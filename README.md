@@ -32,16 +32,16 @@ Las Monjas is a Spanish mod (translated and published on English) for Among Us m
 <details>
   <summary>Click to show</summary>
 
-**Version 1.5.5 (13th May 2022)
+**Version 1.5.5 (13th May 2022)**
 - Divided Modifier settings into Global game settings and Modifiers only settings
 - Reduced minimum arrest time on PAT from 3 to 2
 - Reduced Demon's minimum delay time from 10 to 5
 - 3 new Hats
   
-**Version 1.5.4 (8th May 2022)
+**Version 1.5.4 (8th May 2022)**
 - Another rollback to fix gamemodes
 
-**Version 1.5.3 (8th May 2022)
+**Version 1.5.3 (8th May 2022)**
 - Rollback on the role assignment system
 - Updated Submerged to 2022.5.8 (includes the fix for the visor behind the hat and hacker admin's colors)
 - 1 new nameplate
