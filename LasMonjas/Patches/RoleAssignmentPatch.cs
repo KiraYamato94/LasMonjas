@@ -313,9 +313,9 @@ namespace LasMonjas.Patches
                     while (
                         (impostors.Count > 0 && maxImpostorRoles > 0 && ensuredImpostorRoles.Count > 0) ||
                         (crewmates.Count > 0 && (
-                            (maxCrewmateRoles > 0 && ensuredCrewmateRoles.Count > 0) ||
+                            (maxRebelRoles > 0 && ensuredRebelRoles.Count > 0) ||
                             (maxNeutralRoles > 0 && ensuredNeutralRoles.Count > 0) ||
-                            (maxRebelRoles > 0 && ensuredRebelRoles.Count > 0)
+                            (maxCrewmateRoles > 0 && ensuredCrewmateRoles.Count > 0)
                         ))) {
 
                         Dictionary<RoleType, List<byte>> rolesToAssign = new Dictionary<RoleType, List<byte>>();
@@ -326,7 +326,7 @@ namespace LasMonjas.Patches
 
                         // Randomly select a pool of roles to assign a role from (Crewmate role, Neutral role, Impostor role or Rebel role) then select one of the roles from the selected pool to a player and remove the rol from the pool
                         var roleType = rolesToAssign.Keys.ElementAt(rnd.Next(0, rolesToAssign.Keys.Count()));
-                        var players = roleType == RoleType.Crewmate || roleType == RoleType.Neutral || roleType == RoleType.Rebel ? crewmates : impostors;
+                        var players = roleType == RoleType.Rebel || roleType == RoleType.Neutral || roleType == RoleType.Crewmate ? crewmates : impostors;
                         var index = rnd.Next(0, rolesToAssign[roleType].Count);
                         var roleId = rolesToAssign[roleType][index];
                         setRoleToRandomPlayer(rolesToAssign[roleType][index], players);
@@ -334,10 +334,10 @@ namespace LasMonjas.Patches
 
                         // Adjust the role limit
                         switch (roleType) {
-                            case RoleType.Crewmate: maxCrewmateRoles--; break;
-                            case RoleType.Neutral: maxNeutralRoles--; break;
                             case RoleType.Impostor: maxImpostorRoles--; break;
                             case RoleType.Rebel: maxRebelRoles--; break;
+                            case RoleType.Neutral: maxNeutralRoles--; break;
+                            case RoleType.Crewmate: maxCrewmateRoles--; break;
                         }
                     }
 
