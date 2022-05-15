@@ -636,7 +636,7 @@ namespace LasMonjas
                 Mimic.getpickTargetSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 true,
                 Mimic.duration,
                 () => {
@@ -682,7 +682,7 @@ namespace LasMonjas
                 Painter.getButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 true,
                 Painter.duration,
                 () => { painterPaintButton.Timer = painterPaintButton.MaxTimer; }
@@ -846,7 +846,7 @@ namespace LasMonjas
                 Janitor.getButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                null
+                KeyCode.F
             );
 
             // Janitor dragbody button
@@ -949,7 +949,7 @@ namespace LasMonjas
                 Ilusionist.getPlaceHatButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Ilusionist light button
@@ -994,7 +994,7 @@ namespace LasMonjas
                 Ilusionist.getLightsOutButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 true,
                 Ilusionist.lightsOutDuration,
                 () => { ilusionistLightsOutButton.Timer = ilusionistLightsOutButton.MaxTimer; }
@@ -1042,7 +1042,7 @@ namespace LasMonjas
                 Manipulator.getManipulateButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             //Bomberman place bomb
@@ -1116,7 +1116,7 @@ namespace LasMonjas
                 Bomberman.getBombButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 true,
                 Bomberman.bombDuration,
                 () => { bombermanBombButton.Timer = bombermanBombButton.MaxTimer; }
@@ -1155,7 +1155,7 @@ namespace LasMonjas
                 Chameleon.getInvisibleButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 true,
                 0f,
                 () => {
@@ -1188,7 +1188,7 @@ namespace LasMonjas
                 Sorcerer.getSpellButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 true,
                 Sorcerer.spellDuration,
                 () => {
@@ -1277,7 +1277,7 @@ namespace LasMonjas
                 Renegade.getMinionButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Minion Kill
@@ -1392,7 +1392,7 @@ namespace LasMonjas
                 BountyHunter.getButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 false,
                 0f,
                 () => {
@@ -1452,7 +1452,7 @@ namespace LasMonjas
                 Trapper.getMineButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.Q
+                KeyCode.F
             );
 
             // Trapper place trap
@@ -1593,7 +1593,7 @@ namespace LasMonjas
                 Yinyanger.getYinButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.Q
+                KeyCode.F
             );
 
             // Yinyanger set Yang
@@ -1789,7 +1789,7 @@ namespace LasMonjas
                 Challenger.getChallengeButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.Q,
+                KeyCode.F,
                 false,
                 0f,
                 () => {
@@ -1966,7 +1966,7 @@ namespace LasMonjas
                 RoleThief.getButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.Q
+                KeyCode.F
             );
 
             // Pyromaniac douse ignite
@@ -2006,7 +2006,7 @@ namespace LasMonjas
                 Pyromaniac.getSpraySprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.Q,
+                KeyCode.F,
                 true,
                 Pyromaniac.duration,
                 () => {
@@ -2085,7 +2085,7 @@ namespace LasMonjas
                 TreasureHunter.getButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.Q,
+                KeyCode.F,
                 false,
                 0f,
                 () => { treasureHunterButton.Timer = treasureHunterButton.MaxTimer; }
@@ -2139,7 +2139,7 @@ namespace LasMonjas
                 Devourer.getButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.Q
+                KeyCode.F
             );
 
 
@@ -2213,7 +2213,7 @@ namespace LasMonjas
                 Captain.getCallButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.Q
+                KeyCode.F
             );
 
             // Mechanic Repair
@@ -2284,7 +2284,7 @@ namespace LasMonjas
                 Mechanic.getButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.Q
+                KeyCode.F
             );
 
             // Mechanic button spawn remaining uses text
@@ -2372,7 +2372,7 @@ namespace LasMonjas
                 Detective.getButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.Q,
+                KeyCode.F,
                 true,
                 0f,
                 () => {
@@ -2405,7 +2405,7 @@ namespace LasMonjas
                 Forensic.getQuestionSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.Q,
+                KeyCode.F,
                 true,
                 Forensic.duration,
                 () => {
@@ -2516,7 +2516,7 @@ namespace LasMonjas
                 TimeTraveler.getShieldButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.Q,
+                KeyCode.F,
                 true,
                 TimeTraveler.shieldDuration,
                 () => { timeTravelerShieldButton.Timer = timeTravelerShieldButton.MaxTimer; }
@@ -2586,7 +2586,7 @@ namespace LasMonjas
                 Squire.getButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.Q
+                KeyCode.F
             );
 
             // FortuneTeller reveal
@@ -2616,7 +2616,7 @@ namespace LasMonjas
                 FortuneTeller.getButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.Q,
+                KeyCode.F,
                 true,
                 FortuneTeller.duration,
                 () => {
@@ -2682,7 +2682,7 @@ namespace LasMonjas
                     hackerButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
                 Hacker.getButtonSprite(),
-                new Vector3(-1.9f, -0.06f, 0),
+                new Vector3(0f, -1f, 0),
                 __instance,
                 KeyCode.Q,
                 true,
@@ -2732,9 +2732,9 @@ namespace LasMonjas
                    hackerAdminTableButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                },
                Hacker.getAdminSprite(),
-               new Vector3(-3f, -0.06f, 0),
+               new Vector3(-1.9f, -0.06f, 0),
                __instance,
-               KeyCode.Q,
+               KeyCode.F,
                true,
                0f,
                () => {
@@ -2793,9 +2793,9 @@ namespace LasMonjas
                    hackerVitalsButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                },
                Hacker.getVitalsSprite(),
-               new Vector3(-4.1f, -0.06f, 0),
+               new Vector3(-3f, -0.06f, 0),
                __instance,
-               KeyCode.Q,
+               KeyCode.T,
                true,
                0f,
                () => {
@@ -2834,7 +2834,7 @@ namespace LasMonjas
                 Sleuth.getLocateButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.Q
+                KeyCode.F
             );
 
             // Sleuth locate corpses
@@ -2936,7 +2936,7 @@ namespace LasMonjas
                 Fink.getButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.Q,
+                KeyCode.F,
                 true,
                 0f,
                 () => {
@@ -3001,7 +3001,7 @@ namespace LasMonjas
                 Welder.getCloseVentButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.Q
+                KeyCode.F
             );
 
             // Welder button remaining uses text
@@ -3040,7 +3040,7 @@ namespace LasMonjas
                 Spiritualist.getButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.Q,
+                KeyCode.F,
                 true,
                 Spiritualist.spiritualistReviveTime,
                 () => {
@@ -3124,7 +3124,7 @@ namespace LasMonjas
                 Coward.getButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.Q
+                KeyCode.F
             );
 
             // Coward button spawn remaining uses text
@@ -3169,7 +3169,7 @@ namespace LasMonjas
                 Vigilant.getPlaceCameraButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.Q
+                KeyCode.F
             );
 
             // Vigilant button remaining camera text
@@ -3260,7 +3260,7 @@ namespace LasMonjas
                 Vigilant.getCamSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.Q,
+                KeyCode.F,
                 true,
                 0f,
                 () => {
@@ -3302,7 +3302,7 @@ namespace LasMonjas
                 Medusa.getButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.Q,
+                KeyCode.F,
                 true,
                 Medusa.duration,
                 () => {
@@ -3353,7 +3353,7 @@ namespace LasMonjas
                 Hunter.getButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.Q
+                KeyCode.F
             );
 
             // Jinx button
@@ -3382,7 +3382,7 @@ namespace LasMonjas
                 Jinx.getTargetSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Jinx button jinxs left
@@ -3459,7 +3459,7 @@ namespace LasMonjas
                 CaptureTheFlag.getTakeBlueFlagButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Redplayer02 Kill
@@ -3527,7 +3527,7 @@ namespace LasMonjas
                 CaptureTheFlag.getTakeBlueFlagButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Redplayer03 Kill
@@ -3595,7 +3595,7 @@ namespace LasMonjas
                 CaptureTheFlag.getTakeBlueFlagButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Redplayer04 Kill
@@ -3663,7 +3663,7 @@ namespace LasMonjas
                 CaptureTheFlag.getTakeBlueFlagButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Redplayer05 Kill
@@ -3731,7 +3731,7 @@ namespace LasMonjas
                 CaptureTheFlag.getTakeBlueFlagButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Redplayer06 Kill
@@ -3799,7 +3799,7 @@ namespace LasMonjas
                 CaptureTheFlag.getTakeBlueFlagButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Redplayer07  Kill
@@ -3867,7 +3867,7 @@ namespace LasMonjas
                 CaptureTheFlag.getTakeBlueFlagButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Blueplayer01 Kill
@@ -3935,7 +3935,7 @@ namespace LasMonjas
                 CaptureTheFlag.getTakeRedFlagButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Blueplayer02 Kill
@@ -4003,7 +4003,7 @@ namespace LasMonjas
                 CaptureTheFlag.getTakeRedFlagButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Blueplayer03 Kill
@@ -4071,7 +4071,7 @@ namespace LasMonjas
                 CaptureTheFlag.getTakeRedFlagButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Blueplayer04 Kill
@@ -4139,7 +4139,7 @@ namespace LasMonjas
                 CaptureTheFlag.getTakeRedFlagButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Blueplayer05 Kill
@@ -4207,7 +4207,7 @@ namespace LasMonjas
                 CaptureTheFlag.getTakeRedFlagButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Blueplayer06 Kill
@@ -4275,7 +4275,7 @@ namespace LasMonjas
                 CaptureTheFlag.getTakeRedFlagButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Blueplayer07 Kill
@@ -4343,7 +4343,7 @@ namespace LasMonjas
                 CaptureTheFlag.getTakeRedFlagButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // stealer Kill
@@ -4429,7 +4429,7 @@ namespace LasMonjas
                 PoliceAndThief.getCaptureThiefButtonSprite(),
                 new Vector3(-0.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 true,
                 PoliceAndThief.captureThiefTime,
                 () => {
@@ -4459,7 +4459,7 @@ namespace LasMonjas
                 PoliceAndThief.getLightButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.F,
+                KeyCode.T,
                 true,
                 10,
                 () => { policeplayer01LightButton.Timer = policeplayer01LightButton.MaxTimer; }
@@ -4518,7 +4518,7 @@ namespace LasMonjas
                 PoliceAndThief.getCaptureThiefButtonSprite(),
                 new Vector3(-0.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 true,
                 PoliceAndThief.captureThiefTime,
                 () => {
@@ -4548,7 +4548,7 @@ namespace LasMonjas
                 PoliceAndThief.getLightButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.F,
+                KeyCode.T,
                 true,
                 10,
                 () => { policeplayer02LightButton.Timer = policeplayer02LightButton.MaxTimer; }
@@ -4608,7 +4608,7 @@ namespace LasMonjas
                 PoliceAndThief.getCaptureThiefButtonSprite(),
                 new Vector3(-0.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 true,
                 PoliceAndThief.captureThiefTime,
                 () => {
@@ -4638,7 +4638,7 @@ namespace LasMonjas
                 PoliceAndThief.getLightButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.F,
+                KeyCode.T,
                 true,
                 10,
                 () => { policeplayer03LightButton.Timer = policeplayer03LightButton.MaxTimer; }
@@ -4698,7 +4698,7 @@ namespace LasMonjas
                 PoliceAndThief.getCaptureThiefButtonSprite(),
                 new Vector3(-0.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 true,
                 PoliceAndThief.captureThiefTime,
                 () => {
@@ -4728,7 +4728,7 @@ namespace LasMonjas
                 PoliceAndThief.getLightButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.F,
+                KeyCode.T,
                 true,
                 10,
                 () => { policeplayer04LightButton.Timer = policeplayer04LightButton.MaxTimer; }
@@ -4788,7 +4788,7 @@ namespace LasMonjas
                 PoliceAndThief.getCaptureThiefButtonSprite(),
                 new Vector3(-0.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 true,
                 PoliceAndThief.captureThiefTime,
                 () => {
@@ -4818,7 +4818,7 @@ namespace LasMonjas
                 PoliceAndThief.getLightButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.F,
+                KeyCode.T,
                 true,
                 10,
                 () => { policeplayer05LightButton.Timer = policeplayer05LightButton.MaxTimer; }
@@ -4880,7 +4880,7 @@ namespace LasMonjas
                 PoliceAndThief.getFreeThiefButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Thiefplayer01 Take/Deliver Jewel Button
@@ -5050,7 +5050,7 @@ namespace LasMonjas
                 PoliceAndThief.getFreeThiefButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Thiefplayer02 Take/Deliver Jewel Button
@@ -5220,7 +5220,7 @@ namespace LasMonjas
                 PoliceAndThief.getFreeThiefButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Thiefplayer03 Take/Deliver Jewel Button
@@ -5390,7 +5390,7 @@ namespace LasMonjas
                 PoliceAndThief.getFreeThiefButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Thiefplayer04 Take/Deliver Jewel Button
@@ -5560,7 +5560,7 @@ namespace LasMonjas
                 PoliceAndThief.getFreeThiefButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Thiefplayer05 Take/Deliver Jewel Button
@@ -5730,7 +5730,7 @@ namespace LasMonjas
                 PoliceAndThief.getFreeThiefButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Thiefplayer06 Take/Deliver Jewel Button
@@ -5900,7 +5900,7 @@ namespace LasMonjas
                 PoliceAndThief.getFreeThiefButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Thiefplayer07 Take/Deliver Jewel Button
@@ -6070,7 +6070,7 @@ namespace LasMonjas
                 PoliceAndThief.getFreeThiefButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Thiefplayer08 Take/Deliver Jewel Button
@@ -6240,7 +6240,7 @@ namespace LasMonjas
                 PoliceAndThief.getFreeThiefButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Thiefplayer09 Take/Deliver Jewel Button
@@ -6410,7 +6410,7 @@ namespace LasMonjas
                 PoliceAndThief.getFreeThiefButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Thiefplayer10 Take/Deliver Jewel Button
@@ -7085,7 +7085,7 @@ namespace LasMonjas
                 HotPotato.getButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.Q
+                KeyCode.F
             );
 
             // ZombieLaboratory buttons code
@@ -7151,7 +7151,7 @@ namespace LasMonjas
                 ZombieLaboratory.getInfectButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 false,
                 ZombieLaboratory.infectTime,
                 () => {
@@ -7228,7 +7228,7 @@ namespace LasMonjas
                 ZombieLaboratory.getInfectButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 false,
                 ZombieLaboratory.infectTime,
                 () => {
@@ -7305,7 +7305,7 @@ namespace LasMonjas
                 ZombieLaboratory.getInfectButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 false,
                 ZombieLaboratory.infectTime,
                 () => {
@@ -7382,7 +7382,7 @@ namespace LasMonjas
                 ZombieLaboratory.getInfectButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 false,
                 ZombieLaboratory.infectTime,
                 () => {
@@ -7459,7 +7459,7 @@ namespace LasMonjas
                 ZombieLaboratory.getInfectButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 false,
                 ZombieLaboratory.infectTime,
                 () => {
@@ -7536,7 +7536,7 @@ namespace LasMonjas
                 ZombieLaboratory.getInfectButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 false,
                 ZombieLaboratory.infectTime,
                 () => {
@@ -7613,7 +7613,7 @@ namespace LasMonjas
                 ZombieLaboratory.getInfectButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 false,
                 ZombieLaboratory.infectTime,
                 () => {
@@ -7690,7 +7690,7 @@ namespace LasMonjas
                 ZombieLaboratory.getInfectButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 false,
                 ZombieLaboratory.infectTime,
                 () => {
@@ -7767,7 +7767,7 @@ namespace LasMonjas
                 ZombieLaboratory.getInfectButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 false,
                 ZombieLaboratory.infectTime,
                 () => {
@@ -7844,7 +7844,7 @@ namespace LasMonjas
                 ZombieLaboratory.getInfectButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 false,
                 ZombieLaboratory.infectTime,
                 () => {
@@ -7921,7 +7921,7 @@ namespace LasMonjas
                 ZombieLaboratory.getInfectButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 false,
                 ZombieLaboratory.infectTime,
                 () => {
@@ -7998,7 +7998,7 @@ namespace LasMonjas
                 ZombieLaboratory.getInfectButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 false,
                 ZombieLaboratory.infectTime,
                 () => {
@@ -8075,7 +8075,7 @@ namespace LasMonjas
                 ZombieLaboratory.getInfectButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 false,
                 ZombieLaboratory.infectTime,
                 () => {
@@ -8152,7 +8152,7 @@ namespace LasMonjas
                 ZombieLaboratory.getInfectButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 false,
                 ZombieLaboratory.infectTime,
                 () => {
@@ -8587,7 +8587,7 @@ namespace LasMonjas
                 ZombieLaboratory.getPickMedkitButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.Q
+                KeyCode.F
             );
 
             // Nurse creatuecure Button
@@ -8614,7 +8614,7 @@ namespace LasMonjas
                 ZombieLaboratory.getCreateCureButtonSprite(),
                 new Vector3(0f, 1f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.Q
             );
 
             // Survivor01 kill
@@ -8731,7 +8731,7 @@ namespace LasMonjas
                 ZombieLaboratory.getSurvivorTakeBoxButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 false,
                 ZombieLaboratory.searchBoxTimer,
                 () => {
@@ -8943,7 +8943,7 @@ namespace LasMonjas
                 ZombieLaboratory.getSurvivorTakeBoxButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 false,
                 ZombieLaboratory.searchBoxTimer,
                 () => {
@@ -9154,7 +9154,7 @@ namespace LasMonjas
                 ZombieLaboratory.getSurvivorTakeBoxButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 false,
                 ZombieLaboratory.searchBoxTimer,
                 () => {
@@ -9365,7 +9365,7 @@ namespace LasMonjas
                 ZombieLaboratory.getSurvivorTakeBoxButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 false,
                 ZombieLaboratory.searchBoxTimer,
                 () => {
@@ -9576,7 +9576,7 @@ namespace LasMonjas
                 ZombieLaboratory.getSurvivorTakeBoxButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 false,
                 ZombieLaboratory.searchBoxTimer,
                 () => {
@@ -9787,7 +9787,7 @@ namespace LasMonjas
                 ZombieLaboratory.getSurvivorTakeBoxButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 false,
                 ZombieLaboratory.searchBoxTimer,
                 () => {
@@ -9998,7 +9998,7 @@ namespace LasMonjas
                 ZombieLaboratory.getSurvivorTakeBoxButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 false,
                 ZombieLaboratory.searchBoxTimer,
                 () => {
@@ -10209,7 +10209,7 @@ namespace LasMonjas
                 ZombieLaboratory.getSurvivorTakeBoxButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 false,
                 ZombieLaboratory.searchBoxTimer,
                 () => {
@@ -10420,7 +10420,7 @@ namespace LasMonjas
                 ZombieLaboratory.getSurvivorTakeBoxButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 false,
                 ZombieLaboratory.searchBoxTimer,
                 () => {
@@ -10631,7 +10631,7 @@ namespace LasMonjas
                 ZombieLaboratory.getSurvivorTakeBoxButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 false,
                 ZombieLaboratory.searchBoxTimer,
                 () => {
@@ -10842,7 +10842,7 @@ namespace LasMonjas
                 ZombieLaboratory.getSurvivorTakeBoxButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 false,
                 ZombieLaboratory.searchBoxTimer,
                 () => {
@@ -11053,7 +11053,7 @@ namespace LasMonjas
                 ZombieLaboratory.getSurvivorTakeBoxButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 false,
                 ZombieLaboratory.searchBoxTimer,
                 () => {
@@ -11264,7 +11264,7 @@ namespace LasMonjas
                 ZombieLaboratory.getSurvivorTakeBoxButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T,
+                KeyCode.F,
                 false,
                 ZombieLaboratory.searchBoxTimer,
                 () => {
