@@ -35,7 +35,7 @@ namespace LasMonjas.Patches {
 
             static void Postfix(PingTracker __instance) {
 
-                __instance.text.text += "\n<color=#CC00FFFF>Las Monjas v1.5.6</color>";
+                __instance.text.text += "\n<color=#CC00FFFF>Las Monjas v1.5.7</color>";
                 __instance.transform.localPosition = new Vector3(1.25f, 3f, __instance.transform.localPosition.z);
             }
         }     

@@ -578,7 +578,7 @@ namespace LasMonjas.Patches {
             new YinYang(1, Yinyanger.yangyedplayer);
             Yinyanger.colision = true;
             HudManager.Instance.StartCoroutine(Effects.Lerp(1, new Action<float>((p) => {
-                if (Yinyanger.yinyedplayer == PlayerControl.LocalPlayer || Yinyanger.yangyedplayer == PlayerControl.LocalPlayer) {
+                if (Yinyanger.yinyanger == PlayerControl.LocalPlayer || Yinyanger.yinyedplayer == PlayerControl.LocalPlayer || Yinyanger.yangyedplayer == PlayerControl.LocalPlayer) {
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.yinyangerYinyangColisionClip, false, 100f);
                 }
                 Yinyanger.yinyedplayer.moveable = false;
