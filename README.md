@@ -4,7 +4,7 @@
 Las Monjas is a Spanish mod (translated and published on English) for Among Us made by fans for fans without being affiliated with Among Us or Innersloth Team, all rights reserved to them. This mod features the following:
 
   1. [40 roles](#roles)
-  2. [13 modifiers](#modifiers)
+  2. [7 modifiers](#modifiers)
   3. [1 custom map](https://youtu.be/9tDh9eYqAgk)
   4. [5 custom gamemodes](#gamemodes)
   5. [4 new colors](#settings)
@@ -31,6 +31,13 @@ Las Monjas is a Spanish mod (translated and published on English) for Among Us m
 # Changelog
 <details>
   <summary>Click to show</summary>
+
+**Version 1.5.7 (16th May 2022)**
+- Yinyanger now listens the colission clip
+- Updated Submerged to 2022.5.15
+
+**Version 1.5.6 (15th May 2022)**
+- Fixed custom buttons keybinds
 
 **Version 1.5.5 (13th May 2022)**
 - Divided Modifier settings into Global game settings and Modifiers only settings
@@ -204,7 +211,7 @@ I recommend to play this mod only on custom servers (for example [Impostor](http
 -----------------------
 
 # Settings
-This mod adds a custom lobby which I won't spoil to you, it also adds four colors (Lavender, Petrol, Mint and Olive) and four settings to the client option tab:
+This mod adds a custom lobby which I won't spoil to you, it also adds four colors (Lavender, Petrol, Mint and Olive) and five settings to the client option tab:
 - **Hide Room Code:** More like streamer mode, activating this option will hide the room code and replace it with "Las Monjas"
 - **Game Summary:** Activating this option will create a list containing which role and task progress the players had after the game ends.
 - **Activate Music:** Music pack containing 7 songs from Kevin MacLeod (1 for Lobby, 3 for Tasks and 3 for Meeting depending of how many players are alive)
@@ -891,14 +898,13 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 
 This mod also features some game mechanic modifiers, one of them being a [custom map](https://youtu.be/9tDh9eYqAgk), some of them aren't considered as a separate role, instead they're added as a player attribute which can be good or bad. To activate them, Modifiers spawn rate has to be 100%.
 
-| Modifier Type  | Description |
+| Global Setting  | Description |
 |----------|-------------|
 | Activate Mod Roles | Activate this option to play mod roles and deactivate it to play with vanilla ones |
 | Role Assignment | Choose if mod roles are assigned randomly or by list order |
 | Activate Custom Skeld Map | If enabled and Skeld is selected as the game map, the custom map will load instead the normal Skeld |
 | Remove Swipe Card Task | I hate this task so I made an option to remove it |
 | Remove Airship Doors | After reading what is written above this, you can guess why this option is here |
-| Modifiers Number | How many role modifiers will be on the game |
 
 ## Lovers
   - Two player linked, can be Impostor + Crewmate or both Crewmates, they also die and gets exiled together.
