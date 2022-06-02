@@ -11,11 +11,12 @@ namespace LasMonjas.Patches
         {
             if (__instance.AmOwner && GameData.Instance && __instance.myPlayer.CanMove && PlayerControl.LocalPlayer == Janitor.janitor && Janitor.dragginBody)
                 __instance.body.velocity *= 0.80f; 
-            else if (__instance.AmOwner && GameData.Instance && __instance.myPlayer.CanMove && PlayerControl.LocalPlayer == Modifiers.flash && !Challenger.isDueling)
+            else if (__instance.AmOwner && GameData.Instance && __instance.myPlayer.CanMove && PlayerControl.LocalPlayer == Modifiers.flash && !Challenger.isDueling && !LasMonjas.isHappeningAnonymousComms)
                 __instance.body.velocity *= 1.10f;
-            else if (__instance.AmOwner && GameData.Instance && __instance.myPlayer.CanMove && PlayerControl.LocalPlayer == Modifiers.bigchungus && !Challenger.isDueling)
+            else if (__instance.AmOwner && GameData.Instance && __instance.myPlayer.CanMove && PlayerControl.LocalPlayer == Modifiers.bigchungus && !Challenger.isDueling && !LasMonjas.isHappeningAnonymousComms)
                 __instance.body.velocity *= 0.90f;
-
+            else if (__instance.AmOwner && GameData.Instance && __instance.myPlayer.CanMove && PlayerControl.LocalPlayer == Modifiers.pro)
+                __instance.body.velocity *= -1;
         }
 
         [HarmonyPatch(typeof(CustomNetworkTransform), nameof(CustomNetworkTransform.FixedUpdate))]
@@ -23,9 +24,9 @@ namespace LasMonjas.Patches
         public static void PostfixNetwork(CustomNetworkTransform __instance) {
             if (__instance.AmOwner && __instance.interpolateMovement != 0.0f && PlayerControl.LocalPlayer == Janitor.janitor && Janitor.dragginBody)
                 __instance.body.velocity *= 0.80f; 
-            else if (__instance.AmOwner && __instance.interpolateMovement != 0.0f && PlayerControl.LocalPlayer == Modifiers.flash && !Challenger.isDueling)
+            else if (__instance.AmOwner && __instance.interpolateMovement != 0.0f && PlayerControl.LocalPlayer == Modifiers.flash && !Challenger.isDueling && !LasMonjas.isHappeningAnonymousComms)
                 __instance.body.velocity *= 1.10f;
-            else if (__instance.AmOwner && __instance.interpolateMovement != 0.0f && PlayerControl.LocalPlayer == Modifiers.bigchungus && !Challenger.isDueling)
+            else if (__instance.AmOwner && __instance.interpolateMovement != 0.0f && PlayerControl.LocalPlayer == Modifiers.bigchungus && !Challenger.isDueling && !LasMonjas.isHappeningAnonymousComms)
                 __instance.body.velocity *= 0.90f;
         }
     }

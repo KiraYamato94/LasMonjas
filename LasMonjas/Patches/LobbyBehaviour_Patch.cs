@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Hazel;
 using System;
 using UnhollowerBaseLib;
+using System.Linq;
 
 namespace LasMonjas.Patches
 {
@@ -140,6 +141,10 @@ namespace LasMonjas.Patches
                     myLeftEngine.SetActive(false);
                     GameObject myWardrobe = GameObject.Find("panel_Wardrobe(Clone)");
                     myWardrobe.SetActive(false);
+                    List<PlayerControl> howManyPlayers = PlayerControl.AllPlayerControls.ToArray().ToList();
+                    if (howManyPlayers.Count < 7) {
+                        PlayerControl.GameOptions.NumImpostors = 1;
+                    }
                 }
             }
         }

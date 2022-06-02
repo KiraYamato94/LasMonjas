@@ -249,14 +249,8 @@ namespace LasMonjas.Patches {
                 foreach (RoleInfo roleInfo in RoleInfo.allRoleInfos) {
                     // Not gambled roles
                     if (/* Special roles */ roleInfo.roleId == RoleId.Lover || roleInfo.roleId == RoleId.Kid || (roleInfo == RoleInfo.vigilantMira && PlayerControl.GameOptions.MapId != 1) || (roleInfo == RoleInfo.vigilant && PlayerControl.GameOptions.MapId == 1)
-                        /* Impostor roles */ || roleInfo.roleId == RoleId.Mimic || roleInfo.roleId == RoleId.Painter || roleInfo.roleId == RoleId.Demon || roleInfo.roleId == RoleId.Janitor || roleInfo.roleId == RoleId.Ilusionist || roleInfo.roleId == RoleId.Manipulator || roleInfo.roleId == RoleId.Bomberman || roleInfo.roleId == RoleId.Chameleon || roleInfo.roleId == RoleId.Gambler || roleInfo.roleId == RoleId.Sorcerer || roleInfo.roleId == RoleId.Impostor
-                        /* Modifiers*/ || roleInfo.roleId == RoleId.BigChungus
-                        /* Capture the flag players*/ || roleInfo.roleId == RoleId.RedPlayer01 || roleInfo.roleId == RoleId.RedPlayer02 || roleInfo.roleId == RoleId.RedPlayer03 || roleInfo.roleId == RoleId.RedPlayer04 || roleInfo.roleId == RoleId.RedPlayer05 || roleInfo.roleId == RoleId.RedPlayer06 || roleInfo.roleId == RoleId.RedPlayer07 || roleInfo.roleId == RoleId.BluePlayer01 || roleInfo.roleId == RoleId.BluePlayer02 || roleInfo.roleId == RoleId.BluePlayer03 || roleInfo.roleId == RoleId.BluePlayer04 || roleInfo.roleId == RoleId.BluePlayer05 || roleInfo.roleId == RoleId.BluePlayer06 || roleInfo.roleId == RoleId.BluePlayer07 || roleInfo.roleId == RoleId.StealerPlayer
-                        /* Police and Thief players*/ || roleInfo.roleId == RoleId.PolicePlayer01 || roleInfo.roleId == RoleId.PolicePlayer02 || roleInfo.roleId == RoleId.PolicePlayer03 || roleInfo.roleId == RoleId.PolicePlayer04 || roleInfo.roleId == RoleId.PolicePlayer05 || roleInfo.roleId == RoleId.ThiefPlayer01 || roleInfo.roleId == RoleId.ThiefPlayer02 || roleInfo.roleId == RoleId.ThiefPlayer03 || roleInfo.roleId == RoleId.ThiefPlayer04 || roleInfo.roleId == RoleId.ThiefPlayer05 || roleInfo.roleId == RoleId.ThiefPlayer06 || roleInfo.roleId == RoleId.ThiefPlayer07 || roleInfo.roleId == RoleId.ThiefPlayer08 || roleInfo.roleId == RoleId.ThiefPlayer09 || roleInfo.roleId == RoleId.ThiefPlayer10
-                        /* King of the hill*/ || roleInfo.roleId == RoleId.GreenKing || roleInfo.roleId == RoleId.YellowKing || roleInfo.roleId == RoleId.GreenPlayer01 || roleInfo.roleId == RoleId.GreenPlayer02 || roleInfo.roleId == RoleId.GreenPlayer03 || roleInfo.roleId == RoleId.GreenPlayer04 || roleInfo.roleId == RoleId.GreenPlayer05 || roleInfo.roleId == RoleId.GreenPlayer06 || roleInfo.roleId == RoleId.YellowPlayer01 || roleInfo.roleId == RoleId.YellowPlayer02 || roleInfo.roleId == RoleId.YellowPlayer03 || roleInfo.roleId == RoleId.YellowPlayer04 || roleInfo.roleId == RoleId.YellowPlayer05 || roleInfo.roleId == RoleId.YellowPlayer06 || roleInfo.roleId == RoleId.UsurperPlayer
-                        /* Hot Potato */ || roleInfo.roleId == RoleId.HotPotato || roleInfo.roleId == RoleId.NotPotato01 || roleInfo.roleId == RoleId.NotPotato02 || roleInfo.roleId == RoleId.NotPotato03 || roleInfo.roleId == RoleId.NotPotato04 || roleInfo.roleId == RoleId.NotPotato05 || roleInfo.roleId == RoleId.NotPotato06 || roleInfo.roleId == RoleId.NotPotato07 || roleInfo.roleId == RoleId.NotPotato08 || roleInfo.roleId == RoleId.NotPotato09 || roleInfo.roleId == RoleId.NotPotato10 || roleInfo.roleId == RoleId.NotPotato11 || roleInfo.roleId == RoleId.NotPotato12 || roleInfo.roleId == RoleId.NotPotato13 || roleInfo.roleId == RoleId.NotPotato14
-                        /* Exploded Potato */ || roleInfo.roleId == RoleId.ExplodedPotato01 || roleInfo.roleId == RoleId.ExplodedPotato02 || roleInfo.roleId == RoleId.ExplodedPotato03 || roleInfo.roleId == RoleId.ExplodedPotato04 || roleInfo.roleId == RoleId.ExplodedPotato05 || roleInfo.roleId == RoleId.ExplodedPotato06 || roleInfo.roleId == RoleId.ExplodedPotato07 || roleInfo.roleId == RoleId.ExplodedPotato08 || roleInfo.roleId == RoleId.ExplodedPotato09 || roleInfo.roleId == RoleId.ExplodedPotato10 || roleInfo.roleId == RoleId.ExplodedPotato11 || roleInfo.roleId == RoleId.ExplodedPotato12 || roleInfo.roleId == RoleId.ExplodedPotato13 || roleInfo.roleId == RoleId.ExplodedPotato14
-                        /* Zombie Laboratory */ || roleInfo.roleId == RoleId.NursePlayer || roleInfo.roleId == RoleId.ZombiePlayer01 || roleInfo.roleId == RoleId.ZombiePlayer02 || roleInfo.roleId == RoleId.ZombiePlayer03 || roleInfo.roleId == RoleId.ZombiePlayer04 || roleInfo.roleId == RoleId.ZombiePlayer05 || roleInfo.roleId == RoleId.ZombiePlayer06 || roleInfo.roleId == RoleId.ZombiePlayer07 || roleInfo.roleId == RoleId.ZombiePlayer08 || roleInfo.roleId == RoleId.ZombiePlayer09 || roleInfo.roleId == RoleId.ZombiePlayer10 || roleInfo.roleId == RoleId.ZombiePlayer11 || roleInfo.roleId == RoleId.ZombiePlayer12 || roleInfo.roleId == RoleId.ZombiePlayer13 || roleInfo.roleId == RoleId.ZombiePlayer14 || roleInfo.roleId == RoleId.SurvivorPlayer01 || roleInfo.roleId == RoleId.SurvivorPlayer02 || roleInfo.roleId == RoleId.SurvivorPlayer03 || roleInfo.roleId == RoleId.SurvivorPlayer04 || roleInfo.roleId == RoleId.SurvivorPlayer05 || roleInfo.roleId == RoleId.SurvivorPlayer06 || roleInfo.roleId == RoleId.SurvivorPlayer07 || roleInfo.roleId == RoleId.SurvivorPlayer08 || roleInfo.roleId == RoleId.SurvivorPlayer09 || roleInfo.roleId == RoleId.SurvivorPlayer10 || roleInfo.roleId == RoleId.SurvivorPlayer11 || roleInfo.roleId == RoleId.SurvivorPlayer12 || roleInfo.roleId == RoleId.SurvivorPlayer13)
+                        /* Impostor roles*/ || roleInfo.roleId == RoleId.Mimic || roleInfo.roleId == RoleId.Painter || roleInfo.roleId == RoleId.Demon || roleInfo.roleId == RoleId.Janitor || roleInfo.roleId == RoleId.Illusionist || roleInfo.roleId == RoleId.Manipulator || roleInfo.roleId == RoleId.Bomberman || roleInfo.roleId == RoleId.Chameleon || roleInfo.roleId == RoleId.Gambler || roleInfo.roleId == RoleId.Sorcerer || roleInfo.roleId == RoleId.Medusa || roleInfo.roleId == RoleId.Hypnotist || roleInfo.roleId == RoleId.Archer || roleInfo.roleId == RoleId.Impostor
+                        /* Modifiers*/ || roleInfo.roleId == RoleId.BigChungus)
                         continue;
 
                     // Only add current game roles
@@ -303,20 +297,17 @@ namespace LasMonjas.Patches {
                             var mainRoleInfo = RoleInfo.getRoleInfoForPlayer(target).FirstOrDefault();
                             if (mainRoleInfo == null) return;
 
-                            if (Gambler.gambler.Data.Role.IsImpostor && target.Data.Role.IsImpostor) {
-                                target = PlayerControl.LocalPlayer;
-                            }
-                            else {
-                                target = (mainRoleInfo == roleInfo) ? target : PlayerControl.LocalPlayer;
 
-                                // Reset the GUI
-                                __instance.playerStates.ToList().ForEach(x => x.gameObject.SetActive(true));
-                                UnityEngine.Object.Destroy(container.gameObject);
-                                if (Gambler.canShootMultipleTimes && Gambler.numberOfShots > 1 && target != PlayerControl.LocalPlayer)
-                                    __instance.playerStates.ToList().ForEach(x => { if (x.TargetPlayerId == target.PlayerId && x.transform.FindChild("ShootButton") != null) UnityEngine.Object.Destroy(x.transform.FindChild("ShootButton").gameObject); });
-                                else
-                                    __instance.playerStates.ToList().ForEach(x => { if (x.transform.FindChild("ShootButton") != null) UnityEngine.Object.Destroy(x.transform.FindChild("ShootButton").gameObject); });
-                            }
+                            target = (mainRoleInfo == roleInfo) ? target : PlayerControl.LocalPlayer;
+
+                            // Reset the GUI
+                            __instance.playerStates.ToList().ForEach(x => x.gameObject.SetActive(true));
+                            UnityEngine.Object.Destroy(container.gameObject);
+                            if (Gambler.canShootMultipleTimes && Gambler.numberOfShots > 1 && target != PlayerControl.LocalPlayer)
+                                __instance.playerStates.ToList().ForEach(x => { if (x.TargetPlayerId == target.PlayerId && x.transform.FindChild("ShootButton") != null) UnityEngine.Object.Destroy(x.transform.FindChild("ShootButton").gameObject); });
+                            else
+                                __instance.playerStates.ToList().ForEach(x => { if (x.transform.FindChild("ShootButton") != null) UnityEngine.Object.Destroy(x.transform.FindChild("ShootButton").gameObject); });
+
 
                             // Shoot player and send chat info if activated
                             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamblerShoot, Hazel.SendOption.Reliable, -1);
@@ -429,11 +420,11 @@ namespace LasMonjas.Patches {
 
         [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CoStartMeeting))]
         class StartMeetingPatch {
-            public static void Prefix(PlayerControl __instance, [HarmonyArgument(0)]GameData.PlayerInfo meetingTarget) {
+            public static void Prefix(PlayerControl __instance, [HarmonyArgument(0)] GameData.PlayerInfo meetingTarget) {
                 // Forensic meeting start time
                 Forensic.meetingStartTime = DateTime.UtcNow;
                 // Reset demon bitten
-                Demon.bitten = null;                
+                Demon.bitten = null;
                 // Save the meeting target
                 target = meetingTarget;
 
@@ -444,6 +435,27 @@ namespace LasMonjas.Patches {
 
                 // Reset medusa target
                 Medusa.petrified = null;
+
+                Necromancer.CleanArrow();
+
+                // Add 20 seconds for Berserker
+                if (Berserker.killedFirstTime) {
+                    if (PlayerControl.GameOptions.MapId == 5) {
+                        Berserker.timeToKill += 35;
+                    }
+                    else {
+                        Berserker.timeToKill += 20;
+                    }
+                }
+
+                // Reset Puppeteer morph
+                if (Puppeteer.puppeteer != null) {
+                    Puppeteer.morphed = false;
+                    Puppeteer.puppeteer.setDefaultLook();
+                    Puppeteer.transformTarget = null;
+                    Puppeteer.pickTarget = null;
+                    Puppeteer.currentTarget = null;
+                }
             }
         }
     }

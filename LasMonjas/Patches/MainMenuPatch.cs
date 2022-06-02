@@ -56,4 +56,18 @@ namespace LasMonjas.Patches
             __result = LasMonjasPlugin.HorseMode.Value;
         }
     }
+
+    [HarmonyPatch(typeof(AnnouncementPopUp), nameof(AnnouncementPopUp.UpdateAnnounceText))]
+    public static class Announcement
+    {
+        public static ModUpdateBehaviour.UpdateData updateData = null;
+        public static bool Prefix(AnnouncementPopUp __instance) {
+            if (ModUpdateBehaviour.showPopUp || updateData == null) return true;
+
+            var text = __instance.AnnounceTextMeshPro;
+            text.text = $"<size=150%><color=#CC00FFFF>Las Monjas </color> {(updateData.Tag)}\n{(updateData.Content)}";
+
+            return false;
+        }
+    }
 }

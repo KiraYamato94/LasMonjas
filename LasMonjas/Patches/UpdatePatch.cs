@@ -24,6 +24,7 @@ namespace LasMonjas.Patches {
             foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
                 String playerName = player.Data.PlayerName;
                 if (Mimic.transformTimer > 0f && Mimic.mimic == player && Mimic.transformTarget != null) playerName = Mimic.transformTarget.Data.PlayerName;
+                if (Puppeteer.morphed && Puppeteer.puppeteer == player && Puppeteer.transformTarget != null) playerName = Puppeteer.transformTarget.Data.PlayerName;
 
                 player.nameText.text = Helpers.hidePlayerName(PlayerControl.LocalPlayer, player) ? "" : playerName;
                 if (PlayerControl.LocalPlayer.Data.Role.IsImpostor && player.Data.Role.IsImpostor) {
@@ -70,90 +71,92 @@ namespace LasMonjas.Patches {
 
         static void setNameColors() {
 
-            if (CaptureTheFlag.captureTheFlagMode && howmanygamemodesareon == 1) {
-                if (CaptureTheFlag.stealerPlayer != null) {
-                    setPlayerNameColor(CaptureTheFlag.stealerPlayer, Palette.PlayerColors[15]);
-                }
-                
-                foreach (PlayerControl redplayer in CaptureTheFlag.redteamFlag) {
-                    if (redplayer != null) {
-                        setPlayerNameColor(redplayer, Palette.PlayerColors[0]);
+            if (howmanygamemodesareon == 1) {
+                if (CaptureTheFlag.captureTheFlagMode) {
+                    if (CaptureTheFlag.stealerPlayer != null) {
+                        setPlayerNameColor(CaptureTheFlag.stealerPlayer, Palette.PlayerColors[15]);
                     }
-                }
-                foreach (PlayerControl blueplayer in CaptureTheFlag.blueteamFlag) {
-                    if (blueplayer != null) {
-                        setPlayerNameColor(blueplayer, Palette.PlayerColors[1]);
-                    }
-                }
-            }
-            else if (PoliceAndThief.policeAndThiefMode && howmanygamemodesareon == 1) {
-                foreach (PlayerControl policeplayer in PoliceAndThief.policeTeam) {
-                    if (policeplayer != null) {
-                        setPlayerNameColor(policeplayer, Palette.PlayerColors[10]);
-                    }
-                }
-                foreach (PlayerControl thiefplayer in PoliceAndThief.thiefTeam) {
-                    if (thiefplayer != null) {
-                        setPlayerNameColor(thiefplayer, Palette.PlayerColors[16]);                        
-                    }
-                }
-            }
-            else if (KingOfTheHill.kingOfTheHillMode && howmanygamemodesareon == 1) {
-                if (KingOfTheHill.usurperPlayer != null) {
-                    setPlayerNameColor(KingOfTheHill.usurperPlayer, Palette.PlayerColors[15]);
-                }
-                
-                foreach (PlayerControl greenplayer in KingOfTheHill.greenTeam) {
-                    if (greenplayer != null) {
-                        setPlayerNameColor(greenplayer, Palette.PlayerColors[2]);
-                    }
-                }
-                foreach (PlayerControl yellowplayer in KingOfTheHill.yellowTeam) {
-                    if (yellowplayer != null) {
-                        setPlayerNameColor(yellowplayer, Palette.PlayerColors[5]);
-                    }
-                }
-            }
-            else if (HotPotato.hotPotatoMode && howmanygamemodesareon == 1) {
 
-                foreach (PlayerControl notpotatoplayer in HotPotato.notPotatoTeam) {
-                    if (notpotatoplayer != null) {
-                        setPlayerNameColor(notpotatoplayer, Palette.PlayerColors[10]);
+                    foreach (PlayerControl redplayer in CaptureTheFlag.redteamFlag) {
+                        if (redplayer != null) {
+                            setPlayerNameColor(redplayer, Palette.PlayerColors[0]);
+                        }
+                    }
+                    foreach (PlayerControl blueplayer in CaptureTheFlag.blueteamFlag) {
+                        if (blueplayer != null) {
+                            setPlayerNameColor(blueplayer, Palette.PlayerColors[1]);
+                        }
                     }
                 }
-
-                foreach (PlayerControl explodedpotatoplayer in HotPotato.explodedPotatoTeam) {
-                    if (explodedpotatoplayer != null) {
-                        setPlayerNameColor(explodedpotatoplayer, Palette.PlayerColors[9]);
+                else if (PoliceAndThief.policeAndThiefMode) {
+                    foreach (PlayerControl policeplayer in PoliceAndThief.policeTeam) {
+                        if (policeplayer != null) {
+                            setPlayerNameColor(policeplayer, Palette.PlayerColors[10]);
+                        }
+                    }
+                    foreach (PlayerControl thiefplayer in PoliceAndThief.thiefTeam) {
+                        if (thiefplayer != null) {
+                            setPlayerNameColor(thiefplayer, Palette.PlayerColors[16]);
+                        }
                     }
                 }
+                else if (KingOfTheHill.kingOfTheHillMode) {
+                    if (KingOfTheHill.usurperPlayer != null) {
+                        setPlayerNameColor(KingOfTheHill.usurperPlayer, Palette.PlayerColors[15]);
+                    }
 
-                if (HotPotato.hotPotatoPlayer != null) {
-                    setPlayerNameColor(HotPotato.hotPotatoPlayer, Palette.PlayerColors[15]);
-                }
-            }
-            else if (ZombieLaboratory.zombieLaboratoryMode && howmanygamemodesareon == 1) {
-
-                foreach (PlayerControl survivorPlayer in ZombieLaboratory.survivorTeam) {
-                    if (survivorPlayer != null) {
-                        setPlayerNameColor(survivorPlayer, Palette.PlayerColors[10]);
+                    foreach (PlayerControl greenplayer in KingOfTheHill.greenTeam) {
+                        if (greenplayer != null) {
+                            setPlayerNameColor(greenplayer, Palette.PlayerColors[2]);
+                        }
+                    }
+                    foreach (PlayerControl yellowplayer in KingOfTheHill.yellowTeam) {
+                        if (yellowplayer != null) {
+                            setPlayerNameColor(yellowplayer, Palette.PlayerColors[5]);
+                        }
                     }
                 }
+                else if (HotPotato.hotPotatoMode) {
 
-                foreach (PlayerControl infectedPlayer in ZombieLaboratory.infectedTeam) {
-                    if (infectedPlayer != null) {
-                        setPlayerNameColor(infectedPlayer, Palette.PlayerColors[5]);
+                    foreach (PlayerControl notpotatoplayer in HotPotato.notPotatoTeam) {
+                        if (notpotatoplayer != null) {
+                            setPlayerNameColor(notpotatoplayer, Palette.PlayerColors[10]);
+                        }
+                    }
+
+                    foreach (PlayerControl explodedpotatoplayer in HotPotato.explodedPotatoTeam) {
+                        if (explodedpotatoplayer != null) {
+                            setPlayerNameColor(explodedpotatoplayer, Palette.PlayerColors[9]);
+                        }
+                    }
+
+                    if (HotPotato.hotPotatoPlayer != null) {
+                        setPlayerNameColor(HotPotato.hotPotatoPlayer, Palette.PlayerColors[15]);
                     }
                 }
+                else if (ZombieLaboratory.zombieLaboratoryMode) {
 
-                foreach (PlayerControl zombiePlayer in ZombieLaboratory.zombieTeam) {
-                    if (zombiePlayer != null) {
-                        setPlayerNameColor(zombiePlayer, Palette.PlayerColors[16]);
+                    foreach (PlayerControl survivorPlayer in ZombieLaboratory.survivorTeam) {
+                        if (survivorPlayer != null) {
+                            setPlayerNameColor(survivorPlayer, Palette.PlayerColors[10]);
+                        }
                     }
-                }
 
-                if (ZombieLaboratory.nursePlayer != null) {
-                    setPlayerNameColor(ZombieLaboratory.nursePlayer, Palette.PlayerColors[3]);
+                    foreach (PlayerControl infectedPlayer in ZombieLaboratory.infectedTeam) {
+                        if (infectedPlayer != null) {
+                            setPlayerNameColor(infectedPlayer, Palette.PlayerColors[5]);
+                        }
+                    }
+
+                    foreach (PlayerControl zombiePlayer in ZombieLaboratory.zombieTeam) {
+                        if (zombiePlayer != null) {
+                            setPlayerNameColor(zombiePlayer, Palette.PlayerColors[16]);
+                        }
+                    }
+
+                    if (ZombieLaboratory.nursePlayer != null) {
+                        setPlayerNameColor(ZombieLaboratory.nursePlayer, Palette.PlayerColors[3]);
+                    }
                 }
             }
             else {
@@ -194,12 +197,18 @@ namespace LasMonjas.Patches {
                     setPlayerNameColor(Vigilant.vigilant, Vigilant.color);
                 else if (Vigilant.vigilantMira != null && Vigilant.vigilantMira == PlayerControl.LocalPlayer)
                     setPlayerNameColor(Vigilant.vigilantMira, Vigilant.color);
-                else if (Medusa.medusa != null && Medusa.medusa == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Medusa.medusa, Medusa.color);
                 else if (Hunter.hunter != null && Hunter.hunter == PlayerControl.LocalPlayer)
                     setPlayerNameColor(Hunter.hunter, Hunter.color);
                 else if (Jinx.jinx != null && Jinx.jinx == PlayerControl.LocalPlayer)
                     setPlayerNameColor(Jinx.jinx, Jinx.color);
+                else if (Bat.bat != null && Bat.bat == PlayerControl.LocalPlayer)
+                    setPlayerNameColor(Bat.bat, Bat.color);
+                else if (Necromancer.necromancer != null && Necromancer.necromancer == PlayerControl.LocalPlayer)
+                    setPlayerNameColor(Necromancer.necromancer, Necromancer.color);
+                else if (Engineer.engineer != null && Engineer.engineer == PlayerControl.LocalPlayer)
+                    setPlayerNameColor(Engineer.engineer, Engineer.color);
+                else if (Shy.shy != null && Shy.shy == PlayerControl.LocalPlayer)
+                    setPlayerNameColor(Shy.shy, Shy.color);
 
                 // Neutrals name color
                 else if (Joker.joker != null && Joker.joker == PlayerControl.LocalPlayer)
@@ -215,8 +224,13 @@ namespace LasMonjas.Patches {
                 else if (Devourer.devourer != null && Devourer.devourer == PlayerControl.LocalPlayer) {
                     setPlayerNameColor(Devourer.devourer, Devourer.color);
                 }
+                else if (Poisoner.poisoner != null && Poisoner.poisoner == PlayerControl.LocalPlayer) {
+                    setPlayerNameColor(Poisoner.poisoner, Poisoner.color);
+                }
+                else if (Puppeteer.puppeteer != null && Puppeteer.puppeteer == PlayerControl.LocalPlayer)
+                    setPlayerNameColor(Puppeteer.puppeteer, Puppeteer.color);
 
-                // Rebeld name color
+                // Rebels name color
                 else if (Renegade.renegade != null && Renegade.renegade == PlayerControl.LocalPlayer) {
                     // Renegade can see his minion
                     setPlayerNameColor(Renegade.renegade, Renegade.color);
@@ -235,6 +249,10 @@ namespace LasMonjas.Patches {
                     setPlayerNameColor(Yinyanger.yinyanger, Yinyanger.color);
                 else if (Challenger.challenger != null && Challenger.challenger == PlayerControl.LocalPlayer)
                     setPlayerNameColor(Challenger.challenger, Challenger.color);
+                else if (Ninja.ninja != null && Ninja.ninja == PlayerControl.LocalPlayer)
+                    setPlayerNameColor(Ninja.ninja, Ninja.color);
+                else if (Berserker.berserker != null && Berserker.berserker == PlayerControl.LocalPlayer)
+                    setPlayerNameColor(Berserker.berserker, Berserker.color);
 
                 else if (Modifiers.lover1 != null && Modifiers.lover2 != null && (Modifiers.lover1 == PlayerControl.LocalPlayer || Modifiers.lover2 == PlayerControl.LocalPlayer)) {
                     setPlayerNameColor(Modifiers.lover1, Modifiers.loverscolor);
@@ -249,7 +267,7 @@ namespace LasMonjas.Patches {
                     }
                 }
 
-                // Impostor roles with no color changes: Mimic, Painter, Demon, Janitor, Ilusionist, Manipulator, Bomberman, Chameleon, Gambler and Sorcerer
+                // Impostor roles with no color changes: Mimic, Painter, Demon, Janitor, Illusionist, Manipulator, Bomberman, Chameleon, Gambler, Sorcerer, Medusa, Hypnotist, Archer 
             }
         }
 
@@ -273,6 +291,44 @@ namespace LasMonjas.Patches {
                     foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates) {
                         var target = Helpers.playerById(player.TargetPlayerId);
                         if (target != null) player.NameText.text += $" ({(Helpers.isLighterColor(target.Data.DefaultOutfit.ColorId) ? "L" : "D")})";
+                    }
+                }
+            }
+        }
+
+        static void shakeScreenIfReactorSabotage() {
+            if (shakeScreenReactor) {
+                foreach (PlayerTask task in PlayerControl.LocalPlayer.myTasks) {
+                    if (task.TaskType == TaskTypes.ResetReactor || task.TaskType == TaskTypes.ResetSeismic || task.TaskType == TaskTypes.StopCharles) {
+                        HudManager.Instance.PlayerCam.shakeAmount = 0.025f;
+                        HudManager.Instance.PlayerCam.shakePeriod = 400;
+                    }
+                }
+            }
+        }
+
+        static void anonymousCommsSabotage() {
+            if (anonymousComms) {
+                foreach (PlayerTask task in PlayerControl.LocalPlayer.myTasks) {
+                    if (task.TaskType == TaskTypes.FixComms) {
+                        // Set grey painting while comms sabotage
+                        foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                            player.setLook("", 6, "", "", "", "");
+                        }
+                        isHappeningAnonymousComms = true;
+                    }
+                }
+            }
+        }
+        static void slowSpeedIfOxigenSabotage() {
+            if (slowSpeedOxigen) {
+                foreach (PlayerTask task in PlayerControl.LocalPlayer.myTasks) {
+                    if (task.TaskType == TaskTypes.RestoreOxy) {
+                        // Set slow speed while oxygen sabotage
+                        NoOxyTask oxygenTask = UnityEngine.Object.FindObjectOfType<NoOxyTask>();
+                        foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                            player.MyPhysics.Speed = Math.Max(1.5f,Math.Min(2.5f, 2.5f * oxygenTask.reactor.Countdown / oxygenTask.reactor.LifeSuppDuration));
+                        }
                     }
                 }
             }
@@ -327,8 +383,8 @@ namespace LasMonjas.Patches {
             if (Modifiers.performer != null) {
                 Modifiers.performerDuration -= Time.deltaTime;
             }
-            if (Ilusionist.ilusionist != null) {
-                Ilusionist.lightsOutTimer -= Time.deltaTime;
+            if (Illusionist.illusionist != null) {
+                Illusionist.lightsOutTimer -= Time.deltaTime;
             }
             if (Sleuth.sleuth != null) {
                 Sleuth.corpsesPathfindTimer -= Time.deltaTime;
@@ -342,109 +398,130 @@ namespace LasMonjas.Patches {
             if (Medusa.medusa != null) {
                 Medusa.messageTimer -= Time.deltaTime;
             }
-
-            // Capture the flag timer
-            if (CaptureTheFlag.captureTheFlagMode && howmanygamemodesareon == 1) {
-                CaptureTheFlag.matchDuration -= Time.deltaTime;
-                if (CaptureTheFlag.matchDuration < 0) {                    
-                    // both teams with same points = Draw
-                    if (CaptureTheFlag.currentRedTeamPoints == CaptureTheFlag.currentBlueTeamPoints) {
-                        CaptureTheFlag.triggerDrawWin = true;
-                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.DrawTeamWin, false);
-                    }
-                    // Red team more points than blue team = red team win
-                    else if (CaptureTheFlag.currentRedTeamPoints > CaptureTheFlag.currentBlueTeamPoints) {
-                        CaptureTheFlag.triggerRedTeamWin = true;
-                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.RedTeamFlagWin, false);
-                    }
-                    // otherwise blue team win
-                    else {
-                        CaptureTheFlag.triggerBlueTeamWin = true;
-                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BlueTeamFlagWin, false);
-                    }
+            if (Hypnotist.hypnotist != null) {
+                Hypnotist.messageTimer -= Time.deltaTime;
+            }
+            if (Engineer.engineer != null) {
+                Engineer.messageTimer -= Time.deltaTime;
+            }
+            if (Bat.bat != null) {
+                Bat.frequencyTimer -= Time.deltaTime;
+            }
+            if (Berserker.berserker != null && Berserker.killedFirstTime && MeetingHud.Instance == null && !Berserker.berserker.Data.IsDead) {
+                Berserker.timeToKill -= Time.deltaTime;
+                Berserker.berserkerCountButtonText.text = $"{Berserker.timeToKill.ToString("F0")}";
+                if (Berserker.timeToKill < 0) {
+                    Berserker.berserker.MurderPlayer(Berserker.berserker);
                 }
             }
-
-            // Police and Thief timer, always police team wins if thiefs ran out of time
-            if (PoliceAndThief.policeAndThiefMode && howmanygamemodesareon == 1) {
-                PoliceAndThief.policeplayer01lightTimer -= Time.deltaTime;
-                PoliceAndThief.policeplayer02lightTimer -= Time.deltaTime;
-                PoliceAndThief.policeplayer03lightTimer -= Time.deltaTime;
-                PoliceAndThief.policeplayer04lightTimer -= Time.deltaTime;
-                PoliceAndThief.policeplayer05lightTimer -= Time.deltaTime; 
-                
-                PoliceAndThief.matchDuration -= Time.deltaTime;
-                if (PoliceAndThief.matchDuration < 0) {
-                    PoliceAndThief.triggerPoliceWin = true;
-                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.ThiefModePoliceWin, false);
-                }
+            if (Shy.shy != null) {
+                Shy.timer -= Time.deltaTime;
             }
 
-            // King of the hill timer
-            if (KingOfTheHill.kingOfTheHillMode && howmanygamemodesareon == 1) {
-                KingOfTheHill.matchDuration -= Time.deltaTime;
-                if (KingOfTheHill.matchDuration < 0) {
-                    // both teams with same points = draw
-                    if (KingOfTheHill.currentGreenTeamPoints == KingOfTheHill.currentYellowTeamPoints) {
-                        KingOfTheHill.triggerDrawWin = true;
-                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.TeamHillDraw, false);
-                    }
-                    // green team more points than yellow team = green team win
-                    else if (KingOfTheHill.currentGreenTeamPoints > KingOfTheHill.currentYellowTeamPoints) {
-                        KingOfTheHill.triggerGreenTeamWin = true;
-                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.GreenTeamHillWin, false);
-                    }
-                    // otherwise yellow team win
-                    else {
-                        KingOfTheHill.triggerYellowTeamWin = true;
-                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.YellowTeamHillWin, false);
-                    }
-                }
-
-                if (KingOfTheHill.totalGreenKingzonescaptured != 0) {
-                    KingOfTheHill.currentGreenTeamPoints += KingOfTheHill.totalGreenKingzonescaptured * Time.deltaTime;
-                    if (KingOfTheHill.currentGreenTeamPoints >= KingOfTheHill.requiredPoints) {
-                        KingOfTheHill.triggerGreenTeamWin = true;
-                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.GreenTeamHillWin, false);
-                    }
-                }
-                if (KingOfTheHill.totalYellowKingzonescaptured != 0) {
-                    KingOfTheHill.currentYellowTeamPoints += KingOfTheHill.totalYellowKingzonescaptured * Time.deltaTime;
-                    if (KingOfTheHill.currentYellowTeamPoints >= KingOfTheHill.requiredPoints) {
-                        KingOfTheHill.triggerYellowTeamWin = true;
-                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.YellowTeamHillWin, false);
+            if (howmanygamemodesareon == 1) {
+                // Capture the flag timer
+                if (CaptureTheFlag.captureTheFlagMode) {
+                    CaptureTheFlag.matchDuration -= Time.deltaTime;
+                    if (CaptureTheFlag.matchDuration < 0) {
+                        // both teams with same points = Draw
+                        if (CaptureTheFlag.currentRedTeamPoints == CaptureTheFlag.currentBlueTeamPoints) {
+                            CaptureTheFlag.triggerDrawWin = true;
+                            ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.DrawTeamWin, false);
+                        }
+                        // Red team more points than blue team = red team win
+                        else if (CaptureTheFlag.currentRedTeamPoints > CaptureTheFlag.currentBlueTeamPoints) {
+                            CaptureTheFlag.triggerRedTeamWin = true;
+                            ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.RedTeamFlagWin, false);
+                        }
+                        // otherwise blue team win
+                        else {
+                            CaptureTheFlag.triggerBlueTeamWin = true;
+                            ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BlueTeamFlagWin, false);
+                        }
                     }
                 }
 
-                KingOfTheHill.kingpointCounter = "Score: " + "<color=#00FF00FF>" + KingOfTheHill.currentGreenTeamPoints.ToString("F0") + "</color> - " + "<color=#FFFF00FF>" + KingOfTheHill.currentYellowTeamPoints.ToString("F0") + "</color>";
+                // Police and Thief timer, always police team wins if thiefs ran out of time
+                if (PoliceAndThief.policeAndThiefMode) {
+                    PoliceAndThief.policeplayer01lightTimer -= Time.deltaTime;
+                    PoliceAndThief.policeplayer02lightTimer -= Time.deltaTime;
+                    PoliceAndThief.policeplayer03lightTimer -= Time.deltaTime;
+                    PoliceAndThief.policeplayer04lightTimer -= Time.deltaTime;
+                    PoliceAndThief.policeplayer05lightTimer -= Time.deltaTime;
 
-            }
-            
-            // Hot Potato timer
-            if (HotPotato.hotPotatoMode && howmanygamemodesareon == 1) {
-                if (HotPotato.firstPotatoTransfered) {
-                    HotPotato.timeforTransfer -= Time.deltaTime;
-
-                    if (HotPotato.timeforTransfer <= 0 && !HotPotato.hotPotatoPlayer.Data.IsDead) {
-                        HotPotato.hotPotatoPlayer.MurderPlayer(HotPotato.hotPotatoPlayer);
-                    }
-
-                    HotPotato.matchDuration -= Time.deltaTime;
-
-                    if (HotPotato.matchDuration < 0) {
-                        HotPotato.triggerHotPotatoEnd = true;
-                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.HotPotatoEnd, false);
+                    PoliceAndThief.matchDuration -= Time.deltaTime;
+                    if (PoliceAndThief.matchDuration < 0) {
+                        PoliceAndThief.triggerPoliceWin = true;
+                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.ThiefModePoliceWin, false);
                     }
                 }
-            }
 
-            // ZombieLaboratory timer
-            if (ZombieLaboratory.zombieLaboratoryMode && howmanygamemodesareon == 1) {
-                ZombieLaboratory.matchDuration -= Time.deltaTime;
+                // King of the hill timer
+                if (KingOfTheHill.kingOfTheHillMode) {
+                    KingOfTheHill.matchDuration -= Time.deltaTime;
+                    if (KingOfTheHill.matchDuration < 0) {
+                        // both teams with same points = draw
+                        if (KingOfTheHill.currentGreenTeamPoints == KingOfTheHill.currentYellowTeamPoints) {
+                            KingOfTheHill.triggerDrawWin = true;
+                            ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.TeamHillDraw, false);
+                        }
+                        // green team more points than yellow team = green team win
+                        else if (KingOfTheHill.currentGreenTeamPoints > KingOfTheHill.currentYellowTeamPoints) {
+                            KingOfTheHill.triggerGreenTeamWin = true;
+                            ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.GreenTeamHillWin, false);
+                        }
+                        // otherwise yellow team win
+                        else {
+                            KingOfTheHill.triggerYellowTeamWin = true;
+                            ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.YellowTeamHillWin, false);
+                        }
+                    }
 
-                if (ZombieLaboratory.matchDuration < 0) {
-                    ZombieLaboratory.triggerZombieWin = true;
-                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.ZombieWin, false);
+                    if (KingOfTheHill.totalGreenKingzonescaptured != 0) {
+                        KingOfTheHill.currentGreenTeamPoints += KingOfTheHill.totalGreenKingzonescaptured * Time.deltaTime;
+                        if (KingOfTheHill.currentGreenTeamPoints >= KingOfTheHill.requiredPoints) {
+                            KingOfTheHill.triggerGreenTeamWin = true;
+                            ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.GreenTeamHillWin, false);
+                        }
+                    }
+                    if (KingOfTheHill.totalYellowKingzonescaptured != 0) {
+                        KingOfTheHill.currentYellowTeamPoints += KingOfTheHill.totalYellowKingzonescaptured * Time.deltaTime;
+                        if (KingOfTheHill.currentYellowTeamPoints >= KingOfTheHill.requiredPoints) {
+                            KingOfTheHill.triggerYellowTeamWin = true;
+                            ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.YellowTeamHillWin, false);
+                        }
+                    }
+
+                    KingOfTheHill.kingpointCounter = "Score: " + "<color=#00FF00FF>" + KingOfTheHill.currentGreenTeamPoints.ToString("F0") + "</color> - " + "<color=#FFFF00FF>" + KingOfTheHill.currentYellowTeamPoints.ToString("F0") + "</color>";
+
+                }
+
+                // Hot Potato timer
+                if (HotPotato.hotPotatoMode) {
+                    if (HotPotato.firstPotatoTransfered) {
+                        HotPotato.timeforTransfer -= Time.deltaTime;
+
+                        if (HotPotato.timeforTransfer <= 0 && !HotPotato.hotPotatoPlayer.Data.IsDead) {
+                            HotPotato.hotPotatoPlayer.MurderPlayer(HotPotato.hotPotatoPlayer);
+                        }
+
+                        HotPotato.matchDuration -= Time.deltaTime;
+
+                        if (HotPotato.matchDuration < 0) {
+                            HotPotato.triggerHotPotatoEnd = true;
+                            ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.HotPotatoEnd, false);
+                        }
+                    }
+                }
+
+                // ZombieLaboratory timer
+                if (ZombieLaboratory.zombieLaboratoryMode) {
+                    ZombieLaboratory.matchDuration -= Time.deltaTime;
+
+                    if (ZombieLaboratory.matchDuration < 0) {
+                        ZombieLaboratory.triggerZombieWin = true;
+                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.ZombieWin, false);
+                    }
                 }
             }
         }
@@ -457,12 +534,16 @@ namespace LasMonjas.Patches {
                     p.transform.localScale = new Vector3(0.45f, 0.45f, 1f);
                 else if (Mimic.mimic != null && Mimic.mimic == p && Mimic.transformTarget != null && Mimic.transformTarget == Kid.kid && Mimic.transformTimer > 0f)
                     p.transform.localScale = new Vector3(0.45f, 0.45f, 1f);
+                else if (Puppeteer.puppeteer != null && Puppeteer.puppeteer == p && Puppeteer.transformTarget != null && Puppeteer.transformTarget == Kid.kid && Puppeteer.morphed)
+                    p.transform.localScale = new Vector3(0.45f, 0.45f, 1f);
                 // big chungus update, restore original scale on duel and painting to be more fair
-                else if (Modifiers.bigchungus != null && Modifiers.bigchungus == p && !Challenger.isDueling && Painter.painterTimer <= 0) {
+                else if (Modifiers.bigchungus != null && Modifiers.bigchungus == p && !Challenger.isDueling && Painter.painterTimer <= 0 && !isHappeningAnonymousComms) {
                     p.transform.localScale = new Vector3(0.9f, 0.9f, 1f);
                 }
-                // Mimic big chungus update
-                else if (Mimic.mimic != null && Mimic.mimic == p && Mimic.transformTarget != null && Mimic.transformTarget == Modifiers.bigchungus && Mimic.transformTimer > 0f)
+                // Mimic and Puppeteer big chungus update
+                else if (Mimic.mimic != null && Mimic.mimic == p && Mimic.transformTarget != null && Mimic.transformTarget == Modifiers.bigchungus && Mimic.transformTimer > 0f && !isHappeningAnonymousComms)
+                    p.transform.localScale = new Vector3(0.9f, 0.9f, 1f);
+                else if (Puppeteer.puppeteer != null && Puppeteer.puppeteer == p && Puppeteer.transformTarget != null && Puppeteer.transformTarget == Modifiers.bigchungus && Puppeteer.morphed && !isHappeningAnonymousComms)
                     p.transform.localScale = new Vector3(0.9f, 0.9f, 1f);
                 else
                     p.transform.localScale = new Vector3(0.7f, 0.7f, 1f);
@@ -475,6 +556,8 @@ namespace LasMonjas.Patches {
             if (Demon.demon != null && Demon.demon == PlayerControl.LocalPlayer && !Challenger.isDueling)
                 enabled = false;
             else if (Janitor.janitor != null && Janitor.dragginBody && PlayerControl.LocalPlayer == Janitor.janitor)
+                enabled = false;
+            else if (Archer.archer != null && PlayerControl.LocalPlayer == Archer.archer && !Challenger.isDueling)
                 enabled = false;
             else if (Challenger.isDueling)
                 enabled = false;
@@ -597,8 +680,9 @@ namespace LasMonjas.Patches {
                     Yinyanger.yinyedplayer.moveable = true;
                     Yinyanger.yangyedplayer.moveable = true;
 
-                    Yinyanger.yinedPlayer = null;
-                    Yinyanger.yanedPlayer = null;
+                    Yinyanger.resetYined();
+                    Yinyanger.resetYanged();
+                    Yinyanger.colision = false;
                 }
             })));
             return;
@@ -664,30 +748,23 @@ namespace LasMonjas.Patches {
                             Challenger.rivalPlayer.MurderPlayer(Challenger.challenger);
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.challengerDuelKillClip, false, 5f);
                         }
-                        else
-                        if (Challenger.challengerRock && Challenger.rivalScissors) {
+                        else if (Challenger.challengerRock && Challenger.rivalScissors) {
                             Challenger.challenger.MurderPlayer(Challenger.rivalPlayer);
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.challengerDuelKillClip, false, 5f);
                         }
-                        else
-
-                        if (Challenger.challengerPaper && Challenger.rivalRock) {
+                        else if (Challenger.challengerPaper && Challenger.rivalRock) {
                             Challenger.challenger.MurderPlayer(Challenger.rivalPlayer);
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.challengerDuelKillClip, false, 5f);
                         }
-                        else
-                        if (Challenger.challengerPaper && Challenger.rivalScissors) {
+                        else if (Challenger.challengerPaper && Challenger.rivalScissors) {
                             Challenger.rivalPlayer.MurderPlayer(Challenger.challenger);
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.challengerDuelKillClip, false, 5f);
                         }
-                        else
-
-                        if (Challenger.challengerScissors && Challenger.rivalPaper) {
+                        else if (Challenger.challengerScissors && Challenger.rivalPaper) {
                             Challenger.challenger.MurderPlayer(Challenger.rivalPlayer);
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.challengerDuelKillClip, false, 5f);
                         }
-                        else
-                        if (Challenger.challengerScissors && Challenger.rivalRock) {
+                        else if (Challenger.challengerScissors && Challenger.rivalRock) {
                             Challenger.rivalPlayer.MurderPlayer(Challenger.challenger);
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.challengerDuelKillClip, false, 5f);
                         }
@@ -880,8 +957,10 @@ namespace LasMonjas.Patches {
                         player.setDefaultLook();
                     }
 
+                    timeTravelerRewindTimeButton.Timer = timeTravelerRewindTimeButton.MaxTimer;
+                    timeTravelerShieldButton.Timer = timeTravelerShieldButton.MaxTimer;
                     // Reset challenger values after dueling
-                    Challenger.ResetValues();
+                    Challenger.ResetValues();                    
                 }
             })));
         }
@@ -930,6 +1009,63 @@ namespace LasMonjas.Patches {
             }
         }
 
+        static void batUpdate() {
+            if (Bat.bat == null)
+                return;
+
+            if (Bat.frequencyTimer > 0 && Bat.bat != PlayerControl.LocalPlayer) {
+                if (!Bat.bat.Data.IsDead && Vector2.Distance(Bat.bat.transform.position, PlayerControl.LocalPlayer.transform.position) < (1f * Bat.frequencyRange)) {
+                    
+                    PlayerControl.LocalPlayer.killTimer += Time.fixedDeltaTime;
+
+                    foreach (CustomButton button in CustomButton.buttons) {
+                        if (button.isEffectActive) continue;
+
+                        if (!PlayerControl.LocalPlayer.Data.Role.IsImpostor) {
+                            if (button.Timer > 1f)
+                                button.Timer -= Time.fixedDeltaTime * 0.5f;
+                        }
+                        else {
+                            if (button.MaxTimer > 0f)
+                                if (button.Timer > 1f)
+                                    button.Timer += Time.fixedDeltaTime;
+                        }
+                    }
+                }
+            }
+        }
+
+        static void necromancerUpdate() {
+
+            if (Necromancer.necromancer == null)
+                return;
+
+            if (Necromancer.dragginBody) {
+                DeadBody[] array = UnityEngine.Object.FindObjectsOfType<DeadBody>();
+                for (int i = 0; i < array.Length; i++) {
+                    if (GameData.Instance.GetPlayerById(array[i].ParentId).PlayerId == Necromancer.bodyId) {
+                        var currentPosition = Necromancer.necromancer.GetTruePosition();
+                        var velocity = Necromancer.necromancer.gameObject.GetComponent<Rigidbody2D>().velocity.normalized;
+                        var newPos = ((Vector2)Necromancer.necromancer.GetTruePosition()) - (velocity / 3) + new Vector2(0.15f, 0.25f) + array[i].myCollider.offset;
+                        if (!PhysicsHelpers.AnythingBetween(
+                            currentPosition,
+                            newPos,
+                            Constants.ShipAndObjectsMask,
+                            false
+                        )) {
+                            if (PlayerControl.GameOptions.MapId == 5) {
+                                array[i].transform.position = newPos;
+                                array[i].transform.position += new Vector3(0, 0, -0.5f);
+                            }
+                            else {
+                                array[i].transform.position = newPos;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
         static void captureTheFlagUpdate() {
 
             if (!CaptureTheFlag.captureTheFlagMode && howmanygamemodesareon != 1)
@@ -1540,8 +1676,8 @@ namespace LasMonjas.Patches {
             if (MapBehaviour.Instance != null && MapBehaviour.Instance.IsOpen && howmanygamemodesareon == 1) {
                 switch (PlayerControl.GameOptions.MapId) {
                     case 0:
-                            GameObject minimapSabotageSkeld = GameObject.Find("Main Camera/Hud/ShipMap(Clone)/InfectedOverlay");
-                            minimapSabotageSkeld.SetActive(false);
+                        GameObject minimapSabotageSkeld = GameObject.Find("Main Camera/Hud/ShipMap(Clone)/InfectedOverlay");
+                        minimapSabotageSkeld.SetActive(false);
                         if (activatedSensei && !updatedSenseiMinimap) {
                             GameObject mymap = GameObject.Find("Main Camera/Hud/ShipMap(Clone)/Background");
                             mymap.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.customMinimap.GetComponent<SpriteRenderer>().sprite;
@@ -1647,7 +1783,7 @@ namespace LasMonjas.Patches {
             }
 
             // If bomb, lights actives or special 1vs1 condition, prevent sabotage open map
-            if (howmanygamemodesareon != 1 && PlayerControl.LocalPlayer.Data.Role.IsImpostor && MapBehaviour.Instance != null && MapBehaviour.Instance.IsOpen && (alivePlayers <= 2 || Bomberman.activeBomb || Challenger.isDueling || Ilusionist.lightsOutTimer > 0)) {
+            if (howmanygamemodesareon != 1 && PlayerControl.LocalPlayer.Data.Role.IsImpostor && MapBehaviour.Instance != null && MapBehaviour.Instance.IsOpen && (alivePlayers <= 2 || Bomberman.activeBomb || Challenger.isDueling || Illusionist.lightsOutTimer > 0)) {
                 MapBehaviour.Instance.Close();
             }
         }
@@ -1683,6 +1819,9 @@ namespace LasMonjas.Patches {
             updateShielded();
             setNameTags();
             UpdateMiniMap();
+            shakeScreenIfReactorSabotage();
+            anonymousCommsSabotage();
+            slowSpeedIfOxigenSabotage();
 
             // Impostors
             updateImpostorKillButton(__instance);
@@ -1711,12 +1850,18 @@ namespace LasMonjas.Patches {
             // VigilantMira update
             vigilantMiraUpdate();
 
+            // Bat update
+            batUpdate();
+            
             // Custom gamemode report button update
             updateReportButton(__instance);
 
             // Janitor corpse moving
             janitorUpdate();
 
+            // Necromancer corpse moving
+            necromancerUpdate();
+            
             // Capture the flag flags movement + fix if someone disconnnects
             captureTheFlagUpdate();
 
@@ -1730,7 +1875,7 @@ namespace LasMonjas.Patches {
             hotPotatoUpdate();
 
             // ZombieLaboratory disconnect update
-            zombieLaboratoryUpdate();
+            zombieLaboratoryUpdate();           
         }
     }
 }

@@ -9,26 +9,26 @@ using static LasMonjas.MapOptions;
 using System.Collections.Generic;
 
 
-namespace LasMonjas.Patches {
+namespace LasMonjas.Patches
+{
 
     [HarmonyPatch(typeof(Vent), nameof(Vent.CanUse))]
     public static class VentCanUsePatch
     {
-        public static bool Prefix(bool __runOriginal, Vent __instance, ref float __result, [HarmonyArgument(0)] GameData.PlayerInfo pc, [HarmonyArgument(1)] ref bool canUse, [HarmonyArgument(2)] ref bool couldUse)
-        {
+        public static bool Prefix(bool __runOriginal, Vent __instance, ref float __result, [HarmonyArgument(0)] GameData.PlayerInfo pc, [HarmonyArgument(1)] ref bool canUse, [HarmonyArgument(2)] ref bool couldUse) {
             if (!__runOriginal) {
                 return false;
             }
-			
-			float num = float.MaxValue;
+
+            float num = float.MaxValue;
             PlayerControl @object = pc.Object;
 
             bool roleCouldUse = @object.roleCanUseVents();
 
             var usableDistance = __instance.UsableDistance;
             if (__instance.name.StartsWith("Hat_")) {
-                if (Ilusionist.ilusionist != PlayerControl.LocalPlayer) {
-                    // Only the Ilusionist can use the Hats
+                if (Illusionist.illusionist != PlayerControl.LocalPlayer) {
+                    // Only the Illusionist can use the Hats
                     canUse = false;
                     couldUse = false;
                     __result = num;
@@ -56,13 +56,12 @@ namespace LasMonjas.Patches {
 
             couldUse = (@object.inVent || roleCouldUse) && !pc.IsDead && (@object.CanMove || @object.inVent);
             canUse = couldUse;
-            if (canUse)
-            {
-                Vector2 truePosition = @object.GetTruePosition();
+            if (canUse) {
+                Vector3 center = @object.Collider.bounds.center;
                 Vector3 position = __instance.transform.position;
-                num = Vector2.Distance(truePosition, position);
-                
-                canUse &= (num <= usableDistance && !PhysicsHelpers.AnythingBetween(truePosition, position, Constants.ShipOnlyMask, false));
+                num = Vector2.Distance(center, position);
+
+                canUse &= (num <= usableDistance && !PhysicsHelpers.AnythingBetween(@object.Collider, center, position, Constants.ShipOnlyMask, false));
             }
             __result = num;
             return false;
@@ -70,25 +69,27 @@ namespace LasMonjas.Patches {
     }
 
     [HarmonyPatch(typeof(VentButton), nameof(VentButton.DoClick))]
-    class VentButtonDoClickPatch {
-        static  bool Prefix(VentButton __instance) {
+    class VentButtonDoClickPatch
+    {
+        static bool Prefix(VentButton __instance) {
             // Manually modifying the VentButton to use Vent.Use again in order to trigger the Vent.Use prefix patch
-		    if (__instance.currentTarget != null) __instance.currentTarget.Use();
+            if (__instance.currentTarget != null) __instance.currentTarget.Use();
             return false;
         }
     }
 
     [HarmonyPatch(typeof(Vent), nameof(Vent.Use))]
-    public static class VentUsePatch {
+    public static class VentUsePatch
+    {
         public static bool Prefix(Vent __instance) {
             bool canUse;
             bool couldUse;
             __instance.CanUse(PlayerControl.LocalPlayer.Data, out canUse, out couldUse);
             bool canMoveInVents = true;
-            if (!canUse) return false; 
+            if (!canUse) return false;
 
             bool isEnter = !PlayerControl.LocalPlayer.inVent;
-            
+
             if (__instance.name.StartsWith("Hat_")) {
                 __instance.SetButtons(isEnter && canMoveInVents);
                 MessageWriter writer = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.UseUncheckedVent, Hazel.SendOption.Reliable);
@@ -100,9 +101,10 @@ namespace LasMonjas.Patches {
                 return false;
             }
 
-            if(isEnter) {
+            if (isEnter) {
                 PlayerControl.LocalPlayer.MyPhysics.RpcEnterVent(__instance.Id);
-            } else {
+            }
+            else {
                 PlayerControl.LocalPlayer.MyPhysics.RpcExitVent(__instance.Id);
             }
             __instance.SetButtons(isEnter && canMoveInVents);
@@ -111,7 +113,8 @@ namespace LasMonjas.Patches {
     }
 
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.FixedUpdate))]
-    class VentButtonVisibilityPatch {
+    class VentButtonVisibilityPatch
+    {
         static void Postfix(PlayerControl __instance) {
             if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) return;
 
@@ -125,21 +128,23 @@ namespace LasMonjas.Patches {
     }
 
     [HarmonyPatch(typeof(VentButton), nameof(VentButton.SetTarget))]
-    class VentButtonSetTargetPatch {
+    class VentButtonSetTargetPatch
+    {
         static Sprite defaultVentSprite = null;
         static void Postfix(VentButton __instance) {
-            // Ilusionist render special vent button
-            if (Ilusionist.ilusionist != null && Ilusionist.ilusionist == PlayerControl.LocalPlayer) {
+            // Illusionist render special vent button
+            if (Illusionist.illusionist != null && Illusionist.illusionist == PlayerControl.LocalPlayer) {
                 if (defaultVentSprite == null) defaultVentSprite = __instance.graphic.sprite;
                 bool isSpecialVent = __instance.currentTarget != null && __instance.currentTarget.gameObject != null && __instance.currentTarget.gameObject.name.StartsWith("Hat_");
-                __instance.graphic.sprite = isSpecialVent ? Ilusionist.getIlusionistVentButtonSprite() : defaultVentSprite;
+                __instance.graphic.sprite = isSpecialVent ? Illusionist.getIllusionistVentButtonSprite() : defaultVentSprite;
                 __instance.buttonLabelText.enabled = !isSpecialVent;
             }
         }
     }
 
     [HarmonyPatch(typeof(KillButton), nameof(KillButton.DoClick))]
-    class KillButtonDoClickPatch {
+    class KillButtonDoClickPatch
+    {
         public static bool Prefix(KillButton __instance) {
             if (__instance.isActiveAndEnabled && __instance.currentTarget && !__instance.isCoolingDown && !PlayerControl.LocalPlayer.Data.IsDead && PlayerControl.LocalPlayer.CanMove) {
                 // Use an unchecked kill command, to allow shorter kill cooldowns etc. without getting kicked
@@ -172,13 +177,19 @@ namespace LasMonjas.Patches {
                 return false;
             }
             else {
-                
+
                 // Block sabotage button if Bomberman bomb, lights out, duel or special condition 1vs1 is active
-                bool blockSabotage = (PlayerControl.LocalPlayer.Data.Role.IsImpostor || (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead)) && (alivePlayers <= 2 || Bomberman.activeBomb || Challenger.isDueling || Ilusionist.lightsOutTimer > 0);
+                bool blockSabotage = (PlayerControl.LocalPlayer.Data.Role.IsImpostor || (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead) || (Poisoner.canSabotage && Poisoner.poisoner != null && Poisoner.poisoner == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead)) && (alivePlayers <= 2 || Bomberman.activeBomb || Challenger.isDueling || Illusionist.lightsOutTimer > 0);
                 if (blockSabotage) return false;
 
                 // Joker sabotage
-                if (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && Ilusionist.lightsOutTimer <= 0) {
+                if (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && Illusionist.lightsOutTimer <= 0) {
+                    MapBehaviour.Instance.ShowSabotageMap();
+                    return false;
+                }
+
+                // Poisoner sabotage
+                if (Poisoner.canSabotage && Poisoner.poisoner != null && Poisoner.poisoner == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && Illusionist.lightsOutTimer <= 0) {
                     MapBehaviour.Instance.ShowSabotageMap();
                     return false;
                 }
@@ -187,9 +198,10 @@ namespace LasMonjas.Patches {
             return true;
         }
     }
-    
+
     [HarmonyPatch(typeof(SabotageButton), nameof(SabotageButton.Refresh))]
-    class SabotageButtonRefreshPatch {
+    class SabotageButtonRefreshPatch
+    {
         static void Postfix() {
 
             // Change sabotage button image and block sabotages if capture the flag mode or police and thief mode
@@ -200,15 +212,24 @@ namespace LasMonjas.Patches {
             else {
 
                 // Block sabotage button if Bomberman bomb, lights out, duel or special condition 1vs1 is active
-                bool blockSabotage = (PlayerControl.LocalPlayer.Data.Role.IsImpostor || (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead)) && (alivePlayers <= 2 || Bomberman.activeBomb == true || Challenger.isDueling || Ilusionist.lightsOutTimer > 0);
+                bool blockSabotage = (PlayerControl.LocalPlayer.Data.Role.IsImpostor || (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead) || (Poisoner.canSabotage && Poisoner.poisoner != null && Poisoner.poisoner == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead)) && (alivePlayers <= 2 || Bomberman.activeBomb == true || Challenger.isDueling || Illusionist.lightsOutTimer > 0);
                 if (blockSabotage) {
                     HudManager.Instance.SabotageButton.SetDisabled();
                 }
 
-                if (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && Ilusionist.lightsOutTimer <= 0) {
+                if (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && Illusionist.lightsOutTimer <= 0) {
                     if (MapBehaviour.Instance != null && !MapBehaviour.Instance.IsOpen && MeetingHud.Instance == null) {
                         HudManager.Instance.SabotageButton.Show();
-                    }                    
+                    }
+                    else if (MapBehaviour.Instance != null && MapBehaviour.Instance.IsOpen) {
+                        HudManager.Instance.SabotageButton.Hide();
+                    }
+                }
+
+                if (Poisoner.canSabotage && Poisoner.poisoner != null && Poisoner.poisoner == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && Illusionist.lightsOutTimer <= 0) {
+                    if (MapBehaviour.Instance != null && !MapBehaviour.Instance.IsOpen && MeetingHud.Instance == null) {
+                        HudManager.Instance.SabotageButton.Show();
+                    }
                     else if (MapBehaviour.Instance != null && MapBehaviour.Instance.IsOpen) {
                         HudManager.Instance.SabotageButton.Hide();
                     }
@@ -229,9 +250,10 @@ namespace LasMonjas.Patches {
             return true;
         }
     }
-    
+
     [HarmonyPatch(typeof(EmergencyMinigame), nameof(EmergencyMinigame.Update))]
-    class EmergencyMinigameUpdatePatch {
+    class EmergencyMinigameUpdatePatch
+    {
         static void Postfix(EmergencyMinigame __instance) {
             var roleCanCallEmergency = true;
             var statusText = "";
@@ -272,7 +294,7 @@ namespace LasMonjas.Patches {
             }
 
             // Deactivate emergency button if there's lights out
-            if (Ilusionist.ilusionist != null && Ilusionist.lightsOutTimer > 0) {
+            if (Illusionist.illusionist != null && Illusionist.lightsOutTimer > 0) {
                 roleCanCallEmergency = false;
                 statusText = "There's a Blackout, emergency button doesn't work!";
             }
@@ -436,7 +458,7 @@ namespace LasMonjas.Patches {
                                         if (playerInfo != null) {
                                             var color = Palette.PlayerColors[playerInfo.DefaultOutfit.ColorId];
                                             if (Painter.painterTimer > 0) {
-                                                 color = Palette.PlayerColors[Detective.footprintcolor];
+                                                color = Palette.PlayerColors[Detective.footprintcolor];
                                             }
                                             roomColors.Add(color);
                                         }
@@ -502,11 +524,31 @@ namespace LasMonjas.Patches {
     class SurveillanceMinigamePatch
     {
         private static int page = 0;
-        private static float timer = 0f;
+        private static float timer = 0f;       
+
         [HarmonyPatch(typeof(SurveillanceMinigame), nameof(SurveillanceMinigame.Begin))]
         class SurveillanceMinigameBeginPatch
         {
             public static void Postfix(SurveillanceMinigame __instance) {
+
+                if (nightVision) { 
+                GameObject gameObject = __instance.Viewables.transform.Find("CloseButton").gameObject;
+                nightOverlay = new List<GameObject>();
+                foreach (MeshRenderer meshRenderer in __instance.ViewPorts) {
+                    GameObject gameObject2 = UnityEngine.Object.Instantiate<GameObject>(gameObject, __instance.Viewables.transform);
+                    gameObject2.name = "NightVisionOverlay";
+                    gameObject2.transform.position = new Vector3(meshRenderer.transform.position.x, meshRenderer.transform.position.y, gameObject2.transform.position.z);
+                    gameObject2.transform.localScale = new Vector3(0.91f, 0.612f, 1f);
+                    gameObject2.GetComponent<SpriteRenderer>().sprite = null;
+                    UnityEngine.Object.Destroy(gameObject2.GetComponent<ButtonBehavior>());
+                    UnityEngine.Object.Destroy(gameObject2.GetComponent<CloseButtonConsoleBehaviour>());
+                    UnityEngine.Object.Destroy(gameObject2.GetComponent<CircleCollider2D>());
+                    nightOverlay.Add(gameObject2);
+                }
+                canNightOverlay = true;
+                removeNightOverlay = true;
+                }
+
                 // Add Vigilant cameras
                 page = 0;
                 timer = 0;
@@ -531,6 +573,7 @@ namespace LasMonjas.Patches {
         {
 
             public static bool Prefix(SurveillanceMinigame __instance) {
+
                 // Change camera position on SenseiMap
                 if (PlayerControl.GameOptions.MapId == 0 && activatedSensei) {
                     GameObject myCameras = GameObject.Find("Main Camera/SurvMinigame(Clone)");
@@ -539,7 +582,6 @@ namespace LasMonjas.Patches {
                     myCameras.transform.GetChild(5).transform.position = new Vector3(-16.5f, -6.215f, myCameras.transform.GetChild(5).transform.position.z);
                     myCameras.transform.GetChild(6).transform.position = new Vector3(5f, -13.85f, myCameras.transform.GetChild(6).transform.position.z);
                 }
-
 
                 timer += Time.deltaTime;
                 int numberOfPages = Mathf.CeilToInt(ShipStatus.Instance.AllCameras.Length / 4f);
@@ -575,8 +617,192 @@ namespace LasMonjas.Patches {
                         __instance.SabText[j].gameObject.SetActive(true);
                     }
                 }
+
+                if (nightVision && !PlayerControl.LocalPlayer.Data.Role.IsImpostor) {
+                    if (Modifiers.lighter != null && PlayerControl.LocalPlayer == Modifiers.lighter) return false;
+                    foreach (PlayerTask task in PlayerControl.LocalPlayer.myTasks) {
+                        isLightsOut = false;
+                        if (task.TaskType == TaskTypes.FixLights) {
+                            isLightsOut = true;
+                            if (canNightOverlay) {
+                                foreach (GameObject gameObjecttwo in nightOverlay) {
+                                    gameObjecttwo.GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("LasMonjas.Images.NightVisionCamera.png", 350f);
+                                }
+                                canNightOverlay = false;
+                                removeNightOverlay = true;
+                            }
+                            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                                player.setLook("", 11, "", "", "", "");
+                            }
+                            return false;
+                        }
+                    }
+
+                    if (removeNightOverlay && !isLightsOut) {
+                        foreach (GameObject gameObjecttwo in nightOverlay) {
+                            gameObjecttwo.GetComponent<SpriteRenderer>().sprite = null;
+                        }
+                        foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                            player.setDefaultLook();
+                        }
+                        canNightOverlay = true;
+                        removeNightOverlay = false;
+                    }
+                }
+
                 return false;
             }
+        }
+
+        [HarmonyPatch(typeof(SurveillanceMinigame), nameof(SurveillanceMinigame.Close))]
+        class SurveillanceMinigameClosePatch
+        {
+
+            public static bool Prefix(SurveillanceMinigame __instance) {
+
+                if (nightVision) {
+                    foreach (GameObject gameObjecttwo in nightOverlay) {
+                        gameObjecttwo.GetComponent<SpriteRenderer>().sprite = null;
+                    }
+                    foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                        player.setDefaultLook();
+                    }
+                    canNightOverlay = true;
+                    removeNightOverlay = true;
+                }
+                return true;
+            }
+
+        }
+
+        [HarmonyPatch(typeof(SurveillanceMinigame), nameof(SurveillanceMinigame.OnDestroy))]
+        class SurveillanceMinigameOnDestroyPatch
+        {
+
+            public static bool Prefix(SurveillanceMinigame __instance) {
+
+                if (nightVision) {
+                    foreach (GameObject gameObjecttwo in nightOverlay) {
+                        gameObjecttwo.GetComponent<SpriteRenderer>().sprite = null;
+                    }
+                    foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                        player.setDefaultLook();
+                    }
+                    canNightOverlay = true;
+                    removeNightOverlay = true;
+                }
+                return true;
+            }
+
+        }
+        
+        [HarmonyPatch(typeof(PlanetSurveillanceMinigame), nameof(PlanetSurveillanceMinigame.Begin))]
+        class PlanetSurveillanceMinigameBeginPatch
+        {
+            public static void Postfix(PlanetSurveillanceMinigame __instance) {
+
+                if (nightVision) {
+                    GameObject gameObject = __instance.Viewables.transform.Find("CloseButton").gameObject;
+                    nightOverlay = new List<GameObject>();
+                    MeshRenderer meshRenderer = __instance.ViewPort;
+                    GameObject gameObject2 = UnityEngine.Object.Instantiate<GameObject>(gameObject, __instance.Viewables.transform);
+                    gameObject2.name = "NightVisionOverlay";
+                    gameObject2.transform.position = new Vector3(meshRenderer.transform.position.x, meshRenderer.transform.position.y, gameObject2.transform.position.z);
+                    gameObject2.transform.localScale = new Vector3(0.915f, 0.585f, 1f);
+                    gameObject2.GetComponent<SpriteRenderer>().sprite = null;
+                    UnityEngine.Object.Destroy(gameObject2.GetComponent<ButtonBehavior>());
+                    UnityEngine.Object.Destroy(gameObject2.GetComponent<CloseButtonConsoleBehaviour>());
+                    UnityEngine.Object.Destroy(gameObject2.GetComponent<CircleCollider2D>());
+                    nightOverlay.Add(gameObject2);
+
+                    canNightOverlay = true;
+                    removeNightOverlay = true;
+                }                
+            }
+        }
+
+        [HarmonyPatch(typeof(PlanetSurveillanceMinigame), nameof(PlanetSurveillanceMinigame.Update))]
+        class PlanetSurveillanceMinigameUpdatePatch
+        {
+
+            public static bool Prefix(PlanetSurveillanceMinigame __instance) {
+               
+                if (nightVision && !PlayerControl.LocalPlayer.Data.Role.IsImpostor) {
+                    if (Modifiers.lighter != null && PlayerControl.LocalPlayer == Modifiers.lighter) return false;
+                    foreach (PlayerTask task in PlayerControl.LocalPlayer.myTasks) {
+                        isLightsOut = false;
+                        if (task.TaskType == TaskTypes.FixLights) {
+                            isLightsOut = true;
+                            if (canNightOverlay) {
+                                foreach (GameObject gameObjecttwo in nightOverlay) {
+                                    gameObjecttwo.GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("LasMonjas.Images.NightVisionCamera.png", 150f);
+                                }
+                                canNightOverlay = false;
+                                removeNightOverlay = true;
+                            }
+                            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                                player.setLook("", 11, "", "", "", "");
+                            }
+                            return false;
+                        }
+                    }
+
+                    if (removeNightOverlay && !isLightsOut) {
+                        foreach (GameObject gameObjecttwo in nightOverlay) {
+                            gameObjecttwo.GetComponent<SpriteRenderer>().sprite = null;
+                        }
+                        foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                            player.setDefaultLook();
+                        }
+                        canNightOverlay = true;
+                        removeNightOverlay = false;
+                    }
+                }
+
+                return false;
+            }
+        }
+
+        [HarmonyPatch(typeof(PlanetSurveillanceMinigame), nameof(PlanetSurveillanceMinigame.Close))]
+        class PlanetSurveillanceMinigameClosePatch
+        {
+
+            public static bool Prefix(PlanetSurveillanceMinigame __instance) {
+
+                if (nightVision) {
+                    foreach (GameObject gameObjecttwo in nightOverlay) {
+                        gameObjecttwo.GetComponent<SpriteRenderer>().sprite = null;
+                    }
+                    foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                        player.setDefaultLook();
+                    }
+                    canNightOverlay = true;
+                    removeNightOverlay = true;
+                }
+                return true;
+            }
+
+        }
+
+        [HarmonyPatch(typeof(PlanetSurveillanceMinigame), nameof(PlanetSurveillanceMinigame.OnDestroy))]
+        class PlanetSurveillanceMinigameOnDestroyPatch
+        {
+
+            public static bool Prefix(PlanetSurveillanceMinigame __instance) {
+
+                if (nightVision) {
+                    foreach (GameObject gameObjecttwo in nightOverlay) {
+                        gameObjecttwo.GetComponent<SpriteRenderer>().sprite = null;
+                    }
+                    foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                        player.setDefaultLook();
+                    }
+                    canNightOverlay = true;
+                    removeNightOverlay = true;
+                }
+                return true;
+            }
+
         }
     }
 }

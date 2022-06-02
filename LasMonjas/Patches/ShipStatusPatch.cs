@@ -128,36 +128,33 @@ namespace LasMonjas.Patches
                 return false;
             }
             else {
-                /*if (player == null || player.IsDead) // IsDead
-                    __result = __instance.MaxLightRadius;
-                else */
 
                 if (player.Role.IsImpostor
-                        || (Renegade.renegade != null && Renegade.renegade.PlayerId == player.PlayerId && Ilusionist.lightsOutTimer <= 0f)
-                        || (Minion.minion != null && Minion.minion.PlayerId == player.PlayerId && Ilusionist.lightsOutTimer <= 0f)) {// Impostor, Renegade/Minion
+                        || (Renegade.renegade != null && Renegade.renegade.PlayerId == player.PlayerId && Illusionist.lightsOutTimer <= 0f)
+                        || (Minion.minion != null && Minion.minion.PlayerId == player.PlayerId && Illusionist.lightsOutTimer <= 0f)) {// Impostor, Renegade/Minion
                     __result = GetNeutralLightRadius(__instance, true);
                     return false;
                 }
 
-                if (Modifiers.blind != null && Modifiers.blind.PlayerId == player.PlayerId && Ilusionist.lightsOutTimer <= 0f) {// if player is Blind
+                if (Modifiers.blind != null && Modifiers.blind.PlayerId == player.PlayerId && Illusionist.lightsOutTimer <= 0f) {// if player is Blind
                     float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
                     __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius, unlerped) * PlayerControl.GameOptions.CrewLightMod * 0.75f;
                     return false;
                 }
 
-                if (Modifiers.lighter != null && Modifiers.lighter.PlayerId == player.PlayerId && Ilusionist.lightsOutTimer <= 0f) {// if player is Lighter
+                if (Modifiers.lighter != null && Modifiers.lighter.PlayerId == player.PlayerId && Illusionist.lightsOutTimer <= 0f) {// if player is Lighter
                     float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
                     __result = Mathf.Lerp(__instance.MaxLightRadius * 0.75f, __instance.MaxLightRadius * 2, unlerped);
                     return false;
                 }
 
-                if (Ilusionist.ilusionist != null && Ilusionist.lightsOutTimer > 0f) {
+                if (Illusionist.illusionist != null && Illusionist.lightsOutTimer > 0f) {
                     float lerpValue = 1f;
-                    if (Ilusionist.lightsOutDuration - Ilusionist.lightsOutTimer < 0.5f) {
-                        lerpValue = Mathf.Clamp01((Ilusionist.lightsOutDuration - Ilusionist.lightsOutTimer) * 2);
+                    if (Illusionist.lightsOutDuration - Illusionist.lightsOutTimer < 0.5f) {
+                        lerpValue = Mathf.Clamp01((Illusionist.lightsOutDuration - Illusionist.lightsOutTimer) * 2);
                     }
-                    else if (Ilusionist.lightsOutTimer < 0.5) {
-                        lerpValue = Mathf.Clamp01(Ilusionist.lightsOutTimer * 2);
+                    else if (Illusionist.lightsOutTimer < 0.5) {
+                        lerpValue = Mathf.Clamp01(Illusionist.lightsOutTimer * 2);
                     }
 
                     __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius, 1 - lerpValue) * PlayerControl.GameOptions.CrewLightMod;

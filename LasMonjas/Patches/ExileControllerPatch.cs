@@ -82,6 +82,23 @@ namespace LasMonjas.Patches {
                     }
                 }
 
+                // Poisoner deactivate dead poolable players
+                if (Poisoner.poisoner != null && Poisoner.poisoner == PlayerControl.LocalPlayer) {
+                    int visibleCounter = 0;
+                    Vector3 bottomLeft = new Vector3(-HudManager.Instance.UseButton.transform.localPosition.x, HudManager.Instance.UseButton.transform.localPosition.y, HudManager.Instance.UseButton.transform.localPosition.z);
+                    bottomLeft += new Vector3(-0.25f, -0.25f, 0);
+                    foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
+                        if (!MapOptions.playerIcons.ContainsKey(p.PlayerId)) continue;
+                        if (p.Data.IsDead || p.Data.Disconnected) {
+                            MapOptions.playerIcons[p.PlayerId].gameObject.SetActive(false);
+                        }
+                        else {
+                            MapOptions.playerIcons[p.PlayerId].transform.localPosition = bottomLeft + Vector3.right * visibleCounter * 0.35f;
+                            visibleCounter++;
+                        }
+                    }
+                }
+                
                 // Sleuth reset deadBodyPositions after meeting
                 Sleuth.deadBodyPositions = new List<Vector3>();
 
@@ -113,13 +130,13 @@ namespace LasMonjas.Patches {
 
                 // Cheater exile if the cheated player was innocent, rebels and neutrals counts as impostors
                 if (Cheater.cheater != null && !Cheater.cheater.Data.IsDead) {
-                    if (Cheater.usedCheat == true && exiled.PlayerId == Cheater.cheatedP1.PlayerId && !Cheater.cheatedP1.Data.Role.IsImpostor && Cheater.cheatedP1 != Renegade.renegade && Cheater.cheatedP1 != Minion.minion && Cheater.cheatedP1 != BountyHunter.bountyhunter && Cheater.cheatedP1 != Trapper.trapper && Cheater.cheatedP1 != Yinyanger.yinyanger && Cheater.cheatedP1 != Challenger.challenger && Cheater.cheatedP1 != Joker.joker && Cheater.cheatedP1 != RoleThief.rolethief && Cheater.cheatedP1 != Pyromaniac.pyromaniac && Cheater.cheatedP1 != TreasureHunter.treasureHunter && Cheater.cheatedP1 != Devourer.devourer) {
+                    if (Cheater.usedCheat == true && Cheater.cheatedP1.Data.IsDead && !Cheater.cheatedP1.Data.Role.IsImpostor && Cheater.cheatedP1 != Renegade.renegade && Cheater.cheatedP1 != Minion.minion && Cheater.cheatedP1 != BountyHunter.bountyhunter && Cheater.cheatedP1 != Trapper.trapper && Cheater.cheatedP1 != Yinyanger.yinyanger && Cheater.cheatedP1 != Challenger.challenger && Cheater.cheatedP1 != Ninja.ninja && Cheater.cheatedP1 != Berserker.berserker && Cheater.cheatedP1 != Joker.joker && Cheater.cheatedP1 != RoleThief.rolethief && Cheater.cheatedP1 != Pyromaniac.pyromaniac && Cheater.cheatedP1 != TreasureHunter.treasureHunter && Cheater.cheatedP1 != Devourer.devourer && Cheater.cheatedP1 != Poisoner.poisoner && Cheater.cheatedP1 != Puppeteer.puppeteer) {
                         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.UncheckedExilePlayer, Hazel.SendOption.Reliable, -1);
                         writer.Write(Cheater.cheater.PlayerId);
                         AmongUsClient.Instance.FinishRpcImmediately(writer);
                         RPCProcedure.uncheckedExilePlayer(Cheater.cheater.PlayerId);
                     }
-                    else if (Cheater.usedCheat == true && exiled.PlayerId == Cheater.cheatedP2.PlayerId && !Cheater.cheatedP2.Data.Role.IsImpostor && Cheater.cheatedP2 != Renegade.renegade && Cheater.cheatedP2 != Minion.minion && Cheater.cheatedP2 != BountyHunter.bountyhunter && Cheater.cheatedP2 != Trapper.trapper && Cheater.cheatedP2 != Yinyanger.yinyanger && Cheater.cheatedP2 != Challenger.challenger && Cheater.cheatedP2 != Joker.joker && Cheater.cheatedP2 != RoleThief.rolethief && Cheater.cheatedP2 != Pyromaniac.pyromaniac && Cheater.cheatedP2 != TreasureHunter.treasureHunter && Cheater.cheatedP2 != Devourer.devourer) {
+                    else if (Cheater.usedCheat == true && Cheater.cheatedP2.Data.IsDead && !Cheater.cheatedP2.Data.Role.IsImpostor && Cheater.cheatedP2 != Renegade.renegade && Cheater.cheatedP2 != Minion.minion && Cheater.cheatedP2 != BountyHunter.bountyhunter && Cheater.cheatedP2 != Trapper.trapper && Cheater.cheatedP2 != Yinyanger.yinyanger && Cheater.cheatedP2 != Challenger.challenger && Cheater.cheatedP2 != Ninja.ninja && Cheater.cheatedP2 != Berserker.berserker && Cheater.cheatedP2 != Joker.joker && Cheater.cheatedP2 != RoleThief.rolethief && Cheater.cheatedP2 != Pyromaniac.pyromaniac && Cheater.cheatedP2 != TreasureHunter.treasureHunter && Cheater.cheatedP2 != Devourer.devourer && Cheater.cheatedP2 != Poisoner.poisoner && Cheater.cheatedP2 != Puppeteer.puppeteer) {
                         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.UncheckedExilePlayer, Hazel.SendOption.Reliable, -1);
                         writer.Write(Cheater.cheater.PlayerId);
                         AmongUsClient.Instance.FinishRpcImmediately(writer);
@@ -178,6 +195,16 @@ namespace LasMonjas.Patches {
             });
             ShipStatus.Instance.AllCameras = allCameras.ToArray();
             MapOptions.camerasToAdd = new List<SurvCamera>();
+
+            // Engineer Traps activate after meeting
+            if (Engineer.engineer != null && EngineerTrap.engineerTraps.Count != 0) {
+                EngineerTrap.activateTraps();
+            }
+
+            // Hypnotist Spirals activate after meeting
+            if (Hypnotist.hypnotist != null && HypnotistSpiral.hypnotistSpirals.Count != 0) {
+                HypnotistSpiral.activateSpirals();
+            }
         }
     }
 
@@ -231,12 +258,29 @@ namespace LasMonjas.Patches {
                     }
                 }
 
+                // Poisoner deactivate dead poolable players
+                if (Poisoner.poisoner != null && Poisoner.poisoner == PlayerControl.LocalPlayer) {
+                    int visibleCounter = 0;
+                    Vector3 bottomLeft = new Vector3(-HudManager.Instance.UseButton.transform.localPosition.x, HudManager.Instance.UseButton.transform.localPosition.y, HudManager.Instance.UseButton.transform.localPosition.z);
+                    bottomLeft += new Vector3(-0.25f, -0.25f, 0);
+                    foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
+                        if (!MapOptions.playerIcons.ContainsKey(p.PlayerId)) continue;
+                        if (p.Data.IsDead || p.Data.Disconnected) {
+                            MapOptions.playerIcons[p.PlayerId].gameObject.SetActive(false);
+                        }
+                        else {
+                            MapOptions.playerIcons[p.PlayerId].transform.localPosition = bottomLeft + Vector3.right * visibleCounter * 0.35f;
+                            visibleCounter++;
+                        }
+                    }
+                }
+                
                 // Cheater exile if the cheated player was innocent, rebels and neutrals counts as impostors
                 if (Cheater.cheater != null && !Cheater.cheater.Data.IsDead) {
-                    if (Cheater.usedCheat == true && Cheater.cheatedP1.Data.IsDead && !Cheater.cheatedP1.Data.Role.IsImpostor && Cheater.cheatedP1 != Renegade.renegade && Cheater.cheatedP1 != Minion.minion && Cheater.cheatedP1 != BountyHunter.bountyhunter && Cheater.cheatedP1 != Trapper.trapper && Cheater.cheatedP1 != Yinyanger.yinyanger && Cheater.cheatedP1 != Challenger.challenger && Cheater.cheatedP1 != Joker.joker && Cheater.cheatedP1 != RoleThief.rolethief && Cheater.cheatedP1 != Pyromaniac.pyromaniac && Cheater.cheatedP1 != TreasureHunter.treasureHunter && Cheater.cheatedP1 != Devourer.devourer) {
+                    if (Cheater.usedCheat == true && Cheater.cheatedP1.Data.IsDead && !Cheater.cheatedP1.Data.Role.IsImpostor && Cheater.cheatedP1 != Renegade.renegade && Cheater.cheatedP1 != Minion.minion && Cheater.cheatedP1 != BountyHunter.bountyhunter && Cheater.cheatedP1 != Trapper.trapper && Cheater.cheatedP1 != Yinyanger.yinyanger && Cheater.cheatedP1 != Challenger.challenger && Cheater.cheatedP1 != Ninja.ninja && Cheater.cheatedP1 != Berserker.berserker && Cheater.cheatedP1 != Joker.joker && Cheater.cheatedP1 != RoleThief.rolethief && Cheater.cheatedP1 != Pyromaniac.pyromaniac && Cheater.cheatedP1 != TreasureHunter.treasureHunter && Cheater.cheatedP1 != Devourer.devourer && Cheater.cheatedP1 != Poisoner.poisoner && Cheater.cheatedP1 != Puppeteer.puppeteer) {
                         Cheater.cheater.Exiled();
                     }
-                    else if (Cheater.usedCheat == true && Cheater.cheatedP2.Data.IsDead && !Cheater.cheatedP2.Data.Role.IsImpostor && Cheater.cheatedP2 != Renegade.renegade && Cheater.cheatedP2 != Minion.minion && Cheater.cheatedP2 != BountyHunter.bountyhunter && Cheater.cheatedP2 != Trapper.trapper && Cheater.cheatedP2 != Yinyanger.yinyanger && Cheater.cheatedP2 != Challenger.challenger && Cheater.cheatedP2 != Joker.joker && Cheater.cheatedP2 != RoleThief.rolethief && Cheater.cheatedP2 != Pyromaniac.pyromaniac && Cheater.cheatedP2 != TreasureHunter.treasureHunter && Cheater.cheatedP2 != Devourer.devourer) {
+                    else if (Cheater.usedCheat == true && Cheater.cheatedP2.Data.IsDead && !Cheater.cheatedP2.Data.Role.IsImpostor && Cheater.cheatedP2 != Renegade.renegade && Cheater.cheatedP2 != Minion.minion && Cheater.cheatedP2 != BountyHunter.bountyhunter && Cheater.cheatedP2 != Trapper.trapper && Cheater.cheatedP2 != Yinyanger.yinyanger && Cheater.cheatedP2 != Challenger.challenger && Cheater.cheatedP2 != Ninja.ninja && Cheater.cheatedP2 != Berserker.berserker && Cheater.cheatedP2 != Joker.joker && Cheater.cheatedP2 != RoleThief.rolethief && Cheater.cheatedP2 != Pyromaniac.pyromaniac && Cheater.cheatedP2 != TreasureHunter.treasureHunter && Cheater.cheatedP2 != Devourer.devourer && Cheater.cheatedP2 != Poisoner.poisoner && Cheater.cheatedP2 != Puppeteer.puppeteer) {
                         Cheater.cheater.Exiled();
                     }
                     Cheater.cheatedP1 = null;

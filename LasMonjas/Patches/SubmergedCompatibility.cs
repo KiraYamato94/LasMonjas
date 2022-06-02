@@ -22,6 +22,7 @@ namespace LasMonjas.Patches
         
         public static SemanticVersioning.Version Version { get; private set; }
         public static bool Loaded { get; private set; }
+        public static bool LoadedExternally { get; private set; }
         public static BasePlugin Plugin { get; private set; }
         public static Assembly Assembly { get; private set; }
         public static Type[] Types { get; private set; }
@@ -77,8 +78,13 @@ namespace LasMonjas.Patches
         public static void Initialize()
         {
             Loaded = IL2CPPChainloader.Instance.Plugins.TryGetValue(SUBMERGED_GUID, out PluginInfo plugin);
-            if (!Loaded) return;
-            
+            if (!Loaded) {
+                return;
+            }
+            else {
+                LoadedExternally = true;
+            }
+
             Plugin = plugin!.Instance as BasePlugin;
             Version = plugin.Metadata.Version;
 

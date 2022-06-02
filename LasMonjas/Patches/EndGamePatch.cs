@@ -34,7 +34,11 @@ namespace LasMonjas.Patches {
         TeamHillDraw = 29,
         HotPotatoEnd = 30,
         ZombieWin = 31,
-        SurvivorWin = 32
+        SurvivorWin = 32,
+        PoisonerWin = 33,
+        PuppeteerWin = 34,
+        NinjaWin = 35,
+        BerserkerWin = 36
     }
 
     enum WinCondition {
@@ -62,7 +66,11 @@ namespace LasMonjas.Patches {
         TeamHillDraw,
         HotPotatoEnd,
         ZombieWin,
-        SurvivorWin
+        SurvivorWin,
+        PoisonerWin,
+        PuppeteerWin,
+        NinjaWin,
+        BerserkerWin
     }
 
     static class AdditionalTempData {
@@ -107,12 +115,16 @@ namespace LasMonjas.Patches {
             if (Pyromaniac.pyromaniac != null) notWinners.Add(Pyromaniac.pyromaniac);
             if (TreasureHunter.treasureHunter != null) notWinners.Add(TreasureHunter.treasureHunter);
             if (Devourer.devourer != null) notWinners.Add(Devourer.devourer);
+            if (Poisoner.poisoner != null) notWinners.Add(Poisoner.poisoner);
+            if (Puppeteer.puppeteer != null) notWinners.Add(Puppeteer.puppeteer); 
             if (Renegade.renegade != null) notWinners.Add(Renegade.renegade);
             if (Minion.minion != null) notWinners.Add(Minion.minion);
             if (BountyHunter.bountyhunter != null) notWinners.Add(BountyHunter.bountyhunter);
             if (Trapper.trapper != null) notWinners.Add(Trapper.trapper);
             if (Yinyanger.yinyanger != null) notWinners.Add(Yinyanger.yinyanger);
-            if (Challenger.challenger != null) notWinners.Add(Challenger.challenger);
+            if (Challenger.challenger != null) notWinners.Add(Challenger.challenger);           
+            if (Ninja.ninja != null) notWinners.Add(Ninja.ninja);
+            if (Berserker.berserker != null) notWinners.Add(Berserker.berserker);
 
             // Remove neutral custom gamemode roles from winners
             if (CaptureTheFlag.stealerPlayer != null) notWinners.Add(CaptureTheFlag.stealerPlayer);
@@ -136,9 +148,13 @@ namespace LasMonjas.Patches {
             bool bountyhunterWin = BountyHunter.bountyhunter != null && gameOverReason == (GameOverReason)CustomGameOverReason.BountyHunterWin;
             bool treasurehunterWin = TreasureHunter.treasureHunter != null && gameOverReason == (GameOverReason)CustomGameOverReason.TreasureHunterWin;
             bool devourerWin = Devourer.devourer != null && gameOverReason == (GameOverReason)CustomGameOverReason.DevourerWin;
+            bool poisonerWin = Poisoner.poisoner != null && gameOverReason == (GameOverReason)CustomGameOverReason.PoisonerWin;
+            bool puppeteerWin = Puppeteer.puppeteer != null && gameOverReason == (GameOverReason)CustomGameOverReason.PuppeteerWin;
             bool trapperWin = Trapper.trapper != null && gameOverReason == (GameOverReason)CustomGameOverReason.TrapperWin;
             bool yinyangerWin = Yinyanger.yinyanger != null && gameOverReason == (GameOverReason)CustomGameOverReason.YinyangerWin;
             bool challengerWin = Challenger.challenger != null && gameOverReason == (GameOverReason)CustomGameOverReason.ChallengerWin;
+            bool ninjaWin = Ninja.ninja != null && gameOverReason == (GameOverReason)CustomGameOverReason.NinjaWin;
+            bool berserkerWin = Berserker.berserker != null && gameOverReason == (GameOverReason)CustomGameOverReason.BerserkerWin;
             bool redTeamFlagWin = CaptureTheFlag.captureTheFlagMode && gameOverReason == (GameOverReason)CustomGameOverReason.RedTeamFlagWin;
             bool blueTeamFlagWin = CaptureTheFlag.captureTheFlagMode && gameOverReason == (GameOverReason)CustomGameOverReason.BlueTeamFlagWin;
             bool drawTeamWin = CaptureTheFlag.captureTheFlagMode && gameOverReason == (GameOverReason)CustomGameOverReason.DrawTeamWin;
@@ -150,7 +166,7 @@ namespace LasMonjas.Patches {
             bool hotPotatoEnd = HotPotato.hotPotatoMode && gameOverReason == (GameOverReason)CustomGameOverReason.HotPotatoEnd;
             bool zombieWin = ZombieLaboratory.zombieLaboratoryMode && gameOverReason == (GameOverReason)CustomGameOverReason.ZombieWin;
             bool survivorWin = ZombieLaboratory.zombieLaboratoryMode && gameOverReason == (GameOverReason)CustomGameOverReason.SurvivorWin;
-
+            
             // Kid lose
             if (kidLose) {
                 TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
@@ -160,6 +176,18 @@ namespace LasMonjas.Patches {
                 AdditionalTempData.winCondition = WinCondition.KidLose;
             }
 
+            // Bomb exploded
+            else if (bombExploded) {
+                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                foreach (PlayerControl imimpostor in PlayerControl.AllPlayerControls) {
+                    if (imimpostor.Data.Role.IsImpostor == true) {
+                        WinningPlayerData wpd = new WinningPlayerData(imimpostor.Data);
+                        TempData.winners.Add(wpd);
+                    }
+                }
+                AdditionalTempData.winCondition = WinCondition.BombExploded;
+            }
+            
             // Joker win
             else if (jokerWin) {
                 TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
@@ -176,6 +204,38 @@ namespace LasMonjas.Patches {
                 AdditionalTempData.winCondition = WinCondition.PyromaniacWin;
             }
 
+            // TreasureHunter win
+            else if (treasurehunterWin) {
+                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                WinningPlayerData wpd = new WinningPlayerData(TreasureHunter.treasureHunter.Data);
+                TempData.winners.Add(wpd);
+                AdditionalTempData.winCondition = WinCondition.TreasureHunterWin;
+            }
+
+            // Devourer win
+            else if (devourerWin) {
+                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                WinningPlayerData wpd = new WinningPlayerData(Devourer.devourer.Data);
+                TempData.winners.Add(wpd);
+                AdditionalTempData.winCondition = WinCondition.DevourerWin;
+            }
+            
+            // Poisoner win
+            else if (poisonerWin) {
+                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                WinningPlayerData wpd = new WinningPlayerData(Poisoner.poisoner.Data);
+                TempData.winners.Add(wpd);
+                AdditionalTempData.winCondition = WinCondition.PoisonerWin;
+            }
+
+            // Puppeteer win
+            else if (puppeteerWin) {
+                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                WinningPlayerData wpd = new WinningPlayerData(Puppeteer.puppeteer.Data);
+                TempData.winners.Add(wpd);
+                AdditionalTempData.winCondition = WinCondition.PuppeteerWin;
+            }
+            
             // Lovers win conditions
             else if (loversWin) {
                 // Double win for lovers with crewmates
@@ -186,7 +246,7 @@ namespace LasMonjas.Patches {
                         if (p == null) continue;
                         if (p == Modifiers.lover1 || p == Modifiers.lover2)
                             TempData.winners.Add(new WinningPlayerData(p.Data));
-                        else if (p != Joker.joker && p != RoleThief.rolethief && p != Pyromaniac.pyromaniac && p != TreasureHunter.treasureHunter && p != Devourer.devourer && p != Renegade.renegade && p != Minion.minion && !Renegade.formerRenegades.Contains(p) && p != BountyHunter.bountyhunter && p != Trapper.trapper && p != Yinyanger.yinyanger && p != Challenger.challenger && !p.Data.Role.IsImpostor)
+                        else if (p != Joker.joker && p != RoleThief.rolethief && p != Pyromaniac.pyromaniac && p != TreasureHunter.treasureHunter && p != Devourer.devourer && p != Poisoner.poisoner && p != Puppeteer.puppeteer && p != Renegade.renegade && p != Minion.minion && !Renegade.formerRenegades.Contains(p) && p != BountyHunter.bountyhunter && p != Trapper.trapper && p != Yinyanger.yinyanger && p != Challenger.challenger && p != Ninja.ninja && p != Berserker.berserker && !p.Data.Role.IsImpostor)
                             TempData.winners.Add(new WinningPlayerData(p.Data));
                     }
                 }
@@ -220,18 +280,6 @@ namespace LasMonjas.Patches {
                 }
             }
 
-            // Bomb exploded
-            else if (bombExploded) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                foreach (PlayerControl imimpostor in PlayerControl.AllPlayerControls) {
-                    if (imimpostor.Data.Role.IsImpostor == true) {
-                        WinningPlayerData wpd = new WinningPlayerData(imimpostor.Data);
-                        TempData.winners.Add(wpd);
-                    }
-                }
-                AdditionalTempData.winCondition = WinCondition.BombExploded;
-            }
-
             // BountyHunter win
             else if (bountyhunterWin) {
                 // BountyHunter wins if he kills his target 
@@ -239,23 +287,7 @@ namespace LasMonjas.Patches {
                 WinningPlayerData wpd = new WinningPlayerData(BountyHunter.bountyhunter.Data);
                 TempData.winners.Add(wpd);
                 AdditionalTempData.winCondition = WinCondition.BountyHunterWin;
-            }
-
-            // TreasureHunter win
-            else if (treasurehunterWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                WinningPlayerData wpd = new WinningPlayerData(TreasureHunter.treasureHunter.Data);
-                TempData.winners.Add(wpd);
-                AdditionalTempData.winCondition = WinCondition.TreasureHunterWin;
-            }
-
-            // Devourer win
-            else if (devourerWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                WinningPlayerData wpd = new WinningPlayerData(Devourer.devourer.Data);
-                TempData.winners.Add(wpd);
-                AdditionalTempData.winCondition = WinCondition.DevourerWin;
-            }
+            }            
 
             // Trapper win
             else if (trapperWin) {
@@ -284,6 +316,22 @@ namespace LasMonjas.Patches {
                 AdditionalTempData.winCondition = WinCondition.ChallengerWin;
             }
 
+            // Ninja win
+            else if (ninjaWin) {
+                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                WinningPlayerData wpd = new WinningPlayerData(Ninja.ninja.Data);
+                TempData.winners.Add(wpd);
+                AdditionalTempData.winCondition = WinCondition.NinjaWin;
+            }
+
+            // Berserker win
+            else if (berserkerWin) {
+                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                WinningPlayerData wpd = new WinningPlayerData(Berserker.berserker.Data);
+                TempData.winners.Add(wpd);
+                AdditionalTempData.winCondition = WinCondition.BerserkerWin;
+            }
+            
             // Flag Game Mode Win
             // Draw
             else if (drawTeamWin) {
@@ -487,6 +535,22 @@ namespace LasMonjas.Patches {
                 AmongUsClient.Instance.FinishRpcImmediately(writermusic);
                 RPCProcedure.changeMusic(3);
             }
+            else if (AdditionalTempData.winCondition == WinCondition.PuppeteerWin) {
+                textRenderer.text = "Puppeteer Wins";
+                textRenderer.color = Puppeteer.color;
+                MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
+                writermusic.Write(3);
+                AmongUsClient.Instance.FinishRpcImmediately(writermusic);
+                RPCProcedure.changeMusic(3);
+            }
+            else if (AdditionalTempData.winCondition == WinCondition.PoisonerWin) {
+                textRenderer.text = "Poisoner Wins";
+                textRenderer.color = Poisoner.color;
+                MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
+                writermusic.Write(3);
+                AmongUsClient.Instance.FinishRpcImmediately(writermusic);
+                RPCProcedure.changeMusic(3);
+            }
             else if (AdditionalTempData.winCondition == WinCondition.TrapperWin) {
                 textRenderer.text = "Trapper Wins";
                 textRenderer.color = Trapper.color;
@@ -506,6 +570,22 @@ namespace LasMonjas.Patches {
             else if (AdditionalTempData.winCondition == WinCondition.ChallengerWin) {
                 textRenderer.text = "Challenger Wins";
                 textRenderer.color = Challenger.color;
+                MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
+                writermusic.Write(4);
+                AmongUsClient.Instance.FinishRpcImmediately(writermusic);
+                RPCProcedure.changeMusic(4);
+            }
+            else if (AdditionalTempData.winCondition == WinCondition.NinjaWin) {
+                textRenderer.text = "Ninja Wins";
+                textRenderer.color = Ninja.color;
+                MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
+                writermusic.Write(4);
+                AmongUsClient.Instance.FinishRpcImmediately(writermusic);
+                RPCProcedure.changeMusic(4);
+            }
+            else if (AdditionalTempData.winCondition == WinCondition.BerserkerWin) {
+                textRenderer.text = "Berserker Wins";
+                textRenderer.color = Berserker.color;
                 MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
                 writermusic.Write(4);
                 AmongUsClient.Instance.FinishRpcImmediately(writermusic);
@@ -549,7 +629,7 @@ namespace LasMonjas.Patches {
             }
             else if (AdditionalTempData.winCondition == WinCondition.SurvivorWin) {
                 textRenderer.text = "Survivor Team Win";
-                textRenderer.color = Medusa.color;
+                textRenderer.color = Shy.color;
             }
             else {
                 MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
@@ -594,21 +674,25 @@ namespace LasMonjas.Patches {
                 return true;
             var statistics = new PlayerStatistics(__instance);
             if (CheckAndEndGameForKidLose(__instance)) return false;
-            if (CheckAndEndGameForBountyHunterWin(__instance)) return false;
+            if (CheckAndEndGameForBombExploded(__instance)) return false;
             if (CheckAndEndGameForJokerWin(__instance)) return false;
             if (CheckAndEndGameForPyromaniacWin(__instance)) return false;
             if (CheckAndEndGameForTreasureHunterWin(__instance)) return false;
             if (CheckAndEndGameForDevourerWin(__instance)) return false;
+            if (CheckAndEndGameForPuppeteerWin(__instance)) return false;
+            if (CheckAndEndGameForPoisonerWin(__instance)) return false;
+            if (CheckAndEndGameForRenegadeWin(__instance, statistics)) return false;
+            if (CheckAndEndGameForBountyHunterWin(__instance)) return false;
             if (CheckAndEndGameForTrapperWin(__instance, statistics)) return false;
             if (CheckAndEndGameForYinyangerWin(__instance, statistics)) return false;
             if (CheckAndEndGameForChallengerWin(__instance, statistics)) return false;
+            if (CheckAndEndGameForNinjaWin(__instance, statistics)) return false;
+            if (CheckAndEndGameForBerserkerWin(__instance, statistics)) return false;
             if (CheckAndEndGameForSabotageWin(__instance)) return false;
             if (CheckAndEndGameForTaskWin(__instance)) return false;
             if (CheckAndEndGameForLoverWin(__instance, statistics)) return false;
-            if (CheckAndEndGameForRenegadeWin(__instance, statistics)) return false;
             if (CheckAndEndGameForImpostorWin(__instance, statistics)) return false;
             if (CheckAndEndGameForCrewmateWin(__instance, statistics)) return false;
-            if (CheckAndEndGameForBombExploded(__instance)) return false;
             if (CheckAndEndGameForRedTeamFlagWin(__instance)) return false;
             if (CheckAndEndGameForBlueTeamFlagWin(__instance)) return false;
             if (CheckAndEndGameForDrawFlagWin(__instance)) return false;
@@ -674,6 +758,24 @@ namespace LasMonjas.Patches {
             return false;
         }
 
+        private static bool CheckAndEndGameForPuppeteerWin(ShipStatus __instance) {
+            if (Puppeteer.triggerPuppeteerWin) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.PuppeteerWin, false);
+                return true;
+            }
+            return false;
+        }
+
+        private static bool CheckAndEndGameForPoisonerWin(ShipStatus __instance) {
+            if (Poisoner.triggerPoisonerWin) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.PoisonerWin, false);
+                return true;
+            }
+            return false;
+        }
+        
         private static bool CheckAndEndGameForSabotageWin(ShipStatus __instance) {
             if (__instance.Systems == null) return false;
             ISystemType systemType = __instance.Systems.ContainsKey(SystemTypes.LifeSupp) ? __instance.Systems[SystemTypes.LifeSupp] : null;
@@ -750,9 +852,25 @@ namespace LasMonjas.Patches {
             }
             return false;
         }
-
+        private static bool CheckAndEndGameForNinjaWin(ShipStatus __instance, PlayerStatistics statistics) {
+            if (statistics.TeamNinjaAlive >= statistics.TotalAlive - statistics.TeamNinjaAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.NinjaWin, false);
+                return true;
+            }
+            return false;
+        }
+        private static bool CheckAndEndGameForBerserkerWin(ShipStatus __instance, PlayerStatistics statistics) {
+            if (statistics.TeamBerserkerAlive >= statistics.TotalAlive - statistics.TeamBerserkerAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BerserkerWin, false);
+                return true;
+            }
+            return false;
+        }
+        
         private static bool CheckAndEndGameForImpostorWin(ShipStatus __instance, PlayerStatistics statistics) {
-            if (howmanygamemodesareon != 1 && statistics.TeamImpostorsAlive >= statistics.TotalAlive - statistics.TeamImpostorsAlive + statistics.TeamCaptainAlive && statistics.TeamRenegadeAlive == 0 && statistics.TeamBountyHunterAlive == 0 && statistics.TeamTrapperAlive == 0 && statistics.TeamYinyangerAlive == 0 && statistics.TeamChallengerAlive == 0 && statistics.TeamCaptainAlive != statistics.TeamImpostorsAlive && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
+            if (howmanygamemodesareon != 1 && statistics.TeamImpostorsAlive >= statistics.TotalAlive - statistics.TeamImpostorsAlive + statistics.TeamCaptainAlive && statistics.TeamRenegadeAlive == 0 && statistics.TeamBountyHunterAlive == 0 && statistics.TeamTrapperAlive == 0 && statistics.TeamYinyangerAlive == 0 && statistics.TeamChallengerAlive == 0 && statistics.TeamNinjaAlive == 0 && statistics.TeamBerserkerAlive == 0 && statistics.TeamCaptainAlive != statistics.TeamImpostorsAlive && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
                 __instance.enabled = false;
                 GameOverReason endReason;
                 switch (TempData.LastDeathReason) {
@@ -773,7 +891,7 @@ namespace LasMonjas.Patches {
         }
 
         private static bool CheckAndEndGameForCrewmateWin(ShipStatus __instance, PlayerStatistics statistics) {
-            if (howmanygamemodesareon != 1 && statistics.TeamImpostorsAlive == 0 && statistics.TeamRenegadeAlive == 0 && statistics.TeamBountyHunterAlive == 0 && statistics.TeamTrapperAlive == 0 && statistics.TeamYinyangerAlive == 0 && statistics.TeamChallengerAlive == 0) {
+            if (howmanygamemodesareon != 1 && statistics.TeamImpostorsAlive == 0 && statistics.TeamRenegadeAlive == 0 && statistics.TeamBountyHunterAlive == 0 && statistics.TeamTrapperAlive == 0 && statistics.TeamYinyangerAlive == 0 && statistics.TeamChallengerAlive == 0 && statistics.TeamNinjaAlive == 0 && statistics.TeamBerserkerAlive == 0) {
                 __instance.enabled = false;
                 ShipStatus.RpcEndGame(GameOverReason.HumansByVote, false);
                 return true;
@@ -898,7 +1016,9 @@ namespace LasMonjas.Patches {
         public int TeamYinyangerAlive { get; set; }
         public int TeamCaptainAlive { get; set; }
         public int TeamChallengerAlive { get; set; }
-
+        public int TeamNinjaAlive { get; set; }
+        public int TeamBerserkerAlive { get; set; }
+        
         public PlayerStatistics(ShipStatus __instance) {
             GetPlayerCounts();
         }
@@ -919,6 +1039,8 @@ namespace LasMonjas.Patches {
             int numYinyangerAlive = 0;
             int numCaptainAlive = 0;
             int numChallengerAlive = 0;
+            int numNinjaAlive = 0;
+            int numBerserkerAlive = 0;
 
             for (int i = 0; i < GameData.Instance.PlayerCount; i++) {
                 GameData.PlayerInfo playerInfo = GameData.Instance.AllPlayers[i];
@@ -956,6 +1078,12 @@ namespace LasMonjas.Patches {
                         if (Challenger.challenger != null && Challenger.challenger.PlayerId == playerInfo.PlayerId) {
                             numChallengerAlive++;
                         }
+                        if (Ninja.ninja != null && Ninja.ninja.PlayerId == playerInfo.PlayerId) {
+                            numNinjaAlive++;
+                        }
+                        if (Berserker.berserker != null && Berserker.berserker.PlayerId == playerInfo.PlayerId) {
+                            numBerserkerAlive++;
+                        }
                     }
                 }
             }
@@ -971,6 +1099,8 @@ namespace LasMonjas.Patches {
             TeamYinyangerAlive = numYinyangerAlive;
             TeamCaptainAlive = numCaptainAlive;
             TeamChallengerAlive = numChallengerAlive;
+            TeamNinjaAlive = numNinjaAlive;
+            TeamBerserkerAlive = numBerserkerAlive;
         }
     }
 }
