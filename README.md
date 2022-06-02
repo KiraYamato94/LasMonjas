@@ -33,6 +33,17 @@ Las Monjas is a Spanish mod (translated and published on English) for Among Us m
 <details>
   <summary>Click to show</summary>
 
+**Version 2.0.1 (2nd June 2022)**
+- Fixed the black screen issue when starting the game
+- Updated Reactor to 1.2.6
+- Fixed Illusionist's custom sprites
+- Lovers can't spawn in the same game as the Kid
+- Fixed arrows for Sleuth and Fink to hide during Challenger's duel or anonymous comms
+- Fixed Hypnotized state, you can't use medscan, vents, Airship's platform or ladders if you're hypnotized
+- Fixed hat's bounciness and added 1 new hat and 2 new nameplates
+- Increases Shy's maximum notify range from 10 to 15
+- Reduced Devourer's minimum cooldown from 15 to 10
+
 **Version 2.0 (27th May 2022)**
 - Added a button to Download/Update Submerged in game if needed.
 - Added 4 better sabotage options (night vision for lights, anonymous players for comms, screen shake for reactor and slow down players for O2)
@@ -278,7 +289,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 **Additional Ability Notes:**
 - Player's name remains red for other Impostors.
 - Detective's footprints color change accordingly from the start to the end of duration.
-- It adapts to the size of the mimiced player.
+- It adapts to the size of the mimicked player.
 - Admin table updates the new color for the Hacker.
 - If he mimics the shielded player, the Mimic gains the shield indicator but not the shield itself accordingly to the configured option on the Squire role.
 - Fortune Teller can still see the Mimic original name.
@@ -315,7 +326,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 - If the Demon kills near a Nun, the next kill will have an additional 10 seconds cooldown.
 - A bitten player will die if someone reports a body, make a meeting or Challenger's duel happens if he's not near a Nun.
 - Time Traveler and Squire shields block the bite even if the shields activated after being bitten.
-- On the special game condition called 1vs1, it can kill even if the targed is near a Nun and the option disabled.
+- On the special game condition called 1vs1, it can kill even if the target is near a Nun and the option disabled.
 
 -----------------------
 
@@ -375,7 +386,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 - Anyone can defuse the bomb by touching it except Bomberman.
 - The Mechanic can use one of his repairs to defuse the bomb from anywhere.
 - While the Bomb is active, custom music will play and a custom message with the remaining time for defusing it will display to the players.
-- Bomb duration is fixed to 60 seconds for Skeld, MiraHQ, Dlesk and the custom map, 90 for Polus and 180 for Airship.
+- Bomb duration is fixed to 60 seconds for Skeld, MiraHQ, Dlesk and the custom map, 90 for Polus and Submerged, and 180 for Airship.
 - An additional 5 seconds will be added to the bomb duration for every dead crewmate player.
 
 -----------------------
@@ -417,7 +428,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 |----------|-------------|
 | Impostors | Can cast Spells on a player |
 | Cooldown | Ability Cooldown | 
-| Additional Cooldown per Spell | Additiontal ability cooldown per spelled player | 
+| Additional Cooldown per Spell | Additional ability cooldown per spelled player | 
 | Spell Duration | Time needed near the player to cast the spell | 
 | Can use emergency button | His ability depends on calling meetings, define if he can or not use the button | 
 
@@ -434,6 +445,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 | Team and Options  | Description |
 |----------|-------------|
 | Impostors | Can petrify other players  |
+| Cooldown | Ability Cooldown |
 | Petrify Delay | Delay the petrify effect |
 | Duration | Ability Duration |
 
@@ -456,6 +468,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 - Traps became active after a meeting and don't affect Hypnotist or other impostors.
 - Stepping on a trap triggers a sound and a custom message will tell the player that he's hypnotized.
 - While Hypnotized, player's movement controls will be inverted and stepping into other traps won't make any effect.
+- Hypnotized effect disables medscan, vents, Airship's platform and ladders
 
 -----------------------
 
@@ -480,7 +493,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 ## Renegade
 | Team and Options  | Description |
 |----------|-------------|
-| Rebels | Can recruit a minion and have to kill everyone to win |
+| Rebels | Can recruit a minion and has to kill everyone to win |
 | Recruit Minion Cooldown | Cooldown for recruit a minion | 
 | Can use vents | Define if they can use or not vents | 
 | Can recruit a Minion | Define if he can recruit a Minion to help him | 
@@ -500,7 +513,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 ## BountyHunter
 | Team and Options  | Description |
 |----------|-------------|
-| Rebels | Have to kill a specific player to win |
+| Rebels | Has to kill a specific player to win |
 | Cooldown | Ability Cooldown | 
 
 **Additional Ability Notes:**
@@ -517,7 +530,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 ## Trapper
 | Team and Options  | Description |
 |----------|-------------|
-| Rebels | Have to kill everyone with traps and mines |
+| Rebels | Has to kill everyone with traps and mines |
 | Cooldown | Ability Cooldown | 
 | Mine Number | Number of mines placed at the same time | 
 | Mine Duration | Separate duration for every placed mine | 
@@ -541,7 +554,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 ## Yinyanger
 | Team and Options  | Description |
 |----------|-------------|
-| Rebels | Have to kill everyone marking two players |
+| Rebels | Has to kill everyone marking two players |
 | Cooldown | Ability Cooldown | 
 
 **Additional Ability Notes:**
@@ -559,7 +572,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 ## Challenger
 | Team and Options  | Description |
 |----------|-------------|
-| Rebels | Have to kill everyone challenging players to a rock-paper-scissors duel |
+| Rebels | Has to kill everyone challenging players to a rock-paper-scissors duel |
 | Cooldown | Ability Cooldown | 
 
 **Additional Ability Notes:**
@@ -581,7 +594,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 ## Ninja
 | Team and Options  | Description |
 |----------|-------------|
-| Rebels | Have to kill everyone to win and can make double kills |
+| Rebels | Has to kill everyone to win and can make double kills |
 
 **Additional Ability Notes:**
 - Can make tasks to disguise himself but won't count for the tasks progress.
@@ -596,7 +609,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 ## Berserker
 | Team and Options  | Description |
 |----------|-------------|
-| Rebels | Have to kill everyone to win but can't stop killing after killing for first time |
+| Rebels | Has to kill everyone to win but can't stop killing after killing for first time |
 | Kill Time Limit | Remaining time for killing |
 
 **Additional Ability Notes:**
@@ -611,7 +624,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 ## Joker
 | Team and Options  | Description |
 |----------|-------------|
-| Neutrals | Have to get voted out to win |
+| Neutrals | Has to get voted out to win |
 | Can Sabotage | Define if he can or not sabotage | 
 
 **Additional Ability Notes:**
@@ -639,7 +652,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 ## Pyromaniac
 | Team and Options  | Description |
 |----------|-------------|
-| Neutrals | Have to ignite everyone to win |
+| Neutrals | Has to ignite everyone to win |
 | Cooldown | Ability Cooldown | 
 | Ignite Duration | Time needed to spray a player | 
 
@@ -656,7 +669,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 ## TreasureHunter
 | Team and Options  | Description |
 |----------|-------------|
-| Neutrals | Have to find treasures to win |
+| Neutrals | Has to find treasures to win |
 | Cooldown | Ability Cooldown | 
 | Treasures to Win | Number of needed treasures to win | 
 | Can use emergency button | His ability depends on calling meetings, define if he can or not use the button |  
@@ -665,7 +678,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 - Can make tasks to disguise himself but won't count for the tasks progress.
 - He can spawn one treasure randomly on the map one time per meeting.
 - Treasures stays the whole game and only dissapears when the Treasure Hunter touch them.
-- Treasures are only visible for Treasunte Hunter.
+- Treasures are only visible for Treasure Hunter.
 - He can't get treasures or spawn them if he's dead.
 - He can't be in the same game as Joker, Role Thief, Pyromaniac, Devourer, Poisoner and Puppeteer.
 
@@ -674,7 +687,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 ## Devourer
 | Team and Options  | Description |
 |----------|-------------|
-| Neutrals | Have to eat corpses to win |
+| Neutrals | Has to eat corpses to win |
 | Cooldown | Ability Cooldown | 
 | Devours to Win | Number of needed corpses to win | 
 
@@ -689,7 +702,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 ## Poisoner
 | Team and Options  | Description |
 |----------|-------------|
-| Neutrals | Have to poison everyone to win |
+| Neutrals | Has to poison everyone to win |
 | Cooldown | Ability Cooldown | 
 | Time to Poison | Time needed to make the poisoned player | 
 | Poison Infect Range | Poisoned player range to infect others | 
@@ -790,7 +803,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 | One question per Ghost | Limits the question to one per ghost |
 
 **Additional Ability Notes:**
-- If he reports the Bounty Hunter after failing his hunt, the suicided Lover, the Sheriff who tried to kill a crewmate or the Role Thief who tried to steal an Impostor or Rebel role, he will get a suicide report.
+- If he reports the Bounty Hunter after failing his hunt, the Lover after killing himself, the Sheriff who tried to kill a crewmate or the Role Thief who tried to steal an Impostor or Rebel role, he will get a suicide report.
 - The clues he can get reporting bodies are: Killer's name, killer's color type and something about the killer's appearance.
 - Lighter color types are: pink, orange, yellow, white, cyan, lime, rose, coral, banana and lavender, detailed with a (L) on the report and meeting.
 - Darker color types are: red, blue, green, black, purple, brown, maroon, grey, tan and turquoise, detailed with a (D) on the report and meeting.
@@ -830,7 +843,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 
 **Additional Ability Notes:**
 - The only way to break the shield is killing or exiling the Squire.
-- Murder attemp sound will be hear by the shielded player, Squire, Sheriff, all Impostors and all Rebels.
+- Murder attempt sound will be hear by the shielded player, Squire, Sheriff, all Impostors and all Rebels.
 - He can't shield himself.
 
 -----------------------
@@ -843,7 +856,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 | Can swap himself | Prevents himself from being switched ||
 
 **Additional Ability Notes:**
-- If he switchs votes, and one of the switched player is exiled and turns out to be a crewmate, the Cheater will also be exiled.
+- If he switches votes, and one of the switched player is exiled and turns out to be a crewmate, the Cheater will also be exiled.
 - Rebels and Neutrals counts as Impostors, so the Cheater won't be exiled in this case.
 
 -----------------------
@@ -947,11 +960,11 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 
 **Additional Ability Notes:**
 - Ghosts know who the Spiritualist is by looking at the player's name, it will be pink.
-- To revive someone, he has to stay near the corpse for the setted amount of time. This time resets if you move far away from the corpse.
+- To revive someone, he has to stay near the corpse for the defined amount of time. This time resets if you move far away from the corpse.
 - If he's trying to revive someone and a meeting or body report is called, he will fail the revive and die instead.
 - If he manages to revive the player, Spiritualist's body will disappear and the revived player will be revealed to Impostors and Rebel with a pink arrow targeting him.
 - Time Traveler is the only role who can revive the Spiritualist if he rewind the time right after the Spiritualist revives someone.
-- The revived player spawms where his body was after a pink screen flash, if he was doing a tasks in ghost form it won't be canceled.
+- The revived player spawns where his body was after a pink screen flash, if he was doing a tasks in ghost form it won't be canceled.
 - Reviving a Lover will also revive the other Lover, the same goes with the Bounty Hunter and his target.
 
 -----------------------
@@ -967,8 +980,8 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 | Tasks for recharge batteries | Tasks needed to recharge 1 battery |
 
 **Additional Ability Notes:**
-- A placed camera become avaliable for everyone after a meeting at last the whole game.
-- Remote Camera ability become avaliable for Vigilant after placing the 4 cameras.
+- A placed camera become available for everyone after a meeting at last the whole game.
+- Remote Camera ability become available for Vigilant after placing the 4 cameras.
 - A special Vigilant will take place on MiraHQ, since on that map there aren't any cameras. The Vigilant can use the Doorlog anytime he wants by changing the Use button with the Q key while being alive.
 
 -----------------------
@@ -1087,7 +1100,7 @@ This mod also features some game mechanic modifiers, one of them being a [custom
 | Activate Custom Skeld Map | If enabled and Skeld is selected as the game map, the custom map will load instead the normal Skeld |
 | Remove Swipe Card Task | I hate this task so I made an option to remove it |
 | Remove Airship Doors | After reading what is written above this, you can guess why this option is here |
-| Night Vision for Lights Sabotage | Security Cameras will have night vision when lights are sabotaged making all players lime color with "Player" as their names (not avaliable on Submerged) |
+| Night Vision for Lights Sabotage | Security Cameras will have night vision when lights are sabotaged making all players lime color with "Player" as their names (not available on Submerged) |
 | Screen Shake for Reactor Sabotage | Add a player's screen shake visual effect during reactor sabotage. Graphic's game option "screen shake" has to be active |
 | Anomymous Players for Comms Sabotage | Makes the players grey with "Player" as their names during Cooms sabotage |
 | Decrease Players Speed for Oxygen Sabotage | Player's speed will keep getting lower based of how much time passed since Oxygen had been sabotaged |
@@ -1096,7 +1109,7 @@ This mod also features some game mechanic modifiers, one of them being a [custom
   - Two players linked, they die and get exiled together.
 ## Lighter
   - Player with more vision than the others.
-  - Is inmmune to Night Vision.
+  - Is immune to Night Vision.
 ## Blind
   - Player with less vision than the others.
 ## Flash
@@ -1286,7 +1299,7 @@ A custom hats system (adapted from [xxomega77](https://github.com/xxomega77xx/Ha
 
 # Submerged
 
-From Las Monjas 1.5.0 version, [Submerged](https://github.com/SubmergedAmongUs/Submerged) is included on the modpack and can be played either on roles game or any gamemodes. When a Submerged update is avaliable, a cyan button will appear on the bottom-left on the main menu to update Submerged. There's still a few changes when playing on Submerged exclusively:
+From Las Monjas 1.5.0 version, [Submerged](https://github.com/SubmergedAmongUs/Submerged) is included on the modpack and can be played either on roles game or any gamemodes. When a Submerged update is available, a cyan button will appear on the bottom-left on the main menu to update Submerged. There's still a few changes when playing on Submerged exclusively:
 - Custom arrows points towards the closest Elevator if the target is on the other floor.
 - Central vents (the ones on the glass floor) can be used only by impostor roles. Any crewmate who can vent won't be able to use them.
 - Mimic has a visual bug, if you're transformed into other player and get out of a vent, the hat (if it's adaptative) goes back to its original color, but its only a visual bug for the Mimic player, meaning other players still see the correct hat color.
