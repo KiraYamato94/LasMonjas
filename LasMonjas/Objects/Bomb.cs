@@ -51,13 +51,13 @@ namespace LasMonjas.Objects
 
                 timer -= Time.deltaTime;
 
-                foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                    if (!touchedPlayer && Vector2.Distance(player.transform.position, bomb.transform.position) < 0.5f && player == PlayerControl.LocalPlayer && player != Bomberman.bomberman && !player.Data.IsDead) {
-                        touchedPlayer = true; 
-                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.FixBomb, Hazel.SendOption.Reliable, -1);
-                        AmongUsClient.Instance.FinishRpcImmediately(writer);
-                        RPCProcedure.fixBomb();
-                    }
+                var player = PlayerControl.LocalPlayer;
+
+                if (!touchedPlayer && Vector2.Distance(player.transform.position, bomb.transform.position) < 0.5f && player != Bomberman.bomberman && !player.Data.IsDead) {
+                    touchedPlayer = true;
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.FixBomb, Hazel.SendOption.Reliable, -1);
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    RPCProcedure.fixBomb();
                 }
 
                 if (timer <= 0f) {

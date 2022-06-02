@@ -82,5 +82,8 @@ namespace LasMonjas.Objects
             }
             })));
         }
+        public static void clearFootprints() {
+            footprints = new List<Footprint>();
+        }
     }
 }

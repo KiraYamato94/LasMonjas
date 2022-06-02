@@ -52,19 +52,18 @@ namespace LasMonjas.Objects
 
             HudManager.Instance.StartCoroutine(Effects.Lerp(duration, new Action<float>((p) => {
 
-                foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                    if (Vector2.Distance(player.transform.position, trap.transform.position) < 0.3f && !touched && player != Trapper.trapper && !player.Data.IsDead) {
-                        touched = true;
-                        trap.SetActive(true);
-                        if (player == PlayerControl.LocalPlayer) {
-                            PlayerControl target = Helpers.playerById(player.PlayerId);
-                            MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ActivateTrap, Hazel.SendOption.Reliable, -1);
-                            killWriter.Write(player.PlayerId);
-                            AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                            RPCProcedure.activateTrap(target.PlayerId);                                                         
-                        }
+                var player = PlayerControl.LocalPlayer;
+                if (Vector2.Distance(player.transform.position, trap.transform.position) < 0.3f && !touched && player != Trapper.trapper && !player.Data.IsDead) {
+                    touched = true;
+                    trap.SetActive(true);
+                    if (player == PlayerControl.LocalPlayer) {
+                        PlayerControl target = Helpers.playerById(player.PlayerId);
+                        MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ActivateTrap, Hazel.SendOption.Reliable, -1);
+                        killWriter.Write(player.PlayerId);
+                        AmongUsClient.Instance.FinishRpcImmediately(killWriter);
+                        RPCProcedure.activateTrap(target.PlayerId);
                     }
-                }
+                }                
                 
                 if (p == 1f && trap != null) {
                     Trapper.currentTrapNumber -= 1;

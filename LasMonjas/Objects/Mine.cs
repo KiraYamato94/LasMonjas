@@ -52,19 +52,19 @@ namespace LasMonjas.Objects
 
             HudManager.Instance.StartCoroutine(Effects.Lerp(duration, new Action<float>((p) => {
 
-                foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                    if (Vector2.Distance(player.transform.position, mine.transform.position) < 0.3f && !touched && player != Trapper.trapper && !player.Data.IsDead) {
-                        touched = true;
-                        mine.SetActive(true);
-                        if (player == PlayerControl.LocalPlayer) {
-                            PlayerControl target = Helpers.playerById(player.PlayerId);
-                            MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MineKill, Hazel.SendOption.Reliable, -1);
-                            killWriter.Write(target.PlayerId);
-                            AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                            RPCProcedure.mineKill(target.PlayerId);
-                        }
+                var player = PlayerControl.LocalPlayer;
+
+                if (Vector2.Distance(player.transform.position, mine.transform.position) < 0.3f && !touched && player != Trapper.trapper && !player.Data.IsDead) {
+                    touched = true;
+                    mine.SetActive(true);
+                    if (player == PlayerControl.LocalPlayer) {
+                        PlayerControl target = Helpers.playerById(player.PlayerId);
+                        MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MineKill, Hazel.SendOption.Reliable, -1);
+                        killWriter.Write(target.PlayerId);
+                        AmongUsClient.Instance.FinishRpcImmediately(killWriter);
+                        RPCProcedure.mineKill(target.PlayerId);
                     }
-                }
+                }                
                 
                 if (p == 1f && mine != null) {
                     Trapper.currentMineNumber -= 1;

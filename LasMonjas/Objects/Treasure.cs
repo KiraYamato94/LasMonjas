@@ -460,15 +460,14 @@ namespace LasMonjas.Objects
 
             HudManager.Instance.StartCoroutine(Effects.Lerp(chestDuration, new Action<float>((p) => {
 
-                foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                    if (!touchedPlayer && Vector2.Distance(player.transform.position, treasure.transform.position) < 0.5f && player == PlayerControl.LocalPlayer && player == TreasureHunter.treasureHunter && !player.Data.IsDead) {
-                        touchedPlayer = true;
-                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.CollectedTreasure, Hazel.SendOption.Reliable, -1);
-                        AmongUsClient.Instance.FinishRpcImmediately(writer);
-                        RPCProcedure.collectedTreasure();
-                        treasure.SetActive(false); 
-                    }
-                }
+                var player = PlayerControl.LocalPlayer;
+                if (!touchedPlayer && Vector2.Distance(player.transform.position, treasure.transform.position) < 0.5f && player == TreasureHunter.treasureHunter && !player.Data.IsDead) {
+                    touchedPlayer = true;
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.CollectedTreasure, Hazel.SendOption.Reliable, -1);
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    RPCProcedure.collectedTreasure();
+                    treasure.SetActive(false);
+                }                
 
             })));
 

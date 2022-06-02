@@ -18,7 +18,7 @@ namespace LasMonjas.Objects {
             if (hatAnimationSprites == null || hatAnimationSprites.Length == 0) return null;
             index = Mathf.Clamp(index, 0, hatAnimationSprites.Length - 1);
             if (hatAnimationSprites[index] == null)
-                hatAnimationSprites[index] = (Helpers.loadSpriteFromResources($"LasMonjas.Images.IlusionistAnimation.ilusionist_hat_00{(index + 1):00}.png", 175f));
+                hatAnimationSprites[index] = (Helpers.loadSpriteFromResources($"LasMonjas.Images.IllusionistAnimation.illusionist_hat_00{(index + 1):00}.png", 175f));
             return hatAnimationSprites[index];
         }
 
@@ -76,8 +76,8 @@ namespace LasMonjas.Objects {
             vent.name = "Hat_" + vent.Id;
 
             
-            var playerIsIlusionist = PlayerControl.LocalPlayer == Ilusionist.ilusionist;
-            gameObject.SetActive(playerIsIlusionist);
+            var playerIsIllusionist = PlayerControl.LocalPlayer == Illusionist.illusionist;
+            gameObject.SetActive(playerIsIllusionist);
 
             AllHats.Add(this);
 
@@ -88,8 +88,8 @@ namespace LasMonjas.Objects {
         public static void UpdateStates() {
             if (hatsConvertedToVents == true) return;
             foreach (var hat in AllHats) {
-                var playerIsIlusionist = PlayerControl.LocalPlayer == Ilusionist.ilusionist;
-                hat.gameObject.SetActive(playerIsIlusionist);
+                var playerIsIllusionist = PlayerControl.LocalPlayer == Illusionist.illusionist;
+                hat.gameObject.SetActive(playerIsIllusionist);
             }
         }
 
