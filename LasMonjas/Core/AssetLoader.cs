@@ -17,6 +17,7 @@ namespace LasMonjas.Core
         private static AssetBundle AssetBundleHats;
         private static AssetBundle AssetBundleNamePlates;
         private static AssetBundle AssetBundleVisors;
+
         public static void LoadAssets() {
 
             // Custom Bundle Assets
@@ -26,6 +27,9 @@ namespace LasMonjas.Core
             CustomMain.customAssets.bombermanBomb = assetBundleBundle.LoadAsset<GameObject>("Bomb.prefab").DontUnload();
             CustomMain.customAssets.bombermanPlaceBombClip = assetBundleBundle.LoadAsset<AudioClip>("bombermanPlaceBombClip_Switch2.ogg").DontUnload();
             CustomMain.customAssets.bombermanBombClip = assetBundleBundle.LoadAsset<AudioClip>("bombermanBombClip_Explosion2.ogg").DontUnload();
+            CustomMain.customAssets.medusaPetrify = assetBundleBundle.LoadAsset<AudioClip>("medusaPretrify_Earth2.ogg").DontUnload();
+            CustomMain.customAssets.hypnotistReverse = assetBundleBundle.LoadAsset<GameObject>("hypnotistReverse.prefab").DontUnload();
+            CustomMain.customAssets.archerBowClip = assetBundleBundle.LoadAsset<AudioClip>("archer_Bow3.ogg").DontUnload();
             CustomMain.customAssets.renegadeRecruitMinionClip = assetBundleBundle.LoadAsset<AudioClip>("renegadeRecruitMinionClip_Sword4.ogg").DontUnload();
             CustomMain.customAssets.trapperMine = assetBundleBundle.LoadAsset<GameObject>("mine.prefab").DontUnload();
             CustomMain.customAssets.trapperStepMineClip = assetBundleBundle.LoadAsset<AudioClip>("trapperStepMineClip_Explosion1.ogg").DontUnload();
@@ -46,13 +50,17 @@ namespace LasMonjas.Core
             CustomMain.customAssets.treasureHunterCollectTreasure = assetBundleBundle.LoadAsset<AudioClip>("treasureHunterCollectTreasure_Item3.ogg").DontUnload();
             CustomMain.customAssets.devourerDingClip = assetBundleBundle.LoadAsset<AudioClip>("devourerDingClip_Bell3.ogg").DontUnload();
             CustomMain.customAssets.devourerDevourClip = assetBundleBundle.LoadAsset<AudioClip>("devourerDevourClip_Slash1.ogg").DontUnload();
+            CustomMain.customAssets.poisonerPoisonClip = assetBundleBundle.LoadAsset<AudioClip>("poisonerPoison.ogg").DontUnload();
+            CustomMain.customAssets.puppeteerClip = assetBundleBundle.LoadAsset<AudioClip>("puppeteer_Crow.ogg").DontUnload();
             CustomMain.customAssets.timeTravelerTimeReverseClip = assetBundleBundle.LoadAsset<AudioClip>("timeTravelerTimeReverseClip_Magic3.ogg").DontUnload();
             CustomMain.customAssets.squireShieldClip = assetBundleBundle.LoadAsset<AudioClip>("squireShieldClip_Parry.ogg").DontUnload();
             CustomMain.customAssets.fortuneTellerRevealClip = assetBundleBundle.LoadAsset<AudioClip>("fortuneTellerRevealClip_Magic2.ogg").DontUnload(); 
             CustomMain.customAssets.spiritualistRevive = assetBundleBundle.LoadAsset<AudioClip>("spiritualistRevive_Recovery.ogg").DontUnload();
             CustomMain.customAssets.performerDio = assetBundleBundle.LoadAsset<GameObject>("dio.prefab").DontUnload();
             CustomMain.customAssets.jinxQuack = assetBundleBundle.LoadAsset<AudioClip>("jinxQuack_quack.mp3").DontUnload();
-            CustomMain.customAssets.medusaPetrify = assetBundleBundle.LoadAsset<AudioClip>("medusaPretrify_Earth2.ogg").DontUnload();
+            CustomMain.customAssets.accelSprite = assetBundleBundle.LoadAsset<GameObject>("engineer_accelerate.prefab").DontUnload();
+            CustomMain.customAssets.decelSprite = assetBundleBundle.LoadAsset<GameObject>("engineer_slow.prefab").DontUnload();
+            CustomMain.customAssets.positionSprite = assetBundleBundle.LoadAsset<GameObject>("engineer_detect.prefab").DontUnload();
 
             // Capture the flag
             CustomMain.customAssets.redflag = assetBundleBundle.LoadAsset<GameObject>("redFlag.prefab").DontUnload();
@@ -122,7 +130,7 @@ namespace LasMonjas.Core
 
             CustomMain.customAssets.bombermanBombMusic = assetBundleMusic.LoadAsset<AudioClip>("BombermanTheme_Run Amok.mp3").DontUnload();
             CustomMain.customAssets.challengerDuelMusic = assetBundleMusic.LoadAsset<AudioClip>("ChallengerTheme_FutureGladiator.mp3").DontUnload();
-            CustomMain.customAssets.performerMusic = assetBundleMusic.LoadAsset<AudioClip>("PerformerTheme_Spazzmatica Polka.mp3").DontUnload();
+            CustomMain.customAssets.performerMusic = assetBundleMusic.LoadAsset<AudioClip>("PerformerTheme_Spazzmatica Polka.mp3").DontUnload();           
             CustomMain.customAssets.lobbyMusic = assetBundleMusic.LoadAsset<AudioClip>("Lobby_Hyperfun.mp3").DontUnload();
             CustomMain.customAssets.tasksCalmMusic = assetBundleMusic.LoadAsset<AudioClip>("TasksCalm_Sneaky Adventure.mp3").DontUnload();
             CustomMain.customAssets.tasksCoreMusic = assetBundleMusic.LoadAsset<AudioClip>("TasksCore_Investigations.mp3").DontUnload();
@@ -138,13 +146,13 @@ namespace LasMonjas.Core
             // Custom Gamemode Music Assets
             var resourceGamemodeMusicStream = allulCustomGamemodeMusic.GetManifestResourceStream("LasMonjas.Images.MyAssets.allulcustomgamemodemusic");
             var assetBundleGamemodeMusic = AssetBundle.LoadFromMemory(resourceGamemodeMusicStream.ReadFully());
-            
+
             CustomMain.customAssets.captureTheFlagMusic = assetBundleGamemodeMusic.LoadAsset<AudioClip>("CaptureTheFlagMusic_BeachfrontCelebration.mp3").DontUnload();
             CustomMain.customAssets.policeAndThiefMusic = assetBundleGamemodeMusic.LoadAsset<AudioClip>("PoliceAndThief_Unity.mp3").DontUnload();
             CustomMain.customAssets.kingOfTheHillMusic = assetBundleGamemodeMusic.LoadAsset<AudioClip>("KingOfTheHill_Bama Country.mp3").DontUnload();
             CustomMain.customAssets.hotPotatoMusic = assetBundleGamemodeMusic.LoadAsset<AudioClip>("HotPotato_Batty McFaddin.mp3").DontUnload();
             CustomMain.customAssets.zombieLaboratoryMusic = assetBundleGamemodeMusic.LoadAsset<AudioClip>("ZombieLaboratoryMusic_Anachronist.mp3").DontUnload();
-            
+
             // Custom Bundle Hat Assets
             byte[] bundleHatRead = Assembly.GetCallingAssembly().GetManifestResourceStream("LasMonjas.Images.MyAssets.allulcustomhats").ReadFully();
             AssetBundleHats = AssetBundle.LoadFromMemory(bundleHatRead);

@@ -30,7 +30,12 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "Muaresito", VisorName = "Muaresito Joy"},
             new AuthorData {AuthorName = "Muaresito", VisorName = "Olmaito"},
             new AuthorData {AuthorName = "Muaresito", VisorName = "Impostor Bros"},
+            new AuthorData {AuthorName = "Muaresito", VisorName = "Juice"},
+            new AuthorData {AuthorName = "Muaresito", VisorName = "Josefa Shoe"},
             new AuthorData {AuthorName = "IceCreamGuy", VisorName = "Mungus"},
+            new AuthorData {AuthorName = "ERIKHAPPY", VisorName = "Bubble Gum"},
+            new AuthorData {AuthorName = "lotty", VisorName = "Flower"},
+            new AuthorData {AuthorName = "lotty", VisorName = "Disco Ball"},
          };
 
         internal static Dictionary<int, AuthorData> IdToData = new Dictionary<int, AuthorData>();

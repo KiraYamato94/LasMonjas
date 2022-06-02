@@ -109,10 +109,10 @@ namespace LasMonjas.Core {
                             }
                             break;
                         case 9:
-                            // Ilusionist light out ability timer for other impostors
-                            if (Ilusionist.lightsOutTimer > 0) {
+                            // Illusionist light out ability timer for other impostors
+                            if (Illusionist.lightsOutTimer > 0) {
                                 string prefix = (even ? "<color=#FCBA03FF>" : "<color=#FF0000FF>");
-                                text.text = prefix + message + Ilusionist.lightsOutTimer.ToString("F0") + "</color>";
+                                text.text = prefix + message + Illusionist.lightsOutTimer.ToString("F0") + "</color>";
                             }
                             else {
                                 text.text = "";
@@ -151,7 +151,7 @@ namespace LasMonjas.Core {
                         case 13:
                             // Fink camera use for other impostors
                             if (Fink.finkTimer > 0) {
-                                string prefix = (even ? "<color=#FCBA03FF>" : "<color=#FF0000FF>");
+                                string prefix = (even ? "<color=#FCBA03FF>" : "<color=#B80032FF>");
                                 text.text = prefix + message + "</color>";
                             }
                             else {
@@ -232,6 +232,26 @@ namespace LasMonjas.Core {
                             // ZombieLaboratory warnings
                             if (ZombieLaboratory.zombieLaboratoryMode && ZombieLaboratory.matchDuration >= 0) {
                                 string prefix = ("<color=#FF8000FF>");
+                                text.text = prefix + message + "</color>";
+                            }
+                            else {
+                                text.text = "";
+                            }
+                            break;
+                        case 22:
+                            // Hypnotized text
+                            if (Hypnotist.messageTimer > 0) {
+                                string prefix = (even ? "<color=#FCBA03FF>" : "<color=#FF0000FF>");
+                                text.text = prefix + message + "</color>";
+                            }
+                            else {
+                                text.text = "";
+                            }
+                            break;
+                        case 23:
+                            // Speed text
+                            if (Engineer.messageTimer > 0) {
+                                string prefix = (even ? "<color=#FCBA03FF>" : "<color=#7F4C32FF>");
                                 text.text = prefix + message + "</color>";
                             }
                             else {

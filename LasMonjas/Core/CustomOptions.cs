@@ -412,7 +412,6 @@ namespace LasMonjas.Core
     {
         private static float timer = 1f;
         public static void Postfix(GameOptionsMenu __instance) {
-            //if (__instance.Children.Length < 100) return;
 
             var gameSettingMenu = UnityEngine.Object.FindObjectsOfType<GameSettingMenu>().FirstOrDefault();
             if (gameSettingMenu.RegularGameSettings.active || gameSettingMenu.RolesSettings.gameObject.active) return;
@@ -525,12 +524,12 @@ namespace LasMonjas.Core
             var hudString = sb.ToString();
 
             int defaultSettingsLines = 23;
-            int roleSettingsLines = defaultSettingsLines + 28;
-            int detailedSettingsP1 = roleSettingsLines + 36;
+            int roleSettingsLines = defaultSettingsLines + 36;
+            int detailedSettingsP1 = roleSettingsLines + 42;
             int detailedSettingsP2 = detailedSettingsP1 + 47;
-            int detailedSettingsP3 = detailedSettingsP2 + 33;
-            int detailedSettingsP4 = detailedSettingsP3 + 31;
-            int detailedSettingsP5 = detailedSettingsP4 + 37;
+            int detailedSettingsP3 = detailedSettingsP2 + 42;
+            int detailedSettingsP4 = detailedSettingsP3 + 40;
+            int detailedSettingsP5 = detailedSettingsP4 + 41;
             int end1 = hudString.TakeWhile(c => (defaultSettingsLines -= (c == '\n' ? 1 : 0)) > 0).Count();
             int end2 = hudString.TakeWhile(c => (roleSettingsLines -= (c == '\n' ? 1 : 0)) > 0).Count();
             int end3 = hudString.TakeWhile(c => (detailedSettingsP1 -= (c == '\n' ? 1 : 0)) > 0).Count();
@@ -539,44 +538,44 @@ namespace LasMonjas.Core
             int end6 = hudString.TakeWhile(c => (detailedSettingsP4 -= (c == '\n' ? 1 : 0)) > 0).Count();
             int end7 = hudString.TakeWhile(c => (detailedSettingsP5 -= (c == '\n' ? 1 : 0)) > 0).Count();
             int counter = LasMonjasPlugin.optionsPage;
-            if (counter == 0) {
-                hudString = hudString.Substring(0, end1) + "\n";
-            }
-            else if (counter == 1) {
-                hudString = hudString.Substring(end1 + 1, end2 - end1);
-                int gap = 1;
-                int index = hudString.TakeWhile(c => (gap -= (c == '\n' ? 1 : 0)) > 0).Count();
-                hudString = hudString.Insert(index, "\n");
-                gap = 9;
-                index = hudString.TakeWhile(c => (gap -= (c == '\n' ? 1 : 0)) > 0).Count();
-                hudString = hudString.Insert(index, "\n");
-                gap = 20;
-                index = hudString.TakeWhile(c => (gap -= (c == '\n' ? 1 : 0)) > 0).Count();
-                hudString = hudString.Insert(index, "\n");
-                gap = 26;
-                index = hudString.TakeWhile(c => (gap -= (c == '\n' ? 1 : 0)) > 0).Count();
-                hudString = hudString.Insert(index + 1, "\n");
-            }
-            else if (counter == 2) {
-                hudString = hudString.Substring(end2 + 1, end3 - end2);
-                int gap = 0;
-                int index = hudString.TakeWhile(c => (gap -= (c == '\n' ? 1 : 0)) > 0).Count();
-                hudString = hudString.Insert(index, "\n");
-            }
-            else if (counter == 3) {
-                hudString = hudString.Substring(end3 + 1, end4 - end3);
-            }
-            else if (counter == 4) {
-                hudString = hudString.Substring(end4 + 1, end5 - end4);
-            }
-            else if (counter == 5) {
-                hudString = hudString.Substring(end5 + 1, end6 - end5);
-            }
-            else if (counter == 6) {
-                hudString = hudString.Substring(end6 + 1, end7 - end6);
-            }
-            else if (counter == 7) {
-                hudString = hudString.Substring(end7 + 1);
+            switch (counter) {
+                case 0:
+                    hudString = hudString.Substring(0, end1) + "\n";
+                    break;
+                case 1:
+                    hudString = hudString.Substring(end1 + 1, end2 - end1);
+                    int gap = 1;
+                    int index = hudString.TakeWhile(c => (gap -= (c == '\n' ? 1 : 0)) > 0).Count();
+                    hudString = hudString.Insert(index, "\n");
+                    gap = 10;
+                    index = hudString.TakeWhile(c => (gap -= (c == '\n' ? 1 : 0)) > 0).Count();
+                    hudString = hudString.Insert(index, "\n");
+                    gap = 24;
+                    index = hudString.TakeWhile(c => (gap -= (c == '\n' ? 1 : 0)) > 0).Count();
+                    hudString = hudString.Insert(index, "\n");
+                    gap = 32;
+                    index = hudString.TakeWhile(c => (gap -= (c == '\n' ? 1 : 0)) > 0).Count();
+                    hudString = hudString.Insert(index + 1, "\n"); break;
+                case 2:
+                    hudString = hudString.Substring(end2 + 1, end3 - end2);
+                    int gaptwo = 0;
+                    int indextwo = hudString.TakeWhile(c => (gaptwo -= (c == '\n' ? 1 : 0)) > 0).Count();
+                    hudString = hudString.Insert(indextwo, "\n"); break;
+                case 3:
+                    hudString = hudString.Substring(end3 + 1, end4 - end3);
+                    break;
+                case 4:
+                    hudString = hudString.Substring(end4 + 1, end5 - end4);
+                    break;
+                case 5:
+                    hudString = hudString.Substring(end5 + 1, end6 - end5);
+                    break;
+                case 6:
+                    hudString = hudString.Substring(end6 + 1, end7 - end6);
+                    break;
+                case 7:
+                    hudString = hudString.Substring(end7 + 1);
+                    break;
             }
 
             hudString += $"\nTab for next page ({counter + 1}/8)";

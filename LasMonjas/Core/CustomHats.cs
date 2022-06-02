@@ -39,7 +39,7 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "Sensei", HatName = "Egyptian", NoBounce = true },
             new AuthorData {AuthorName = "Sensei", HatName = "Joker", NoBounce = true },
             new AuthorData {AuthorName = "Sensei", HatName = "SrCobra", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Sensei", HatName = "Dinoseto", NoBounce = false, altShader = true},
+            new AuthorData {AuthorName = "Sensei", HatName = "Dinoseto", NoBounce = true, altShader = true},
             new AuthorData {AuthorName = "Sensei", HatName = "Super Red Sus", NoBounce = false},
             new AuthorData {AuthorName = "Sensei", HatName = "Super Green Sus", NoBounce = false},
             new AuthorData {AuthorName = "Sensei", HatName = "Super Yellow Sus", NoBounce = false},
@@ -50,12 +50,15 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "Sensei", HatName = "Take It Easy", NoBounce = true},
             new AuthorData {AuthorName = "Sensei", HatName = "Moon Face", NoBounce = true, altShader = true},
             new AuthorData {AuthorName = "Sensei", HatName = "Pepper Carrot", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "Sensei", HatName = "Battle Armor", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "Sensei", HatName = "Space Captain", NoBounce = true},
             new AuthorData {AuthorName = "Sensei", HatName = "Dontaegamez", NoBounce = true},
+            new AuthorData {AuthorName = "Sensei", HatName = "Blocky", NoBounce = true},
             new AuthorData {AuthorName = "Muaresito", HatName = "Cell", NoBounce = true, altShader = true},
             new AuthorData {AuthorName = "Muaresito", HatName = "Ghost", NoBounce = true, altShader = true},
             new AuthorData {AuthorName = "Muaresito", HatName = "Goodbye", NoBounce = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Muaresito Joy", NoBounce = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Avatar", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "Muaresito", HatName = "Muaresito Joy", NoBounce = false},
+            new AuthorData {AuthorName = "Muaresito", HatName = "Avatar", NoBounce = false, altShader = true},
             new AuthorData {AuthorName = "Muaresito", HatName = "Scallop Walker", NoBounce = true},
             new AuthorData {AuthorName = "Muaresito", HatName = "Unknown Race", NoBounce = true, altShader = true},
             new AuthorData {AuthorName = "Muaresito", HatName = "Kill Palex", NoBounce = true},
@@ -65,16 +68,26 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "Muaresito", HatName = "Susboy", NoBounce = true, altShader = true},
             new AuthorData {AuthorName = "Muaresito", HatName = "Xabasus", NoBounce = true, altShader = true},
             new AuthorData {AuthorName = "Muaresito", HatName = "Bee", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "Muaresito", HatName = "Bounty Hunter", NoBounce = false},
+            new AuthorData {AuthorName = "Muaresito", HatName = "King Skull", NoBounce = true},
+            new AuthorData {AuthorName = "Muaresito", HatName = "Josefa", NoBounce = true},
             new AuthorData {AuthorName = "Xago", HatName = "World Destroyer", NoBounce = true},
             new AuthorData {AuthorName = "Xago", HatName = "Amazing Robot", NoBounce = true},
+            new AuthorData {AuthorName = "Xago", HatName = "Fourze", NoBounce = true},
             new AuthorData {AuthorName = "Hige", HatName = "Punsus", NoBounce = true},
-            new AuthorData {AuthorName = "IceCreamGuy", HatName = "Ice Cream Man", NoBounce = true},
+            new AuthorData {AuthorName = "IceCreamGuy", HatName = "Ice Cream Man", NoBounce = false},
             new AuthorData {AuthorName = "IceCreamGuy", HatName = "Devious Bling", NoBounce = true, altShader = true},
             new AuthorData {AuthorName = "IceCreamGuy", HatName = "Hungry Hat", NoBounce = true},
             new AuthorData {AuthorName = "Sen", HatName = "Artist", FloorHatName ="Artist_climb", ClimbHatName = "Artist_climb", LeftImageName = "Artist", NoBounce = true},
-            new AuthorData {AuthorName = "lotty", HatName = "Flower", NoBounce = true, altShader = true},
             new AuthorData {AuthorName = "lotty", HatName = "Bubbles", NoBounce = true},
+            new AuthorData {AuthorName = "lotty", HatName = "Black Cat", NoBounce = false},
+            new AuthorData {AuthorName = "lotty", HatName = "White Cat", NoBounce = false},
+            new AuthorData {AuthorName = "lotty", HatName = "Clown", NoBounce = true},
+            new AuthorData {AuthorName = "lotty", HatName = "Raccoon", NoBounce = true},
             new AuthorData {AuthorName = "ERIKHAPPY", HatName = "Blue Scarf", NoBounce = true},
+            new AuthorData {AuthorName = "ERIKHAPPY", HatName = "Egg", NoBounce = false},
+            new AuthorData {AuthorName = "Jesushi", HatName = "Jester", NoBounce = true},
+            new AuthorData {AuthorName = "Jesushi", HatName = "Crown", NoBounce = true},
         };
 
         internal static Dictionary<int, AuthorData> IdToData = new Dictionary<int, AuthorData>();
@@ -94,24 +107,40 @@ namespace LasMonjas.Core
                         if (data.FloorHatName != null && data.ClimbHatName != null && data.LeftImageName != null) {
                             if (data.NoBounce) {
                                 if (data.altShader == true) {
-                                    allHats.Add(CreateHat(GetSprite(data.HatName), data.AuthorName, GetSprite(data.ClimbHatName), GetSprite(data.FloorHatName), null, true, true));
+                                    allHats.Add(CreateHat(GetSprite(data.HatName), data.AuthorName, GetSprite(data.ClimbHatName), GetSprite(data.FloorHatName), GetSprite(data.LeftImageName), true, true));
                                 }
                                 else {
                                     allHats.Add(CreateHat(GetSprite(data.HatName), data.AuthorName, GetSprite(data.ClimbHatName), GetSprite(data.FloorHatName), GetSprite(data.LeftImageName), true, false));
                                 }
                             }
                             else {
-                                allHats.Add(CreateHat(GetSprite(data.HatName), data.AuthorName, GetSprite(data.ClimbHatName), GetSprite(data.FloorHatName), GetSprite(data.LeftImageName)));
+                                if (data.altShader == true) {
+                                    allHats.Add(CreateHat(GetSprite(data.HatName), data.AuthorName, GetSprite(data.ClimbHatName), GetSprite(data.FloorHatName), GetSprite(data.LeftImageName), false, true));
+                                }
+                                else {
+                                    allHats.Add(CreateHat(GetSprite(data.HatName), data.AuthorName, GetSprite(data.ClimbHatName), GetSprite(data.FloorHatName), GetSprite(data.LeftImageName)));
+                                }
                             }
 
                         }
                         else {
-                            if (data.altShader == true) {
-                                allHats.Add(CreateHat(GetSprite(data.HatName), data.AuthorName, null, null, null, false, true));
+                            if (data.NoBounce) {
+                                if (data.altShader == true) {
+                                    allHats.Add(CreateHat(GetSprite(data.HatName), data.AuthorName, null, null, null, true, true));
+                                }
+                                else {
+                                    allHats.Add(CreateHat(GetSprite(data.HatName), data.AuthorName, null, null, null, true, false));
+                                }
                             }
                             else {
-                                allHats.Add(CreateHat(GetSprite(data.HatName), data.AuthorName));
+                                if (data.altShader == true) {
+                                    allHats.Add(CreateHat(GetSprite(data.HatName), data.AuthorName, null, null, null, false, true));
+                                }
+                                else {
+                                    allHats.Add(CreateHat(GetSprite(data.HatName), data.AuthorName, null, null, null, false, false));
+                                }
                             }
+                            
                         }
                         IdToData.Add(HatManager.Instance.allHats.Count - 1, data);
 
