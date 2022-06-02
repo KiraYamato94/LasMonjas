@@ -25,7 +25,7 @@ namespace LasMonjas
     {
         public const string Id = "me.allul.lasmonjas";
 
-        public const string VersionString = "1.5.7";
+        public const string VersionString = "2.0.1";
 
         public static System.Version Version = System.Version.Parse(VersionString);
         internal static BepInEx.Logging.ManualLogSource Logger;
@@ -44,6 +44,7 @@ namespace LasMonjas
         public static ConfigEntry<bool> HorseMode { get; set; }
         public static ConfigEntry<string> IpCustom { get; set; }
         public static ConfigEntry<ushort> PortCustom { get; set; }
+
 
         public static IRegionInfo[] defaultRegions;
         public static void UpdateRegions() {
@@ -70,6 +71,7 @@ namespace LasMonjas
 
             IpCustom = Config.Bind("Custom", "Custom Server IP", "127.0.0.1");
             PortCustom = Config.Bind("Custom", "Custom Server Port", (ushort)22023);
+
             defaultRegions = ServerManager.DefaultRegions;
 
             UpdateRegions();
@@ -83,6 +85,7 @@ namespace LasMonjas
 
             Harmony.PatchAll();
             SubmergedCompatibility.Initialize();
+            AddComponent<ModUpdateBehaviour>();
         }
     }
 

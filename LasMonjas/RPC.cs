@@ -22,23 +22,30 @@ namespace LasMonjas
         Painter,
         Demon,
         Janitor,
-        Ilusionist,
+        Illusionist,
         Manipulator,
         Bomberman,
         Chameleon,
         Gambler,
         Sorcerer,
+        Medusa,
+        Hypnotist,
+        Archer,
         Renegade,
         Minion,
         BountyHunter,
         Trapper,
         Yinyanger,
         Challenger,
+        Ninja,
+        Berserker, 
         Joker,
         RoleThief,
         Pyromaniac,
         TreasureHunter,
         Devourer,
+        Poisoner,
+        Puppeteer, 
         Captain,
         Mechanic,
         Sheriff,
@@ -57,9 +64,12 @@ namespace LasMonjas
         Coward,
         Vigilant,
         VigilantMira,
-        Medusa,
         Hunter,
         Jinx,
+        Bat,
+        Necromancer,
+        Engineer,
+        Shy, 
         Lover,
         Lighter,
         Blind,
@@ -67,6 +77,7 @@ namespace LasMonjas
         BigChungus,
         TheChosenOne,
         Performer,
+        Pro,
         Crewmate,
         Impostor,
 
@@ -191,7 +202,7 @@ namespace LasMonjas
         ShareOptions,
         ForceEnd,
         SetRole,
-        SetModifier,
+        SetModifier, 
         UseUncheckedVent,
         UncheckedMurderPlayer,
         UncheckedCmdReportDeadBody,
@@ -214,6 +225,10 @@ namespace LasMonjas
         ChameleonInvisible,
         GamblerShoot,
         SetSpelledPlayer,
+        MedusaPetrify,
+        ShowArcherNotification,
+        PlaceSpiralTrap,
+        ActivateSpiralTrap,
 
         RenegadeRecruitMinion,
         BountyHunterSetKill,
@@ -227,12 +242,18 @@ namespace LasMonjas
         ChallengerPerformDuel,
         ChallengerSelectAttack,
         ChallengerCantDuel,
+        NinjaKill,
+        BerserkerKill,
 
         RoleThiefSteal,
         PyromaniacWin,
         PlaceTreasure,
         CollectedTreasure,
         DevourBody,
+        PoisonerWin,
+        PuppeteerWin,
+        PuppeteerTransform,
+        PuppeteerResetTransform,
 
         MechanicFixLights,
         MechanicUsedRepair,
@@ -256,9 +277,11 @@ namespace LasMonjas
         PlaceCamera,
         VigilantAbilityUses,
         PerformerIsReported,
-        MedusaPetrify,
         HunterUsedHunted,
         SetJinxed,
+        BatFrequency,
+        PlaceEngineerTrap,
+        ActivateEngineerTrap,
 
         ChangeMusic,
 
@@ -304,6 +327,9 @@ namespace LasMonjas
             Hats.clearHats();
             Mine.clearMines();
             Trap.clearTraps();
+            EngineerTrap.clearTraps();
+            HypnotistSpiral.clearHypnotistSpirals();
+            Footprint.clearFootprints();
             clearAndReloadMapOptions();
             clearAndReloadRoles();
             clearGameHistory();
@@ -334,7 +360,7 @@ namespace LasMonjas
             }
         }
 
-        public static void setRole(byte roleId, byte playerId, byte flag) {
+        public static void setRole(byte roleId, byte playerId) {
             foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                 if (player.PlayerId == playerId) {
                     switch ((RoleId)roleId) {
@@ -350,8 +376,8 @@ namespace LasMonjas
                         case RoleId.Janitor:
                             Janitor.janitor = player;
                             break;
-                        case RoleId.Ilusionist:
-                            Ilusionist.ilusionist = player;
+                        case RoleId.Illusionist:
+                            Illusionist.illusionist = player;
                             break;
                         case RoleId.Manipulator:
                             Manipulator.manipulator = player;
@@ -368,6 +394,15 @@ namespace LasMonjas
                         case RoleId.Sorcerer:
                             Sorcerer.sorcerer = player;
                             break;
+                        case RoleId.Medusa:
+                            Medusa.medusa = player;
+                            break;
+                        case RoleId.Hypnotist:
+                            Hypnotist.hypnotist = player;
+                            break;
+                        case RoleId.Archer:
+                            Archer.archer = player;
+                            break;                        
                         case RoleId.Renegade:
                             Renegade.renegade = player;
                             break;
@@ -386,6 +421,12 @@ namespace LasMonjas
                         case RoleId.Challenger:
                             Challenger.challenger = player;
                             break;
+                        case RoleId.Ninja:
+                            Ninja.ninja = player;
+                            break;
+                        case RoleId.Berserker:
+                            Berserker.berserker = player;
+                            break;
                         case RoleId.Joker:
                             Joker.joker = player;
                             break;
@@ -400,6 +441,12 @@ namespace LasMonjas
                             break;
                         case RoleId.Devourer:
                             Devourer.devourer = player;
+                            break;
+                        case RoleId.Poisoner:
+                            Poisoner.poisoner = player;
+                            break;
+                        case RoleId.Puppeteer:
+                            Puppeteer.puppeteer = player;
                             break;
                         case RoleId.Captain:
                             Captain.captain = player;
@@ -455,41 +502,26 @@ namespace LasMonjas
                         case RoleId.VigilantMira:
                             Vigilant.vigilantMira = player;
                             break;
-                        case RoleId.Medusa:
-                            Medusa.medusa = player;
-                            break;
                         case RoleId.Hunter:
                             Hunter.hunter = player;
                             break;
                         case RoleId.Jinx:
                             Jinx.jinx = player;
                             break;
-
-                        // Modifiers
-                        case RoleId.Lover:
-                            if (flag == 0) Modifiers.lover1 = player;
-                            else Modifiers.lover2 = player;
+                        case RoleId.Bat:
+                            Bat.bat = player;
                             break;
-                        case RoleId.Lighter:
-                            Modifiers.lighter = player;
+                        case RoleId.Necromancer:
+                            Necromancer.necromancer = player;
                             break;
-                        case RoleId.Blind:
-                            Modifiers.blind = player;
+                        case RoleId.Engineer:
+                            Engineer.engineer = player;
                             break;
-                        case RoleId.Flash:
-                            Modifiers.flash = player;
-                            break;
-                        case RoleId.BigChungus:
-                            Modifiers.bigchungus = player;
-                            break;
-                        case RoleId.TheChosenOne:
-                            Modifiers.theChosenOne = player;
-                            break;
-                        case RoleId.Performer:
-                            Modifiers.performer = player;
-                            break;
+                        case RoleId.Shy:
+                            Shy.shy = player;
+                            break;                        
                             
-                            // Capture the Flag
+                        // Capture the Flag
                         case RoleId.RedPlayer01:
                             CaptureTheFlag.redplayer01 = player;
                             CaptureTheFlag.redteamFlag.Add(player);
@@ -893,17 +925,16 @@ namespace LasMonjas
                 }
         }
 
-        /*public static void setModifier(byte modifierId, byte playerId, byte flag) {
+        public static void setModifier(byte modifierId, byte playerId, byte flag) {
             PlayerControl player = Helpers.playerById(playerId);
             switch ((RoleId)modifierId) {
-                // Modifiers
                 case RoleId.Lover:
                     if (flag == 0) Modifiers.lover1 = player;
                     else Modifiers.lover2 = player;
                     break;
                 case RoleId.Lighter:
                     Modifiers.lighter = player;
-                    break;
+                    break;                
                 case RoleId.Blind:
                     Modifiers.blind = player;
                     break;
@@ -919,8 +950,11 @@ namespace LasMonjas
                 case RoleId.Performer:
                     Modifiers.performer = player;
                     break;
+                case RoleId.Pro:
+                    Modifiers.pro = player;
+                    break;
             }
-        }*/
+        }
         
         public static void useUncheckedVent(int ventId, byte playerId, byte isEnter) {
             PlayerControl player = Helpers.playerById(playerId);
@@ -1014,41 +1048,64 @@ namespace LasMonjas
                 performerIsReported(0);
         }
 
-        public static void dragPlaceBody(byte playerId) {
+        public static void dragPlaceBody(byte playerId, byte carrierId) {
             DeadBody[] array = UnityEngine.Object.FindObjectsOfType<DeadBody>();
             for (int i = 0; i < array.Length; i++) {
                 if (GameData.Instance.GetPlayerById(array[i].ParentId).PlayerId == playerId) {
-                    if (!Janitor.dragginBody) {
-                        Janitor.dragginBody = true;
-                        Janitor.bodyId = playerId;
-                        if (PlayerControl.GameOptions.MapId == 5) {
-                            GameObject vent = GameObject.Find("LowerCentralVent");
-                            vent.GetComponent<BoxCollider2D>().enabled = false;
-                        }
-                    }
-                    else {
-                        Janitor.dragginBody = false;
-                        Janitor.bodyId = 0;
-                        var currentPosition = Janitor.janitor.GetTruePosition();
-                        var velocity = Janitor.janitor.gameObject.GetComponent<Rigidbody2D>().velocity.normalized;
-                        var newPos = ((Vector2)Janitor.janitor.GetTruePosition()) - (velocity / 3) + new Vector2(0.15f, 0.25f) + array[i].myCollider.offset;
-                        if (!PhysicsHelpers.AnythingBetween(
-                            currentPosition,
-                            newPos,
-                            Constants.ShipAndObjectsMask,
-                            false
-                        )) {
-                            if (PlayerControl.GameOptions.MapId == 5) {
-                                array[i].transform.position = newPos;
-                                array[i].transform.position += new Vector3(0, 0, -0.5f);
-                                GameObject vent = GameObject.Find("LowerCentralVent");
-                                vent.GetComponent<BoxCollider2D>().enabled = true;
+                    foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                        if (Janitor.janitor != null && player.PlayerId == carrierId && carrierId == Janitor.janitor.Data.PlayerId) {
+                            if (!Janitor.dragginBody) {
+                                Janitor.dragginBody = true;
+                                Janitor.bodyId = playerId;
+                                if (PlayerControl.GameOptions.MapId == 5) {
+                                    GameObject vent = GameObject.Find("LowerCentralVent");
+                                    vent.GetComponent<BoxCollider2D>().enabled = false;
+                                }
                             }
                             else {
-                                array[i].transform.position = newPos;
+                                Janitor.dragginBody = false;
+                                Janitor.bodyId = 0;
+                                var currentPosition = Janitor.janitor.GetTruePosition();
+                                var velocity = Janitor.janitor.gameObject.GetComponent<Rigidbody2D>().velocity.normalized;
+                                var newPos = ((Vector2)Janitor.janitor.GetTruePosition()) - (velocity / 3) + new Vector2(0.15f, 0.25f) + array[i].myCollider.offset;
+                                if (!PhysicsHelpers.AnythingBetween(
+                                    currentPosition,
+                                    newPos,
+                                    Constants.ShipAndObjectsMask,
+                                    false
+                                )) {
+                                    if (PlayerControl.GameOptions.MapId == 5) {
+                                        array[i].transform.position = newPos;
+                                        array[i].transform.position += new Vector3(0, 0, -0.5f);
+                                        GameObject vent = GameObject.Find("LowerCentralVent");
+                                        vent.GetComponent<BoxCollider2D>().enabled = true;
+                                    }
+                                    else {
+                                        array[i].transform.position = newPos;
+                                    }
+                                }
                             }
                         }
-                    }
+                        else if (Necromancer.necromancer != null && player.PlayerId == carrierId && carrierId == Necromancer.necromancer.Data.PlayerId) {
+                            if (!Necromancer.dragginBody) {
+                                Necromancer.dragginBody = true;
+                                Necromancer.bodyId = playerId;
+                            }
+                            else {
+                                Necromancer.dragginBody = false;
+                                Necromancer.bodyId = 0;
+                                var currentPosition = Necromancer.necromancer.GetTruePosition();
+                                var velocity = Necromancer.necromancer.gameObject.GetComponent<Rigidbody2D>().velocity.normalized;
+                                var newPos = ((Vector2)Necromancer.necromancer.GetTruePosition()) - (velocity / 3) + new Vector2(0.15f, 0.25f) + array[i].myCollider.offset;
+                                if (!PhysicsHelpers.AnythingBetween(
+                                    currentPosition,
+                                    newPos,
+                                    Constants.ShipAndObjectsMask,
+                                    false
+                                )) array[i].transform.position = newPos;
+                            }
+                        }
+                    }                    
                 }
             }
         }
@@ -1072,10 +1129,10 @@ namespace LasMonjas
             if (MapBehaviour.Instance) {
                 MapBehaviour.Instance.Close();
             }
-            Ilusionist.lightsOutTimer = Ilusionist.lightsOutDuration;
+            Illusionist.lightsOutTimer = Illusionist.lightsOutDuration;
             // If the local player is impostor indicate lights out
-            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor && PlayerControl.LocalPlayer != Ilusionist.ilusionist) {
-                new CustomMessage("The Ilusionist turned off the lights: ", Ilusionist.lightsOutDuration, -1, -1.3f, 9);
+            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor && PlayerControl.LocalPlayer != Illusionist.illusionist) {
+                new CustomMessage("The Illusionist turned off the lights: ", Illusionist.lightsOutDuration, -1, -1.3f, 9);
             }
         }
 
@@ -1195,14 +1252,98 @@ namespace LasMonjas
             }
         }
 
+        public static void medusaPetrify(byte targetId) {
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                if (player.PlayerId == targetId) {
+                    Medusa.messageTimer = Medusa.duration;
+                    if (PlayerControl.LocalPlayer == player) {
+                        SoundManager.Instance.PlaySound(CustomMain.customAssets.medusaPetrify, false, 100f);
+                        if (MapBehaviour.Instance) {
+                            MapBehaviour.Instance.Close();
+                        }
+                        new CustomMessage("Petrified!", Medusa.duration, -1, 1.6f, 14);
+                    }
+                    player.moveable = false;
+                    player.NetTransform.Halt(); // Stop current movement
+                    HudManager.Instance.StartCoroutine(Effects.Lerp(Medusa.duration, new Action<float>((p) => { // Delayed action
+                        if (p == 1f) {
+                            player.moveable = true;
+                        }
+                    })));
+                    return;
+                }
+            }
+        }
+        
+        public static void showArcherNotification(byte murderId) {
+
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                if (player == PlayerControl.LocalPlayer && Vector2.Distance(player.transform.position, Helpers.playerById(murderId).transform.position) < Archer.noticeRange) {
+                    Arrow arrow = new Arrow(Color.white);
+                    arrow.image.sprite = Archer.getArcherWarningSprite(); 
+                    SoundManager.Instance.PlaySound(CustomMain.customAssets.archerBowClip, false, 100f);
+
+                    Vector3 pos = Helpers.playerById(murderId).transform.position;
+
+                    HudManager.Instance.StartCoroutine(Effects.Lerp(10f, new Action<float>((p) => {
+                        arrow.Update(pos);
+                        arrow.arrow.transform.eulerAngles = new Vector3(0f, 0f, 0f);
+                        if (p > 0.8f) {
+                            arrow.image.color = new Color(1f, 1f, 1f, (1f - p) * 5f);
+                        }
+                        if (p == 1f) {
+                            UnityEngine.Object.Destroy(arrow.arrow);
+                        }
+                    })));
+                }
+            }
+        }
+
+        public static void placeSpiralTrap() {
+            Hypnotist.currentSpiralNumber += 1;
+            new HypnotistSpiral(Hypnotist.spiralDuration, Hypnotist.hypnotist);
+        }
+
+        public static void activateSpiralTrap(byte targetId) {
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                if (player.PlayerId == targetId) {
+
+                    player.MyPhysics.Speed *= -1;
+
+                    HudManager.Instance.StartCoroutine(Effects.Lerp(Hypnotist.spiralDuration, new Action<float>((p) => {
+                        if (p == 1f) {
+                            player.MyPhysics.Speed *= -1;
+                            if (player == PlayerControl.LocalPlayer) {
+                                foreach (HypnotistSpiral spiral in HypnotistSpiral.hypnotistSpirals) {
+                                    spiral.isActive = true;
+                                }
+                            }
+                        }
+                    })));
+                }
+            }
+        }
+        
         public static void renegadeRecruitMinion(byte targetId) {
             PlayerControl player = Helpers.playerById(targetId);
             if (player == null) return;
 
             Renegade.usedRecruit = true;
 
-            if (player == Chameleon.chameleon) {
+            if (Chameleon.chameleon != null && player == Chameleon.chameleon) {
                 Chameleon.resetChameleon();
+            }
+
+            if (Archer.archer != null && player == Archer.archer) {
+                if (Archer.Guides.Count != 0) {
+                    foreach (var guide in Archer.Guides) {
+                        guide.Value.color = Color.clear;
+                    }
+                }
+                Archer.weaponEquiped = false;
+                if (Archer.bow != null) {
+                    Archer.bow.gameObject.SetActive(Archer.weaponEquiped);
+                }
             }
 
             DestroyableSingleton<RoleManager>.Instance.SetRole(player, RoleTypes.Crewmate);
@@ -1259,21 +1400,27 @@ namespace LasMonjas
             if (player == Coward.coward) Coward.clearAndReload();
             if (player == Vigilant.vigilant) Vigilant.clearAndReload();
             if (player == Vigilant.vigilantMira) Vigilant.clearAndReload();
-            if (player == Medusa.medusa) Medusa.clearAndReload();
             if (player == Hunter.hunter) Hunter.clearAndReload();
             if (player == Jinx.jinx) Jinx.clearAndReload();
+            if (player == Bat.bat) Bat.clearAndReload();
+            if (player == Necromancer.necromancer) Necromancer.clearAndReload();
+            if (player == Engineer.engineer) Engineer.clearAndReload();
+            if (player == Shy.shy) Shy.clearAndReload();
 
             // Impostor roles
             if (player == Mimic.mimic) Mimic.clearAndReload();
             if (player == Painter.painter) Painter.clearAndReload();
             if (player == Demon.demon) Demon.clearAndReload();
             if (player == Janitor.janitor) Janitor.clearAndReload();
-            if (player == Ilusionist.ilusionist) Ilusionist.clearAndReload();
+            if (player == Illusionist.illusionist) Illusionist.clearAndReload();
             if (player == Manipulator.manipulator) Manipulator.clearAndReload();
             if (player == Bomberman.bomberman) Bomberman.clearAndReload();
             if (player == Chameleon.chameleon) Chameleon.clearAndReload();
             if (player == Gambler.gambler) Gambler.clearAndReload();
             if (player == Sorcerer.sorcerer) Sorcerer.clearAndReload();
+            if (player == Medusa.medusa) Medusa.clearAndReload();
+            if (player == Hypnotist.hypnotist) Hypnotist.clearAndReload();
+            if (player == Archer.archer) Archer.clearAndReload();
 
             // Neutral roles
             if (player == Joker.joker) Joker.clearAndReload();
@@ -1281,6 +1428,8 @@ namespace LasMonjas
             if (player == Pyromaniac.pyromaniac) Pyromaniac.clearAndReload();
             if (player == TreasureHunter.treasureHunter) TreasureHunter.clearAndReload();
             if (player == Devourer.devourer) Devourer.clearAndReload();
+            if (player == Poisoner.poisoner) Poisoner.clearAndReload();
+            if (player == Puppeteer.puppeteer) Puppeteer.clearAndReload();
 
             if (!ignoreLovers && (player == Modifiers.lover1 || player == Modifiers.lover2)) { // The whole Lover couple is being erased
                 Modifiers.ClearLovers();
@@ -1320,6 +1469,12 @@ namespace LasMonjas
                 else if (BountyHunter.hasToKill == Devourer.devourer) {
                     BountyHunter.rolName = ": <color=#808080FF>Devourer</color>";
                 }
+                else if (BountyHunter.hasToKill == Poisoner.poisoner) {
+                    BountyHunter.rolName = ": <color=#808080FF>Poisoner</color>";
+                }
+                else if (BountyHunter.hasToKill == Puppeteer.puppeteer) {
+                    BountyHunter.rolName = ": <color=#808080FF>Puppeteer</color>";
+                }
                 else if (BountyHunter.hasToKill == Captain.captain) {
                     BountyHunter.rolName = ": <color=#5E3E7DFF>Captain</color>";
                 }
@@ -1330,7 +1485,7 @@ namespace LasMonjas
                     BountyHunter.rolName = ": <color=#FFFF00FF>Sheriff</color>";
                 }
                 else if (BountyHunter.hasToKill == Detective.detective) {
-                    BountyHunter.rolName = ": <color=#A600FFFF>Detective</color>";
+                    BountyHunter.rolName = ": <color=#C85ABEFF>Detective</color>";
                 }
                 else if (BountyHunter.hasToKill == Forensic.forensic) {
                     BountyHunter.rolName = ": <color=#4E61FFFF>Forensic</color>";
@@ -1371,14 +1526,23 @@ namespace LasMonjas
                 else if (BountyHunter.hasToKill == Vigilant.vigilantMira) {
                     BountyHunter.rolName = ": <color=#E3E15AFF>Vigilant</color>";
                 }
-                else if (BountyHunter.hasToKill == Medusa.medusa) {
-                    BountyHunter.rolName = ": <color=#F2BEFFFF>Medusa</color>";
-                }
                 else if (BountyHunter.hasToKill == Hunter.hunter) {
                     BountyHunter.rolName = ": <color=#E1EB90FF>Hunter</color>";
                 }
                 else if (BountyHunter.hasToKill == Jinx.jinx) {
                     BountyHunter.rolName = ": <color=#928B55FF>Jinx</color>";
+                }
+                else if (BountyHunter.hasToKill == Bat.bat) {
+                    BountyHunter.rolName = ": <color=#A600FFFF>Bat</color>";
+                }
+                else if (BountyHunter.hasToKill == Necromancer.necromancer) {
+                    BountyHunter.rolName = ": <color=#FF73F6FF>Necromancer</color>";
+                }
+                else if (BountyHunter.hasToKill == Engineer.engineer) {
+                    BountyHunter.rolName = ": <color=#7F4C00FF>Engineer</color>";
+                }
+                else if (BountyHunter.hasToKill == Shy.shy) {
+                    BountyHunter.rolName = ": <color=#F2BEFFFF>Shy</color>";
                 }
                 else if (BountyHunter.hasToKill == Mimic.mimic) {
                     BountyHunter.rolName = ": <color=#FF0000FF>Mimic</color>";
@@ -1392,8 +1556,8 @@ namespace LasMonjas
                 else if (BountyHunter.hasToKill == Janitor.janitor) {
                     BountyHunter.rolName = ": <color=#FF0000FF>Janitor</color>";
                 }
-                else if (BountyHunter.hasToKill == Ilusionist.ilusionist) {
-                    BountyHunter.rolName = ": <color=#FF0000FF>Ilusionist</color>";
+                else if (BountyHunter.hasToKill == Illusionist.illusionist) {
+                    BountyHunter.rolName = ": <color=#FF0000FF>Illusionist</color>";
                 }
                 else if (BountyHunter.hasToKill == Manipulator.manipulator) {
                     BountyHunter.rolName = ": <color=#FF0000FF>Manipulator</color>";
@@ -1410,6 +1574,15 @@ namespace LasMonjas
                 else if (BountyHunter.hasToKill == Sorcerer.sorcerer) {
                     BountyHunter.rolName = ": <color=#FF0000FF>Sorcerer</color>";
                 }
+                else if (BountyHunter.hasToKill == Medusa.medusa) {
+                    BountyHunter.rolName = ": <color=#FF0000FF>Medusa</color>";
+                }
+                else if (BountyHunter.hasToKill == Archer.archer) {
+                    BountyHunter.rolName = ": <color=#FF0000FF>Archer</color>";
+                }
+                else if (BountyHunter.hasToKill == Hypnotist.hypnotist) {
+                    BountyHunter.rolName = ": <color=#FF0000FF>Hypnotist</color>";
+                }
                 else if (BountyHunter.hasToKill == Modifiers.lighter) {
                     BountyHunter.rolName = ": <color=#F08048FF>Lighter</color>";
                 }
@@ -1418,6 +1591,9 @@ namespace LasMonjas
                 }
                 else if (BountyHunter.hasToKill == Modifiers.flash) {
                     BountyHunter.rolName = ": <color=#F08048FF>Flash</color>";
+                }
+                else if (BountyHunter.hasToKill == Modifiers.pro) {
+                    BountyHunter.rolName = ": <color=#F08048FF>Pro</color>";
                 }
                 else if (BountyHunter.hasToKill.Data.Role.IsImpostor) {
                     BountyHunter.rolName = ": <color=#FF0000FF>Impostor</color>";
@@ -1576,7 +1752,7 @@ namespace LasMonjas
             }
 
             // Force map close to all players
-            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor && MapBehaviour.Instance || PlayerControl.LocalPlayer == Joker.joker && MapBehaviour.Instance) {
+            if (MapBehaviour.Instance) {
                 MapBehaviour.Instance.Close();
             }
             // Force task close to all players
@@ -1639,13 +1815,38 @@ namespace LasMonjas
             Challenger.challengerIsInMeeting = true;
         }
 
+        public static void ninjaKill(byte targetId) {
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                if (player.PlayerId == targetId) {
+                    Ninja.ninja.MurderPlayer(player);
+                    Ninja.ninja.transform.position = player.transform.position;
+                    return;
+                }
+            }
+        }
+
+        public static void berserkerKill(byte targetId) {
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                if (player.PlayerId == targetId) {
+                    Berserker.berserker.MurderPlayer(player);
+                    if (!Berserker.killedFirstTime) {
+                        Berserker.killedFirstTime = true;
+                    }
+                    else {
+                        Berserker.timeToKill = Berserker.backupTimeToKill;
+                    }
+                    return;
+                }
+            }
+        }
+        
         public static PlayerControl oldRoleThief = null;
 
         public static void roleThiefSteal(byte targetId) {
             foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
                 if (player.PlayerId == targetId && RoleThief.rolethief != null) {
                     // Suicide when impostor or rebel variants
-                    if (player.Data.Role.IsImpostor || player == Renegade.renegade || player == Minion.minion || player == BountyHunter.bountyhunter || player == Trapper.trapper || player == Yinyanger.yinyanger || player == Challenger.challenger) {
+                    if (player.Data.Role.IsImpostor || player == Renegade.renegade || player == Minion.minion || player == BountyHunter.bountyhunter || player == Trapper.trapper || player == Yinyanger.yinyanger || player == Challenger.challenger || player == Ninja.ninja || player == Berserker.berserker) {
                         RoleThief.rolethief.MurderPlayer(RoleThief.rolethief);
                         return;
                     }
@@ -1747,14 +1948,23 @@ namespace LasMonjas
                             Vigilant.doorLog.transform.localPosition = new Vector2(0, -0.5f);
                         }
                     }
-                    else if (Medusa.medusa != null && Medusa.medusa == player) {
-                        Medusa.medusa = oldRoleThief;
-                    }
                     else if (Hunter.hunter != null && Hunter.hunter == player) {
                         Hunter.hunter = oldRoleThief;
                     }
                     else if (Jinx.jinx != null && Jinx.jinx == player) {
                         Jinx.jinx = oldRoleThief;
+                    }
+                    else if (Bat.bat != null && Bat.bat == player) {
+                        Bat.bat = oldRoleThief;
+                    }
+                    else if (Necromancer.necromancer != null && Necromancer.necromancer == player) {
+                        Necromancer.necromancer = oldRoleThief;
+                    }
+                    else if (Engineer.engineer != null && Engineer.engineer == player) {
+                        Engineer.engineer = oldRoleThief;
+                    }
+                    else if (Shy.shy != null && Shy.shy == player) {
+                        Shy.shy = oldRoleThief;
                     }
                     else { // Crewmate
                     }
@@ -1800,6 +2010,9 @@ namespace LasMonjas
                     if (Janitor.janitor != null && Janitor.dragginBody && Janitor.bodyId == playerId) {
                         janitorResetValues();
                     }
+                    else if (Necromancer.necromancer != null && Necromancer.dragginBody && Necromancer.bodyId == playerId) {
+                        necromancerResetValues();
+                    }
                 }
             }
             if (Modifiers.performer != null && playerId == Modifiers.performer.PlayerId)
@@ -1813,6 +2026,49 @@ namespace LasMonjas
             }
         }
 
+        public static void poisonerWin() {
+            SoundManager.Instance.PlaySound(CustomMain.customAssets.poisonerPoisonClip, false, 100f);
+            Poisoner.triggerPoisonerWin = true;
+            foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
+                if (p != Poisoner.poisoner) p.Exiled();
+            }
+        }
+        public static void puppeteerTransform(byte playerId) {
+            PlayerControl target = Helpers.playerById(playerId);
+            if (Puppeteer.puppeteer == null || target == null) return;
+            Puppeteer.positionPreMorphed = Puppeteer.puppeteer.transform.position;
+            Puppeteer.morphed = true;
+            Puppeteer.transformTarget = target;
+            if (Painter.painterTimer <= 0f)
+                Puppeteer.puppeteer.setLook(target.Data.PlayerName, target.Data.DefaultOutfit.ColorId, target.Data.DefaultOutfit.HatId, target.Data.DefaultOutfit.VisorId, target.Data.DefaultOutfit.SkinId, target.Data.DefaultOutfit.PetId);
+        }
+        
+        public static void puppeteerWin() {
+            Puppeteer.triggerPuppeteerWin = true;
+        }
+
+        public static void puppeteerResetTransform() {
+            if (PlayerControl.GameOptions.MapId == 5) {
+                if (Puppeteer.puppeteer.transform.position.y > 0) {
+                    Puppeteer.puppeteer.transform.position = new Vector3(5.5f, 31.5f, -5);
+                }
+                else {
+                    Puppeteer.puppeteer.transform.position = new Vector3(-4.75f, -33.25f, -5);
+                }
+            }
+            else {
+                Puppeteer.puppeteer.transform.position = Puppeteer.positionPreMorphed;
+            }
+            HudManagerStartPatch.puppeteerTransformButton.Timer = HudManagerStartPatch.puppeteerTransformButton.MaxTimer;
+            HudManagerStartPatch.puppeteerSampleButton.Timer = HudManagerStartPatch.puppeteerSampleButton.MaxTimer; 
+            Puppeteer.morphed = false;
+            Puppeteer.puppeteer.setDefaultLook();
+            Puppeteer.transformTarget = null;
+            Puppeteer.pickTarget = null;
+            Puppeteer.currentTarget = null;
+
+        }
+        
         public static void mechanicFixLights() {
             SwitchSystem switchSystem = ShipStatus.Instance.Systems[SystemTypes.Electrical].Cast<SwitchSystem>();
             switchSystem.ActualSwitches = switchSystem.ExpectedSwitches;
@@ -1892,6 +2148,9 @@ namespace LasMonjas
                     if (Janitor.janitor != null && Janitor.dragginBody) {
                         janitorResetValues();
                     }
+                    if (Necromancer.necromancer != null && Necromancer.dragginBody) {
+                        necromancerResetValues();
+                    }
                 }
         }
 
@@ -1903,7 +2162,7 @@ namespace LasMonjas
         }
 
         public static void shieldedMurderAttempt() {
-            if (Squire.shielded != null && Squire.shielded == PlayerControl.LocalPlayer && Squire.showAttemptToShielded || Squire.showAttemptToShielded && (PlayerControl.LocalPlayer.Data.Role.IsImpostor || Sheriff.sheriff != null && Sheriff.sheriff == PlayerControl.LocalPlayer || Renegade.renegade != null && Renegade.renegade == PlayerControl.LocalPlayer || Minion.minion != null && Minion.minion == PlayerControl.LocalPlayer || BountyHunter.bountyhunter != null && BountyHunter.bountyhunter == PlayerControl.LocalPlayer || Trapper.trapper != null && Trapper.trapper == PlayerControl.LocalPlayer || Yinyanger.yinyanger != null && Yinyanger.yinyanger == PlayerControl.LocalPlayer || Challenger.challenger != null && Challenger.challenger == PlayerControl.LocalPlayer)) {
+            if (Squire.shielded != null && Squire.shielded == PlayerControl.LocalPlayer && Squire.showAttemptToShielded || Squire.showAttemptToShielded && (PlayerControl.LocalPlayer.Data.Role.IsImpostor || Sheriff.sheriff != null && Sheriff.sheriff == PlayerControl.LocalPlayer || Renegade.renegade != null && Renegade.renegade == PlayerControl.LocalPlayer || Minion.minion != null && Minion.minion == PlayerControl.LocalPlayer || BountyHunter.bountyhunter != null && BountyHunter.bountyhunter == PlayerControl.LocalPlayer || Trapper.trapper != null && Trapper.trapper == PlayerControl.LocalPlayer || Yinyanger.yinyanger != null && Yinyanger.yinyanger == PlayerControl.LocalPlayer || Challenger.challenger != null && Challenger.challenger == PlayerControl.LocalPlayer || Ninja.ninja != null && Ninja.ninja == PlayerControl.LocalPlayer || Berserker.berserker != null && Berserker.berserker == PlayerControl.LocalPlayer)) {
                 SoundManager.Instance.PlaySound(CustomMain.customAssets.squireShieldClip, false, 100f);
                 return;
             }
@@ -1984,7 +2243,7 @@ namespace LasMonjas
                 new CustomMessage("Fink is using Hawkeye!", Fink.duration, -1, -1f, 13);
             }
         }
-        
+
         public static void sealVent(int ventId) {
             Vent vent = ShipStatus.Instance.AllVents.FirstOrDefault((x) => x != null && x.Id == ventId);
             if (vent == null) return;
@@ -1992,18 +2251,40 @@ namespace LasMonjas
             Welder.remainingWelds -= 1;
             MapOptions.ventsToSeal.Add(vent);
             Welder.welderButtonText.text = $"{Welder.remainingWelds} / {Welder.totalWelds}";
+
+            if (PlayerControl.LocalPlayer == Welder.welder) {
+                // Welder vents seal sprite    
+                if (PlayerControl.GameOptions.MapId != 2) { 
+                    PowerTools.SpriteAnim animator = vent.GetComponent<PowerTools.SpriteAnim>();
+                    animator?.Stop();
+                    vent.EnterVentAnim = vent.ExitVentAnim = null;
+                    vent.myRend.sprite = Welder.getAnimatedVentSealedSprite();
+                }
+                else {
+                    vent.myRend.sprite = Welder.getStaticVentSealedSprite();
+                }
+                vent.myRend.color = new Color(1, 1, 1, 0.5f);
+            }
         }
 
-        public static void spiritualistRevive(byte playerId) {
+        public static void spiritualistRevive(byte playerId, byte reviverId) {
 
             foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                if (PlayerControl.LocalPlayer == Spiritualist.spiritualist) {
+                if (Spiritualist.spiritualist != null && Spiritualist.spiritualist.PlayerId == reviverId && PlayerControl.LocalPlayer == Spiritualist.spiritualist) {
+                    SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
+                }
+                else if (Necromancer.necromancer != null && Necromancer.necromancer.PlayerId == reviverId && PlayerControl.LocalPlayer == Necromancer.necromancer) {
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
                 }
 
                 if (player.PlayerId == playerId) {
-                    Spiritualist.revivedPlayer = Helpers.playerById(playerId);
-                    Spiritualist.usedRevive = true;
+                    if (Spiritualist.spiritualist != null && Spiritualist.spiritualist.PlayerId == reviverId) {
+                        Spiritualist.revivedPlayer = Helpers.playerById(playerId);
+                        Spiritualist.usedRevive = true;
+                    }
+                    if (Necromancer.necromancer != null && Necromancer.necromancer.PlayerId == reviverId) {
+                        Necromancer.revivedPlayer = Helpers.playerById(playerId);
+                    }
                     player.Revive();
                     var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == playerId);
                     if (PlayerControl.GameOptions.MapId == 5) {
@@ -2027,6 +2308,9 @@ namespace LasMonjas
                         Hunter.resetHunted();
                     if (Janitor.janitor != null && Janitor.dragginBody) {
                         janitorResetValues();
+                    }
+                    if (Necromancer.necromancer != null && Necromancer.dragginBody) {
+                        necromancerResetValues();
                     }
                     // Check lovers, revive lover2 or lover1 too
                     if (player == Modifiers.lover1) {
@@ -2057,6 +2341,9 @@ namespace LasMonjas
                         if (Janitor.janitor != null && Janitor.dragginBody) {
                             janitorResetValues();
                         }
+                        if (Necromancer.necromancer != null && Necromancer.dragginBody) {
+                            necromancerResetValues();
+                        }
                     }
                     else if (player == Modifiers.lover2) {
                         PlayerControl loverone = Modifiers.lover1;
@@ -2085,6 +2372,9 @@ namespace LasMonjas
                             Hunter.resetHunted();
                         if (Janitor.janitor != null && Janitor.dragginBody) {
                             janitorResetValues();
+                        }
+                        if (Necromancer.necromancer != null && Necromancer.dragginBody) {
+                            necromancerResetValues();
                         }
                     }
 
@@ -2117,6 +2407,9 @@ namespace LasMonjas
                         if (Janitor.janitor != null && Janitor.dragginBody) {
                             janitorResetValues();
                         }
+                        if (Necromancer.necromancer != null && Necromancer.dragginBody) {
+                            necromancerResetValues();
+                        }
                     }
 
                     // Check bountyhunter and try reviving their target
@@ -2145,18 +2438,23 @@ namespace LasMonjas
                 }
             }
 
-            Spiritualist.preventReport = true;
-            murderSpiritualistIfReportWhileReviving();
-            HudManager.Instance.StartCoroutine(Effects.Lerp(0.5f, new Action<float>((p) => { // Delayed action
-                if (p == 1f) {
-                    removeBody(Spiritualist.spiritualist.PlayerId);
-                    Spiritualist.preventReport = false;
-                }
-            })));
+            if (Spiritualist.spiritualist != null && Spiritualist.spiritualist.PlayerId == reviverId) {
+                Spiritualist.preventReport = true;
+                murderSpiritualistIfReportWhileReviving();
+                HudManager.Instance.StartCoroutine(Effects.Lerp(0.5f, new Action<float>((p) => { // Delayed action
+                    if (p == 1f) {
+                        removeBody(Spiritualist.spiritualist.PlayerId);
+                        Spiritualist.preventReport = false;
+                    }
+                })));
+            }
         }
 
         public static void spiritualistPinkScreen(byte playerId) {
             foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                if (PlayerControl.LocalPlayer.Data.Role.IsImpostor || Renegade.renegade != null && Renegade.renegade == PlayerControl.LocalPlayer || Minion.minion != null && Minion.minion == PlayerControl.LocalPlayer || BountyHunter.bountyhunter != null && BountyHunter.bountyhunter == PlayerControl.LocalPlayer || Trapper.trapper != null && Trapper.trapper == PlayerControl.LocalPlayer || Yinyanger.yinyanger != null && Yinyanger.yinyanger == PlayerControl.LocalPlayer || Challenger.challenger != null && Challenger.challenger == PlayerControl.LocalPlayer || Ninja.ninja != null && Ninja.ninja == PlayerControl.LocalPlayer || Berserker.berserker != null && Berserker.berserker == PlayerControl.LocalPlayer) {
+                    SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
+                }
                 if (player.PlayerId == playerId && playerId == PlayerControl.LocalPlayer.PlayerId) {
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
                     HudManager.Instance.FullScreen.enabled = true;
@@ -2248,29 +2546,6 @@ namespace LasMonjas
             }
             SoundManager.Instance.StopSound(CustomMain.customAssets.performerMusic);
         }
-
-        public static void medusaPetrify(byte targetId) {
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                if (player.PlayerId == targetId) {
-                    Medusa.messageTimer = Medusa.duration;
-                    if (PlayerControl.LocalPlayer == player) {
-                        SoundManager.Instance.PlaySound(CustomMain.customAssets.medusaPetrify, false, 100f);
-                        if (MapBehaviour.Instance) {
-                            MapBehaviour.Instance.Close();
-                        }
-                        new CustomMessage("Petrified!", Medusa.duration, -1, 1.6f, 14);
-                    }
-                    player.moveable = false;
-                    player.NetTransform.Halt(); // Stop current movement
-                    HudManager.Instance.StartCoroutine(Effects.Lerp(Medusa.duration, new Action<float>((p) => { // Delayed action
-                        if (p == 1f) {
-                            player.moveable = true;
-                        }
-                    })));
-                    return;
-                }
-            }
-        }
         
         public static void hunterUsedHunted(byte targetId) {
             Hunter.usedHunted = true;
@@ -2316,8 +2591,91 @@ namespace LasMonjas
                 if (Vigilant.maxCharges > Vigilant.charges) Vigilant.charges++;
             }
         }
-        
-        
+
+        public static void batFrequency() {
+            if (Bat.bat == null) return;
+
+            Bat.frequencyTimer = Bat.duration;
+        }
+
+        public static void necromancerResetValues() {
+            // Restore necromancer values when rewind time
+            if (Necromancer.necromancer != null && Necromancer.dragginBody) {
+                Necromancer.dragginBody = false;
+                Necromancer.bodyId = 0;
+            }
+        }
+
+        public static void placeEngineerTrap(byte trapType) {
+            Engineer.currentTrapNumber += 1;
+            new EngineerTrap(Engineer.trapsDuration, Engineer.engineer, trapType);
+            if (!Engineer.savedOldSpeed) {
+                if (PlayerControl.LocalPlayer) {
+                    Engineer.oldSpeed = PlayerControl.LocalPlayer.MyPhysics.Speed;
+                    Engineer.savedOldSpeed = true;
+                }
+            }
+        }
+
+        public static void activateEngineerTrap(byte targetId, byte trapType) {
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                if (player.PlayerId == targetId) {
+                    switch (trapType) {
+                        case 1:
+                            player.MyPhysics.Speed *= Engineer.accelTrapIncrease;
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(5f, new Action<float>((p) => {
+                                if (p == 1f) {
+                                    player.MyPhysics.Speed = Engineer.oldSpeed;
+                                    if (player == PlayerControl.LocalPlayer) {
+                                        foreach (EngineerTrap trap in EngineerTrap.engineerTraps) {
+                                            if (trap.myTrapType != 3) {
+                                                trap.isActive = true;
+                                            }
+                                        }
+                                    }
+                                }
+                            })));
+                            break;
+                        case 2:
+                            player.MyPhysics.Speed *= Engineer.decelTrapDecrease;
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(5f, new Action<float>((p) => {
+                                if (p == 1f) {
+                                    player.MyPhysics.Speed = Engineer.oldSpeed;
+                                    if (player == PlayerControl.LocalPlayer) {
+                                        foreach (EngineerTrap trap in EngineerTrap.engineerTraps) {
+                                            if (trap.myTrapType != 3) {
+                                                trap.isActive = true;
+                                            }
+                                        }
+                                    }
+                                }
+                            })));
+                            break;
+                        case 3:
+                            if (Engineer.engineer != null && !Engineer.engineer.Data.IsDead && PlayerControl.LocalPlayer == Engineer.engineer) {
+
+                                Arrow arrow = new Arrow(Palette.PlayerColors[player.CurrentOutfit.ColorId]);
+                                arrow.arrow.SetActive(true);
+                                arrow.Update(player.transform.position);
+
+                                HudManager.Instance.StartCoroutine(Effects.Lerp(5f, new Action<float>((p) =>
+                                {
+                                    arrow.Update(player.transform.position);
+                                    if (p > 0.8f) {
+                                        arrow.image.color = new Color(arrow.image.color.r, arrow.image.color.g, arrow.image.color.b, (1f - p) * 5f);
+                                    }
+                                    if (p == 1f) {
+                                        UnityEngine.Object.Destroy(arrow.arrow);
+                                    }
+                                })));
+
+                            }
+                            break;
+                    }
+                }
+            }
+        }
+
         public static void changeMusic(byte whichmusic) {
             SoundManager.Instance.StopSound(CustomMain.customAssets.bombermanBombMusic);
             SoundManager.Instance.StopSound(CustomMain.customAssets.challengerDuelMusic);
@@ -5633,15 +5991,14 @@ namespace LasMonjas
                 case (byte)CustomRPC.SetRole:
                     byte roleId = reader.ReadByte();
                     byte playerId = reader.ReadByte();
-                    byte flag = reader.ReadByte();
-                    RPCProcedure.setRole(roleId, playerId, flag);
+                    RPCProcedure.setRole(roleId, playerId);
                     break;
-                /*case (byte)CustomRPC.SetModifier:
+                case (byte)CustomRPC.SetModifier:
                     byte modifierId = reader.ReadByte();
                     byte pId = reader.ReadByte();
                     byte flag = reader.ReadByte();
                     RPCProcedure.setModifier(modifierId, pId, flag);
-                    break;*/
+                    break;
                 case (byte)CustomRPC.UseUncheckedVent:
                     int ventId = reader.ReadPackedInt32();
                     byte ventingPlayer = reader.ReadByte();
@@ -5685,7 +6042,7 @@ namespace LasMonjas
                     RPCProcedure.removeBody(reader.ReadByte());
                     break;
                 case (byte)CustomRPC.DragPlaceBody:
-                    RPCProcedure.dragPlaceBody(reader.ReadByte());
+                    RPCProcedure.dragPlaceBody(reader.ReadByte(), reader.ReadByte());
                     break;
                 case (byte)CustomRPC.PlaceHat:
                     RPCProcedure.placeHat(reader.ReadBytesAndSize());
@@ -5713,6 +6070,18 @@ namespace LasMonjas
                     break;
                 case (byte)CustomRPC.SetSpelledPlayer:
                     RPCProcedure.setSpelledPlayer(reader.ReadByte());
+                    break;
+                case (byte)CustomRPC.MedusaPetrify:
+                    RPCProcedure.medusaPetrify(reader.ReadByte());
+                    break;
+                case (byte)CustomRPC.PlaceSpiralTrap:
+                    RPCProcedure.placeSpiralTrap();
+                    break;
+                case (byte)CustomRPC.ActivateSpiralTrap:
+                    RPCProcedure.activateSpiralTrap(reader.ReadByte());
+                    break;
+                case (byte)CustomRPC.ShowArcherNotification:
+                    RPCProcedure.showArcherNotification(reader.ReadByte());
                     break;
 
                 // Role rebeldes functionality
@@ -5758,7 +6127,13 @@ namespace LasMonjas
                 case (byte)CustomRPC.ChallengerSelectAttack:
                     byte challengerAttack = reader.ReadByte();
                     RPCProcedure.challengerSelectAttack(challengerAttack);
-                    break; 
+                    break;
+                case (byte)CustomRPC.NinjaKill:
+                    RPCProcedure.ninjaKill(reader.ReadByte());
+                    break;
+                case (byte)CustomRPC.BerserkerKill:
+                    RPCProcedure.berserkerKill(reader.ReadByte());
+                    break;
 
                 // Role neutrals functionality
 
@@ -5776,6 +6151,18 @@ namespace LasMonjas
                     break;
                 case (byte)CustomRPC.DevourBody:
                     RPCProcedure.devourBody(reader.ReadByte());
+                    break;
+                case (byte)CustomRPC.PoisonerWin:
+                    RPCProcedure.poisonerWin();
+                    break;
+                case (byte)CustomRPC.PuppeteerWin:
+                    RPCProcedure.puppeteerWin();
+                    break;
+                case (byte)CustomRPC.PuppeteerTransform:
+                    RPCProcedure.puppeteerTransform(reader.ReadByte());
+                    break;
+                case (byte)CustomRPC.PuppeteerResetTransform:
+                    RPCProcedure.puppeteerResetTransform();
                     break;
 
                 // Role crewmates functionality
@@ -5827,7 +6214,7 @@ namespace LasMonjas
                     RPCProcedure.sealVent(reader.ReadPackedInt32());
                     break;
                 case (byte)CustomRPC.SpiritualistRevive:
-                    RPCProcedure.spiritualistRevive(reader.ReadByte());
+                    RPCProcedure.spiritualistRevive(reader.ReadByte(), reader.ReadByte());
                     break;
                 case (byte)CustomRPC.SendSpiritualistIsReviving:
                     RPCProcedure.sendSpiritualistIsReviving();
@@ -5852,9 +6239,6 @@ namespace LasMonjas
                     byte check = reader.ReadByte();
                     RPCProcedure.performerIsReported(check);
                     break;
-                case (byte)CustomRPC.MedusaPetrify:
-                    RPCProcedure.medusaPetrify(reader.ReadByte());
-                    break;
                 case (byte)CustomRPC.HunterUsedHunted:
                     RPCProcedure.hunterUsedHunted(reader.ReadByte());
                     break;
@@ -5862,6 +6246,15 @@ namespace LasMonjas
                     var pid = reader.ReadByte();
                     var jinxedValue = reader.ReadByte();
                     RPCProcedure.setJinxed(pid, jinxedValue);
+                    break;
+                case (byte)CustomRPC.BatFrequency:
+                    RPCProcedure.batFrequency();
+                    break;
+                case (byte)CustomRPC.PlaceEngineerTrap:
+                    RPCProcedure.placeEngineerTrap(reader.ReadByte());
+                    break;
+                case (byte)CustomRPC.ActivateEngineerTrap:
+                    RPCProcedure.activateEngineerTrap(reader.ReadByte(), reader.ReadByte());
                     break;
 
                 // Other funtionality
