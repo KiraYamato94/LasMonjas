@@ -30,6 +30,7 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "Muaresito", NamePlateName = "Bounty Hunter"},
             new AuthorData {AuthorName = "Muaresito", NamePlateName = "Yinyanger"},
             new AuthorData {AuthorName = "Muaresito", NamePlateName = "Challenger"},
+            new AuthorData {AuthorName = "Muaresito", NamePlateName = "Ninja"},
             new AuthorData {AuthorName = "Muaresito", NamePlateName = "Objsustion"},
             new AuthorData {AuthorName = "Muaresito", NamePlateName = "Deal with Pi"},
             new AuthorData {AuthorName = "Blocky", NamePlateName = "Submerged"},
