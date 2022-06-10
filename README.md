@@ -33,6 +33,21 @@ Las Monjas is a Spanish mod (translated and published on English) for Among Us m
 <details>
   <summary>Click to show</summary>
 
+**Version 2.0.2 (10th June 2022)**
+- New lobby option: hide vent anim on shadows (works for roles and gamemodes, this fixes being able to see a vent opening or closing inside shadows)
+- New client option: nun cursor (changes mouse cursor)
+- Added a zoom out / in button for dead players when they have all tasks done (zoom resets if a meeting is called or the player revives)
+- Added an info message on CTF to tell players that a teammate stole enemy's flag (some guidance to try to group around that player)
+- Added an info message on CTF exclusively to Flag Stealer that tells him if a team flag has been stolen (to know when he should make his tactic)
+- Added a cyan arrow on KOTH pointing each King's position (exclusively for each team, no more "where is my king?" situations)
+- Added two cyan arrows on KOTH exclusively to Usurper, pointing both King's position
+- 1 new nameplate
+- Fixed Puppeteer's morphing size if he's Big Chungus (not if he morphs into Big Chungus)
+- Fixed a bug with Necromancer's arrow on custom skeld
+- Fixed a bug with Poisoner where it could continue poisoning during Challenger's duel
+- Fixed some issues with Performer's music overlaping with other music
+- Fixed 2 vanilla bugs: players can't see other player's name if they're not inside their light range, and on custom skeld you can't do tasks across walls anymore
+  
 **Version 2.0.1 (2nd June 2022)**
 - Fixed the black screen issue when starting the game
 - Updated Reactor to 1.2.6
@@ -239,12 +254,13 @@ I recommend to play this mod only on custom servers (for example [Impostor](http
 -----------------------
 
 # Settings
-This mod adds a custom lobby which I won't spoil to you, it also adds four colors (Lavender, Petrol, Mint and Olive) and five settings to the client option tab:
+This mod adds a custom lobby which I won't spoil to you, it also adds four colors (Lavender, Petrol, Mint and Olive), a button to zoom out / in the map if you're dead and have all tasks done, and six settings to the client option tab:
 - **Hide Room Code:** More like streamer mode, activating this option will hide the room code and replace it with "Las Monjas"
 - **Game Summary:** Activating this option will create a list containing which role and task progress the players had after the game ends.
 - **Activate Music:** Music pack containing 7 songs from Kevin MacLeod (1 for Lobby, 3 for Tasks and 3 for Meeting depending of how many players are alive)
 - **Ghost Can See Roles:** Only after being reported, ghosts will be able to see which role the players have.
 - **Horse Mode:** Activate 2022 1st April Fools, remember to take of your skin if you activate Horse Mode.
+- **Monja Cursor:** Enable a bigger Nun cursor for the game.
 
 -----------------------
 
@@ -1104,6 +1120,7 @@ This mod also features some game mechanic modifiers, one of them being a [custom
 | Screen Shake for Reactor Sabotage | Add a player's screen shake visual effect during reactor sabotage. Graphic's game option "screen shake" has to be active |
 | Anomymous Players for Comms Sabotage | Makes the players grey with "Player" as their names during Cooms sabotage |
 | Decrease Players Speed for Oxygen Sabotage | Player's speed will keep getting lower based of how much time passed since Oxygen had been sabotaged |
+| Hide Vent Anim on Shadows | Remove being able to see a vent opening or closing inside shadows |
 
 ## Lovers
   - Two players linked, they die and get exiled together.
@@ -1152,7 +1169,7 @@ Match between red and blue team where each team has to steal the enemy flag and 
 - You can't kill your teammates.
 - The player who has the flag can't kill or use vents.
 - Killing the player who has the flag makes the flag teleport back to his base.
-- The Flag Stealer always loses, he can kill everyone and if he kills a player with a flag, he switchs teams with him
+- The Flag Stealer always loses, he can kill everyone and if he kills a player with a flag, he switchs teams with him.
 - There are custom messages for match duration, stolen flag and scored point, also the game score is always displayed.
 - Flags positions are marked by a team color corresponding arrow.
 - If the player who has the flag disconnects from the match, the flag goes back to its base.
@@ -1216,7 +1233,7 @@ Match between green and yellow team. There's a total of 3 capturable zones in th
 
 **Additional Gamemode Notes:**
 - Only the Kings can capture zones, the rest of the team have to protect him and the captured zones.
-- Kings are marked with a team color's aura around them.
+- Kings are marked with a team color's aura around them and an exclusively arrow for each team pointing their position. 
 - Everyone can vent but the Kings can't.
 - Capturable zones are marked with an arrow colored with the team color who captured it (or white if nobody has it yet)
 - Each captured zone gives 1 point per second to the team who captured it.
@@ -1224,7 +1241,7 @@ Match between green and yellow team. There's a total of 3 capturable zones in th
 - If a King gets killed, his team will lose every captured zone, turning them into white color.
 - A captured zone can be stolen by the other King.
 - If a King disconnects from the game, another King will be assigned randomly between team players.
-- The Usurper always loses, he can kill everyone and if he kills a King he becomes one, making the old King the new Usurper
+- The Usurper always loses, he can kill everyone and if he kills a King he becomes one, making the old King the new Usurper. Also Usurper has two arrows pointing towards each King's position.
 - Each player name color will be the same as the team color.
 - There are custom messages for match duration, captured zone, a King died or a King disconnects, also the game score is always displayed.
 - Revive Time value is calculated by subtracting Invincibility Time value from it, for example if Revive Time is 8 and Invincibility Time is 3, players will revive after 5 seconds but will be invincible for another 3 seconds after reviving.
@@ -1345,10 +1362,10 @@ If you use something from Las Monjas on your mod, please credit me on your mod's
 [Eisbison](https://github.com/Eisbison) - Original idea for Night Vision cameras\
 [Pandraghon](https://github.com/Pandraghon) - Original idea for the Better Reactor, Comms and Oxygen sabotage\
 [eDonnes124](https://github.com/eDonnes124) - Original idea for Drunk (Pro)\
-[Dolly1016](https://github.com/Dolly1016) - Original idea for Sniper (Archer), Empiric (Poisoner), Alien (Bat), Necromancer and Trapper (Engineer)
+[Dolly1016](https://github.com/Dolly1016) - Original idea for Sniper (Archer), Empiric (Poisoner), Alien (Bat), Necromancer and Trapper (Engineer)\
+[Herysia](https://github.com/Herysia) - Original idea for the try hard vents
 
 -----------------------
 
 # Known Bugs
-- On the custom map, you can see player names and do some tasks across the walls (this is a vanilla game bug)
 - Players can see their head off the map on Horse mode on some walls (this is a vanilla game bug)
