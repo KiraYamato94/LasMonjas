@@ -22,13 +22,14 @@ namespace LasMonjas
         // Global Settings
         public static CustomOption globalSettings;
         public static CustomOption activateRoles;
-        public static CustomOption nightVisionLightSabotage;
         public static CustomOption activateSenseiMap;
         public static CustomOption removeSwipeCard;
         public static CustomOption removeAirshipDoors;
+        public static CustomOption nightVisionLightSabotage;
         public static CustomOption screenShakeReactorSabotage;
         public static CustomOption anonymousCommsSabotage;
         public static CustomOption slowSpeedOxigenSabotage;
+        public static CustomOption hideVentAnimOnShadows;
 
         // Modifiers
         public static CustomOption activateModifiers;
@@ -408,6 +409,7 @@ namespace LasMonjas
             screenShakeReactorSabotage = CustomOption.Create(9, cs(Detective.color, "Screen shake for reactor sabotage"), "setting", false, globalSettings);
             anonymousCommsSabotage = CustomOption.Create(10, cs(Detective.color, "Anonymous players for comms sabotage"), "setting", false, globalSettings);
             slowSpeedOxigenSabotage = CustomOption.Create(11, cs(Detective.color, "Decreaes speed for oxygen sabotage"), "setting", false, globalSettings);
+            hideVentAnimOnShadows = CustomOption.Create(12, cs(Detective.color, "Hide Vent Anim on Shadows"), "setting", false, globalSettings);
 
             // Modifiers
             activateModifiers = CustomOption.Create(15, cs(Modifiers.color, "Modifiers"), "setting", false, null, true);

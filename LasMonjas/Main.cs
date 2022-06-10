@@ -25,7 +25,7 @@ namespace LasMonjas
     {
         public const string Id = "me.allul.lasmonjas";
 
-        public const string VersionString = "2.0.1";
+        public const string VersionString = "2.0.2";
 
         public static System.Version Version = System.Version.Parse(VersionString);
         internal static BepInEx.Logging.ManualLogSource Logger;
@@ -42,6 +42,7 @@ namespace LasMonjas
         public static ConfigEntry<bool> ActivateMusic { get; set; }
         public static ConfigEntry<bool> GhostsSeeRoles { get; set; }
         public static ConfigEntry<bool> HorseMode { get; set; }
+        public static ConfigEntry<bool> MonjaCursor { get; set; }
         public static ConfigEntry<string> IpCustom { get; set; }
         public static ConfigEntry<ushort> PortCustom { get; set; }
 
@@ -68,6 +69,7 @@ namespace LasMonjas
             ActivateMusic = Config.Bind("Custom", "Activate Music", true);
             GhostsSeeRoles = Config.Bind("Custom", "Ghosts See Roles", true);
             HorseMode = Config.Bind("Custom", "Horse Mode", false);
+            MonjaCursor = Config.Bind("Custom", "Monja Cursor", true);
 
             IpCustom = Config.Bind("Custom", "Custom Server IP", "127.0.0.1");
             PortCustom = Config.Bind("Custom", "Custom Server Port", (ushort)22023);
@@ -86,6 +88,9 @@ namespace LasMonjas
             Harmony.PatchAll();
             SubmergedCompatibility.Initialize();
             AddComponent<ModUpdateBehaviour>();
+            if (MonjaCursor.Value) {
+                Helpers.enableCursor("start");
+            }
         }
     }
 

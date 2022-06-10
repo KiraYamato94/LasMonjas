@@ -63,6 +63,8 @@ namespace LasMonjas
 
         public static bool slowSpeedOxigen = CustomOptionHolder.slowSpeedOxigenSabotage.getBool();
 
+        public static bool hideVentAnim = CustomOptionHolder.hideVentAnimOnShadows.getBool();
+
         public static void clearAndReloadRoles() {
             Mimic.clearAndReload();
             Painter.clearAndReload();
@@ -156,6 +158,7 @@ namespace LasMonjas
             anonymousComms = CustomOptionHolder.anonymousCommsSabotage.getBool();
             isHappeningAnonymousComms = false;
             slowSpeedOxigen = CustomOptionHolder.slowSpeedOxigenSabotage.getBool();
+            hideVentAnim = CustomOptionHolder.hideVentAnimOnShadows.getBool();
         }
 
     }

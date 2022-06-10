@@ -1764,6 +1764,7 @@ namespace LasMonjas
             // music stop and play duel music
             changeMusic(8);
             SoundManager.Instance.PlaySound(CustomMain.customAssets.challengerDuelMusic, false, 5f);
+            SoundManager.Instance.StopSound(CustomMain.customAssets.performerMusic);
 
             foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
                 if (player == PlayerControl.LocalPlayer) {
@@ -2151,6 +2152,8 @@ namespace LasMonjas
                     if (Necromancer.necromancer != null && Necromancer.dragginBody) {
                         necromancerResetValues();
                     }
+                    // Reset zoomed out ghosts
+                    Helpers.toggleZoom(reset: true);
                 }
         }
 
@@ -2438,6 +2441,9 @@ namespace LasMonjas
                 }
             }
 
+            // Reset zoomed out ghosts
+            Helpers.toggleZoom(reset: true); 
+            
             if (Spiritualist.spiritualist != null && Spiritualist.spiritualist.PlayerId == reviverId) {
                 Spiritualist.preventReport = true;
                 murderSpiritualistIfReportWhileReviving();
@@ -2922,6 +2928,14 @@ namespace LasMonjas
                     CaptureTheFlag.redPlayerWhoHasBlueFlag = player;
                     CaptureTheFlag.blueflag.transform.parent = player.transform;
                     CaptureTheFlag.blueflag.transform.localPosition = new Vector3(0f, 0f, -0.1f);
+                    foreach (PlayerControl redplayer in CaptureTheFlag.redteamFlag) {
+                        if (redplayer == PlayerControl.LocalPlayer && redplayer != null) {
+                            new CustomMessage("<color=#0000FFFF>Blue Flag</color> stolen by <color=#FF0000FF>"+ CaptureTheFlag.redPlayerWhoHasBlueFlag.name + "</color>!", 5, -1, 1.6f, 4);
+                        }
+                    }
+                    if (CaptureTheFlag.stealerPlayer != null && CaptureTheFlag.stealerPlayer == PlayerControl.LocalPlayer) {
+                        new CustomMessage("<color=#0000FFFF>Blue Flag</color> stolen by <color=#FF0000FF>" + CaptureTheFlag.redPlayerWhoHasBlueFlag.name + "</color>!", 5, -1, 1.6f, 4);
+                    }
                 }
 
                 // Alert red team players
@@ -2941,6 +2955,14 @@ namespace LasMonjas
                     CaptureTheFlag.bluePlayerWhoHasRedFlag = player;
                     CaptureTheFlag.redflag.transform.parent = player.transform;
                     CaptureTheFlag.redflag.transform.localPosition = new Vector3(0f, 0f, -0.1f);
+                    foreach (PlayerControl blueplayer in CaptureTheFlag.blueteamFlag) {
+                        if (blueplayer == PlayerControl.LocalPlayer && blueplayer != null) {
+                            new CustomMessage("<color=#FF0000FF>Red Flag</color> stolen by <color=#0000FFFF>" + CaptureTheFlag.bluePlayerWhoHasRedFlag.name + "</color>!", 5, -1, 1.6f, 4);
+                        }
+                    }
+                    if (CaptureTheFlag.stealerPlayer != null && CaptureTheFlag.stealerPlayer == PlayerControl.LocalPlayer) {
+                        new CustomMessage("<color=#FF0000FF>Red Flag</color> stolen by <color=#0000FFFF>" + CaptureTheFlag.bluePlayerWhoHasRedFlag.name + "</color>!", 5, -1, 1.3f, 4);
+                    }
                 }
 
                 // Alert blue team players
@@ -3400,7 +3422,7 @@ namespace LasMonjas
         }
 
         public static void policeandThiefDeliverJewel(byte thiefWhoTookATreasure, byte jewelId) {
-            // Red team
+            // Thief team
             foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
                 // Thief player steal a jewel
                 if (player.PlayerId == thiefWhoTookATreasure) {
@@ -4326,8 +4348,16 @@ namespace LasMonjas
                                 KingOfTheHill.greenkingaura.transform.parent = KingOfTheHill.greenKingplayer.transform;
                                 if (PlayerControl.LocalPlayer == KingOfTheHill.greenKingplayer) {
                                     new CustomMessage("You're the new <color=#00FF00FF>Green King</color>!", 5, -1, 1.6f, 11);
+                                    KingOfTheHill.localArrows[3].arrow.SetActive(false);
+                                    KingOfTheHill.localArrows[4].arrow.SetActive(false);
+                                    KingOfTheHill.localArrows[5].arrow.SetActive(false);
                                 }
                                 KingOfTheHill.greenKingplayer.MurderPlayer(KingOfTheHill.usurperPlayer);
+                                if (PlayerControl.LocalPlayer == KingOfTheHill.usurperPlayer) {
+                                    KingOfTheHill.localArrows[3].arrow.SetActive(false);
+                                    KingOfTheHill.localArrows[4].arrow.SetActive(true);
+                                    KingOfTheHill.localArrows[5].arrow.SetActive(true);
+                                }
                             }
                             else if (player.PlayerId == KingOfTheHill.yellowKingplayer.PlayerId) {
                                 KingOfTheHill.yellowTeam.Remove(KingOfTheHill.yellowKingplayer);
@@ -4343,8 +4373,16 @@ namespace LasMonjas
                                 KingOfTheHill.yellowkingaura.transform.parent = KingOfTheHill.yellowKingplayer.transform;
                                 if (PlayerControl.LocalPlayer == KingOfTheHill.yellowKingplayer) {
                                     new CustomMessage("You're the new <color=#FFFF00FF>Yellow King</color>!", 5, -1, 1.6f, 11);
+                                    KingOfTheHill.localArrows[3].arrow.SetActive(false);
+                                    KingOfTheHill.localArrows[4].arrow.SetActive(false);
+                                    KingOfTheHill.localArrows[5].arrow.SetActive(false);
                                 }
                                 KingOfTheHill.yellowKingplayer.MurderPlayer(KingOfTheHill.usurperPlayer);
+                                if (PlayerControl.LocalPlayer == KingOfTheHill.usurperPlayer) {
+                                    KingOfTheHill.localArrows[3].arrow.SetActive(false);
+                                    KingOfTheHill.localArrows[4].arrow.SetActive(true);
+                                    KingOfTheHill.localArrows[5].arrow.SetActive(true);
+                                }
                             } else {
 								KingOfTheHill.usurperPlayer.MurderPlayer(player);
 							}

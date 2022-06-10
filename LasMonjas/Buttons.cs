@@ -93,6 +93,9 @@ namespace LasMonjas
         private static CustomButton engineerTrapButton;
         private static CustomButton shyButton;
 
+        public static CustomButton zoomOutButton;
+        public static bool zoomOutStatus = false;
+
         // Capture the flag buttons
         private static CustomButton redplayer01KillButton;
         private static CustomButton redplayer01TakeFlagButton;
@@ -373,6 +376,8 @@ namespace LasMonjas
             shyButton.MaxTimer = Shy.cooldown;
             shyButton.EffectDuration = Shy.duration;
 
+            zoomOutButton.MaxTimer = 0f;
+            
             // Remaining uses text
             Mechanic.mechanicRepairButtonText.text = $"{Mechanic.numberOfRepairs - Mechanic.timesUsedRepairs} / {Mechanic.numberOfRepairs}";
             FortuneTeller.fortuneTellerRevealButtonText.text = $"{FortuneTeller.numberOfFortunes - FortuneTeller.timesUsedFortune} / {FortuneTeller.numberOfFortunes}";
@@ -2738,7 +2743,7 @@ namespace LasMonjas
                                 }
                             }
 
-                            if (MeetingHud.Instance == null && Poisoner.poisonedTarget != null && !Poisoner.poisonedTarget.Data.IsDead && Vector2.Distance(Poisoner.poisonedTarget.transform.position, player.transform.position) < (1f * Poisoner.infectRange)) {
+                            if (MeetingHud.Instance == null && Poisoner.poisonedTarget != null && !Poisoner.poisonedTarget.Data.IsDead && Vector2.Distance(Poisoner.poisonedTarget.transform.position, player.transform.position) < (1f * Poisoner.infectRange) && !Challenger.isDueling) {
                                 infectProceedFlag = true;
                             }
 
@@ -4179,33 +4184,38 @@ namespace LasMonjas
                                         GameData.PlayerInfo playerInfo = GameData.Instance.GetPlayerById(component.ParentId);
 
                                         if (PlayerControl.GameOptions.MapId != 5) {
-                                            if (!Necromancer.madeList) {
-                                                foreach (SystemTypes type in ShipStatus.Instance.FastRooms.Keys) {
-                                                    Necromancer.Rooms.Add(type);
-                                                }
-                                                Necromancer.madeList = true;
-                                            }
-
-                                            List<SystemTypes> candidate = new List<SystemTypes>();
-                                            float dis = Necromancer.roomDistance, nearestDis = 100f;
-                                            SystemTypes? nearest = null;
-                                            foreach (var room in Necromancer.Rooms) {
-                                                float d = ShipStatus.Instance.FastRooms[room].roomArea.Distance(collider2D).distance;
-                                                if (d > 0.2f) {
-                                                    if (dis > d) {
-                                                        candidate.Add(room);
-                                                    }
-                                                    if (nearest == null || nearestDis > d) {
-                                                        nearestDis = d;
-                                                        nearest = room;
-                                                    }
-                                                }
-                                            }
-                                            if (candidate.Count > 0) {
-                                                Necromancer.targetRoom = candidate[LasMonjas.rnd.Next(candidate.Count)];
+                                            if (activatedSensei) {
+                                                Necromancer.targetRoom = SystemTypes.MedBay;
                                             }
                                             else {
-                                                Necromancer.targetRoom = nearest.Value;
+                                                if (!Necromancer.madeList) {
+                                                    foreach (SystemTypes type in ShipStatus.Instance.FastRooms.Keys) {
+                                                        Necromancer.Rooms.Add(type);
+                                                    }
+                                                    Necromancer.madeList = true;
+                                                }
+
+                                                List<SystemTypes> candidate = new List<SystemTypes>();
+                                                float dis = Necromancer.roomDistance, nearestDis = 100f;
+                                                SystemTypes? nearest = null;
+                                                foreach (var room in Necromancer.Rooms) {
+                                                    float d = ShipStatus.Instance.FastRooms[room].roomArea.Distance(collider2D).distance;
+                                                    if (d > 0.2f) {
+                                                        if (dis > d) {
+                                                            candidate.Add(room);
+                                                        }
+                                                        if (nearest == null || nearestDis > d) {
+                                                            nearestDis = d;
+                                                            nearest = room;
+                                                        }
+                                                    }
+                                                }
+                                                if (candidate.Count > 0) {
+                                                    Necromancer.targetRoom = candidate[LasMonjas.rnd.Next(candidate.Count)];
+                                                }
+                                                else {
+                                                    Necromancer.targetRoom = nearest.Value;
+                                                }
                                             }
                                         } else {
                                             List<SystemTypes> candidate = new List<SystemTypes>();
@@ -4240,7 +4250,12 @@ namespace LasMonjas
                             Necromancer.reviveArrow.arrow.SetActive(true);
                         }
                         else {
-                            Necromancer.reviveArrow.Update(ShipStatus.Instance.FastRooms[Necromancer.targetRoom].roomArea.transform.position);
+                            if (activatedSensei) {
+                                Necromancer.reviveArrow.Update(new Vector3 (-6.5f, -2, 0));
+                            }
+                            else {
+                                Necromancer.reviveArrow.Update(ShipStatus.Instance.FastRooms[Necromancer.targetRoom].roomArea.transform.position);
+                            }
                         }
                     }
                     else {
@@ -4466,6 +4481,22 @@ namespace LasMonjas
                 }
             );
 
+            zoomOutButton = new CustomButton(
+                () => { Helpers.toggleZoom();
+                },
+                () => { if (PlayerControl.LocalPlayer == null || !PlayerControl.LocalPlayer.Data.IsDead || PlayerControl.LocalPlayer.Data.Role.IsImpostor || TimeTraveler.isRewinding || howmanygamemodesareon == 1) return false;
+                    var (playerCompleted, playerTotal) = TasksHandler.taskInfo(PlayerControl.LocalPlayer.Data);
+                    int numberOfLeftTasks = playerTotal - playerCompleted;
+                    return numberOfLeftTasks <= 0;
+                },
+                () => { return true; },
+                () => { return; },
+                Helpers.loadSpriteFromResources("LasMonjas.Images.MinusButton.png", 150f),  // Invisible button!
+                new Vector3(0.4f, 2.8f, 0),
+                __instance,
+                KeyCode.KeypadPlus
+                );
+            zoomOutButton.Timer = 0f;
 
             // Capture the flag buttons
             // Redplayer01 Kill
@@ -7617,6 +7648,12 @@ namespace LasMonjas
                         KingOfTheHill.localArrows[0].Update(KingOfTheHill.zoneone.transform.position, KingOfTheHill.zoneonecolor);
                         KingOfTheHill.localArrows[1].Update(KingOfTheHill.zonetwo.transform.position, KingOfTheHill.zonetwocolor);
                         KingOfTheHill.localArrows[2].Update(KingOfTheHill.zonethree.transform.position, KingOfTheHill.zonethreecolor);
+                        if (!KingOfTheHill.greenKingplayer.Data.IsDead) {
+                            KingOfTheHill.localArrows[3].arrow.SetActive(true);
+                            KingOfTheHill.localArrows[3].Update(KingOfTheHill.greenKingplayer.transform.position, Color.cyan);
+                        } else {
+                            KingOfTheHill.localArrows[3].arrow.SetActive(false);
+                        }
                     }
                     return KingOfTheHill.greenplayer01currentTarget && PlayerControl.LocalPlayer.CanMove && !KingOfTheHill.greenplayer01IsReviving && !PlayerControl.LocalPlayer.Data.IsDead;
                 },
@@ -7645,6 +7682,13 @@ namespace LasMonjas
                         KingOfTheHill.localArrows[0].Update(KingOfTheHill.zoneone.transform.position, KingOfTheHill.zoneonecolor);
                         KingOfTheHill.localArrows[1].Update(KingOfTheHill.zonetwo.transform.position, KingOfTheHill.zonetwocolor);
                         KingOfTheHill.localArrows[2].Update(KingOfTheHill.zonethree.transform.position, KingOfTheHill.zonethreecolor);
+                        if (!KingOfTheHill.greenKingplayer.Data.IsDead) {
+                            KingOfTheHill.localArrows[3].arrow.SetActive(true);
+                            KingOfTheHill.localArrows[3].Update(KingOfTheHill.greenKingplayer.transform.position, Color.cyan);
+                        }
+                        else {
+                            KingOfTheHill.localArrows[3].arrow.SetActive(false);
+                        }
                     }
                     return KingOfTheHill.greenplayer02currentTarget && PlayerControl.LocalPlayer.CanMove && !KingOfTheHill.greenplayer02IsReviving && !PlayerControl.LocalPlayer.Data.IsDead;
                 },
@@ -7673,6 +7717,13 @@ namespace LasMonjas
                         KingOfTheHill.localArrows[0].Update(KingOfTheHill.zoneone.transform.position, KingOfTheHill.zoneonecolor);
                         KingOfTheHill.localArrows[1].Update(KingOfTheHill.zonetwo.transform.position, KingOfTheHill.zonetwocolor);
                         KingOfTheHill.localArrows[2].Update(KingOfTheHill.zonethree.transform.position, KingOfTheHill.zonethreecolor);
+                        if (!KingOfTheHill.greenKingplayer.Data.IsDead) {
+                            KingOfTheHill.localArrows[3].arrow.SetActive(true);
+                            KingOfTheHill.localArrows[3].Update(KingOfTheHill.greenKingplayer.transform.position, Color.cyan);
+                        }
+                        else {
+                            KingOfTheHill.localArrows[3].arrow.SetActive(false);
+                        }
                     }
                     return KingOfTheHill.greenplayer03currentTarget && PlayerControl.LocalPlayer.CanMove && !KingOfTheHill.greenplayer03IsReviving && !PlayerControl.LocalPlayer.Data.IsDead;
                 },
@@ -7701,6 +7752,13 @@ namespace LasMonjas
                         KingOfTheHill.localArrows[0].Update(KingOfTheHill.zoneone.transform.position, KingOfTheHill.zoneonecolor);
                         KingOfTheHill.localArrows[1].Update(KingOfTheHill.zonetwo.transform.position, KingOfTheHill.zonetwocolor);
                         KingOfTheHill.localArrows[2].Update(KingOfTheHill.zonethree.transform.position, KingOfTheHill.zonethreecolor);
+                        if (!KingOfTheHill.greenKingplayer.Data.IsDead) {
+                            KingOfTheHill.localArrows[3].arrow.SetActive(true);
+                            KingOfTheHill.localArrows[3].Update(KingOfTheHill.greenKingplayer.transform.position, Color.cyan);
+                        }
+                        else {
+                            KingOfTheHill.localArrows[3].arrow.SetActive(false);
+                        }
                     }
                     return KingOfTheHill.greenplayer04currentTarget && PlayerControl.LocalPlayer.CanMove && !KingOfTheHill.greenplayer04IsReviving && !PlayerControl.LocalPlayer.Data.IsDead;
                 },
@@ -7729,6 +7787,13 @@ namespace LasMonjas
                         KingOfTheHill.localArrows[0].Update(KingOfTheHill.zoneone.transform.position, KingOfTheHill.zoneonecolor);
                         KingOfTheHill.localArrows[1].Update(KingOfTheHill.zonetwo.transform.position, KingOfTheHill.zonetwocolor);
                         KingOfTheHill.localArrows[2].Update(KingOfTheHill.zonethree.transform.position, KingOfTheHill.zonethreecolor);
+                        if (!KingOfTheHill.greenKingplayer.Data.IsDead) {
+                            KingOfTheHill.localArrows[3].arrow.SetActive(true);
+                            KingOfTheHill.localArrows[3].Update(KingOfTheHill.greenKingplayer.transform.position, Color.cyan);
+                        }
+                        else {
+                            KingOfTheHill.localArrows[3].arrow.SetActive(false);
+                        }
                     }
                     return KingOfTheHill.greenplayer05currentTarget && PlayerControl.LocalPlayer.CanMove && !KingOfTheHill.greenplayer05IsReviving && !PlayerControl.LocalPlayer.Data.IsDead;
                 },
@@ -7757,6 +7822,13 @@ namespace LasMonjas
                         KingOfTheHill.localArrows[0].Update(KingOfTheHill.zoneone.transform.position, KingOfTheHill.zoneonecolor);
                         KingOfTheHill.localArrows[1].Update(KingOfTheHill.zonetwo.transform.position, KingOfTheHill.zonetwocolor);
                         KingOfTheHill.localArrows[2].Update(KingOfTheHill.zonethree.transform.position, KingOfTheHill.zonethreecolor);
+                        if (!KingOfTheHill.greenKingplayer.Data.IsDead) {
+                            KingOfTheHill.localArrows[3].arrow.SetActive(true);
+                            KingOfTheHill.localArrows[3].Update(KingOfTheHill.greenKingplayer.transform.position, Color.cyan);
+                        }
+                        else {
+                            KingOfTheHill.localArrows[3].arrow.SetActive(false);
+                        }
                     }
                     return KingOfTheHill.greenplayer06currentTarget && PlayerControl.LocalPlayer.CanMove && !KingOfTheHill.greenplayer06IsReviving && !PlayerControl.LocalPlayer.Data.IsDead;
                 },
@@ -7807,6 +7879,13 @@ namespace LasMonjas
                         KingOfTheHill.localArrows[0].Update(KingOfTheHill.zoneone.transform.position, KingOfTheHill.zoneonecolor);
                         KingOfTheHill.localArrows[1].Update(KingOfTheHill.zonetwo.transform.position, KingOfTheHill.zonetwocolor);
                         KingOfTheHill.localArrows[2].Update(KingOfTheHill.zonethree.transform.position, KingOfTheHill.zonethreecolor);
+                        if (!KingOfTheHill.yellowKingplayer.Data.IsDead) {
+                            KingOfTheHill.localArrows[3].arrow.SetActive(true);
+                            KingOfTheHill.localArrows[3].Update(KingOfTheHill.yellowKingplayer.transform.position, Color.cyan);
+                        }
+                        else {
+                            KingOfTheHill.localArrows[3].arrow.SetActive(false);
+                        }
                     }
                     return KingOfTheHill.yellowplayer01currentTarget && PlayerControl.LocalPlayer.CanMove && !KingOfTheHill.yellowplayer01IsReviving && !PlayerControl.LocalPlayer.Data.IsDead;
                 },
@@ -7836,6 +7915,13 @@ namespace LasMonjas
                         KingOfTheHill.localArrows[0].Update(KingOfTheHill.zoneone.transform.position, KingOfTheHill.zoneonecolor);
                         KingOfTheHill.localArrows[1].Update(KingOfTheHill.zonetwo.transform.position, KingOfTheHill.zonetwocolor);
                         KingOfTheHill.localArrows[2].Update(KingOfTheHill.zonethree.transform.position, KingOfTheHill.zonethreecolor);
+                        if (!KingOfTheHill.yellowKingplayer.Data.IsDead) {
+                            KingOfTheHill.localArrows[3].arrow.SetActive(true);
+                            KingOfTheHill.localArrows[3].Update(KingOfTheHill.yellowKingplayer.transform.position, Color.cyan);
+                        }
+                        else {
+                            KingOfTheHill.localArrows[3].arrow.SetActive(false);
+                        }
                     }
                     return KingOfTheHill.yellowplayer02currentTarget && PlayerControl.LocalPlayer.CanMove && !KingOfTheHill.yellowplayer02IsReviving && !PlayerControl.LocalPlayer.Data.IsDead;
                 },
@@ -7864,6 +7950,13 @@ namespace LasMonjas
                         KingOfTheHill.localArrows[0].Update(KingOfTheHill.zoneone.transform.position, KingOfTheHill.zoneonecolor);
                         KingOfTheHill.localArrows[1].Update(KingOfTheHill.zonetwo.transform.position, KingOfTheHill.zonetwocolor);
                         KingOfTheHill.localArrows[2].Update(KingOfTheHill.zonethree.transform.position, KingOfTheHill.zonethreecolor);
+                        if (!KingOfTheHill.yellowKingplayer.Data.IsDead) {
+                            KingOfTheHill.localArrows[3].arrow.SetActive(true);
+                            KingOfTheHill.localArrows[3].Update(KingOfTheHill.yellowKingplayer.transform.position, Color.cyan);
+                        }
+                        else {
+                            KingOfTheHill.localArrows[3].arrow.SetActive(false);
+                        }
                     }
                     return KingOfTheHill.yellowplayer03currentTarget && PlayerControl.LocalPlayer.CanMove && !KingOfTheHill.yellowplayer03IsReviving && !PlayerControl.LocalPlayer.Data.IsDead;
                 },
@@ -7892,6 +7985,13 @@ namespace LasMonjas
                         KingOfTheHill.localArrows[0].Update(KingOfTheHill.zoneone.transform.position, KingOfTheHill.zoneonecolor);
                         KingOfTheHill.localArrows[1].Update(KingOfTheHill.zonetwo.transform.position, KingOfTheHill.zonetwocolor);
                         KingOfTheHill.localArrows[2].Update(KingOfTheHill.zonethree.transform.position, KingOfTheHill.zonethreecolor);
+                        if (!KingOfTheHill.yellowKingplayer.Data.IsDead) {
+                            KingOfTheHill.localArrows[3].arrow.SetActive(true);
+                            KingOfTheHill.localArrows[3].Update(KingOfTheHill.yellowKingplayer.transform.position, Color.cyan);
+                        }
+                        else {
+                            KingOfTheHill.localArrows[3].arrow.SetActive(false);
+                        }
                     }
                     return KingOfTheHill.yellowplayer04currentTarget && PlayerControl.LocalPlayer.CanMove && !KingOfTheHill.yellowplayer04IsReviving && !PlayerControl.LocalPlayer.Data.IsDead;
                 },
@@ -7920,6 +8020,13 @@ namespace LasMonjas
                         KingOfTheHill.localArrows[0].Update(KingOfTheHill.zoneone.transform.position, KingOfTheHill.zoneonecolor);
                         KingOfTheHill.localArrows[1].Update(KingOfTheHill.zonetwo.transform.position, KingOfTheHill.zonetwocolor);
                         KingOfTheHill.localArrows[2].Update(KingOfTheHill.zonethree.transform.position, KingOfTheHill.zonethreecolor);
+                        if (!KingOfTheHill.yellowKingplayer.Data.IsDead) {
+                            KingOfTheHill.localArrows[3].arrow.SetActive(true);
+                            KingOfTheHill.localArrows[3].Update(KingOfTheHill.yellowKingplayer.transform.position, Color.cyan);
+                        }
+                        else {
+                            KingOfTheHill.localArrows[3].arrow.SetActive(false);
+                        }
                     }
                     return KingOfTheHill.yellowplayer05currentTarget && PlayerControl.LocalPlayer.CanMove && !KingOfTheHill.yellowplayer05IsReviving && !PlayerControl.LocalPlayer.Data.IsDead;
                 },
@@ -7948,6 +8055,13 @@ namespace LasMonjas
                         KingOfTheHill.localArrows[0].Update(KingOfTheHill.zoneone.transform.position, KingOfTheHill.zoneonecolor);
                         KingOfTheHill.localArrows[1].Update(KingOfTheHill.zonetwo.transform.position, KingOfTheHill.zonetwocolor);
                         KingOfTheHill.localArrows[2].Update(KingOfTheHill.zonethree.transform.position, KingOfTheHill.zonethreecolor);
+                        if (!KingOfTheHill.yellowKingplayer.Data.IsDead) {
+                            KingOfTheHill.localArrows[3].arrow.SetActive(true);
+                            KingOfTheHill.localArrows[3].Update(KingOfTheHill.yellowKingplayer.transform.position, Color.cyan);
+                        }
+                        else {
+                            KingOfTheHill.localArrows[3].arrow.SetActive(false);
+                        }
                     }
                     return KingOfTheHill.yellowplayer06currentTarget && PlayerControl.LocalPlayer.CanMove && !KingOfTheHill.yellowplayer06IsReviving && !PlayerControl.LocalPlayer.Data.IsDead;
                 },
@@ -7976,6 +8090,20 @@ namespace LasMonjas
                         KingOfTheHill.localArrows[0].Update(KingOfTheHill.zoneone.transform.position, KingOfTheHill.zoneonecolor);
                         KingOfTheHill.localArrows[1].Update(KingOfTheHill.zonetwo.transform.position, KingOfTheHill.zonetwocolor);
                         KingOfTheHill.localArrows[2].Update(KingOfTheHill.zonethree.transform.position, KingOfTheHill.zonethreecolor);
+                        if (!KingOfTheHill.greenKingplayer.Data.IsDead) {
+                            KingOfTheHill.localArrows[4].arrow.SetActive(true);
+                            KingOfTheHill.localArrows[4].Update(KingOfTheHill.greenKingplayer.transform.position, Color.cyan);
+                        }
+                        else {
+                            KingOfTheHill.localArrows[4].arrow.SetActive(false);
+                        }
+                        if (!KingOfTheHill.yellowKingplayer.Data.IsDead) {
+                            KingOfTheHill.localArrows[5].arrow.SetActive(true);
+                            KingOfTheHill.localArrows[5].Update(KingOfTheHill.yellowKingplayer.transform.position, Color.cyan);
+                        }
+                        else {
+                            KingOfTheHill.localArrows[5].arrow.SetActive(false);
+                        }
                     }
                     return KingOfTheHill.usurperPlayercurrentTarget && PlayerControl.LocalPlayer.CanMove && !KingOfTheHill.usurperPlayerIsReviving && !PlayerControl.LocalPlayer.Data.IsDead;
                 },
@@ -8055,7 +8183,7 @@ namespace LasMonjas
                 },
                 () => { greenKingplayerCaptureZoneButton.Timer = greenKingplayerCaptureZoneButton.MaxTimer; },
                 KingOfTheHill.getPlaceGreenFlagButtonSprite(),
-                new Vector3(-3f, -0.06f, 0),
+                new Vector3(-1.9f, -0.06f, 0),
                 __instance,
                 KeyCode.F,
                 true,
@@ -8120,7 +8248,7 @@ namespace LasMonjas
                 },
                 () => { yellowKingplayerCaptureZoneButton.Timer = yellowKingplayerCaptureZoneButton.MaxTimer; },
                 KingOfTheHill.getPlaceYellowFlagButtonSprite(),
-                new Vector3(-3f, -0.06f, 0),
+                new Vector3(-1.9f, -0.06f, 0),
                 __instance,
                 KeyCode.F,
                 true,
