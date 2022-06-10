@@ -2402,14 +2402,30 @@ namespace LasMonjas.Patches
                         new CustomMessage(KingOfTheHill.kingpointCounter, KingOfTheHill.matchDuration, -1, 1.9f, 12);
 
                         // Add Arrows pointing the zones
-                        if (KingOfTheHill.localArrows.Count == 0 && KingOfTheHill.localArrows.Count < 3) {
+                        if (KingOfTheHill.localArrows.Count == 0 && KingOfTheHill.localArrows.Count < 4) {
                             KingOfTheHill.localArrows.Add(new Arrow(KingOfTheHill.zoneonecolor));
                             KingOfTheHill.localArrows.Add(new Arrow(KingOfTheHill.zonetwocolor));
                             KingOfTheHill.localArrows.Add(new Arrow(KingOfTheHill.zonethreecolor));
+                            KingOfTheHill.localArrows.Add(new Arrow(Color.cyan));
+                            KingOfTheHill.localArrows.Add(new Arrow(Color.cyan));
+                            KingOfTheHill.localArrows.Add(new Arrow(Color.cyan));
                         }
                         KingOfTheHill.localArrows[0].arrow.SetActive(true);
                         KingOfTheHill.localArrows[1].arrow.SetActive(true);
                         KingOfTheHill.localArrows[2].arrow.SetActive(true);
+                        if (PlayerControl.LocalPlayer == KingOfTheHill.greenKingplayer || PlayerControl.LocalPlayer == KingOfTheHill.yellowKingplayer) {
+                            KingOfTheHill.localArrows[3].arrow.SetActive(false);
+                        } else {
+                            KingOfTheHill.localArrows[3].arrow.SetActive(true);
+                        }
+                        if (KingOfTheHill.usurperPlayer != null && PlayerControl.LocalPlayer == KingOfTheHill.usurperPlayer) {
+                            KingOfTheHill.localArrows[3].arrow.SetActive(false);
+                            KingOfTheHill.localArrows[4].arrow.SetActive(true);
+                            KingOfTheHill.localArrows[5].arrow.SetActive(true);
+                        } else {
+                            KingOfTheHill.localArrows[4].arrow.SetActive(false);
+                            KingOfTheHill.localArrows[5].arrow.SetActive(false);
+                        }
                     }
                     // Hot Potato
                     else if (HotPotato.hotPotatoMode) {
@@ -3539,8 +3555,8 @@ namespace LasMonjas.Patches
                 }
 
                 // Assign colliders objets, find halconCollisions to be the main parent
-                GameObject halconCollisions = senseiMap.transform.GetChild(0).transform.gameObject; 
-                
+                GameObject halconCollisions = senseiMap.transform.GetChild(0).transform.gameObject;
+
                 // Area colliders rebuilded for showing map names
                 GameObject colliderAdmin = GameObject.Find("SkeldShip(Clone)/Admin/Room");
                 colliderAdmin.transform.SetParent(halconCollisions.transform);
@@ -4058,6 +4074,10 @@ namespace LasMonjas.Patches
                 skeldMedBayConsole.transform.SetParent(halconMedical.transform);
                 skeldMedBayConsole.transform.position = new Vector3(-4.315f, -0.595f, skeldMedBayConsole.transform.position.z);
 
+                var objList = GameObject.FindObjectsOfType<Console>().ToList();
+                foreach (var obj in objList) {
+                    obj.checkWalls = true;
+                }
 
                 // Change original skeld map parent and hide the innecesary vanilla objects (don't destroy them, the game won't work otherwise)
                 GameObject skeldship = GameObject.Find("SkeldShip(Clone)");

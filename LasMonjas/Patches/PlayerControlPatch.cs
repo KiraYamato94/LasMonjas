@@ -2032,7 +2032,7 @@ namespace LasMonjas.Patches {
                 // Ace Attorney Music Stop and play theater music
                 if (PlayerControl.LocalPlayer != Spiritualist.spiritualist && PlayerControl.LocalPlayer != TimeTraveler.timeTraveler) {
                     RPCProcedure.changeMusic(7);
-                    SoundManager.Instance.PlaySound(CustomMain.customAssets.performerMusic, true, 5f);
+                    SoundManager.Instance.PlaySound(CustomMain.customAssets.performerMusic, false, 5f);
                     new DIO(Modifiers.performerDuration, Modifiers.performer);
                 }
                 Modifiers.performerMusicStop = false;
