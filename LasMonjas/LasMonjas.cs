@@ -2407,6 +2407,7 @@ namespace LasMonjas
         public static PlayerControl stealerPlayer = null;
         public static bool stealerPlayerIsReviving = false;
         public static PlayerControl stealerPlayercurrentTarget = null;
+        public static List<GameObject> stealerSpawns = new List<GameObject>();
 
         public static bool captureTheFlagMode = false;
         public static float requiredFlags = 3;
@@ -2515,7 +2516,8 @@ namespace LasMonjas
             stealerPlayer = null;
             stealerPlayerIsReviving = false;
             stealerPlayercurrentTarget = null;
-            if (CustomOptionHolder.captureTheFlagMode.getBool() == true) {
+            stealerSpawns.Clear();
+            if(CustomOptionHolder.captureTheFlagMode.getBool() == true) {
                 captureTheFlagMode = true;
             }
             else {
@@ -2595,11 +2597,6 @@ namespace LasMonjas
         public static bool thiefplayer09IsStealing = false;
         public static byte thiefplayer09JewelId = 0;
         public static bool thiefplayer09IsReviving = false;
-        public static PlayerControl thiefplayer10 = null;
-        public static PlayerControl thiefplayer10currentTarget = null;
-        public static bool thiefplayer10IsStealing = false;
-        public static byte thiefplayer10JewelId = 0;
-        public static bool thiefplayer10IsReviving = false;
 
         public static List<PlayerControl> policeTeam = new List<PlayerControl>();
         public static PlayerControl policeplayer01 = null;
@@ -2609,9 +2606,10 @@ namespace LasMonjas
         public static bool policeplayer01IsReviving = false;
         public static PlayerControl policeplayer02 = null;
         public static PlayerControl policeplayer02currentTarget = null;
-        public static PlayerControl policeplayer02targetedPlayer = null;
         public static float policeplayer02lightTimer = 0;
         public static bool policeplayer02IsReviving = false;
+        public static GameObject policeplayer02Taser = null;
+        public static float policeplayer02mouseAngle = 0f;
         public static PlayerControl policeplayer03 = null;
         public static PlayerControl policeplayer03currentTarget = null;
         public static PlayerControl policeplayer03targetedPlayer = null;
@@ -2619,14 +2617,20 @@ namespace LasMonjas
         public static bool policeplayer03IsReviving = false;
         public static PlayerControl policeplayer04 = null;
         public static PlayerControl policeplayer04currentTarget = null;
-        public static PlayerControl policeplayer04targetedPlayer = null;
         public static float policeplayer04lightTimer = 0;
         public static bool policeplayer04IsReviving = false;
+        public static GameObject policeplayer04Taser = null;
+        public static float policeplayer04mouseAngle = 0f; 
         public static PlayerControl policeplayer05 = null;
         public static PlayerControl policeplayer05currentTarget = null;
         public static PlayerControl policeplayer05targetedPlayer = null;
         public static float policeplayer05lightTimer = 0;
-        public static bool policeplayer05IsReviving = false;
+        public static bool policeplayer05IsReviving = false; 
+        public static PlayerControl policeplayer06 = null;
+        public static PlayerControl policeplayer06currentTarget = null;
+        public static PlayerControl policeplayer06targetedPlayer = null;
+        public static float policeplayer06lightTimer = 0;
+        public static bool policeplayer06IsReviving = false;
 
         public static List<PlayerControl> thiefArrested = new List<PlayerControl>();
         public static List<GameObject> thiefTreasures = new List<GameObject>();
@@ -2672,14 +2676,15 @@ namespace LasMonjas
         public static bool policeAndThiefMode = false;
         public static float requiredJewels = 10;
         public static float policeKillCooldown = 20f;
-        public static bool policeCanKillNearPrison = false;
+        public static float policeTaseCooldown = 20f;
+        public static float policeTaseDuration = 5f;
         public static bool policeCanSeeJewels = false;
         public static float policeCatchCooldown = 10f;
         public static float captureThiefTime = 3f;
         public static float policeVision = 1f;
         public static float matchDuration = 300f;
         public static float policeReviveTime = 5f;
-        public static bool thiefTeamCanKill = false;
+        public static int whoCanThiefsKill = 0;
         public static float thiefKillCooldown = 20f;
         public static float thiefReviveTime = 10f;
         public static float invincibilityTimeAfterRevive = 3f;
@@ -2737,7 +2742,21 @@ namespace LasMonjas
             return buttonSpriteTakeJewel;
         }
 
+        private static Sprite taserSprite;
 
+        public static Sprite getTaserSprite() {
+            if (taserSprite) return taserSprite;
+            taserSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.PoliceAndThiefsTaser.png", 100f);
+            return taserSprite;
+        }
+
+        private static Sprite buttonSpriteTaserThief;
+        public static Sprite getTaserThiefButtonSprite() {
+            if (buttonSpriteTaserThief) return buttonSpriteTaserThief;
+            buttonSpriteTaserThief = Helpers.loadSpriteFromResources("LasMonjas.Images.PoliceAndThiefsTaserButton.png", 90f);
+            return buttonSpriteTaserThief;
+        }
+        
         public static void clearAndReload() {
             cell = null;
             cellbutton = null;
@@ -2795,11 +2814,6 @@ namespace LasMonjas
             thiefplayer09IsStealing = false;
             thiefplayer09JewelId = 0;
             thiefplayer09IsReviving = false;
-            thiefplayer10 = null;
-            thiefplayer10currentTarget = null;
-            thiefplayer10IsStealing = false;
-            thiefplayer10JewelId = 0;
-            thiefplayer10IsReviving = false;
 
             policeTeam.Clear();
             policeplayer01 = null;
@@ -2809,9 +2823,10 @@ namespace LasMonjas
             policeplayer01IsReviving = false;
             policeplayer02 = null;
             policeplayer02currentTarget = null;
-            policeplayer02targetedPlayer = null;
             policeplayer02lightTimer = 0;
             policeplayer02IsReviving = false;
+            policeplayer02Taser = null;
+            policeplayer02mouseAngle = 0f;
             policeplayer03 = null;
             policeplayer03currentTarget = null;
             policeplayer03targetedPlayer = null;
@@ -2819,14 +2834,20 @@ namespace LasMonjas
             policeplayer03IsReviving = false;
             policeplayer04 = null;
             policeplayer04currentTarget = null;
-            policeplayer04targetedPlayer = null;
             policeplayer04lightTimer = 0;
             policeplayer04IsReviving = false;
+            policeplayer04Taser = null;
+            policeplayer04mouseAngle = 0f; 
             policeplayer05 = null;
             policeplayer05currentTarget = null;
             policeplayer05targetedPlayer = null;
             policeplayer05lightTimer = 0;
             policeplayer05IsReviving = false;
+            policeplayer06 = null;
+            policeplayer06currentTarget = null;
+            policeplayer06targetedPlayer = null;
+            policeplayer06lightTimer = 0;
+            policeplayer06IsReviving = false;
 
             jewel01 = null;
             jewel01BeingStealed = null;
@@ -2870,14 +2891,15 @@ namespace LasMonjas
             }
             requiredJewels = CustomOptionHolder.thiefModerequiredJewels.getFloat();
             policeKillCooldown = CustomOptionHolder.thiefModePoliceKillCooldown.getFloat();
-            policeCanKillNearPrison = CustomOptionHolder.thiefModePoliceCanKillNearPrison.getBool();
+            policeTaseCooldown = CustomOptionHolder.thiefModePoliceTaseCooldown.getFloat();
+            policeTaseDuration = CustomOptionHolder.thiefModePoliceTaseDuration.getFloat();
             policeCanSeeJewels = CustomOptionHolder.thiefModePoliceCanSeeJewels.getBool();
             policeCatchCooldown = CustomOptionHolder.thiefModePoliceCatchCooldown.getFloat();
             captureThiefTime = CustomOptionHolder.thiefModecaptureThiefTime.getFloat();
             policeVision = CustomOptionHolder.thiefModepolicevision.getFloat();
             matchDuration = CustomOptionHolder.thiefModeMatchDuration.getFloat() + 10f;
             policeReviveTime = CustomOptionHolder.thiefModePoliceReviveTime.getFloat();
-            thiefTeamCanKill = CustomOptionHolder.thiefModeCanKill.getBool();
+            whoCanThiefsKill = CustomOptionHolder.thiefModeWhoCanThiefsKill.getSelection();
             thiefKillCooldown = CustomOptionHolder.thiefModeKillCooldown.getFloat();
             thiefReviveTime = CustomOptionHolder.thiefModeThiefReviveTime.getFloat();
             invincibilityTimeAfterRevive = CustomOptionHolder.thiefModeInvincibilityTimeAfterRevive.getFloat();
@@ -2886,6 +2908,48 @@ namespace LasMonjas
             triggerPoliceWin = false;
             currentThiefsCaptured = 0;
             thiefpointCounter = "Stealed Jewels: " + "<color=#00F7FFFF>" + currentJewelsStoled + "/" + requiredJewels + "</color> | " + "Captured Thiefs: " + "<color=#928B55FF>" + currentThiefsCaptured + "/" + thiefTeam.Count + "</color>";
+        }
+        public static PlayerControl GetTasedPlayerTwo(float shotSize, float effectiveRange) {
+            PlayerControl result = null;
+            float num = effectiveRange;
+            Vector3 pos;
+            float mouseAngle = policeplayer02mouseAngle;
+            foreach (PlayerControl player in thiefTeam) {
+                if (player.PlayerId == PlayerControl.LocalPlayer.PlayerId) continue;
+
+                if (player.Data.IsDead || player.inVent) continue;
+
+                pos = player.transform.position - PlayerControl.LocalPlayer.transform.position;
+                pos = new Vector3(
+                    pos.x * MathF.Cos(mouseAngle) + pos.y * MathF.Sin(mouseAngle),
+                    pos.y * MathF.Cos(mouseAngle) - pos.x * MathF.Sin(mouseAngle));
+                if (Math.Abs(pos.y) < shotSize && (!(pos.x < 0)) && pos.x < num) {
+                    num = pos.x;
+                    result = player;
+                }
+            }
+            return result;
+        }
+        public static PlayerControl GetTasedPlayerFour(float shotSize, float effectiveRange) {
+            PlayerControl result = null;
+            float num = effectiveRange;
+            Vector3 pos;
+            float mouseAngle = policeplayer04mouseAngle;
+            foreach (PlayerControl player in thiefTeam) {
+                if (player.PlayerId == PlayerControl.LocalPlayer.PlayerId) continue;
+
+                if (player.Data.IsDead || player.inVent) continue;
+
+                pos = player.transform.position - PlayerControl.LocalPlayer.transform.position;
+                pos = new Vector3(
+                    pos.x * MathF.Cos(mouseAngle) + pos.y * MathF.Sin(mouseAngle),
+                    pos.y * MathF.Cos(mouseAngle) - pos.x * MathF.Sin(mouseAngle));
+                if (Math.Abs(pos.y) < shotSize && (!(pos.x < 0)) && pos.x < num) {
+                    num = pos.x;
+                    result = player;
+                }
+            }
+            return result;
         }
     }
 
@@ -2949,6 +3013,7 @@ namespace LasMonjas
         public static PlayerControl usurperPlayer = null;
         public static PlayerControl usurperPlayercurrentTarget = null;
         public static bool usurperPlayerIsReviving = false;
+        public static List<GameObject> usurperSpawns = new List<GameObject>();
 
         public static bool kingOfTheHillMode = false;
         public static float requiredPoints = 150;
@@ -3062,6 +3127,7 @@ namespace LasMonjas
             usurperPlayer = null;
             usurperPlayercurrentTarget = null;
             usurperPlayerIsReviving = false;
+            usurperSpawns.Clear();
 
             if (CustomOptionHolder.kingOfTheHillMode.getBool() == true) {
                 kingOfTheHillMode = true;
@@ -3236,6 +3302,7 @@ namespace LasMonjas
         public static List<PlayerControl> infectedTeam = new List<PlayerControl>();
         public static List<GameObject> nurseExits = new List<GameObject>();
         public static List<GameObject> nurseMedkits = new List<GameObject>();
+        public static List<GameObject> laboratoryEntrances = new List<GameObject>();
 
         public static List<Vector3> susBoxPositions = new List<Vector3>();
         public static List<Arrow> localNurseArrows = new List<Arrow>();
@@ -3581,6 +3648,7 @@ namespace LasMonjas
             nurseMedkits.Clear();
             localNurseArrows = new List<Arrow>();
             localSurvivorsDeliverArrow = new List<Arrow>();
+            laboratoryEntrances.Clear();
 
             nursePlayer = null;
             nursePlayercurrentTarget = null;
@@ -4346,6 +4414,8 @@ namespace LasMonjas
         public GameObject jewelruby;
         public GameObject thiefspaceship;
         public GameObject thiefspaceshiphatch;
+        public GameObject policeParalyze;
+        public AudioClip policeTaser;
 
         // Custom Bundle King Of The Hill Assets
         public AudioClip kingOfTheHillMusic;

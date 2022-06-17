@@ -57,13 +57,14 @@ namespace LasMonjas
         public static CustomOption thiefModeMatchDuration;
         public static CustomOption thiefModerequiredJewels;
         public static CustomOption thiefModePoliceKillCooldown;
-        public static CustomOption thiefModePoliceCanKillNearPrison;
+        public static CustomOption thiefModePoliceTaseCooldown;
+        public static CustomOption thiefModePoliceTaseDuration;
         public static CustomOption thiefModePoliceCanSeeJewels;
         public static CustomOption thiefModePoliceCatchCooldown;
         public static CustomOption thiefModecaptureThiefTime;
         public static CustomOption thiefModepolicevision;
         public static CustomOption thiefModePoliceReviveTime;
-        public static CustomOption thiefModeCanKill;
+        public static CustomOption thiefModeWhoCanThiefsKill;
         public static CustomOption thiefModeKillCooldown;
         public static CustomOption thiefModeThiefReviveTime;
         public static CustomOption thiefModeInvincibilityTimeAfterRevive;
@@ -437,16 +438,17 @@ namespace LasMonjas
             thiefModeMatchDuration = CustomOption.Create(41, cs(Coward.color, "Police and Thiefs") + ": Match Duration", "gamemode", 300f, 300f, 450f, 30f, policeAndThiefMode);
             thiefModerequiredJewels = CustomOption.Create(42, cs(Coward.color, "Police and Thiefs") + ": Jewel Number", "gamemode", 15f, 8f, 15f, 1f, policeAndThiefMode);
             thiefModePoliceKillCooldown = CustomOption.Create(43, cs(Coward.color, "Police and Thiefs") + ": Police Kill Cooldown", "gamemode", 15f, 10f, 20f, 1f, policeAndThiefMode);
-            thiefModePoliceCanKillNearPrison = CustomOption.Create(44, cs(Coward.color, "Police and Thiefs") + ": Police can Kill near prison", "gamemode", false, policeAndThiefMode);
-            thiefModePoliceCanSeeJewels = CustomOption.Create(45, cs(Coward.color, "Police and Thiefs") + ": Police can see Jewels", "gamemode", false, policeAndThiefMode);
-            thiefModePoliceCatchCooldown = CustomOption.Create(46, cs(Coward.color, "Police and Thiefs") + ": Arrest Cooldown", "gamemode", 10f, 5f, 15f, 1f, policeAndThiefMode);
-            thiefModecaptureThiefTime = CustomOption.Create(47, cs(Coward.color, "Police and Thiefs") + ": Time to Arrest", "gamemode", 3f, 2f, 5f, 1f, policeAndThiefMode);
-            thiefModepolicevision = CustomOption.Create(48, cs(Coward.color, "Police and Thiefs") + ": Police vision range", "gamemode", 0.8f, 0.4f, 1.4f, 0.2f, policeAndThiefMode);
-            thiefModePoliceReviveTime = CustomOption.Create(49, cs(Coward.color, "Police and Thiefs") + ": Police Revive Wait Time", "gamemode", 8f, 8f, 13f, 1f, policeAndThiefMode);
-            thiefModeCanKill = CustomOption.Create(50, cs(Coward.color, "Police and Thiefs") + ": Thiefs Can Kill", "gamemode", false, policeAndThiefMode);
-            thiefModeKillCooldown = CustomOption.Create(51, cs(Coward.color, "Police and Thiefs") + ": Thiefs Kill Cooldown", "gamemode", 20f, 15f, 30f, 1f, policeAndThiefMode);
-            thiefModeThiefReviveTime = CustomOption.Create(52, cs(Coward.color, "Police and Thiefs") + ": Thiefs Revive Wait Time", "gamemode", 13f, 13f, 23f, 1f, policeAndThiefMode);
-            thiefModeInvincibilityTimeAfterRevive = CustomOption.Create(53, cs(Coward.color, "Police and Thiefs") + ": Invincibility Time After Revive", "gamemode", 3f, 2f, 5f, 1f, policeAndThiefMode);
+            thiefModePoliceCatchCooldown = CustomOption.Create(44, cs(Coward.color, "Police and Thiefs") + ": Police Arrest Cooldown", "gamemode", 10f, 5f, 15f, 1f, policeAndThiefMode);
+            thiefModecaptureThiefTime = CustomOption.Create(45, cs(Coward.color, "Police and Thiefs") + ": Time to Arrest", "gamemode", 3f, 2f, 5f, 1f, policeAndThiefMode);
+            thiefModePoliceTaseCooldown = CustomOption.Create(46, cs(Coward.color, "Police and Thiefs") + ": Police Tase Cooldown", "gamemode", 15f, 10f, 20f, 1f, policeAndThiefMode);
+            thiefModePoliceTaseDuration = CustomOption.Create(47, cs(Coward.color, "Police and Thiefs") + ": Police Tase Duration", "gamemode", 3f, 3f, 5f, 1f, policeAndThiefMode);
+            thiefModePoliceCanSeeJewels = CustomOption.Create(48, cs(Coward.color, "Police and Thiefs") + ": Police can see Jewels", "gamemode", false, policeAndThiefMode);
+            thiefModepolicevision = CustomOption.Create(49, cs(Coward.color, "Police and Thiefs") + ": Police vision range", "gamemode", 0.8f, 0.4f, 1.4f, 0.2f, policeAndThiefMode);
+            thiefModePoliceReviveTime = CustomOption.Create(50, cs(Coward.color, "Police and Thiefs") + ": Police Revive Wait Time", "gamemode", 8f, 8f, 13f, 1f, policeAndThiefMode);
+            thiefModeWhoCanThiefsKill = CustomOption.Create(51, cs(Coward.color, "Police and Thiefs") + ": Who Can Thiefs Kill", "gamemode", new string[] { "Taser", "All", "Nobody" }, policeAndThiefMode);
+            thiefModeKillCooldown = CustomOption.Create(52, cs(Coward.color, "Police and Thiefs") + ": Thiefs Kill Cooldown", "gamemode", 20f, 15f, 30f, 1f, policeAndThiefMode);
+            thiefModeThiefReviveTime = CustomOption.Create(53, cs(Coward.color, "Police and Thiefs") + ": Thiefs Revive Wait Time", "gamemode", 13f, 13f, 23f, 1f, policeAndThiefMode);
+            thiefModeInvincibilityTimeAfterRevive = CustomOption.Create(54, cs(Coward.color, "Police and Thiefs") + ": Invincibility Time After Revive", "gamemode", 3f, 2f, 5f, 1f, policeAndThiefMode);
 
             // King of the hill mode
             kingOfTheHillMode = CustomOption.Create(60, cs(Squire.color, "King of the Hill"), "gamemode", false, null, true);

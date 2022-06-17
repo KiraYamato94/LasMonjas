@@ -46,10 +46,11 @@ namespace LasMonjas
 
         // Police and Thief Teams
         public static RoleInfo policeplayer01 = new RoleInfo("Police Officer", Color.cyan, "Capture all the <color=#D2B48CFF>Thiefs</color>", "Capture all the <color=#D2B48CFF>Thiefs</color>", RoleId.PolicePlayer01);
-        public static RoleInfo policeplayer02 = new RoleInfo("Police Officer", Color.cyan, "Capture all the <color=#D2B48CFF>Thiefs</color>", "Capture all the <color=#D2B48CFF>Thiefs</color>", RoleId.PolicePlayer02);
+        public static RoleInfo policeplayer02 = new RoleInfo("Taser", Color.yellow, "Tase the <color=#D2B48CFF>Thiefs</color>", "Tase the <color=#D2B48CFF>Thiefs \n with right clic</color>", RoleId.PolicePlayer02);
         public static RoleInfo policeplayer03 = new RoleInfo("Police Officer", Color.cyan, "Capture all the <color=#D2B48CFF>Thiefs</color>", "Capture all the <color=#D2B48CFF>Thiefs</color>", RoleId.PolicePlayer03);
-        public static RoleInfo policeplayer04 = new RoleInfo("Police Officer", Color.cyan, "Capture all the <color=#D2B48CFF>Thiefs</color>", "Capture all the <color=#D2B48CFF>Thiefs</color>", RoleId.PolicePlayer04);
+        public static RoleInfo policeplayer04 = new RoleInfo("Taser", Color.yellow, "Tase the <color=#D2B48CFF>Thiefs</color>", "Tase the <color=#D2B48CFF>Thiefs \n with right clic</color>", RoleId.PolicePlayer04);
         public static RoleInfo policeplayer05 = new RoleInfo("Police Officer", Color.cyan, "Capture all the <color=#D2B48CFF>Thiefs</color>", "Capture all the <color=#D2B48CFF>Thiefs</color>", RoleId.PolicePlayer05);
+        public static RoleInfo policeplayer06 = new RoleInfo("Police Officer", Color.cyan, "Capture all the <color=#D2B48CFF>Thiefs</color>", "Capture all the <color=#D2B48CFF>Thiefs</color>", RoleId.PolicePlayer06);
         public static RoleInfo thiefplayer01 = new RoleInfo("Thief", Mechanic.color, "Steal all the jewels without getting captured", "Steal all the jewels \nwithout getting captured", RoleId.ThiefPlayer01);
         public static RoleInfo thiefplayer02 = new RoleInfo("Thief", Mechanic.color, "Steal all the jewels without getting captured", "Steal all the jewels \nwithout getting captured", RoleId.ThiefPlayer02);
         public static RoleInfo thiefplayer03 = new RoleInfo("Thief", Mechanic.color, "Steal all the jewels without getting captured", "Steal all the jewels \nwithout getting captured", RoleId.ThiefPlayer03);
@@ -59,7 +60,6 @@ namespace LasMonjas
         public static RoleInfo thiefplayer07 = new RoleInfo("Thief", Mechanic.color, "Steal all the jewels without getting captured", "Steal all the jewels \nwithout getting captured", RoleId.ThiefPlayer07);
         public static RoleInfo thiefplayer08 = new RoleInfo("Thief", Mechanic.color, "Steal all the jewels without getting captured", "Steal all the jewels \nwithout getting captured", RoleId.ThiefPlayer08);
         public static RoleInfo thiefplayer09 = new RoleInfo("Thief", Mechanic.color, "Steal all the jewels without getting captured", "Steal all the jewels \nwithout getting captured", RoleId.ThiefPlayer09);
-        public static RoleInfo thiefplayer10 = new RoleInfo("Thief", Mechanic.color, "Steal all the jewels without getting captured", "Steal all the jewels \nwithout getting captured", RoleId.ThiefPlayer10);
 
         // King of the hill Teams
         public static RoleInfo greenKing = new RoleInfo("Green King", Color.green, "Capture the zones", "Capture the zones", RoleId.GreenKing);
@@ -296,6 +296,7 @@ namespace LasMonjas
             policeplayer03,
             policeplayer04,
             policeplayer05,
+            policeplayer06,
             thiefplayer01,
             thiefplayer02,
             thiefplayer03,
@@ -305,7 +306,6 @@ namespace LasMonjas
             thiefplayer07,
             thiefplayer08,
             thiefplayer09,
-            thiefplayer10,
             greenKing,
             greenplayer01,
             greenplayer02,
@@ -407,6 +407,7 @@ namespace LasMonjas
             if (p == PoliceAndThief.policeplayer03) infos.Add(policeplayer03);
             if (p == PoliceAndThief.policeplayer04) infos.Add(policeplayer04);
             if (p == PoliceAndThief.policeplayer05) infos.Add(policeplayer05);
+            if (p == PoliceAndThief.policeplayer06) infos.Add(policeplayer06);
             if (p == PoliceAndThief.thiefplayer01) infos.Add(thiefplayer01);
             if (p == PoliceAndThief.thiefplayer02) infos.Add(thiefplayer02);
             if (p == PoliceAndThief.thiefplayer03) infos.Add(thiefplayer03);
@@ -416,7 +417,6 @@ namespace LasMonjas
             if (p == PoliceAndThief.thiefplayer07) infos.Add(thiefplayer07);
             if (p == PoliceAndThief.thiefplayer08) infos.Add(thiefplayer08);
             if (p == PoliceAndThief.thiefplayer09) infos.Add(thiefplayer09);
-            if (p == PoliceAndThief.thiefplayer10) infos.Add(thiefplayer10);
 
             // King of the hill
             if (p == KingOfTheHill.greenKingplayer) infos.Add(greenKing);

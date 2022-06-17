@@ -104,6 +104,7 @@ namespace LasMonjas
         PolicePlayer03,
         PolicePlayer04,
         PolicePlayer05,
+        PolicePlayer06,
         ThiefPlayer01,
         ThiefPlayer02,
         ThiefPlayer03,
@@ -113,7 +114,6 @@ namespace LasMonjas
         ThiefPlayer07,
         ThiefPlayer08,
         ThiefPlayer09,
-        ThiefPlayer10,
 
         // King of the Hill
         GreenKing,
@@ -297,6 +297,7 @@ namespace LasMonjas
         PoliceandThiefTakeJewel,
         PoliceandThiefDeliverJewel,
         PoliceandThiefRevertedJewelPosition,
+        PoliceandThiefsTased,
 
         // King of the hill
         KingoftheHillKills,
@@ -603,6 +604,10 @@ namespace LasMonjas
                             PoliceAndThief.policeplayer05 = player;
                             PoliceAndThief.policeTeam.Add(player);
                             break;
+                        case RoleId.PolicePlayer06:
+                            PoliceAndThief.policeplayer06 = player;
+                            PoliceAndThief.policeTeam.Add(player);
+                            break;
                         case RoleId.ThiefPlayer01:
                             PoliceAndThief.thiefplayer01 = player;
                             PoliceAndThief.thiefTeam.Add(player);
@@ -637,10 +642,6 @@ namespace LasMonjas
                             break;
                         case RoleId.ThiefPlayer09:
                             PoliceAndThief.thiefplayer09 = player;
-                            PoliceAndThief.thiefTeam.Add(player);
-                            break;
-                        case RoleId.ThiefPlayer10:
-                            PoliceAndThief.thiefplayer10 = player;
                             PoliceAndThief.thiefTeam.Add(player);
                             break;
 
@@ -3088,6 +3089,9 @@ namespace LasMonjas
                         case 5:
                             PoliceAndThief.policeplayer05.MurderPlayer(player);
                             break;
+                        case 6:
+                            PoliceAndThief.policeplayer06.MurderPlayer(player);
+                            break;
                         case 7:
                             PoliceAndThief.thiefplayer01.MurderPlayer(player);
                             break;
@@ -3114,9 +3118,6 @@ namespace LasMonjas
                             break;
                         case 15:
                             PoliceAndThief.thiefplayer09.MurderPlayer(player);
-                            break;
-                        case 16:
-                            PoliceAndThief.thiefplayer10.MurderPlayer(player);
                             break;
                     }
                     return;
@@ -3182,11 +3183,6 @@ namespace LasMonjas
                     else if (PoliceAndThief.thiefplayer09 != null && thiefId == PoliceAndThief.thiefplayer09.PlayerId) {
                         if (PoliceAndThief.thiefplayer09IsStealing) {
                             policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer09JewelId);
-                        }
-                    }
-                    else if (PoliceAndThief.thiefplayer10 != null && thiefId == PoliceAndThief.thiefplayer10.PlayerId) {
-                        if (PoliceAndThief.thiefplayer10IsStealing) {
-                            policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer10JewelId);
                         }
                     }
                     switch (PlayerControl.GameOptions.MapId) {
@@ -3319,10 +3315,6 @@ namespace LasMonjas
                     else if (PoliceAndThief.thiefplayer09 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer09.PlayerId) {
                         PoliceAndThief.thiefplayer09IsStealing = true;
                         PoliceAndThief.thiefplayer09JewelId = jewelId;
-                    }
-                    else if (PoliceAndThief.thiefplayer10 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer10.PlayerId) {
-                        PoliceAndThief.thiefplayer10IsStealing = true;
-                        PoliceAndThief.thiefplayer10JewelId = jewelId;
                     }
                     switch (jewelId) {
                         case 1:
@@ -3461,10 +3453,6 @@ namespace LasMonjas
                     else if (PoliceAndThief.thiefplayer09 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer09.PlayerId) {
                         PoliceAndThief.thiefplayer09IsStealing = false;
                         PoliceAndThief.thiefplayer09JewelId = 0;
-                    }
-                    else if (PoliceAndThief.thiefplayer10 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer10.PlayerId) {
-                        PoliceAndThief.thiefplayer10IsStealing = false;
-                        PoliceAndThief.thiefplayer10JewelId = 0;
                     }
                     GameObject myJewel = null;
                     bool isDiamond = true;
@@ -3665,10 +3653,6 @@ namespace LasMonjas
                     else if (PoliceAndThief.thiefplayer09 != null && thiefWhoLostJewel == PoliceAndThief.thiefplayer09.PlayerId) {
                         PoliceAndThief.thiefplayer09IsStealing = false;
                         PoliceAndThief.thiefplayer09JewelId = 0;
-                    }
-                    else if (PoliceAndThief.thiefplayer10 != null && thiefWhoLostJewel == PoliceAndThief.thiefplayer10.PlayerId) {
-                        PoliceAndThief.thiefplayer10IsStealing = false;
-                        PoliceAndThief.thiefplayer10JewelId = 0;
                     }
                     switch (PlayerControl.GameOptions.MapId) {
                         // Skeld
@@ -4235,7 +4219,7 @@ namespace LasMonjas
                     }
 
                     // if police can't see jewels, hide it after jailing a player
-                    if (PlayerControl.LocalPlayer == PoliceAndThief.policeplayer01 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer02 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer03 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer04 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer05) {
+                    if (PlayerControl.LocalPlayer == PoliceAndThief.policeplayer01 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer02 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer03 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer04 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer05 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer06) {
                         if (!PoliceAndThief.policeCanSeeJewels) {
                             switch (jewelRevertedId) {
                                 case 1:
@@ -4290,6 +4274,73 @@ namespace LasMonjas
             }
         }
 
+        public static void policeandThiefsTased(byte targetId) {
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                if (player.PlayerId == targetId) {
+                    if (PlayerControl.LocalPlayer == player) {
+                        SoundManager.Instance.PlaySound(CustomMain.customAssets.policeTaser, false, 100f);
+                        if (MapBehaviour.Instance) {
+                            MapBehaviour.Instance.Close();
+                        }
+                    }
+                    new Tased(PoliceAndThief.policeTaseDuration, player);
+                    if (PoliceAndThief.thiefplayer01 != null && targetId == PoliceAndThief.thiefplayer01.PlayerId) {
+                        if (PoliceAndThief.thiefplayer01IsStealing) {
+                            policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer01JewelId);
+                        }
+                    }
+                    else if (PoliceAndThief.thiefplayer02 != null && targetId == PoliceAndThief.thiefplayer02.PlayerId) {
+                        if (PoliceAndThief.thiefplayer02IsStealing) {
+                            policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer02JewelId);
+                        }
+                    }
+                    else if (PoliceAndThief.thiefplayer03 != null && targetId == PoliceAndThief.thiefplayer03.PlayerId) {
+                        if (PoliceAndThief.thiefplayer03IsStealing) {
+                            policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer03JewelId);
+                        }
+                    }
+                    else if (PoliceAndThief.thiefplayer04 != null && targetId == PoliceAndThief.thiefplayer04.PlayerId) {
+                        if (PoliceAndThief.thiefplayer04IsStealing) {
+                            policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer04JewelId);
+                        }
+                    }
+                    else if (PoliceAndThief.thiefplayer05 != null && targetId == PoliceAndThief.thiefplayer05.PlayerId) {
+                        if (PoliceAndThief.thiefplayer05IsStealing) {
+                            policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer05JewelId);
+                        }
+                    }
+                    else if (PoliceAndThief.thiefplayer06 != null && targetId == PoliceAndThief.thiefplayer06.PlayerId) {
+                        if (PoliceAndThief.thiefplayer06IsStealing) {
+                            policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer06JewelId);
+                        }
+                    }
+                    else if (PoliceAndThief.thiefplayer07 != null && targetId == PoliceAndThief.thiefplayer07.PlayerId) {
+                        if (PoliceAndThief.thiefplayer07IsStealing) {
+                            policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer07JewelId);
+                        }
+                    }
+                    else if (PoliceAndThief.thiefplayer08 != null && targetId == PoliceAndThief.thiefplayer08.PlayerId) {
+                        if (PoliceAndThief.thiefplayer08IsStealing) {
+                            policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer08JewelId);
+                        }
+                    }
+                    else if (PoliceAndThief.thiefplayer09 != null && targetId == PoliceAndThief.thiefplayer09.PlayerId) {
+                        if (PoliceAndThief.thiefplayer09IsStealing) {
+                            policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer09JewelId);
+                        }
+                    }
+                    player.moveable = false;
+                    player.NetTransform.Halt(); // Stop current movement
+                    HudManager.Instance.StartCoroutine(Effects.Lerp(PoliceAndThief.policeTaseDuration, new Action<float>((p) => { // Delayed action
+                        if (p == 1f) {
+                            player.moveable = true;
+                        }
+                    })));
+                    return;
+                }
+            }
+        }
+        
         public static void kingOfTheHillKills(byte targetId, int whichplayer) {
             foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
                 if (player.PlayerId == targetId) {
@@ -5776,60 +5827,120 @@ namespace LasMonjas
                     if (ZombieLaboratory.survivorPlayer01 != null && player == ZombieLaboratory.survivorPlayer01) {
                         ZombieLaboratory.survivorPlayer01IsInfected = false;
                         ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer01);
+                        nurseHealSound(targetId);
                     }
                     else if (ZombieLaboratory.survivorPlayer02 != null && player == ZombieLaboratory.survivorPlayer02) {
                         ZombieLaboratory.survivorPlayer02IsInfected = false;
                         ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer02);
+                        nurseHealSound(targetId);
                     }
                     else if (ZombieLaboratory.survivorPlayer03 != null && player == ZombieLaboratory.survivorPlayer03) {
                         ZombieLaboratory.survivorPlayer03IsInfected = false;
                         ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer03);
+                        nurseHealSound(targetId);
                     }
                     else if (ZombieLaboratory.survivorPlayer04 != null && player == ZombieLaboratory.survivorPlayer04) {
                         ZombieLaboratory.survivorPlayer04IsInfected = false;
                         ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer04);
+                        nurseHealSound(targetId);
                     }
                     else if (ZombieLaboratory.survivorPlayer05 != null && player == ZombieLaboratory.survivorPlayer05) {
                         ZombieLaboratory.survivorPlayer05IsInfected = false;
                         ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer05);
+                        nurseHealSound(targetId);
                     }
                     else if (ZombieLaboratory.survivorPlayer06 != null && player == ZombieLaboratory.survivorPlayer06) {
                         ZombieLaboratory.survivorPlayer06IsInfected = false;
                         ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer06);
+                        nurseHealSound(targetId);
                     }
                     else if (ZombieLaboratory.survivorPlayer07 != null && player == ZombieLaboratory.survivorPlayer07) {
                         ZombieLaboratory.survivorPlayer07IsInfected = false;
                         ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer07);
+                        nurseHealSound(targetId);
                     }
                     else if (ZombieLaboratory.survivorPlayer08 != null && player == ZombieLaboratory.survivorPlayer08) {
                         ZombieLaboratory.survivorPlayer08IsInfected = false;
                         ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer08);
+                        nurseHealSound(targetId);
                     }
                     else if (ZombieLaboratory.survivorPlayer09 != null && player == ZombieLaboratory.survivorPlayer09) {
                         ZombieLaboratory.survivorPlayer09IsInfected = false;
                         ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer09);
+                        nurseHealSound(targetId);
                     }
                     else if (ZombieLaboratory.survivorPlayer10 != null && player == ZombieLaboratory.survivorPlayer10) {
                         ZombieLaboratory.survivorPlayer10IsInfected = false;
                         ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer10);
+                        nurseHealSound(targetId);
                     }
                     else if (ZombieLaboratory.survivorPlayer11 != null && player == ZombieLaboratory.survivorPlayer11) {
                         ZombieLaboratory.survivorPlayer11IsInfected = false;
                         ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer11);
+                        nurseHealSound(targetId);
                     }
                     else if (ZombieLaboratory.survivorPlayer12 != null && player == ZombieLaboratory.survivorPlayer12) {
                         ZombieLaboratory.survivorPlayer12IsInfected = false;
                         ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer12);
+                        nurseHealSound(targetId);
                     }
                     else if (ZombieLaboratory.survivorPlayer13 != null && player == ZombieLaboratory.survivorPlayer13) {
                         ZombieLaboratory.survivorPlayer13IsInfected = false;
                         ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer13);
+                        nurseHealSound(targetId);
+                    }
+                    else if (ZombieLaboratory.zombiePlayer01 != null && player == ZombieLaboratory.zombiePlayer01) {
+                        ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer01);
+                    }
+                    else if (ZombieLaboratory.zombiePlayer02 != null && player == ZombieLaboratory.zombiePlayer02) {
+                        ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer02);
+                    }
+                    else if (ZombieLaboratory.zombiePlayer03 != null && player == ZombieLaboratory.zombiePlayer03) {
+                        ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer03);
+                    }
+                    else if (ZombieLaboratory.zombiePlayer04 != null && player == ZombieLaboratory.zombiePlayer04) {
+                        ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer04);
+                    }
+                    else if (ZombieLaboratory.zombiePlayer05 != null && player == ZombieLaboratory.zombiePlayer05) {
+                        ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer05);
+                    }
+                    else if (ZombieLaboratory.zombiePlayer06 != null && player == ZombieLaboratory.zombiePlayer06) {
+                        ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer06);
+                    }
+                    else if (ZombieLaboratory.zombiePlayer07 != null && player == ZombieLaboratory.zombiePlayer07) {
+                        ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer07);
+                    }
+                    else if (ZombieLaboratory.zombiePlayer08 != null && player == ZombieLaboratory.zombiePlayer08) {
+                        ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer08);
+                    }
+                    else if (ZombieLaboratory.zombiePlayer09 != null && player == ZombieLaboratory.zombiePlayer09) {
+                        ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer09);
+                    }
+                    else if (ZombieLaboratory.zombiePlayer10 != null && player == ZombieLaboratory.zombiePlayer10) {
+                        ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer10);
+                    }
+                    else if (ZombieLaboratory.zombiePlayer11 != null && player == ZombieLaboratory.zombiePlayer11) {
+                        ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer11);
+                    }
+                    else if (ZombieLaboratory.zombiePlayer12 != null && player == ZombieLaboratory.zombiePlayer12) {
+                        ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer12);
+                    }
+                    else if (ZombieLaboratory.zombiePlayer13 != null && player == ZombieLaboratory.zombiePlayer13) {
+                        ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer13);
+                    }
+                    else if (ZombieLaboratory.zombiePlayer14 != null && player == ZombieLaboratory.zombiePlayer14) {
+                        ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer14);
                     }
                     ZombieLaboratory.laboratoryNurseMedKit.SetActive(false);
                     ZombieLaboratory.zombieLaboratoryCounter = "Key Items: " + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + "Survivors: " + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> " + "| " + "Infected: " + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> " + "| " + "Zombies: " + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
                 }
+            }
+        }
+
+        public static void nurseHealSound (byte playerId) {
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
                 SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
-                if (player.PlayerId == targetId && targetId == PlayerControl.LocalPlayer.PlayerId) {
+                if (player.PlayerId == playerId && playerId == PlayerControl.LocalPlayer.PlayerId) {
                     HudManager.Instance.FullScreen.enabled = true;
                     HudManager.Instance.StartCoroutine(Effects.Lerp(0.5f, new Action<float>((p) => {
                         var renderer = HudManager.Instance.FullScreen;
@@ -6346,6 +6457,9 @@ namespace LasMonjas
                     byte thiefWhoLostJewel = reader.ReadByte();
                     byte jewelRevertedId = reader.ReadByte();
                     RPCProcedure.policeandThiefRevertedJewelPosition(thiefWhoLostJewel, jewelRevertedId);
+                    break;
+                case (byte)CustomRPC.PoliceandThiefsTased:
+                    RPCProcedure.policeandThiefsTased(reader.ReadByte());
                     break;
 
                 // King of the hill funtionality
