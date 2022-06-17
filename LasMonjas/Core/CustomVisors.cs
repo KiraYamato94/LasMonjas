@@ -32,6 +32,8 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "Muaresito", VisorName = "Impostor Bros"},
             new AuthorData {AuthorName = "Muaresito", VisorName = "Juice"},
             new AuthorData {AuthorName = "Muaresito", VisorName = "Josefa Shoe"},
+            new AuthorData {AuthorName = "Muaresito", VisorName = "Menacing"},
+            new AuthorData {AuthorName = "Xago", VisorName = "Zargothrax"},
             new AuthorData {AuthorName = "IceCreamGuy", VisorName = "Mungus"},
             new AuthorData {AuthorName = "ERIKHAPPY", VisorName = "Bubble Gum"},
             new AuthorData {AuthorName = "lotty", VisorName = "Flower"},

@@ -526,7 +526,7 @@ namespace LasMonjas.Core
             int defaultSettingsLines = 23;
             int roleSettingsLines = defaultSettingsLines + 36;
             int detailedSettingsP1 = roleSettingsLines + 43;
-            int detailedSettingsP2 = detailedSettingsP1 + 47;
+            int detailedSettingsP2 = detailedSettingsP1 + 48;
             int detailedSettingsP3 = detailedSettingsP2 + 42;
             int detailedSettingsP4 = detailedSettingsP3 + 40;
             int detailedSettingsP5 = detailedSettingsP4 + 41;

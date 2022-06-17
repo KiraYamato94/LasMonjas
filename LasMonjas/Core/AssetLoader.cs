@@ -78,6 +78,8 @@ namespace LasMonjas.Core
             CustomMain.customAssets.jewelruby = assetBundleBundle.LoadAsset<GameObject>("jewel_ruby.prefab").DontUnload();
             CustomMain.customAssets.thiefspaceship = assetBundleBundle.LoadAsset<GameObject>("thief_spaceship.prefab").DontUnload();
             CustomMain.customAssets.thiefspaceshiphatch = assetBundleBundle.LoadAsset<GameObject>("thief_spaceship_hatch.prefab").DontUnload();
+            CustomMain.customAssets.policeParalyze = assetBundleBundle.LoadAsset<GameObject>("Tased.prefab").DontUnload();
+            CustomMain.customAssets.policeTaser = assetBundleBundle.LoadAsset<AudioClip>("policeandThiefsTase_Paralyze3.ogg").DontUnload();
 
             // King of the hill
             CustomMain.customAssets.whiteflag = assetBundleBundle.LoadAsset<GameObject>("whiteFlag.prefab").DontUnload();
