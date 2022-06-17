@@ -95,12 +95,12 @@ namespace LasMonjas.Patches
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.policeAndThiefMusic, true, 25f);
                     // Intro police and thiefs teams
                     var thiefTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                    if (PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer01 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer02 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer03 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer04 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer05 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer06 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer07 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer08 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer09 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer10) {
+                    if (PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer01 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer02 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer03 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer04 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer05 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer06 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer07 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer08 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer09) {
                         thiefTeam.Add(PlayerControl.LocalPlayer);
                         yourTeam = thiefTeam;
                     }
                     var policeTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                    if (PlayerControl.LocalPlayer == PoliceAndThief.policeplayer01 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer02 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer03 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer04 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer05) {
+                    if (PlayerControl.LocalPlayer == PoliceAndThief.policeplayer01 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer02 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer03 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer04 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer05 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer06) {
                         policeTeam.Add(PlayerControl.LocalPlayer);
                         yourTeam = policeTeam;
                     }
@@ -429,6 +429,8 @@ namespace LasMonjas.Patches
                                         blueflagbase.name = "blueflagbase";
                                         blueflagbase.transform.position = new Vector3(7.7f, -1.2f, 1f);
                                         CaptureTheFlag.blueflagbase = blueflagbase;
+                                        CaptureTheFlag.stealerSpawns.Add(redflagbase);
+                                        CaptureTheFlag.stealerSpawns.Add(blueflagbase);
                                         createdcapturetheflag = true;
 
                                         // Remove camera use and admin table on Skeld
@@ -471,6 +473,8 @@ namespace LasMonjas.Patches
                                         blueflagbase.name = "blueflagbase";
                                         blueflagbase.transform.position = new Vector3(16.5f, -4.7f, 1f);
                                         CaptureTheFlag.blueflagbase = blueflagbase;
+                                        CaptureTheFlag.stealerSpawns.Add(redflagbase);
+                                        CaptureTheFlag.stealerSpawns.Add(blueflagbase); 
                                         createdcapturetheflag = true;
 
                                         // Remove camera use and admin table on Skeld
@@ -515,6 +519,8 @@ namespace LasMonjas.Patches
                                     blueflagbase.name = "blueflagbase";
                                     blueflagbase.transform.position = new Vector3(23.25f, 5f, 1f);
                                     CaptureTheFlag.blueflagbase = blueflagbase;
+                                    CaptureTheFlag.stealerSpawns.Add(redflagbase);
+                                    CaptureTheFlag.stealerSpawns.Add(blueflagbase);
                                     createdcapturetheflag = true;
 
                                     // Remove Doorlog use, Decontamination doors and admin table on MiraHQ
@@ -570,6 +576,8 @@ namespace LasMonjas.Patches
                                     blueflagbase.name = "blueflagbase";
                                     blueflagbase.transform.position = new Vector3(5.4f, -9.7f, 1f);
                                     CaptureTheFlag.blueflagbase = blueflagbase;
+                                    CaptureTheFlag.stealerSpawns.Add(redflagbase);
+                                    CaptureTheFlag.stealerSpawns.Add(blueflagbase);
                                     createdcapturetheflag = true;
 
                                     // Remove Decon doors, camera use, vitals, admin tables on Polus
@@ -623,6 +631,8 @@ namespace LasMonjas.Patches
                                     blueflagbase.name = "blueflagbase";
                                     blueflagbase.transform.position = new Vector3(-16.5f, -4.7f, 1f);
                                     CaptureTheFlag.blueflagbase = blueflagbase;
+                                    CaptureTheFlag.stealerSpawns.Add(redflagbase);
+                                    CaptureTheFlag.stealerSpawns.Add(blueflagbase);
                                     createdcapturetheflag = true;
 
                                     // Remove camera use and admin table on Dleks
@@ -666,6 +676,8 @@ namespace LasMonjas.Patches
                                     blueflagbase.name = "blueflagbase";
                                     blueflagbase.transform.position = new Vector3(33.6f, 1.2f, 1f);
                                     CaptureTheFlag.blueflagbase = blueflagbase;
+                                    CaptureTheFlag.stealerSpawns.Add(redflagbase);
+                                    CaptureTheFlag.stealerSpawns.Add(blueflagbase);
                                     createdcapturetheflag = true;
 
                                     // Remove camera use, admin table, vitals, electrical doors on Airship
@@ -743,6 +755,8 @@ namespace LasMonjas.Patches
                                     blueteamfloor.name = "blueteamfloor";
                                     blueteamfloor.transform.position = new Vector3(14.25f, 24.25f, 0.03f);
 
+                                    CaptureTheFlag.stealerSpawns.Add(redflagbase);
+                                    CaptureTheFlag.stealerSpawns.Add(blueflagbase);
                                     createdcapturetheflag = true;
 
                                     // Remove camera use, admin table, vitals, on Submerged
@@ -1891,6 +1905,8 @@ namespace LasMonjas.Patches
                                         KingOfTheHill.kingZones.Add(zoneone);
                                         KingOfTheHill.kingZones.Add(zonetwo);
                                         KingOfTheHill.kingZones.Add(zonethree);
+                                        KingOfTheHill.usurperSpawns.Add(greenteamfloor);
+                                        KingOfTheHill.usurperSpawns.Add(yellowteamfloor);
                                         createdkingofthehill = true;
 
                                         // Remove camera use and admin table on Skeld
@@ -1958,6 +1974,8 @@ namespace LasMonjas.Patches
                                         KingOfTheHill.kingZones.Add(zoneone);
                                         KingOfTheHill.kingZones.Add(zonetwo);
                                         KingOfTheHill.kingZones.Add(zonethree);
+                                        KingOfTheHill.usurperSpawns.Add(greenteamfloor);
+                                        KingOfTheHill.usurperSpawns.Add(yellowteamfloor); 
                                         createdkingofthehill = true;
 
                                         // Remove camera use and admin table on Skeld
@@ -2027,6 +2045,8 @@ namespace LasMonjas.Patches
                                     KingOfTheHill.kingZones.Add(zoneone);
                                     KingOfTheHill.kingZones.Add(zonetwo);
                                     KingOfTheHill.kingZones.Add(zonethree);
+                                    KingOfTheHill.usurperSpawns.Add(greenteamfloor);
+                                    KingOfTheHill.usurperSpawns.Add(yellowteamfloor); 
                                     createdkingofthehill = true;
 
                                     // Remove Doorlog use, Decontamintion doors and admin table on MiraHQ
@@ -2107,6 +2127,8 @@ namespace LasMonjas.Patches
                                     KingOfTheHill.kingZones.Add(zoneone);
                                     KingOfTheHill.kingZones.Add(zonetwo);
                                     KingOfTheHill.kingZones.Add(zonethree);
+                                    KingOfTheHill.usurperSpawns.Add(greenteamfloor);
+                                    KingOfTheHill.usurperSpawns.Add(yellowteamfloor); 
                                     createdkingofthehill = true;
 
                                     // Remove Decon doors, camera use, vitals, admin tables on Polus
@@ -2185,6 +2207,8 @@ namespace LasMonjas.Patches
                                     KingOfTheHill.kingZones.Add(zoneone);
                                     KingOfTheHill.kingZones.Add(zonetwo);
                                     KingOfTheHill.kingZones.Add(zonethree);
+                                    KingOfTheHill.usurperSpawns.Add(greenteamfloor);
+                                    KingOfTheHill.usurperSpawns.Add(yellowteamfloor); 
                                     createdkingofthehill = true;
 
                                     // Remove camera use and admin table on Dleks
@@ -2253,6 +2277,8 @@ namespace LasMonjas.Patches
                                     KingOfTheHill.kingZones.Add(zoneone);
                                     KingOfTheHill.kingZones.Add(zonetwo);
                                     KingOfTheHill.kingZones.Add(zonethree);
+                                    KingOfTheHill.usurperSpawns.Add(greenteamfloor);
+                                    KingOfTheHill.usurperSpawns.Add(yellowteamfloor); 
                                     createdkingofthehill = true;
 
                                     // Remove camera use, admin table, vitals, electrical doors on Airship
@@ -2353,6 +2379,10 @@ namespace LasMonjas.Patches
                                     KingOfTheHill.kingZones.Add(zoneone);
                                     KingOfTheHill.kingZones.Add(zonetwo);
                                     KingOfTheHill.kingZones.Add(zonethree);
+                                    KingOfTheHill.usurperSpawns.Add(greenteamfloor);
+                                    KingOfTheHill.usurperSpawns.Add(yellowteamfloor);
+                                    KingOfTheHill.usurperSpawns.Add(greenteamfloortwo);
+                                    KingOfTheHill.usurperSpawns.Add(yellowteamfloortwo); 
                                     createdkingofthehill = true;
 
                                     // Remove camera use, admin table, vitals, on Submerged
@@ -2777,6 +2807,7 @@ namespace LasMonjas.Patches
                                         nurseMedKit.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
                                         ZombieLaboratory.laboratoryNurseMedKit = nurseMedKit;
                                         ZombieLaboratory.laboratoryNurseMedKit.SetActive(false);
+                                        ZombieLaboratory.laboratoryEntrances.Add(ZombieLaboratory.laboratoryEnterButton);
 
                                         // Remove camera use and admin table on Skeld
                                         GameObject cameraStand = GameObject.Find("SurvConsole");
@@ -2854,6 +2885,7 @@ namespace LasMonjas.Patches
                                         nurseMedKit.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
                                         ZombieLaboratory.laboratoryNurseMedKit = nurseMedKit;
                                         ZombieLaboratory.laboratoryNurseMedKit.SetActive(false);
+                                        ZombieLaboratory.laboratoryEntrances.Add(ZombieLaboratory.laboratoryEnterButton);
 
                                         // Remove camera use and admin table on Skeld
                                         GameObject cameraStand = GameObject.Find("SurvConsole");
@@ -2932,6 +2964,7 @@ namespace LasMonjas.Patches
                                     nurseMedKit.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
                                     ZombieLaboratory.laboratoryNurseMedKit = nurseMedKit;
                                     ZombieLaboratory.laboratoryNurseMedKit.SetActive(false);
+                                    ZombieLaboratory.laboratoryEntrances.Add(ZombieLaboratory.laboratoryEnterButton);
 
                                     // Remove Doorlog use, Decontamintion doors and admin table on MiraHQ
                                     GameObject DoorLog = GameObject.Find("SurvLogConsole");
@@ -3021,6 +3054,7 @@ namespace LasMonjas.Patches
                                     nurseMedKit.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
                                     ZombieLaboratory.laboratoryNurseMedKit = nurseMedKit;
                                     ZombieLaboratory.laboratoryNurseMedKit.SetActive(false);
+                                    ZombieLaboratory.laboratoryEntrances.Add(ZombieLaboratory.laboratoryEnterButton);
 
                                     // Remove Decon doors, camera use, vitals, admin tables on Polus
                                     GameObject lowerdecon = GameObject.Find("LowerDecon");
@@ -3109,6 +3143,7 @@ namespace LasMonjas.Patches
                                     nurseMedKit.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
                                     ZombieLaboratory.laboratoryNurseMedKit = nurseMedKit;
                                     ZombieLaboratory.laboratoryNurseMedKit.SetActive(false);
+                                    ZombieLaboratory.laboratoryEntrances.Add(ZombieLaboratory.laboratoryEnterButton);
 
                                     // Remove camera use and admin table on Skeld
                                     GameObject cameraStand = GameObject.Find("SurvConsole");
@@ -3188,6 +3223,7 @@ namespace LasMonjas.Patches
                                     nurseMedKit.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
                                     ZombieLaboratory.laboratoryNurseMedKit = nurseMedKit;
                                     ZombieLaboratory.laboratoryNurseMedKit.SetActive(false);
+                                    ZombieLaboratory.laboratoryEntrances.Add(ZombieLaboratory.laboratoryEnterButton);
 
                                     // Remove camera use, admin table, vitals, electrical doors on Airship
                                     GameObject cameras = GameObject.Find("task_cams");
@@ -3314,6 +3350,8 @@ namespace LasMonjas.Patches
                                     nurseMedKit.transform.localPosition = new Vector3(0f, 0.7f, -0.5f);
                                     ZombieLaboratory.laboratoryNurseMedKit = nurseMedKit;
                                     ZombieLaboratory.laboratoryNurseMedKit.SetActive(false);
+                                    ZombieLaboratory.laboratoryEntrances.Add(ZombieLaboratory.laboratoryEnterButton);
+                                    ZombieLaboratory.laboratoryEntrances.Add(ZombieLaboratory.laboratorytwoEnterButton);
 
                                     // Remove camera use, admin table, vitals, on Submerged
                                     GameObject upperCentralVent = GameObject.Find("UpperCentralVent");
@@ -3947,7 +3985,7 @@ namespace LasMonjas.Patches
                 skeldreactor_wireTop.transform.position = new Vector3(-21.21f, 0.175f, 6.7f);
                 GameObject skeldreactor_wireBot = GameObject.Find("reactor_wireBot");
                 skeldreactor_wireBot.transform.SetParent(halconReactor.transform);
-                skeldreactor_wireBot.transform.position = new Vector3(-21.21f, -2.74f, 6.9f);
+                skeldreactor_wireBot.transform.position = new Vector3(-21.21f, -2.7f, 6.9f);
                 skeldreactor_wireBot.transform.rotation = Quaternion.Euler(0f, 0f, 12.5f);
 
                 // Storage objects

@@ -251,59 +251,59 @@ namespace LasMonjas.Patches
                     // Police and Thief    
                     myPoliceandthief.Clear();
                     int mypolice = 1;
-                    while (myPoliceandthief.Count < (Mathf.Round(PlayerControl.AllPlayerControls.Count / 2.75f))) {
+                    while (myPoliceandthief.Count < (Mathf.Round(PlayerControl.AllPlayerControls.Count / 2.39f))) {
                         switch (mypolice) {
                             case 1:
                                 setRoleToRandomPlayer((byte)RoleId.PolicePlayer01, modifiers);
                                 break;
                             case 2:
-                                setRoleToRandomPlayer((byte)RoleId.PolicePlayer02, modifiers);
-                                break;
-                            case 3:
                                 setRoleToRandomPlayer((byte)RoleId.PolicePlayer03, modifiers);
                                 break;
+                            case 3:
+                                setRoleToRandomPlayer((byte)RoleId.PolicePlayer02, modifiers);
+                                break;
                             case 4:
-                                setRoleToRandomPlayer((byte)RoleId.PolicePlayer04, modifiers);
+                                setRoleToRandomPlayer((byte)RoleId.PolicePlayer05, modifiers);
                                 break;
                             case 5:
-                                setRoleToRandomPlayer((byte)RoleId.PolicePlayer05, modifiers);
+                                setRoleToRandomPlayer((byte)RoleId.PolicePlayer04, modifiers);
+                                break;
+                            case 6:
+                                setRoleToRandomPlayer((byte)RoleId.PolicePlayer06, modifiers);
                                 break;
                         }
                         myPoliceandthief.Add(mypolice);
                         mypolice += 1;
                     }
-                    int mythief = 6;
+                    int mythief = 7;
                     while (myPoliceandthief.Count < PlayerControl.AllPlayerControls.Count) {
                         switch (mythief) {
-                            case 6:
+                            case 7:
                                 setRoleToRandomPlayer((byte)RoleId.ThiefPlayer01, modifiers);
                                 break;
-                            case 7:
+                            case 8:
                                 setRoleToRandomPlayer((byte)RoleId.ThiefPlayer02, modifiers);
                                 break;
-                            case 8:
+                            case 9:
                                 setRoleToRandomPlayer((byte)RoleId.ThiefPlayer03, modifiers);
                                 break;
-                            case 9:
+                            case 10:
                                 setRoleToRandomPlayer((byte)RoleId.ThiefPlayer04, modifiers);
                                 break;
-                            case 10:
+                            case 11:
                                 setRoleToRandomPlayer((byte)RoleId.ThiefPlayer05, modifiers);
                                 break;
-                            case 11:
+                            case 12:
                                 setRoleToRandomPlayer((byte)RoleId.ThiefPlayer06, modifiers);
                                 break;
-                            case 12:
+                            case 13:
                                 setRoleToRandomPlayer((byte)RoleId.ThiefPlayer07, modifiers);
                                 break;
-                            case 13:
+                            case 14:
                                 setRoleToRandomPlayer((byte)RoleId.ThiefPlayer08, modifiers);
                                 break;
-                            case 14:
-                                setRoleToRandomPlayer((byte)RoleId.ThiefPlayer09, modifiers);
-                                break;
                             case 15:
-                                setRoleToRandomPlayer((byte)RoleId.ThiefPlayer10, modifiers);
+                                setRoleToRandomPlayer((byte)RoleId.ThiefPlayer09, modifiers);
                                 break;
                         }
                         myPoliceandthief.Add(mythief);

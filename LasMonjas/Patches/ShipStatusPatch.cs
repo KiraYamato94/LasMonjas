@@ -85,6 +85,16 @@ namespace LasMonjas.Patches
                         __result = Mathf.Lerp(__instance.MinLightRadius * (PoliceAndThief.policeVision / 2), __instance.MaxLightRadius * (PoliceAndThief.policeVision / 2), unlerped);
                     }
                 }
+                else if (PoliceAndThief.policeplayer06 != null && PoliceAndThief.policeplayer06.PlayerId == player.PlayerId) {
+                    if (PoliceAndThief.policeplayer06lightTimer > 0f) {
+                        float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
+                        __result = Mathf.Lerp(__instance.MinLightRadius * (PoliceAndThief.policeVision / 2), __instance.MaxLightRadius * PoliceAndThief.policeVision, unlerped);
+                    }
+                    else {
+                        float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
+                        __result = Mathf.Lerp(__instance.MinLightRadius * (PoliceAndThief.policeVision / 2), __instance.MaxLightRadius * (PoliceAndThief.policeVision / 2), unlerped);
+                    }
+                }
                 else {
                     float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
                     __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius, unlerped) * PlayerControl.GameOptions.CrewLightMod;
@@ -114,8 +124,14 @@ namespace LasMonjas.Patches
                 else {
                     foreach (PlayerControl survivor in ZombieLaboratory.survivorTeam) {
                         if (survivor != null && survivor.PlayerId == player.PlayerId) {
-                            float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
-                            __result = Mathf.Lerp(__instance.MinLightRadius * (ZombieLaboratory.survivorsVision / 2), __instance.MaxLightRadius * (ZombieLaboratory.survivorsVision / 2), unlerped);
+                            if (survivor.PlayerId == player.PlayerId && player.PlayerId == ZombieLaboratory.nursePlayer.PlayerId && ZombieLaboratory.currentKeyItems >= 3) {
+                                float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
+                                __result = Mathf.Lerp(__instance.MinLightRadius * (ZombieLaboratory.survivorsVision / 1.5f), __instance.MaxLightRadius * (ZombieLaboratory.survivorsVision / 1.5f), unlerped);
+                            }
+                            else {
+                                float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
+                                __result = Mathf.Lerp(__instance.MinLightRadius * (ZombieLaboratory.survivorsVision / 2), __instance.MaxLightRadius * (ZombieLaboratory.survivorsVision / 2), unlerped);
+                            }
                         }
                     }
                     foreach (PlayerControl zombie in ZombieLaboratory.zombieTeam) {

@@ -984,12 +984,6 @@ namespace LasMonjas.Patches {
             else {
                 untargetablePolice.Remove(PoliceAndThief.thiefplayer09);
             }
-            if (PoliceAndThief.thiefplayer10IsReviving) {
-                untargetablePolice.Add(PoliceAndThief.thiefplayer10);
-            }
-            else {
-                untargetablePolice.Remove(PoliceAndThief.thiefplayer10);
-            }
 
             if (PoliceAndThief.policeplayer01 != null && PoliceAndThief.policeplayer01 == PlayerControl.LocalPlayer) {
                 PoliceAndThief.policeplayer01currentTarget = setTarget(untargetablePlayers: untargetablePolice);
@@ -1010,6 +1004,10 @@ namespace LasMonjas.Patches {
             if (PoliceAndThief.policeplayer05 != null && PoliceAndThief.policeplayer05 == PlayerControl.LocalPlayer) {
                 PoliceAndThief.policeplayer05currentTarget = setTarget(untargetablePlayers: untargetablePolice);
                 setPlayerOutline(PoliceAndThief.policeplayer05currentTarget, Cheater.color);
+            }
+            if (PoliceAndThief.policeplayer06 != null && PoliceAndThief.policeplayer06 == PlayerControl.LocalPlayer) {
+                PoliceAndThief.policeplayer06currentTarget = setTarget(untargetablePlayers: untargetablePolice);
+                setPlayerOutline(PoliceAndThief.policeplayer06currentTarget, Cheater.color);
             }
 
             var untargetableThiefs = new List<PlayerControl>();
@@ -1048,6 +1046,12 @@ namespace LasMonjas.Patches {
             else {
                 untargetableThiefs.Remove(PoliceAndThief.policeplayer05);
             }
+            if (PoliceAndThief.policeplayer06IsReviving) {
+                untargetableThiefs.Add(PoliceAndThief.policeplayer06);
+            }
+            else {
+                untargetableThiefs.Remove(PoliceAndThief.policeplayer06);
+            }
 
             if (PoliceAndThief.thiefplayer01 != null && PoliceAndThief.thiefplayer01 == PlayerControl.LocalPlayer) {
                 PoliceAndThief.thiefplayer01currentTarget = setTarget(untargetablePlayers: untargetableThiefs);
@@ -1084,10 +1088,6 @@ namespace LasMonjas.Patches {
             if (PoliceAndThief.thiefplayer09 != null && PoliceAndThief.thiefplayer09 == PlayerControl.LocalPlayer) {
                 PoliceAndThief.thiefplayer09currentTarget = setTarget(untargetablePlayers: untargetableThiefs);
                 setPlayerOutline(PoliceAndThief.thiefplayer09currentTarget, Mechanic.color);
-            }
-            if (PoliceAndThief.thiefplayer10 != null && PoliceAndThief.thiefplayer10 == PlayerControl.LocalPlayer) {
-                PoliceAndThief.thiefplayer10currentTarget = setTarget(untargetablePlayers: untargetableThiefs);
-                setPlayerOutline(PoliceAndThief.thiefplayer10currentTarget, Mechanic.color);
             }
         }
 
@@ -1419,7 +1419,7 @@ namespace LasMonjas.Patches {
             }
 
             if (ZombieLaboratory.nursePlayer != null && ZombieLaboratory.nursePlayer == PlayerControl.LocalPlayer) {
-                ZombieLaboratory.nursePlayercurrentTarget = setTarget(untargetablePlayers: untargetableZombiePlayers);
+                ZombieLaboratory.nursePlayercurrentTarget = setTarget();
                 setPlayerOutline(ZombieLaboratory.nursePlayercurrentTarget, Shy.color);
             }
             if (ZombieLaboratory.survivorPlayer01 != null && ZombieLaboratory.survivorPlayer01 == PlayerControl.LocalPlayer) {
@@ -2572,6 +2572,9 @@ namespace LasMonjas.Patches {
                             else if (PoliceAndThief.policeplayer05 != null && target.PlayerId == PoliceAndThief.policeplayer05.PlayerId) {
                                 PoliceAndThief.policeplayer05IsReviving = true;
                             }
+                            else if (PoliceAndThief.policeplayer06 != null && target.PlayerId == PoliceAndThief.policeplayer06.PlayerId) {
+                                PoliceAndThief.policeplayer06IsReviving = true;
+                            }
                             player.nameText.color = new Color(player.nameText.color.r, player.nameText.color.g, player.nameText.color.b, 0.5f);
                             if (player.CurrentPet != null && player.CurrentPet.rend != null && player.CurrentPet.shadowRend != null) {
                                 player.CurrentPet.rend.color = new Color(player.CurrentPet.rend.color.r, player.CurrentPet.rend.color.g, player.CurrentPet.rend.color.b, 0.5f);
@@ -2603,6 +2606,9 @@ namespace LasMonjas.Patches {
                                     }
                                     else if (PoliceAndThief.policeplayer05 != null && target.PlayerId == PoliceAndThief.policeplayer05.PlayerId) {
                                         PoliceAndThief.policeplayer05IsReviving = false;
+                                    }
+                                    else if (PoliceAndThief.policeplayer06 != null && target.PlayerId == PoliceAndThief.policeplayer06.PlayerId) {
+                                        PoliceAndThief.policeplayer06IsReviving = false;
                                     }
                                     player.nameText.color = new Color(player.nameText.color.r, player.nameText.color.g, player.nameText.color.b, 1f);
                                     if (player.CurrentPet != null && player.CurrentPet.rend != null && player.CurrentPet.shadowRend != null) {
@@ -2727,13 +2733,7 @@ namespace LasMonjas.Patches {
                                     RPCProcedure.policeandThiefRevertedJewelPosition(target.PlayerId, PoliceAndThief.thiefplayer09JewelId);
                                 }
                                 PoliceAndThief.thiefplayer09IsReviving = true;
-                            }
-                            else if (PoliceAndThief.thiefplayer10 != null && target.PlayerId == PoliceAndThief.thiefplayer10.PlayerId) {
-                                if (PoliceAndThief.thiefplayer10IsStealing) {
-                                    RPCProcedure.policeandThiefRevertedJewelPosition(target.PlayerId, PoliceAndThief.thiefplayer10JewelId);
-                                }
-                                PoliceAndThief.thiefplayer10IsReviving = true;
-                            }
+                            }                            
                             player.nameText.color = new Color(player.nameText.color.r, player.nameText.color.g, player.nameText.color.b, 0.5f);
                             if (player.CurrentPet != null && player.CurrentPet.rend != null && player.CurrentPet.shadowRend != null) {
                                 player.CurrentPet.rend.color = new Color(player.CurrentPet.rend.color.r, player.CurrentPet.rend.color.g, player.CurrentPet.rend.color.b, 0.5f);
@@ -2777,9 +2777,6 @@ namespace LasMonjas.Patches {
                                     }
                                     else if (PoliceAndThief.thiefplayer09 != null && target.PlayerId == PoliceAndThief.thiefplayer09.PlayerId) {
                                         PoliceAndThief.thiefplayer09IsReviving = false;
-                                    }
-                                    else if (PoliceAndThief.thiefplayer10 != null && target.PlayerId == PoliceAndThief.thiefplayer10.PlayerId) {
-                                        PoliceAndThief.thiefplayer10IsReviving = false;
                                     }
                                     player.nameText.color = new Color(player.nameText.color.r, player.nameText.color.g, player.nameText.color.b, 1f);
                                     if (player.CurrentPet != null && player.CurrentPet.rend != null && player.CurrentPet.shadowRend != null) {

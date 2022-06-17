@@ -91,7 +91,12 @@ namespace LasMonjas.Patches {
                 else if (PoliceAndThief.policeAndThiefMode) {
                     foreach (PlayerControl policeplayer in PoliceAndThief.policeTeam) {
                         if (policeplayer != null) {
-                            setPlayerNameColor(policeplayer, Palette.PlayerColors[10]);
+                            if (PoliceAndThief.policeplayer02 != null && policeplayer == PoliceAndThief.policeplayer02 || PoliceAndThief.policeplayer04 != null && policeplayer == PoliceAndThief.policeplayer04) {
+                                setPlayerNameColor(policeplayer, Palette.PlayerColors[5]);
+                            }
+                            else {
+                                setPlayerNameColor(policeplayer, Palette.PlayerColors[10]);
+                            }
                         }
                     }
                     foreach (PlayerControl thiefplayer in PoliceAndThief.thiefTeam) {
@@ -448,6 +453,7 @@ namespace LasMonjas.Patches {
                     PoliceAndThief.policeplayer03lightTimer -= Time.deltaTime;
                     PoliceAndThief.policeplayer04lightTimer -= Time.deltaTime;
                     PoliceAndThief.policeplayer05lightTimer -= Time.deltaTime;
+                    PoliceAndThief.policeplayer06lightTimer -= Time.deltaTime;
 
                     PoliceAndThief.matchDuration -= Time.deltaTime;
                     if (PoliceAndThief.matchDuration < 0) {
@@ -1196,10 +1202,6 @@ namespace LasMonjas.Patches {
                         PoliceAndThief.thiefTeam.Remove(PoliceAndThief.thiefplayer09);
                         RPCProcedure.policeandThiefRevertedJewelPosition(thief.PlayerId, PoliceAndThief.thiefplayer09JewelId);
                     }
-                    else if (PoliceAndThief.thiefplayer10 != null && thief.PlayerId == PoliceAndThief.thiefplayer10.PlayerId && PoliceAndThief.thiefplayer10IsStealing) {
-                        PoliceAndThief.thiefTeam.Remove(PoliceAndThief.thiefplayer10);
-                        RPCProcedure.policeandThiefRevertedJewelPosition(thief.PlayerId, PoliceAndThief.thiefplayer10JewelId);
-                    }
 
                     PoliceAndThief.thiefpointCounter = "Stealed Jewels: " + "<color=#00F7FFFF>" + PoliceAndThief.currentJewelsStoled + "/" + PoliceAndThief.requiredJewels + "</color> | " + "Thiefs Captured: " + "<color=#928B55FF>" + PoliceAndThief.currentThiefsCaptured + "/" + PoliceAndThief.thiefTeam.Count + "</color>";
                     if (PoliceAndThief.currentThiefsCaptured == PoliceAndThief.thiefTeam.Count) {
@@ -1226,6 +1228,9 @@ namespace LasMonjas.Patches {
                     }
                     else if (PoliceAndThief.policeplayer05 != null && police.PlayerId == PoliceAndThief.policeplayer05.PlayerId) {
                         PoliceAndThief.policeTeam.Remove(PoliceAndThief.policeplayer05);
+                    }
+                    else if (PoliceAndThief.policeplayer06 != null && police.PlayerId == PoliceAndThief.policeplayer06.PlayerId) {
+                        PoliceAndThief.policeTeam.Remove(PoliceAndThief.policeplayer06);
                     }
 
                     if (PoliceAndThief.policeTeam.Count <= 0) {
