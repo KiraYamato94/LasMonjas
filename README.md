@@ -22,8 +22,8 @@ Las Monjas is a Spanish mod (translated and published on English) for Among Us m
 # Installation
 
   1. Download the latest [Release](https://github.com/KiraYamato94/LasMonjas/releases) of Las Monjas.
-  2. Find where your Among Us game is installed (make sure you have a clean game installation)
-  3. Extract the files on the game folder (where the Among Us.exe file is)
+  2. Find where your Among Us game is installed (make sure you have a clean game installation).
+  3. Extract the files inside "Las Monjas modVersion" in the game folder (where the Among Us.exe file is) selecting replace if necessary.
   4. Open Among Us.exe, the first time takes a bit to load, don't worry.
   5. If there's a Submerged update, you can update it with the "Download/Update Submerged" cyan's button on the main menu.
 
@@ -33,6 +33,24 @@ Las Monjas is a Spanish mod (translated and published on English) for Among Us m
 <details>
   <summary>Click to show</summary>
 
+**Version 2.0.3 (17th June 2022)**
+- Fixed Reactor's sabotage on custom skeld
+- Submerged updated to 2022.6.12
+- Fixed some lag issues with the Speed patch
+- Fixed Hot Potato bug where the timer could go to "-0" value
+- Added that Flag Stealer player can't kill near team's base to prevent bugs on CTF
+- Added that Usurper player can't kill near team's respawn point to prevent bugs on KOTH
+- On Zombie Laboratory, reduced Nurse enter/exit and pick/use medkit cooldown from 5 to 3
+- Added that the Nurse can use a medkit on a zombie to kill it
+- Added that Zombies can't kill near the Infirmary to prevent spawn camping
+- Added that Nurse gets a speed boost and more vision after delivering 3 of 6 key items
+- On PAT, removed 1 thief role, added 1 police role and changed 2 police roles to 2 taser roles, they can throw an electric discharge with right clic on the mouse direction to paralyze a Thief for a few seconds, this also change the jewel that Thief is delivering back to its original position, if they miss shot the Taser gets paralyzed instead.
+- Changed the "Thiefs can kill" option to "Who can Thiefs kill?: Taser / All / Nobody"
+- Removed police can kill near prison option, they can never kill close to the prison
+- Added that police and taser can't arrest or tase close to the jewel deliver button to prevent spawn camping
+- Added 2 lobby options, taser cooldown and duration
+- 7 new hats and 2 new visor
+  
 **Version 2.0.2 (10th June 2022)**
 - New lobby option: hide vent anim on shadows (works for roles and gamemodes, this fixes being able to see a vent opening or closing inside shadows)
 - New client option: nun cursor (changes mouse cursor)
@@ -191,7 +209,7 @@ Known 1.3.3 BETA issues:
 - Fixed lobby music to not continue playing when the game starts on some cases
 - Fixed Usurper rol on King Of The Hill, can't kill reviving players anymore
 - Increased maximum required points to win on King Of The Hill from 200 to 300
-- Added Flag Stealer rol on Capture the Flag, never wins but can kill everyone and if he kills a player with the Flag he switchs teams with him
+- Added Flag Stealer rol on Capture the Flag, never wins but can kill everyone and if he kills a player with the Flag he switches teams with him
 - 2 new colors added: Olive and Mint
 - Detective: added an option to define if his ability is always working or via button use
 - Fink: new ability, zoom out for a short period of time, he can't move while using it
@@ -1169,7 +1187,7 @@ Match between red and blue team where each team has to steal the enemy flag and 
 - You can't kill your teammates.
 - The player who has the flag can't kill or use vents.
 - Killing the player who has the flag makes the flag teleport back to his base.
-- The Flag Stealer always loses, he can kill everyone and if he kills a player with a flag, he switchs teams with him.
+- The Flag Stealer always loses, he can kill everyone (but not close to a team's spawn) and if he kills a player with a flag, he switches teams with him.
 - There are custom messages for match duration, stolen flag and scored point, also the game score is always displayed.
 - Flags positions are marked by a team color corresponding arrow.
 - If the player who has the flag disconnects from the match, the flag goes back to its base.
@@ -1179,20 +1197,21 @@ Match between red and blue team where each team has to steal the enemy flag and 
 
 ## PoliceAndThiefs
 
-Match between cyan (Police) and brown (Thiefs) team. This gamemode adds a new map room, the Prison. Police team have to capture all the Thiefs by sending them to Prison, while Thief team have to steal all the jewels on the map without being captured. The player assignment is 2 Thief per 1 Police, being the max 10 Thiefs and 5 Polices.
+Match between cyan (Police) and brown (Thiefs) team. This gamemode adds a new map room, the Prison. Police team have to capture all the Thiefs by sending them to Prison, while Thief team have to steal all the jewels on the map without being captured. The player assignment is like 1.5 Thief per 1 Police, being the max 9 Thiefs and 6 Polices (divided by 4 Police and 2 Tasers).
 
 | Option  | Description |
 |----------|-------------|
 | Match Duration | From 5 to 7 and half minutes |
 | Jewel Number | Jewels needed for Thief team to win, from 8 to 15 |
 | Police Kill Cooldown | Police team kill cooldown |
-| Police Can Kill Near Prison | Define if police team can kill near the prison |
-| Police Can See Jewels | Define if police team can see jewels on the map |
 | Arrest Cooldown | Police ability to arrest a Thief |
 | Time to Arrest | Police needed time next to a Thief to arrest it |
+| Police Tase Cooldown | Police Taser players tase cooldown |
+| Police Tase Duration | Time a Thief will be tased |
+| Police Can See Jewels | Define if police team can see jewels on the map |
 | Police Vision Range | Define light range for Police |
 | Police Revive Time | Wait time for Police team to revive |
-| Thiefs Can Kill | Define if Thief team can or not kill |
+| Who Can Thiefs Kill | Define if Thief team can kill Tasers, All Police team or nobody |
 | Thiefs Kill Cooldown | Thief team kill cooldown if they can kill |
 | Thiefs Revive Time | Wait time for Thief team to revive |
 | Invincibility Time After Revive | Players can't use their abilities, vent or get killed during this time |
@@ -1201,16 +1220,18 @@ Match between cyan (Police) and brown (Thiefs) team. This gamemode adds a new ma
 - Police team always win on match time out and capturing all the Thiefs.
 - Thief team only win if they manage to steal all the Jewels.
 - Each player name color will be the same as the team color.
-- Capturing a Thief teleports him to the Prison, another Thief have to push the button outside the prison to release it.
-- Releasing a Thief only release the one who's been more time in Prison, that Thief gets teleported to the Thief spawm base.
+- Capturing a Thief teleports him to the Prison, another Thief has to push the button outside the prison to release it.
+- Releasing a Thief only releases the one who's been more time in Prison, that Thief gets teleported to the Thief spawn base.
 - Thief team can use vents (can't use while they're reviving).
-- You can't kill (or arrest if you're Police) your teammates.
+- You can't kill (or arrest or tase if you're Police) your teammates.
 - After taking a Jewel, the Thief can't put it back, he has to deliver it and can only take 1 Jewel per time.
 - While taking a Jewel, the Thief can't kill or use vents.
 - Killing or capturing a Thief who has a Jewel makes the Jewel teleports back to its original position.
-- If Police team can't see jewels, they will see only if a Thief is delivering one
-- Police team has a button to increase their light vision for 10 seconds
-- There are custom messages for match duration, delivered jewel, captured Thief and released Thief, also the game score is always displayed.
+- If Police team can't see jewels, they will see them only if a Thief is delivering one
+- The Tasers shot an electric discharge on mouse direction with right clic, if they hit a Thief he can't move for a few seconds and if he was delivering a jewel it goes back to its original position
+- If the Taser miss the shot, he gets himself tased instead.
+- Police team has a button to increase their light vision for 15 seconds
+- There are custom messages for match duration, delivered jewel, captured Thief, released Thief and tased Thief, also the game score is always displayed.
 - If a Thief who has a Jewel disconnects from the match, the Jewel stays where that player was.
 - Also if a Thief disconnects, the required captured Thief updates too.
 - Revive Time value is calculated by subtracting Invincibility Time value from it, for example if Revive Time is 8 and Invincibility Time is 3, players will revive after 5 seconds but will be invincible for another 3 seconds after reviving.
@@ -1241,7 +1262,7 @@ Match between green and yellow team. There's a total of 3 capturable zones in th
 - If a King gets killed, his team will lose every captured zone, turning them into white color.
 - A captured zone can be stolen by the other King.
 - If a King disconnects from the game, another King will be assigned randomly between team players.
-- The Usurper always loses, he can kill everyone and if he kills a King he becomes one, making the old King the new Usurper. Also Usurper has two arrows pointing towards each King's position.
+- The Usurper always loses, he can kill everyone (but not close to a team's spawn) and if he kills a King he becomes one, making the old King the new Usurper. Also Usurper has two arrows pointing towards each King's position.
 - Each player name color will be the same as the team color.
 - There are custom messages for match duration, captured zone, a King died or a King disconnects, also the game score is always displayed.
 - Revive Time value is calculated by subtracting Invincibility Time value from it, for example if Revive Time is 8 and Invincibility Time is 3, players will revive after 5 seconds but will be invincible for another 3 seconds after reviving.
@@ -1295,10 +1316,10 @@ A random player gets the Zombie role, another player the Nurse role and the rest
 - Only Zombies can use vents.
 - Zombies can infect other player by standing near to him the needed time. Infected players name will turn from blue to yellow but they remain as Survivor during the time limit to use medkit.
 - If the time to use medkit reach 0 (this timer doesn't show anywhere to add tension), that Survivor will turn into a Zombie.
--Nurse is immune to the infection, she can pick a medkit (pointed by pink arrows) from 3 different map location and use it on a infected player (yellow name) to cure it. She can carry only 1 medkit at once and will lose it if she gets killed. A healed player has to be infected again to try to turn it into a zombie.
+- Nurse is immune to the infection, she can pick a medkit (pointed by pink arrows) from 3 different map location and use it on a infected player (yellow name) to cure it or on a zombie to kill it. She can carry only 1 medkit at once and will lose it if she gets killed. A healed player will have a pink screen flash, and everyone will hear a heal sound, also that player has to be infected again to try to turn it into a zombie. The Nurse gets a permanent speed and vision boost if Survivors delivered 3 or more key items.
 - Infirmary is the Nurse's spawn and only survivors can enter in it. After 10 seconds, survivors will be forced to exit it. The Nurse can enter and stay in it anytime she wants, also she can leave from 3 different location to prevent Zombie spawn camping. There's 2 switches in the Infirmary, the left one is for delivering a key item and the right one is to create the cure when all key items are delivered, making the Survivor team the winner.
 - Survivors have to look for the key items hided in the boxes around the map and deliver them to the Infirmary.
-- Zombies can kill, the Nurse can't and the Survivors can find ammo on random boxes, which makes them able to kill 1 time (after being killed or killing a Zombie they will have to search the same ammo box to recharge their kill button)
+- Zombies can kill (but not close to the Infirmaty), and the Survivors can find ammo on random boxes, which makes them able to kill 1 time (after being killed or killing a Zombie they will have to search the same ammo box to recharge their kill button)
 - Boxes loot are random for every player even the location is the same for everyone. There are 60 box on every map, 6 of them contains the key items, 4 contains ammo and the rest are empty. For example Survivor 1 can find ammo on Admin while Survivor 2 finds it on Reactor, the same goes with the key items. 
 - If you're delivering a key item, you can't search boxes or kill and you'll lose it if you die or turn into a zombie, making the key item return to their original location.
 - If a Zombie disconnects from the game and was the only one, survivors will win. Also if the Nurse disconnects, zombie team will win.
