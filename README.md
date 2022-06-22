@@ -33,6 +33,13 @@ Las Monjas is a Spanish mod (translated and published on English) for Among Us m
 <details>
   <summary>Click to show</summary>
 
+**Version 2.0.4 (22nd June 2022)
+- This is a BETA version for Among Us 2022.6.21s, you might find issues
+- This BETA doesn't include Submerged, since it needs to be updated first, but you'll be able to download it when it's done via Submerged Update button on the main menu
+- Added mod updater button (the same one as Submerged but it will check first if there's a Las Monjas update)
+- Changed Archer's shot key from Q to right clic
+- Removed streamer mode mod option since it is now included on vanilla game
+
 **Version 2.0.3 (17th June 2022)**
 - Fixed Reactor's sabotage on custom skeld
 - Submerged updated to 2022.6.12
@@ -272,8 +279,7 @@ I recommend to play this mod only on custom servers (for example [Impostor](http
 -----------------------
 
 # Settings
-This mod adds a custom lobby which I won't spoil to you, it also adds four colors (Lavender, Petrol, Mint and Olive), a button to zoom out / in the map if you're dead and have all tasks done, and six settings to the client option tab:
-- **Hide Room Code:** More like streamer mode, activating this option will hide the room code and replace it with "Las Monjas"
+This mod adds a custom lobby which I won't spoil to you, it also adds four colors (Lavender, Petrol, Mint and Olive), a button to zoom out / in the map if you're dead and have all tasks done, and five settings to the client option tab:
 - **Game Summary:** Activating this option will create a list containing which role and task progress the players had after the game ends.
 - **Activate Music:** Music pack containing 7 songs from Kevin MacLeod (1 for Lobby, 3 for Tasks and 3 for Meeting depending of how many players are alive)
 - **Ghost Can See Roles:** Only after being reported, ghosts will be able to see which role the players have.
@@ -517,7 +523,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 
 **Additional Ability Notes:**
 - He can't make normal kills.
-- To use this role, he needs to pick a Bow (button use), put the mouse cursor towards the desired direction and pressing Q to shoot.
+- To use this role, he needs to pick a Bow (button use), put the mouse cursor towards the desired direction and pressing right click to shoot.
 - Bow is invisible to other players, but after shooting, a warning image will appear into the map for the players inside the Notify Range, and also a sound will be heard.
 - The warning image appears on the Archer's position if he miss the shoot or above the player's body if he doesn't miss the shoot.
 - Aim duration reveal player's direction but not how much distance they are from the Archer.
