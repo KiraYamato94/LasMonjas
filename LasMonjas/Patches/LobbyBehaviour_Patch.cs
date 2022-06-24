@@ -53,7 +53,7 @@ namespace LasMonjas.Patches
 
         }
         
-        private static string lobbyCodeText = "";
+        /*private static string lobbyCodeText = "";
 
         [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Start))]
         public class GameStartManagerStartPatch
@@ -64,17 +64,7 @@ namespace LasMonjas.Patches
                 GUIUtility.systemCopyBuffer = code;
                 lobbyCodeText = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.RoomCode, new Il2CppReferenceArray<Il2CppSystem.Object>(0)) + "\r\n" + code;
             }
-        }
-        
-        [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Update))]
-        public class GameStartManagerUpdatePatch
-        {
-
-            public static void Postfix(GameStartManager __instance) {               
-                // Lobby code replacement if hide room code is enabled
-                __instance.GameRoomName.text = LasMonjasPlugin.StreamerMode.Value ? $"<color={LasMonjasPlugin.StreamerModeReplacementColor.Value}>{LasMonjasPlugin.StreamerModeReplacementText.Value}</color>" : lobbyCodeText;
-            }
-        }
+        }*/
         
         [HarmonyPatch(typeof(LobbyBehaviour), nameof(LobbyBehaviour.Start))]
 

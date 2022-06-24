@@ -26,11 +26,11 @@ namespace LasMonjas.Patches {
                 if (Mimic.transformTimer > 0f && Mimic.mimic == player && Mimic.transformTarget != null) playerName = Mimic.transformTarget.Data.PlayerName;
                 if (Puppeteer.morphed && Puppeteer.puppeteer == player && Puppeteer.transformTarget != null) playerName = Puppeteer.transformTarget.Data.PlayerName;
 
-                player.nameText.text = Helpers.hidePlayerName(PlayerControl.LocalPlayer, player) ? "" : playerName;
+                player.cosmetics.nameText.text = Helpers.hidePlayerName(PlayerControl.LocalPlayer, player) ? "" : playerName;
                 if (PlayerControl.LocalPlayer.Data.Role.IsImpostor && player.Data.Role.IsImpostor) {
-                    player.nameText.color = Palette.ImpostorRed;
+                    player.cosmetics.nameText.color = Palette.ImpostorRed;
                 } else {
-                    player.nameText.color = Color.white;
+                    player.cosmetics.nameText.color = Color.white;
                 }
             }
             if (MeetingHud.Instance != null) {
@@ -50,7 +50,7 @@ namespace LasMonjas.Patches {
                 List<PlayerControl> impostors = PlayerControl.AllPlayerControls.ToArray().ToList();
                 impostors.RemoveAll(x => !x.Data.Role.IsImpostor);
                 foreach (PlayerControl player in impostors)
-                    player.nameText.color = Palette.ImpostorRed;
+                    player.cosmetics.nameText.color = Palette.ImpostorRed;
                 if (MeetingHud.Instance != null)
                     foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates) {
                         PlayerControl playerControl = Helpers.playerById((byte)player.TargetPlayerId);
@@ -62,7 +62,7 @@ namespace LasMonjas.Patches {
         }
 
         static void setPlayerNameColor(PlayerControl p, Color color) {
-            p.nameText.color = color;
+            p.cosmetics.nameText.color = color;
             if (MeetingHud.Instance != null)
                 foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
                     if (player.NameText != null && p.PlayerId == player.TargetPlayerId)
@@ -281,8 +281,8 @@ namespace LasMonjas.Patches {
             // Lovers add a heart to their names
             if (Modifiers.lover1 != null && Modifiers.lover2 != null && (Modifiers.lover1 == PlayerControl.LocalPlayer || Modifiers.lover2 == PlayerControl.LocalPlayer)) {
                 string suffix = Helpers.cs(Modifiers.loverscolor, " ♥");
-                Modifiers.lover1.nameText.text += suffix;
-                Modifiers.lover2.nameText.text += suffix;
+                Modifiers.lover1.cosmetics.nameText.text += suffix;
+                Modifiers.lover2.cosmetics.nameText.text += suffix;
 
                 if (MeetingHud.Instance != null)
                     foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
@@ -363,8 +363,8 @@ namespace LasMonjas.Patches {
                     }
 
                     // Set color and name
-                    p.nameText.color = si.color;
-                    p.nameText.text = result;
+                    p.cosmetics.nameText.color = si.color;
+                    p.cosmetics.nameText.text = result;
                     if (MeetingHud.Instance != null) {
                         foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates) {
                             if (p.PlayerId == player.TargetPlayerId) {
@@ -583,10 +583,10 @@ namespace LasMonjas.Patches {
             if (PlayerControl.LocalPlayer == Spiritualist.spiritualist && Spiritualist.spiritualist != null) {
                 foreach (var player in PlayerControl.AllPlayerControls) {
                     if (player.Data.IsDead) {
-                        player.MyRend.gameObject.SetActive(true);
-                        player.MyRend.enabled = true;
-                        player.nameText.enabled = true;
-                        player.nameText.gameObject.SetActive(true);
+                        player.cosmetics.currentBodySprite.BodySprite.gameObject.SetActive(true);
+                        player.cosmetics.currentBodySprite.BodySprite.enabled = true;
+                        player.cosmetics.nameText.enabled = true;
+                        player.cosmetics.nameText.gameObject.SetActive(true);
                     }
                 }
             }
@@ -594,7 +594,7 @@ namespace LasMonjas.Patches {
             // Identify Spiritualist by name color if you're dead
             foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
                 if (Spiritualist.spiritualist != null && !Spiritualist.spiritualist.Data.IsDead && p == PlayerControl.LocalPlayer && p.Data.IsDead) {
-                    Spiritualist.spiritualist.nameText.color = Spiritualist.color;
+                    Spiritualist.spiritualist.cosmetics.nameText.color = Spiritualist.color;
                 }
             }
         }
@@ -607,36 +607,38 @@ namespace LasMonjas.Patches {
 
             if (Chameleon.chameleonTimer > 0f) {
                 if (Chameleon.chameleon == PlayerControl.LocalPlayer) {
-                    Chameleon.chameleon.nameText.color = new Color(Chameleon.chameleon.nameText.color.r, Chameleon.chameleon.nameText.color.g, Chameleon.chameleon.nameText.color.b, 0.5f);
-                    if (Chameleon.chameleon.CurrentPet != null && Chameleon.chameleon.CurrentPet.rend != null && Chameleon.chameleon.CurrentPet.shadowRend != null) {
-                        Chameleon.chameleon.CurrentPet.rend.color = new Color(Chameleon.chameleon.CurrentPet.rend.color.r, Chameleon.chameleon.CurrentPet.rend.color.g, Chameleon.chameleon.CurrentPet.rend.color.b, 0.5f);
-                        Chameleon.chameleon.CurrentPet.shadowRend.color = new Color(Chameleon.chameleon.CurrentPet.shadowRend.color.r, Chameleon.chameleon.CurrentPet.shadowRend.color.g, Chameleon.chameleon.CurrentPet.shadowRend.color.b, 0.5f);
+                    Chameleon.chameleon.cosmetics.nameText.color = new Color(Chameleon.chameleon.cosmetics.nameText.color.r, Chameleon.chameleon.cosmetics.nameText.color.g, Chameleon.chameleon.cosmetics.nameText.color.b, 0.5f);
+                    Chameleon.chameleon.cosmetics.colorBlindText.color = new Color(Chameleon.chameleon.cosmetics.colorBlindText.color.r, Chameleon.chameleon.cosmetics.colorBlindText.color.g, Chameleon.chameleon.cosmetics.colorBlindText.color.b, 0.5f);
+                    if (Chameleon.chameleon.cosmetics.currentPet != null && Chameleon.chameleon.cosmetics.currentPet.rend != null && Chameleon.chameleon.cosmetics.currentPet.shadowRend != null) {
+                        Chameleon.chameleon.cosmetics.currentPet.rend.color = new Color(Chameleon.chameleon.cosmetics.currentPet.rend.color.r, Chameleon.chameleon.cosmetics.currentPet.rend.color.g, Chameleon.chameleon.cosmetics.currentPet.rend.color.b, 0.5f);
+                        Chameleon.chameleon.cosmetics.currentPet.shadowRend.color = new Color(Chameleon.chameleon.cosmetics.currentPet.shadowRend.color.r, Chameleon.chameleon.cosmetics.currentPet.shadowRend.color.g, Chameleon.chameleon.cosmetics.currentPet.shadowRend.color.b, 0.5f);
                     }
-                    if (Chameleon.chameleon.HatRenderer != null) {
-                        Chameleon.chameleon.HatRenderer.Parent.color = new Color(Chameleon.chameleon.HatRenderer.Parent.color.r, Chameleon.chameleon.HatRenderer.Parent.color.g, Chameleon.chameleon.HatRenderer.Parent.color.b, 0.5f);
-                        Chameleon.chameleon.HatRenderer.BackLayer.color = new Color(Chameleon.chameleon.HatRenderer.BackLayer.color.r, Chameleon.chameleon.HatRenderer.BackLayer.color.g, Chameleon.chameleon.HatRenderer.BackLayer.color.b, 0.5f);
-                        Chameleon.chameleon.HatRenderer.FrontLayer.color = new Color(Chameleon.chameleon.HatRenderer.FrontLayer.color.r, Chameleon.chameleon.HatRenderer.FrontLayer.color.g, Chameleon.chameleon.HatRenderer.FrontLayer.color.b, 0.5f);
+                    if (Chameleon.chameleon.cosmetics.hat != null) {
+                        Chameleon.chameleon.cosmetics.hat.Parent.color = new Color(Chameleon.chameleon.cosmetics.hat.Parent.color.r, Chameleon.chameleon.cosmetics.hat.Parent.color.g, Chameleon.chameleon.cosmetics.hat.Parent.color.b, 0.5f);
+                        Chameleon.chameleon.cosmetics.hat.BackLayer.color = new Color(Chameleon.chameleon.cosmetics.hat.BackLayer.color.r, Chameleon.chameleon.cosmetics.hat.BackLayer.color.g, Chameleon.chameleon.cosmetics.hat.BackLayer.color.b, 0.5f);
+                        Chameleon.chameleon.cosmetics.hat.FrontLayer.color = new Color(Chameleon.chameleon.cosmetics.hat.FrontLayer.color.r, Chameleon.chameleon.cosmetics.hat.FrontLayer.color.g, Chameleon.chameleon.cosmetics.hat.FrontLayer.color.b, 0.5f);
                     }
-                    if (Chameleon.chameleon.VisorSlot != null) {
-                        Chameleon.chameleon.VisorSlot.Image.color = new Color(Chameleon.chameleon.VisorSlot.Image.color.r, Chameleon.chameleon.VisorSlot.Image.color.g, Chameleon.chameleon.VisorSlot.Image.color.b, 0.5f);
+                    if (Chameleon.chameleon.cosmetics.visor != null) {
+                        Chameleon.chameleon.cosmetics.visor.Image.color = new Color(Chameleon.chameleon.cosmetics.visor.Image.color.r, Chameleon.chameleon.cosmetics.visor.Image.color.g, Chameleon.chameleon.cosmetics.visor.Image.color.b, 0.5f);
                     }
-                    Chameleon.chameleon.MyPhysics.Skin.layer.color = new Color(Chameleon.chameleon.MyPhysics.Skin.layer.color.r, Chameleon.chameleon.MyPhysics.Skin.layer.color.g, Chameleon.chameleon.MyPhysics.Skin.layer.color.b, 0.5f);
+                    Chameleon.chameleon.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(Chameleon.chameleon.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, Chameleon.chameleon.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, Chameleon.chameleon.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
                 }
                 else {
-                    Chameleon.chameleon.nameText.color = new Color(Chameleon.chameleon.nameText.color.r, Chameleon.chameleon.nameText.color.g, Chameleon.chameleon.nameText.color.b, 0f);
-                    if (Chameleon.chameleon.CurrentPet != null && Chameleon.chameleon.CurrentPet.rend != null && Chameleon.chameleon.CurrentPet.shadowRend != null) {
-                        Chameleon.chameleon.CurrentPet.rend.color = new Color(Chameleon.chameleon.CurrentPet.rend.color.r, Chameleon.chameleon.CurrentPet.rend.color.g, Chameleon.chameleon.CurrentPet.rend.color.b, 0f);
-                        Chameleon.chameleon.CurrentPet.shadowRend.color = new Color(Chameleon.chameleon.CurrentPet.shadowRend.color.r, Chameleon.chameleon.CurrentPet.shadowRend.color.g, Chameleon.chameleon.CurrentPet.shadowRend.color.b, 0f);
+                    Chameleon.chameleon.cosmetics.nameText.color = new Color(Chameleon.chameleon.cosmetics.nameText.color.r, Chameleon.chameleon.cosmetics.nameText.color.g, Chameleon.chameleon.cosmetics.nameText.color.b, 0f);
+                    Chameleon.chameleon.cosmetics.colorBlindText.color = new Color(Chameleon.chameleon.cosmetics.colorBlindText.color.r, Chameleon.chameleon.cosmetics.colorBlindText.color.g, Chameleon.chameleon.cosmetics.colorBlindText.color.b, 0f);
+                    if (Chameleon.chameleon.cosmetics.currentPet != null && Chameleon.chameleon.cosmetics.currentPet.rend != null && Chameleon.chameleon.cosmetics.currentPet.shadowRend != null) {
+                        Chameleon.chameleon.cosmetics.currentPet.rend.color = new Color(Chameleon.chameleon.cosmetics.currentPet.rend.color.r, Chameleon.chameleon.cosmetics.currentPet.rend.color.g, Chameleon.chameleon.cosmetics.currentPet.rend.color.b, 0f);
+                        Chameleon.chameleon.cosmetics.currentPet.shadowRend.color = new Color(Chameleon.chameleon.cosmetics.currentPet.shadowRend.color.r, Chameleon.chameleon.cosmetics.currentPet.shadowRend.color.g, Chameleon.chameleon.cosmetics.currentPet.shadowRend.color.b, 0f);
                     }
-                    if (Chameleon.chameleon.HatRenderer != null) {
-                        Chameleon.chameleon.HatRenderer.Parent.color = new Color(Chameleon.chameleon.HatRenderer.Parent.color.r, Chameleon.chameleon.HatRenderer.Parent.color.g, Chameleon.chameleon.HatRenderer.Parent.color.b, 0f);
-                        Chameleon.chameleon.HatRenderer.BackLayer.color = new Color(Chameleon.chameleon.HatRenderer.BackLayer.color.r, Chameleon.chameleon.HatRenderer.BackLayer.color.g, Chameleon.chameleon.HatRenderer.BackLayer.color.b, 0f);
-                        Chameleon.chameleon.HatRenderer.FrontLayer.color = new Color(Chameleon.chameleon.HatRenderer.FrontLayer.color.r, Chameleon.chameleon.HatRenderer.FrontLayer.color.g, Chameleon.chameleon.HatRenderer.FrontLayer.color.b, 0f);
+                    if (Chameleon.chameleon.cosmetics.hat != null) {
+                        Chameleon.chameleon.cosmetics.hat.Parent.color = new Color(Chameleon.chameleon.cosmetics.hat.Parent.color.r, Chameleon.chameleon.cosmetics.hat.Parent.color.g, Chameleon.chameleon.cosmetics.hat.Parent.color.b, 0f);
+                        Chameleon.chameleon.cosmetics.hat.BackLayer.color = new Color(Chameleon.chameleon.cosmetics.hat.BackLayer.color.r, Chameleon.chameleon.cosmetics.hat.BackLayer.color.g, Chameleon.chameleon.cosmetics.hat.BackLayer.color.b, 0f);
+                        Chameleon.chameleon.cosmetics.hat.FrontLayer.color = new Color(Chameleon.chameleon.cosmetics.hat.FrontLayer.color.r, Chameleon.chameleon.cosmetics.hat.FrontLayer.color.g, Chameleon.chameleon.cosmetics.hat.FrontLayer.color.b, 0f);
                     }
-                    if (Chameleon.chameleon.VisorSlot != null) {
-                        Chameleon.chameleon.VisorSlot.Image.color = new Color(Chameleon.chameleon.VisorSlot.Image.color.r, Chameleon.chameleon.VisorSlot.Image.color.g, Chameleon.chameleon.VisorSlot.Image.color.b, 0f);
+                    if (Chameleon.chameleon.cosmetics.visor != null) {
+                        Chameleon.chameleon.cosmetics.visor.Image.color = new Color(Chameleon.chameleon.cosmetics.visor.Image.color.r, Chameleon.chameleon.cosmetics.visor.Image.color.g, Chameleon.chameleon.cosmetics.visor.Image.color.b, 0f);
                     }
-                    Chameleon.chameleon.MyPhysics.Skin.layer.color = new Color(Chameleon.chameleon.MyPhysics.Skin.layer.color.r, Chameleon.chameleon.MyPhysics.Skin.layer.color.g, Chameleon.chameleon.MyPhysics.Skin.layer.color.b, 0f);
+                    Chameleon.chameleon.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(Chameleon.chameleon.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, Chameleon.chameleon.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, Chameleon.chameleon.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0f);
                 }
             }
 

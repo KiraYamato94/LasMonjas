@@ -47,15 +47,15 @@ namespace LasMonjas.Patches {
         }
 
         static void setPlayerOutline(PlayerControl target, Color color) {
-            if (target == null || target.MyRend == null) return;
+            if (target == null || target.cosmetics.currentBodySprite.BodySprite == null) return;
 
-            target.MyRend.material.SetFloat("_Outline", 1f);
-            target.MyRend.material.SetColor("_OutlineColor", color);
+            target.cosmetics.currentBodySprite.BodySprite.material.SetFloat("_Outline", 1f);
+            target.cosmetics.currentBodySprite.BodySprite.material.SetColor("_OutlineColor", color);
         }
 
         static void setBasePlayerOutlines() {
             foreach (PlayerControl target in PlayerControl.AllPlayerControls) {
-                if (target == null || target.MyRend == null) continue;
+                if (target == null || target.cosmetics.currentBodySprite.BodySprite == null) continue;
 
                 bool isTransformedMimic = target == Mimic.mimic && Mimic.transformTarget != null && Mimic.transformTimer > 0f;
                 bool hasVisibleShield = false;
@@ -66,11 +66,11 @@ namespace LasMonjas.Patches {
                 }
 
                 if (hasVisibleShield) {
-                    target.MyRend.material.SetFloat("_Outline", 1f);
-                    target.MyRend.material.SetColor("_OutlineColor", Squire.shieldedColor);
+                    target.cosmetics.currentBodySprite.BodySprite.material.SetFloat("_Outline", 1f);
+                    target.cosmetics.currentBodySprite.BodySprite.material.SetColor("_OutlineColor", Squire.shieldedColor);
                 }
                 else {
-                    target.MyRend.material.SetFloat("_Outline", 0f);
+                    target.cosmetics.currentBodySprite.BodySprite.material.SetFloat("_Outline", 0f);
                 }
             }
         }
@@ -275,7 +275,7 @@ namespace LasMonjas.Patches {
         static void sleuthUpdate() {
             // Handle player locate
             if (Sleuth.arrow?.arrow != null) {
-                if (Sleuth.sleuth == null || PlayerControl.LocalPlayer != Sleuth.sleuth || Challenger.isDueling || anonymousComms) {
+                if (Sleuth.sleuth == null || PlayerControl.LocalPlayer != Sleuth.sleuth || Challenger.isDueling || isHappeningAnonymousComms) {
                     Sleuth.arrow.arrow.SetActive(false);
                     return;
                 }
@@ -412,7 +412,7 @@ namespace LasMonjas.Patches {
                     Fink.localArrows[0].Update(Fink.fink.transform.position);
                 }
             }
-            else if (PlayerControl.LocalPlayer == Fink.fink && numberOfTasks == 0 && !Challenger.isDueling && !anonymousComms) {
+            else if (PlayerControl.LocalPlayer == Fink.fink && numberOfTasks == 0 && !Challenger.isDueling && !isHappeningAnonymousComms) {
                 int arrowIndex = 0;
                 foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
                     bool arrowForImp = p.Data.Role.IsImpostor;
@@ -2210,37 +2210,37 @@ namespace LasMonjas.Patches {
                         var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
                         body.transform.position = new Vector3(50, 50, 1);
                         CaptureTheFlag.stealerPlayerIsReviving = true;
-                        CaptureTheFlag.stealerPlayer.nameText.color = new Color(CaptureTheFlag.stealerPlayer.nameText.color.r, CaptureTheFlag.stealerPlayer.nameText.color.g, CaptureTheFlag.stealerPlayer.nameText.color.b, 0.5f);
-                        if (CaptureTheFlag.stealerPlayer.CurrentPet != null && CaptureTheFlag.stealerPlayer.CurrentPet.rend != null && CaptureTheFlag.stealerPlayer.CurrentPet.shadowRend != null) {
-                            CaptureTheFlag.stealerPlayer.CurrentPet.rend.color = new Color(CaptureTheFlag.stealerPlayer.CurrentPet.rend.color.r, CaptureTheFlag.stealerPlayer.CurrentPet.rend.color.g, CaptureTheFlag.stealerPlayer.CurrentPet.rend.color.b, 0.5f);
-                            CaptureTheFlag.stealerPlayer.CurrentPet.shadowRend.color = new Color(CaptureTheFlag.stealerPlayer.CurrentPet.shadowRend.color.r, CaptureTheFlag.stealerPlayer.CurrentPet.shadowRend.color.g, CaptureTheFlag.stealerPlayer.CurrentPet.shadowRend.color.b, 0.5f);
+                        CaptureTheFlag.stealerPlayer.cosmetics.nameText.color = new Color(CaptureTheFlag.stealerPlayer.cosmetics.nameText.color.r, CaptureTheFlag.stealerPlayer.cosmetics.nameText.color.g, CaptureTheFlag.stealerPlayer.cosmetics.nameText.color.b, 0.5f);
+                        if (CaptureTheFlag.stealerPlayer.cosmetics.currentPet != null && CaptureTheFlag.stealerPlayer.cosmetics.currentPet.rend != null && CaptureTheFlag.stealerPlayer.cosmetics.currentPet.shadowRend != null) {
+                            CaptureTheFlag.stealerPlayer.cosmetics.currentPet.rend.color = new Color(CaptureTheFlag.stealerPlayer.cosmetics.currentPet.rend.color.r, CaptureTheFlag.stealerPlayer.cosmetics.currentPet.rend.color.g, CaptureTheFlag.stealerPlayer.cosmetics.currentPet.rend.color.b, 0.5f);
+                            CaptureTheFlag.stealerPlayer.cosmetics.currentPet.shadowRend.color = new Color(CaptureTheFlag.stealerPlayer.cosmetics.currentPet.shadowRend.color.r, CaptureTheFlag.stealerPlayer.cosmetics.currentPet.shadowRend.color.g, CaptureTheFlag.stealerPlayer.cosmetics.currentPet.shadowRend.color.b, 0.5f);
                         }
-                        if (CaptureTheFlag.stealerPlayer.HatRenderer != null) {
-                            CaptureTheFlag.stealerPlayer.HatRenderer.Parent.color = new Color(CaptureTheFlag.stealerPlayer.HatRenderer.Parent.color.r, CaptureTheFlag.stealerPlayer.HatRenderer.Parent.color.g, CaptureTheFlag.stealerPlayer.HatRenderer.Parent.color.b, 0.5f);
-                            CaptureTheFlag.stealerPlayer.HatRenderer.BackLayer.color = new Color(CaptureTheFlag.stealerPlayer.HatRenderer.BackLayer.color.r, CaptureTheFlag.stealerPlayer.HatRenderer.BackLayer.color.g, CaptureTheFlag.stealerPlayer.HatRenderer.BackLayer.color.b, 0.5f);
-                            CaptureTheFlag.stealerPlayer.HatRenderer.FrontLayer.color = new Color(CaptureTheFlag.stealerPlayer.HatRenderer.FrontLayer.color.r, CaptureTheFlag.stealerPlayer.HatRenderer.FrontLayer.color.g, CaptureTheFlag.stealerPlayer.HatRenderer.FrontLayer.color.b, 0.5f);
+                        if (CaptureTheFlag.stealerPlayer.cosmetics.hat != null) {
+                            CaptureTheFlag.stealerPlayer.cosmetics.hat.Parent.color = new Color(CaptureTheFlag.stealerPlayer.cosmetics.hat.Parent.color.r, CaptureTheFlag.stealerPlayer.cosmetics.hat.Parent.color.g, CaptureTheFlag.stealerPlayer.cosmetics.hat.Parent.color.b, 0.5f);
+                            CaptureTheFlag.stealerPlayer.cosmetics.hat.BackLayer.color = new Color(CaptureTheFlag.stealerPlayer.cosmetics.hat.BackLayer.color.r, CaptureTheFlag.stealerPlayer.cosmetics.hat.BackLayer.color.g, CaptureTheFlag.stealerPlayer.cosmetics.hat.BackLayer.color.b, 0.5f);
+                            CaptureTheFlag.stealerPlayer.cosmetics.hat.FrontLayer.color = new Color(CaptureTheFlag.stealerPlayer.cosmetics.hat.FrontLayer.color.r, CaptureTheFlag.stealerPlayer.cosmetics.hat.FrontLayer.color.g, CaptureTheFlag.stealerPlayer.cosmetics.hat.FrontLayer.color.b, 0.5f);
                         }
-                        if (CaptureTheFlag.stealerPlayer.VisorSlot != null) {
-                            CaptureTheFlag.stealerPlayer.VisorSlot.Image.color = new Color(CaptureTheFlag.stealerPlayer.VisorSlot.Image.color.r, CaptureTheFlag.stealerPlayer.VisorSlot.Image.color.g, CaptureTheFlag.stealerPlayer.VisorSlot.Image.color.b, 0.5f);
+                        if (CaptureTheFlag.stealerPlayer.cosmetics.visor != null) {
+                            CaptureTheFlag.stealerPlayer.cosmetics.visor.Image.color = new Color(CaptureTheFlag.stealerPlayer.cosmetics.visor.Image.color.r, CaptureTheFlag.stealerPlayer.cosmetics.visor.Image.color.g, CaptureTheFlag.stealerPlayer.cosmetics.visor.Image.color.b, 0.5f);
                         }
-                        CaptureTheFlag.stealerPlayer.MyPhysics.Skin.layer.color = new Color(CaptureTheFlag.stealerPlayer.MyPhysics.Skin.layer.color.r, CaptureTheFlag.stealerPlayer.MyPhysics.Skin.layer.color.g, CaptureTheFlag.stealerPlayer.MyPhysics.Skin.layer.color.b, 0.5f);
+                        CaptureTheFlag.stealerPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(CaptureTheFlag.stealerPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, CaptureTheFlag.stealerPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, CaptureTheFlag.stealerPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
                         HudManager.Instance.StartCoroutine(Effects.Lerp(CaptureTheFlag.reviveTime, new Action<float>((p) => {
                             if (p == 1f && CaptureTheFlag.stealerPlayer != null) {
                                 CaptureTheFlag.stealerPlayerIsReviving = false;
-                                CaptureTheFlag.stealerPlayer.nameText.color = new Color(CaptureTheFlag.stealerPlayer.nameText.color.r, CaptureTheFlag.stealerPlayer.nameText.color.g, CaptureTheFlag.stealerPlayer.nameText.color.b, 1f);
-                                if (CaptureTheFlag.stealerPlayer.CurrentPet != null && CaptureTheFlag.stealerPlayer.CurrentPet.rend != null && CaptureTheFlag.stealerPlayer.CurrentPet.shadowRend != null) {
-                                    CaptureTheFlag.stealerPlayer.CurrentPet.rend.color = new Color(CaptureTheFlag.stealerPlayer.CurrentPet.rend.color.r, CaptureTheFlag.stealerPlayer.CurrentPet.rend.color.g, CaptureTheFlag.stealerPlayer.CurrentPet.rend.color.b, 1f);
-                                    CaptureTheFlag.stealerPlayer.CurrentPet.shadowRend.color = new Color(CaptureTheFlag.stealerPlayer.CurrentPet.shadowRend.color.r, CaptureTheFlag.stealerPlayer.CurrentPet.shadowRend.color.g, CaptureTheFlag.stealerPlayer.CurrentPet.shadowRend.color.b, 1f);
+                                CaptureTheFlag.stealerPlayer.cosmetics.nameText.color = new Color(CaptureTheFlag.stealerPlayer.cosmetics.nameText.color.r, CaptureTheFlag.stealerPlayer.cosmetics.nameText.color.g, CaptureTheFlag.stealerPlayer.cosmetics.nameText.color.b, 1f);
+                                if (CaptureTheFlag.stealerPlayer.cosmetics.currentPet != null && CaptureTheFlag.stealerPlayer.cosmetics.currentPet.rend != null && CaptureTheFlag.stealerPlayer.cosmetics.currentPet.shadowRend != null) {
+                                    CaptureTheFlag.stealerPlayer.cosmetics.currentPet.rend.color = new Color(CaptureTheFlag.stealerPlayer.cosmetics.currentPet.rend.color.r, CaptureTheFlag.stealerPlayer.cosmetics.currentPet.rend.color.g, CaptureTheFlag.stealerPlayer.cosmetics.currentPet.rend.color.b, 1f);
+                                    CaptureTheFlag.stealerPlayer.cosmetics.currentPet.shadowRend.color = new Color(CaptureTheFlag.stealerPlayer.cosmetics.currentPet.shadowRend.color.r, CaptureTheFlag.stealerPlayer.cosmetics.currentPet.shadowRend.color.g, CaptureTheFlag.stealerPlayer.cosmetics.currentPet.shadowRend.color.b, 1f);
                                 }
-                                if (CaptureTheFlag.stealerPlayer.HatRenderer != null) {
-                                    CaptureTheFlag.stealerPlayer.HatRenderer.Parent.color = new Color(CaptureTheFlag.stealerPlayer.HatRenderer.Parent.color.r, CaptureTheFlag.stealerPlayer.HatRenderer.Parent.color.g, CaptureTheFlag.stealerPlayer.HatRenderer.Parent.color.b, 1f);
-                                    CaptureTheFlag.stealerPlayer.HatRenderer.BackLayer.color = new Color(CaptureTheFlag.stealerPlayer.HatRenderer.BackLayer.color.r, CaptureTheFlag.stealerPlayer.HatRenderer.BackLayer.color.g, CaptureTheFlag.stealerPlayer.HatRenderer.BackLayer.color.b, 1f);
-                                    CaptureTheFlag.stealerPlayer.HatRenderer.FrontLayer.color = new Color(CaptureTheFlag.stealerPlayer.HatRenderer.FrontLayer.color.r, CaptureTheFlag.stealerPlayer.HatRenderer.FrontLayer.color.g, CaptureTheFlag.stealerPlayer.HatRenderer.FrontLayer.color.b, 1f);
+                                if (CaptureTheFlag.stealerPlayer.cosmetics.hat != null) {
+                                    CaptureTheFlag.stealerPlayer.cosmetics.hat.Parent.color = new Color(CaptureTheFlag.stealerPlayer.cosmetics.hat.Parent.color.r, CaptureTheFlag.stealerPlayer.cosmetics.hat.Parent.color.g, CaptureTheFlag.stealerPlayer.cosmetics.hat.Parent.color.b, 1f);
+                                    CaptureTheFlag.stealerPlayer.cosmetics.hat.BackLayer.color = new Color(CaptureTheFlag.stealerPlayer.cosmetics.hat.BackLayer.color.r, CaptureTheFlag.stealerPlayer.cosmetics.hat.BackLayer.color.g, CaptureTheFlag.stealerPlayer.cosmetics.hat.BackLayer.color.b, 1f);
+                                    CaptureTheFlag.stealerPlayer.cosmetics.hat.FrontLayer.color = new Color(CaptureTheFlag.stealerPlayer.cosmetics.hat.FrontLayer.color.r, CaptureTheFlag.stealerPlayer.cosmetics.hat.FrontLayer.color.g, CaptureTheFlag.stealerPlayer.cosmetics.hat.FrontLayer.color.b, 1f);
                                 }
-                                if (CaptureTheFlag.stealerPlayer.VisorSlot != null) {
-                                    CaptureTheFlag.stealerPlayer.VisorSlot.Image.color = new Color(CaptureTheFlag.stealerPlayer.VisorSlot.Image.color.r, CaptureTheFlag.stealerPlayer.VisorSlot.Image.color.g, CaptureTheFlag.stealerPlayer.VisorSlot.Image.color.b, 1f);
+                                if (CaptureTheFlag.stealerPlayer.cosmetics.visor != null) {
+                                    CaptureTheFlag.stealerPlayer.cosmetics.visor.Image.color = new Color(CaptureTheFlag.stealerPlayer.cosmetics.visor.Image.color.r, CaptureTheFlag.stealerPlayer.cosmetics.visor.Image.color.g, CaptureTheFlag.stealerPlayer.cosmetics.visor.Image.color.b, 1f);
                                 }
-                                CaptureTheFlag.stealerPlayer.MyPhysics.Skin.layer.color = new Color(CaptureTheFlag.stealerPlayer.MyPhysics.Skin.layer.color.r, CaptureTheFlag.stealerPlayer.MyPhysics.Skin.layer.color.g, CaptureTheFlag.stealerPlayer.MyPhysics.Skin.layer.color.b, 1f);
+                                CaptureTheFlag.stealerPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(CaptureTheFlag.stealerPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, CaptureTheFlag.stealerPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, CaptureTheFlag.stealerPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
                             }
                         })));
                         HudManager.Instance.StartCoroutine(Effects.Lerp(CaptureTheFlag.reviveTime - CaptureTheFlag.invincibilityTimeAfterRevive, new Action<float>((p) => {
@@ -2316,20 +2316,20 @@ namespace LasMonjas.Patches {
                             else if (CaptureTheFlag.redplayer07 != null && target.PlayerId == CaptureTheFlag.redplayer07.PlayerId) {
                                 CaptureTheFlag.redplayer07IsReviving = true;
                             }
-                            player.nameText.color = new Color(player.nameText.color.r, player.nameText.color.g, player.nameText.color.b, 0.5f);
-                            if (player.CurrentPet != null && player.CurrentPet.rend != null && player.CurrentPet.shadowRend != null) {
-                                player.CurrentPet.rend.color = new Color(player.CurrentPet.rend.color.r, player.CurrentPet.rend.color.g, player.CurrentPet.rend.color.b, 0.5f);
-                                player.CurrentPet.shadowRend.color = new Color(player.CurrentPet.shadowRend.color.r, player.CurrentPet.shadowRend.color.g, player.CurrentPet.shadowRend.color.b, 0.5f);
+                            player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0.5f);
+                            if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
+                                player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 0.5f);
+                                player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 0.5f);
                             }
-                            if (player.HatRenderer != null) {
-                                player.HatRenderer.Parent.color = new Color(player.HatRenderer.Parent.color.r, player.HatRenderer.Parent.color.g, player.HatRenderer.Parent.color.b, 0.5f);
-                                player.HatRenderer.BackLayer.color = new Color(player.HatRenderer.BackLayer.color.r, player.HatRenderer.BackLayer.color.g, player.HatRenderer.BackLayer.color.b, 0.5f);
-                                player.HatRenderer.FrontLayer.color = new Color(player.HatRenderer.FrontLayer.color.r, player.HatRenderer.FrontLayer.color.g, player.HatRenderer.FrontLayer.color.b, 0.5f);
+                            if (player.cosmetics.hat != null) {
+                                player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0.5f);
+                                player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 0.5f);
+                                player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 0.5f);
                             }
-                            if (player.VisorSlot != null) {
-                                player.VisorSlot.Image.color = new Color(player.VisorSlot.Image.color.r, player.VisorSlot.Image.color.g, player.VisorSlot.Image.color.b, 0.5f);
+                            if (player.cosmetics.visor != null) {
+                                player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 0.5f);
                             }
-                            player.MyPhysics.Skin.layer.color = new Color(player.MyPhysics.Skin.layer.color.r, player.MyPhysics.Skin.layer.color.g, player.MyPhysics.Skin.layer.color.b, 0.5f);
+                            player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
 
                             HudManager.Instance.StartCoroutine(Effects.Lerp(CaptureTheFlag.reviveTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
@@ -2354,20 +2354,20 @@ namespace LasMonjas.Patches {
                                     else if (CaptureTheFlag.redplayer07 != null && target.PlayerId == CaptureTheFlag.redplayer07.PlayerId) {
                                         CaptureTheFlag.redplayer07IsReviving = false;
                                     }
-                                    player.nameText.color = new Color(player.nameText.color.r, player.nameText.color.g, player.nameText.color.b, 1f);
-                                    if (player.CurrentPet != null && player.CurrentPet.rend != null && player.CurrentPet.shadowRend != null) {
-                                        player.CurrentPet.rend.color = new Color(player.CurrentPet.rend.color.r, player.CurrentPet.rend.color.g, player.CurrentPet.rend.color.b, 1f);
-                                        player.CurrentPet.shadowRend.color = new Color(player.CurrentPet.shadowRend.color.r, player.CurrentPet.shadowRend.color.g, player.CurrentPet.shadowRend.color.b, 1f);
+                                    player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 1f);
+                                    if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
+                                        player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 1f);
+                                        player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 1f);
                                     }
-                                    if (player.HatRenderer != null) {
-                                        player.HatRenderer.Parent.color = new Color(player.HatRenderer.Parent.color.r, player.HatRenderer.Parent.color.g, player.HatRenderer.Parent.color.b, 1f);
-                                        player.HatRenderer.BackLayer.color = new Color(player.HatRenderer.BackLayer.color.r, player.HatRenderer.BackLayer.color.g, player.HatRenderer.BackLayer.color.b, 1f);
-                                        player.HatRenderer.FrontLayer.color = new Color(player.HatRenderer.FrontLayer.color.r, player.HatRenderer.FrontLayer.color.g, player.HatRenderer.FrontLayer.color.b, 1f);
+                                    if (player.cosmetics.hat != null) {
+                                        player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 1f);
+                                        player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 1f);
+                                        player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 1f);
                                     }
-                                    if (player.VisorSlot != null) {
-                                        player.VisorSlot.Image.color = new Color(player.VisorSlot.Image.color.r, player.VisorSlot.Image.color.g, player.VisorSlot.Image.color.b, 1f);
+                                    if (player.cosmetics.visor != null) {
+                                        player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 1f);
                                     }
-                                    player.MyPhysics.Skin.layer.color = new Color(player.MyPhysics.Skin.layer.color.r, player.MyPhysics.Skin.layer.color.g, player.MyPhysics.Skin.layer.color.b, 1f);
+                                    player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
 
                                 }
                             })));
@@ -2445,20 +2445,20 @@ namespace LasMonjas.Patches {
                             else if (CaptureTheFlag.blueplayer07 != null && target.PlayerId == CaptureTheFlag.blueplayer07.PlayerId) {
                                 CaptureTheFlag.blueplayer07IsReviving = true;
                             }
-                            player.nameText.color = new Color(player.nameText.color.r, player.nameText.color.g, player.nameText.color.b, 0.5f);
-                            if (player.CurrentPet != null && player.CurrentPet.rend != null && player.CurrentPet.shadowRend != null) {
-                                player.CurrentPet.rend.color = new Color(player.CurrentPet.rend.color.r, player.CurrentPet.rend.color.g, player.CurrentPet.rend.color.b, 0.5f);
-                                player.CurrentPet.shadowRend.color = new Color(player.CurrentPet.shadowRend.color.r, player.CurrentPet.shadowRend.color.g, player.CurrentPet.shadowRend.color.b, 0.5f);
+                            player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0.5f);
+                            if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
+                                player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 0.5f);
+                                player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 0.5f);
                             }
-                            if (player.HatRenderer != null) {
-                                player.HatRenderer.Parent.color = new Color(player.HatRenderer.Parent.color.r, player.HatRenderer.Parent.color.g, player.HatRenderer.Parent.color.b, 0.5f);
-                                player.HatRenderer.BackLayer.color = new Color(player.HatRenderer.BackLayer.color.r, player.HatRenderer.BackLayer.color.g, player.HatRenderer.BackLayer.color.b, 0.5f);
-                                player.HatRenderer.FrontLayer.color = new Color(player.HatRenderer.FrontLayer.color.r, player.HatRenderer.FrontLayer.color.g, player.HatRenderer.FrontLayer.color.b, 0.5f);
+                            if (player.cosmetics.hat != null) {
+                                player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0.5f);
+                                player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 0.5f);
+                                player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 0.5f);
                             }
-                            if (player.VisorSlot != null) {
-                                player.VisorSlot.Image.color = new Color(player.VisorSlot.Image.color.r, player.VisorSlot.Image.color.g, player.VisorSlot.Image.color.b, 0.5f);
+                            if (player.cosmetics.visor != null) {
+                                player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 0.5f);
                             }
-                            player.MyPhysics.Skin.layer.color = new Color(player.MyPhysics.Skin.layer.color.r, player.MyPhysics.Skin.layer.color.g, player.MyPhysics.Skin.layer.color.b, 0.5f);
+                            player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
 
                             HudManager.Instance.StartCoroutine(Effects.Lerp(CaptureTheFlag.reviveTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
@@ -2483,20 +2483,20 @@ namespace LasMonjas.Patches {
                                     else if (CaptureTheFlag.blueplayer07 != null && target.PlayerId == CaptureTheFlag.blueplayer07.PlayerId) {
                                         CaptureTheFlag.blueplayer07IsReviving = false;
                                     }
-                                    player.nameText.color = new Color(player.nameText.color.r, player.nameText.color.g, player.nameText.color.b, 1f);
-                                    if (player.CurrentPet != null && player.CurrentPet.rend != null && player.CurrentPet.shadowRend != null) {
-                                        player.CurrentPet.rend.color = new Color(player.CurrentPet.rend.color.r, player.CurrentPet.rend.color.g, player.CurrentPet.rend.color.b, 1f);
-                                        player.CurrentPet.shadowRend.color = new Color(player.CurrentPet.shadowRend.color.r, player.CurrentPet.shadowRend.color.g, player.CurrentPet.shadowRend.color.b, 1f);
+                                    player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 1f);
+                                    if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
+                                        player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 1f);
+                                        player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 1f);
                                     }
-                                    if (player.HatRenderer != null) {
-                                        player.HatRenderer.Parent.color = new Color(player.HatRenderer.Parent.color.r, player.HatRenderer.Parent.color.g, player.HatRenderer.Parent.color.b, 1f);
-                                        player.HatRenderer.BackLayer.color = new Color(player.HatRenderer.BackLayer.color.r, player.HatRenderer.BackLayer.color.g, player.HatRenderer.BackLayer.color.b, 1f);
-                                        player.HatRenderer.FrontLayer.color = new Color(player.HatRenderer.FrontLayer.color.r, player.HatRenderer.FrontLayer.color.g, player.HatRenderer.FrontLayer.color.b, 1f);
+                                    if (player.cosmetics.hat != null) {
+                                        player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 1f);
+                                        player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 1f);
+                                        player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 1f);
                                     }
-                                    if (player.VisorSlot != null) {
-                                        player.VisorSlot.Image.color = new Color(player.VisorSlot.Image.color.r, player.VisorSlot.Image.color.g, player.VisorSlot.Image.color.b, 1f);
+                                    if (player.cosmetics.visor != null) {
+                                        player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 1f);
                                     }
-                                    player.MyPhysics.Skin.layer.color = new Color(player.MyPhysics.Skin.layer.color.r, player.MyPhysics.Skin.layer.color.g, player.MyPhysics.Skin.layer.color.b, 1f);
+                                    player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
 
                                 }
                             })));
@@ -2575,20 +2575,20 @@ namespace LasMonjas.Patches {
                             else if (PoliceAndThief.policeplayer06 != null && target.PlayerId == PoliceAndThief.policeplayer06.PlayerId) {
                                 PoliceAndThief.policeplayer06IsReviving = true;
                             }
-                            player.nameText.color = new Color(player.nameText.color.r, player.nameText.color.g, player.nameText.color.b, 0.5f);
-                            if (player.CurrentPet != null && player.CurrentPet.rend != null && player.CurrentPet.shadowRend != null) {
-                                player.CurrentPet.rend.color = new Color(player.CurrentPet.rend.color.r, player.CurrentPet.rend.color.g, player.CurrentPet.rend.color.b, 0.5f);
-                                player.CurrentPet.shadowRend.color = new Color(player.CurrentPet.shadowRend.color.r, player.CurrentPet.shadowRend.color.g, player.CurrentPet.shadowRend.color.b, 0.5f);
+                            player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0.5f);
+                            if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
+                                player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 0.5f);
+                                player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 0.5f);
                             }
-                            if (player.HatRenderer != null) {
-                                player.HatRenderer.Parent.color = new Color(player.HatRenderer.Parent.color.r, player.HatRenderer.Parent.color.g, player.HatRenderer.Parent.color.b, 0.5f);
-                                player.HatRenderer.BackLayer.color = new Color(player.HatRenderer.BackLayer.color.r, player.HatRenderer.BackLayer.color.g, player.HatRenderer.BackLayer.color.b, 0.5f);
-                                player.HatRenderer.FrontLayer.color = new Color(player.HatRenderer.FrontLayer.color.r, player.HatRenderer.FrontLayer.color.g, player.HatRenderer.FrontLayer.color.b, 0.5f);
+                            if (player.cosmetics.hat != null) {
+                                player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0.5f);
+                                player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 0.5f);
+                                player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 0.5f);
                             }
-                            if (player.VisorSlot != null) {
-                                player.VisorSlot.Image.color = new Color(player.VisorSlot.Image.color.r, player.VisorSlot.Image.color.g, player.VisorSlot.Image.color.b, 0.5f);
+                            if (player.cosmetics.visor != null) {
+                                player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 0.5f);
                             }
-                            player.MyPhysics.Skin.layer.color = new Color(player.MyPhysics.Skin.layer.color.r, player.MyPhysics.Skin.layer.color.g, player.MyPhysics.Skin.layer.color.b, 0.5f);
+                            player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
 
                             HudManager.Instance.StartCoroutine(Effects.Lerp(PoliceAndThief.policeReviveTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
@@ -2610,20 +2610,20 @@ namespace LasMonjas.Patches {
                                     else if (PoliceAndThief.policeplayer06 != null && target.PlayerId == PoliceAndThief.policeplayer06.PlayerId) {
                                         PoliceAndThief.policeplayer06IsReviving = false;
                                     }
-                                    player.nameText.color = new Color(player.nameText.color.r, player.nameText.color.g, player.nameText.color.b, 1f);
-                                    if (player.CurrentPet != null && player.CurrentPet.rend != null && player.CurrentPet.shadowRend != null) {
-                                        player.CurrentPet.rend.color = new Color(player.CurrentPet.rend.color.r, player.CurrentPet.rend.color.g, player.CurrentPet.rend.color.b, 1f);
-                                        player.CurrentPet.shadowRend.color = new Color(player.CurrentPet.shadowRend.color.r, player.CurrentPet.shadowRend.color.g, player.CurrentPet.shadowRend.color.b, 1f);
+                                    player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 1f);
+                                    if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
+                                        player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 1f);
+                                        player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 1f);
                                     }
-                                    if (player.HatRenderer != null) {
-                                        player.HatRenderer.Parent.color = new Color(player.HatRenderer.Parent.color.r, player.HatRenderer.Parent.color.g, player.HatRenderer.Parent.color.b, 1f);
-                                        player.HatRenderer.BackLayer.color = new Color(player.HatRenderer.BackLayer.color.r, player.HatRenderer.BackLayer.color.g, player.HatRenderer.BackLayer.color.b, 1f);
-                                        player.HatRenderer.FrontLayer.color = new Color(player.HatRenderer.FrontLayer.color.r, player.HatRenderer.FrontLayer.color.g, player.HatRenderer.FrontLayer.color.b, 1f);
+                                    if (player.cosmetics.hat != null) {
+                                        player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 1f);
+                                        player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 1f);
+                                        player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 1f);
                                     }
-                                    if (player.VisorSlot != null) {
-                                        player.VisorSlot.Image.color = new Color(player.VisorSlot.Image.color.r, player.VisorSlot.Image.color.g, player.VisorSlot.Image.color.b, 1f);
+                                    if (player.cosmetics.visor != null) {
+                                        player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 1f);
                                     }
-                                    player.MyPhysics.Skin.layer.color = new Color(player.MyPhysics.Skin.layer.color.r, player.MyPhysics.Skin.layer.color.g, player.MyPhysics.Skin.layer.color.b, 1f);
+                                    player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
 
                                 }
                             })));
@@ -2734,20 +2734,20 @@ namespace LasMonjas.Patches {
                                 }
                                 PoliceAndThief.thiefplayer09IsReviving = true;
                             }                            
-                            player.nameText.color = new Color(player.nameText.color.r, player.nameText.color.g, player.nameText.color.b, 0.5f);
-                            if (player.CurrentPet != null && player.CurrentPet.rend != null && player.CurrentPet.shadowRend != null) {
-                                player.CurrentPet.rend.color = new Color(player.CurrentPet.rend.color.r, player.CurrentPet.rend.color.g, player.CurrentPet.rend.color.b, 0.5f);
-                                player.CurrentPet.shadowRend.color = new Color(player.CurrentPet.shadowRend.color.r, player.CurrentPet.shadowRend.color.g, player.CurrentPet.shadowRend.color.b, 0.5f);
+                            player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0.5f);
+                            if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
+                                player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 0.5f);
+                                player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 0.5f);
                             }
-                            if (player.HatRenderer != null) {
-                                player.HatRenderer.Parent.color = new Color(player.HatRenderer.Parent.color.r, player.HatRenderer.Parent.color.g, player.HatRenderer.Parent.color.b, 0.5f);
-                                player.HatRenderer.BackLayer.color = new Color(player.HatRenderer.BackLayer.color.r, player.HatRenderer.BackLayer.color.g, player.HatRenderer.BackLayer.color.b, 0.5f);
-                                player.HatRenderer.FrontLayer.color = new Color(player.HatRenderer.FrontLayer.color.r, player.HatRenderer.FrontLayer.color.g, player.HatRenderer.FrontLayer.color.b, 0.5f);
+                            if (player.cosmetics.hat != null) {
+                                player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0.5f);
+                                player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 0.5f);
+                                player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 0.5f);
                             }
-                            if (player.VisorSlot != null) {
-                                player.VisorSlot.Image.color = new Color(player.VisorSlot.Image.color.r, player.VisorSlot.Image.color.g, player.VisorSlot.Image.color.b, 0.5f);
+                            if (player.cosmetics.visor != null) {
+                                player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 0.5f);
                             }
-                            player.MyPhysics.Skin.layer.color = new Color(player.MyPhysics.Skin.layer.color.r, player.MyPhysics.Skin.layer.color.g, player.MyPhysics.Skin.layer.color.b, 0.5f);
+                            player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
 
                             HudManager.Instance.StartCoroutine(Effects.Lerp(PoliceAndThief.thiefReviveTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
@@ -2778,20 +2778,20 @@ namespace LasMonjas.Patches {
                                     else if (PoliceAndThief.thiefplayer09 != null && target.PlayerId == PoliceAndThief.thiefplayer09.PlayerId) {
                                         PoliceAndThief.thiefplayer09IsReviving = false;
                                     }
-                                    player.nameText.color = new Color(player.nameText.color.r, player.nameText.color.g, player.nameText.color.b, 1f);
-                                    if (player.CurrentPet != null && player.CurrentPet.rend != null && player.CurrentPet.shadowRend != null) {
-                                        player.CurrentPet.rend.color = new Color(player.CurrentPet.rend.color.r, player.CurrentPet.rend.color.g, player.CurrentPet.rend.color.b, 1f);
-                                        player.CurrentPet.shadowRend.color = new Color(player.CurrentPet.shadowRend.color.r, player.CurrentPet.shadowRend.color.g, player.CurrentPet.shadowRend.color.b, 1f);
+                                    player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 1f);
+                                    if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
+                                        player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 1f);
+                                        player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 1f);
                                     }
-                                    if (player.HatRenderer != null) {
-                                        player.HatRenderer.Parent.color = new Color(player.HatRenderer.Parent.color.r, player.HatRenderer.Parent.color.g, player.HatRenderer.Parent.color.b, 1f);
-                                        player.HatRenderer.BackLayer.color = new Color(player.HatRenderer.BackLayer.color.r, player.HatRenderer.BackLayer.color.g, player.HatRenderer.BackLayer.color.b, 1f);
-                                        player.HatRenderer.FrontLayer.color = new Color(player.HatRenderer.FrontLayer.color.r, player.HatRenderer.FrontLayer.color.g, player.HatRenderer.FrontLayer.color.b, 1f);
+                                    if (player.cosmetics.hat != null) {
+                                        player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 1f);
+                                        player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 1f);
+                                        player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 1f);
                                     }
-                                    if (player.VisorSlot != null) {
-                                        player.VisorSlot.Image.color = new Color(player.VisorSlot.Image.color.r, player.VisorSlot.Image.color.g, player.VisorSlot.Image.color.b, 1f);
+                                    if (player.cosmetics.visor != null) {
+                                        player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 1f);
                                     }
-                                    player.MyPhysics.Skin.layer.color = new Color(player.MyPhysics.Skin.layer.color.r, player.MyPhysics.Skin.layer.color.g, player.MyPhysics.Skin.layer.color.b, 1f);
+                                    player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
 
                                 }
                             })));
@@ -2852,37 +2852,37 @@ namespace LasMonjas.Patches {
                         var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
                         body.transform.position = new Vector3(50, 50, 1);
                         KingOfTheHill.usurperPlayerIsReviving = true;
-                        KingOfTheHill.usurperPlayer.nameText.color = new Color(KingOfTheHill.usurperPlayer.nameText.color.r, KingOfTheHill.usurperPlayer.nameText.color.g, KingOfTheHill.usurperPlayer.nameText.color.b, 0.5f);
-                        if (KingOfTheHill.usurperPlayer.CurrentPet != null && KingOfTheHill.usurperPlayer.CurrentPet.rend != null && KingOfTheHill.usurperPlayer.CurrentPet.shadowRend != null) {
-                            KingOfTheHill.usurperPlayer.CurrentPet.rend.color = new Color(KingOfTheHill.usurperPlayer.CurrentPet.rend.color.r, KingOfTheHill.usurperPlayer.CurrentPet.rend.color.g, KingOfTheHill.usurperPlayer.CurrentPet.rend.color.b, 0.5f);
-                            KingOfTheHill.usurperPlayer.CurrentPet.shadowRend.color = new Color(KingOfTheHill.usurperPlayer.CurrentPet.shadowRend.color.r, KingOfTheHill.usurperPlayer.CurrentPet.shadowRend.color.g, KingOfTheHill.usurperPlayer.CurrentPet.shadowRend.color.b, 0.5f);
+                        KingOfTheHill.usurperPlayer.cosmetics.nameText.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.nameText.color.r, KingOfTheHill.usurperPlayer.cosmetics.nameText.color.g, KingOfTheHill.usurperPlayer.cosmetics.nameText.color.b, 0.5f);
+                        if (KingOfTheHill.usurperPlayer.cosmetics.currentPet != null && KingOfTheHill.usurperPlayer.cosmetics.currentPet.rend != null && KingOfTheHill.usurperPlayer.cosmetics.currentPet.shadowRend != null) {
+                            KingOfTheHill.usurperPlayer.cosmetics.currentPet.rend.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.currentPet.rend.color.r, KingOfTheHill.usurperPlayer.cosmetics.currentPet.rend.color.g, KingOfTheHill.usurperPlayer.cosmetics.currentPet.rend.color.b, 0.5f);
+                            KingOfTheHill.usurperPlayer.cosmetics.currentPet.shadowRend.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.currentPet.shadowRend.color.r, KingOfTheHill.usurperPlayer.cosmetics.currentPet.shadowRend.color.g, KingOfTheHill.usurperPlayer.cosmetics.currentPet.shadowRend.color.b, 0.5f);
                         }
-                        if (KingOfTheHill.usurperPlayer.HatRenderer != null) {
-                            KingOfTheHill.usurperPlayer.HatRenderer.Parent.color = new Color(KingOfTheHill.usurperPlayer.HatRenderer.Parent.color.r, KingOfTheHill.usurperPlayer.HatRenderer.Parent.color.g, KingOfTheHill.usurperPlayer.HatRenderer.Parent.color.b, 0.5f);
-                            KingOfTheHill.usurperPlayer.HatRenderer.BackLayer.color = new Color(KingOfTheHill.usurperPlayer.HatRenderer.BackLayer.color.r, KingOfTheHill.usurperPlayer.HatRenderer.BackLayer.color.g, KingOfTheHill.usurperPlayer.HatRenderer.BackLayer.color.b, 0.5f);
-                            KingOfTheHill.usurperPlayer.HatRenderer.FrontLayer.color = new Color(KingOfTheHill.usurperPlayer.HatRenderer.FrontLayer.color.r, KingOfTheHill.usurperPlayer.HatRenderer.FrontLayer.color.g, KingOfTheHill.usurperPlayer.HatRenderer.FrontLayer.color.b, 0.5f);
+                        if (KingOfTheHill.usurperPlayer.cosmetics.hat != null) {
+                            KingOfTheHill.usurperPlayer.cosmetics.hat.Parent.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.hat.Parent.color.r, KingOfTheHill.usurperPlayer.cosmetics.hat.Parent.color.g, KingOfTheHill.usurperPlayer.cosmetics.hat.Parent.color.b, 0.5f);
+                            KingOfTheHill.usurperPlayer.cosmetics.hat.BackLayer.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.hat.BackLayer.color.r, KingOfTheHill.usurperPlayer.cosmetics.hat.BackLayer.color.g, KingOfTheHill.usurperPlayer.cosmetics.hat.BackLayer.color.b, 0.5f);
+                            KingOfTheHill.usurperPlayer.cosmetics.hat.FrontLayer.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.hat.FrontLayer.color.r, KingOfTheHill.usurperPlayer.cosmetics.hat.FrontLayer.color.g, KingOfTheHill.usurperPlayer.cosmetics.hat.FrontLayer.color.b, 0.5f);
                         }
-                        if (KingOfTheHill.usurperPlayer.VisorSlot != null) {
-                            KingOfTheHill.usurperPlayer.VisorSlot.Image.color = new Color(KingOfTheHill.usurperPlayer.VisorSlot.Image.color.r, KingOfTheHill.usurperPlayer.VisorSlot.Image.color.g, KingOfTheHill.usurperPlayer.VisorSlot.Image.color.b, 0.5f);
+                        if (KingOfTheHill.usurperPlayer.cosmetics.visor != null) {
+                            KingOfTheHill.usurperPlayer.cosmetics.visor.Image.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.visor.Image.color.r, KingOfTheHill.usurperPlayer.cosmetics.visor.Image.color.g, KingOfTheHill.usurperPlayer.cosmetics.visor.Image.color.b, 0.5f);
                         }
-                        KingOfTheHill.usurperPlayer.MyPhysics.Skin.layer.color = new Color(KingOfTheHill.usurperPlayer.MyPhysics.Skin.layer.color.r, KingOfTheHill.usurperPlayer.MyPhysics.Skin.layer.color.g, KingOfTheHill.usurperPlayer.MyPhysics.Skin.layer.color.b, 0.5f);
+                        KingOfTheHill.usurperPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(KingOfTheHill.usurperPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, KingOfTheHill.usurperPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, KingOfTheHill.usurperPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
                         HudManager.Instance.StartCoroutine(Effects.Lerp(KingOfTheHill.reviveTime, new Action<float>((p) => {
                             if (p == 1f && KingOfTheHill.usurperPlayer != null) {
                                 KingOfTheHill.usurperPlayerIsReviving = false;
-                                KingOfTheHill.usurperPlayer.nameText.color = new Color(KingOfTheHill.usurperPlayer.nameText.color.r, KingOfTheHill.usurperPlayer.nameText.color.g, KingOfTheHill.usurperPlayer.nameText.color.b, 1f);
-                                if (KingOfTheHill.usurperPlayer.CurrentPet != null && KingOfTheHill.usurperPlayer.CurrentPet.rend != null && KingOfTheHill.usurperPlayer.CurrentPet.shadowRend != null) {
-                                    KingOfTheHill.usurperPlayer.CurrentPet.rend.color = new Color(KingOfTheHill.usurperPlayer.CurrentPet.rend.color.r, KingOfTheHill.usurperPlayer.CurrentPet.rend.color.g, KingOfTheHill.usurperPlayer.CurrentPet.rend.color.b, 1f);
-                                    KingOfTheHill.usurperPlayer.CurrentPet.shadowRend.color = new Color(KingOfTheHill.usurperPlayer.CurrentPet.shadowRend.color.r, KingOfTheHill.usurperPlayer.CurrentPet.shadowRend.color.g, KingOfTheHill.usurperPlayer.CurrentPet.shadowRend.color.b, 1f);
+                                KingOfTheHill.usurperPlayer.cosmetics.nameText.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.nameText.color.r, KingOfTheHill.usurperPlayer.cosmetics.nameText.color.g, KingOfTheHill.usurperPlayer.cosmetics.nameText.color.b, 1f);
+                                if (KingOfTheHill.usurperPlayer.cosmetics.currentPet != null && KingOfTheHill.usurperPlayer.cosmetics.currentPet.rend != null && KingOfTheHill.usurperPlayer.cosmetics.currentPet.shadowRend != null) {
+                                    KingOfTheHill.usurperPlayer.cosmetics.currentPet.rend.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.currentPet.rend.color.r, KingOfTheHill.usurperPlayer.cosmetics.currentPet.rend.color.g, KingOfTheHill.usurperPlayer.cosmetics.currentPet.rend.color.b, 1f);
+                                    KingOfTheHill.usurperPlayer.cosmetics.currentPet.shadowRend.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.currentPet.shadowRend.color.r, KingOfTheHill.usurperPlayer.cosmetics.currentPet.shadowRend.color.g, KingOfTheHill.usurperPlayer.cosmetics.currentPet.shadowRend.color.b, 1f);
                                 }
-                                if (KingOfTheHill.usurperPlayer.HatRenderer != null) {
-                                    KingOfTheHill.usurperPlayer.HatRenderer.Parent.color = new Color(KingOfTheHill.usurperPlayer.HatRenderer.Parent.color.r, KingOfTheHill.usurperPlayer.HatRenderer.Parent.color.g, KingOfTheHill.usurperPlayer.HatRenderer.Parent.color.b, 1f);
-                                    KingOfTheHill.usurperPlayer.HatRenderer.BackLayer.color = new Color(KingOfTheHill.usurperPlayer.HatRenderer.BackLayer.color.r, KingOfTheHill.usurperPlayer.HatRenderer.BackLayer.color.g, KingOfTheHill.usurperPlayer.HatRenderer.BackLayer.color.b, 1f);
-                                    KingOfTheHill.usurperPlayer.HatRenderer.FrontLayer.color = new Color(KingOfTheHill.usurperPlayer.HatRenderer.FrontLayer.color.r, KingOfTheHill.usurperPlayer.HatRenderer.FrontLayer.color.g, KingOfTheHill.usurperPlayer.HatRenderer.FrontLayer.color.b, 1f);
+                                if (KingOfTheHill.usurperPlayer.cosmetics.hat != null) {
+                                    KingOfTheHill.usurperPlayer.cosmetics.hat.Parent.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.hat.Parent.color.r, KingOfTheHill.usurperPlayer.cosmetics.hat.Parent.color.g, KingOfTheHill.usurperPlayer.cosmetics.hat.Parent.color.b, 1f);
+                                    KingOfTheHill.usurperPlayer.cosmetics.hat.BackLayer.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.hat.BackLayer.color.r, KingOfTheHill.usurperPlayer.cosmetics.hat.BackLayer.color.g, KingOfTheHill.usurperPlayer.cosmetics.hat.BackLayer.color.b, 1f);
+                                    KingOfTheHill.usurperPlayer.cosmetics.hat.FrontLayer.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.hat.FrontLayer.color.r, KingOfTheHill.usurperPlayer.cosmetics.hat.FrontLayer.color.g, KingOfTheHill.usurperPlayer.cosmetics.hat.FrontLayer.color.b, 1f);
                                 }
-                                if (KingOfTheHill.usurperPlayer.VisorSlot != null) {
-                                    KingOfTheHill.usurperPlayer.VisorSlot.Image.color = new Color(KingOfTheHill.usurperPlayer.VisorSlot.Image.color.r, KingOfTheHill.usurperPlayer.VisorSlot.Image.color.g, KingOfTheHill.usurperPlayer.VisorSlot.Image.color.b, 1f);
+                                if (KingOfTheHill.usurperPlayer.cosmetics.visor != null) {
+                                    KingOfTheHill.usurperPlayer.cosmetics.visor.Image.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.visor.Image.color.r, KingOfTheHill.usurperPlayer.cosmetics.visor.Image.color.g, KingOfTheHill.usurperPlayer.cosmetics.visor.Image.color.b, 1f);
                                 }
-                                KingOfTheHill.usurperPlayer.MyPhysics.Skin.layer.color = new Color(KingOfTheHill.usurperPlayer.MyPhysics.Skin.layer.color.r, KingOfTheHill.usurperPlayer.MyPhysics.Skin.layer.color.g, KingOfTheHill.usurperPlayer.MyPhysics.Skin.layer.color.b, 1f);
+                                KingOfTheHill.usurperPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(KingOfTheHill.usurperPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, KingOfTheHill.usurperPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, KingOfTheHill.usurperPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
 
                             }
                         })));
@@ -3002,20 +3002,20 @@ namespace LasMonjas.Patches {
                             else if (KingOfTheHill.greenplayer06 != null && target.PlayerId == KingOfTheHill.greenplayer06.PlayerId) {
                                 KingOfTheHill.greenplayer06IsReviving = true;
                             }
-                            player.nameText.color = new Color(player.nameText.color.r, player.nameText.color.g, player.nameText.color.b, 0.5f);
-                            if (player.CurrentPet != null && player.CurrentPet.rend != null && player.CurrentPet.shadowRend != null) {
-                                player.CurrentPet.rend.color = new Color(player.CurrentPet.rend.color.r, player.CurrentPet.rend.color.g, player.CurrentPet.rend.color.b, 0.5f);
-                                player.CurrentPet.shadowRend.color = new Color(player.CurrentPet.shadowRend.color.r, player.CurrentPet.shadowRend.color.g, player.CurrentPet.shadowRend.color.b, 0.5f);
+                            player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0.5f);
+                            if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
+                                player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 0.5f);
+                                player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 0.5f);
                             }
-                            if (player.HatRenderer != null) {
-                                player.HatRenderer.Parent.color = new Color(player.HatRenderer.Parent.color.r, player.HatRenderer.Parent.color.g, player.HatRenderer.Parent.color.b, 0.5f);
-                                player.HatRenderer.BackLayer.color = new Color(player.HatRenderer.BackLayer.color.r, player.HatRenderer.BackLayer.color.g, player.HatRenderer.BackLayer.color.b, 0.5f);
-                                player.HatRenderer.FrontLayer.color = new Color(player.HatRenderer.FrontLayer.color.r, player.HatRenderer.FrontLayer.color.g, player.HatRenderer.FrontLayer.color.b, 0.5f);
+                            if (player.cosmetics.hat != null) {
+                                player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0.5f);
+                                player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 0.5f);
+                                player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 0.5f);
                             }
-                            if (player.VisorSlot != null) {
-                                player.VisorSlot.Image.color = new Color(player.VisorSlot.Image.color.r, player.VisorSlot.Image.color.g, player.VisorSlot.Image.color.b, 0.5f);
+                            if (player.cosmetics.visor != null) {
+                                player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 0.5f);
                             }
-                            player.MyPhysics.Skin.layer.color = new Color(player.MyPhysics.Skin.layer.color.r, player.MyPhysics.Skin.layer.color.g, player.MyPhysics.Skin.layer.color.b, 0.5f);
+                            player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
                             HudManager.Instance.StartCoroutine(Effects.Lerp(KingOfTheHill.reviveTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     if (KingOfTheHill.greenKingplayer != null && target.PlayerId == KingOfTheHill.greenKingplayer.PlayerId) {
@@ -3039,20 +3039,20 @@ namespace LasMonjas.Patches {
                                     else if (KingOfTheHill.greenplayer06 != null && target.PlayerId == KingOfTheHill.greenplayer06.PlayerId) {
                                         KingOfTheHill.greenplayer06IsReviving = false;
                                     }
-                                    player.nameText.color = new Color(player.nameText.color.r, player.nameText.color.g, player.nameText.color.b, 1f);
-                                    if (player.CurrentPet != null && player.CurrentPet.rend != null && player.CurrentPet.shadowRend != null) {
-                                        player.CurrentPet.rend.color = new Color(player.CurrentPet.rend.color.r, player.CurrentPet.rend.color.g, player.CurrentPet.rend.color.b, 1f);
-                                        player.CurrentPet.shadowRend.color = new Color(player.CurrentPet.shadowRend.color.r, player.CurrentPet.shadowRend.color.g, player.CurrentPet.shadowRend.color.b, 1f);
+                                    player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 1f);
+                                    if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
+                                        player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 1f);
+                                        player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 1f);
                                     }
-                                    if (player.HatRenderer != null) {
-                                        player.HatRenderer.Parent.color = new Color(player.HatRenderer.Parent.color.r, player.HatRenderer.Parent.color.g, player.HatRenderer.Parent.color.b, 1f);
-                                        player.HatRenderer.BackLayer.color = new Color(player.HatRenderer.BackLayer.color.r, player.HatRenderer.BackLayer.color.g, player.HatRenderer.BackLayer.color.b, 1f);
-                                        player.HatRenderer.FrontLayer.color = new Color(player.HatRenderer.FrontLayer.color.r, player.HatRenderer.FrontLayer.color.g, player.HatRenderer.FrontLayer.color.b, 1f);
+                                    if (player.cosmetics.hat != null) {
+                                        player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 1f);
+                                        player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 1f);
+                                        player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 1f);
                                     }
-                                    if (player.VisorSlot != null) {
-                                        player.VisorSlot.Image.color = new Color(player.VisorSlot.Image.color.r, player.VisorSlot.Image.color.g, player.VisorSlot.Image.color.b, 1f);
+                                    if (player.cosmetics.visor != null) {
+                                        player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 1f);
                                     }
-                                    player.MyPhysics.Skin.layer.color = new Color(player.MyPhysics.Skin.layer.color.r, player.MyPhysics.Skin.layer.color.g, player.MyPhysics.Skin.layer.color.b, 1f);
+                                    player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
 
                                 }
                             })));
@@ -3172,20 +3172,20 @@ namespace LasMonjas.Patches {
                             else if (KingOfTheHill.yellowplayer06 != null && target.PlayerId == KingOfTheHill.yellowplayer06.PlayerId) {
                                 KingOfTheHill.yellowplayer06IsReviving = true;
                             }
-                            player.nameText.color = new Color(player.nameText.color.r, player.nameText.color.g, player.nameText.color.b, 0.5f);
-                            if (player.CurrentPet != null && player.CurrentPet.rend != null && player.CurrentPet.shadowRend != null) {
-                                player.CurrentPet.rend.color = new Color(player.CurrentPet.rend.color.r, player.CurrentPet.rend.color.g, player.CurrentPet.rend.color.b, 0.5f);
-                                player.CurrentPet.shadowRend.color = new Color(player.CurrentPet.shadowRend.color.r, player.CurrentPet.shadowRend.color.g, player.CurrentPet.shadowRend.color.b, 0.5f);
+                            player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0.5f);
+                            if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
+                                player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 0.5f);
+                                player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 0.5f);
                             }
-                            if (player.HatRenderer != null) {
-                                player.HatRenderer.Parent.color = new Color(player.HatRenderer.Parent.color.r, player.HatRenderer.Parent.color.g, player.HatRenderer.Parent.color.b, 0.5f);
-                                player.HatRenderer.BackLayer.color = new Color(player.HatRenderer.BackLayer.color.r, player.HatRenderer.BackLayer.color.g, player.HatRenderer.BackLayer.color.b, 0.5f);
-                                player.HatRenderer.FrontLayer.color = new Color(player.HatRenderer.FrontLayer.color.r, player.HatRenderer.FrontLayer.color.g, player.HatRenderer.FrontLayer.color.b, 0.5f);
+                            if (player.cosmetics.hat != null) {
+                                player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0.5f);
+                                player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 0.5f);
+                                player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 0.5f);
                             }
-                            if (player.VisorSlot != null) {
-                                player.VisorSlot.Image.color = new Color(player.VisorSlot.Image.color.r, player.VisorSlot.Image.color.g, player.VisorSlot.Image.color.b, 0.5f);
+                            if (player.cosmetics.visor != null) {
+                                player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 0.5f);
                             }
-                            player.MyPhysics.Skin.layer.color = new Color(player.MyPhysics.Skin.layer.color.r, player.MyPhysics.Skin.layer.color.g, player.MyPhysics.Skin.layer.color.b, 0.5f);
+                            player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
 
                             HudManager.Instance.StartCoroutine(Effects.Lerp(KingOfTheHill.reviveTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
@@ -3210,20 +3210,20 @@ namespace LasMonjas.Patches {
                                     else if (KingOfTheHill.yellowplayer06 != null && target.PlayerId == KingOfTheHill.yellowplayer06.PlayerId) {
                                         KingOfTheHill.yellowplayer06IsReviving = false;
                                     }
-                                    player.nameText.color = new Color(player.nameText.color.r, player.nameText.color.g, player.nameText.color.b, 1f);
-                                    if (player.CurrentPet != null && player.CurrentPet.rend != null && player.CurrentPet.shadowRend != null) {
-                                        player.CurrentPet.rend.color = new Color(player.CurrentPet.rend.color.r, player.CurrentPet.rend.color.g, player.CurrentPet.rend.color.b, 1f);
-                                        player.CurrentPet.shadowRend.color = new Color(player.CurrentPet.shadowRend.color.r, player.CurrentPet.shadowRend.color.g, player.CurrentPet.shadowRend.color.b, 1f);
+                                    player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 1f);
+                                    if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
+                                        player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 1f);
+                                        player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 1f);
                                     }
-                                    if (player.HatRenderer != null) {
-                                        player.HatRenderer.Parent.color = new Color(player.HatRenderer.Parent.color.r, player.HatRenderer.Parent.color.g, player.HatRenderer.Parent.color.b, 1f);
-                                        player.HatRenderer.BackLayer.color = new Color(player.HatRenderer.BackLayer.color.r, player.HatRenderer.BackLayer.color.g, player.HatRenderer.BackLayer.color.b, 1f);
-                                        player.HatRenderer.FrontLayer.color = new Color(player.HatRenderer.FrontLayer.color.r, player.HatRenderer.FrontLayer.color.g, player.HatRenderer.FrontLayer.color.b, 1f);
+                                    if (player.cosmetics.hat != null) {
+                                        player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 1f);
+                                        player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 1f);
+                                        player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 1f);
                                     }
-                                    if (player.VisorSlot != null) {
-                                        player.VisorSlot.Image.color = new Color(player.VisorSlot.Image.color.r, player.VisorSlot.Image.color.g, player.VisorSlot.Image.color.b, 1f);
+                                    if (player.cosmetics.visor != null) {
+                                        player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 1f);
                                     }
-                                    player.MyPhysics.Skin.layer.color = new Color(player.MyPhysics.Skin.layer.color.r, player.MyPhysics.Skin.layer.color.g, player.MyPhysics.Skin.layer.color.b, 1f);
+                                    player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
 
                                 }
                             })));
@@ -3598,20 +3598,20 @@ namespace LasMonjas.Patches {
                                     RPCProcedure.zombieLaboratoryRevertedKeyPosition(target.PlayerId, ZombieLaboratory.survivorPlayer13FoundBox);
                                 }
                             }
-                            player.nameText.color = new Color(player.nameText.color.r, player.nameText.color.g, player.nameText.color.b, 0.5f);
-                            if (player.CurrentPet != null && player.CurrentPet.rend != null && player.CurrentPet.shadowRend != null) {
-                                player.CurrentPet.rend.color = new Color(player.CurrentPet.rend.color.r, player.CurrentPet.rend.color.g, player.CurrentPet.rend.color.b, 0.5f);
-                                player.CurrentPet.shadowRend.color = new Color(player.CurrentPet.shadowRend.color.r, player.CurrentPet.shadowRend.color.g, player.CurrentPet.shadowRend.color.b, 0.5f);
+                            player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0.5f);
+                            if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
+                                player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 0.5f);
+                                player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 0.5f);
                             }
-                            if (player.HatRenderer != null) {
-                                player.HatRenderer.Parent.color = new Color(player.HatRenderer.Parent.color.r, player.HatRenderer.Parent.color.g, player.HatRenderer.Parent.color.b, 0.5f);
-                                player.HatRenderer.BackLayer.color = new Color(player.HatRenderer.BackLayer.color.r, player.HatRenderer.BackLayer.color.g, player.HatRenderer.BackLayer.color.b, 0.5f);
-                                player.HatRenderer.FrontLayer.color = new Color(player.HatRenderer.FrontLayer.color.r, player.HatRenderer.FrontLayer.color.g, player.HatRenderer.FrontLayer.color.b, 0.5f);
+                            if (player.cosmetics.hat != null) {
+                                player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0.5f);
+                                player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 0.5f);
+                                player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 0.5f);
                             }
-                            if (player.VisorSlot != null) {
-                                player.VisorSlot.Image.color = new Color(player.VisorSlot.Image.color.r, player.VisorSlot.Image.color.g, player.VisorSlot.Image.color.b, 0.5f);
+                            if (player.cosmetics.visor != null) {
+                                player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 0.5f);
                             }
-                            player.MyPhysics.Skin.layer.color = new Color(player.MyPhysics.Skin.layer.color.r, player.MyPhysics.Skin.layer.color.g, player.MyPhysics.Skin.layer.color.b, 0.5f);
+                            player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
 
                             HudManager.Instance.StartCoroutine(Effects.Lerp(ZombieLaboratory.reviveTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
@@ -3657,20 +3657,20 @@ namespace LasMonjas.Patches {
                                     else if (ZombieLaboratory.survivorPlayer13 != null && target.PlayerId == ZombieLaboratory.survivorPlayer13.PlayerId) {
                                         ZombieLaboratory.survivorPlayer13IsReviving = false;
                                     }
-                                    player.nameText.color = new Color(player.nameText.color.r, player.nameText.color.g, player.nameText.color.b, 1f);
-                                    if (player.CurrentPet != null && player.CurrentPet.rend != null && player.CurrentPet.shadowRend != null) {
-                                        player.CurrentPet.rend.color = new Color(player.CurrentPet.rend.color.r, player.CurrentPet.rend.color.g, player.CurrentPet.rend.color.b, 1f);
-                                        player.CurrentPet.shadowRend.color = new Color(player.CurrentPet.shadowRend.color.r, player.CurrentPet.shadowRend.color.g, player.CurrentPet.shadowRend.color.b, 1f);
+                                    player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 1f);
+                                    if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
+                                        player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 1f);
+                                        player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 1f);
                                     }
-                                    if (player.HatRenderer != null) {
-                                        player.HatRenderer.Parent.color = new Color(player.HatRenderer.Parent.color.r, player.HatRenderer.Parent.color.g, player.HatRenderer.Parent.color.b, 1f);
-                                        player.HatRenderer.BackLayer.color = new Color(player.HatRenderer.BackLayer.color.r, player.HatRenderer.BackLayer.color.g, player.HatRenderer.BackLayer.color.b, 1f);
-                                        player.HatRenderer.FrontLayer.color = new Color(player.HatRenderer.FrontLayer.color.r, player.HatRenderer.FrontLayer.color.g, player.HatRenderer.FrontLayer.color.b, 1f);
+                                    if (player.cosmetics.hat != null) {
+                                        player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 1f);
+                                        player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 1f);
+                                        player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 1f);
                                     }
-                                    if (player.VisorSlot != null) {
-                                        player.VisorSlot.Image.color = new Color(player.VisorSlot.Image.color.r, player.VisorSlot.Image.color.g, player.VisorSlot.Image.color.b, 1f);
+                                    if (player.cosmetics.visor != null) {
+                                        player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 1f);
                                     }
-                                    player.MyPhysics.Skin.layer.color = new Color(player.MyPhysics.Skin.layer.color.r, player.MyPhysics.Skin.layer.color.g, player.MyPhysics.Skin.layer.color.b, 1f);
+                                    player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
 
                                 }
                             })));
@@ -3808,20 +3808,20 @@ namespace LasMonjas.Patches {
                             else if (ZombieLaboratory.zombiePlayer14 != null && target.PlayerId == ZombieLaboratory.zombiePlayer14.PlayerId) {
                                 ZombieLaboratory.zombiePlayer14IsReviving = true;
                             }
-                            player.nameText.color = new Color(player.nameText.color.r, player.nameText.color.g, player.nameText.color.b, 0.5f);
-                            if (player.CurrentPet != null && player.CurrentPet.rend != null && player.CurrentPet.shadowRend != null) {
-                                player.CurrentPet.rend.color = new Color(player.CurrentPet.rend.color.r, player.CurrentPet.rend.color.g, player.CurrentPet.rend.color.b, 0.5f);
-                                player.CurrentPet.shadowRend.color = new Color(player.CurrentPet.shadowRend.color.r, player.CurrentPet.shadowRend.color.g, player.CurrentPet.shadowRend.color.b, 0.5f);
+                            player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0.5f);
+                            if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
+                                player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 0.5f);
+                                player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 0.5f);
                             }
-                            if (player.HatRenderer != null) {
-                                player.HatRenderer.Parent.color = new Color(player.HatRenderer.Parent.color.r, player.HatRenderer.Parent.color.g, player.HatRenderer.Parent.color.b, 0.5f);
-                                player.HatRenderer.BackLayer.color = new Color(player.HatRenderer.BackLayer.color.r, player.HatRenderer.BackLayer.color.g, player.HatRenderer.BackLayer.color.b, 0.5f);
-                                player.HatRenderer.FrontLayer.color = new Color(player.HatRenderer.FrontLayer.color.r, player.HatRenderer.FrontLayer.color.g, player.HatRenderer.FrontLayer.color.b, 0.5f);
+                            if (player.cosmetics.hat != null) {
+                                player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0.5f);
+                                player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 0.5f);
+                                player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 0.5f);
                             }
-                            if (player.VisorSlot != null) {
-                                player.VisorSlot.Image.color = new Color(player.VisorSlot.Image.color.r, player.VisorSlot.Image.color.g, player.VisorSlot.Image.color.b, 0.5f);
+                            if (player.cosmetics.visor != null) {
+                                player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 0.5f);
                             }
-                            player.MyPhysics.Skin.layer.color = new Color(player.MyPhysics.Skin.layer.color.r, player.MyPhysics.Skin.layer.color.g, player.MyPhysics.Skin.layer.color.b, 0.5f);
+                            player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
 
                             HudManager.Instance.StartCoroutine(Effects.Lerp(ZombieLaboratory.reviveTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
@@ -3867,20 +3867,20 @@ namespace LasMonjas.Patches {
                                     else if (ZombieLaboratory.zombiePlayer14 != null && target.PlayerId == ZombieLaboratory.zombiePlayer14.PlayerId) {
                                         ZombieLaboratory.zombiePlayer14IsReviving = false;
                                     }
-                                    player.nameText.color = new Color(player.nameText.color.r, player.nameText.color.g, player.nameText.color.b, 1f);
-                                    if (player.CurrentPet != null && player.CurrentPet.rend != null && player.CurrentPet.shadowRend != null) {
-                                        player.CurrentPet.rend.color = new Color(player.CurrentPet.rend.color.r, player.CurrentPet.rend.color.g, player.CurrentPet.rend.color.b, 1f);
-                                        player.CurrentPet.shadowRend.color = new Color(player.CurrentPet.shadowRend.color.r, player.CurrentPet.shadowRend.color.g, player.CurrentPet.shadowRend.color.b, 1f);
+                                    player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 1f);
+                                    if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
+                                        player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 1f);
+                                        player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 1f);
                                     }
-                                    if (player.HatRenderer != null) {
-                                        player.HatRenderer.Parent.color = new Color(player.HatRenderer.Parent.color.r, player.HatRenderer.Parent.color.g, player.HatRenderer.Parent.color.b, 1f);
-                                        player.HatRenderer.BackLayer.color = new Color(player.HatRenderer.BackLayer.color.r, player.HatRenderer.BackLayer.color.g, player.HatRenderer.BackLayer.color.b, 1f);
-                                        player.HatRenderer.FrontLayer.color = new Color(player.HatRenderer.FrontLayer.color.r, player.HatRenderer.FrontLayer.color.g, player.HatRenderer.FrontLayer.color.b, 1f);
+                                    if (player.cosmetics.hat != null) {
+                                        player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 1f);
+                                        player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 1f);
+                                        player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 1f);
                                     }
-                                    if (player.VisorSlot != null) {
-                                        player.VisorSlot.Image.color = new Color(player.VisorSlot.Image.color.r, player.VisorSlot.Image.color.g, player.VisorSlot.Image.color.b, 1f);
+                                    if (player.cosmetics.visor != null) {
+                                        player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 1f);
                                     }
-                                    player.MyPhysics.Skin.layer.color = new Color(player.MyPhysics.Skin.layer.color.r, player.MyPhysics.Skin.layer.color.g, player.MyPhysics.Skin.layer.color.b, 1f);
+                                    player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
 
                                 }
                             })));
@@ -3961,7 +3961,7 @@ namespace LasMonjas.Patches {
     class KillAnimationSetMovementPatch {
         private static int? colorId = null;
         public static void Prefix(PlayerControl source, bool canMove) {
-            Color color = source.MyRend.material.GetColor("_BodyColor");
+            Color color = source.cosmetics.currentBodySprite.BodySprite.material.GetColor("_BodyColor");
             if (color != null && Mimic.mimic != null && source.Data.PlayerId == Mimic.mimic.PlayerId) {
                 var index = Palette.PlayerColors.IndexOf(color);
                 if (index != -1) colorId = index;

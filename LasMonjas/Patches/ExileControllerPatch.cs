@@ -106,10 +106,10 @@ namespace LasMonjas.Patches {
                 if (MapOptions.ghostsSeeRoles && howmanygamemodesareon != 1) {
                     foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
                         if (p == PlayerControl.LocalPlayer || PlayerControl.LocalPlayer.Data.IsDead) {
-                            Transform playerInfoTransform = p.nameText.transform.parent.FindChild("Info");
+                            Transform playerInfoTransform = p.cosmetics.nameText.transform.parent.FindChild("Info");
                             TMPro.TextMeshPro playerInfo = playerInfoTransform != null ? playerInfoTransform.GetComponent<TMPro.TextMeshPro>() : null;
                             if (playerInfo == null) {
-                                playerInfo = UnityEngine.Object.Instantiate(p.nameText, p.nameText.transform.parent);
+                                playerInfo = UnityEngine.Object.Instantiate(p.cosmetics.nameText, p.cosmetics.nameText.transform.parent);
                                 playerInfo.transform.localPosition += Vector3.up * 0.5f;
                                 playerInfo.fontSize *= 0.75f;
                                 playerInfo.gameObject.name = "Info";
@@ -342,10 +342,10 @@ namespace LasMonjas.Patches {
                 if (MapOptions.ghostsSeeRoles && howmanygamemodesareon != 1) {
                     foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
                         if (p == PlayerControl.LocalPlayer || PlayerControl.LocalPlayer.Data.IsDead) {
-                            Transform playerInfoTransform = p.nameText.transform.parent.FindChild("Info");
+                            Transform playerInfoTransform = p.cosmetics.nameText.transform.parent.FindChild("Info");
                             TMPro.TextMeshPro playerInfo = playerInfoTransform != null ? playerInfoTransform.GetComponent<TMPro.TextMeshPro>() : null;
                             if (playerInfo == null) {
-                                playerInfo = UnityEngine.Object.Instantiate(p.nameText, p.nameText.transform.parent);
+                                playerInfo = UnityEngine.Object.Instantiate(p.cosmetics.nameText, p.cosmetics.nameText.transform.parent);
                                 playerInfo.transform.localPosition += Vector3.up * 0.5f;
                                 playerInfo.fontSize *= 0.75f;
                                 playerInfo.gameObject.name = "Info";

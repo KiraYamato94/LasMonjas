@@ -17,16 +17,16 @@ namespace LasMonjas.Patches
 
             // Generate alive player icons for Pyromaniac
             int playerCounter = 0;
-            if (PlayerControl.LocalPlayer != null && HudManager.Instance != null) {
+            if (PlayerControl.LocalPlayer != null && HudManager.Instance != null && howmanygamemodesareon != 1) {
                 Vector3 bottomLeft = new Vector3(-HudManager.Instance.UseButton.transform.localPosition.x, HudManager.Instance.UseButton.transform.localPosition.y, HudManager.Instance.UseButton.transform.localPosition.z);
                 foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
                     GameData.PlayerInfo data = p.Data;
                     PoolablePlayer player = UnityEngine.Object.Instantiate<PoolablePlayer>(__instance.PlayerPrefab, HudManager.Instance.transform);
-                    PlayerControl.SetPlayerMaterialColors(data.DefaultOutfit.ColorId, player.CurrentBodySprite.BodySprite);
+                    p.SetPlayerMaterialColors(player.cosmetics.currentBodySprite.BodySprite);
                     player.SetSkin(data.DefaultOutfit.SkinId, data.DefaultOutfit.ColorId); 
-                    player.HatSlot.SetHat(data.DefaultOutfit.HatId, data.DefaultOutfit.ColorId);
-                    PlayerControl.SetPetImage(data.DefaultOutfit.PetId, data.DefaultOutfit.ColorId, player.PetSlot);
-                    player.NameText.text = data.PlayerName;
+                    player.cosmetics.hat.SetHat(data.DefaultOutfit.HatId, data.DefaultOutfit.ColorId);
+                    //p.SetPetImage(player.cosmetics.currentPet, data.DefaultOutfit.ColorId, player.cosmetics.currentPet.rend);
+                    player.cosmetics.nameText.text = data.PlayerName;
                     player.SetFlipX(true);
                     MapOptions.playerIcons[p.PlayerId] = player;
 
@@ -710,7 +710,9 @@ namespace LasMonjas.Patches
                                     GameObject BottomRightVert = GameObject.Find("BottomRightVert");
                                     BottomRightVert.SetActive(false);
                                     GameObject LeftDoorBottom = GameObject.Find("LeftDoorBottom");
-                                    LeftDoorBottom.SetActive(false);
+                                    LeftDoorBottom.SetActive(false); 
+                                    GameObject recordsadmin = GameObject.Find("records_admin_map");
+                                    recordsadmin.GetComponent<BoxCollider2D>().enabled = false;
                                 }
                                 break;
                             // Submerged
@@ -1562,6 +1564,8 @@ namespace LasMonjas.Patches
                                     platformleft.SetActive(false);
                                     GameObject platformright = GameObject.Find("PlatformRight");
                                     platformright.SetActive(false);
+                                    GameObject recordsadmin = GameObject.Find("records_admin_map");
+                                    recordsadmin.GetComponent<BoxCollider2D>().enabled = false;
 
                                     // Spawn jewels
                                     GameObject jewel01 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
@@ -2312,6 +2316,8 @@ namespace LasMonjas.Patches
                                     BottomRightVert.SetActive(false);
                                     GameObject LeftDoorBottom = GameObject.Find("LeftDoorBottom");
                                     LeftDoorBottom.SetActive(false);
+                                    GameObject recordsadmin = GameObject.Find("records_admin_map");
+                                    recordsadmin.GetComponent<BoxCollider2D>().enabled = false;
                                 }
                                 break;
                             // Submerged
@@ -2669,6 +2675,8 @@ namespace LasMonjas.Patches
                                     BottomRightVert.SetActive(false);
                                     GameObject LeftDoorBottom = GameObject.Find("LeftDoorBottom");
                                     LeftDoorBottom.SetActive(false);
+                                    GameObject recordsadmin = GameObject.Find("records_admin_map");
+                                    recordsadmin.GetComponent<BoxCollider2D>().enabled = false;
                                 }
                                 break;
                             // Submerged
@@ -3256,6 +3264,8 @@ namespace LasMonjas.Patches
                                     BottomRightVert.SetActive(false);
                                     GameObject LeftDoorBottom = GameObject.Find("LeftDoorBottom");
                                     LeftDoorBottom.SetActive(false);
+                                    GameObject recordsadmin = GameObject.Find("records_admin_map");
+                                    recordsadmin.GetComponent<BoxCollider2D>().enabled = false;
                                 }
                                 break;
                             // Submerged

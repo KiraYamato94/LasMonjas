@@ -14,7 +14,6 @@ namespace LasMonjas.Patches
     public static class ClientOptionsPatch
     {
         private static SelectionBehaviour[] AllOptions = {
-            new SelectionBehaviour("Hide Room Code", () => LasMonjasPlugin.StreamerMode.Value = !LasMonjasPlugin.StreamerMode.Value, LasMonjasPlugin.StreamerMode.Value),
             new SelectionBehaviour("Game Summary", () => MapOptions.showRoleSummary = LasMonjasPlugin.ShowRoleSummary.Value = !LasMonjasPlugin.ShowRoleSummary.Value, LasMonjasPlugin.ShowRoleSummary.Value),
             new SelectionBehaviour("Activate Music", () => MapOptions.activateMusic = LasMonjasPlugin.ActivateMusic.Value = !LasMonjasPlugin.ActivateMusic.Value, LasMonjasPlugin.ActivateMusic.Value),
             new SelectionBehaviour("Ghosts Can \nSee Roles", () => MapOptions.ghostsSeeRoles = LasMonjasPlugin.GhostsSeeRoles.Value = !LasMonjasPlugin.GhostsSeeRoles.Value, LasMonjasPlugin.GhostsSeeRoles.Value),
@@ -216,14 +215,4 @@ namespace LasMonjas.Patches
             }
         }
     }
-    
-    [HarmonyPatch(typeof(TextBoxTMP), nameof(TextBoxTMP.SetText))]
-	public static class HiddenTextPatch
-	{
-		private static void Postfix(TextBoxTMP __instance)
-		{
-			bool flag = LasMonjasPlugin.StreamerMode.Value && (__instance.name == "GameIdText" || __instance.name == "IpTextBox" || __instance.name == "PortTextBox");
-			if (flag) __instance.outputText.text = new string('*', __instance.text.Length);
-		}
-	}
 }

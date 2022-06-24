@@ -88,9 +88,9 @@ namespace LasMonjas.Patches {
             public static bool Prefix(MeetingHud __instance, [HarmonyArgument(0)]GameData.PlayerInfo voterPlayer, [HarmonyArgument(1)]int index, [HarmonyArgument(2)]Transform parent) {
                 SpriteRenderer spriteRenderer = UnityEngine.Object.Instantiate<SpriteRenderer>(__instance.PlayerVotePrefab);
                 if (!PlayerControl.GameOptions.AnonymousVotes)
-                    PlayerControl.SetPlayerMaterialColors(voterPlayer.DefaultOutfit.ColorId, spriteRenderer);
+                    voterPlayer.Object.SetPlayerMaterialColors(spriteRenderer);
                 else
-                    PlayerControl.SetPlayerMaterialColors(Palette.DisabledGrey, spriteRenderer);
+                    voterPlayer.Object.SetPlayerMaterialColors(spriteRenderer);
                 spriteRenderer.transform.SetParent(parent);
                 spriteRenderer.transform.localScale = Vector3.zero;
                 __instance.StartCoroutine(Effects.Bloop((float)index * 0.3f, spriteRenderer.transform, 1f, 0.5f));
@@ -361,8 +361,8 @@ namespace LasMonjas.Patches {
 
             //Fix visor in Meetings 
             foreach (PlayerVoteArea pva in __instance.playerStates) {
-                if(pva.PlayerIcon != null && pva.PlayerIcon.VisorSlot != null){
-                    pva.PlayerIcon.VisorSlot.transform.position += new Vector3(0, 0, -1f);
+                if(pva.PlayerIcon != null && pva.PlayerIcon.cosmetics.visor != null){
+                    pva.PlayerIcon.cosmetics.visor.transform.position += new Vector3(0, 0, -1f);
                 }
             }
 
@@ -418,7 +418,7 @@ namespace LasMonjas.Patches {
             }
         }
 
-        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CoStartMeeting))]
+        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.StartMeeting))]
         class StartMeetingPatch {
             public static void Prefix(PlayerControl __instance, [HarmonyArgument(0)] GameData.PlayerInfo meetingTarget) {
                 // Forensic meeting start time

@@ -405,8 +405,8 @@ namespace LasMonjas.Patches
 
                 //Fix Visor in Vitals
                 foreach (VitalsPanel panel in __instance.vitals) {
-                    if (panel.PlayerIcon != null && panel.PlayerIcon.Skin != null) {
-                        panel.PlayerIcon.Skin.transform.position = new Vector3(0, 0, 0f);
+                    if (panel.PlayerIcon != null && panel.PlayerIcon.cosmetics.skin != null) {
+                        panel.PlayerIcon.cosmetics.skin.transform.position = new Vector3(0, 0, 0f);
                     }
                 }
             }
@@ -515,8 +515,8 @@ namespace LasMonjas.Patches
                                     if (!component || component.Data == null || component.Data.Disconnected || component.Data.IsDead) {
                                         num2--;
                                     }
-                                    else if (component?.MyRend?.material != null) {
-                                        Color color = component.MyRend.material.GetColor("_BodyColor");
+                                    else if (component?.cosmetics.currentBodySprite.BodySprite.material != null) {
+                                        Color color = component.cosmetics.currentBodySprite.BodySprite.material.GetColor("_BodyColor");
                                         roomColors.Add(color);
                                     }
                                 }
