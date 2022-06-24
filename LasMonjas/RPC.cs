@@ -1861,11 +1861,11 @@ namespace LasMonjas
 
                     // Switch shield
                     if (Squire.shielded != null && Squire.shielded == player) {
-                        Squire.shielded.MyRend.material.SetFloat("_Outline", 0f);
+                        Squire.shielded.cosmetics.currentBodySprite.BodySprite.material.SetFloat("_Outline", 0f);
                         Squire.shielded = oldRoleThief;
                     }
                     else if (Squire.shielded != null && Squire.shielded == oldRoleThief) {
-                        Squire.shielded.MyRend.material.SetFloat("_Outline", 0f);
+                        Squire.shielded.cosmetics.currentBodySprite.BodySprite.material.SetFloat("_Outline", 0f);
                         Squire.shielded = player;
                     }
 
@@ -2804,7 +2804,7 @@ namespace LasMonjas
                         case 16:
                             if (CaptureTheFlag.redPlayerWhoHasBlueFlag != null && player.PlayerId == CaptureTheFlag.redPlayerWhoHasBlueFlag.PlayerId) {
                                 if (PlayerControl.LocalPlayer == CaptureTheFlag.stealerPlayer) {
-                                    new CustomMessage("You're the new <color=#FF0000FF>Red Team</color> player now!", 5, -1, 1.6f, 4);
+                                    new CustomMessage("You're the new <color=#FF0000FF>Red Team</color> player now!", 5, -1, 1f, 4);
                                 }
                                 if (CaptureTheFlag.redplayer01 != null && CaptureTheFlag.redplayer01 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
                                     CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer01);
@@ -2858,7 +2858,7 @@ namespace LasMonjas
                             }
                             else if (CaptureTheFlag.bluePlayerWhoHasRedFlag != null && player.PlayerId == CaptureTheFlag.bluePlayerWhoHasRedFlag.PlayerId) {
                                 if (PlayerControl.LocalPlayer == CaptureTheFlag.stealerPlayer) {
-                                    new CustomMessage("You're the new <color=#0000FFFF>Blue Team</color> player now!", 5, -1, 1.6f, 4);
+                                    new CustomMessage("You're the new <color=#0000FFFF>Blue Team</color> player now!", 5, -1, 1f, 4);
                                 }
                                 if (CaptureTheFlag.blueplayer01 != null && CaptureTheFlag.blueplayer01 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
                                     CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer01);

@@ -152,7 +152,7 @@ namespace LasMonjas
         public static RoleInfo sorcerer = new RoleInfo("Sorcerer", Sorcerer.color, "Casts spells on players", "Casts spells on players", RoleId.Sorcerer);
         public static RoleInfo medusa = new RoleInfo("Medusa", Medusa.color, "Petrify players", "Petrify players", RoleId.Medusa);
         public static RoleInfo hypnotist = new RoleInfo("Hypnotist", Hypnotist.color, "Invert player movement controls", "Invert player movement controls", RoleId.Hypnotist);
-        public static RoleInfo archer = new RoleInfo("Archer", Archer.color, "Make range kills", "Make range kills", RoleId.Archer);
+        public static RoleInfo archer = new RoleInfo("Archer", Archer.color, "Make range kills", "Pick bow with F \nand right click to shoot", RoleId.Archer);
 
         // Rebelde roles
         public static RoleInfo renegade = new RoleInfo("Renegade", Renegade.color, "Recruit a Minion and kill everyone", "Recruit a Minion and kill everyone", RoleId.Renegade, false, true);

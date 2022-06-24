@@ -1608,7 +1608,7 @@ namespace LasMonjas
                 __instance.KillButton.graphic.sprite,
                 new Vector3(0, 1f, 0),
                 __instance,
-                KeyCode.Q
+                KeyCode.Mouse1
             );
 
 
@@ -2717,17 +2717,17 @@ namespace LasMonjas
                     foreach (KeyValuePair<byte, PoolablePlayer> player in MapOptions.playerIcons) {
                         if (Poisoner.infectProgress.ContainsKey(player.Key)) {
                             if (Poisoner.infectProgress[player.Key] < 1) {
-                                player.Value.NameText.text = String.Format("{0:F0}%", Poisoner.infectProgress[player.Key] * 100f);
+                                player.Value.cosmetics.nameText.text = String.Format("{0:F0}%", Poisoner.infectProgress[player.Key] * 100f);
                             }
                             else {
-                                player.Value.NameText.text = "100%";
+                                player.Value.cosmetics.nameText.text = "100%";
                             }
                         }
                         else {
-                            player.Value.NameText.text = "0%";
+                            player.Value.cosmetics.nameText.text = "0%";
                         }
-                        player.Value.NameText.color = Color.white;
-                        player.Value.NameText.fontSize = 5;
+                        player.Value.cosmetics.nameText.color = Color.white;
+                        player.Value.cosmetics.nameText.fontSize = 5;
                     }
 
                     // Detect infected player distance to others and increase infect progress

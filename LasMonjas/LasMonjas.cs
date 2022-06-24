@@ -476,20 +476,21 @@ namespace LasMonjas
         public static void resetChameleon() {
             chameleonTimer = 0f;
             if (chameleon != null) {
-                chameleon.nameText.color = new Color(chameleon.nameText.color.r, chameleon.nameText.color.g, chameleon.nameText.color.b, 1);
-                if (chameleon.CurrentPet != null && chameleon.CurrentPet.rend != null && chameleon.CurrentPet.shadowRend != null) {
-                    chameleon.CurrentPet.rend.color = new Color(chameleon.CurrentPet.rend.color.r, chameleon.CurrentPet.rend.color.g, chameleon.CurrentPet.rend.color.b, 1);
-                    chameleon.CurrentPet.shadowRend.color = new Color(chameleon.CurrentPet.shadowRend.color.r, chameleon.CurrentPet.shadowRend.color.g, chameleon.CurrentPet.shadowRend.color.b, 1);
+                chameleon.cosmetics.nameText.color = new Color(chameleon.cosmetics.nameText.color.r, chameleon.cosmetics.nameText.color.g, chameleon.cosmetics.nameText.color.b, 1);
+                chameleon.cosmetics.colorBlindText.color = new Color(chameleon.cosmetics.colorBlindText.color.r, chameleon.cosmetics.colorBlindText.color.g, chameleon.cosmetics.colorBlindText.color.b, 1);
+                if (chameleon.cosmetics.currentPet != null && chameleon.cosmetics.currentPet.rend != null && chameleon.cosmetics.currentPet.shadowRend != null) {
+                    chameleon.cosmetics.currentPet.rend.color = new Color(chameleon.cosmetics.currentPet.rend.color.r, chameleon.cosmetics.currentPet.rend.color.g, chameleon.cosmetics.currentPet.rend.color.b, 1);
+                    chameleon.cosmetics.currentPet.shadowRend.color = new Color(chameleon.cosmetics.currentPet.shadowRend.color.r, chameleon.cosmetics.currentPet.shadowRend.color.g, chameleon.cosmetics.currentPet.shadowRend.color.b, 1);
                 }
-                if (chameleon.HatRenderer != null) {
-                    chameleon.HatRenderer.Parent.color = new Color(chameleon.HatRenderer.Parent.color.r, chameleon.HatRenderer.Parent.color.g, chameleon.HatRenderer.Parent.color.b, 1);
-                    chameleon.HatRenderer.BackLayer.color = new Color(chameleon.HatRenderer.BackLayer.color.r, chameleon.HatRenderer.BackLayer.color.g, chameleon.HatRenderer.BackLayer.color.b, 1);
-                    chameleon.HatRenderer.FrontLayer.color = new Color(chameleon.HatRenderer.FrontLayer.color.r, chameleon.HatRenderer.FrontLayer.color.g, chameleon.HatRenderer.FrontLayer.color.b, 1);
+                if (chameleon.cosmetics.hat != null) {
+                    chameleon.cosmetics.hat.Parent.color = new Color(chameleon.cosmetics.hat.Parent.color.r, chameleon.cosmetics.hat.Parent.color.g, chameleon.cosmetics.hat.Parent.color.b, 1);
+                    chameleon.cosmetics.hat.BackLayer.color = new Color(chameleon.cosmetics.hat.BackLayer.color.r, chameleon.cosmetics.hat.BackLayer.color.g, chameleon.cosmetics.hat.BackLayer.color.b, 1);
+                    chameleon.cosmetics.hat.FrontLayer.color = new Color(chameleon.cosmetics.hat.FrontLayer.color.r, chameleon.cosmetics.hat.FrontLayer.color.g, chameleon.cosmetics.hat.FrontLayer.color.b, 1);
                 }
-                if (chameleon.VisorSlot != null) {
-                    chameleon.VisorSlot.Image.color = new Color(chameleon.VisorSlot.Image.color.r, chameleon.VisorSlot.Image.color.g, chameleon.VisorSlot.Image.color.b, 1);
+                if (chameleon.cosmetics.visor != null) {
+                    chameleon.cosmetics.visor.Image.color = new Color(chameleon.cosmetics.visor.Image.color.r, chameleon.cosmetics.visor.Image.color.g, chameleon.cosmetics.visor.Image.color.b, 1);
                 }
-                chameleon.MyPhysics.Skin.layer.color = new Color(chameleon.MyPhysics.Skin.layer.color.r, chameleon.MyPhysics.Skin.layer.color.g, chameleon.MyPhysics.Skin.layer.color.b, 1);
+                chameleon.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(chameleon.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, chameleon.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, chameleon.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1);
             }
         }
 

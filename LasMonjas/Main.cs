@@ -25,7 +25,7 @@ namespace LasMonjas
     {
         public const string Id = "me.allul.lasmonjas";
 
-        public const string VersionString = "2.0.3";
+        public const string VersionString = "2.0.5";
 
         public static System.Version Version = System.Version.Parse(VersionString);
         internal static BepInEx.Logging.ManualLogSource Logger;
@@ -35,10 +35,7 @@ namespace LasMonjas
 
         public static int optionsPage = 1;
 
-        public static ConfigEntry<bool> StreamerMode { get; set; }
         public static ConfigEntry<bool> ShowRoleSummary { get; set; }
-        public static ConfigEntry<string> StreamerModeReplacementText { get; set; }
-        public static ConfigEntry<string> StreamerModeReplacementColor { get; set; }
         public static ConfigEntry<bool> ActivateMusic { get; set; }
         public static ConfigEntry<bool> GhostsSeeRoles { get; set; }
         public static ConfigEntry<bool> HorseMode { get; set; }
@@ -62,10 +59,7 @@ namespace LasMonjas
             Logger = Log;
             AssetLoader.LoadAssets();
           
-            StreamerMode = Config.Bind("Custom", "Enable Streamer Mode", false);
             ShowRoleSummary = Config.Bind("Custom", "Show Role Summary", true);
-            StreamerModeReplacementText = Config.Bind("Custom", "Streamer Mode Replacement Text", "\n\nLas Monjas");
-            StreamerModeReplacementColor = Config.Bind("Custom", "Streamer Mode Replacement Text Hex Color", "#CC00FFFF");
             ActivateMusic = Config.Bind("Custom", "Activate Music", true);
             GhostsSeeRoles = Config.Bind("Custom", "Ghosts See Roles", true);
             HorseMode = Config.Bind("Custom", "Horse Mode", false);
@@ -106,7 +100,7 @@ namespace LasMonjas
     [HarmonyPatch(typeof(ChatController), nameof(ChatController.Awake))]
     public static class ChatControllerAwakePatch {
         private static void Prefix() {
-            if (!EOSManager.Instance.IsMinor()) {
+            if (!EOSManager.Instance.isKWSMinor) {
                 SaveManager.chatModeType = 1;
                 SaveManager.isGuest = false;
             }
