@@ -1766,7 +1766,7 @@ namespace LasMonjas
                     }
 
                     foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                        if (player != Kid.kid && player != Modifiers.lover1 && player != Modifiers.lover2 && player != BountyHunter.bountyhunter && player != Modifiers.bigchungus) {
+                        if (player != Kid.kid && player != Modifiers.lover1 && player != Modifiers.lover2 && player != BountyHunter.bountyhunter && player != Modifiers.bigchungus && player != Modifiers.lighter && player != Modifiers.blind && player != Modifiers.flash && player != Modifiers.pro && player != Modifiers.theChosenOne && player != Modifiers.performer) {
                             BountyHunter.possibleTargets.Add(player);
                         }
                     }

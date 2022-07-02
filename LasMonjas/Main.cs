@@ -25,7 +25,7 @@ namespace LasMonjas
     {
         public const string Id = "me.allul.lasmonjas";
 
-        public const string VersionString = "2.0.5";
+        public const string VersionString = "2.0.6";
 
         public static System.Version Version = System.Version.Parse(VersionString);
         internal static BepInEx.Logging.ManualLogSource Logger;

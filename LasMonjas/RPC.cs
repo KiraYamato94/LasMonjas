@@ -1584,18 +1584,6 @@ namespace LasMonjas
                 else if (BountyHunter.hasToKill == Hypnotist.hypnotist) {
                     BountyHunter.rolName = ": <color=#FF0000FF>Hypnotist</color>";
                 }
-                else if (BountyHunter.hasToKill == Modifiers.lighter) {
-                    BountyHunter.rolName = ": <color=#F08048FF>Lighter</color>";
-                }
-                else if (BountyHunter.hasToKill == Modifiers.blind) {
-                    BountyHunter.rolName = ": <color=#F08048FF>Blind</color>";
-                }
-                else if (BountyHunter.hasToKill == Modifiers.flash) {
-                    BountyHunter.rolName = ": <color=#F08048FF>Flash</color>";
-                }
-                else if (BountyHunter.hasToKill == Modifiers.pro) {
-                    BountyHunter.rolName = ": <color=#F08048FF>Pro</color>";
-                }
                 else if (BountyHunter.hasToKill.Data.Role.IsImpostor) {
                     BountyHunter.rolName = ": <color=#FF0000FF>Impostor</color>";
                 }
