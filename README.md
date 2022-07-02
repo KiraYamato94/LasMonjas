@@ -33,14 +33,21 @@ Las Monjas is a Spanish mod (translated and published on English) for Among Us m
 <details>
   <summary>Click to show</summary>
 
-**Version 2.0.5 (24th June 2022)
+**Version 2.0.6 (2nd July 2022)**
+- Fixed an issue where Anonymous Votes weren't anonymous
+- Fixed that players were unable to do alignment task at upper engine on custom skeld map
+- Fixed an issue with Mimic if it was Big Chungus, now it adapts correctly to target's size
+- Fixed an issue where Bounty Hunter could get his Modifier as a target
+- Fixed an issue where players were able to report a body during Challenger's duel
+
+**Version 2.0.5 (24th June 2022)**
 - Full compatibilty patch for Among Us 2022.6.21s, 
 - Reactor updated to 1.2.7 that should fix the Epic auth error
 - Added submerged 2022.6.23s
 - Fixed an issue with custom regions, it should appear now for everybody
 - 2 new hats
 
-**Version 2.0.4 (22nd June 2022)
+**Version 2.0.4 (22nd June 2022)**
 - This is a BETA version for Among Us 2022.6.21s, you might find issues
 - This BETA doesn't include Submerged, since it needs to be updated first, but you'll be able to download it when it's done via Submerged Update button on the main menu
 - Added mod updater button (the same one as Submerged but it will check first if there's a Las Monjas update)
