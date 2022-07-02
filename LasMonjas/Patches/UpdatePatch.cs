@@ -544,7 +544,10 @@ namespace LasMonjas.Patches {
                     p.transform.localScale = new Vector3(0.45f, 0.45f, 1f);
                 // big chungus update, restore original scale on duel and painting to be more fair
                 else if (Modifiers.bigchungus != null && Modifiers.bigchungus == p && !Challenger.isDueling && Painter.painterTimer <= 0 && !isHappeningAnonymousComms) {
-                    if (Puppeteer.puppeteer != null && Puppeteer.morphed && Puppeteer.puppeteer.PlayerId == Modifiers.bigchungus.PlayerId) {
+                    if (Mimic.mimic != null && Mimic.transformTimer > 0f && Mimic.mimic.PlayerId == Modifiers.bigchungus.PlayerId) {
+                        p.transform.localScale = new Vector3(0.7f, 0.7f, 1f);
+                    }
+                    else if (Puppeteer.puppeteer != null && Puppeteer.morphed && Puppeteer.puppeteer.PlayerId == Modifiers.bigchungus.PlayerId) {
                         p.transform.localScale = new Vector3(0.7f, 0.7f, 1f);
                     }
                     else {
@@ -757,6 +760,8 @@ namespace LasMonjas.Patches {
 
                     if (p == 1f) {
 
+                        bool challengerOrRival = true;
+
                         if (Challenger.challengerRock && Challenger.rivalPaper) {
                             Challenger.rivalPlayer.MurderPlayer(Challenger.challenger);
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.challengerDuelKillClip, false, 5f);
@@ -764,10 +769,12 @@ namespace LasMonjas.Patches {
                         else if (Challenger.challengerRock && Challenger.rivalScissors) {
                             Challenger.challenger.MurderPlayer(Challenger.rivalPlayer);
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.challengerDuelKillClip, false, 5f);
+                            challengerOrRival = false;
                         }
                         else if (Challenger.challengerPaper && Challenger.rivalRock) {
                             Challenger.challenger.MurderPlayer(Challenger.rivalPlayer);
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.challengerDuelKillClip, false, 5f);
+                            challengerOrRival = false;
                         }
                         else if (Challenger.challengerPaper && Challenger.rivalScissors) {
                             Challenger.rivalPlayer.MurderPlayer(Challenger.challenger);
@@ -776,10 +783,20 @@ namespace LasMonjas.Patches {
                         else if (Challenger.challengerScissors && Challenger.rivalPaper) {
                             Challenger.challenger.MurderPlayer(Challenger.rivalPlayer);
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.challengerDuelKillClip, false, 5f);
+                            challengerOrRival = false;
                         }
                         else if (Challenger.challengerScissors && Challenger.rivalRock) {
                             Challenger.rivalPlayer.MurderPlayer(Challenger.challenger);
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.challengerDuelKillClip, false, 5f);
+                        }
+
+                        if (challengerOrRival) {
+                            var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == Challenger.challenger.PlayerId);
+                            body.transform.position = new Vector3(75f, 0f, -5);
+                        }
+                        else {
+                            var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == Challenger.rivalPlayer.PlayerId);
+                            body.transform.position = new Vector3(75f, 0f, -5);
                         }
                     }
                 })));
@@ -789,20 +806,41 @@ namespace LasMonjas.Patches {
 
                     if (p == 1f) {
 
+                        int whoDied = 0;
+
                         if ((Challenger.challengerRock || Challenger.challengerPaper || Challenger.challengerScissors) && (!Challenger.rivalRock && !Challenger.rivalPaper && !Challenger.rivalScissors)) {
                             Challenger.challenger.MurderPlayer(Challenger.rivalPlayer);
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.challengerDuelKillClip, false, 5f);
+                            whoDied = 2;
                         }
                         else if ((!Challenger.challengerRock && !Challenger.challengerPaper && !Challenger.challengerScissors) && (Challenger.rivalRock || Challenger.rivalPaper || Challenger.rivalScissors)) {
                             Challenger.rivalPlayer.MurderPlayer(Challenger.challenger);
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.challengerDuelKillClip, false, 5f);
+                            whoDied = 1;
                         }
                         else if ((!Challenger.challengerRock && !Challenger.challengerPaper && !Challenger.challengerScissors) && (!Challenger.rivalRock || !Challenger.rivalPaper || !Challenger.rivalScissors)) {
                             Challenger.challenger.MurderPlayer(Challenger.rivalPlayer);
                             Challenger.rivalPlayer.MurderPlayer(Challenger.challenger);
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.challengerDuelKillClip, false, 5f);
+                            whoDied = 3;
                         }
 
+                        switch (whoDied) {
+                            case 1:
+                                var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == Challenger.challenger.PlayerId);
+                                body.transform.position = new Vector3(75f, 0f, -5);
+                                break;
+                            case 2:
+                                var bodytwo = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == Challenger.rivalPlayer.PlayerId);
+                                bodytwo.transform.position = new Vector3(75f, 0f, -5);
+                                break;
+                            case 3:
+                                var bodythree = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == Challenger.rivalPlayer.PlayerId);
+                                bodythree.transform.position = new Vector3(75f, 0f, -5);
+                                var bodyfour = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == Challenger.challenger.PlayerId);
+                                bodyfour.transform.position = new Vector3(75f, 0f, -5); 
+                                break;
+                        }
                     }
                 })));
             }

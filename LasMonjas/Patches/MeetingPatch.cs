@@ -87,14 +87,15 @@ namespace LasMonjas.Patches {
         class MeetingHudBloopAVoteIconPatch {
             public static bool Prefix(MeetingHud __instance, [HarmonyArgument(0)]GameData.PlayerInfo voterPlayer, [HarmonyArgument(1)]int index, [HarmonyArgument(2)]Transform parent) {
                 SpriteRenderer spriteRenderer = UnityEngine.Object.Instantiate<SpriteRenderer>(__instance.PlayerVotePrefab);
-                if (!PlayerControl.GameOptions.AnonymousVotes)
-                    voterPlayer.Object.SetPlayerMaterialColors(spriteRenderer);
-                else
-                    voterPlayer.Object.SetPlayerMaterialColors(spriteRenderer);
+                int cId = voterPlayer.DefaultOutfit.ColorId; 
+                if (PlayerControl.GameOptions.AnonymousVotes)
+                    voterPlayer.Object.SetColor(6);
+                voterPlayer.Object.SetPlayerMaterialColors(spriteRenderer);
                 spriteRenderer.transform.SetParent(parent);
                 spriteRenderer.transform.localScale = Vector3.zero;
                 __instance.StartCoroutine(Effects.Bloop((float)index * 0.3f, spriteRenderer.transform, 1f, 0.5f));
                 parent.GetComponent<VoteSpreader>().AddVote(spriteRenderer);
+                voterPlayer.Object.SetColor(cId); 
                 return false;
             }
         } 

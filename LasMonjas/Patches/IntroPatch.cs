@@ -4124,7 +4124,9 @@ namespace LasMonjas.Patches
 
                 var objList = GameObject.FindObjectsOfType<Console>().ToList();
                 foreach (var obj in objList) {
-                    obj.checkWalls = true;
+                    if (obj.name != "AlignEngineConsole") {
+                        obj.checkWalls = true;
+                    }
                 }
 
                 // Change original skeld map parent and hide the innecesary vanilla objects (don't destroy them, the game won't work otherwise)
