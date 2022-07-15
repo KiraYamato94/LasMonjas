@@ -249,6 +249,7 @@ namespace LasMonjas
 
             float progress = playerPhysics.Animator.m_animator.GetCurrentAnimatorStateInfo(0).normalizedTime;
             playerPhysics.myPlayer.cosmetics.skin.skin = nextSkin;
+            playerPhysics.myPlayer.cosmetics.skin.UpdateMaterial();
             spriteAnim.Play(clip, 1f);
             spriteAnim.m_animator.Play("a", 0, progress % 1);
             spriteAnim.m_animator.Update(0f);
@@ -353,6 +354,9 @@ namespace LasMonjas
                         else {
                             roleCouldUse = false;
                         }
+                    }
+                    else if (BattleRoyale.battleRoyaleMode) {
+                        roleCouldUse = false;
                     }
                 }
             }

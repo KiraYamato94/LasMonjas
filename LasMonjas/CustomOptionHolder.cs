@@ -14,7 +14,7 @@ namespace LasMonjas
 {
     public class CustomOptionHolder {
         public static string[] rates = new string[]{"0%", "100%"}; 
-        public static string[] presets = new string[]{"Roles", "Capture the Flag", "Police and Thiefs", "King of the Hill", "Hot Potato", "Zombie Laboratory", "Preset 7", "Preset 8", "Preset 9", "Preset 10" };
+        public static string[] presets = new string[]{"Roles", "Capture the Flag", "Police and Thiefs", "King of the Hill", "Hot Potato", "Zombie Laboratory", "Battle Royale", "Preset 8", "Preset 9", "Preset 10" };
 
         // Game Options 
         public static CustomOption presetSelection;
@@ -101,8 +101,17 @@ namespace LasMonjas
         public static CustomOption zombieLaboratoryWhoCanZombiesKill;
         public static CustomOption zombieLaboratorySurvivorsVision;
         public static CustomOption zombieLaboratorySearchBoxTimer;
-        
-        
+
+        // BattleRoyale
+        public static CustomOption battleRoyaleMode;
+        public static CustomOption battleRoyaleMatchDuration;
+        public static CustomOption battleRoyaleMatchType;
+        public static CustomOption battleRoyaleKillCooldown;
+        public static CustomOption battleRoyaleLifes;
+        public static CustomOption battleRoyaleScoreNeeded;
+        public static CustomOption battleRoyaleReviveTime;
+        public static CustomOption battleRoyaleInvincibilityTimeAfterRevive;
+
         // Impostors configurable options
 
         // Mimic
@@ -482,7 +491,17 @@ namespace LasMonjas
             zombieLaboratoryKillCooldown = CustomOption.Create(89, cs(Hunter.color, "Zombie Laboratory") + ": Kill Cooldown", "gamemode", 10f, 10f, 20f, 1f, zombieLaboratoryMode);
             zombieLaboratoryReviveTime = CustomOption.Create(90, cs(Hunter.color, "Zombie Laboratory") + ": Revive Wait Time", "gamemode", 8f, 8f, 13f, 1f, zombieLaboratoryMode);
             zombieLaboratoryInvincibilityTimeAfterRevive = CustomOption.Create(91, cs(Hunter.color, "Zombie Laboratory") + ": Invincibility Time After Revive", "gamemode", 3f, 2f, 5f, 1f, zombieLaboratoryMode);
-            
+
+            // Battle Royale
+            battleRoyaleMode = CustomOption.Create(100, cs(Sleuth.color, "Battle Royale"), "gamemode", false, null, true);
+            battleRoyaleMatchDuration = CustomOption.Create(101, cs(Sleuth.color, "Battle Royale") + ": Match Duration", "gamemode", 180f, 180f, 300f, 30f, battleRoyaleMode);
+            battleRoyaleMatchType = CustomOption.Create(102, cs(Sleuth.color, "Battle Royale") + ": Match Type", "gamemode", new string[] { "All vs All", "Team Battle", "Score Battle" }, battleRoyaleMode);
+            battleRoyaleKillCooldown = CustomOption.Create(103, cs(Sleuth.color, "Battle Royale") + ": Kill Cooldown", "gamemode", 1f, 1f, 3f, 1f, battleRoyaleMode);
+            battleRoyaleLifes = CustomOption.Create(104, cs(Sleuth.color, "Battle Royale") + ": Fighter Lifes", "gamemode", 3f, 3f, 10f, 1f, battleRoyaleMode);
+            battleRoyaleScoreNeeded = CustomOption.Create(105, cs(Sleuth.color, "Battle Royale") + ": Score Number", "gamemode", 200f, 100f, 300f, 10f, battleRoyaleMode);
+            battleRoyaleReviveTime = CustomOption.Create(106, cs(Sleuth.color, "Battle Royale") + ": Revive Wait Time", "gamemode", 5f, 3f, 5f, 1f, battleRoyaleMode);
+            battleRoyaleInvincibilityTimeAfterRevive = CustomOption.Create(107, cs(Sleuth.color, "Battle Royale") + ": Invincibility Time After Revive", "gamemode", 3f, 2f, 5f, 1f, battleRoyaleMode);
+
             // Mimic options
             mimicSpawnRate = CustomOption.Create(150, cs(Mimic.color, "Mimic"), "impostor", rates, null, true);
             mimicDuration = CustomOption.Create(151, cs(Mimic.color, "Mimic") + ": Duration", "impostor", 10f, 10f, 15f, 1f, mimicSpawnRate);

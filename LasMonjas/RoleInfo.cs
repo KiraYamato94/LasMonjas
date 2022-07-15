@@ -138,6 +138,40 @@ namespace LasMonjas
         public static RoleInfo zombiePlayer12 = new RoleInfo("Zombie", Mechanic.color, "Infect all survivors", "Infect all survivors", RoleId.ZombiePlayer12);
         public static RoleInfo zombiePlayer13 = new RoleInfo("Zombie", Mechanic.color, "Infect all survivors", "Infect all survivors", RoleId.ZombiePlayer13);
         public static RoleInfo zombiePlayer14 = new RoleInfo("Zombie", Mechanic.color, "Infect all survivors", "Infect all survivors", RoleId.ZombiePlayer14);
+
+        // Battle Royale
+        public static RoleInfo soloPlayer01 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer01);
+        public static RoleInfo soloPlayer02 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer02);
+        public static RoleInfo soloPlayer03 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer03);
+        public static RoleInfo soloPlayer04 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer04);
+        public static RoleInfo soloPlayer05 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer05);
+        public static RoleInfo soloPlayer06 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer06);
+        public static RoleInfo soloPlayer07 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer07);
+        public static RoleInfo soloPlayer08 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer08);
+        public static RoleInfo soloPlayer09 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer09);
+        public static RoleInfo soloPlayer10 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer10);
+        public static RoleInfo soloPlayer11 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer11);
+        public static RoleInfo soloPlayer12 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer12);
+        public static RoleInfo soloPlayer13 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer13);
+        public static RoleInfo soloPlayer14 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer14);
+        public static RoleInfo soloPlayer15 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer15);
+
+        public static RoleInfo purplePlayer01 = new RoleInfo("Purple Team", Captain.color, "Kill <color=#F2BEFFFF>Pink</color> Team", "Kill <color=#F2BEFFFF>Pink</color> Team", RoleId.PurplePlayer01);
+        public static RoleInfo purplePlayer02 = new RoleInfo("Purple Team", Captain.color, "Kill <color=#F2BEFFFF>Pink</color> Team", "Kill <color=#F2BEFFFF>Pink</color> Team", RoleId.PurplePlayer02);
+        public static RoleInfo purplePlayer03 = new RoleInfo("Purple Team", Captain.color, "Kill <color=#F2BEFFFF>Pink</color> Team", "Kill <color=#F2BEFFFF>Pink</color> Team", RoleId.PurplePlayer03);
+        public static RoleInfo purplePlayer04 = new RoleInfo("Purple Team", Captain.color, "Kill <color=#F2BEFFFF>Pink</color> Team", "Kill <color=#F2BEFFFF>Pink</color> Team", RoleId.PurplePlayer04);
+        public static RoleInfo purplePlayer05 = new RoleInfo("Purple Team", Captain.color, "Kill <color=#F2BEFFFF>Pink</color> Team", "Kill <color=#F2BEFFFF>Pink</color> Team", RoleId.PurplePlayer05);
+        public static RoleInfo purplePlayer06 = new RoleInfo("Purple Team", Captain.color, "Kill <color=#F2BEFFFF>Pink</color> Team", "Kill <color=#F2BEFFFF>Pink</color> Team", RoleId.PurplePlayer06);
+        public static RoleInfo purplePlayer07 = new RoleInfo("Purple Team", Captain.color, "Kill <color=#F2BEFFFF>Pink</color> Team", "Kill <color=#F2BEFFFF>Pink</color> Team", RoleId.PurplePlayer07);
+        public static RoleInfo pinkPlayer01 = new RoleInfo("Pink Team", Shy.color, "Kill <color=#5E3E7DFF>Purple</color> Team", "Kill <color=#5E3E7DFF>Purple</color> Team", RoleId.PinkPlayer01);
+        public static RoleInfo pinkPlayer02 = new RoleInfo("Pink Team", Shy.color, "Kill <color=#5E3E7DFF>Purple</color> Team", "Kill <color=#5E3E7DFF>Purple</color> Team", RoleId.PinkPlayer02);
+        public static RoleInfo pinkPlayer03 = new RoleInfo("Pink Team", Shy.color, "Kill <color=#5E3E7DFF>Purple</color> Team", "Kill <color=#5E3E7DFF>Purple</color> Team", RoleId.PinkPlayer03);
+        public static RoleInfo pinkPlayer04 = new RoleInfo("Pink Team", Shy.color, "Kill <color=#5E3E7DFF>Purple</color> Team", "Kill <color=#5E3E7DFF>Purple</color> Team", RoleId.PinkPlayer04);
+        public static RoleInfo pinkPlayer05 = new RoleInfo("Pink Team", Shy.color, "Kill <color=#5E3E7DFF>Purple</color> Team", "Kill <color=#5E3E7DFF>Purple</color> Team", RoleId.PinkPlayer05);
+        public static RoleInfo pinkPlayer06 = new RoleInfo("Pink Team", Shy.color, "Kill <color=#5E3E7DFF>Purple</color> Team", "Kill <color=#5E3E7DFF>Purple</color> Team", RoleId.PinkPlayer06);
+        public static RoleInfo pinkPlayer07 = new RoleInfo("Pink Team", Shy.color, "Kill <color=#5E3E7DFF>Purple</color> Team", "Kill <color=#5E3E7DFF>Purple</color> Team", RoleId.PinkPlayer07);
+        public static RoleInfo serialKiller = new RoleInfo("Serial Killer", Joker.color, "Kill Everyone", "Kill Everyone", RoleId.SerialKiller);
+        
         
         // Impostor roles
         public static RoleInfo mimic = new RoleInfo("Mimic", Mimic.color, "Mimic other player's look", "Mimic other player's look", RoleId.Mimic);
@@ -377,7 +411,37 @@ namespace LasMonjas
             zombiePlayer11,
             zombiePlayer12,
             zombiePlayer13,
-            zombiePlayer14
+            zombiePlayer14,
+            soloPlayer01,
+            soloPlayer02,
+            soloPlayer03,
+            soloPlayer04,
+            soloPlayer05,
+            soloPlayer06,
+            soloPlayer07,
+            soloPlayer08,
+            soloPlayer09,
+            soloPlayer10,
+            soloPlayer11,
+            soloPlayer12,
+            soloPlayer13,
+            soloPlayer14,
+            soloPlayer15,
+            purplePlayer01,
+            purplePlayer02,
+            purplePlayer03,
+            purplePlayer04,
+            purplePlayer05,
+            purplePlayer06,
+            purplePlayer07,
+            pinkPlayer01,
+            pinkPlayer02,
+            pinkPlayer03,
+            pinkPlayer04,
+            pinkPlayer05,
+            pinkPlayer06,
+            pinkPlayer07,
+            serialKiller
         };
 
         public static List<RoleInfo> getRoleInfoForPlayer(PlayerControl p) {
@@ -497,6 +561,39 @@ namespace LasMonjas
             if (p == ZombieLaboratory.zombiePlayer12) infos.Add(zombiePlayer12);
             if (p == ZombieLaboratory.zombiePlayer13) infos.Add(zombiePlayer13);
             if (p == ZombieLaboratory.zombiePlayer14) infos.Add(zombiePlayer14);
+
+            // Battle Royale
+            if (p == BattleRoyale.soloPlayer01) infos.Add(soloPlayer01);
+            if (p == BattleRoyale.soloPlayer02) infos.Add(soloPlayer02);
+            if (p == BattleRoyale.soloPlayer03) infos.Add(soloPlayer03);
+            if (p == BattleRoyale.soloPlayer04) infos.Add(soloPlayer04);
+            if (p == BattleRoyale.soloPlayer05) infos.Add(soloPlayer05);
+            if (p == BattleRoyale.soloPlayer06) infos.Add(soloPlayer06);
+            if (p == BattleRoyale.soloPlayer07) infos.Add(soloPlayer07);
+            if (p == BattleRoyale.soloPlayer08) infos.Add(soloPlayer08);
+            if (p == BattleRoyale.soloPlayer09) infos.Add(soloPlayer09);
+            if (p == BattleRoyale.soloPlayer10) infos.Add(soloPlayer10);
+            if (p == BattleRoyale.soloPlayer11) infos.Add(soloPlayer11);
+            if (p == BattleRoyale.soloPlayer12) infos.Add(soloPlayer12);
+            if (p == BattleRoyale.soloPlayer13) infos.Add(soloPlayer13);
+            if (p == BattleRoyale.soloPlayer14) infos.Add(soloPlayer14);
+            if (p == BattleRoyale.soloPlayer15) infos.Add(soloPlayer15);
+
+            if (p == BattleRoyale.purplePlayer01) infos.Add(purplePlayer01);
+            if (p == BattleRoyale.purplePlayer02) infos.Add(purplePlayer02);
+            if (p == BattleRoyale.purplePlayer03) infos.Add(purplePlayer03);
+            if (p == BattleRoyale.purplePlayer04) infos.Add(purplePlayer04);
+            if (p == BattleRoyale.purplePlayer05) infos.Add(purplePlayer05);
+            if (p == BattleRoyale.purplePlayer06) infos.Add(purplePlayer06);
+            if (p == BattleRoyale.purplePlayer07) infos.Add(purplePlayer07);
+            if (p == BattleRoyale.pinkPlayer01) infos.Add(pinkPlayer01);
+            if (p == BattleRoyale.pinkPlayer02) infos.Add(pinkPlayer02);
+            if (p == BattleRoyale.pinkPlayer03) infos.Add(pinkPlayer03);
+            if (p == BattleRoyale.pinkPlayer04) infos.Add(pinkPlayer04);
+            if (p == BattleRoyale.pinkPlayer05) infos.Add(pinkPlayer05);
+            if (p == BattleRoyale.pinkPlayer06) infos.Add(pinkPlayer06);
+            if (p == BattleRoyale.pinkPlayer07) infos.Add(pinkPlayer07);
+            if (p == BattleRoyale.serialKiller) infos.Add(serialKiller);
 
 
             // Impostor roles
