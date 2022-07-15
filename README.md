@@ -6,7 +6,7 @@ Las Monjas is a Spanish mod (translated and published on English) for Among Us m
   1. [50 roles](#roles)
   2. [8 modifiers and 7 game mechanics](#modifiers)
   3. [1 custom map](https://youtu.be/9tDh9eYqAgk)
-  4. [5 custom gamemodes](#gamemodes)
+  4. [6 custom gamemodes](#gamemodes)
   5. [4 new colors](#settings)
   6. [Custom Music](#settings)
   7. [Custom Lobby](#settings)
@@ -32,6 +32,12 @@ Las Monjas is a Spanish mod (translated and published on English) for Among Us m
 # Changelog
 <details>
   <summary>Click to show</summary>
+
+**Version 2.1.0 (15th July 2022)**
+- New Gamemode: Battle Royale
+- 11 new hats, 3 new visors and 1 new nameplate
+- Fixed an issue where Mimic and Puppeteer didn't get the right color upon transformation
+- Dead bodies from Challenger's challenge now get teleported next to the map's emergency button
 
 **Version 2.0.6 (2nd July 2022)**
 - Fixed an issue where Anonymous Votes weren't anonymous
@@ -1349,6 +1355,35 @@ A random player gets the Zombie role, another player the Nurse role and the rest
 
 -----------------------
 
+## BattleRoyale
+
+On this gamemode everyone has a ranged kill button with the Archer's mechanic (usable with right mouse clic) and a very low cooldown. Players have lifes and when they reach 0 lifes they die for the rest of the match, the last one alive wins. Also there are 3 ways of playing this gamemode, which are detailed below. 
+
+| Option  | Description |
+|----------|-------------|
+| Match Duration | From 3 to 5 minutes |
+| Match Type | All VS All, Team Battle or Score Battle |
+| Kill Cooldown | Kill Button Cooldown |
+| Fighter Lifes | Number of Lifes the players have |
+| Score Number | Total Score for winning on Score Battle |
+| Revive Time | Only on Score Battle, everyone revives on his team base after a setted amount of time |
+| Invincibility Time After Revive | Only on Score Battle, players can't use their abilities or get killed during this time |
+
+**Additional Gamemode Notes:**
+- Nobody can vent.
+- If the time reaches 0, all alive players will win (except on Score Battle).
+- All VS All is an individual deathmatch where players spawn on 15 different selected spawn points (this doesn't apply to Airship or Submerged) and the last alive player wins.
+- Team Battle is a team deathmatch between 2 teams (purple and pink with 7 max players) where the team that kill the enemy team first wins.
+- Score Battle is the same as Team Battle but instead of permadeath, players revive and gain points each time they kill someone, upon reaching the needed score they win. You get 10 points for killing anyone and 30 points if you kill the neutral role detailed below.
+- On odd player number games for Team and Score Battle there will be a powerful neutral role called Serial Killer which act as a solo team player that can also win killing everyone or reaching the needed score. This role has x3 lifes and half kill cooldown on games with less than 11 players. If you're 11 or more players it will have even less kill cooldown. 
+- Player's lifes are shown after their names but you can't see other player's remaining lifes. On the other hand, on Team and Score Battle you can see your teammates remaining lifes, also you can't hit or kill your teammates.
+- The ranged kill can't go across walls or other collision props like the Archer's impostor role and if you miss the shot it just enters cooldown. Also a straight line player color based will appear everytime you shoot to serve as guidance.
+- You will hear a sound if you hit someone or you get hit. Also there's a special bell sound when someone dies on All VS All or Team Battle.
+- Player's color ground splashes will appear when someone gets hit on All VS All, on Team and Score Battle they will be purple, pink or grey. It will stay there the entire match except for Score Battle, where it disappears after 5 seconds.
+- Revive Time value is calculated by subtracting Invincibility Time value from it, for example if Revive Time is 8 and Invincibility Time is 3, players will revive after 5 seconds but will be invincible for another 3 seconds after reviving.
+
+-----------------------
+
 # CustomCosmetics
 
 A custom hats system (adapted from [xxomega77](https://github.com/xxomega77xx/HatPack)) has been added, also thanks to that I could add a method to add custom visors and nameplates too. Hats don't replace visors and some have adaptative color. It can also have some color or position bugs, we'll try to fix them in the future while also adding new hats.
@@ -1367,7 +1402,6 @@ From Las Monjas 1.5.0 version, [Submerged](https://github.com/SubmergedAmongUs/S
 - Welder can't seal central vents or the one-way vent + its exit.
 - Spiritualist and Necromancer revive point is fixed to Medbey on the upper floor and security on the lower one, instead the body's location.
 - Vigilant can't put extra cameras, only check them remotely.
-- Puppeteer has a visual bug, if you're transformed into other player and get out of a vent, the hat (if it's adaptative) goes back to its original color, but its only a visual bug for the Puppeteer player, meaning other players still see the correct hat color.
 - Archer only gets aim assist for the players on the same floor as him.
 - Ninja can't use Ninja Time if his target is on the other floor.
 - Puppeteer initial transform position gets replaced by Medbey on the upper floor and security on the lower one.
