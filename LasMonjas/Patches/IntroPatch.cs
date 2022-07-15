@@ -70,6 +70,9 @@ namespace LasMonjas.Patches
             if (ZombieLaboratory.zombieLaboratoryMode) {
                 howmanygamemodesareon += 1;
             }
+            if (BattleRoyale.battleRoyaleMode) {
+                howmanygamemodesareon += 1;
+            }
 
             if (howmanygamemodesareon == 1) {
                 if (CaptureTheFlag.captureTheFlagMode) {
@@ -154,6 +157,34 @@ namespace LasMonjas.Patches
                         yourTeam = survivorTeam;
                     }
                 }
+                else if (BattleRoyale.battleRoyaleMode) {
+                    SoundManager.Instance.PlaySound(CustomMain.customAssets.battleRoyaleMusic, true, 25f);
+                    // Intro Battle Royale
+                    if (BattleRoyale.matchType == 0) {
+                        var soloTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
+                        if (PlayerControl.LocalPlayer == BattleRoyale.soloPlayer01 || PlayerControl.LocalPlayer == BattleRoyale.soloPlayer02 || PlayerControl.LocalPlayer == BattleRoyale.soloPlayer03 || PlayerControl.LocalPlayer == BattleRoyale.soloPlayer04 || PlayerControl.LocalPlayer == BattleRoyale.soloPlayer05 || PlayerControl.LocalPlayer == BattleRoyale.soloPlayer06 || PlayerControl.LocalPlayer == BattleRoyale.soloPlayer07 || PlayerControl.LocalPlayer == BattleRoyale.soloPlayer08 || PlayerControl.LocalPlayer == BattleRoyale.soloPlayer09 || PlayerControl.LocalPlayer == BattleRoyale.soloPlayer10 || PlayerControl.LocalPlayer == BattleRoyale.soloPlayer11 || PlayerControl.LocalPlayer == BattleRoyale.soloPlayer12 || PlayerControl.LocalPlayer == BattleRoyale.soloPlayer13 || PlayerControl.LocalPlayer == BattleRoyale.soloPlayer14 || PlayerControl.LocalPlayer == BattleRoyale.soloPlayer15) {
+                            soloTeam.Add(PlayerControl.LocalPlayer);
+                            yourTeam = soloTeam;
+                        }
+                    }
+                    else {
+                        var purpleTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
+                        if (PlayerControl.LocalPlayer == BattleRoyale.purplePlayer01 || PlayerControl.LocalPlayer == BattleRoyale.purplePlayer02 || PlayerControl.LocalPlayer == BattleRoyale.purplePlayer03 || PlayerControl.LocalPlayer == BattleRoyale.purplePlayer04 || PlayerControl.LocalPlayer == BattleRoyale.purplePlayer05 || PlayerControl.LocalPlayer == BattleRoyale.purplePlayer06 || PlayerControl.LocalPlayer == BattleRoyale.purplePlayer07) {
+                            purpleTeam.Add(PlayerControl.LocalPlayer);
+                            yourTeam = purpleTeam;
+                        }
+                        var pinkTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
+                        if (PlayerControl.LocalPlayer == BattleRoyale.pinkPlayer01 || PlayerControl.LocalPlayer == BattleRoyale.pinkPlayer02 || PlayerControl.LocalPlayer == BattleRoyale.pinkPlayer03 || PlayerControl.LocalPlayer == BattleRoyale.pinkPlayer04 || PlayerControl.LocalPlayer == BattleRoyale.pinkPlayer05 || PlayerControl.LocalPlayer == BattleRoyale.pinkPlayer06 || PlayerControl.LocalPlayer == BattleRoyale.pinkPlayer07) {
+                            pinkTeam.Add(PlayerControl.LocalPlayer);
+                            yourTeam = pinkTeam;
+                        }
+                        if (PlayerControl.LocalPlayer == BattleRoyale.serialKiller) {
+                            var greyTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
+                            greyTeam.Add(PlayerControl.LocalPlayer);
+                            yourTeam = greyTeam;
+                        }
+                    }
+                }
             }
             else {
                 // Intro solo teams (rebels and neutrals)
@@ -172,6 +203,7 @@ namespace LasMonjas.Patches
                 KingOfTheHill.kingOfTheHillMode = false;
                 HotPotato.hotPotatoMode = false;
                 ZombieLaboratory.zombieLaboratoryMode = false;
+                BattleRoyale.battleRoyaleMode = false;
             }
         }
 
@@ -205,6 +237,11 @@ namespace LasMonjas.Patches
                     __instance.BackgroundBar.material.color = Hunter.color;
                     __instance.TeamTitle.text = "Zombie \nLaboratory";
                     __instance.TeamTitle.color = Hunter.color;
+                }
+                else if (BattleRoyale.battleRoyaleMode) {
+                    __instance.BackgroundBar.material.color = Sleuth.color;
+                    __instance.TeamTitle.text = "Battle \nRoyale";
+                    __instance.TeamTitle.color = Sleuth.color;
                 }
             }
             else {
@@ -3467,6 +3504,380 @@ namespace LasMonjas.Patches
                         new CustomMessage("Time Left: ", ZombieLaboratory.matchDuration, -1, -1.3f, 19);
                         ZombieLaboratory.zombieLaboratoryCounter = "Key Items: " + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + "Survivors: " + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> " + "| " + "Infected: " + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> " + "| " + "Zombies: " + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
                         new CustomMessage(ZombieLaboratory.zombieLaboratoryCounter, ZombieLaboratory.matchDuration, -1, 1.9f, 20);
+                    }
+                    // Battle Royale
+                    else if (BattleRoyale.battleRoyaleMode) {
+                        int howmanyplayers = 0;
+                        switch (PlayerControl.GameOptions.MapId) {
+                            // Skeld
+                            case 0:
+                                if (activatedSensei) {
+
+                                    if (BattleRoyale.matchType == 0) {
+                                        foreach (PlayerControl soloPlayer in BattleRoyale.soloPlayerTeam) {
+                                            soloPlayer.transform.position = new Vector3(BattleRoyale.soloPlayersSpawnPositions[howmanyplayers].x, BattleRoyale.soloPlayersSpawnPositions[howmanyplayers].y, PlayerControl.LocalPlayer.transform.position.z);
+                                            Helpers.clearAllTasks(soloPlayer);
+                                            howmanyplayers += 1;
+                                        }
+                                    }
+                                    else {
+                                        if (PlayerControl.LocalPlayer == BattleRoyale.serialKiller) {
+                                            BattleRoyale.serialKiller.transform.position = new Vector3(-3.65f, 5f, PlayerControl.LocalPlayer.transform.position.z);
+                                            Helpers.clearAllTasks(BattleRoyale.serialKiller);
+                                        }
+
+                                        foreach (PlayerControl player in BattleRoyale.purpleTeam) {
+                                            player.transform.position = new Vector3(-17.5f, -1.15f, PlayerControl.LocalPlayer.transform.position.z);
+                                            Helpers.clearAllTasks(player);
+                                        }
+                                        foreach (PlayerControl player in BattleRoyale.pinkTeam) {
+                                            player.transform.position = new Vector3(7.7f, -0.95f, PlayerControl.LocalPlayer.transform.position.z);
+                                            Helpers.clearAllTasks(player);
+                                        }
+                                    }
+
+                                    if (PlayerControl.LocalPlayer != null && !createdbattleroyale) {
+
+                                        createdbattleroyale = true;
+
+                                        // Remove camera use and admin table on Skeld
+                                        GameObject cameraStand = GameObject.Find("SurvConsole");
+                                        cameraStand.GetComponent<PolygonCollider2D>().enabled = false;
+                                        GameObject admin = GameObject.Find("MapRoomConsole");
+                                        admin.GetComponent<CircleCollider2D>().enabled = false;
+                                    }
+                                }
+                                else {
+
+                                    if (BattleRoyale.matchType == 0) {
+                                        foreach (PlayerControl soloPlayer in BattleRoyale.soloPlayerTeam) {
+                                            soloPlayer.transform.position = new Vector3(BattleRoyale.soloPlayersSpawnPositions[howmanyplayers].x, BattleRoyale.soloPlayersSpawnPositions[howmanyplayers].y, PlayerControl.LocalPlayer.transform.position.z);
+                                            Helpers.clearAllTasks(soloPlayer);
+                                            howmanyplayers += 1;
+                                        }
+                                    }
+                                    else {
+
+                                        if (PlayerControl.LocalPlayer == BattleRoyale.serialKiller) {
+                                            BattleRoyale.serialKiller.transform.position = new Vector3(6.35f, -7.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                            Helpers.clearAllTasks(BattleRoyale.serialKiller);
+                                        }
+
+                                        foreach (PlayerControl player in BattleRoyale.purpleTeam) {
+                                            player.transform.position = new Vector3(-17f, -5.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                            Helpers.clearAllTasks(player);
+                                        }
+                                        foreach (PlayerControl player in BattleRoyale.pinkTeam) {
+                                            player.transform.position = new Vector3(12f, -4.75f, PlayerControl.LocalPlayer.transform.position.z);
+                                            Helpers.clearAllTasks(player);
+                                        }
+                                    }
+
+                                    if (PlayerControl.LocalPlayer != null && !createdbattleroyale) {
+
+                                        createdbattleroyale = true;
+
+                                        // Remove camera use and admin table on Skeld
+                                        GameObject cameraStand = GameObject.Find("SurvConsole");
+                                        cameraStand.GetComponent<PolygonCollider2D>().enabled = false;
+                                        GameObject admin = GameObject.Find("MapRoomConsole");
+                                        admin.GetComponent<CircleCollider2D>().enabled = false;
+                                    }
+                                }
+                                break;
+                            // MiraHQ
+                            case 1:
+
+                                if (BattleRoyale.matchType == 0) {
+                                    foreach (PlayerControl soloPlayer in BattleRoyale.soloPlayerTeam) {
+                                        soloPlayer.transform.position = new Vector3(BattleRoyale.soloPlayersSpawnPositions[howmanyplayers].x, BattleRoyale.soloPlayersSpawnPositions[howmanyplayers].y, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(soloPlayer);
+                                        howmanyplayers += 1;
+                                    }
+                                }
+                                else {
+                                    if (PlayerControl.LocalPlayer == BattleRoyale.serialKiller) {
+                                        BattleRoyale.serialKiller.transform.position = new Vector3(16.25f, 24.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(BattleRoyale.serialKiller);
+                                    }
+
+                                    foreach (PlayerControl player in BattleRoyale.purpleTeam) {
+                                        player.transform.position = new Vector3(6.15f, 13.25f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(player);
+                                    }
+                                    foreach (PlayerControl player in BattleRoyale.pinkTeam) {
+                                        player.transform.position = new Vector3(22.25f, 3f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(player);
+                                    }
+                                }
+
+                                if (PlayerControl.LocalPlayer != null && !createdbattleroyale) {
+
+                                    createdbattleroyale = true;
+
+                                    // Remove Doorlog use, Decontamination doors and admin table on MiraHQ
+                                    GameObject DoorLog = GameObject.Find("SurvLogConsole");
+                                    DoorLog.GetComponent<BoxCollider2D>().enabled = false;
+                                    GameObject deconUpperDoor = GameObject.Find("UpperDoor");
+                                    deconUpperDoor.SetActive(false);
+                                    GameObject deconLowerDoor = GameObject.Find("LowerDoor");
+                                    deconLowerDoor.SetActive(false);
+                                    GameObject deconUpperDoorPanelTop = GameObject.Find("DeconDoorPanel-Top");
+                                    deconUpperDoorPanelTop.SetActive(false);
+                                    GameObject deconUpperDoorPanelHigh = GameObject.Find("DeconDoorPanel-High");
+                                    deconUpperDoorPanelHigh.SetActive(false);
+                                    GameObject deconUpperDoorPanelBottom = GameObject.Find("DeconDoorPanel-Bottom");
+                                    deconUpperDoorPanelBottom.SetActive(false);
+                                    GameObject deconUpperDoorPanelLow = GameObject.Find("DeconDoorPanel-Low");
+                                    deconUpperDoorPanelLow.SetActive(false);
+                                    GameObject admin = GameObject.Find("AdminMapConsole");
+                                    admin.GetComponent<CircleCollider2D>().enabled = false;
+                                }
+                                break;
+                            // Polus
+                            case 2:
+
+                                if (BattleRoyale.matchType == 0) {
+                                    foreach (PlayerControl soloPlayer in BattleRoyale.soloPlayerTeam) {
+                                        soloPlayer.transform.position = new Vector3(BattleRoyale.soloPlayersSpawnPositions[howmanyplayers].x, BattleRoyale.soloPlayersSpawnPositions[howmanyplayers].y, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(soloPlayer);
+                                        howmanyplayers += 1;
+                                    }
+                                }
+                                else {
+                                    if (PlayerControl.LocalPlayer == BattleRoyale.serialKiller) {
+                                        BattleRoyale.serialKiller.transform.position = new Vector3(22.3f, -19.15f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(BattleRoyale.serialKiller);
+                                    }
+
+                                    foreach (PlayerControl player in BattleRoyale.purpleTeam) {
+                                        player.transform.position = new Vector3(2.35f, -23.75f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(player);
+                                    }
+                                    foreach (PlayerControl player in BattleRoyale.pinkTeam) {
+                                        player.transform.position = new Vector3(36.35f, -8f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(player);
+                                    }
+                                }
+
+                                if (PlayerControl.LocalPlayer != null && !createdbattleroyale) {
+
+                                    createdbattleroyale = true;
+
+                                    // Remove Decon doors, camera use, vitals, admin tables on Polus
+                                    GameObject lowerdecon = GameObject.Find("LowerDecon");
+                                    lowerdecon.SetActive(false);
+                                    GameObject upperdecon = GameObject.Find("UpperDecon");
+                                    upperdecon.SetActive(false);
+                                    GameObject survCameras = GameObject.Find("Surv_Panel");
+                                    survCameras.GetComponent<BoxCollider2D>().enabled = false;
+                                    GameObject vitals = GameObject.Find("panel_vitals");
+                                    vitals.GetComponent<BoxCollider2D>().enabled = false;
+                                    GameObject adminone = GameObject.Find("panel_map");
+                                    adminone.GetComponent<BoxCollider2D>().enabled = false;
+                                    GameObject admintwo = GameObject.Find("panel_map (1)");
+                                    admintwo.GetComponent<BoxCollider2D>().enabled = false;
+                                    GameObject ramp = GameObject.Find("ramp");
+                                    ramp.transform.position = new Vector3(ramp.transform.position.x, ramp.transform.position.y, 0.75f);
+                                }
+                                break;
+                            // Dlesk
+                            case 3:
+
+                                if (BattleRoyale.matchType == 0) {
+                                    foreach (PlayerControl soloPlayer in BattleRoyale.soloPlayerTeam) {
+                                        soloPlayer.transform.position = new Vector3(BattleRoyale.soloPlayersSpawnPositions[howmanyplayers].x, BattleRoyale.soloPlayersSpawnPositions[howmanyplayers].y, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(soloPlayer);
+                                        howmanyplayers += 1;
+                                    }
+                                }
+                                else {
+
+                                    if (PlayerControl.LocalPlayer == BattleRoyale.serialKiller) {
+                                        BattleRoyale.serialKiller.transform.position = new Vector3(-6.35f, -7.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(BattleRoyale.serialKiller);
+                                    }
+
+                                    foreach (PlayerControl player in BattleRoyale.purpleTeam) {
+                                        player.transform.position = new Vector3(17f, -5.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(player);
+                                    }
+                                    foreach (PlayerControl player in BattleRoyale.pinkTeam) {
+                                        player.transform.position = new Vector3(-12f, -4.75f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(player);
+                                    }
+                                }
+
+                                if (PlayerControl.LocalPlayer != null && !createdbattleroyale) {
+
+                                    createdbattleroyale = true;
+
+                                    // Remove camera use and admin table on Dleks
+                                    GameObject cameraStand = GameObject.Find("SurvConsole");
+                                    cameraStand.GetComponent<PolygonCollider2D>().enabled = false;
+                                    GameObject admin = GameObject.Find("MapRoomConsole");
+                                    admin.GetComponent<CircleCollider2D>().enabled = false;
+                                }
+                                break;
+                            // Airship
+                            case 4:
+
+                                if (BattleRoyale.matchType == 0) {
+                                    foreach (PlayerControl soloPlayer in BattleRoyale.soloPlayerTeam) {
+                                        soloPlayer.transform.position = new Vector3(-0.5f, -1, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(soloPlayer);
+                                    }
+                                }
+                                else {
+
+                                    if (PlayerControl.LocalPlayer == BattleRoyale.serialKiller) {
+                                        BattleRoyale.serialKiller.transform.position = new Vector3(12.25f, 2f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(BattleRoyale.serialKiller);
+                                    }
+
+                                    foreach (PlayerControl player in BattleRoyale.purpleTeam) {
+                                        player.transform.position = new Vector3(-13.9f, -14.45f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(player);
+                                    }
+                                    foreach (PlayerControl player in BattleRoyale.pinkTeam) {
+                                        player.transform.position = new Vector3(37.35f, -3.25f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(player);
+                                    }
+                                }
+
+                                if (PlayerControl.LocalPlayer != null && !createdbattleroyale) {
+
+                                    createdbattleroyale = true;
+
+                                    // Remove camera use, admin table, vitals, electrical doors on Airship
+                                    GameObject cameras = GameObject.Find("task_cams");
+                                    cameras.GetComponent<BoxCollider2D>().enabled = false;
+                                    GameObject admin = GameObject.Find("panel_cockpit_map");
+                                    admin.GetComponent<BoxCollider2D>().enabled = false;
+                                    GameObject vitals = GameObject.Find("panel_vitals");
+                                    vitals.GetComponent<CircleCollider2D>().enabled = false;
+                                    GameObject LeftDoorTop = GameObject.Find("LeftDoorTop");
+                                    LeftDoorTop.SetActive(false);
+                                    GameObject TopLeftVert = GameObject.Find("TopLeftVert");
+                                    TopLeftVert.SetActive(false);
+                                    GameObject TopLeftHort = GameObject.Find("TopLeftHort");
+                                    TopLeftHort.SetActive(false);
+                                    GameObject BottomHort = GameObject.Find("BottomHort");
+                                    BottomHort.SetActive(false);
+                                    GameObject TopCenterHort = GameObject.Find("TopCenterHort");
+                                    TopCenterHort.SetActive(false);
+                                    GameObject LeftVert = GameObject.Find("LeftVert");
+                                    LeftVert.SetActive(false);
+                                    GameObject RightVert = GameObject.Find("RightVert");
+                                    RightVert.SetActive(false);
+                                    GameObject TopRightVert = GameObject.Find("TopRightVert");
+                                    TopRightVert.SetActive(false);
+                                    GameObject TopRightHort = GameObject.Find("TopRightHort");
+                                    TopRightHort.SetActive(false);
+                                    GameObject BottomRightHort = GameObject.Find("BottomRightHort");
+                                    BottomRightHort.SetActive(false);
+                                    GameObject BottomRightVert = GameObject.Find("BottomRightVert");
+                                    BottomRightVert.SetActive(false);
+                                    GameObject LeftDoorBottom = GameObject.Find("LeftDoorBottom");
+                                    LeftDoorBottom.SetActive(false);
+                                }
+                                break;
+                            // Submerged
+                            case 5:
+
+                                if (BattleRoyale.matchType == 0) {
+                                    foreach (PlayerControl soloPlayer in BattleRoyale.soloPlayerTeam) {
+                                        soloPlayer.transform.position = new Vector3(3.75f, -26.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(soloPlayer);
+                                    }
+                                }
+                                else {
+
+                                    if (PlayerControl.LocalPlayer == BattleRoyale.serialKiller) {
+                                        BattleRoyale.serialKiller.transform.position = new Vector3(5.75f, 31.25f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(BattleRoyale.serialKiller);
+                                    }
+
+                                    foreach (PlayerControl player in BattleRoyale.purpleTeam) {
+                                        player.transform.position = new Vector3(-12.25f, 18.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(player);
+                                    }
+                                    foreach (PlayerControl player in BattleRoyale.pinkTeam) {
+                                        player.transform.position = new Vector3(-8.5f, -39.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(player);
+                                    }
+                                }
+
+                                if (PlayerControl.LocalPlayer != null && !createdbattleroyale) {
+
+                                    createdbattleroyale = true;
+
+                                    // Remove camera use, admin table, vitals, on Submerged
+                                    GameObject upperCentralVent = GameObject.Find("UpperCentralVent");
+                                    upperCentralVent.GetComponent<CircleCollider2D>().enabled = false;
+                                    upperCentralVent.GetComponent<PolygonCollider2D>().enabled = false;
+                                    GameObject lowerCentralVent = GameObject.Find("LowerCentralVent");
+                                    lowerCentralVent.GetComponent<BoxCollider2D>().enabled = false;
+                                    GameObject securityCams = GameObject.Find("SecurityConsole");
+                                    securityCams.GetComponent<PolygonCollider2D>().enabled = false;
+                                    GameObject vitals = GameObject.Find("panel_vitals(Clone)");
+                                    vitals.GetComponent<CircleCollider2D>().enabled = false;
+                                    GameObject adminone = GameObject.Find("console-adm-admintable");
+                                    adminone.GetComponent<CircleCollider2D>().enabled = false;
+                                    GameObject admintwo = GameObject.Find("console-adm-admintable (1)");
+                                    GameObject deconVLower = GameObject.Find("DeconDoorVLower");
+                                    deconVLower.SetActive(false);
+                                    GameObject deconVUpper = GameObject.Find("DeconDoorVUpper");
+                                    deconVUpper.SetActive(false);
+                                    GameObject deconHLower = GameObject.Find("DeconDoorHLower");
+                                    deconHLower.SetActive(false);
+                                    GameObject deconHUpper = GameObject.Find("DeconDoorHUpper");
+                                    deconHUpper.SetActive(false);
+                                    admintwo.GetComponent<CircleCollider2D>().enabled = false;
+                                    GameObject camsone = GameObject.Find("Submerged(Clone)/Cameras/LowerDeck/Electrical/FixConsole");
+                                    camsone.GetComponent<PolygonCollider2D>().enabled = false;
+                                    GameObject camstwo = GameObject.Find("Submerged(Clone)/Cameras/LowerDeck/Lobby/FixConsole");
+                                    camstwo.GetComponent<BoxCollider2D>().enabled = false;
+                                    camstwo.GetComponent<CircleCollider2D>().enabled = false;
+                                    GameObject camsthree = GameObject.Find("Submerged(Clone)/Cameras/UpperDeck/Comms/FixConsole");
+                                    camsthree.GetComponent<PolygonCollider2D>().enabled = false;
+                                    GameObject camsfour = GameObject.Find("Submerged(Clone)/Cameras/UpperDeck/Lobby/FixConsole");
+                                    camsfour.GetComponent<BoxCollider2D>().enabled = false;
+                                    camsfour.GetComponent<CircleCollider2D>().enabled = false;
+                                    GameObject camsfive = GameObject.Find("Submerged(Clone)/Cameras/UpperDeck/WestHallway/FixConsole");
+                                    camsfive.GetComponent<BoxCollider2D>().enabled = false;
+                                    camsfive.GetComponent<CircleCollider2D>().enabled = false;
+                                    GameObject camssix = GameObject.Find("Submerged(Clone)/Cameras/UpperDeck/YHallway/FixConsole");
+                                    camssix.GetComponent<BoxCollider2D>().enabled = false;
+                                    camssix.GetComponent<CircleCollider2D>().enabled = false;
+                                    GameObject camsseven = GameObject.Find("Submerged(Clone)/Cameras/LowerDeck/WestHallway/FixConsole");
+                                    camsseven.GetComponent<BoxCollider2D>().enabled = false;
+                                }
+                                break;
+                        }
+                        new CustomMessage("Time Left: ", BattleRoyale.matchDuration, -1, -1.3f, 24);
+                        switch (BattleRoyale.matchType) {
+                            case 0:
+                                BattleRoyale.battleRoyalepointCounter = "Battle Royale Fighters: " + "<color=#009F57FF>" + BattleRoyale.soloPlayerTeam.Count + "</color>";
+                                break;
+                            case 1:
+                                if (BattleRoyale.serialKiller != null) {
+                                    BattleRoyale.battleRoyalepointCounter = "Purple Team: " + "<color=#5E3E7DFF>" + BattleRoyale.purpleTeam.Count + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + BattleRoyale.pinkTeam.Count + "</color> | " + "Serial Killer: " + "<color=#808080FF>" + BattleRoyale.serialKillerTeam.Count + "</color>";
+                                }
+                                else {
+                                    BattleRoyale.battleRoyalepointCounter = "Purple Team: " + "<color=#5E3E7DFF>" + BattleRoyale.purpleTeam.Count + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + BattleRoyale.pinkTeam.Count + "</color>";
+                                }
+                                break;
+                            case 2:
+                                if (BattleRoyale.serialKiller != null) {
+                                    BattleRoyale.battleRoyalepointCounter = "Goal: " + BattleRoyale.requiredScore + " | <color=#5E3E7DFF>Purple Team: " + BattleRoyale.purplePoints + "</color> | " + "<color=#F2BEFFFF>Pink Team: " + BattleRoyale.pinkPoints + "</color> | " + "<color=#808080FF>Serial Killer Points: " + BattleRoyale.serialKillerPoints + "</color>";
+                                }
+                                else {
+                                    BattleRoyale.battleRoyalepointCounter = "Goal: " + BattleRoyale.requiredScore + " | <color=#5E3E7DFF>Purple Team: " + BattleRoyale.purplePoints + "</color> | " + "<color=#F2BEFFFF>Pink Team: " + BattleRoyale.pinkPoints + "</color>";
+                                }
+                                break;
+                        }
+                        new CustomMessage(BattleRoyale.battleRoyalepointCounter, BattleRoyale.matchDuration, -1, 1.9f, 25);
                     }
                 }
             }

@@ -79,6 +79,7 @@ namespace LasMonjas.Patches
                 KingOfTheHill.kingOfTheHillMode = false;
                 HotPotato.hotPotatoMode = false;
                 ZombieLaboratory.zombieLaboratoryMode = false;
+                BattleRoyale.battleRoyaleMode = false;
 
                 if (prefab == null) {
                     LoadPrefab();

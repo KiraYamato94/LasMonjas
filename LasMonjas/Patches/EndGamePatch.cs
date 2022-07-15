@@ -38,7 +38,13 @@ namespace LasMonjas.Patches {
         PoisonerWin = 33,
         PuppeteerWin = 34,
         NinjaWin = 35,
-        BerserkerWin = 36
+        BerserkerWin = 36,
+        BattleRoyaleSoloWin = 37,
+        BattleRoyaleTimeWin = 38,
+        BattleRoyalePurpleTeamWin = 39,
+        BattleRoyalePinkTeamWin = 40,
+        BattleRoyaleSerialKillerWin = 41,
+        BattleRoyaleDraw = 42
     }
 
     enum WinCondition {
@@ -70,7 +76,13 @@ namespace LasMonjas.Patches {
         PoisonerWin,
         PuppeteerWin,
         NinjaWin,
-        BerserkerWin
+        BerserkerWin,
+        BattleRoyaleSoloWin,
+        BattleRoyaleTimeWin,
+        BattleRoyalePurpleTeamWin,
+        BattleRoyalePinkTeamWin,
+        BattleRoyaleSerialKillerWin,
+        BattleRoyaleDraw
     }
 
     static class AdditionalTempData {
@@ -169,7 +181,13 @@ namespace LasMonjas.Patches {
             bool hotPotatoEnd = HotPotato.hotPotatoMode && gameOverReason == (GameOverReason)CustomGameOverReason.HotPotatoEnd;
             bool zombieWin = ZombieLaboratory.zombieLaboratoryMode && gameOverReason == (GameOverReason)CustomGameOverReason.ZombieWin;
             bool survivorWin = ZombieLaboratory.zombieLaboratoryMode && gameOverReason == (GameOverReason)CustomGameOverReason.SurvivorWin;
-            
+            bool battleRoyaleSoloWin = BattleRoyale.battleRoyaleMode && gameOverReason == (GameOverReason)CustomGameOverReason.BattleRoyaleSoloWin;
+            bool battleRoyaleTimeWin = BattleRoyale.battleRoyaleMode && gameOverReason == (GameOverReason)CustomGameOverReason.BattleRoyaleTimeWin;
+            bool battleRoyalePurpleTeamWin = BattleRoyale.battleRoyaleMode && gameOverReason == (GameOverReason)CustomGameOverReason.BattleRoyalePurpleTeamWin;
+            bool battleRoyalePinkTeamWin = BattleRoyale.battleRoyaleMode && gameOverReason == (GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin;
+            bool battleRoyaleSerialKillerWin = BattleRoyale.battleRoyaleMode && gameOverReason == (GameOverReason)CustomGameOverReason.BattleRoyaleSerialKillerWin;
+            bool battleRoyaleDraw = BattleRoyale.battleRoyaleMode && gameOverReason == (GameOverReason)CustomGameOverReason.BattleRoyaleDraw;
+
             // Kid lose
             if (kidLose) {
                 TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
@@ -440,6 +458,73 @@ namespace LasMonjas.Patches {
                 }
                 AdditionalTempData.winCondition = WinCondition.SurvivorWin;
             }
+            
+            // BattleRoyale Win
+            else if (battleRoyaleSoloWin) {
+                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                foreach (PlayerControl player in BattleRoyale.soloPlayerTeam) {
+                    if (!player.Data.IsDead) {
+                        WinningPlayerData wpd = new WinningPlayerData(player.Data);
+                        TempData.winners.Add(wpd);
+                    }
+                }
+                AdditionalTempData.winCondition = WinCondition.BattleRoyaleSoloWin;
+            }
+            // BattleRoyale Time Win
+            else if (battleRoyaleTimeWin) {
+                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                if (BattleRoyale.matchType == 0) {
+                    foreach (PlayerControl player in BattleRoyale.soloPlayerTeam) {
+                        if (!player.Data.IsDead) {
+                            WinningPlayerData wpd = new WinningPlayerData(player.Data);
+                            TempData.winners.Add(wpd);
+                        }
+                    }
+                }
+                else {
+                    foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                        if (!player.Data.IsDead) {
+                            WinningPlayerData wpd = new WinningPlayerData(player.Data);
+                            TempData.winners.Add(wpd);
+                        }
+                    }
+                }
+                AdditionalTempData.winCondition = WinCondition.BattleRoyaleTimeWin;
+            }
+            // BattleRoyale Purple Team Win
+            else if (battleRoyalePurpleTeamWin) {
+                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                foreach (PlayerControl player in BattleRoyale.purpleTeam) {
+                    WinningPlayerData wpd = new WinningPlayerData(player.Data);
+                    TempData.winners.Add(wpd);
+                }
+                AdditionalTempData.winCondition = WinCondition.BattleRoyalePurpleTeamWin;
+            }
+            // BattleRoyale Pink Team Win
+            else if (battleRoyalePinkTeamWin) {
+                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                foreach (PlayerControl player in BattleRoyale.pinkTeam) {
+                    WinningPlayerData wpd = new WinningPlayerData(player.Data);
+                    TempData.winners.Add(wpd);
+                }
+                AdditionalTempData.winCondition = WinCondition.BattleRoyalePinkTeamWin;
+            }
+            // BattleRoyale Serial Killer Win
+            else if (battleRoyaleSerialKillerWin) {
+                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                WinningPlayerData wpd = new WinningPlayerData(BattleRoyale.serialKiller.Data);
+                TempData.winners.Add(wpd);
+                AdditionalTempData.winCondition = WinCondition.BattleRoyaleSerialKillerWin;
+            }
+            // BattleRoyale Draw
+            else if (battleRoyaleDraw) {
+                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                    WinningPlayerData wpd = new WinningPlayerData(player.Data);
+                    TempData.winners.Add(wpd);
+                }
+                AdditionalTempData.winCondition = WinCondition.BattleRoyaleDraw; 
+            }
 
             // Reset Settings
             RPCProcedure.resetVariables();
@@ -594,45 +679,65 @@ namespace LasMonjas.Patches {
                 AmongUsClient.Instance.FinishRpcImmediately(writermusic);
                 RPCProcedure.changeMusic(4);
             }
-            else if (AdditionalTempData.winCondition == WinCondition.DrawTeamWin || AdditionalTempData.winCondition == WinCondition.TeamHillDraw) {
+            else if (AdditionalTempData.winCondition == WinCondition.DrawTeamWin || AdditionalTempData.winCondition == WinCondition.TeamHillDraw || AdditionalTempData.winCondition == WinCondition.BattleRoyaleDraw) {
                 textRenderer.text = "Draw";
                 textRenderer.color = new Color32(255, 128, 0, byte.MaxValue); 
             }
             else if (AdditionalTempData.winCondition == WinCondition.RedTeamFlagWin) {
-                textRenderer.text = "Red Team Win";
+                textRenderer.text = "Red Team Wins";
                 textRenderer.color = Color.red; 
             }
             else if (AdditionalTempData.winCondition == WinCondition.BlueTeamFlagWin) {
-                textRenderer.text = "Blue Team Win";
+                textRenderer.text = "Blue Team Wins";
                 textRenderer.color = Color.blue; 
             }
             else if (AdditionalTempData.winCondition == WinCondition.ThiefModePoliceWin) {
-                textRenderer.text = "Police Team Win";
+                textRenderer.text = "Police Team Wins";
                 textRenderer.color = Color.cyan; 
             }
             else if (AdditionalTempData.winCondition == WinCondition.ThiefModeThiefWin) {
-                textRenderer.text = "Thief Team Win";
+                textRenderer.text = "Thief Team Wins";
                 textRenderer.color = Mechanic.color;
             }
             else if (AdditionalTempData.winCondition == WinCondition.GreenTeamHillWin) {
-                textRenderer.text = "Green Team Win";
+                textRenderer.text = "Green Team Wins";
                 textRenderer.color = Color.green;
             }
             else if (AdditionalTempData.winCondition == WinCondition.YellowTeamHillWin) {
-                textRenderer.text = "Yellow Team Win";
+                textRenderer.text = "Yellow Team Wins";
                 textRenderer.color = Color.yellow;
             }
             else if (AdditionalTempData.winCondition == WinCondition.HotPotatoEnd) {
-                textRenderer.text = "Cold Potato Team Win";
+                textRenderer.text = "Cold Potato Team Wins";
                 textRenderer.color = Color.cyan;
             }
             else if (AdditionalTempData.winCondition == WinCondition.ZombieWin) {
-                textRenderer.text = "Zombie Team Win";
+                textRenderer.text = "Zombie Team Wins";
                 textRenderer.color = Mechanic.color;
             }
             else if (AdditionalTempData.winCondition == WinCondition.SurvivorWin) {
-                textRenderer.text = "Survivor Team Win";
+                textRenderer.text = "Survivor Team Wins";
                 textRenderer.color = Shy.color;
+            }
+            else if (AdditionalTempData.winCondition == WinCondition.BattleRoyaleSoloWin) {
+                textRenderer.text = "Battle Royale Champion";
+                textRenderer.color = Sleuth.color;
+            }
+            else if (AdditionalTempData.winCondition == WinCondition.BattleRoyaleTimeWin) {
+                textRenderer.text = "Battle Royale Champions";
+                textRenderer.color = Sleuth.color;
+            }
+            else if (AdditionalTempData.winCondition == WinCondition.BattleRoyalePurpleTeamWin) {
+                textRenderer.text = "Purple Team Wins";
+                textRenderer.color = Captain.color;
+            }
+            else if (AdditionalTempData.winCondition == WinCondition.BattleRoyalePinkTeamWin) {
+                textRenderer.text = "Pink Team Wins";
+                textRenderer.color = Shy.color;
+            }
+            else if (AdditionalTempData.winCondition == WinCondition.BattleRoyaleSerialKillerWin) {
+                textRenderer.text = "Serial Killer Wins";
+                textRenderer.color = Joker.color;
             }
             else {
                 MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
@@ -676,10 +781,10 @@ namespace LasMonjas.Patches {
             if (DestroyableSingleton<TutorialManager>.InstanceExists) 
                 return true;
             var statistics = new PlayerStatistics(__instance);
+            if (CheckAndEndGameForPyromaniacWin(__instance)) return false;
             if (CheckAndEndGameForKidLose(__instance)) return false;
             if (CheckAndEndGameForBombExploded(__instance)) return false;
             if (CheckAndEndGameForJokerWin(__instance)) return false;
-            if (CheckAndEndGameForPyromaniacWin(__instance)) return false;
             if (CheckAndEndGameForTreasureHunterWin(__instance)) return false;
             if (CheckAndEndGameForDevourerWin(__instance)) return false;
             if (CheckAndEndGameForPuppeteerWin(__instance)) return false;
@@ -707,6 +812,12 @@ namespace LasMonjas.Patches {
             if (CheckAndEndGameForHotPotatoEnd(__instance)) return false;
             if (CheckAndEndGameForZombieWin(__instance)) return false;
             if (CheckAndEndGameForSurvivorWin(__instance)) return false;
+            if (CheckAndEndGameForBattleRoyaleSoloWin(__instance)) return false;
+            if (CheckAndEndGameForBattleRoyaleTimeWin(__instance)) return false;
+            if (CheckAndEndGameForBattleRoyalePurpleTeamWin(__instance)) return false;
+            if (CheckAndEndGameForBattleRoyalePinkTeamWin(__instance)) return false;
+            if (CheckAndEndGameForBattleRoyaleSerialKillerWin(__instance)) return false; 
+            if (CheckAndEndGameForBattleRoyaleDraw(__instance)) return false; 
             return false;
         }
 
@@ -999,6 +1110,54 @@ namespace LasMonjas.Patches {
             if (ZombieLaboratory.triggerSurvivorWin) {
                 __instance.enabled = false;
                 ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.SurvivorWin, false);
+                return true;
+            }
+            return false;
+        }
+        private static bool CheckAndEndGameForBattleRoyaleSoloWin(ShipStatus __instance) {
+            if (BattleRoyale.triggerSoloWin) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSoloWin, false);
+                return true;
+            }
+            return false;
+        }
+        private static bool CheckAndEndGameForBattleRoyaleTimeWin(ShipStatus __instance) {
+            if (BattleRoyale.triggerTimeWin) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleTimeWin, false);
+                return true;
+            }
+            return false;
+        }
+        private static bool CheckAndEndGameForBattleRoyalePurpleTeamWin(ShipStatus __instance) {
+            if (BattleRoyale.triggerPurpleTeamWin) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePurpleTeamWin, false);
+                return true;
+            }
+            return false;
+        }
+        private static bool CheckAndEndGameForBattleRoyalePinkTeamWin(ShipStatus __instance) {
+            if (BattleRoyale.triggerPinkTeamWin) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
+                return true;
+            }
+            return false;
+        }
+        private static bool CheckAndEndGameForBattleRoyaleSerialKillerWin(ShipStatus __instance) {
+            if (BattleRoyale.triggerSerialKillerWin) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSerialKillerWin, false);
+                return true;
+            }
+            return false;
+        }
+        private static bool CheckAndEndGameForBattleRoyaleDraw(ShipStatus __instance) {
+            if (BattleRoyale.triggerDrawWin) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleDraw, false);
                 return true;
             }
             return false;

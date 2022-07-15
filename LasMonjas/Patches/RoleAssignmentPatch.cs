@@ -31,6 +31,7 @@ namespace LasMonjas.Patches
         private static List<int> myKingoftheHill = new List<int>();
         private static List<int> myHotPotato = new List<int>();
         private static List<int> myZombie = new List<int>();
+        private static List<int> myBattleRoyale = new List<int>();
 
         public static void Postfix() {
             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ResetVaribles, Hazel.SendOption.Reliable, -1);
@@ -62,6 +63,9 @@ namespace LasMonjas.Patches
                 howmanygamemodesareon += 1;
             }
             if (ZombieLaboratory.zombieLaboratoryMode) {
+                howmanygamemodesareon += 1;
+            }
+            if (BattleRoyale.battleRoyaleMode) {
                 howmanygamemodesareon += 1;
             }
 
@@ -685,6 +689,129 @@ namespace LasMonjas.Patches
                         }
                         myZombie.Add(myzombie);
                         myzombie += 1;
+                    }
+                }
+                else if (BattleRoyale.battleRoyaleMode) {
+                    // Battle Royale   
+                    myBattleRoyale.Clear();
+                    if (BattleRoyale.matchType == 0) {
+                        int myBattle = 1;
+                        while (myBattleRoyale.Count < PlayerControl.AllPlayerControls.Count) {
+                            switch (myBattle) {
+                                case 1:
+                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer01, modifiers);
+                                    break;
+                                case 2:
+                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer02, modifiers);
+                                    break;
+                                case 3:
+                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer03, modifiers);
+                                    break;
+                                case 4:
+                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer04, modifiers);
+                                    break;
+                                case 5:
+                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer05, modifiers);
+                                    break;
+                                case 6:
+                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer06, modifiers);
+                                    break;
+                                case 7:
+                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer07, modifiers);
+                                    break;
+                                case 8:
+                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer08, modifiers);
+                                    break;
+                                case 9:
+                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer09, modifiers);
+                                    break;
+                                case 10:
+                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer10, modifiers);
+                                    break;
+                                case 11:
+                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer11, modifiers);
+                                    break;
+                                case 12:
+                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer12, modifiers);
+                                    break;
+                                case 13:
+                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer13, modifiers);
+                                    break;
+                                case 14:
+                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer14, modifiers);
+                                    break;
+                                case 15:
+                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer15, modifiers);
+                                    break;
+                            }
+                            myBattleRoyale.Add(myBattle);
+                            myBattle += 1;
+                        }
+                    }
+                    else {
+                        // Battle Royale Teams   
+                        myBattleRoyale.Clear();
+                        bool oddNumber = false;
+                        if (Mathf.Ceil(PlayerControl.AllPlayerControls.Count) % 2 != 0) {
+                            oddNumber = true;
+                            setRoleToRandomPlayer((byte)RoleId.SerialKiller, modifiers);
+                        }
+                        int myBattlePurple = 1;
+                        while (myBattleRoyale.Count < (Mathf.Round(PlayerControl.AllPlayerControls.Count / 2))) {
+                            switch (myBattlePurple) {
+                                case 1:
+                                    setRoleToRandomPlayer((byte)RoleId.PurplePlayer01, modifiers);
+                                    break;
+                                case 2:
+                                    setRoleToRandomPlayer((byte)RoleId.PurplePlayer02, modifiers);
+                                    break;
+                                case 3:
+                                    setRoleToRandomPlayer((byte)RoleId.PurplePlayer03, modifiers);
+                                    break;
+                                case 4:
+                                    setRoleToRandomPlayer((byte)RoleId.PurplePlayer04, modifiers);
+                                    break;
+                                case 5:
+                                    setRoleToRandomPlayer((byte)RoleId.PurplePlayer05, modifiers);
+                                    break;
+                                case 6:
+                                    setRoleToRandomPlayer((byte)RoleId.PurplePlayer06, modifiers);
+                                    break;
+                                case 7:
+                                    setRoleToRandomPlayer((byte)RoleId.PurplePlayer07, modifiers);
+                                    break;
+                            }
+                            myBattleRoyale.Add(myBattlePurple);
+                            myBattlePurple += 1;
+                        }
+                        int myBattlePink = 9;
+                        while (!oddNumber && myBattleRoyale.Count < PlayerControl.AllPlayerControls.Count || oddNumber && myBattleRoyale.Count < PlayerControl.AllPlayerControls.Count - 1) {
+                            switch (myBattlePink) {
+                                case 9:
+                                    setRoleToRandomPlayer((byte)RoleId.PinkPlayer01, modifiers);
+                                    break;
+                                case 10:
+                                    setRoleToRandomPlayer((byte)RoleId.PinkPlayer02, modifiers);
+                                    break;
+                                case 11:
+                                    setRoleToRandomPlayer((byte)RoleId.PinkPlayer03, modifiers);
+                                    break;
+                                case 12:
+                                    setRoleToRandomPlayer((byte)RoleId.PinkPlayer04, modifiers);
+                                    break;
+                                case 13:
+                                    setRoleToRandomPlayer((byte)RoleId.PinkPlayer05, modifiers);
+                                    break;
+                                case 14:
+                                    setRoleToRandomPlayer((byte)RoleId.PinkPlayer06, modifiers);
+                                    break;
+                                case 15:
+                                    setRoleToRandomPlayer((byte)RoleId.PinkPlayer07, modifiers);
+                                    break;
+                            }
+                            myBattleRoyale.Add(myBattlePink);
+                            myBattlePink += 1;
+                        }
                     }
                 }
             }

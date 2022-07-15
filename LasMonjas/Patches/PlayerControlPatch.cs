@@ -3935,6 +3935,368 @@ namespace LasMonjas.Patches {
                     }
                     ZombieLaboratory.zombieLaboratoryCounter = "Key Items: " + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + "Survivors: " + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> " + "| " + "Infected: " + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> " + "| " + "Zombies: " + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
                 }
+
+                // Battle Royale
+                if (BattleRoyale.battleRoyaleMode) {
+                    var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
+                    body.transform.position = new Vector3(50, 50, 1);
+
+                    if (BattleRoyale.matchType == 2) {
+                        if (BattleRoyale.serialKiller != null && BattleRoyale.serialKiller.PlayerId == target.PlayerId) {
+                            BattleRoyale.serialKillerIsReviving = true;
+                            BattleRoyale.serialKiller.cosmetics.nameText.color = new Color(BattleRoyale.serialKiller.cosmetics.nameText.color.r, BattleRoyale.serialKiller.cosmetics.nameText.color.g, BattleRoyale.serialKiller.cosmetics.nameText.color.b, 0.5f);
+                            if (BattleRoyale.serialKiller.cosmetics.currentPet != null && BattleRoyale.serialKiller.cosmetics.currentPet.rend != null && BattleRoyale.serialKiller.cosmetics.currentPet.shadowRend != null) {
+                                BattleRoyale.serialKiller.cosmetics.currentPet.rend.color = new Color(BattleRoyale.serialKiller.cosmetics.currentPet.rend.color.r, BattleRoyale.serialKiller.cosmetics.currentPet.rend.color.g, BattleRoyale.serialKiller.cosmetics.currentPet.rend.color.b, 0.5f);
+                                BattleRoyale.serialKiller.cosmetics.currentPet.shadowRend.color = new Color(BattleRoyale.serialKiller.cosmetics.currentPet.shadowRend.color.r, BattleRoyale.serialKiller.cosmetics.currentPet.shadowRend.color.g, BattleRoyale.serialKiller.cosmetics.currentPet.shadowRend.color.b, 0.5f);
+                            }
+                            if (BattleRoyale.serialKiller.cosmetics.hat != null) {
+                                BattleRoyale.serialKiller.cosmetics.hat.Parent.color = new Color(BattleRoyale.serialKiller.cosmetics.hat.Parent.color.r, BattleRoyale.serialKiller.cosmetics.hat.Parent.color.g, BattleRoyale.serialKiller.cosmetics.hat.Parent.color.b, 0.5f);
+                                BattleRoyale.serialKiller.cosmetics.hat.BackLayer.color = new Color(BattleRoyale.serialKiller.cosmetics.hat.BackLayer.color.r, BattleRoyale.serialKiller.cosmetics.hat.BackLayer.color.g, BattleRoyale.serialKiller.cosmetics.hat.BackLayer.color.b, 0.5f);
+                                BattleRoyale.serialKiller.cosmetics.hat.FrontLayer.color = new Color(BattleRoyale.serialKiller.cosmetics.hat.FrontLayer.color.r, BattleRoyale.serialKiller.cosmetics.hat.FrontLayer.color.g, BattleRoyale.serialKiller.cosmetics.hat.FrontLayer.color.b, 0.5f);
+                            }
+                            if (BattleRoyale.serialKiller.cosmetics.visor != null) {
+                                BattleRoyale.serialKiller.cosmetics.visor.Image.color = new Color(BattleRoyale.serialKiller.cosmetics.visor.Image.color.r, BattleRoyale.serialKiller.cosmetics.visor.Image.color.g, BattleRoyale.serialKiller.cosmetics.visor.Image.color.b, 0.5f);
+                            }
+                            BattleRoyale.serialKiller.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(BattleRoyale.serialKiller.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, BattleRoyale.serialKiller.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, BattleRoyale.serialKiller.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(BattleRoyale.reviveTime, new Action<float>((p) => {
+                                if (p == 1f && BattleRoyale.serialKiller != null) {
+                                    BattleRoyale.serialKillerIsReviving = false;
+                                    BattleRoyale.serialKillerLifes = BattleRoyale.fighterLifes * 3;
+                                    BattleRoyale.serialKiller.cosmetics.nameText.color = new Color(BattleRoyale.serialKiller.cosmetics.nameText.color.r, BattleRoyale.serialKiller.cosmetics.nameText.color.g, BattleRoyale.serialKiller.cosmetics.nameText.color.b, 1f);
+                                    if (BattleRoyale.serialKiller.cosmetics.currentPet != null && BattleRoyale.serialKiller.cosmetics.currentPet.rend != null && BattleRoyale.serialKiller.cosmetics.currentPet.shadowRend != null) {
+                                        BattleRoyale.serialKiller.cosmetics.currentPet.rend.color = new Color(BattleRoyale.serialKiller.cosmetics.currentPet.rend.color.r, BattleRoyale.serialKiller.cosmetics.currentPet.rend.color.g, BattleRoyale.serialKiller.cosmetics.currentPet.rend.color.b, 1f);
+                                        BattleRoyale.serialKiller.cosmetics.currentPet.shadowRend.color = new Color(BattleRoyale.serialKiller.cosmetics.currentPet.shadowRend.color.r, BattleRoyale.serialKiller.cosmetics.currentPet.shadowRend.color.g, BattleRoyale.serialKiller.cosmetics.currentPet.shadowRend.color.b, 1f);
+                                    }
+                                    if (BattleRoyale.serialKiller.cosmetics.hat != null) {
+                                        BattleRoyale.serialKiller.cosmetics.hat.Parent.color = new Color(BattleRoyale.serialKiller.cosmetics.hat.Parent.color.r, BattleRoyale.serialKiller.cosmetics.hat.Parent.color.g, BattleRoyale.serialKiller.cosmetics.hat.Parent.color.b, 1f);
+                                        BattleRoyale.serialKiller.cosmetics.hat.BackLayer.color = new Color(BattleRoyale.serialKiller.cosmetics.hat.BackLayer.color.r, BattleRoyale.serialKiller.cosmetics.hat.BackLayer.color.g, BattleRoyale.serialKiller.cosmetics.hat.BackLayer.color.b, 1f);
+                                        BattleRoyale.serialKiller.cosmetics.hat.FrontLayer.color = new Color(BattleRoyale.serialKiller.cosmetics.hat.FrontLayer.color.r, BattleRoyale.serialKiller.cosmetics.hat.FrontLayer.color.g, BattleRoyale.serialKiller.cosmetics.hat.FrontLayer.color.b, 1f);
+                                    }
+                                    if (BattleRoyale.serialKiller.cosmetics.visor != null) {
+                                        BattleRoyale.serialKiller.cosmetics.visor.Image.color = new Color(BattleRoyale.serialKiller.cosmetics.visor.Image.color.r, BattleRoyale.serialKiller.cosmetics.visor.Image.color.g, BattleRoyale.serialKiller.cosmetics.visor.Image.color.b, 1f);
+                                    }
+                                    BattleRoyale.serialKiller.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(BattleRoyale.serialKiller.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, BattleRoyale.serialKiller.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, BattleRoyale.serialKiller.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
+
+                                }
+                            })));
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(BattleRoyale.reviveTime - BattleRoyale.invincibilityTimeAfterRevive, new Action<float>((p) => {
+                                if (p == 1f && BattleRoyale.serialKiller != null) {
+                                    BattleRoyale.serialKiller.Revive();
+                                    switch (PlayerControl.GameOptions.MapId) {
+                                        // Skeld
+                                        case 0:
+                                            if (activatedSensei) {
+                                                BattleRoyale.serialKiller.transform.position = new Vector3(-3.65f, 5f, PlayerControl.LocalPlayer.transform.position.z);
+                                            }
+                                            else {
+                                                BattleRoyale.serialKiller.transform.position = new Vector3(6.35f, -7.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                            }
+                                            break;
+                                        // MiraHQ
+                                        case 1:
+                                            BattleRoyale.serialKiller.transform.position = new Vector3(16.25f, 24.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                            break;
+                                        // Polus
+                                        case 2:
+                                            BattleRoyale.serialKiller.transform.position = new Vector3(22.3f, -19.15f, PlayerControl.LocalPlayer.transform.position.z);
+                                            break;
+                                        // Dleks
+                                        case 3:
+                                            BattleRoyale.serialKiller.transform.position = new Vector3(-6.35f, -7.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                            break;
+                                        // Airship
+                                        case 4:
+                                            BattleRoyale.serialKiller.transform.position = new Vector3(12.25f, 2f, PlayerControl.LocalPlayer.transform.position.z);
+                                            break;
+                                        // Submerged
+                                        case 5:
+                                            if (BattleRoyale.serialKiller.transform.position.y > 0) {
+                                                BattleRoyale.serialKiller.transform.position = new Vector3(5.75f, 31.25f, BattleRoyale.serialKiller.transform.position.z);
+                                            }
+                                            else {
+                                                BattleRoyale.serialKiller.transform.position = new Vector3(-4.25f, -33.5f, BattleRoyale.serialKiller.transform.position.z);
+                                            }
+                                            break;
+                                    }
+                                    DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
+                                    if (body != null) UnityEngine.Object.Destroy(body.gameObject);
+                                    if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
+                                }
+
+                            })));
+
+                        }
+
+                        foreach (PlayerControl player in BattleRoyale.purpleTeam) {
+                            if (player.PlayerId == target.PlayerId) {
+
+                                if (BattleRoyale.purplePlayer01 != null && target.PlayerId == BattleRoyale.purplePlayer01.PlayerId) {
+                                    BattleRoyale.purplePlayer01IsReviving = true;
+                                }
+                                else if (BattleRoyale.purplePlayer02 != null && target.PlayerId == BattleRoyale.purplePlayer02.PlayerId) {
+                                    BattleRoyale.purplePlayer02IsReviving = true;
+                                }
+                                else if (BattleRoyale.purplePlayer03 != null && target.PlayerId == BattleRoyale.purplePlayer03.PlayerId) {
+                                    BattleRoyale.purplePlayer03IsReviving = true;
+                                }
+                                else if (BattleRoyale.purplePlayer04 != null && target.PlayerId == BattleRoyale.purplePlayer04.PlayerId) {
+                                    BattleRoyale.purplePlayer04IsReviving = true;
+                                }
+                                else if (BattleRoyale.purplePlayer05 != null && target.PlayerId == BattleRoyale.purplePlayer05.PlayerId) {
+                                    BattleRoyale.purplePlayer05IsReviving = true;
+                                }
+                                else if (BattleRoyale.purplePlayer06 != null && target.PlayerId == BattleRoyale.purplePlayer06.PlayerId) {
+                                    BattleRoyale.purplePlayer06IsReviving = true;
+                                }
+                                else if (BattleRoyale.purplePlayer07 != null && target.PlayerId == BattleRoyale.purplePlayer07.PlayerId) {
+                                    BattleRoyale.purplePlayer07IsReviving = true;
+                                }
+                                player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0.5f);
+                                if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
+                                    player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 0.5f);
+                                    player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 0.5f);
+                                }
+                                if (player.cosmetics.hat != null) {
+                                    player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0.5f);
+                                    player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 0.5f);
+                                    player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 0.5f);
+                                }
+                                if (player.cosmetics.visor != null) {
+                                    player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 0.5f);
+                                }
+                                player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
+                                HudManager.Instance.StartCoroutine(Effects.Lerp(BattleRoyale.reviveTime, new Action<float>((p) => {
+                                    if (p == 1f && player != null) {
+                                        if (BattleRoyale.purplePlayer01 != null && target.PlayerId == BattleRoyale.purplePlayer01.PlayerId) {
+                                            BattleRoyale.purplePlayer01IsReviving = false;
+                                            BattleRoyale.purplePlayer01Lifes = BattleRoyale.fighterLifes;
+                                        }
+                                        else if (BattleRoyale.purplePlayer02 != null && target.PlayerId == BattleRoyale.purplePlayer02.PlayerId) {
+                                            BattleRoyale.purplePlayer02IsReviving = false;
+                                            BattleRoyale.purplePlayer02Lifes = BattleRoyale.fighterLifes;
+                                        }
+                                        else if (BattleRoyale.purplePlayer03 != null && target.PlayerId == BattleRoyale.purplePlayer03.PlayerId) {
+                                            BattleRoyale.purplePlayer03IsReviving = false;
+                                            BattleRoyale.purplePlayer03Lifes = BattleRoyale.fighterLifes;
+                                        }
+                                        else if (BattleRoyale.purplePlayer04 != null && target.PlayerId == BattleRoyale.purplePlayer04.PlayerId) {
+                                            BattleRoyale.purplePlayer04IsReviving = false;
+                                            BattleRoyale.purplePlayer04Lifes = BattleRoyale.fighterLifes;
+                                        }
+                                        else if (BattleRoyale.purplePlayer05 != null && target.PlayerId == BattleRoyale.purplePlayer05.PlayerId) {
+                                            BattleRoyale.purplePlayer05IsReviving = false;
+                                            BattleRoyale.purplePlayer05Lifes = BattleRoyale.fighterLifes;
+                                        }
+                                        else if (BattleRoyale.purplePlayer06 != null && target.PlayerId == BattleRoyale.purplePlayer06.PlayerId) {
+                                            BattleRoyale.purplePlayer06IsReviving = false;
+                                            BattleRoyale.purplePlayer06Lifes = BattleRoyale.fighterLifes;
+                                        }
+                                        else if (BattleRoyale.purplePlayer07 != null && target.PlayerId == BattleRoyale.purplePlayer07.PlayerId) {
+                                            BattleRoyale.purplePlayer07IsReviving = false;
+                                            BattleRoyale.purplePlayer07Lifes = BattleRoyale.fighterLifes;
+                                        }
+                                        player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 1f);
+                                        if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
+                                            player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 1f);
+                                            player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 1f);
+                                        }
+                                        if (player.cosmetics.hat != null) {
+                                            player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 1f);
+                                            player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 1f);
+                                            player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 1f);
+                                        }
+                                        if (player.cosmetics.visor != null) {
+                                            player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 1f);
+                                        }
+                                        player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
+
+                                    }
+                                })));
+                                HudManager.Instance.StartCoroutine(Effects.Lerp(BattleRoyale.reviveTime - BattleRoyale.invincibilityTimeAfterRevive, new Action<float>((p) => {
+                                    if (p == 1f && player != null) {
+                                        player.Revive();
+                                        switch (PlayerControl.GameOptions.MapId) {
+                                            // Skeld
+                                            case 0:
+                                                if (activatedSensei) {
+                                                    player.transform.position = new Vector3(-17.5f, -1.15f, player.transform.position.z);
+                                                }
+                                                else {
+                                                    player.transform.position = new Vector3(-17f, -5.5f, player.transform.position.z);
+                                                }
+                                                break;
+                                            // MiraHQ
+                                            case 1:
+                                                player.transform.position = new Vector3(6.15f, 13.25f, player.transform.position.z);
+                                                break;
+                                            // Polus
+                                            case 2:
+                                                player.transform.position = new Vector3(2.35f, -23.75f, player.transform.position.z);
+                                                break;
+                                            // Dleks
+                                            case 3:
+                                                player.transform.position = new Vector3(17f, -5.5f, player.transform.position.z);
+                                                break;
+                                            // Airship
+                                            case 4:
+                                                player.transform.position = new Vector3(-13.9f, -14.45f, player.transform.position.z);
+                                                break;
+                                            // Submerged
+                                            case 5:
+                                                if (player.transform.position.y > 0) {
+                                                    player.transform.position = new Vector3(-12.25f, 18.5f, player.transform.position.z);
+                                                }
+                                                else {
+                                                    player.transform.position = new Vector3(-14.5f, -34.35f, player.transform.position.z);
+                                                }
+                                                break;
+                                        }
+                                        DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
+                                        if (body != null) UnityEngine.Object.Destroy(body.gameObject);
+                                        if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
+                                    }
+
+                                })));
+
+                            }
+                        }
+                        foreach (PlayerControl player in BattleRoyale.pinkTeam) {
+                            if (player.PlayerId == target.PlayerId) {
+
+                                if (BattleRoyale.pinkPlayer01 != null && target.PlayerId == BattleRoyale.pinkPlayer01.PlayerId) {
+                                    BattleRoyale.pinkPlayer01IsReviving = true;
+                                }
+                                else if (BattleRoyale.pinkPlayer02 != null && target.PlayerId == BattleRoyale.pinkPlayer02.PlayerId) {
+                                    BattleRoyale.pinkPlayer02IsReviving = true;
+                                }
+                                else if (BattleRoyale.pinkPlayer03 != null && target.PlayerId == BattleRoyale.pinkPlayer03.PlayerId) {
+                                    BattleRoyale.pinkPlayer03IsReviving = true;
+                                }
+                                else if (BattleRoyale.pinkPlayer04 != null && target.PlayerId == BattleRoyale.pinkPlayer04.PlayerId) {
+                                    BattleRoyale.pinkPlayer04IsReviving = true;
+                                }
+                                else if (BattleRoyale.pinkPlayer05 != null && target.PlayerId == BattleRoyale.pinkPlayer05.PlayerId) {
+                                    BattleRoyale.pinkPlayer05IsReviving = true;
+                                }
+                                else if (BattleRoyale.pinkPlayer06 != null && target.PlayerId == BattleRoyale.pinkPlayer06.PlayerId) {
+                                    BattleRoyale.pinkPlayer06IsReviving = true;
+                                }
+                                else if (BattleRoyale.pinkPlayer01 != null && target.PlayerId == BattleRoyale.pinkPlayer07.PlayerId) {
+                                    BattleRoyale.pinkPlayer07IsReviving = true;
+                                }
+                                player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0.5f);
+                                if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
+                                    player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 0.5f);
+                                    player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 0.5f);
+                                }
+                                if (player.cosmetics.hat != null) {
+                                    player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0.5f);
+                                    player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 0.5f);
+                                    player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 0.5f);
+                                }
+                                if (player.cosmetics.visor != null) {
+                                    player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 0.5f);
+                                }
+                                player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
+
+                                HudManager.Instance.StartCoroutine(Effects.Lerp(BattleRoyale.reviveTime, new Action<float>((p) => {
+                                    if (p == 1f && player != null) {
+                                        if (BattleRoyale.pinkPlayer01 != null && target.PlayerId == BattleRoyale.pinkPlayer01.PlayerId) {
+                                            BattleRoyale.pinkPlayer01IsReviving = false;
+                                            BattleRoyale.pinkPlayer01Lifes = BattleRoyale.fighterLifes;
+                                        }
+                                        else if (BattleRoyale.pinkPlayer02 != null && target.PlayerId == BattleRoyale.pinkPlayer02.PlayerId) {
+                                            BattleRoyale.pinkPlayer02IsReviving = false;
+                                            BattleRoyale.pinkPlayer02Lifes = BattleRoyale.fighterLifes;
+                                        }
+                                        else if (BattleRoyale.pinkPlayer03 != null && target.PlayerId == BattleRoyale.pinkPlayer03.PlayerId) {
+                                            BattleRoyale.pinkPlayer03IsReviving = false;
+                                            BattleRoyale.pinkPlayer03Lifes = BattleRoyale.fighterLifes;
+                                        }
+                                        else if (BattleRoyale.pinkPlayer04 != null && target.PlayerId == BattleRoyale.pinkPlayer04.PlayerId) {
+                                            BattleRoyale.pinkPlayer04IsReviving = false;
+                                            BattleRoyale.pinkPlayer04Lifes = BattleRoyale.fighterLifes;
+                                        }
+                                        else if (BattleRoyale.pinkPlayer05 != null && target.PlayerId == BattleRoyale.pinkPlayer05.PlayerId) {
+                                            BattleRoyale.pinkPlayer05IsReviving = false;
+                                            BattleRoyale.pinkPlayer05Lifes = BattleRoyale.fighterLifes;
+                                        }
+                                        else if (BattleRoyale.pinkPlayer06 != null && target.PlayerId == BattleRoyale.pinkPlayer06.PlayerId) {
+                                            BattleRoyale.pinkPlayer06IsReviving = false;
+                                            BattleRoyale.pinkPlayer06Lifes = BattleRoyale.fighterLifes;
+                                        }
+                                        else if (BattleRoyale.pinkPlayer01 != null && target.PlayerId == BattleRoyale.pinkPlayer07.PlayerId) {
+                                            BattleRoyale.pinkPlayer07IsReviving = false;
+                                            BattleRoyale.pinkPlayer07Lifes = BattleRoyale.fighterLifes;
+                                        }
+                                        player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 1f);
+                                        if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
+                                            player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 1f);
+                                            player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 1f);
+                                        }
+                                        if (player.cosmetics.hat != null) {
+                                            player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 1f);
+                                            player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 1f);
+                                            player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 1f);
+                                        }
+                                        if (player.cosmetics.visor != null) {
+                                            player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 1f);
+                                        }
+                                        player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
+
+                                    }
+                                })));
+
+                                HudManager.Instance.StartCoroutine(Effects.Lerp(BattleRoyale.reviveTime - BattleRoyale.invincibilityTimeAfterRevive, new Action<float>((p) => {
+                                    if (p == 1f && player != null) {
+                                        player.Revive();
+                                        switch (PlayerControl.GameOptions.MapId) {
+                                            // Skeld
+                                            case 0:
+                                                if (activatedSensei) {
+                                                    player.transform.position = new Vector3(7.7f, -0.95f, player.transform.position.z);
+                                                }
+                                                else {
+                                                    player.transform.position = new Vector3(12f, -4.75f, player.transform.position.z);
+                                                }
+                                                break;
+                                            // MiraHQ
+                                            case 1:
+                                                player.transform.position = new Vector3(22.25f, 3f, player.transform.position.z);
+                                                break;
+                                            // Polus
+                                            case 2:
+                                                player.transform.position = new Vector3(36.35f, -8f, player.transform.position.z);
+                                                break;
+                                            // Dleks
+                                            case 3:
+                                                player.transform.position = new Vector3(-12f, -4.75f, player.transform.position.z);
+                                                break;
+                                            // Airship
+                                            case 4:
+                                                player.transform.position = new Vector3(37.35f, -3.25f, player.transform.position.z);
+                                                break;
+                                            // Submerged
+                                            case 5:
+                                                if (player.transform.position.y > 0) {
+                                                    player.transform.position = new Vector3(0f, 33.5f, player.transform.position.z);
+                                                }
+                                                else {
+                                                    player.transform.position = new Vector3(-8.5f, -39.5f, player.transform.position.z);
+                                                }
+                                                break;
+                                        }
+                                        DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
+                                        if (body != null) UnityEngine.Object.Destroy(body.gameObject);
+                                        if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
+                                    }
+
+                                })));
+
+                            }
+                        }
+                    }
+                }
             } else {
                 // Check alive players for disable sabotage button if game result in 1vs1 special condition (impostor + rebel / impostor + captain / rebel + captain)
                 alivePlayers = 0;

@@ -163,6 +163,33 @@ namespace LasMonjas.Patches {
                         setPlayerNameColor(ZombieLaboratory.nursePlayer, Palette.PlayerColors[3]);
                     }
                 }
+                else if (BattleRoyale.battleRoyaleMode) {
+
+                    if (BattleRoyale.matchType == 0) {
+                        foreach (PlayerControl soloPlayer in BattleRoyale.soloPlayerTeam) {
+                            if (soloPlayer != null) {
+                                setPlayerNameColor(soloPlayer, Palette.PlayerColors[2]);
+                            }
+                        }
+                    }
+                    else {
+                        if (BattleRoyale.serialKiller != null) {
+                            setPlayerNameColor(BattleRoyale.serialKiller, Palette.PlayerColors[15]);
+                        }
+
+                        foreach (PlayerControl purpleplayer in BattleRoyale.purpleTeam) {
+                            if (purpleplayer != null) {
+                                setPlayerNameColor(purpleplayer, Palette.PlayerColors[8]);
+                            }
+                        }
+
+                        foreach (PlayerControl pinkplayer in BattleRoyale.pinkTeam) {
+                            if (pinkplayer != null) {
+                                setPlayerNameColor(pinkplayer, Palette.PlayerColors[13]);
+                            }
+                        }
+                    }
+                }
             }
             else {
                 // Crewmates name color
@@ -296,6 +323,142 @@ namespace LasMonjas.Patches {
                     foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates) {
                         var target = Helpers.playerById(player.TargetPlayerId);
                         if (target != null) player.NameText.text += $" ({(Helpers.isLighterColor(target.Data.DefaultOutfit.ColorId) ? "L" : "D")})";
+                    }
+                }
+            }
+
+            // Battle Royale Lifes
+            if (BattleRoyale.battleRoyaleMode && howmanygamemodesareon == 1) {
+                if (BattleRoyale.matchType == 0) {
+                    if (BattleRoyale.soloPlayer01 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer01) {
+                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer01Lifes + "♥)");
+                        BattleRoyale.soloPlayer01.cosmetics.nameText.text += suffix;
+                    }
+                    if (BattleRoyale.soloPlayer02 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer02) {
+                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer02Lifes + "♥)");
+                        BattleRoyale.soloPlayer02.cosmetics.nameText.text += suffix;
+                    }
+                    if (BattleRoyale.soloPlayer03 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer03) {
+                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer03Lifes + "♥)");
+                        BattleRoyale.soloPlayer03.cosmetics.nameText.text += suffix;
+                    }
+                    if (BattleRoyale.soloPlayer04 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer04) {
+                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer04Lifes + "♥)");
+                        BattleRoyale.soloPlayer04.cosmetics.nameText.text += suffix;
+                    }
+                    if (BattleRoyale.soloPlayer05 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer05) {
+                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer05Lifes + "♥)");
+                        BattleRoyale.soloPlayer05.cosmetics.nameText.text += suffix;
+                    }
+                    if (BattleRoyale.soloPlayer06 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer06) {
+                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer06Lifes + "♥)");
+                        BattleRoyale.soloPlayer06.cosmetics.nameText.text += suffix;
+                    }
+                    if (BattleRoyale.soloPlayer07 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer07) {
+                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer07Lifes + "♥)");
+                        BattleRoyale.soloPlayer07.cosmetics.nameText.text += suffix;
+                    }
+                    if (BattleRoyale.soloPlayer08 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer08) {
+                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer08Lifes + "♥)");
+                        BattleRoyale.soloPlayer08.cosmetics.nameText.text += suffix;
+                    }
+                    if (BattleRoyale.soloPlayer09 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer09) {
+                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer09Lifes + "♥)");
+                        BattleRoyale.soloPlayer09.cosmetics.nameText.text += suffix;
+                    }
+                    if (BattleRoyale.soloPlayer10 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer10) {
+                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer10Lifes + "♥)");
+                        BattleRoyale.soloPlayer10.cosmetics.nameText.text += suffix;
+                    }
+                    if (BattleRoyale.soloPlayer11 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer11) {
+                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer11Lifes + "♥)");
+                        BattleRoyale.soloPlayer11.cosmetics.nameText.text += suffix;
+                    }
+                    if (BattleRoyale.soloPlayer12 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer12) {
+                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer12Lifes + "♥)");
+                        BattleRoyale.soloPlayer12.cosmetics.nameText.text += suffix;
+                    }
+                    if (BattleRoyale.soloPlayer13 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer13) {
+                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer13Lifes + "♥)");
+                        BattleRoyale.soloPlayer13.cosmetics.nameText.text += suffix;
+                    }
+                    if (BattleRoyale.soloPlayer14 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer14) {
+                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer14Lifes + "♥)");
+                        BattleRoyale.soloPlayer14.cosmetics.nameText.text += suffix;
+                    }
+                    if (BattleRoyale.soloPlayer15 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer15) {
+                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer15Lifes + "♥)");
+                        BattleRoyale.soloPlayer15.cosmetics.nameText.text += suffix;
+                    }
+                }
+                else {
+                    foreach (PlayerControl purplePlayer in BattleRoyale.purpleTeam) {
+                        if (purplePlayer == PlayerControl.LocalPlayer) {
+                            if (BattleRoyale.purplePlayer01 != null) {
+                                string suffix = Helpers.cs(Captain.color, " (" + BattleRoyale.purplePlayer01Lifes + "♥)");
+                                BattleRoyale.purplePlayer01.cosmetics.nameText.text += suffix;
+                            }
+                            if (BattleRoyale.purplePlayer02 != null) {
+                                string suffix = Helpers.cs(Captain.color, " (" + BattleRoyale.purplePlayer02Lifes + "♥)");
+                                BattleRoyale.purplePlayer02.cosmetics.nameText.text += suffix;
+                            }
+                            if (BattleRoyale.purplePlayer03 != null) {
+                                string suffix = Helpers.cs(Captain.color, " (" + BattleRoyale.purplePlayer03Lifes + "♥)");
+                                BattleRoyale.purplePlayer03.cosmetics.nameText.text += suffix;
+                            }
+                            if (BattleRoyale.purplePlayer04 != null) {
+                                string suffix = Helpers.cs(Captain.color, " (" + BattleRoyale.purplePlayer04Lifes + "♥)");
+                                BattleRoyale.purplePlayer04.cosmetics.nameText.text += suffix;
+                            }
+                            if (BattleRoyale.purplePlayer05 != null) {
+                                string suffix = Helpers.cs(Captain.color, " (" + BattleRoyale.purplePlayer05Lifes + "♥)");
+                                BattleRoyale.purplePlayer05.cosmetics.nameText.text += suffix;
+                            }
+                            if (BattleRoyale.purplePlayer06 != null) {
+                                string suffix = Helpers.cs(Captain.color, " (" + BattleRoyale.purplePlayer06Lifes + "♥)");
+                                BattleRoyale.purplePlayer06.cosmetics.nameText.text += suffix;
+                            }
+                            if (BattleRoyale.purplePlayer07 != null) {
+                                string suffix = Helpers.cs(Captain.color, " (" + BattleRoyale.purplePlayer07Lifes + "♥)");
+                                BattleRoyale.purplePlayer07.cosmetics.nameText.text += suffix;
+                            }
+                        }
+                    }
+                    foreach (PlayerControl pinkPlayer in BattleRoyale.pinkTeam) {
+                        if (pinkPlayer == PlayerControl.LocalPlayer) {
+                            if (BattleRoyale.pinkPlayer01 != null) {
+                                string suffix = Helpers.cs(Shy.color, " (" + BattleRoyale.pinkPlayer01Lifes + "♥)");
+                                BattleRoyale.pinkPlayer01.cosmetics.nameText.text += suffix;
+                            }
+                            if (BattleRoyale.pinkPlayer02 != null) {
+                                string suffix = Helpers.cs(Shy.color, " (" + BattleRoyale.pinkPlayer02Lifes + "♥)");
+                                BattleRoyale.pinkPlayer02.cosmetics.nameText.text += suffix;
+                            }
+                            if (BattleRoyale.pinkPlayer03 != null) {
+                                string suffix = Helpers.cs(Shy.color, " (" + BattleRoyale.pinkPlayer03Lifes + "♥)");
+                                BattleRoyale.pinkPlayer03.cosmetics.nameText.text += suffix;
+                            }
+                            if (BattleRoyale.pinkPlayer04 != null) {
+                                string suffix = Helpers.cs(Shy.color, " (" + BattleRoyale.pinkPlayer04Lifes + "♥)");
+                                BattleRoyale.pinkPlayer04.cosmetics.nameText.text += suffix;
+                            }
+                            if (BattleRoyale.pinkPlayer05 != null) {
+                                string suffix = Helpers.cs(Shy.color, " (" + BattleRoyale.pinkPlayer05Lifes + "♥)");
+                                BattleRoyale.pinkPlayer05.cosmetics.nameText.text += suffix;
+                            }
+                            if (BattleRoyale.pinkPlayer06 != null) {
+                                string suffix = Helpers.cs(Shy.color, " (" + BattleRoyale.pinkPlayer06Lifes + "♥)");
+                                BattleRoyale.pinkPlayer06.cosmetics.nameText.text += suffix;
+                            }
+                            if (BattleRoyale.pinkPlayer07 != null) {
+                                string suffix = Helpers.cs(Shy.color, " (" + BattleRoyale.pinkPlayer07Lifes + "♥)");
+                                BattleRoyale.pinkPlayer07.cosmetics.nameText.text += suffix;
+                            }
+                        }
+                    }
+                    if (BattleRoyale.serialKiller != null && PlayerControl.LocalPlayer == BattleRoyale.serialKiller) {
+                        string suffix = Helpers.cs(Joker.color, " (" + BattleRoyale.serialKillerLifes + "♥)");
+                        BattleRoyale.serialKiller.cosmetics.nameText.text += suffix;
                     }
                 }
             }
@@ -527,6 +690,63 @@ namespace LasMonjas.Patches {
                     if (ZombieLaboratory.matchDuration < 0) {
                         ZombieLaboratory.triggerZombieWin = true;
                         ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.ZombieWin, false);
+                    }
+                }
+                
+                // Battle Royale timer
+                if (BattleRoyale.battleRoyaleMode) {
+                    BattleRoyale.matchDuration -= Time.deltaTime;
+                    if (BattleRoyale.matchDuration < 0) {
+                        if (BattleRoyale.matchType == 2) {
+                            if (BattleRoyale.serialKiller != null) {
+                                // all teams with same points = Draw
+                                if (BattleRoyale.purplePoints == BattleRoyale.pinkPoints && BattleRoyale.pinkPoints == BattleRoyale.serialKillerPoints) {
+                                    BattleRoyale.triggerDrawWin = true;
+                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleDraw, false);
+                                }
+                                // Purple team more points than pink team and serial killer = purple team win
+                                else if (BattleRoyale.purplePoints > BattleRoyale.pinkPoints && BattleRoyale.purplePoints > BattleRoyale.serialKillerPoints) {
+                                    BattleRoyale.triggerPurpleTeamWin = true;
+                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePurpleTeamWin, false);
+                                }
+                                // otherwise pink team win
+                                else if (BattleRoyale.pinkPoints > BattleRoyale.purplePoints && BattleRoyale.pinkPoints > BattleRoyale.serialKillerPoints) {
+                                    BattleRoyale.triggerPinkTeamWin = true;
+                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
+                                }
+                                // otherwise serial killer win
+                                else if (BattleRoyale.serialKillerPoints > BattleRoyale.purplePoints && BattleRoyale.serialKillerPoints > BattleRoyale.pinkPoints) {
+                                    BattleRoyale.triggerSerialKillerWin = true;
+                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSerialKillerWin, false);
+                                } 
+                                // draw between some of the teams
+                                else {
+                                    BattleRoyale.triggerDrawWin = true;
+                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleDraw, false);
+                                }
+                            }
+                            else {
+                                // both teams with same points = Draw
+                                if (BattleRoyale.purplePoints == BattleRoyale.pinkPoints) {
+                                    BattleRoyale.triggerDrawWin = true;
+                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleDraw, false);
+                                }
+                                // Purple team more points than pink team = purple team win
+                                else if (BattleRoyale.purplePoints > BattleRoyale.pinkPoints) {
+                                    BattleRoyale.triggerPurpleTeamWin = true;
+                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePurpleTeamWin, false);
+                                }
+                                // otherwise pink team win
+                                else {
+                                    BattleRoyale.triggerPinkTeamWin = true;
+                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
+                                }
+                            }
+                        }
+                        else {
+                            BattleRoyale.triggerTimeWin = true;
+                            ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleTimeWin, false);
+                        }
                     }
                 }
             }
@@ -863,6 +1083,29 @@ namespace LasMonjas.Patches {
 
                 if (p == 1f) {
 
+                    GameObject emerButton = null; 
+
+                    switch (PlayerControl.GameOptions.MapId) {
+                        case 0:
+                            emerButton = GameObject.Find("EmergencyConsole");
+                            break;
+                        case 1:
+                            emerButton = GameObject.Find("EmergencyConsole");
+                            break;
+                        case 2:
+                            emerButton = GameObject.Find("EmergencyButton");
+                            break;
+                        case 3:
+                            emerButton = GameObject.Find("EmergencyConsole");
+                            break;
+                        case 4:
+                            emerButton = GameObject.Find("task_emergency");
+                            break;
+                        case 5:
+                            emerButton = GameObject.Find("console-mr-callmeeting");
+                            break;
+                    }
+
                     // If after the duel both are dead, teleport their body to the player location
                     if (Challenger.challenger.Data.IsDead && Challenger.rivalPlayer.Data.IsDead) {
                         var bodyChallenger = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == Challenger.challenger.PlayerId);
@@ -875,7 +1118,7 @@ namespace LasMonjas.Patches {
                             }
                         }
                         else {
-                            bodyChallenger.transform.position = Challenger.challenger.transform.position;
+                            bodyChallenger.transform.position = emerButton.transform.position + new Vector3(0.5f, 0f, -0.5f);
                         }
                         var bodyRival = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == Challenger.rivalPlayer.PlayerId);
                         if (PlayerControl.GameOptions.MapId == 5) {
@@ -887,7 +1130,7 @@ namespace LasMonjas.Patches {
                             }
                         }
                         else {
-                            bodyRival.transform.position = Challenger.rivalPlayer.transform.position;
+                            bodyRival.transform.position = emerButton.transform.position + new Vector3(0.5f, 0f, -0.5f);
                         }
                         // If after the duel one of them was a lover, teleport the other lover body too
                         if (Modifiers.lover1 != null && (Challenger.rivalPlayer.PlayerId == Modifiers.lover1.PlayerId || Challenger.challenger.PlayerId == Modifiers.lover1.PlayerId)) {
@@ -901,12 +1144,22 @@ namespace LasMonjas.Patches {
                                 }
                             }
                             else {
-                                bodyLover2.transform.position = Modifiers.lover2.transform.position;
+                                bodyLover2.transform.position = emerButton.transform.position + new Vector3(0.5f, 0f, -0.5f);
                             }
                         }
                         else if (Modifiers.lover2 != null && (Challenger.rivalPlayer.PlayerId == Modifiers.lover2.PlayerId || Challenger.challenger.PlayerId == Modifiers.lover2.PlayerId)) {
                             var bodyLover1 = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == Modifiers.lover1.PlayerId);
-                            bodyLover1.transform.position = Modifiers.lover1.transform.position;
+                            if (PlayerControl.GameOptions.MapId == 5) {
+                                if (bodyLover1.transform.position.y > 0) {
+                                    bodyLover1.transform.position = new Vector3(5f, 19.5f, -5);
+                                }
+                                else {
+                                    bodyLover1.transform.position = new Vector3(1.35f, -28.25f, -5);
+                                }
+                            }
+                            else {
+                                bodyLover1.transform.position = emerButton.transform.position + new Vector3(0.5f, 0f, -0.5f);
+                            }
                         }
                     }
                     // If after the duel the challenger is dead, teleport his body to the player location
@@ -921,7 +1174,7 @@ namespace LasMonjas.Patches {
                             }
                         }
                         else {
-                            bodyC.transform.position = Challenger.challenger.transform.position;
+                            bodyC.transform.position = emerButton.transform.position + new Vector3(0.5f, 0f, -0.5f);
                         }
                         // If after the duel one of them was a lover, teleport the other lover body too
                         if (Modifiers.lover1 != null && Challenger.challenger.PlayerId == Modifiers.lover1.PlayerId) {
@@ -935,7 +1188,7 @@ namespace LasMonjas.Patches {
                                 }
                             }
                             else {
-                                bodyLover2.transform.position = Modifiers.lover2.transform.position;
+                                bodyLover2.transform.position = emerButton.transform.position + new Vector3(0.5f, 0f, -0.5f);
                             }
                         }
                         else if (Modifiers.lover2 != null && Challenger.challenger.PlayerId == Modifiers.lover2.PlayerId) {
@@ -949,7 +1202,7 @@ namespace LasMonjas.Patches {
                                 }
                             }
                             else {
-                                bodyLover1.transform.position = Modifiers.lover1.transform.position;
+                                bodyLover1.transform.position = emerButton.transform.position + new Vector3(0.5f, 0f, -0.5f);
                             }
                         }
                     }
@@ -965,7 +1218,7 @@ namespace LasMonjas.Patches {
                             }
                         }
                         else {
-                            bodyR.transform.position = Challenger.rivalPlayer.transform.position;
+                            bodyR.transform.position = emerButton.transform.position + new Vector3(0.5f, 0f, -0.5f);
                         }
                         // If after the duel one of them was a lover, teleport the other lover body too
                         if (Modifiers.lover1 != null && Challenger.rivalPlayer.PlayerId == Modifiers.lover1.PlayerId) {
@@ -979,7 +1232,7 @@ namespace LasMonjas.Patches {
                                 }
                             }
                             else {
-                                bodyLover2.transform.position = Modifiers.lover2.transform.position;
+                                bodyLover2.transform.position = emerButton.transform.position + new Vector3(0.5f, 0f, -0.5f);
                             }
                         }
                         else if (Modifiers.lover2 != null && Challenger.rivalPlayer.PlayerId == Modifiers.lover2.PlayerId) {
@@ -993,7 +1246,7 @@ namespace LasMonjas.Patches {
                                 }
                             }
                             else {
-                                bodyLover1.transform.position = Modifiers.lover1.transform.position;
+                                bodyLover1.transform.position = emerButton.transform.position + new Vector3(0.5f, 0f, -0.5f);
                             }
                         }
                     }
@@ -1723,6 +1976,307 @@ namespace LasMonjas.Patches {
             }
         }
 
+        static void battleRoyaleUpdate() {
+
+            if (!BattleRoyale.battleRoyaleMode && howmanygamemodesareon != 1)
+                return;
+            
+            if (BattleRoyale.matchType == 0) {
+                // If solo player disconnects, check number of players
+                foreach (PlayerControl soloPlayer in BattleRoyale.soloPlayerTeam) {
+                    if (soloPlayer.Data.Disconnected) {
+
+                        if (BattleRoyale.soloPlayer01 != null && soloPlayer.PlayerId == BattleRoyale.soloPlayer01.PlayerId) {
+                            BattleRoyale.soloPlayerTeam.Remove(BattleRoyale.soloPlayer01);
+                        }
+                        else if (BattleRoyale.soloPlayer02 != null && soloPlayer.PlayerId == BattleRoyale.soloPlayer02.PlayerId) {
+                            BattleRoyale.soloPlayerTeam.Remove(BattleRoyale.soloPlayer02);
+                        }
+                        else if (BattleRoyale.soloPlayer03 != null && soloPlayer.PlayerId == BattleRoyale.soloPlayer03.PlayerId) {
+                            BattleRoyale.soloPlayerTeam.Remove(BattleRoyale.soloPlayer03);
+                        }
+                        else if (BattleRoyale.soloPlayer04 != null && soloPlayer.PlayerId == BattleRoyale.soloPlayer04.PlayerId) {
+                            BattleRoyale.soloPlayerTeam.Remove(BattleRoyale.soloPlayer04);
+                        }
+                        else if (BattleRoyale.soloPlayer05 != null && soloPlayer.PlayerId == BattleRoyale.soloPlayer05.PlayerId) {
+                            BattleRoyale.soloPlayerTeam.Remove(BattleRoyale.soloPlayer05);
+                        }
+                        else if (BattleRoyale.soloPlayer06 != null && soloPlayer.PlayerId == BattleRoyale.soloPlayer06.PlayerId) {
+                            BattleRoyale.soloPlayerTeam.Remove(BattleRoyale.soloPlayer06);
+                        }
+                        else if (BattleRoyale.soloPlayer07 != null && soloPlayer.PlayerId == BattleRoyale.soloPlayer07.PlayerId) {
+                            BattleRoyale.soloPlayerTeam.Remove(BattleRoyale.soloPlayer07);
+                        }
+                        else if (BattleRoyale.soloPlayer08 != null && soloPlayer.PlayerId == BattleRoyale.soloPlayer08.PlayerId) {
+                            BattleRoyale.soloPlayerTeam.Remove(BattleRoyale.soloPlayer08);
+                        }
+                        else if (BattleRoyale.soloPlayer09 != null && soloPlayer.PlayerId == BattleRoyale.soloPlayer09.PlayerId) {
+                            BattleRoyale.soloPlayerTeam.Remove(BattleRoyale.soloPlayer09);
+                        }
+                        else if (BattleRoyale.soloPlayer10 != null && soloPlayer.PlayerId == BattleRoyale.soloPlayer10.PlayerId) {
+                            BattleRoyale.soloPlayerTeam.Remove(BattleRoyale.soloPlayer10);
+                        }
+                        else if (BattleRoyale.soloPlayer11 != null && soloPlayer.PlayerId == BattleRoyale.soloPlayer11.PlayerId) {
+                            BattleRoyale.soloPlayerTeam.Remove(BattleRoyale.soloPlayer11);
+                        }
+                        else if (BattleRoyale.soloPlayer12 != null && soloPlayer.PlayerId == BattleRoyale.soloPlayer12.PlayerId) {
+                            BattleRoyale.soloPlayerTeam.Remove(BattleRoyale.soloPlayer12);
+                        }
+                        else if (BattleRoyale.soloPlayer13 != null && soloPlayer.PlayerId == BattleRoyale.soloPlayer13.PlayerId) {
+                            BattleRoyale.soloPlayerTeam.Remove(BattleRoyale.soloPlayer13);
+                        }
+                        else if (BattleRoyale.soloPlayer14 != null && soloPlayer.PlayerId == BattleRoyale.soloPlayer14.PlayerId) {
+                            BattleRoyale.soloPlayerTeam.Remove(BattleRoyale.soloPlayer14);
+                        }
+                        else if (BattleRoyale.soloPlayer15 != null && soloPlayer.PlayerId == BattleRoyale.soloPlayer15.PlayerId) {
+                            BattleRoyale.soloPlayerTeam.Remove(BattleRoyale.soloPlayer15);
+                        }
+
+                        int soloPlayersAlives = 0;
+
+                        foreach (PlayerControl remainPlayer in BattleRoyale.soloPlayerTeam) {
+
+                            if (!remainPlayer.Data.IsDead) {
+                                soloPlayersAlives += 1;
+                            }
+
+                        }
+
+                        BattleRoyale.battleRoyalepointCounter = "Battle Royale Fighters: " + "<color=#009F57FF>" + soloPlayersAlives + "</color>";
+
+                        if (soloPlayersAlives <= 1) {
+                            BattleRoyale.triggerSoloWin = true;
+                            ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSoloWin, false);
+                        }
+                        break;
+                    }
+                }
+            }
+            else {
+                // Purple Team disconnects
+                foreach (PlayerControl purplePlayer in BattleRoyale.purpleTeam) {
+                    if (purplePlayer.Data.Disconnected) {
+
+                        if (BattleRoyale.purplePlayer01 != null && purplePlayer.PlayerId == BattleRoyale.purplePlayer01.PlayerId) {
+                            BattleRoyale.purpleTeam.Remove(BattleRoyale.purplePlayer01);
+                        }
+                        else if (BattleRoyale.purplePlayer02 != null && purplePlayer.PlayerId == BattleRoyale.purplePlayer02.PlayerId) {
+                            BattleRoyale.purpleTeam.Remove(BattleRoyale.purplePlayer02);
+                        }
+                        else if (BattleRoyale.purplePlayer03 != null && purplePlayer.PlayerId == BattleRoyale.purplePlayer03.PlayerId) {
+                            BattleRoyale.purpleTeam.Remove(BattleRoyale.purplePlayer03);
+                        }
+                        else if (BattleRoyale.purplePlayer04 != null && purplePlayer.PlayerId == BattleRoyale.purplePlayer04.PlayerId) {
+                            BattleRoyale.purpleTeam.Remove(BattleRoyale.purplePlayer04);
+                        }
+                        else if (BattleRoyale.purplePlayer05 != null && purplePlayer.PlayerId == BattleRoyale.purplePlayer05.PlayerId) {
+                            BattleRoyale.purpleTeam.Remove(BattleRoyale.purplePlayer05);
+                        }
+                        else if (BattleRoyale.purplePlayer06 != null && purplePlayer.PlayerId == BattleRoyale.purplePlayer06.PlayerId) {
+                            BattleRoyale.purpleTeam.Remove(BattleRoyale.purplePlayer06);
+                        }
+                        else if (BattleRoyale.purplePlayer07 != null && purplePlayer.PlayerId == BattleRoyale.purplePlayer07.PlayerId) {
+                            BattleRoyale.purpleTeam.Remove(BattleRoyale.purplePlayer07);
+                        }
+
+                        int purplePlayersAlive = 0;
+
+                        foreach (PlayerControl remainingPurplePlayer in BattleRoyale.purpleTeam) {
+
+                            if (!remainingPurplePlayer.Data.IsDead) {
+                                purplePlayersAlive += 1;
+                            }
+
+                        }
+
+                        int pinkPlayersAlive = 0;
+
+                        foreach (PlayerControl remainingPinkPlayer in BattleRoyale.pinkTeam) {
+
+                            if (!remainingPinkPlayer.Data.IsDead) {
+                                pinkPlayersAlive += 1;
+                            }
+
+                        }
+
+                        if (BattleRoyale.serialKiller != null) {
+
+                            int serialKillerAlive = 0;
+
+                            foreach (PlayerControl serialKiller in BattleRoyale.serialKillerTeam) {
+
+                                if (!serialKiller.Data.IsDead) {
+                                    serialKillerAlive += 1;
+                                }
+
+                            }
+
+                            if (BattleRoyale.matchType == 1) {
+                                BattleRoyale.battleRoyalepointCounter = "Purple Team: " + "<color=#5E3E7DFF>" + purplePlayersAlive + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + pinkPlayersAlive + "</color> | " + "Serial Killer: " + "<color=#808080FF>" + serialKillerAlive + "</color>";
+                                if (purplePlayersAlive <= 0 && pinkPlayersAlive <= 0 && !BattleRoyale.serialKiller.Data.IsDead) {
+                                    BattleRoyale.triggerSerialKillerWin = true;
+                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSerialKillerWin, false);
+                                }
+                                else if (pinkPlayersAlive <= 0 && BattleRoyale.serialKiller.Data.IsDead) {
+                                    BattleRoyale.triggerPurpleTeamWin = true;
+                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePurpleTeamWin, false);
+                                }
+                                else if (purplePlayersAlive <= 0 && BattleRoyale.serialKiller.Data.IsDead) {
+                                    BattleRoyale.triggerPinkTeamWin = true;
+                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
+                                }
+                            }                           
+                        }
+                        else {
+                            if (BattleRoyale.matchType == 1) {
+                                BattleRoyale.battleRoyalepointCounter = "Purple Team: " + "<color=#5E3E7DFF>" + purplePlayersAlive + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + pinkPlayersAlive + "</color>";
+                                if (pinkPlayersAlive <= 0) {
+                                    BattleRoyale.triggerPurpleTeamWin = true;
+                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePurpleTeamWin, false);
+                                }
+                                else if (purplePlayersAlive <= 0) {
+                                    BattleRoyale.triggerPinkTeamWin = true;
+                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
+                                }
+                            }
+                        }
+                        break;
+                    }
+                }
+                // Pink Team disconnects
+                foreach (PlayerControl pinkPlayer in BattleRoyale.pinkTeam) {
+                    if (pinkPlayer.Data.Disconnected) {
+
+                        if (BattleRoyale.pinkPlayer01 != null && pinkPlayer.PlayerId == BattleRoyale.pinkPlayer01.PlayerId) {
+                            BattleRoyale.pinkTeam.Remove(BattleRoyale.pinkPlayer01);
+                        }
+                        else if (BattleRoyale.pinkPlayer02 != null && pinkPlayer.PlayerId == BattleRoyale.pinkPlayer02.PlayerId) {
+                            BattleRoyale.pinkTeam.Remove(BattleRoyale.pinkPlayer02);
+                        }
+                        else if (BattleRoyale.pinkPlayer03 != null && pinkPlayer.PlayerId == BattleRoyale.pinkPlayer03.PlayerId) {
+                            BattleRoyale.pinkTeam.Remove(BattleRoyale.pinkPlayer03);
+                        }
+                        else if (BattleRoyale.pinkPlayer04 != null && pinkPlayer.PlayerId == BattleRoyale.pinkPlayer04.PlayerId) {
+                            BattleRoyale.pinkTeam.Remove(BattleRoyale.pinkPlayer04);
+                        }
+                        else if (BattleRoyale.pinkPlayer05 != null && pinkPlayer.PlayerId == BattleRoyale.pinkPlayer05.PlayerId) {
+                            BattleRoyale.pinkTeam.Remove(BattleRoyale.pinkPlayer05);
+                        }
+                        else if (BattleRoyale.pinkPlayer06 != null && pinkPlayer.PlayerId == BattleRoyale.pinkPlayer06.PlayerId) {
+                            BattleRoyale.pinkTeam.Remove(BattleRoyale.pinkPlayer06);
+                        }
+                        else if (BattleRoyale.pinkPlayer07 != null && pinkPlayer.PlayerId == BattleRoyale.pinkPlayer07.PlayerId) {
+                            BattleRoyale.pinkTeam.Remove(BattleRoyale.pinkPlayer07);
+                        }
+
+                        int purplePlayersAlive = 0;
+
+                        foreach (PlayerControl remainingPurplePlayer in BattleRoyale.purpleTeam) {
+
+                            if (!remainingPurplePlayer.Data.IsDead) {
+                                purplePlayersAlive += 1;
+                            }
+
+                        }
+
+                        int pinkPlayersAlive = 0;
+
+                        foreach (PlayerControl remainingPinkPlayer in BattleRoyale.pinkTeam) {
+
+                            if (!remainingPinkPlayer.Data.IsDead) {
+                                pinkPlayersAlive += 1;
+                            }
+
+                        }
+
+                        if (BattleRoyale.serialKiller != null) {
+
+                            int serialKillerAlive = 0;
+
+                            foreach (PlayerControl serialKiller in BattleRoyale.serialKillerTeam) {
+
+                                if (!serialKiller.Data.IsDead) {
+                                    serialKillerAlive += 1;
+                                }
+
+                            }
+
+                            if (BattleRoyale.matchType == 1) {
+                                BattleRoyale.battleRoyalepointCounter = "Purple Team: " + "<color=#5E3E7DFF>" + purplePlayersAlive + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + pinkPlayersAlive + "</color> | " + "Serial Killer: " + "<color=#808080FF>" + serialKillerAlive + "</color>";
+                                if (purplePlayersAlive <= 0 && pinkPlayersAlive <= 0 && !BattleRoyale.serialKiller.Data.IsDead) {
+                                    BattleRoyale.triggerSerialKillerWin = true;
+                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSerialKillerWin, false);
+                                }
+                                else if (pinkPlayersAlive <= 0 && BattleRoyale.serialKiller.Data.IsDead) {
+                                    BattleRoyale.triggerPurpleTeamWin = true;
+                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePurpleTeamWin, false);
+                                }
+                                else if (purplePlayersAlive <= 0 && BattleRoyale.serialKiller.Data.IsDead) {
+                                    BattleRoyale.triggerPinkTeamWin = true;
+                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
+                                }
+                            }
+                        }
+                        else {
+                            if (BattleRoyale.matchType == 1) {
+                                BattleRoyale.battleRoyalepointCounter = "Purple Team: " + "<color=#5E3E7DFF>" + purplePlayersAlive + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + pinkPlayersAlive + "</color>";
+                                if (pinkPlayersAlive <= 0) {
+                                    BattleRoyale.triggerPurpleTeamWin = true;
+                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePurpleTeamWin, false);
+                                }
+                                else if (purplePlayersAlive <= 0) {
+                                    BattleRoyale.triggerPinkTeamWin = true;
+                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
+                                }
+                            }
+                        }
+                        break;
+                    }
+                }
+                // Serial Killer disconnects
+                if (BattleRoyale.serialKiller != null && BattleRoyale.serialKiller.Data.Disconnected) {
+
+                    BattleRoyale.serialKillerTeam.Remove(BattleRoyale.serialKiller);
+
+                    int purplePlayersAlive = 0;
+
+                    foreach (PlayerControl purplePlayer in BattleRoyale.purpleTeam) {
+
+                        if (!purplePlayer.Data.IsDead) {
+                            purplePlayersAlive += 1;
+                        }
+
+                    }
+
+                    int pinkPlayersAlive = 0;
+
+                    foreach (PlayerControl pinkPlayer in BattleRoyale.pinkTeam) {
+
+                        if (!pinkPlayer.Data.IsDead) {
+                            pinkPlayersAlive += 1;
+                        }
+
+                    }
+
+                    int serialKillerAlive = 0;
+
+                    if (BattleRoyale.matchType == 1) {
+                        BattleRoyale.battleRoyalepointCounter = "Purple Team: " + "<color=#5E3E7DFF>" + purplePlayersAlive + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + pinkPlayersAlive + "</color> | " + "Serial Killer: " + "<color=#808080FF>" + serialKillerAlive + "</color>";
+                        if (pinkPlayersAlive <= 0) {
+                            BattleRoyale.triggerPurpleTeamWin = true;
+                            ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePurpleTeamWin, false);
+                        }
+                        else if (purplePlayersAlive <= 0) {
+                            BattleRoyale.triggerPinkTeamWin = true;
+                            ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
+                        }
+                    }
+
+                }
+            }
+        }
+        
+        
         static void UpdateMiniMap() {
 
             if (MapBehaviour.Instance != null && MapBehaviour.Instance.IsOpen && howmanygamemodesareon == 1) {
@@ -1927,7 +2481,10 @@ namespace LasMonjas.Patches {
             hotPotatoUpdate();
 
             // ZombieLaboratory disconnect update
-            zombieLaboratoryUpdate();           
+            zombieLaboratoryUpdate();     
+            
+            // Battle Royale disconnect update
+            battleRoyaleUpdate();
         }
     }
 }

@@ -18,7 +18,7 @@ namespace LasMonjas.Patches
             if (!__instance.Systems.ContainsKey(SystemTypes.Electrical)) return true;
 
             // Same crewmate vision for everyone on gamemodes with no vision change
-            if (CaptureTheFlag.captureTheFlagMode || KingOfTheHill.kingOfTheHillMode) {
+            if (CaptureTheFlag.captureTheFlagMode || KingOfTheHill.kingOfTheHillMode || BattleRoyale.battleRoyaleMode) {
                 if (player == null || player.IsDead) // IsDead
                     __result = __instance.MaxLightRadius;
                 else {
