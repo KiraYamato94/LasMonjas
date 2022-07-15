@@ -110,6 +110,11 @@ namespace LasMonjas.Core
             CustomMain.customAssets.rechargeAmmoClip = assetBundleBundle.LoadAsset<AudioClip>("zombieLaboratoryRecharge_Equip1.ogg").DontUnload();
             CustomMain.customAssets.nurseMedKit = assetBundleBundle.LoadAsset<GameObject>("nurseMedKit.prefab").DontUnload();
             CustomMain.customAssets.mapMedKit = assetBundleBundle.LoadAsset<GameObject>("medKit.prefab").DontUnload();
+
+            // Battle Royale
+            CustomMain.customAssets.royaleGetHit = assetBundleBundle.LoadAsset<AudioClip>("battleroyaleGetHit_Blow3.ogg").DontUnload();
+            CustomMain.customAssets.royaleHitPlayer = assetBundleBundle.LoadAsset<AudioClip>("battleroyaleHit_Damage3.ogg").DontUnload();
+            CustomMain.customAssets.royaleShoot = assetBundleBundle.LoadAsset<GameObject>("BattleRoyale_Shoot.prefab").DontUnload();
             
             // Custom Lobby Assets
             var resourceStreamLobby = allulCustomLobby.GetManifestResourceStream("LasMonjas.Images.MyAssets.allulcustomlobby");
@@ -154,6 +159,7 @@ namespace LasMonjas.Core
             CustomMain.customAssets.kingOfTheHillMusic = assetBundleGamemodeMusic.LoadAsset<AudioClip>("KingOfTheHill_Bama Country.mp3").DontUnload();
             CustomMain.customAssets.hotPotatoMusic = assetBundleGamemodeMusic.LoadAsset<AudioClip>("HotPotato_Batty McFaddin.mp3").DontUnload();
             CustomMain.customAssets.zombieLaboratoryMusic = assetBundleGamemodeMusic.LoadAsset<AudioClip>("ZombieLaboratoryMusic_Anachronist.mp3").DontUnload();
+            CustomMain.customAssets.battleRoyaleMusic = assetBundleGamemodeMusic.LoadAsset<AudioClip>("BattleRoyale_Killers.mp3").DontUnload();
 
             // Custom Bundle Hat Assets
             byte[] bundleHatRead = Assembly.GetCallingAssembly().GetManifestResourceStream("LasMonjas.Images.MyAssets.allulcustomhats").ReadFully();

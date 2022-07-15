@@ -524,12 +524,13 @@ namespace LasMonjas.Core
             var hudString = sb.ToString();
 
             int defaultSettingsLines = 23;
-            int roleSettingsLines = defaultSettingsLines + 36;
+            int roleSettingsLines = defaultSettingsLines + 37;
             int detailedSettingsP1 = roleSettingsLines + 43;
-            int detailedSettingsP2 = detailedSettingsP1 + 48;
-            int detailedSettingsP3 = detailedSettingsP2 + 42;
-            int detailedSettingsP4 = detailedSettingsP3 + 40;
-            int detailedSettingsP5 = detailedSettingsP4 + 41;
+            int detailedSettingsP2 = detailedSettingsP1 + 29;
+            int detailedSettingsP3 = detailedSettingsP2 + 27;
+            int detailedSettingsP4 = detailedSettingsP3 + 42;
+            int detailedSettingsP5 = detailedSettingsP4 + 40;
+            int detailedSettingsP6 = detailedSettingsP5 + 46;
             int end1 = hudString.TakeWhile(c => (defaultSettingsLines -= (c == '\n' ? 1 : 0)) > 0).Count();
             int end2 = hudString.TakeWhile(c => (roleSettingsLines -= (c == '\n' ? 1 : 0)) > 0).Count();
             int end3 = hudString.TakeWhile(c => (detailedSettingsP1 -= (c == '\n' ? 1 : 0)) > 0).Count();
@@ -537,6 +538,7 @@ namespace LasMonjas.Core
             int end5 = hudString.TakeWhile(c => (detailedSettingsP3 -= (c == '\n' ? 1 : 0)) > 0).Count();
             int end6 = hudString.TakeWhile(c => (detailedSettingsP4 -= (c == '\n' ? 1 : 0)) > 0).Count();
             int end7 = hudString.TakeWhile(c => (detailedSettingsP5 -= (c == '\n' ? 1 : 0)) > 0).Count();
+            int end8 = hudString.TakeWhile(c => (detailedSettingsP6 -= (c == '\n' ? 1 : 0)) > 0).Count();
             int counter = LasMonjasPlugin.optionsPage;
             switch (counter) {
                 case 0:
@@ -547,13 +549,13 @@ namespace LasMonjas.Core
                     int gap = 1;
                     int index = hudString.TakeWhile(c => (gap -= (c == '\n' ? 1 : 0)) > 0).Count();
                     hudString = hudString.Insert(index, "\n");
-                    gap = 10;
+                    gap = 11;
                     index = hudString.TakeWhile(c => (gap -= (c == '\n' ? 1 : 0)) > 0).Count();
                     hudString = hudString.Insert(index, "\n");
-                    gap = 24;
+                    gap = 25;
                     index = hudString.TakeWhile(c => (gap -= (c == '\n' ? 1 : 0)) > 0).Count();
                     hudString = hudString.Insert(index, "\n");
-                    gap = 32;
+                    gap = 33;
                     index = hudString.TakeWhile(c => (gap -= (c == '\n' ? 1 : 0)) > 0).Count();
                     hudString = hudString.Insert(index + 1, "\n"); break;
                 case 2:
@@ -574,11 +576,14 @@ namespace LasMonjas.Core
                     hudString = hudString.Substring(end6 + 1, end7 - end6);
                     break;
                 case 7:
-                    hudString = hudString.Substring(end7 + 1);
+                    hudString = hudString.Substring(end7 + 1, end8 - end7);
+                    break;
+                case 8:
+                    hudString = hudString.Substring(end8 + 1);
                     break;
             }
 
-            hudString += $"\nTab for next page ({counter + 1}/8)";
+            hudString += $"\nTab for next page ({counter + 1}/9)";
             __result = hudString;
         }
     }
@@ -588,7 +593,7 @@ namespace LasMonjas.Core
     {
         public static void Postfix(KeyboardJoystick __instance) {
             if (Input.GetKeyDown(KeyCode.Tab)) {
-                LasMonjasPlugin.optionsPage = (LasMonjasPlugin.optionsPage + 1) % 8;
+                LasMonjasPlugin.optionsPage = (LasMonjasPlugin.optionsPage + 1) % 9;
             }
         }
     }

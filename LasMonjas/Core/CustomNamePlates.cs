@@ -38,6 +38,7 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "Blocky", NamePlateName = "Bluescreen"},
             new AuthorData {AuthorName = "Blocky", NamePlateName = "Lot of bodies"},
             new AuthorData {AuthorName = "Blocky", NamePlateName = "RIP"},
+            new AuthorData {AuthorName = "AD", NamePlateName = "Jailed"},
         };
 
         internal static Dictionary<int, AuthorData> IdToData = new Dictionary<int, AuthorData>();

@@ -258,6 +258,36 @@ namespace LasMonjas.Core {
                                 text.text = "";
                             }
                             break;
+                        case 24:
+                            // Battle Royale timer
+                            if (BattleRoyale.battleRoyaleMode && BattleRoyale.matchDuration >= 0) {
+                                string prefix = ("<color=#FF8000FF>");
+                                text.text = prefix + message + BattleRoyale.matchDuration.ToString("F0") + "</color>";
+                            }
+                            else {
+                                text.text = "";
+                            }
+                            break;
+                        case 25:
+                            // Battle Royale point counter
+                            if (BattleRoyale.battleRoyaleMode && BattleRoyale.matchDuration >= 0) {
+                                string prefix = ("<color=#FF8000FF>");
+                                text.text = prefix + BattleRoyale.battleRoyalepointCounter + "</color>";
+                            }
+                            else {
+                                text.text = "";
+                            }
+                            break;
+                        case 26:
+                            // Battle Royale warnings
+                            if (BattleRoyale.battleRoyaleMode && BattleRoyale.matchDuration >= 0) {
+                                string prefix = ("<color=#FF8000FF>");
+                                text.text = prefix + message + "</color>";
+                            }
+                            else {
+                                text.text = "";
+                            }
+                            break;
                     }
                     if (text != null) text.color = even ? Color.yellow : Color.red;
                     if (p == 1f && text != null && text.gameObject != null) {
