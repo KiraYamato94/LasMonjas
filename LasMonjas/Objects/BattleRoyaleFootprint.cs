@@ -26,7 +26,7 @@ namespace LasMonjas.Objects
                     this.color = Palette.PlayerColors[(int)player.Data.DefaultOutfit.ColorId];
                     break;
                 case 1:
-                    this.color = Palette.PlayerColors[8];
+                    this.color = Palette.PlayerColors[11];
                     break;
                 case 2:
                     this.color = Palette.PlayerColors[13];
