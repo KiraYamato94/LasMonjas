@@ -177,9 +177,9 @@ namespace LasMonjas.Patches {
                             setPlayerNameColor(BattleRoyale.serialKiller, Palette.PlayerColors[15]);
                         }
 
-                        foreach (PlayerControl purpleplayer in BattleRoyale.purpleTeam) {
-                            if (purpleplayer != null) {
-                                setPlayerNameColor(purpleplayer, Palette.PlayerColors[8]);
+                        foreach (PlayerControl limeplayer in BattleRoyale.limeTeam) {
+                            if (limeplayer != null) {
+                                setPlayerNameColor(limeplayer, Palette.PlayerColors[11]);
                             }
                         }
 
@@ -330,97 +330,116 @@ namespace LasMonjas.Patches {
             // Battle Royale Lifes
             if (BattleRoyale.battleRoyaleMode && howmanygamemodesareon == 1) {
                 if (BattleRoyale.matchType == 0) {
-                    if (BattleRoyale.soloPlayer01 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer01) {
-                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer01Lifes + "♥)");
-                        BattleRoyale.soloPlayer01.cosmetics.nameText.text += suffix;
+                    if (PlayerControl.LocalPlayer.Data.IsDead) {
+                        BattleRoyale.soloPlayer01.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer01Lifes + "♥)");
+                        BattleRoyale.soloPlayer02.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer02Lifes + "♥)");
+                        BattleRoyale.soloPlayer03.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer03Lifes + "♥)");
+                        BattleRoyale.soloPlayer04.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer04Lifes + "♥)");
+                        BattleRoyale.soloPlayer05.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer05Lifes + "♥)");
+                        BattleRoyale.soloPlayer06.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer06Lifes + "♥)");
+                        BattleRoyale.soloPlayer07.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer07Lifes + "♥)");
+                        BattleRoyale.soloPlayer08.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer08Lifes + "♥)");
+                        BattleRoyale.soloPlayer09.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer09Lifes + "♥)");
+                        BattleRoyale.soloPlayer10.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer10Lifes + "♥)");
+                        BattleRoyale.soloPlayer11.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer11Lifes + "♥)");
+                        BattleRoyale.soloPlayer12.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer12Lifes + "♥)");
+                        BattleRoyale.soloPlayer13.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer13Lifes + "♥)");
+                        BattleRoyale.soloPlayer14.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer14Lifes + "♥)");
+                        BattleRoyale.soloPlayer15.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer15Lifes + "♥)");
                     }
-                    if (BattleRoyale.soloPlayer02 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer02) {
-                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer02Lifes + "♥)");
-                        BattleRoyale.soloPlayer02.cosmetics.nameText.text += suffix;
-                    }
-                    if (BattleRoyale.soloPlayer03 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer03) {
-                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer03Lifes + "♥)");
-                        BattleRoyale.soloPlayer03.cosmetics.nameText.text += suffix;
-                    }
-                    if (BattleRoyale.soloPlayer04 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer04) {
-                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer04Lifes + "♥)");
-                        BattleRoyale.soloPlayer04.cosmetics.nameText.text += suffix;
-                    }
-                    if (BattleRoyale.soloPlayer05 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer05) {
-                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer05Lifes + "♥)");
-                        BattleRoyale.soloPlayer05.cosmetics.nameText.text += suffix;
-                    }
-                    if (BattleRoyale.soloPlayer06 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer06) {
-                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer06Lifes + "♥)");
-                        BattleRoyale.soloPlayer06.cosmetics.nameText.text += suffix;
-                    }
-                    if (BattleRoyale.soloPlayer07 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer07) {
-                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer07Lifes + "♥)");
-                        BattleRoyale.soloPlayer07.cosmetics.nameText.text += suffix;
-                    }
-                    if (BattleRoyale.soloPlayer08 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer08) {
-                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer08Lifes + "♥)");
-                        BattleRoyale.soloPlayer08.cosmetics.nameText.text += suffix;
-                    }
-                    if (BattleRoyale.soloPlayer09 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer09) {
-                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer09Lifes + "♥)");
-                        BattleRoyale.soloPlayer09.cosmetics.nameText.text += suffix;
-                    }
-                    if (BattleRoyale.soloPlayer10 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer10) {
-                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer10Lifes + "♥)");
-                        BattleRoyale.soloPlayer10.cosmetics.nameText.text += suffix;
-                    }
-                    if (BattleRoyale.soloPlayer11 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer11) {
-                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer11Lifes + "♥)");
-                        BattleRoyale.soloPlayer11.cosmetics.nameText.text += suffix;
-                    }
-                    if (BattleRoyale.soloPlayer12 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer12) {
-                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer12Lifes + "♥)");
-                        BattleRoyale.soloPlayer12.cosmetics.nameText.text += suffix;
-                    }
-                    if (BattleRoyale.soloPlayer13 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer13) {
-                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer13Lifes + "♥)");
-                        BattleRoyale.soloPlayer13.cosmetics.nameText.text += suffix;
-                    }
-                    if (BattleRoyale.soloPlayer14 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer14) {
-                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer14Lifes + "♥)");
-                        BattleRoyale.soloPlayer14.cosmetics.nameText.text += suffix;
-                    }
-                    if (BattleRoyale.soloPlayer15 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer15) {
-                        string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer15Lifes + "♥)");
-                        BattleRoyale.soloPlayer15.cosmetics.nameText.text += suffix;
+                    else {
+                        if (BattleRoyale.soloPlayer01 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer01) {
+                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer01Lifes + "♥)");
+                            BattleRoyale.soloPlayer01.cosmetics.nameText.text += suffix;
+                        }
+                        if (BattleRoyale.soloPlayer02 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer02) {
+                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer02Lifes + "♥)");
+                            BattleRoyale.soloPlayer02.cosmetics.nameText.text += suffix;
+                        }
+                        if (BattleRoyale.soloPlayer03 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer03) {
+                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer03Lifes + "♥)");
+                            BattleRoyale.soloPlayer03.cosmetics.nameText.text += suffix;
+                        }
+                        if (BattleRoyale.soloPlayer04 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer04) {
+                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer04Lifes + "♥)");
+                            BattleRoyale.soloPlayer04.cosmetics.nameText.text += suffix;
+                        }
+                        if (BattleRoyale.soloPlayer05 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer05) {
+                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer05Lifes + "♥)");
+                            BattleRoyale.soloPlayer05.cosmetics.nameText.text += suffix;
+                        }
+                        if (BattleRoyale.soloPlayer06 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer06) {
+                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer06Lifes + "♥)");
+                            BattleRoyale.soloPlayer06.cosmetics.nameText.text += suffix;
+                        }
+                        if (BattleRoyale.soloPlayer07 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer07) {
+                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer07Lifes + "♥)");
+                            BattleRoyale.soloPlayer07.cosmetics.nameText.text += suffix;
+                        }
+                        if (BattleRoyale.soloPlayer08 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer08) {
+                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer08Lifes + "♥)");
+                            BattleRoyale.soloPlayer08.cosmetics.nameText.text += suffix;
+                        }
+                        if (BattleRoyale.soloPlayer09 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer09) {
+                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer09Lifes + "♥)");
+                            BattleRoyale.soloPlayer09.cosmetics.nameText.text += suffix;
+                        }
+                        if (BattleRoyale.soloPlayer10 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer10) {
+                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer10Lifes + "♥)");
+                            BattleRoyale.soloPlayer10.cosmetics.nameText.text += suffix;
+                        }
+                        if (BattleRoyale.soloPlayer11 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer11) {
+                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer11Lifes + "♥)");
+                            BattleRoyale.soloPlayer11.cosmetics.nameText.text += suffix;
+                        }
+                        if (BattleRoyale.soloPlayer12 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer12) {
+                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer12Lifes + "♥)");
+                            BattleRoyale.soloPlayer12.cosmetics.nameText.text += suffix;
+                        }
+                        if (BattleRoyale.soloPlayer13 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer13) {
+                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer13Lifes + "♥)");
+                            BattleRoyale.soloPlayer13.cosmetics.nameText.text += suffix;
+                        }
+                        if (BattleRoyale.soloPlayer14 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer14) {
+                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer14Lifes + "♥)");
+                            BattleRoyale.soloPlayer14.cosmetics.nameText.text += suffix;
+                        }
+                        if (BattleRoyale.soloPlayer15 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer15) {
+                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer15Lifes + "♥)");
+                            BattleRoyale.soloPlayer15.cosmetics.nameText.text += suffix;
+                        }
                     }
                 }
                 else {
-                    foreach (PlayerControl purplePlayer in BattleRoyale.purpleTeam) {
-                        if (purplePlayer == PlayerControl.LocalPlayer) {
-                            if (BattleRoyale.purplePlayer01 != null) {
-                                string suffix = Helpers.cs(Captain.color, " (" + BattleRoyale.purplePlayer01Lifes + "♥)");
-                                BattleRoyale.purplePlayer01.cosmetics.nameText.text += suffix;
+                    foreach (PlayerControl limePlayer in BattleRoyale.limeTeam) {
+                        if (limePlayer == PlayerControl.LocalPlayer) {
+                            if (BattleRoyale.limePlayer01 != null) {
+                                string suffix = Helpers.cs(FortuneTeller.color, " (" + BattleRoyale.limePlayer01Lifes + "♥)");
+                                BattleRoyale.limePlayer01.cosmetics.nameText.text += suffix;
                             }
-                            if (BattleRoyale.purplePlayer02 != null) {
-                                string suffix = Helpers.cs(Captain.color, " (" + BattleRoyale.purplePlayer02Lifes + "♥)");
-                                BattleRoyale.purplePlayer02.cosmetics.nameText.text += suffix;
+                            if (BattleRoyale.limePlayer02 != null) {
+                                string suffix = Helpers.cs(FortuneTeller.color, " (" + BattleRoyale.limePlayer02Lifes + "♥)");
+                                BattleRoyale.limePlayer02.cosmetics.nameText.text += suffix;
                             }
-                            if (BattleRoyale.purplePlayer03 != null) {
-                                string suffix = Helpers.cs(Captain.color, " (" + BattleRoyale.purplePlayer03Lifes + "♥)");
-                                BattleRoyale.purplePlayer03.cosmetics.nameText.text += suffix;
+                            if (BattleRoyale.limePlayer03 != null) {
+                                string suffix = Helpers.cs(FortuneTeller.color, " (" + BattleRoyale.limePlayer03Lifes + "♥)");
+                                BattleRoyale.limePlayer03.cosmetics.nameText.text += suffix;
                             }
-                            if (BattleRoyale.purplePlayer04 != null) {
-                                string suffix = Helpers.cs(Captain.color, " (" + BattleRoyale.purplePlayer04Lifes + "♥)");
-                                BattleRoyale.purplePlayer04.cosmetics.nameText.text += suffix;
+                            if (BattleRoyale.limePlayer04 != null) {
+                                string suffix = Helpers.cs(FortuneTeller.color, " (" + BattleRoyale.limePlayer04Lifes + "♥)");
+                                BattleRoyale.limePlayer04.cosmetics.nameText.text += suffix;
                             }
-                            if (BattleRoyale.purplePlayer05 != null) {
-                                string suffix = Helpers.cs(Captain.color, " (" + BattleRoyale.purplePlayer05Lifes + "♥)");
-                                BattleRoyale.purplePlayer05.cosmetics.nameText.text += suffix;
+                            if (BattleRoyale.limePlayer05 != null) {
+                                string suffix = Helpers.cs(FortuneTeller.color, " (" + BattleRoyale.limePlayer05Lifes + "♥)");
+                                BattleRoyale.limePlayer05.cosmetics.nameText.text += suffix;
                             }
-                            if (BattleRoyale.purplePlayer06 != null) {
-                                string suffix = Helpers.cs(Captain.color, " (" + BattleRoyale.purplePlayer06Lifes + "♥)");
-                                BattleRoyale.purplePlayer06.cosmetics.nameText.text += suffix;
+                            if (BattleRoyale.limePlayer06 != null) {
+                                string suffix = Helpers.cs(FortuneTeller.color, " (" + BattleRoyale.limePlayer06Lifes + "♥)");
+                                BattleRoyale.limePlayer06.cosmetics.nameText.text += suffix;
                             }
-                            if (BattleRoyale.purplePlayer07 != null) {
-                                string suffix = Helpers.cs(Captain.color, " (" + BattleRoyale.purplePlayer07Lifes + "♥)");
-                                BattleRoyale.purplePlayer07.cosmetics.nameText.text += suffix;
+                            if (BattleRoyale.limePlayer07 != null) {
+                                string suffix = Helpers.cs(FortuneTeller.color, " (" + BattleRoyale.limePlayer07Lifes + "♥)");
+                                BattleRoyale.limePlayer07.cosmetics.nameText.text += suffix;
                             }
                         }
                     }
@@ -542,54 +561,55 @@ namespace LasMonjas.Patches {
         }
 
         static void timerUpdate() {
+            var deltaTime = Time.deltaTime;
             if (Hacker.hacker != null) {
-                Hacker.hackerTimer -= Time.deltaTime;
+                Hacker.hackerTimer -= deltaTime;
             }
             if (Bomberman.bomberman != null) {
-                Bomberman.bombTimer -= Time.deltaTime;
+                Bomberman.bombTimer -= deltaTime;
             }
             if (Modifiers.performer != null) {
-                Modifiers.performerDuration -= Time.deltaTime;
+                Modifiers.performerDuration -= deltaTime;
             }
             if (Illusionist.illusionist != null) {
-                Illusionist.lightsOutTimer -= Time.deltaTime;
+                Illusionist.lightsOutTimer -= deltaTime;
             }
             if (Sleuth.sleuth != null) {
-                Sleuth.corpsesPathfindTimer -= Time.deltaTime;
+                Sleuth.corpsesPathfindTimer -= deltaTime;
             }
             if (Detective.detective != null) {
-                Detective.detectiveTimer -= Time.deltaTime;
+                Detective.detectiveTimer -= deltaTime;
             }
             if (Fink.fink != null) {
-                Fink.finkTimer -= Time.deltaTime;
+                Fink.finkTimer -= deltaTime;
             }
             if (Medusa.medusa != null) {
-                Medusa.messageTimer -= Time.deltaTime;
+                Medusa.messageTimer -= deltaTime;
             }
             if (Hypnotist.hypnotist != null) {
-                Hypnotist.messageTimer -= Time.deltaTime;
+                Hypnotist.messageTimer -= deltaTime;
             }
             if (Engineer.engineer != null) {
-                Engineer.messageTimer -= Time.deltaTime;
+                Engineer.messageTimer -= deltaTime;
             }
             if (Bat.bat != null) {
-                Bat.frequencyTimer -= Time.deltaTime;
+                Bat.frequencyTimer -= deltaTime;
             }
             if (Berserker.berserker != null && Berserker.killedFirstTime && MeetingHud.Instance == null && !Berserker.berserker.Data.IsDead) {
-                Berserker.timeToKill -= Time.deltaTime;
+                Berserker.timeToKill -= deltaTime;
                 Berserker.berserkerCountButtonText.text = $"{Berserker.timeToKill.ToString("F0")}";
                 if (Berserker.timeToKill < 0) {
                     Berserker.berserker.MurderPlayer(Berserker.berserker);
                 }
             }
             if (Shy.shy != null) {
-                Shy.timer -= Time.deltaTime;
+                Shy.timer -= deltaTime;
             }
 
             if (howmanygamemodesareon == 1) {
                 // Capture the flag timer
                 if (CaptureTheFlag.captureTheFlagMode) {
-                    CaptureTheFlag.matchDuration -= Time.deltaTime;
+                    CaptureTheFlag.matchDuration -= deltaTime;
                     if (CaptureTheFlag.matchDuration < 0) {
                         // both teams with same points = Draw
                         if (CaptureTheFlag.currentRedTeamPoints == CaptureTheFlag.currentBlueTeamPoints) {
@@ -611,14 +631,14 @@ namespace LasMonjas.Patches {
 
                 // Police and Thief timer, always police team wins if thiefs ran out of time
                 if (PoliceAndThief.policeAndThiefMode) {
-                    PoliceAndThief.policeplayer01lightTimer -= Time.deltaTime;
-                    PoliceAndThief.policeplayer02lightTimer -= Time.deltaTime;
-                    PoliceAndThief.policeplayer03lightTimer -= Time.deltaTime;
-                    PoliceAndThief.policeplayer04lightTimer -= Time.deltaTime;
-                    PoliceAndThief.policeplayer05lightTimer -= Time.deltaTime;
-                    PoliceAndThief.policeplayer06lightTimer -= Time.deltaTime;
+                    PoliceAndThief.policeplayer01lightTimer -= deltaTime;
+                    PoliceAndThief.policeplayer02lightTimer -= deltaTime;
+                    PoliceAndThief.policeplayer03lightTimer -= deltaTime;
+                    PoliceAndThief.policeplayer04lightTimer -= deltaTime;
+                    PoliceAndThief.policeplayer05lightTimer -= deltaTime;
+                    PoliceAndThief.policeplayer06lightTimer -= deltaTime;
 
-                    PoliceAndThief.matchDuration -= Time.deltaTime;
+                    PoliceAndThief.matchDuration -= deltaTime;
                     if (PoliceAndThief.matchDuration < 0) {
                         PoliceAndThief.triggerPoliceWin = true;
                         ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.ThiefModePoliceWin, false);
@@ -627,7 +647,7 @@ namespace LasMonjas.Patches {
 
                 // King of the hill timer
                 if (KingOfTheHill.kingOfTheHillMode) {
-                    KingOfTheHill.matchDuration -= Time.deltaTime;
+                    KingOfTheHill.matchDuration -= deltaTime;
                     if (KingOfTheHill.matchDuration < 0) {
                         // both teams with same points = draw
                         if (KingOfTheHill.currentGreenTeamPoints == KingOfTheHill.currentYellowTeamPoints) {
@@ -647,14 +667,14 @@ namespace LasMonjas.Patches {
                     }
 
                     if (KingOfTheHill.totalGreenKingzonescaptured != 0) {
-                        KingOfTheHill.currentGreenTeamPoints += KingOfTheHill.totalGreenKingzonescaptured * Time.deltaTime;
+                        KingOfTheHill.currentGreenTeamPoints += KingOfTheHill.totalGreenKingzonescaptured * deltaTime; ;
                         if (KingOfTheHill.currentGreenTeamPoints >= KingOfTheHill.requiredPoints) {
                             KingOfTheHill.triggerGreenTeamWin = true;
                             ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.GreenTeamHillWin, false);
                         }
                     }
                     if (KingOfTheHill.totalYellowKingzonescaptured != 0) {
-                        KingOfTheHill.currentYellowTeamPoints += KingOfTheHill.totalYellowKingzonescaptured * Time.deltaTime;
+                        KingOfTheHill.currentYellowTeamPoints += KingOfTheHill.totalYellowKingzonescaptured * deltaTime; ;
                         if (KingOfTheHill.currentYellowTeamPoints >= KingOfTheHill.requiredPoints) {
                             KingOfTheHill.triggerYellowTeamWin = true;
                             ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.YellowTeamHillWin, false);
@@ -668,13 +688,13 @@ namespace LasMonjas.Patches {
                 // Hot Potato timer
                 if (HotPotato.hotPotatoMode) {
                     if (HotPotato.firstPotatoTransfered) {
-                        HotPotato.timeforTransfer -= Time.deltaTime;
+                        HotPotato.timeforTransfer -= deltaTime;
 
                         if (HotPotato.timeforTransfer <= 0 && !HotPotato.hotPotatoPlayer.Data.IsDead) {
                             HotPotato.hotPotatoPlayer.MurderPlayer(HotPotato.hotPotatoPlayer);
                         }
 
-                        HotPotato.matchDuration -= Time.deltaTime;
+                        HotPotato.matchDuration -= deltaTime;
 
                         if (HotPotato.matchDuration < 0) {
                             HotPotato.triggerHotPotatoEnd = true;
@@ -685,7 +705,7 @@ namespace LasMonjas.Patches {
 
                 // ZombieLaboratory timer
                 if (ZombieLaboratory.zombieLaboratoryMode) {
-                    ZombieLaboratory.matchDuration -= Time.deltaTime;
+                    ZombieLaboratory.matchDuration -= deltaTime;
 
                     if (ZombieLaboratory.matchDuration < 0) {
                         ZombieLaboratory.triggerZombieWin = true;
@@ -695,27 +715,27 @@ namespace LasMonjas.Patches {
                 
                 // Battle Royale timer
                 if (BattleRoyale.battleRoyaleMode) {
-                    BattleRoyale.matchDuration -= Time.deltaTime;
+                    BattleRoyale.matchDuration -= deltaTime;
                     if (BattleRoyale.matchDuration < 0) {
                         if (BattleRoyale.matchType == 2) {
                             if (BattleRoyale.serialKiller != null) {
                                 // all teams with same points = Draw
-                                if (BattleRoyale.purplePoints == BattleRoyale.pinkPoints && BattleRoyale.pinkPoints == BattleRoyale.serialKillerPoints) {
+                                if (BattleRoyale.limePoints == BattleRoyale.pinkPoints && BattleRoyale.pinkPoints == BattleRoyale.serialKillerPoints) {
                                     BattleRoyale.triggerDrawWin = true;
                                     ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleDraw, false);
                                 }
-                                // Purple team more points than pink team and serial killer = purple team win
-                                else if (BattleRoyale.purplePoints > BattleRoyale.pinkPoints && BattleRoyale.purplePoints > BattleRoyale.serialKillerPoints) {
-                                    BattleRoyale.triggerPurpleTeamWin = true;
-                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePurpleTeamWin, false);
+                                // Lime team more points than pink team and serial killer = lime team win
+                                else if (BattleRoyale.limePoints > BattleRoyale.pinkPoints && BattleRoyale.limePoints > BattleRoyale.serialKillerPoints) {
+                                    BattleRoyale.triggerLimeTeamWin = true;
+                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
                                 }
                                 // otherwise pink team win
-                                else if (BattleRoyale.pinkPoints > BattleRoyale.purplePoints && BattleRoyale.pinkPoints > BattleRoyale.serialKillerPoints) {
+                                else if (BattleRoyale.pinkPoints > BattleRoyale.limePoints && BattleRoyale.pinkPoints > BattleRoyale.serialKillerPoints) {
                                     BattleRoyale.triggerPinkTeamWin = true;
                                     ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
                                 }
                                 // otherwise serial killer win
-                                else if (BattleRoyale.serialKillerPoints > BattleRoyale.purplePoints && BattleRoyale.serialKillerPoints > BattleRoyale.pinkPoints) {
+                                else if (BattleRoyale.serialKillerPoints > BattleRoyale.limePoints && BattleRoyale.serialKillerPoints > BattleRoyale.pinkPoints) {
                                     BattleRoyale.triggerSerialKillerWin = true;
                                     ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSerialKillerWin, false);
                                 } 
@@ -727,14 +747,14 @@ namespace LasMonjas.Patches {
                             }
                             else {
                                 // both teams with same points = Draw
-                                if (BattleRoyale.purplePoints == BattleRoyale.pinkPoints) {
+                                if (BattleRoyale.limePoints == BattleRoyale.pinkPoints) {
                                     BattleRoyale.triggerDrawWin = true;
                                     ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleDraw, false);
                                 }
-                                // Purple team more points than pink team = purple team win
-                                else if (BattleRoyale.purplePoints > BattleRoyale.pinkPoints) {
-                                    BattleRoyale.triggerPurpleTeamWin = true;
-                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePurpleTeamWin, false);
+                                // Lime team more points than pink team = lime team win
+                                else if (BattleRoyale.limePoints > BattleRoyale.pinkPoints) {
+                                    BattleRoyale.triggerLimeTeamWin = true;
+                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
                                 }
                                 // otherwise pink team win
                                 else {
@@ -2053,38 +2073,38 @@ namespace LasMonjas.Patches {
                 }
             }
             else {
-                // Purple Team disconnects
-                foreach (PlayerControl purplePlayer in BattleRoyale.purpleTeam) {
-                    if (purplePlayer.Data.Disconnected) {
+                // lime Team disconnects
+                foreach (PlayerControl limePlayer in BattleRoyale.limeTeam) {
+                    if (limePlayer.Data.Disconnected) {
 
-                        if (BattleRoyale.purplePlayer01 != null && purplePlayer.PlayerId == BattleRoyale.purplePlayer01.PlayerId) {
-                            BattleRoyale.purpleTeam.Remove(BattleRoyale.purplePlayer01);
+                        if (BattleRoyale.limePlayer01 != null && limePlayer.PlayerId == BattleRoyale.limePlayer01.PlayerId) {
+                            BattleRoyale.limeTeam.Remove(BattleRoyale.limePlayer01);
                         }
-                        else if (BattleRoyale.purplePlayer02 != null && purplePlayer.PlayerId == BattleRoyale.purplePlayer02.PlayerId) {
-                            BattleRoyale.purpleTeam.Remove(BattleRoyale.purplePlayer02);
+                        else if (BattleRoyale.limePlayer02 != null && limePlayer.PlayerId == BattleRoyale.limePlayer02.PlayerId) {
+                            BattleRoyale.limeTeam.Remove(BattleRoyale.limePlayer02);
                         }
-                        else if (BattleRoyale.purplePlayer03 != null && purplePlayer.PlayerId == BattleRoyale.purplePlayer03.PlayerId) {
-                            BattleRoyale.purpleTeam.Remove(BattleRoyale.purplePlayer03);
+                        else if (BattleRoyale.limePlayer03 != null && limePlayer.PlayerId == BattleRoyale.limePlayer03.PlayerId) {
+                            BattleRoyale.limeTeam.Remove(BattleRoyale.limePlayer03);
                         }
-                        else if (BattleRoyale.purplePlayer04 != null && purplePlayer.PlayerId == BattleRoyale.purplePlayer04.PlayerId) {
-                            BattleRoyale.purpleTeam.Remove(BattleRoyale.purplePlayer04);
+                        else if (BattleRoyale.limePlayer04 != null && limePlayer.PlayerId == BattleRoyale.limePlayer04.PlayerId) {
+                            BattleRoyale.limeTeam.Remove(BattleRoyale.limePlayer04);
                         }
-                        else if (BattleRoyale.purplePlayer05 != null && purplePlayer.PlayerId == BattleRoyale.purplePlayer05.PlayerId) {
-                            BattleRoyale.purpleTeam.Remove(BattleRoyale.purplePlayer05);
+                        else if (BattleRoyale.limePlayer05 != null && limePlayer.PlayerId == BattleRoyale.limePlayer05.PlayerId) {
+                            BattleRoyale.limeTeam.Remove(BattleRoyale.limePlayer05);
                         }
-                        else if (BattleRoyale.purplePlayer06 != null && purplePlayer.PlayerId == BattleRoyale.purplePlayer06.PlayerId) {
-                            BattleRoyale.purpleTeam.Remove(BattleRoyale.purplePlayer06);
+                        else if (BattleRoyale.limePlayer06 != null && limePlayer.PlayerId == BattleRoyale.limePlayer06.PlayerId) {
+                            BattleRoyale.limeTeam.Remove(BattleRoyale.limePlayer06);
                         }
-                        else if (BattleRoyale.purplePlayer07 != null && purplePlayer.PlayerId == BattleRoyale.purplePlayer07.PlayerId) {
-                            BattleRoyale.purpleTeam.Remove(BattleRoyale.purplePlayer07);
+                        else if (BattleRoyale.limePlayer07 != null && limePlayer.PlayerId == BattleRoyale.limePlayer07.PlayerId) {
+                            BattleRoyale.limeTeam.Remove(BattleRoyale.limePlayer07);
                         }
 
-                        int purplePlayersAlive = 0;
+                        int limePlayersAlive = 0;
 
-                        foreach (PlayerControl remainingPurplePlayer in BattleRoyale.purpleTeam) {
+                        foreach (PlayerControl remainingLimePlayer in BattleRoyale.limeTeam) {
 
-                            if (!remainingPurplePlayer.Data.IsDead) {
-                                purplePlayersAlive += 1;
+                            if (!remainingLimePlayer.Data.IsDead) {
+                                limePlayersAlive += 1;
                             }
 
                         }
@@ -2112,16 +2132,16 @@ namespace LasMonjas.Patches {
                             }
 
                             if (BattleRoyale.matchType == 1) {
-                                BattleRoyale.battleRoyalepointCounter = "Purple Team: " + "<color=#5E3E7DFF>" + purplePlayersAlive + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + pinkPlayersAlive + "</color> | " + "Serial Killer: " + "<color=#808080FF>" + serialKillerAlive + "</color>";
-                                if (purplePlayersAlive <= 0 && pinkPlayersAlive <= 0 && !BattleRoyale.serialKiller.Data.IsDead) {
+                                BattleRoyale.battleRoyalepointCounter = "Lime Team: " + "<color=#39FF14FF>" + limePlayersAlive + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + pinkPlayersAlive + "</color> | " + "Serial Killer: " + "<color=#808080FF>" + serialKillerAlive + "</color>";
+                                if (limePlayersAlive <= 0 && pinkPlayersAlive <= 0 && !BattleRoyale.serialKiller.Data.IsDead) {
                                     BattleRoyale.triggerSerialKillerWin = true;
                                     ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSerialKillerWin, false);
                                 }
                                 else if (pinkPlayersAlive <= 0 && BattleRoyale.serialKiller.Data.IsDead) {
-                                    BattleRoyale.triggerPurpleTeamWin = true;
-                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePurpleTeamWin, false);
+                                    BattleRoyale.triggerLimeTeamWin = true;
+                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
                                 }
-                                else if (purplePlayersAlive <= 0 && BattleRoyale.serialKiller.Data.IsDead) {
+                                else if (limePlayersAlive <= 0 && BattleRoyale.serialKiller.Data.IsDead) {
                                     BattleRoyale.triggerPinkTeamWin = true;
                                     ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
                                 }
@@ -2129,12 +2149,12 @@ namespace LasMonjas.Patches {
                         }
                         else {
                             if (BattleRoyale.matchType == 1) {
-                                BattleRoyale.battleRoyalepointCounter = "Purple Team: " + "<color=#5E3E7DFF>" + purplePlayersAlive + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + pinkPlayersAlive + "</color>";
+                                BattleRoyale.battleRoyalepointCounter = "Lime Team: " + "<color=#39FF14FF>" + limePlayersAlive + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + pinkPlayersAlive + "</color>";
                                 if (pinkPlayersAlive <= 0) {
-                                    BattleRoyale.triggerPurpleTeamWin = true;
-                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePurpleTeamWin, false);
+                                    BattleRoyale.triggerLimeTeamWin = true;
+                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
                                 }
-                                else if (purplePlayersAlive <= 0) {
+                                else if (limePlayersAlive <= 0) {
                                     BattleRoyale.triggerPinkTeamWin = true;
                                     ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
                                 }
@@ -2169,12 +2189,12 @@ namespace LasMonjas.Patches {
                             BattleRoyale.pinkTeam.Remove(BattleRoyale.pinkPlayer07);
                         }
 
-                        int purplePlayersAlive = 0;
+                        int limePlayersAlive = 0;
 
-                        foreach (PlayerControl remainingPurplePlayer in BattleRoyale.purpleTeam) {
+                        foreach (PlayerControl remainingLimePlayer in BattleRoyale.limeTeam) {
 
-                            if (!remainingPurplePlayer.Data.IsDead) {
-                                purplePlayersAlive += 1;
+                            if (!remainingLimePlayer.Data.IsDead) {
+                                limePlayersAlive += 1;
                             }
 
                         }
@@ -2202,16 +2222,16 @@ namespace LasMonjas.Patches {
                             }
 
                             if (BattleRoyale.matchType == 1) {
-                                BattleRoyale.battleRoyalepointCounter = "Purple Team: " + "<color=#5E3E7DFF>" + purplePlayersAlive + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + pinkPlayersAlive + "</color> | " + "Serial Killer: " + "<color=#808080FF>" + serialKillerAlive + "</color>";
-                                if (purplePlayersAlive <= 0 && pinkPlayersAlive <= 0 && !BattleRoyale.serialKiller.Data.IsDead) {
+                                BattleRoyale.battleRoyalepointCounter = "Lime Team: " + "<color=#39FF14FF>" + limePlayersAlive + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + pinkPlayersAlive + "</color> | " + "Serial Killer: " + "<color=#808080FF>" + serialKillerAlive + "</color>";
+                                if (limePlayersAlive <= 0 && pinkPlayersAlive <= 0 && !BattleRoyale.serialKiller.Data.IsDead) {
                                     BattleRoyale.triggerSerialKillerWin = true;
                                     ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSerialKillerWin, false);
                                 }
                                 else if (pinkPlayersAlive <= 0 && BattleRoyale.serialKiller.Data.IsDead) {
-                                    BattleRoyale.triggerPurpleTeamWin = true;
-                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePurpleTeamWin, false);
+                                    BattleRoyale.triggerLimeTeamWin = true;
+                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
                                 }
-                                else if (purplePlayersAlive <= 0 && BattleRoyale.serialKiller.Data.IsDead) {
+                                else if (limePlayersAlive <= 0 && BattleRoyale.serialKiller.Data.IsDead) {
                                     BattleRoyale.triggerPinkTeamWin = true;
                                     ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
                                 }
@@ -2219,12 +2239,12 @@ namespace LasMonjas.Patches {
                         }
                         else {
                             if (BattleRoyale.matchType == 1) {
-                                BattleRoyale.battleRoyalepointCounter = "Purple Team: " + "<color=#5E3E7DFF>" + purplePlayersAlive + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + pinkPlayersAlive + "</color>";
+                                BattleRoyale.battleRoyalepointCounter = "Lime Team: " + "<color=#39FF14FF>" + limePlayersAlive + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + pinkPlayersAlive + "</color>";
                                 if (pinkPlayersAlive <= 0) {
-                                    BattleRoyale.triggerPurpleTeamWin = true;
-                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePurpleTeamWin, false);
+                                    BattleRoyale.triggerLimeTeamWin = true;
+                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
                                 }
-                                else if (purplePlayersAlive <= 0) {
+                                else if (limePlayersAlive <= 0) {
                                     BattleRoyale.triggerPinkTeamWin = true;
                                     ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
                                 }
@@ -2238,12 +2258,12 @@ namespace LasMonjas.Patches {
 
                     BattleRoyale.serialKillerTeam.Remove(BattleRoyale.serialKiller);
 
-                    int purplePlayersAlive = 0;
+                    int limePlayersAlive = 0;
 
-                    foreach (PlayerControl purplePlayer in BattleRoyale.purpleTeam) {
+                    foreach (PlayerControl limePlayer in BattleRoyale.limeTeam) {
 
-                        if (!purplePlayer.Data.IsDead) {
-                            purplePlayersAlive += 1;
+                        if (!limePlayer.Data.IsDead) {
+                            limePlayersAlive += 1;
                         }
 
                     }
@@ -2261,12 +2281,12 @@ namespace LasMonjas.Patches {
                     int serialKillerAlive = 0;
 
                     if (BattleRoyale.matchType == 1) {
-                        BattleRoyale.battleRoyalepointCounter = "Purple Team: " + "<color=#5E3E7DFF>" + purplePlayersAlive + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + pinkPlayersAlive + "</color> | " + "Serial Killer: " + "<color=#808080FF>" + serialKillerAlive + "</color>";
+                        BattleRoyale.battleRoyalepointCounter = "Lime Team: " + "<color=#39FF14FF>" + limePlayersAlive + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + pinkPlayersAlive + "</color> | " + "Serial Killer: " + "<color=#808080FF>" + serialKillerAlive + "</color>";
                         if (pinkPlayersAlive <= 0) {
-                            BattleRoyale.triggerPurpleTeamWin = true;
-                            ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePurpleTeamWin, false);
+                            BattleRoyale.triggerLimeTeamWin = true;
+                            ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
                         }
-                        else if (purplePlayersAlive <= 0) {
+                        else if (limePlayersAlive <= 0) {
                             BattleRoyale.triggerPinkTeamWin = true;
                             ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
                         }
@@ -2415,25 +2435,32 @@ namespace LasMonjas.Patches {
             __instance.ReportButton.enabled = enabled;
         }
 
-        static void Postfix(HudManager __instance)
-        {
+        static void Postfix(HudManager __instance) {
             if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) return;
 
             CustomButton.HudUpdate();
             resetNameTagsAndColors();
             setNameColors();
-            updateShielded();
             setNameTags();
             UpdateMiniMap();
-            shakeScreenIfReactorSabotage();
-            anonymousCommsSabotage();
-            slowSpeedIfOxigenSabotage();
 
             // Impostors
             updateImpostorKillButton(__instance);
 
             // Timer updates
             timerUpdate();
+
+            // Custom gamemode report button update
+            updateReportButton(__instance);
+
+
+            // Better Sabotages
+            shakeScreenIfReactorSabotage();
+            anonymousCommsSabotage();
+            slowSpeedIfOxigenSabotage();
+
+            // Squire update
+            updateShielded();
 
             // Kid
             kidUpdate();
@@ -2458,16 +2485,14 @@ namespace LasMonjas.Patches {
 
             // Bat update
             batUpdate();
-            
-            // Custom gamemode report button update
-            updateReportButton(__instance);
 
             // Janitor corpse moving
             janitorUpdate();
 
             // Necromancer corpse moving
             necromancerUpdate();
-            
+
+
             // Capture the flag flags movement + fix if someone disconnnects
             captureTheFlagUpdate();
 
@@ -2481,10 +2506,11 @@ namespace LasMonjas.Patches {
             hotPotatoUpdate();
 
             // ZombieLaboratory disconnect update
-            zombieLaboratoryUpdate();     
-            
+            zombieLaboratoryUpdate();
+
             // Battle Royale disconnect update
             battleRoyaleUpdate();
+
         }
     }
 }

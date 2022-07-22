@@ -168,10 +168,10 @@ namespace LasMonjas.Patches
                         }
                     }
                     else {
-                        var purpleTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                        if (PlayerControl.LocalPlayer == BattleRoyale.purplePlayer01 || PlayerControl.LocalPlayer == BattleRoyale.purplePlayer02 || PlayerControl.LocalPlayer == BattleRoyale.purplePlayer03 || PlayerControl.LocalPlayer == BattleRoyale.purplePlayer04 || PlayerControl.LocalPlayer == BattleRoyale.purplePlayer05 || PlayerControl.LocalPlayer == BattleRoyale.purplePlayer06 || PlayerControl.LocalPlayer == BattleRoyale.purplePlayer07) {
-                            purpleTeam.Add(PlayerControl.LocalPlayer);
-                            yourTeam = purpleTeam;
+                        var limeTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
+                        if (PlayerControl.LocalPlayer == BattleRoyale.limePlayer01 || PlayerControl.LocalPlayer == BattleRoyale.limePlayer02 || PlayerControl.LocalPlayer == BattleRoyale.limePlayer03 || PlayerControl.LocalPlayer == BattleRoyale.limePlayer04 || PlayerControl.LocalPlayer == BattleRoyale.limePlayer05 || PlayerControl.LocalPlayer == BattleRoyale.limePlayer06 || PlayerControl.LocalPlayer == BattleRoyale.limePlayer07) {
+                            limeTeam.Add(PlayerControl.LocalPlayer);
+                            yourTeam = limeTeam;
                         }
                         var pinkTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
                         if (PlayerControl.LocalPlayer == BattleRoyale.pinkPlayer01 || PlayerControl.LocalPlayer == BattleRoyale.pinkPlayer02 || PlayerControl.LocalPlayer == BattleRoyale.pinkPlayer03 || PlayerControl.LocalPlayer == BattleRoyale.pinkPlayer04 || PlayerControl.LocalPlayer == BattleRoyale.pinkPlayer05 || PlayerControl.LocalPlayer == BattleRoyale.pinkPlayer06 || PlayerControl.LocalPlayer == BattleRoyale.pinkPlayer07) {
@@ -3513,7 +3513,7 @@ namespace LasMonjas.Patches
                             case 0:
                                 if (activatedSensei) {
 
-                                    if (BattleRoyale.matchType == 0) {
+                                    if (BattleRoyale.matchType == 0) { 
                                         foreach (PlayerControl soloPlayer in BattleRoyale.soloPlayerTeam) {
                                             soloPlayer.transform.position = new Vector3(BattleRoyale.soloPlayersSpawnPositions[howmanyplayers].x, BattleRoyale.soloPlayersSpawnPositions[howmanyplayers].y, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(soloPlayer);
@@ -3526,7 +3526,7 @@ namespace LasMonjas.Patches
                                             Helpers.clearAllTasks(BattleRoyale.serialKiller);
                                         }
 
-                                        foreach (PlayerControl player in BattleRoyale.purpleTeam) {
+                                        foreach (PlayerControl player in BattleRoyale.limeTeam) {
                                             player.transform.position = new Vector3(-17.5f, -1.15f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
@@ -3537,7 +3537,16 @@ namespace LasMonjas.Patches
                                     }
 
                                     if (PlayerControl.LocalPlayer != null && !createdbattleroyale) {
-
+                                        if (BattleRoyale.matchType != 0) {
+                                            GameObject limeteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
+                                            limeteamfloor.name = "limeteamfloor";
+                                            limeteamfloor.transform.position = new Vector3(-17.5f, -1.15f, 0.5f);
+                                            GameObject pinkteamfloor = GameObject.Instantiate(CustomMain.customAssets.redfloor, PlayerControl.LocalPlayer.transform.parent);
+                                            pinkteamfloor.name = "pinkteamfloor";
+                                            pinkteamfloor.transform.position = new Vector3(7.7f, -0.95f, 0.5f);
+                                            BattleRoyale.serialKillerSpawns.Add(limeteamfloor);
+                                            BattleRoyale.serialKillerSpawns.Add(pinkteamfloor);
+                                        }
                                         createdbattleroyale = true;
 
                                         // Remove camera use and admin table on Skeld
@@ -3563,7 +3572,7 @@ namespace LasMonjas.Patches
                                             Helpers.clearAllTasks(BattleRoyale.serialKiller);
                                         }
 
-                                        foreach (PlayerControl player in BattleRoyale.purpleTeam) {
+                                        foreach (PlayerControl player in BattleRoyale.limeTeam) {
                                             player.transform.position = new Vector3(-17f, -5.5f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
@@ -3574,7 +3583,16 @@ namespace LasMonjas.Patches
                                     }
 
                                     if (PlayerControl.LocalPlayer != null && !createdbattleroyale) {
-
+                                        if (BattleRoyale.matchType != 0) {
+                                            GameObject limeteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
+                                            limeteamfloor.name = "limeteamfloor";
+                                            limeteamfloor.transform.position = new Vector3(-17f, -5.5f, 0.5f);
+                                            GameObject pinkteamfloor = GameObject.Instantiate(CustomMain.customAssets.redfloor, PlayerControl.LocalPlayer.transform.parent);
+                                            pinkteamfloor.name = "pinkteamfloor";
+                                            pinkteamfloor.transform.position = new Vector3(12f, -4.75f, 0.5f);
+                                            BattleRoyale.serialKillerSpawns.Add(limeteamfloor);
+                                            BattleRoyale.serialKillerSpawns.Add(pinkteamfloor);
+                                        }
                                         createdbattleroyale = true;
 
                                         // Remove camera use and admin table on Skeld
@@ -3601,7 +3619,7 @@ namespace LasMonjas.Patches
                                         Helpers.clearAllTasks(BattleRoyale.serialKiller);
                                     }
 
-                                    foreach (PlayerControl player in BattleRoyale.purpleTeam) {
+                                    foreach (PlayerControl player in BattleRoyale.limeTeam) {
                                         player.transform.position = new Vector3(6.15f, 13.25f, PlayerControl.LocalPlayer.transform.position.z);
                                         Helpers.clearAllTasks(player);
                                     }
@@ -3612,7 +3630,16 @@ namespace LasMonjas.Patches
                                 }
 
                                 if (PlayerControl.LocalPlayer != null && !createdbattleroyale) {
-
+                                    if (BattleRoyale.matchType != 0) {
+                                        GameObject limeteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
+                                        limeteamfloor.name = "limeteamfloor";
+                                        limeteamfloor.transform.position = new Vector3(6.15f, 13.25f, 0.5f);
+                                        GameObject pinkteamfloor = GameObject.Instantiate(CustomMain.customAssets.redfloor, PlayerControl.LocalPlayer.transform.parent);
+                                        pinkteamfloor.name = "pinkteamfloor";
+                                        pinkteamfloor.transform.position = new Vector3(22.25f, 3f, 0.5f);
+                                        BattleRoyale.serialKillerSpawns.Add(limeteamfloor);
+                                        BattleRoyale.serialKillerSpawns.Add(pinkteamfloor);
+                                    }
                                     createdbattleroyale = true;
 
                                     // Remove Doorlog use, Decontamination doors and admin table on MiraHQ
@@ -3650,7 +3677,7 @@ namespace LasMonjas.Patches
                                         Helpers.clearAllTasks(BattleRoyale.serialKiller);
                                     }
 
-                                    foreach (PlayerControl player in BattleRoyale.purpleTeam) {
+                                    foreach (PlayerControl player in BattleRoyale.limeTeam) {
                                         player.transform.position = new Vector3(2.35f, -23.75f, PlayerControl.LocalPlayer.transform.position.z);
                                         Helpers.clearAllTasks(player);
                                     }
@@ -3661,7 +3688,16 @@ namespace LasMonjas.Patches
                                 }
 
                                 if (PlayerControl.LocalPlayer != null && !createdbattleroyale) {
-
+                                    if (BattleRoyale.matchType != 0) {
+                                        GameObject limeteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
+                                        limeteamfloor.name = "limeteamfloor";
+                                        limeteamfloor.transform.position = new Vector3(2.35f, -23.75f, 0.5f);
+                                        GameObject pinkteamfloor = GameObject.Instantiate(CustomMain.customAssets.redfloor, PlayerControl.LocalPlayer.transform.parent);
+                                        pinkteamfloor.name = "pinkteamfloor";
+                                        pinkteamfloor.transform.position = new Vector3(36.35f, -8f, 0.5f);
+                                        BattleRoyale.serialKillerSpawns.Add(limeteamfloor);
+                                        BattleRoyale.serialKillerSpawns.Add(pinkteamfloor);
+                                    }
                                     createdbattleroyale = true;
 
                                     // Remove Decon doors, camera use, vitals, admin tables on Polus
@@ -3698,7 +3734,7 @@ namespace LasMonjas.Patches
                                         Helpers.clearAllTasks(BattleRoyale.serialKiller);
                                     }
 
-                                    foreach (PlayerControl player in BattleRoyale.purpleTeam) {
+                                    foreach (PlayerControl player in BattleRoyale.limeTeam) {
                                         player.transform.position = new Vector3(17f, -5.5f, PlayerControl.LocalPlayer.transform.position.z);
                                         Helpers.clearAllTasks(player);
                                     }
@@ -3709,7 +3745,16 @@ namespace LasMonjas.Patches
                                 }
 
                                 if (PlayerControl.LocalPlayer != null && !createdbattleroyale) {
-
+                                    if (BattleRoyale.matchType != 0) {
+                                        GameObject limeteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
+                                        limeteamfloor.name = "limeteamfloor";
+                                        limeteamfloor.transform.position = new Vector3(17f, -5.5f, 0.5f);
+                                        GameObject pinkteamfloor = GameObject.Instantiate(CustomMain.customAssets.redfloor, PlayerControl.LocalPlayer.transform.parent);
+                                        pinkteamfloor.name = "pinkteamfloor";
+                                        pinkteamfloor.transform.position = new Vector3(-12f, -4.75f, 0.5f);
+                                        BattleRoyale.serialKillerSpawns.Add(limeteamfloor);
+                                        BattleRoyale.serialKillerSpawns.Add(pinkteamfloor);
+                                    }
                                     createdbattleroyale = true;
 
                                     // Remove camera use and admin table on Dleks
@@ -3735,7 +3780,7 @@ namespace LasMonjas.Patches
                                         Helpers.clearAllTasks(BattleRoyale.serialKiller);
                                     }
 
-                                    foreach (PlayerControl player in BattleRoyale.purpleTeam) {
+                                    foreach (PlayerControl player in BattleRoyale.limeTeam) {
                                         player.transform.position = new Vector3(-13.9f, -14.45f, PlayerControl.LocalPlayer.transform.position.z);
                                         Helpers.clearAllTasks(player);
                                     }
@@ -3746,7 +3791,16 @@ namespace LasMonjas.Patches
                                 }
 
                                 if (PlayerControl.LocalPlayer != null && !createdbattleroyale) {
-
+                                    if (BattleRoyale.matchType != 0) {
+                                        GameObject limeteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
+                                        limeteamfloor.name = "limeteamfloor";
+                                        limeteamfloor.transform.position = new Vector3(-13.9f, -14.45f, 0.5f);
+                                        GameObject pinkteamfloor = GameObject.Instantiate(CustomMain.customAssets.redfloor, PlayerControl.LocalPlayer.transform.parent);
+                                        pinkteamfloor.name = "pinkteamfloor";
+                                        pinkteamfloor.transform.position = new Vector3(37.35f, -3.25f, 0.5f);
+                                        BattleRoyale.serialKillerSpawns.Add(limeteamfloor);
+                                        BattleRoyale.serialKillerSpawns.Add(pinkteamfloor);
+                                    }
                                     createdbattleroyale = true;
 
                                     // Remove camera use, admin table, vitals, electrical doors on Airship
@@ -3798,7 +3852,7 @@ namespace LasMonjas.Patches
                                         Helpers.clearAllTasks(BattleRoyale.serialKiller);
                                     }
 
-                                    foreach (PlayerControl player in BattleRoyale.purpleTeam) {
+                                    foreach (PlayerControl player in BattleRoyale.limeTeam) {
                                         player.transform.position = new Vector3(-12.25f, 18.5f, PlayerControl.LocalPlayer.transform.position.z);
                                         Helpers.clearAllTasks(player);
                                     }
@@ -3809,7 +3863,24 @@ namespace LasMonjas.Patches
                                 }
 
                                 if (PlayerControl.LocalPlayer != null && !createdbattleroyale) {
-
+                                    if (BattleRoyale.matchType != 0) {
+                                        GameObject limeteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
+                                        limeteamfloor.name = "limeteamfloor";
+                                        limeteamfloor.transform.position = new Vector3(-12.25f, 18.5f, 0.03f);
+                                        GameObject limeteamfloortwo = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
+                                        limeteamfloortwo.name = "limeteamfloortwo";
+                                        limeteamfloortwo.transform.position = new Vector3(-14.5f, -34.35f, -0.01f);
+                                        GameObject pinkteamfloor = GameObject.Instantiate(CustomMain.customAssets.redfloor, PlayerControl.LocalPlayer.transform.parent);
+                                        pinkteamfloor.name = "pinkteamfloor";
+                                        pinkteamfloor.transform.position = new Vector3(-8.5f, -39.5f, -0.01f);
+                                        GameObject pinkteamfloortwo = GameObject.Instantiate(CustomMain.customAssets.redfloor, PlayerControl.LocalPlayer.transform.parent);
+                                        pinkteamfloortwo.name = "pinkteamfloortwo";
+                                        pinkteamfloortwo.transform.position = new Vector3(0f, 33.5f, 0.03f);
+                                        BattleRoyale.serialKillerSpawns.Add(limeteamfloor);
+                                        BattleRoyale.serialKillerSpawns.Add(pinkteamfloor);
+                                        BattleRoyale.serialKillerSpawns.Add(limeteamfloortwo);
+                                        BattleRoyale.serialKillerSpawns.Add(pinkteamfloortwo);
+                                    }
                                     createdbattleroyale = true;
 
                                     // Remove camera use, admin table, vitals, on Submerged
@@ -3862,18 +3933,18 @@ namespace LasMonjas.Patches
                                 break;
                             case 1:
                                 if (BattleRoyale.serialKiller != null) {
-                                    BattleRoyale.battleRoyalepointCounter = "Purple Team: " + "<color=#5E3E7DFF>" + BattleRoyale.purpleTeam.Count + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + BattleRoyale.pinkTeam.Count + "</color> | " + "Serial Killer: " + "<color=#808080FF>" + BattleRoyale.serialKillerTeam.Count + "</color>";
+                                    BattleRoyale.battleRoyalepointCounter = "Lime Team: " + "<color=#39FF14FF>" + BattleRoyale.limeTeam.Count + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + BattleRoyale.pinkTeam.Count + "</color> | " + "Serial Killer: " + "<color=#808080FF>" + BattleRoyale.serialKillerTeam.Count + "</color>";
                                 }
                                 else {
-                                    BattleRoyale.battleRoyalepointCounter = "Purple Team: " + "<color=#5E3E7DFF>" + BattleRoyale.purpleTeam.Count + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + BattleRoyale.pinkTeam.Count + "</color>";
+                                    BattleRoyale.battleRoyalepointCounter = "Lime Team: " + "<color=#39FF14FF>" + BattleRoyale.limeTeam.Count + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + BattleRoyale.pinkTeam.Count + "</color>";
                                 }
                                 break;
                             case 2:
                                 if (BattleRoyale.serialKiller != null) {
-                                    BattleRoyale.battleRoyalepointCounter = "Goal: " + BattleRoyale.requiredScore + " | <color=#5E3E7DFF>Purple Team: " + BattleRoyale.purplePoints + "</color> | " + "<color=#F2BEFFFF>Pink Team: " + BattleRoyale.pinkPoints + "</color> | " + "<color=#808080FF>Serial Killer Points: " + BattleRoyale.serialKillerPoints + "</color>";
+                                    BattleRoyale.battleRoyalepointCounter = "Goal: " + BattleRoyale.requiredScore + " | <color=#39FF14FF>Lime Team: " + BattleRoyale.limePoints + "</color> | " + "<color=#F2BEFFFF>Pink Team: " + BattleRoyale.pinkPoints + "</color> | " + "<color=#808080FF>Serial Killer Points: " + BattleRoyale.serialKillerPoints + "</color>";
                                 }
                                 else {
-                                    BattleRoyale.battleRoyalepointCounter = "Goal: " + BattleRoyale.requiredScore + " | <color=#5E3E7DFF>Purple Team: " + BattleRoyale.purplePoints + "</color> | " + "<color=#F2BEFFFF>Pink Team: " + BattleRoyale.pinkPoints + "</color>";
+                                    BattleRoyale.battleRoyalepointCounter = "Goal: " + BattleRoyale.requiredScore + " | <color=#39FF14FF>Lime Team: " + BattleRoyale.limePoints + "</color> | " + "<color=#F2BEFFFF>Pink Team: " + BattleRoyale.pinkPoints + "</color>";
                                 }
                                 break;
                         }

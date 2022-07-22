@@ -610,7 +610,7 @@ namespace LasMonjas.Patches {
         static void necromancerUpdate() {
             if (Necromancer.revivedPlayer != null) {
                 if (!Necromancer.revivedPlayer.Data.IsDead && (PlayerControl.LocalPlayer.Data.Role.IsImpostor || PlayerControl.LocalPlayer == Renegade.renegade || PlayerControl.LocalPlayer == Minion.minion || PlayerControl.LocalPlayer == BountyHunter.bountyhunter || PlayerControl.LocalPlayer == Trapper.trapper || PlayerControl.LocalPlayer == Yinyanger.yinyanger || PlayerControl.LocalPlayer == Challenger.challenger || PlayerControl.LocalPlayer == Ninja.ninja || PlayerControl.LocalPlayer == Berserker.berserker)) {
-                    if (Necromancer.localNecromancerArrows.Count == 0) Necromancer.localNecromancerArrows.Add(new Arrow(Necromancer.color));
+                    if (Necromancer.localNecromancerArrows.Count == 0) Necromancer.localNecromancerArrows.Add(new Arrow(Color.green));
                     if (Necromancer.localNecromancerArrows.Count != 0 && Necromancer.localNecromancerArrows[0] != null) {
                         Necromancer.localNecromancerArrows[0].arrow.SetActive(true);
                         Necromancer.localNecromancerArrows[0].Update(Necromancer.revivedPlayer.transform.position);
@@ -4027,29 +4027,29 @@ namespace LasMonjas.Patches {
 
                         }
 
-                        foreach (PlayerControl player in BattleRoyale.purpleTeam) {
+                        foreach (PlayerControl player in BattleRoyale.limeTeam) {
                             if (player.PlayerId == target.PlayerId) {
 
-                                if (BattleRoyale.purplePlayer01 != null && target.PlayerId == BattleRoyale.purplePlayer01.PlayerId) {
-                                    BattleRoyale.purplePlayer01IsReviving = true;
+                                if (BattleRoyale.limePlayer01 != null && target.PlayerId == BattleRoyale.limePlayer01.PlayerId) {
+                                    BattleRoyale.limePlayer01IsReviving = true;
                                 }
-                                else if (BattleRoyale.purplePlayer02 != null && target.PlayerId == BattleRoyale.purplePlayer02.PlayerId) {
-                                    BattleRoyale.purplePlayer02IsReviving = true;
+                                else if (BattleRoyale.limePlayer02 != null && target.PlayerId == BattleRoyale.limePlayer02.PlayerId) {
+                                    BattleRoyale.limePlayer02IsReviving = true;
                                 }
-                                else if (BattleRoyale.purplePlayer03 != null && target.PlayerId == BattleRoyale.purplePlayer03.PlayerId) {
-                                    BattleRoyale.purplePlayer03IsReviving = true;
+                                else if (BattleRoyale.limePlayer03 != null && target.PlayerId == BattleRoyale.limePlayer03.PlayerId) {
+                                    BattleRoyale.limePlayer03IsReviving = true;
                                 }
-                                else if (BattleRoyale.purplePlayer04 != null && target.PlayerId == BattleRoyale.purplePlayer04.PlayerId) {
-                                    BattleRoyale.purplePlayer04IsReviving = true;
+                                else if (BattleRoyale.limePlayer04 != null && target.PlayerId == BattleRoyale.limePlayer04.PlayerId) {
+                                    BattleRoyale.limePlayer04IsReviving = true;
                                 }
-                                else if (BattleRoyale.purplePlayer05 != null && target.PlayerId == BattleRoyale.purplePlayer05.PlayerId) {
-                                    BattleRoyale.purplePlayer05IsReviving = true;
+                                else if (BattleRoyale.limePlayer05 != null && target.PlayerId == BattleRoyale.limePlayer05.PlayerId) {
+                                    BattleRoyale.limePlayer05IsReviving = true;
                                 }
-                                else if (BattleRoyale.purplePlayer06 != null && target.PlayerId == BattleRoyale.purplePlayer06.PlayerId) {
-                                    BattleRoyale.purplePlayer06IsReviving = true;
+                                else if (BattleRoyale.limePlayer06 != null && target.PlayerId == BattleRoyale.limePlayer06.PlayerId) {
+                                    BattleRoyale.limePlayer06IsReviving = true;
                                 }
-                                else if (BattleRoyale.purplePlayer07 != null && target.PlayerId == BattleRoyale.purplePlayer07.PlayerId) {
-                                    BattleRoyale.purplePlayer07IsReviving = true;
+                                else if (BattleRoyale.limePlayer07 != null && target.PlayerId == BattleRoyale.limePlayer07.PlayerId) {
+                                    BattleRoyale.limePlayer07IsReviving = true;
                                 }
                                 player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0.5f);
                                 if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
@@ -4067,33 +4067,33 @@ namespace LasMonjas.Patches {
                                 player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
                                 HudManager.Instance.StartCoroutine(Effects.Lerp(BattleRoyale.reviveTime, new Action<float>((p) => {
                                     if (p == 1f && player != null) {
-                                        if (BattleRoyale.purplePlayer01 != null && target.PlayerId == BattleRoyale.purplePlayer01.PlayerId) {
-                                            BattleRoyale.purplePlayer01IsReviving = false;
-                                            BattleRoyale.purplePlayer01Lifes = BattleRoyale.fighterLifes;
+                                        if (BattleRoyale.limePlayer01 != null && target.PlayerId == BattleRoyale.limePlayer01.PlayerId) {
+                                            BattleRoyale.limePlayer01IsReviving = false;
+                                            BattleRoyale.limePlayer01Lifes = BattleRoyale.fighterLifes;
                                         }
-                                        else if (BattleRoyale.purplePlayer02 != null && target.PlayerId == BattleRoyale.purplePlayer02.PlayerId) {
-                                            BattleRoyale.purplePlayer02IsReviving = false;
-                                            BattleRoyale.purplePlayer02Lifes = BattleRoyale.fighterLifes;
+                                        else if (BattleRoyale.limePlayer02 != null && target.PlayerId == BattleRoyale.limePlayer02.PlayerId) {
+                                            BattleRoyale.limePlayer02IsReviving = false;
+                                            BattleRoyale.limePlayer02Lifes = BattleRoyale.fighterLifes;
                                         }
-                                        else if (BattleRoyale.purplePlayer03 != null && target.PlayerId == BattleRoyale.purplePlayer03.PlayerId) {
-                                            BattleRoyale.purplePlayer03IsReviving = false;
-                                            BattleRoyale.purplePlayer03Lifes = BattleRoyale.fighterLifes;
+                                        else if (BattleRoyale.limePlayer03 != null && target.PlayerId == BattleRoyale.limePlayer03.PlayerId) {
+                                            BattleRoyale.limePlayer03IsReviving = false;
+                                            BattleRoyale.limePlayer03Lifes = BattleRoyale.fighterLifes;
                                         }
-                                        else if (BattleRoyale.purplePlayer04 != null && target.PlayerId == BattleRoyale.purplePlayer04.PlayerId) {
-                                            BattleRoyale.purplePlayer04IsReviving = false;
-                                            BattleRoyale.purplePlayer04Lifes = BattleRoyale.fighterLifes;
+                                        else if (BattleRoyale.limePlayer04 != null && target.PlayerId == BattleRoyale.limePlayer04.PlayerId) {
+                                            BattleRoyale.limePlayer04IsReviving = false;
+                                            BattleRoyale.limePlayer04Lifes = BattleRoyale.fighterLifes;
                                         }
-                                        else if (BattleRoyale.purplePlayer05 != null && target.PlayerId == BattleRoyale.purplePlayer05.PlayerId) {
-                                            BattleRoyale.purplePlayer05IsReviving = false;
-                                            BattleRoyale.purplePlayer05Lifes = BattleRoyale.fighterLifes;
+                                        else if (BattleRoyale.limePlayer05 != null && target.PlayerId == BattleRoyale.limePlayer05.PlayerId) {
+                                            BattleRoyale.limePlayer05IsReviving = false;
+                                            BattleRoyale.limePlayer05Lifes = BattleRoyale.fighterLifes;
                                         }
-                                        else if (BattleRoyale.purplePlayer06 != null && target.PlayerId == BattleRoyale.purplePlayer06.PlayerId) {
-                                            BattleRoyale.purplePlayer06IsReviving = false;
-                                            BattleRoyale.purplePlayer06Lifes = BattleRoyale.fighterLifes;
+                                        else if (BattleRoyale.limePlayer06 != null && target.PlayerId == BattleRoyale.limePlayer06.PlayerId) {
+                                            BattleRoyale.limePlayer06IsReviving = false;
+                                            BattleRoyale.limePlayer06Lifes = BattleRoyale.fighterLifes;
                                         }
-                                        else if (BattleRoyale.purplePlayer07 != null && target.PlayerId == BattleRoyale.purplePlayer07.PlayerId) {
-                                            BattleRoyale.purplePlayer07IsReviving = false;
-                                            BattleRoyale.purplePlayer07Lifes = BattleRoyale.fighterLifes;
+                                        else if (BattleRoyale.limePlayer07 != null && target.PlayerId == BattleRoyale.limePlayer07.PlayerId) {
+                                            BattleRoyale.limePlayer07IsReviving = false;
+                                            BattleRoyale.limePlayer07Lifes = BattleRoyale.fighterLifes;
                                         }
                                         player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 1f);
                                         if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {

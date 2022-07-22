@@ -756,33 +756,33 @@ namespace LasMonjas.Patches
                             oddNumber = true;
                             setRoleToRandomPlayer((byte)RoleId.SerialKiller, modifiers);
                         }
-                        int myBattlePurple = 1;
+                        int myBattleLime = 1;
                         while (myBattleRoyale.Count < (Mathf.Round(PlayerControl.AllPlayerControls.Count / 2))) {
-                            switch (myBattlePurple) {
+                            switch (myBattleLime) {
                                 case 1:
-                                    setRoleToRandomPlayer((byte)RoleId.PurplePlayer01, modifiers);
+                                    setRoleToRandomPlayer((byte)RoleId.LimePlayer01, modifiers);
                                     break;
                                 case 2:
-                                    setRoleToRandomPlayer((byte)RoleId.PurplePlayer02, modifiers);
+                                    setRoleToRandomPlayer((byte)RoleId.LimePlayer02, modifiers);
                                     break;
                                 case 3:
-                                    setRoleToRandomPlayer((byte)RoleId.PurplePlayer03, modifiers);
+                                    setRoleToRandomPlayer((byte)RoleId.LimePlayer03, modifiers);
                                     break;
                                 case 4:
-                                    setRoleToRandomPlayer((byte)RoleId.PurplePlayer04, modifiers);
+                                    setRoleToRandomPlayer((byte)RoleId.LimePlayer04, modifiers);
                                     break;
                                 case 5:
-                                    setRoleToRandomPlayer((byte)RoleId.PurplePlayer05, modifiers);
+                                    setRoleToRandomPlayer((byte)RoleId.LimePlayer05, modifiers);
                                     break;
                                 case 6:
-                                    setRoleToRandomPlayer((byte)RoleId.PurplePlayer06, modifiers);
+                                    setRoleToRandomPlayer((byte)RoleId.LimePlayer06, modifiers);
                                     break;
                                 case 7:
-                                    setRoleToRandomPlayer((byte)RoleId.PurplePlayer07, modifiers);
+                                    setRoleToRandomPlayer((byte)RoleId.LimePlayer07, modifiers);
                                     break;
                             }
-                            myBattleRoyale.Add(myBattlePurple);
-                            myBattlePurple += 1;
+                            myBattleRoyale.Add(myBattleLime);
+                            myBattleLime += 1;
                         }
                         int myBattlePink = 9;
                         while (!oddNumber && myBattleRoyale.Count < PlayerControl.AllPlayerControls.Count || oddNumber && myBattleRoyale.Count < PlayerControl.AllPlayerControls.Count - 1) {
