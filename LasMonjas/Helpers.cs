@@ -63,14 +63,14 @@ namespace LasMonjas
             return null;
         }
 
-        internal delegate bool d_LoadImage(IntPtr tex, IntPtr data, bool markNonReadable);
+        /*internal delegate bool d_LoadImage(IntPtr tex, IntPtr data, bool markNonReadable);
         internal static d_LoadImage iCall_LoadImage;
         private static bool LoadImage(Texture2D tex, byte[] data, bool markNonReadable) {
             if (iCall_LoadImage == null)
                 iCall_LoadImage = IL2CPP.ResolveICall<d_LoadImage>("UnityEngine.ImageConversion::LoadImage");
             var il2cppArray = (Il2CppStructArray<byte>) data;
             return iCall_LoadImage.Invoke(tex.Pointer, il2cppArray.Pointer, markNonReadable);
-        }
+        }*/
 
         public static PlayerControl playerById(byte id)
         {
@@ -502,20 +502,22 @@ namespace LasMonjas
                 Cursor.SetCursor(sprite.texture, Vector2.zero, CursorMode.Auto);
             }
         }
+
+        public static bool zoomOutStatus = false;
         public static void toggleZoom(bool reset = false) {
-            float zoomFactor = 4f;
-            if (HudManagerStartPatch.zoomOutStatus)
-                zoomFactor = 1 / zoomFactor;
-            else if (reset) return; // Dont zoom out if meant to reset.
-            HudManagerStartPatch.zoomOutStatus = !HudManagerStartPatch.zoomOutStatus;
-            Camera.main.orthographicSize *= zoomFactor;
+
+            float orthographicSize = reset || zoomOutStatus ? 3f : 12f;
+
+            zoomOutStatus = !zoomOutStatus && !reset;
+            Camera.main.orthographicSize = orthographicSize;
             foreach (var cam in Camera.allCameras) {
-                if (cam != null && cam.gameObject.name == "UI Camera") cam.orthographicSize *= zoomFactor;  // The UI is scaled too, else we cant click the buttons. Downside: map is super small.
+                if (cam != null && cam.gameObject.name == "UI Camera") cam.orthographicSize = orthographicSize;  // The UI is scaled too, else we cant click the buttons. Downside: map is super small.
             }
 
-            HudManagerStartPatch.zoomOutButton.Sprite = HudManagerStartPatch.zoomOutStatus ? Helpers.loadSpriteFromResources("LasMonjas.Images.PlusButton.png", 150f / zoomFactor * 2) : Helpers.loadSpriteFromResources("LasMonjas.Images.MinusButton.png", 150f);
-            HudManagerStartPatch.zoomOutButton.PositionOffset = HudManagerStartPatch.zoomOutStatus ? new Vector3(0f, 3f, 0) : new Vector3(0.4f, 2.8f, 0);
+            HudManagerStartPatch.zoomOutButton.Sprite = zoomOutStatus ? Helpers.loadSpriteFromResources("LasMonjas.Images.PlusButton.png", 75f) : Helpers.loadSpriteFromResources("LasMonjas.Images.MinusButton.png", 150f);
+            HudManagerStartPatch.zoomOutButton.PositionOffset = zoomOutStatus ? new Vector3(0f, 3f, 0) : new Vector3(0.4f, 2.8f, 0);
             ResolutionManager.ResolutionChanged.Invoke((float)Screen.width / Screen.height); // This will move button positions to the correct position.
+
         }
 
     }

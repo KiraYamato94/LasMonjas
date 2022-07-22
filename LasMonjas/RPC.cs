@@ -209,13 +209,13 @@ namespace LasMonjas
         SoloPlayer13,
         SoloPlayer14,
         SoloPlayer15,
-        PurplePlayer01,
-        PurplePlayer02,
-        PurplePlayer03,
-        PurplePlayer04,
-        PurplePlayer05,
-        PurplePlayer06,
-        PurplePlayer07,
+        LimePlayer01,
+        LimePlayer02,
+        LimePlayer03,
+        LimePlayer04,
+        LimePlayer05,
+        LimePlayer06,
+        LimePlayer07,
         PinkPlayer01,
         PinkPlayer02,
         PinkPlayer03,
@@ -373,6 +373,7 @@ namespace LasMonjas
             clearAndReloadRoles();
             clearGameHistory();
             setCustomButtonCooldowns();
+            Helpers.toggleZoom(reset : true);
         }
 
         public static void ShareOptions(int numberOfOptions, MessageReader reader) {
@@ -1022,33 +1023,33 @@ namespace LasMonjas
                             BattleRoyale.soloPlayer15 = player;
                             BattleRoyale.soloPlayerTeam.Add(player);
                             break;
-                        case RoleId.PurplePlayer01:
-                            BattleRoyale.purplePlayer01 = player;
-                            BattleRoyale.purpleTeam.Add(player);
+                        case RoleId.LimePlayer01:
+                            BattleRoyale.limePlayer01 = player;
+                            BattleRoyale.limeTeam.Add(player);
                             break;
-                        case RoleId.PurplePlayer02:
-                            BattleRoyale.purplePlayer02 = player;
-                            BattleRoyale.purpleTeam.Add(player);
+                        case RoleId.LimePlayer02:
+                            BattleRoyale.limePlayer02 = player;
+                            BattleRoyale.limeTeam.Add(player);
                             break;
-                        case RoleId.PurplePlayer03:
-                            BattleRoyale.purplePlayer03 = player;
-                            BattleRoyale.purpleTeam.Add(player);
+                        case RoleId.LimePlayer03:
+                            BattleRoyale.limePlayer03 = player;
+                            BattleRoyale.limeTeam.Add(player);
                             break;
-                        case RoleId.PurplePlayer04:
-                            BattleRoyale.purplePlayer04 = player;
-                            BattleRoyale.purpleTeam.Add(player);
+                        case RoleId.LimePlayer04:
+                            BattleRoyale.limePlayer04 = player;
+                            BattleRoyale.limeTeam.Add(player);
                             break;
-                        case RoleId.PurplePlayer05:
-                            BattleRoyale.purplePlayer05 = player;
-                            BattleRoyale.purpleTeam.Add(player);
+                        case RoleId.LimePlayer05:
+                            BattleRoyale.limePlayer05 = player;
+                            BattleRoyale.limeTeam.Add(player);
                             break;
-                        case RoleId.PurplePlayer06:
-                            BattleRoyale.purplePlayer06 = player;
-                            BattleRoyale.purpleTeam.Add(player);
+                        case RoleId.LimePlayer06:
+                            BattleRoyale.limePlayer06 = player;
+                            BattleRoyale.limeTeam.Add(player);
                             break;
-                        case RoleId.PurplePlayer07:
-                            BattleRoyale.purplePlayer07 = player;
-                            BattleRoyale.purpleTeam.Add(player);
+                        case RoleId.LimePlayer07:
+                            BattleRoyale.limePlayer07 = player;
+                            BattleRoyale.limeTeam.Add(player);
                             break;
                         case RoleId.PinkPlayer01:
                             BattleRoyale.pinkPlayer01 = player;
@@ -6393,10 +6394,10 @@ namespace LasMonjas
                     }
                     else {
                         // Remove 1 life and check remaining lifes
-                        if (BattleRoyale.purplePlayer01 != null && player == BattleRoyale.purplePlayer01) {
-                            BattleRoyale.purplePlayer01Lifes -= 1;
+                        if (BattleRoyale.limePlayer01 != null && player == BattleRoyale.limePlayer01) {
+                            BattleRoyale.limePlayer01Lifes -= 1;
                             new BattleRoyaleFootprint(player, 1);
-                            if (BattleRoyale.purplePlayer01Lifes <= 0) {
+                            if (BattleRoyale.limePlayer01Lifes <= 0) {
                                 uncheckedMurderPlayer(sourceId, targetId, 0);
                                 switch (BattleRoyale.matchType) {
                                     case 1:
@@ -6413,10 +6414,10 @@ namespace LasMonjas
                                 }
                             }
                         }
-                        else if (BattleRoyale.purplePlayer02 != null && player == BattleRoyale.purplePlayer02) {
-                            BattleRoyale.purplePlayer02Lifes -= 1;
+                        else if (BattleRoyale.limePlayer02 != null && player == BattleRoyale.limePlayer02) {
+                            BattleRoyale.limePlayer02Lifes -= 1;
                             new BattleRoyaleFootprint(player, 1);
-                            if (BattleRoyale.purplePlayer02Lifes <= 0) {
+                            if (BattleRoyale.limePlayer02Lifes <= 0) {
                                 uncheckedMurderPlayer(sourceId, targetId, 0);
                                 switch (BattleRoyale.matchType) {
                                     case 1:
@@ -6433,10 +6434,10 @@ namespace LasMonjas
                                 }
                             }
                         }
-                        else if (BattleRoyale.purplePlayer03 != null && player == BattleRoyale.purplePlayer03) {
-                            BattleRoyale.purplePlayer03Lifes -= 1;
+                        else if (BattleRoyale.limePlayer03 != null && player == BattleRoyale.limePlayer03) {
+                            BattleRoyale.limePlayer03Lifes -= 1;
                             new BattleRoyaleFootprint(player, 1);
-                            if (BattleRoyale.purplePlayer03Lifes <= 0) {
+                            if (BattleRoyale.limePlayer03Lifes <= 0) {
                                 uncheckedMurderPlayer(sourceId, targetId, 0);
                                 switch (BattleRoyale.matchType) {
                                     case 1:
@@ -6453,10 +6454,10 @@ namespace LasMonjas
                                 }
                             }
                         }
-                        else if (BattleRoyale.purplePlayer04 != null && player == BattleRoyale.purplePlayer04) {
-                            BattleRoyale.purplePlayer04Lifes -= 1;
+                        else if (BattleRoyale.limePlayer04 != null && player == BattleRoyale.limePlayer04) {
+                            BattleRoyale.limePlayer04Lifes -= 1;
                             new BattleRoyaleFootprint(player, 1);
-                            if (BattleRoyale.purplePlayer04Lifes <= 0) {
+                            if (BattleRoyale.limePlayer04Lifes <= 0) {
                                 uncheckedMurderPlayer(sourceId, targetId, 0);
                                 switch (BattleRoyale.matchType) {
                                     case 1:
@@ -6473,10 +6474,10 @@ namespace LasMonjas
                                 }
                             }
                         }
-                        else if (BattleRoyale.purplePlayer05 != null && player == BattleRoyale.purplePlayer05) {
-                            BattleRoyale.purplePlayer05Lifes -= 1;
+                        else if (BattleRoyale.limePlayer05 != null && player == BattleRoyale.limePlayer05) {
+                            BattleRoyale.limePlayer05Lifes -= 1;
                             new BattleRoyaleFootprint(player, 1);
-                            if (BattleRoyale.purplePlayer05Lifes <= 0) {
+                            if (BattleRoyale.limePlayer05Lifes <= 0) {
                                 uncheckedMurderPlayer(sourceId, targetId, 0);
                                 switch (BattleRoyale.matchType) {
                                     case 1:
@@ -6493,10 +6494,10 @@ namespace LasMonjas
                                 }
                             }
                         }
-                        else if (BattleRoyale.purplePlayer06 != null && player == BattleRoyale.purplePlayer06) {
-                            BattleRoyale.purplePlayer06Lifes -= 1;
+                        else if (BattleRoyale.limePlayer06 != null && player == BattleRoyale.limePlayer06) {
+                            BattleRoyale.limePlayer06Lifes -= 1;
                             new BattleRoyaleFootprint(player, 1);
-                            if (BattleRoyale.purplePlayer06Lifes <= 0) {
+                            if (BattleRoyale.limePlayer06Lifes <= 0) {
                                 uncheckedMurderPlayer(sourceId, targetId, 0);
                                 switch (BattleRoyale.matchType) {
                                     case 1:
@@ -6513,10 +6514,10 @@ namespace LasMonjas
                                 }
                             }
                         }
-                        else if (BattleRoyale.purplePlayer07 != null && player == BattleRoyale.purplePlayer07) {
-                            BattleRoyale.purplePlayer07Lifes -= 1;
+                        else if (BattleRoyale.limePlayer07 != null && player == BattleRoyale.limePlayer07) {
+                            BattleRoyale.limePlayer07Lifes -= 1;
                             new BattleRoyaleFootprint(player, 1);
-                            if (BattleRoyale.purplePlayer07Lifes <= 0) {
+                            if (BattleRoyale.limePlayer07Lifes <= 0) {
                                 uncheckedMurderPlayer(sourceId, targetId, 0);
                                 switch (BattleRoyale.matchType) {
                                     case 1:
@@ -6683,7 +6684,7 @@ namespace LasMonjas
                                         battleRoyaleCheckWin(3);
                                         break;
                                     case 2:
-                                        if (BattleRoyale.purplePlayer01 != null && sourceId == BattleRoyale.purplePlayer01.PlayerId || BattleRoyale.purplePlayer02 != null && sourceId == BattleRoyale.purplePlayer02.PlayerId || BattleRoyale.purplePlayer03 != null && sourceId == BattleRoyale.purplePlayer03.PlayerId || BattleRoyale.purplePlayer04 != null && sourceId == BattleRoyale.purplePlayer04.PlayerId || BattleRoyale.purplePlayer05 != null && sourceId == BattleRoyale.purplePlayer05.PlayerId || BattleRoyale.purplePlayer06 != null && sourceId == BattleRoyale.purplePlayer06.PlayerId || BattleRoyale.purplePlayer07 != null && sourceId == BattleRoyale.purplePlayer07.PlayerId) {
+                                        if (BattleRoyale.limePlayer01 != null && sourceId == BattleRoyale.limePlayer01.PlayerId || BattleRoyale.limePlayer02 != null && sourceId == BattleRoyale.limePlayer02.PlayerId || BattleRoyale.limePlayer03 != null && sourceId == BattleRoyale.limePlayer03.PlayerId || BattleRoyale.limePlayer04 != null && sourceId == BattleRoyale.limePlayer04.PlayerId || BattleRoyale.limePlayer05 != null && sourceId == BattleRoyale.limePlayer05.PlayerId || BattleRoyale.limePlayer06 != null && sourceId == BattleRoyale.limePlayer06.PlayerId || BattleRoyale.limePlayer07 != null && sourceId == BattleRoyale.limePlayer07.PlayerId) {
                                             battleRoyaleScoreCheck(1, 3);
                                         }
                                         else {
@@ -6724,12 +6725,12 @@ namespace LasMonjas
             }
             else {
 
-                int purplePlayersAlive = 0;
+                int limePlayersAlive = 0;
 
-                foreach (PlayerControl purplePlayer in BattleRoyale.purpleTeam) {
+                foreach (PlayerControl limePlayer in BattleRoyale.limeTeam) {
 
-                    if (!purplePlayer.Data.IsDead) {
-                        purplePlayersAlive += 1;
+                    if (!limePlayer.Data.IsDead) {
+                        limePlayersAlive += 1;
                     }
 
                 }
@@ -6745,20 +6746,20 @@ namespace LasMonjas
                 }
 
                 if (whichTeamCheck == 1) {
-                    new CustomMessage("One <color=#5E3E7DFF>Purple Fighter</color> down!", 5, -1, 1.6f, 26);
+                    new CustomMessage("One <color=#39FF14FF>Lime Fighter</color> down!", 5, -1, 1.6f, 26);
                 }
                 else if (whichTeamCheck == 2) {
                     new CustomMessage("One <color=#F2BEFFFF>Pink Fighter</color> down!", 5, -1, 1.3f, 26);
                 }
                 else if (whichTeamCheck == 3) {
                     new CustomMessage("<color=#808080FF>Serial Killer</color> down!", 5, -1, 1f, 26);
-                    if (purplePlayersAlive <= 0) {
+                    if (limePlayersAlive <= 0) {
                         BattleRoyale.triggerPinkTeamWin = true;
                         ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
                     }
                     else if (pinkPlayersAlive <= 0) {
-                        BattleRoyale.triggerPurpleTeamWin = true;
-                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePurpleTeamWin, false);
+                        BattleRoyale.triggerLimeTeamWin = true;
+                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
                     }
                 }
 
@@ -6773,27 +6774,27 @@ namespace LasMonjas
                         }
 
                     }
-                    BattleRoyale.battleRoyalepointCounter = "Purple Team: " + "<color=#5E3E7DFF>" + purplePlayersAlive + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + pinkPlayersAlive + "</color> | " + "Serial Killer: " + "<color=#808080FF>" + serialKillerAlive + "</color>";
-                    if (purplePlayersAlive <= 0 && pinkPlayersAlive <= 0 && !BattleRoyale.serialKiller.Data.IsDead) {
+                    BattleRoyale.battleRoyalepointCounter = "Lime Team: " + "<color=#39FF14FF>" + limePlayersAlive + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + pinkPlayersAlive + "</color> | " + "Serial Killer: " + "<color=#808080FF>" + serialKillerAlive + "</color>";
+                    if (limePlayersAlive <= 0 && pinkPlayersAlive <= 0 && !BattleRoyale.serialKiller.Data.IsDead) {
                         BattleRoyale.triggerSerialKillerWin = true;
                         ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSerialKillerWin, false);
                     }
                     else if (pinkPlayersAlive <= 0 && BattleRoyale.serialKiller.Data.IsDead) {
-                        BattleRoyale.triggerPurpleTeamWin = true;
-                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePurpleTeamWin, false);
+                        BattleRoyale.triggerLimeTeamWin = true;
+                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
                     }
-                    else if (purplePlayersAlive <= 0 && BattleRoyale.serialKiller.Data.IsDead) {
+                    else if (limePlayersAlive <= 0 && BattleRoyale.serialKiller.Data.IsDead) {
                         BattleRoyale.triggerPinkTeamWin = true;
                         ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
                     }
                 }
                 else {
-                    BattleRoyale.battleRoyalepointCounter = "Purple Team: " + "<color=#5E3E7DFF>" + purplePlayersAlive + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + pinkPlayersAlive + "</color>";
+                    BattleRoyale.battleRoyalepointCounter = "Lime Team: " + "<color=#39FF14FF>" + limePlayersAlive + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + pinkPlayersAlive + "</color>";
                     if (pinkPlayersAlive <= 0) {
-                        BattleRoyale.triggerPurpleTeamWin = true;
-                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePurpleTeamWin, false);
+                        BattleRoyale.triggerLimeTeamWin = true;
+                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
                     }
-                    else if (purplePlayersAlive <= 0) {
+                    else if (limePlayersAlive <= 0) {
                         BattleRoyale.triggerPinkTeamWin = true;
                         ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
                     }
@@ -6804,8 +6805,8 @@ namespace LasMonjas
         public static void battleRoyaleScoreCheck(int whichTeamCheck, int multiplier) {
             switch (whichTeamCheck) {
                 case 1:
-                    BattleRoyale.purplePoints += 10 * multiplier;
-                    new CustomMessage("Points for <color=#5E3E7DFF>Purple Team</color>!", 5, -1, 1.6f, 26);
+                    BattleRoyale.limePoints += 10 * multiplier;
+                    new CustomMessage("Points for <color=#39FF14FF>Lime Team</color>!", 5, -1, 1.6f, 26);
                     break;
                 case 2:
                     BattleRoyale.pinkPoints += 10 * multiplier;
@@ -6818,15 +6819,15 @@ namespace LasMonjas
             }
             
             if (BattleRoyale.serialKiller != null) {
-                BattleRoyale.battleRoyalepointCounter = "Goal: " + BattleRoyale.requiredScore + " | <color=#5E3E7DFF>Purple Team: " + BattleRoyale.purplePoints + "</color> | " + "<color=#F2BEFFFF>Pink Team: " + BattleRoyale.pinkPoints + "</color> | " + "<color=#808080FF>Serial Killer Points: " + BattleRoyale.serialKillerPoints + "</color>";
+                BattleRoyale.battleRoyalepointCounter = "Goal: " + BattleRoyale.requiredScore + " | <color=#39FF14FF>Lime Team: " + BattleRoyale.limePoints + "</color> | " + "<color=#F2BEFFFF>Pink Team: " + BattleRoyale.pinkPoints + "</color> | " + "<color=#808080FF>Serial Killer Points: " + BattleRoyale.serialKillerPoints + "</color>";
             }
             else {
-                BattleRoyale.battleRoyalepointCounter = "Goal: " + BattleRoyale.requiredScore + " | <color=#5E3E7DFF>Purple Team: " + BattleRoyale.purplePoints + "</color> | " + "<color=#F2BEFFFF>Pink Team: " + BattleRoyale.pinkPoints + "</color>";
+                BattleRoyale.battleRoyalepointCounter = "Goal: " + BattleRoyale.requiredScore + " | <color=#39FF14FF>Lime Team: " + BattleRoyale.limePoints + "</color> | " + "<color=#F2BEFFFF>Pink Team: " + BattleRoyale.pinkPoints + "</color>";
             }
 
-            if (BattleRoyale.purplePoints >= BattleRoyale.requiredScore) {
-                BattleRoyale.triggerPurpleTeamWin = true;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePurpleTeamWin, false);
+            if (BattleRoyale.limePoints >= BattleRoyale.requiredScore) {
+                BattleRoyale.triggerLimeTeamWin = true;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
             }
             else if (BattleRoyale.pinkPoints >= BattleRoyale.requiredScore) {
                 BattleRoyale.triggerPinkTeamWin = true;

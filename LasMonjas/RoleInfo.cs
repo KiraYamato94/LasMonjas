@@ -156,20 +156,20 @@ namespace LasMonjas
         public static RoleInfo soloPlayer14 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer14);
         public static RoleInfo soloPlayer15 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer15);
 
-        public static RoleInfo purplePlayer01 = new RoleInfo("Purple Team", Captain.color, "Kill <color=#F2BEFFFF>Pink</color> Team", "Kill <color=#F2BEFFFF>Pink</color> Team", RoleId.PurplePlayer01);
-        public static RoleInfo purplePlayer02 = new RoleInfo("Purple Team", Captain.color, "Kill <color=#F2BEFFFF>Pink</color> Team", "Kill <color=#F2BEFFFF>Pink</color> Team", RoleId.PurplePlayer02);
-        public static RoleInfo purplePlayer03 = new RoleInfo("Purple Team", Captain.color, "Kill <color=#F2BEFFFF>Pink</color> Team", "Kill <color=#F2BEFFFF>Pink</color> Team", RoleId.PurplePlayer03);
-        public static RoleInfo purplePlayer04 = new RoleInfo("Purple Team", Captain.color, "Kill <color=#F2BEFFFF>Pink</color> Team", "Kill <color=#F2BEFFFF>Pink</color> Team", RoleId.PurplePlayer04);
-        public static RoleInfo purplePlayer05 = new RoleInfo("Purple Team", Captain.color, "Kill <color=#F2BEFFFF>Pink</color> Team", "Kill <color=#F2BEFFFF>Pink</color> Team", RoleId.PurplePlayer05);
-        public static RoleInfo purplePlayer06 = new RoleInfo("Purple Team", Captain.color, "Kill <color=#F2BEFFFF>Pink</color> Team", "Kill <color=#F2BEFFFF>Pink</color> Team", RoleId.PurplePlayer06);
-        public static RoleInfo purplePlayer07 = new RoleInfo("Purple Team", Captain.color, "Kill <color=#F2BEFFFF>Pink</color> Team", "Kill <color=#F2BEFFFF>Pink</color> Team", RoleId.PurplePlayer07);
-        public static RoleInfo pinkPlayer01 = new RoleInfo("Pink Team", Shy.color, "Kill <color=#5E3E7DFF>Purple</color> Team", "Kill <color=#5E3E7DFF>Purple</color> Team", RoleId.PinkPlayer01);
-        public static RoleInfo pinkPlayer02 = new RoleInfo("Pink Team", Shy.color, "Kill <color=#5E3E7DFF>Purple</color> Team", "Kill <color=#5E3E7DFF>Purple</color> Team", RoleId.PinkPlayer02);
-        public static RoleInfo pinkPlayer03 = new RoleInfo("Pink Team", Shy.color, "Kill <color=#5E3E7DFF>Purple</color> Team", "Kill <color=#5E3E7DFF>Purple</color> Team", RoleId.PinkPlayer03);
-        public static RoleInfo pinkPlayer04 = new RoleInfo("Pink Team", Shy.color, "Kill <color=#5E3E7DFF>Purple</color> Team", "Kill <color=#5E3E7DFF>Purple</color> Team", RoleId.PinkPlayer04);
-        public static RoleInfo pinkPlayer05 = new RoleInfo("Pink Team", Shy.color, "Kill <color=#5E3E7DFF>Purple</color> Team", "Kill <color=#5E3E7DFF>Purple</color> Team", RoleId.PinkPlayer05);
-        public static RoleInfo pinkPlayer06 = new RoleInfo("Pink Team", Shy.color, "Kill <color=#5E3E7DFF>Purple</color> Team", "Kill <color=#5E3E7DFF>Purple</color> Team", RoleId.PinkPlayer06);
-        public static RoleInfo pinkPlayer07 = new RoleInfo("Pink Team", Shy.color, "Kill <color=#5E3E7DFF>Purple</color> Team", "Kill <color=#5E3E7DFF>Purple</color> Team", RoleId.PinkPlayer07);
+        public static RoleInfo limePlayer01 = new RoleInfo("Lime Team", FortuneTeller.color, "Kill <color=#F2BEFFFF>Pink</color> Team", "Kill <color=#F2BEFFFF>Pink</color> Team", RoleId.LimePlayer01);
+        public static RoleInfo limePlayer02 = new RoleInfo("Lime Team", FortuneTeller.color, "Kill <color=#F2BEFFFF>Pink</color> Team", "Kill <color=#F2BEFFFF>Pink</color> Team", RoleId.LimePlayer02);
+        public static RoleInfo limePlayer03 = new RoleInfo("Lime Team", FortuneTeller.color, "Kill <color=#F2BEFFFF>Pink</color> Team", "Kill <color=#F2BEFFFF>Pink</color> Team", RoleId.LimePlayer03);
+        public static RoleInfo limePlayer04 = new RoleInfo("Lime Team", FortuneTeller.color, "Kill <color=#F2BEFFFF>Pink</color> Team", "Kill <color=#F2BEFFFF>Pink</color> Team", RoleId.LimePlayer04);
+        public static RoleInfo limePlayer05 = new RoleInfo("Lime Team", FortuneTeller.color, "Kill <color=#F2BEFFFF>Pink</color> Team", "Kill <color=#F2BEFFFF>Pink</color> Team", RoleId.LimePlayer05);
+        public static RoleInfo limePlayer06 = new RoleInfo("Lime Team", FortuneTeller.color, "Kill <color=#F2BEFFFF>Pink</color> Team", "Kill <color=#F2BEFFFF>Pink</color> Team", RoleId.LimePlayer06);
+        public static RoleInfo limePlayer07 = new RoleInfo("Lime Team", FortuneTeller.color, "Kill <color=#F2BEFFFF>Pink</color> Team", "Kill <color=#F2BEFFFF>Pink</color> Team", RoleId.LimePlayer07);
+        public static RoleInfo pinkPlayer01 = new RoleInfo("Pink Team", Shy.color, "Kill <color=#39FF14FF>Lime</color> Team", "Kill <color=#39FF14FF>Lime</color> Team", RoleId.PinkPlayer01);
+        public static RoleInfo pinkPlayer02 = new RoleInfo("Pink Team", Shy.color, "Kill <color=#39FF14FF>Lime</color> Team", "Kill <color=#39FF14FF>Lime</color> Team", RoleId.PinkPlayer02);
+        public static RoleInfo pinkPlayer03 = new RoleInfo("Pink Team", Shy.color, "Kill <color=#39FF14FF>Lime</color> Team", "Kill <color=#39FF14FF>Lime</color> Team", RoleId.PinkPlayer03);
+        public static RoleInfo pinkPlayer04 = new RoleInfo("Pink Team", Shy.color, "Kill <color=#39FF14FF>Lime</color> Team", "Kill <color=#39FF14FF>Lime</color> Team", RoleId.PinkPlayer04);
+        public static RoleInfo pinkPlayer05 = new RoleInfo("Pink Team", Shy.color, "Kill <color=#39FF14FF>Lime</color> Team", "Kill <color=#39FF14FF>Lime</color> Team", RoleId.PinkPlayer05);
+        public static RoleInfo pinkPlayer06 = new RoleInfo("Pink Team", Shy.color, "Kill <color=#39FF14FF>Lime</color> Team", "Kill <color=#39FF14FF>Lime</color> Team", RoleId.PinkPlayer06);
+        public static RoleInfo pinkPlayer07 = new RoleInfo("Pink Team", Shy.color, "Kill <color=#39FF14FF>Lime</color> Team", "Kill <color=#39FF14FF>Lime</color> Team", RoleId.PinkPlayer07);
         public static RoleInfo serialKiller = new RoleInfo("Serial Killer", Joker.color, "Kill Everyone", "Kill Everyone", RoleId.SerialKiller);
         
         
@@ -427,13 +427,13 @@ namespace LasMonjas
             soloPlayer13,
             soloPlayer14,
             soloPlayer15,
-            purplePlayer01,
-            purplePlayer02,
-            purplePlayer03,
-            purplePlayer04,
-            purplePlayer05,
-            purplePlayer06,
-            purplePlayer07,
+            limePlayer01,
+            limePlayer02,
+            limePlayer03,
+            limePlayer04,
+            limePlayer05,
+            limePlayer06,
+            limePlayer07,
             pinkPlayer01,
             pinkPlayer02,
             pinkPlayer03,
@@ -579,13 +579,13 @@ namespace LasMonjas
             if (p == BattleRoyale.soloPlayer14) infos.Add(soloPlayer14);
             if (p == BattleRoyale.soloPlayer15) infos.Add(soloPlayer15);
 
-            if (p == BattleRoyale.purplePlayer01) infos.Add(purplePlayer01);
-            if (p == BattleRoyale.purplePlayer02) infos.Add(purplePlayer02);
-            if (p == BattleRoyale.purplePlayer03) infos.Add(purplePlayer03);
-            if (p == BattleRoyale.purplePlayer04) infos.Add(purplePlayer04);
-            if (p == BattleRoyale.purplePlayer05) infos.Add(purplePlayer05);
-            if (p == BattleRoyale.purplePlayer06) infos.Add(purplePlayer06);
-            if (p == BattleRoyale.purplePlayer07) infos.Add(purplePlayer07);
+            if (p == BattleRoyale.limePlayer01) infos.Add(limePlayer01);
+            if (p == BattleRoyale.limePlayer02) infos.Add(limePlayer02);
+            if (p == BattleRoyale.limePlayer03) infos.Add(limePlayer03);
+            if (p == BattleRoyale.limePlayer04) infos.Add(limePlayer04);
+            if (p == BattleRoyale.limePlayer05) infos.Add(limePlayer05);
+            if (p == BattleRoyale.limePlayer06) infos.Add(limePlayer06);
+            if (p == BattleRoyale.limePlayer07) infos.Add(limePlayer07);
             if (p == BattleRoyale.pinkPlayer01) infos.Add(pinkPlayer01);
             if (p == BattleRoyale.pinkPlayer02) infos.Add(pinkPlayer02);
             if (p == BattleRoyale.pinkPlayer03) infos.Add(pinkPlayer03);

@@ -94,7 +94,6 @@ namespace LasMonjas
         private static CustomButton shyButton;
 
         public static CustomButton zoomOutButton;
-        public static bool zoomOutStatus = false;
 
         // Capture the flag buttons
         private static CustomButton redplayer01KillButton;
@@ -285,13 +284,13 @@ namespace LasMonjas
         private static CustomButton soloPlayer13KillButton;
         private static CustomButton soloPlayer14KillButton;
         private static CustomButton soloPlayer15KillButton;
-        private static CustomButton purplePlayer01KillButton;
-        private static CustomButton purplePlayer02KillButton;
-        private static CustomButton purplePlayer03KillButton;
-        private static CustomButton purplePlayer04KillButton;
-        private static CustomButton purplePlayer05KillButton;
-        private static CustomButton purplePlayer06KillButton;
-        private static CustomButton purplePlayer07KillButton;
+        private static CustomButton limePlayer01KillButton;
+        private static CustomButton limePlayer02KillButton;
+        private static CustomButton limePlayer03KillButton;
+        private static CustomButton limePlayer04KillButton;
+        private static CustomButton limePlayer05KillButton;
+        private static CustomButton limePlayer06KillButton;
+        private static CustomButton limePlayer07KillButton;
         private static CustomButton pinkPlayer01KillButton;
         private static CustomButton pinkPlayer02KillButton;
         private static CustomButton pinkPlayer03KillButton;
@@ -649,13 +648,13 @@ namespace LasMonjas
             soloPlayer13KillButton.MaxTimer = BattleRoyale.killCooldown;
             soloPlayer14KillButton.MaxTimer = BattleRoyale.killCooldown;
             soloPlayer15KillButton.MaxTimer = BattleRoyale.killCooldown;
-            purplePlayer01KillButton.MaxTimer = BattleRoyale.killCooldown;
-            purplePlayer02KillButton.MaxTimer = BattleRoyale.killCooldown;
-            purplePlayer03KillButton.MaxTimer = BattleRoyale.killCooldown;
-            purplePlayer04KillButton.MaxTimer = BattleRoyale.killCooldown;
-            purplePlayer05KillButton.MaxTimer = BattleRoyale.killCooldown;
-            purplePlayer06KillButton.MaxTimer = BattleRoyale.killCooldown;
-            purplePlayer07KillButton.MaxTimer = BattleRoyale.killCooldown;
+            limePlayer01KillButton.MaxTimer = BattleRoyale.killCooldown;
+            limePlayer02KillButton.MaxTimer = BattleRoyale.killCooldown;
+            limePlayer03KillButton.MaxTimer = BattleRoyale.killCooldown;
+            limePlayer04KillButton.MaxTimer = BattleRoyale.killCooldown;
+            limePlayer05KillButton.MaxTimer = BattleRoyale.killCooldown;
+            limePlayer06KillButton.MaxTimer = BattleRoyale.killCooldown;
+            limePlayer07KillButton.MaxTimer = BattleRoyale.killCooldown;
             pinkPlayer01KillButton.MaxTimer = BattleRoyale.killCooldown;
             pinkPlayer02KillButton.MaxTimer = BattleRoyale.killCooldown;
             pinkPlayer03KillButton.MaxTimer = BattleRoyale.killCooldown;
@@ -13792,15 +13791,15 @@ namespace LasMonjas
                 KeyCode.Mouse1
             );
 
-            // PurplePlayer01 Kill
-            purplePlayer01KillButton = new CustomButton(
+            // LimePlayer01 Kill
+            limePlayer01KillButton = new CustomButton(
                 () => {
-                    PlayerControl target = BattleRoyale.GetPurpleShotPlayer(2 * 0.2f, 6, 1);
+                    PlayerControl target = BattleRoyale.GetLimeShotPlayer(2 * 0.2f, 6, 1);
 
-                    new BattleRoyaleShoot(BattleRoyale.purplePlayer01, 1, BattleRoyale.purplePlayer01mouseAngle);
+                    new BattleRoyaleShoot(BattleRoyale.limePlayer01, 1, BattleRoyale.limePlayer01mouseAngle);
 
                     if (target == null) {
-                        purplePlayer01KillButton.Timer = purplePlayer01KillButton.MaxTimer;
+                        limePlayer01KillButton.Timer = limePlayer01KillButton.MaxTimer;
                         return;
                     }
 
@@ -13813,76 +13812,76 @@ namespace LasMonjas
                         BattleRoyale.pinkPlayer06 != null && target == BattleRoyale.pinkPlayer06 && BattleRoyale.pinkPlayer06IsReviving ||
                         BattleRoyale.pinkPlayer07 != null && target == BattleRoyale.pinkPlayer07 && BattleRoyale.pinkPlayer07IsReviving ||
                         BattleRoyale.serialKiller != null && target == BattleRoyale.serialKiller && BattleRoyale.serialKillerIsReviving) {
-                            purplePlayer01KillButton.Timer = purplePlayer01KillButton.MaxTimer;
+                            limePlayer01KillButton.Timer = limePlayer01KillButton.MaxTimer;
                             return;
                         }
                     }
 
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
-                    writer.Write(BattleRoyale.purplePlayer01.PlayerId);
+                    writer.Write(BattleRoyale.limePlayer01.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.purplePlayer01.PlayerId);
+                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.limePlayer01.PlayerId);
 
-                    purplePlayer01KillButton.Timer = purplePlayer01KillButton.MaxTimer;
+                    limePlayer01KillButton.Timer = limePlayer01KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
 
                     target = null;
                 },
-                () => { return BattleRoyale.purplePlayer01 != null && BattleRoyale.purplePlayer01 == PlayerControl.LocalPlayer; },
+                () => { return BattleRoyale.limePlayer01 != null && BattleRoyale.limePlayer01 == PlayerControl.LocalPlayer; },
                 () => {
-                    if (BattleRoyale.purplePlayer01Wep == null) {
-                        BattleRoyale.purplePlayer01Wep = new GameObject("Weapon");
-                        var renderer = BattleRoyale.purplePlayer01Wep.AddComponent<SpriteRenderer>();
+                    if (BattleRoyale.limePlayer01Wep == null) {
+                        BattleRoyale.limePlayer01Wep = new GameObject("Weapon");
+                        var renderer = BattleRoyale.limePlayer01Wep.AddComponent<SpriteRenderer>();
 
                         renderer.sprite = Archer.getBowSprite();
-                        renderer.transform.parent = BattleRoyale.purplePlayer01.transform;
+                        renderer.transform.parent = BattleRoyale.limePlayer01.transform;
                         renderer.color = new Color(1, 1, 1, 1);
                         renderer.transform.position = new Vector3(0, 0, -30f);
                     }
                     else {
 
                         if (PlayerControl.LocalPlayer.Data.IsDead && BattleRoyale.matchType != 2) {
-                            BattleRoyale.purplePlayer01Wep.SetActive(false);
+                            BattleRoyale.limePlayer01Wep.SetActive(false);
                         }
 
                         Vector3 mouseDirection = Input.mousePosition - new Vector3(Screen.width / 2, Screen.height / 2);
-                        BattleRoyale.purplePlayer01mouseAngle = Mathf.Atan2(mouseDirection.y, mouseDirection.x);
+                        BattleRoyale.limePlayer01mouseAngle = Mathf.Atan2(mouseDirection.y, mouseDirection.x);
 
-                        var targetPosition = BattleRoyale.purplePlayer01.transform.position + new Vector3(0.8f * (float)Math.Cos(BattleRoyale.purplePlayer01mouseAngle), 0.8f * (float)Math.Sin(BattleRoyale.purplePlayer01mouseAngle));
-                        BattleRoyale.purplePlayer01Wep.transform.position += (targetPosition - BattleRoyale.purplePlayer01Wep.transform.position) * 0.4f;
-                        BattleRoyale.purplePlayer01Wep.GetComponent<SpriteRenderer>().transform.eulerAngles = new Vector3(0f, 0f, (float)(BattleRoyale.purplePlayer01mouseAngle * 360f / Math.PI / 2f));
-                        if (Math.Cos(BattleRoyale.purplePlayer01mouseAngle) < 0.0) {
-                            if (BattleRoyale.purplePlayer01Wep.GetComponent<SpriteRenderer>().transform.localScale.y > 0)
-                                BattleRoyale.purplePlayer01Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, -1f);
+                        var targetPosition = BattleRoyale.limePlayer01.transform.position + new Vector3(0.8f * (float)Math.Cos(BattleRoyale.limePlayer01mouseAngle), 0.8f * (float)Math.Sin(BattleRoyale.limePlayer01mouseAngle));
+                        BattleRoyale.limePlayer01Wep.transform.position += (targetPosition - BattleRoyale.limePlayer01Wep.transform.position) * 0.4f;
+                        BattleRoyale.limePlayer01Wep.GetComponent<SpriteRenderer>().transform.eulerAngles = new Vector3(0f, 0f, (float)(BattleRoyale.limePlayer01mouseAngle * 360f / Math.PI / 2f));
+                        if (Math.Cos(BattleRoyale.limePlayer01mouseAngle) < 0.0) {
+                            if (BattleRoyale.limePlayer01Wep.GetComponent<SpriteRenderer>().transform.localScale.y > 0)
+                                BattleRoyale.limePlayer01Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, -1f);
                         }
                         else {
-                            if (BattleRoyale.purplePlayer01Wep.GetComponent<SpriteRenderer>().transform.localScale.y < 0)
-                                BattleRoyale.purplePlayer01Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, 1f);
+                            if (BattleRoyale.limePlayer01Wep.GetComponent<SpriteRenderer>().transform.localScale.y < 0)
+                                BattleRoyale.limePlayer01Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, 1f);
                         }
                     }
                     bool CanUse = true;
-                    if (BattleRoyale.purplePlayer01IsReviving) {
+                    if (BattleRoyale.limePlayer01IsReviving) {
                         CanUse = false;
                     }
                     return CanUse && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead;
                 },
-                () => { purplePlayer01KillButton.Timer = purplePlayer01KillButton.MaxTimer; },
+                () => { limePlayer01KillButton.Timer = limePlayer01KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                  new Vector3(0f, 1f, 0),
                 __instance,
                 KeyCode.Mouse1
             );
 
-            // PurplePlayer02 Kill
-            purplePlayer02KillButton = new CustomButton(
+            // LimePlayer02 Kill
+            limePlayer02KillButton = new CustomButton(
                 () => {
-                    PlayerControl target = BattleRoyale.GetPurpleShotPlayer(2 * 0.2f, 6, 2);
+                    PlayerControl target = BattleRoyale.GetLimeShotPlayer(2 * 0.2f, 6, 2);
 
-                    new BattleRoyaleShoot(BattleRoyale.purplePlayer02, 1, BattleRoyale.purplePlayer02mouseAngle);
+                    new BattleRoyaleShoot(BattleRoyale.limePlayer02, 1, BattleRoyale.limePlayer02mouseAngle);
 
                     if (target == null) {
-                        purplePlayer02KillButton.Timer = purplePlayer02KillButton.MaxTimer;
+                        limePlayer02KillButton.Timer = limePlayer02KillButton.MaxTimer;
                         return;
                     }
 
@@ -13895,76 +13894,76 @@ namespace LasMonjas
                         BattleRoyale.pinkPlayer06 != null && target == BattleRoyale.pinkPlayer06 && BattleRoyale.pinkPlayer06IsReviving ||
                         BattleRoyale.pinkPlayer07 != null && target == BattleRoyale.pinkPlayer07 && BattleRoyale.pinkPlayer07IsReviving ||
                         BattleRoyale.serialKiller != null && target == BattleRoyale.serialKiller && BattleRoyale.serialKillerIsReviving) {
-                            purplePlayer02KillButton.Timer = purplePlayer02KillButton.MaxTimer;
+                            limePlayer02KillButton.Timer = limePlayer02KillButton.MaxTimer;
                             return;
                         }
                     }
                     
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
-                    writer.Write(BattleRoyale.purplePlayer02.PlayerId);
+                    writer.Write(BattleRoyale.limePlayer02.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.purplePlayer02.PlayerId);
+                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.limePlayer02.PlayerId);
 
-                    purplePlayer02KillButton.Timer = purplePlayer02KillButton.MaxTimer;
+                    limePlayer02KillButton.Timer = limePlayer02KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
 
                     target = null;
                 },
-                () => { return BattleRoyale.purplePlayer02 != null && BattleRoyale.purplePlayer02 == PlayerControl.LocalPlayer; },
+                () => { return BattleRoyale.limePlayer02 != null && BattleRoyale.limePlayer02 == PlayerControl.LocalPlayer; },
                 () => {
-                    if (BattleRoyale.purplePlayer02Wep == null) {
-                        BattleRoyale.purplePlayer02Wep = new GameObject("Weapon");
-                        var renderer = BattleRoyale.purplePlayer02Wep.AddComponent<SpriteRenderer>();
+                    if (BattleRoyale.limePlayer02Wep == null) {
+                        BattleRoyale.limePlayer02Wep = new GameObject("Weapon");
+                        var renderer = BattleRoyale.limePlayer02Wep.AddComponent<SpriteRenderer>();
 
                         renderer.sprite = Archer.getBowSprite();
-                        renderer.transform.parent = BattleRoyale.purplePlayer02.transform;
+                        renderer.transform.parent = BattleRoyale.limePlayer02.transform;
                         renderer.color = new Color(1, 1, 1, 1);
                         renderer.transform.position = new Vector3(0, 0, -30f);
                     }
                     else {
 
                         if (PlayerControl.LocalPlayer.Data.IsDead && BattleRoyale.matchType != 2) {
-                            BattleRoyale.purplePlayer02Wep.SetActive(false);
+                            BattleRoyale.limePlayer02Wep.SetActive(false);
                         }
 
                         Vector3 mouseDirection = Input.mousePosition - new Vector3(Screen.width / 2, Screen.height / 2);
-                        BattleRoyale.purplePlayer02mouseAngle = Mathf.Atan2(mouseDirection.y, mouseDirection.x);
+                        BattleRoyale.limePlayer02mouseAngle = Mathf.Atan2(mouseDirection.y, mouseDirection.x);
 
-                        var targetPosition = BattleRoyale.purplePlayer02.transform.position + new Vector3(0.8f * (float)Math.Cos(BattleRoyale.purplePlayer02mouseAngle), 0.8f * (float)Math.Sin(BattleRoyale.purplePlayer02mouseAngle));
-                        BattleRoyale.purplePlayer02Wep.transform.position += (targetPosition - BattleRoyale.purplePlayer02Wep.transform.position) * 0.4f;
-                        BattleRoyale.purplePlayer02Wep.GetComponent<SpriteRenderer>().transform.eulerAngles = new Vector3(0f, 0f, (float)(BattleRoyale.purplePlayer02mouseAngle * 360f / Math.PI / 2f));
-                        if (Math.Cos(BattleRoyale.purplePlayer02mouseAngle) < 0.0) {
-                            if (BattleRoyale.purplePlayer02Wep.GetComponent<SpriteRenderer>().transform.localScale.y > 0)
-                                BattleRoyale.purplePlayer02Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, -1f);
+                        var targetPosition = BattleRoyale.limePlayer02.transform.position + new Vector3(0.8f * (float)Math.Cos(BattleRoyale.limePlayer02mouseAngle), 0.8f * (float)Math.Sin(BattleRoyale.limePlayer02mouseAngle));
+                        BattleRoyale.limePlayer02Wep.transform.position += (targetPosition - BattleRoyale.limePlayer02Wep.transform.position) * 0.4f;
+                        BattleRoyale.limePlayer02Wep.GetComponent<SpriteRenderer>().transform.eulerAngles = new Vector3(0f, 0f, (float)(BattleRoyale.limePlayer02mouseAngle * 360f / Math.PI / 2f));
+                        if (Math.Cos(BattleRoyale.limePlayer02mouseAngle) < 0.0) {
+                            if (BattleRoyale.limePlayer02Wep.GetComponent<SpriteRenderer>().transform.localScale.y > 0)
+                                BattleRoyale.limePlayer02Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, -1f);
                         }
                         else {
-                            if (BattleRoyale.purplePlayer02Wep.GetComponent<SpriteRenderer>().transform.localScale.y < 0)
-                                BattleRoyale.purplePlayer02Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, 1f);
+                            if (BattleRoyale.limePlayer02Wep.GetComponent<SpriteRenderer>().transform.localScale.y < 0)
+                                BattleRoyale.limePlayer02Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, 1f);
                         }
                     }
                     bool CanUse = true;
-                    if (BattleRoyale.purplePlayer02IsReviving) {
+                    if (BattleRoyale.limePlayer02IsReviving) {
                         CanUse = false;
                     }
                     return CanUse && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead;
                 },
-                () => { purplePlayer02KillButton.Timer = purplePlayer02KillButton.MaxTimer; },
+                () => { limePlayer02KillButton.Timer = limePlayer02KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                  new Vector3(0f, 1f, 0),
                 __instance,
                 KeyCode.Mouse1
             );
 
-            // PurplePlayer03 Kill
-            purplePlayer03KillButton = new CustomButton(
+            // LimePlayer03 Kill
+            limePlayer03KillButton = new CustomButton(
                 () => {
-                    PlayerControl target = BattleRoyale.GetPurpleShotPlayer(2 * 0.2f, 6, 3);
+                    PlayerControl target = BattleRoyale.GetLimeShotPlayer(2 * 0.2f, 6, 3);
 
-                    new BattleRoyaleShoot(BattleRoyale.purplePlayer03, 1, BattleRoyale.purplePlayer03mouseAngle);
+                    new BattleRoyaleShoot(BattleRoyale.limePlayer03, 1, BattleRoyale.limePlayer03mouseAngle);
 
                     if (target == null) {
-                        purplePlayer03KillButton.Timer = purplePlayer03KillButton.MaxTimer;
+                        limePlayer03KillButton.Timer = limePlayer03KillButton.MaxTimer;
                         return;
                     }
 
@@ -13977,76 +13976,76 @@ namespace LasMonjas
                         BattleRoyale.pinkPlayer06 != null && target == BattleRoyale.pinkPlayer06 && BattleRoyale.pinkPlayer06IsReviving ||
                         BattleRoyale.pinkPlayer07 != null && target == BattleRoyale.pinkPlayer07 && BattleRoyale.pinkPlayer07IsReviving ||
                         BattleRoyale.serialKiller != null && target == BattleRoyale.serialKiller && BattleRoyale.serialKillerIsReviving) {
-                            purplePlayer03KillButton.Timer = purplePlayer03KillButton.MaxTimer;
+                            limePlayer03KillButton.Timer = limePlayer03KillButton.MaxTimer;
                             return;
                         }
                     }
                     
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
-                    writer.Write(BattleRoyale.purplePlayer03.PlayerId);
+                    writer.Write(BattleRoyale.limePlayer03.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.purplePlayer03.PlayerId);
+                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.limePlayer03.PlayerId);
 
-                    purplePlayer03KillButton.Timer = purplePlayer03KillButton.MaxTimer;
+                    limePlayer03KillButton.Timer = limePlayer03KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
 
                     target = null;
                 },
-                () => { return BattleRoyale.purplePlayer03 != null && BattleRoyale.purplePlayer03 == PlayerControl.LocalPlayer; },
+                () => { return BattleRoyale.limePlayer03 != null && BattleRoyale.limePlayer03 == PlayerControl.LocalPlayer; },
                 () => {
-                    if (BattleRoyale.purplePlayer03Wep == null) {
-                        BattleRoyale.purplePlayer03Wep = new GameObject("Weapon");
-                        var renderer = BattleRoyale.purplePlayer03Wep.AddComponent<SpriteRenderer>();
+                    if (BattleRoyale.limePlayer03Wep == null) {
+                        BattleRoyale.limePlayer03Wep = new GameObject("Weapon");
+                        var renderer = BattleRoyale.limePlayer03Wep.AddComponent<SpriteRenderer>();
 
                         renderer.sprite = Archer.getBowSprite();
-                        renderer.transform.parent = BattleRoyale.purplePlayer03.transform;
+                        renderer.transform.parent = BattleRoyale.limePlayer03.transform;
                         renderer.color = new Color(1, 1, 1, 1);
                         renderer.transform.position = new Vector3(0, 0, -30f);
                     }
                     else {
 
                         if (PlayerControl.LocalPlayer.Data.IsDead && BattleRoyale.matchType != 2) {
-                            BattleRoyale.purplePlayer03Wep.SetActive(false);
+                            BattleRoyale.limePlayer03Wep.SetActive(false);
                         }
 
                         Vector3 mouseDirection = Input.mousePosition - new Vector3(Screen.width / 2, Screen.height / 2);
-                        BattleRoyale.purplePlayer03mouseAngle = Mathf.Atan2(mouseDirection.y, mouseDirection.x);
+                        BattleRoyale.limePlayer03mouseAngle = Mathf.Atan2(mouseDirection.y, mouseDirection.x);
 
-                        var targetPosition = BattleRoyale.purplePlayer03.transform.position + new Vector3(0.8f * (float)Math.Cos(BattleRoyale.purplePlayer03mouseAngle), 0.8f * (float)Math.Sin(BattleRoyale.purplePlayer03mouseAngle));
-                        BattleRoyale.purplePlayer03Wep.transform.position += (targetPosition - BattleRoyale.purplePlayer03Wep.transform.position) * 0.4f;
-                        BattleRoyale.purplePlayer03Wep.GetComponent<SpriteRenderer>().transform.eulerAngles = new Vector3(0f, 0f, (float)(BattleRoyale.purplePlayer03mouseAngle * 360f / Math.PI / 2f));
-                        if (Math.Cos(BattleRoyale.purplePlayer03mouseAngle) < 0.0) {
-                            if (BattleRoyale.purplePlayer03Wep.GetComponent<SpriteRenderer>().transform.localScale.y > 0)
-                                BattleRoyale.purplePlayer03Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, -1f);
+                        var targetPosition = BattleRoyale.limePlayer03.transform.position + new Vector3(0.8f * (float)Math.Cos(BattleRoyale.limePlayer03mouseAngle), 0.8f * (float)Math.Sin(BattleRoyale.limePlayer03mouseAngle));
+                        BattleRoyale.limePlayer03Wep.transform.position += (targetPosition - BattleRoyale.limePlayer03Wep.transform.position) * 0.4f;
+                        BattleRoyale.limePlayer03Wep.GetComponent<SpriteRenderer>().transform.eulerAngles = new Vector3(0f, 0f, (float)(BattleRoyale.limePlayer03mouseAngle * 360f / Math.PI / 2f));
+                        if (Math.Cos(BattleRoyale.limePlayer03mouseAngle) < 0.0) {
+                            if (BattleRoyale.limePlayer03Wep.GetComponent<SpriteRenderer>().transform.localScale.y > 0)
+                                BattleRoyale.limePlayer03Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, -1f);
                         }
                         else {
-                            if (BattleRoyale.purplePlayer03Wep.GetComponent<SpriteRenderer>().transform.localScale.y < 0)
-                                BattleRoyale.purplePlayer03Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, 1f);
+                            if (BattleRoyale.limePlayer03Wep.GetComponent<SpriteRenderer>().transform.localScale.y < 0)
+                                BattleRoyale.limePlayer03Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, 1f);
                         }
                     }
                     bool CanUse = true;
-                    if (BattleRoyale.purplePlayer03IsReviving) {
+                    if (BattleRoyale.limePlayer03IsReviving) {
                         CanUse = false;
                     }
                     return CanUse && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead;
                 },
-                () => { purplePlayer03KillButton.Timer = purplePlayer03KillButton.MaxTimer; },
+                () => { limePlayer03KillButton.Timer = limePlayer03KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                  new Vector3(0f, 1f, 0),
                 __instance,
                 KeyCode.Mouse1
             );
 
-            // PurplePlayer04 Kill
-            purplePlayer04KillButton = new CustomButton(
+            // LimePlayer04 Kill
+            limePlayer04KillButton = new CustomButton(
                 () => {
-                    PlayerControl target = BattleRoyale.GetPurpleShotPlayer(2 * 0.2f, 6, 4);
+                    PlayerControl target = BattleRoyale.GetLimeShotPlayer(2 * 0.2f, 6, 4);
 
-                    new BattleRoyaleShoot(BattleRoyale.purplePlayer04, 1, BattleRoyale.purplePlayer04mouseAngle);
+                    new BattleRoyaleShoot(BattleRoyale.limePlayer04, 1, BattleRoyale.limePlayer04mouseAngle);
 
                     if (target == null) {
-                        purplePlayer04KillButton.Timer = purplePlayer04KillButton.MaxTimer;
+                        limePlayer04KillButton.Timer = limePlayer04KillButton.MaxTimer;
                         return;
                     }
 
@@ -14059,76 +14058,76 @@ namespace LasMonjas
                         BattleRoyale.pinkPlayer06 != null && target == BattleRoyale.pinkPlayer06 && BattleRoyale.pinkPlayer06IsReviving ||
                         BattleRoyale.pinkPlayer07 != null && target == BattleRoyale.pinkPlayer07 && BattleRoyale.pinkPlayer07IsReviving ||
                         BattleRoyale.serialKiller != null && target == BattleRoyale.serialKiller && BattleRoyale.serialKillerIsReviving) {
-                            purplePlayer04KillButton.Timer = purplePlayer04KillButton.MaxTimer;
+                            limePlayer04KillButton.Timer = limePlayer04KillButton.MaxTimer;
                             return;
                         }
                     }
                     
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
-                    writer.Write(BattleRoyale.purplePlayer04.PlayerId);
+                    writer.Write(BattleRoyale.limePlayer04.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.purplePlayer04.PlayerId);
+                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.limePlayer04.PlayerId);
 
-                    purplePlayer04KillButton.Timer = purplePlayer04KillButton.MaxTimer;
+                    limePlayer04KillButton.Timer = limePlayer04KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
 
                     target = null;
                 },
-                () => { return BattleRoyale.purplePlayer04 != null && BattleRoyale.purplePlayer04 == PlayerControl.LocalPlayer; },
+                () => { return BattleRoyale.limePlayer04 != null && BattleRoyale.limePlayer04 == PlayerControl.LocalPlayer; },
                 () => {
-                    if (BattleRoyale.purplePlayer04Wep == null) {
-                        BattleRoyale.purplePlayer04Wep = new GameObject("Weapon");
-                        var renderer = BattleRoyale.purplePlayer04Wep.AddComponent<SpriteRenderer>();
+                    if (BattleRoyale.limePlayer04Wep == null) {
+                        BattleRoyale.limePlayer04Wep = new GameObject("Weapon");
+                        var renderer = BattleRoyale.limePlayer04Wep.AddComponent<SpriteRenderer>();
 
                         renderer.sprite = Archer.getBowSprite();
-                        renderer.transform.parent = BattleRoyale.purplePlayer04.transform;
+                        renderer.transform.parent = BattleRoyale.limePlayer04.transform;
                         renderer.color = new Color(1, 1, 1, 1);
                         renderer.transform.position = new Vector3(0, 0, -30f);
                     }
                     else {
 
                         if (PlayerControl.LocalPlayer.Data.IsDead && BattleRoyale.matchType != 2) {
-                            BattleRoyale.purplePlayer04Wep.SetActive(false);
+                            BattleRoyale.limePlayer04Wep.SetActive(false);
                         }
 
                         Vector3 mouseDirection = Input.mousePosition - new Vector3(Screen.width / 2, Screen.height / 2);
-                        BattleRoyale.purplePlayer04mouseAngle = Mathf.Atan2(mouseDirection.y, mouseDirection.x);
+                        BattleRoyale.limePlayer04mouseAngle = Mathf.Atan2(mouseDirection.y, mouseDirection.x);
 
-                        var targetPosition = BattleRoyale.purplePlayer04.transform.position + new Vector3(0.8f * (float)Math.Cos(BattleRoyale.purplePlayer04mouseAngle), 0.8f * (float)Math.Sin(BattleRoyale.purplePlayer04mouseAngle));
-                        BattleRoyale.purplePlayer04Wep.transform.position += (targetPosition - BattleRoyale.purplePlayer04Wep.transform.position) * 0.4f;
-                        BattleRoyale.purplePlayer04Wep.GetComponent<SpriteRenderer>().transform.eulerAngles = new Vector3(0f, 0f, (float)(BattleRoyale.purplePlayer04mouseAngle * 360f / Math.PI / 2f));
-                        if (Math.Cos(BattleRoyale.purplePlayer04mouseAngle) < 0.0) {
-                            if (BattleRoyale.purplePlayer04Wep.GetComponent<SpriteRenderer>().transform.localScale.y > 0)
-                                BattleRoyale.purplePlayer04Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, -1f);
+                        var targetPosition = BattleRoyale.limePlayer04.transform.position + new Vector3(0.8f * (float)Math.Cos(BattleRoyale.limePlayer04mouseAngle), 0.8f * (float)Math.Sin(BattleRoyale.limePlayer04mouseAngle));
+                        BattleRoyale.limePlayer04Wep.transform.position += (targetPosition - BattleRoyale.limePlayer04Wep.transform.position) * 0.4f;
+                        BattleRoyale.limePlayer04Wep.GetComponent<SpriteRenderer>().transform.eulerAngles = new Vector3(0f, 0f, (float)(BattleRoyale.limePlayer04mouseAngle * 360f / Math.PI / 2f));
+                        if (Math.Cos(BattleRoyale.limePlayer04mouseAngle) < 0.0) {
+                            if (BattleRoyale.limePlayer04Wep.GetComponent<SpriteRenderer>().transform.localScale.y > 0)
+                                BattleRoyale.limePlayer04Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, -1f);
                         }
                         else {
-                            if (BattleRoyale.purplePlayer04Wep.GetComponent<SpriteRenderer>().transform.localScale.y < 0)
-                                BattleRoyale.purplePlayer04Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, 1f);
+                            if (BattleRoyale.limePlayer04Wep.GetComponent<SpriteRenderer>().transform.localScale.y < 0)
+                                BattleRoyale.limePlayer04Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, 1f);
                         }
                     }
                     bool CanUse = true;
-                    if (BattleRoyale.purplePlayer04IsReviving) {
+                    if (BattleRoyale.limePlayer04IsReviving) {
                         CanUse = false;
                     }
                     return CanUse && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead;
                 },
-                () => { purplePlayer04KillButton.Timer = purplePlayer04KillButton.MaxTimer; },
+                () => { limePlayer04KillButton.Timer = limePlayer04KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                  new Vector3(0f, 1f, 0),
                 __instance,
                 KeyCode.Mouse1
             );
 
-            // PurplePlayer05 Kill
-            purplePlayer05KillButton = new CustomButton(
+            // LimePlayer05 Kill
+            limePlayer05KillButton = new CustomButton(
                 () => {
-                    PlayerControl target = BattleRoyale.GetPurpleShotPlayer(2 * 0.2f, 6, 5);
+                    PlayerControl target = BattleRoyale.GetLimeShotPlayer(2 * 0.2f, 6, 5);
 
-                    new BattleRoyaleShoot(BattleRoyale.purplePlayer05, 1, BattleRoyale.purplePlayer05mouseAngle);
+                    new BattleRoyaleShoot(BattleRoyale.limePlayer05, 1, BattleRoyale.limePlayer05mouseAngle);
 
                     if (target == null) {
-                        purplePlayer05KillButton.Timer = purplePlayer05KillButton.MaxTimer;
+                        limePlayer05KillButton.Timer = limePlayer05KillButton.MaxTimer;
                         return;
                     }
 
@@ -14141,76 +14140,76 @@ namespace LasMonjas
                         BattleRoyale.pinkPlayer06 != null && target == BattleRoyale.pinkPlayer06 && BattleRoyale.pinkPlayer06IsReviving ||
                         BattleRoyale.pinkPlayer07 != null && target == BattleRoyale.pinkPlayer07 && BattleRoyale.pinkPlayer07IsReviving ||
                         BattleRoyale.serialKiller != null && target == BattleRoyale.serialKiller && BattleRoyale.serialKillerIsReviving) {
-                            purplePlayer05KillButton.Timer = purplePlayer05KillButton.MaxTimer;
+                            limePlayer05KillButton.Timer = limePlayer05KillButton.MaxTimer;
                             return;
                         }
                     }
                     
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
-                    writer.Write(BattleRoyale.purplePlayer05.PlayerId);
+                    writer.Write(BattleRoyale.limePlayer05.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.purplePlayer05.PlayerId);
+                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.limePlayer05.PlayerId);
 
-                    purplePlayer05KillButton.Timer = purplePlayer05KillButton.MaxTimer;
+                    limePlayer05KillButton.Timer = limePlayer05KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
 
                     target = null;
                 },
-                () => { return BattleRoyale.purplePlayer05 != null && BattleRoyale.purplePlayer05 == PlayerControl.LocalPlayer; },
+                () => { return BattleRoyale.limePlayer05 != null && BattleRoyale.limePlayer05 == PlayerControl.LocalPlayer; },
                 () => {
-                    if (BattleRoyale.purplePlayer05Wep == null) {
-                        BattleRoyale.purplePlayer05Wep = new GameObject("Weapon");
-                        var renderer = BattleRoyale.purplePlayer05Wep.AddComponent<SpriteRenderer>();
+                    if (BattleRoyale.limePlayer05Wep == null) {
+                        BattleRoyale.limePlayer05Wep = new GameObject("Weapon");
+                        var renderer = BattleRoyale.limePlayer05Wep.AddComponent<SpriteRenderer>();
 
                         renderer.sprite = Archer.getBowSprite();
-                        renderer.transform.parent = BattleRoyale.purplePlayer05.transform;
+                        renderer.transform.parent = BattleRoyale.limePlayer05.transform;
                         renderer.color = new Color(1, 1, 1, 1);
                         renderer.transform.position = new Vector3(0, 0, -30f);
                     }
                     else {
 
                         if (PlayerControl.LocalPlayer.Data.IsDead && BattleRoyale.matchType != 2) {
-                            BattleRoyale.purplePlayer05Wep.SetActive(false);
+                            BattleRoyale.limePlayer05Wep.SetActive(false);
                         }
 
                         Vector3 mouseDirection = Input.mousePosition - new Vector3(Screen.width / 2, Screen.height / 2);
-                        BattleRoyale.purplePlayer05mouseAngle = Mathf.Atan2(mouseDirection.y, mouseDirection.x);
+                        BattleRoyale.limePlayer05mouseAngle = Mathf.Atan2(mouseDirection.y, mouseDirection.x);
 
-                        var targetPosition = BattleRoyale.purplePlayer05.transform.position + new Vector3(0.8f * (float)Math.Cos(BattleRoyale.purplePlayer05mouseAngle), 0.8f * (float)Math.Sin(BattleRoyale.purplePlayer05mouseAngle));
-                        BattleRoyale.purplePlayer05Wep.transform.position += (targetPosition - BattleRoyale.purplePlayer05Wep.transform.position) * 0.4f;
-                        BattleRoyale.purplePlayer05Wep.GetComponent<SpriteRenderer>().transform.eulerAngles = new Vector3(0f, 0f, (float)(BattleRoyale.purplePlayer05mouseAngle * 360f / Math.PI / 2f));
-                        if (Math.Cos(BattleRoyale.purplePlayer05mouseAngle) < 0.0) {
-                            if (BattleRoyale.purplePlayer05Wep.GetComponent<SpriteRenderer>().transform.localScale.y > 0)
-                                BattleRoyale.purplePlayer05Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, -1f);
+                        var targetPosition = BattleRoyale.limePlayer05.transform.position + new Vector3(0.8f * (float)Math.Cos(BattleRoyale.limePlayer05mouseAngle), 0.8f * (float)Math.Sin(BattleRoyale.limePlayer05mouseAngle));
+                        BattleRoyale.limePlayer05Wep.transform.position += (targetPosition - BattleRoyale.limePlayer05Wep.transform.position) * 0.4f;
+                        BattleRoyale.limePlayer05Wep.GetComponent<SpriteRenderer>().transform.eulerAngles = new Vector3(0f, 0f, (float)(BattleRoyale.limePlayer05mouseAngle * 360f / Math.PI / 2f));
+                        if (Math.Cos(BattleRoyale.limePlayer05mouseAngle) < 0.0) {
+                            if (BattleRoyale.limePlayer05Wep.GetComponent<SpriteRenderer>().transform.localScale.y > 0)
+                                BattleRoyale.limePlayer05Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, -1f);
                         }
                         else {
-                            if (BattleRoyale.purplePlayer05Wep.GetComponent<SpriteRenderer>().transform.localScale.y < 0)
-                                BattleRoyale.purplePlayer05Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, 1f);
+                            if (BattleRoyale.limePlayer05Wep.GetComponent<SpriteRenderer>().transform.localScale.y < 0)
+                                BattleRoyale.limePlayer05Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, 1f);
                         }
                     }
                     bool CanUse = true;
-                    if (BattleRoyale.purplePlayer05IsReviving) {
+                    if (BattleRoyale.limePlayer05IsReviving) {
                         CanUse = false;
                     }
                     return CanUse && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead;
                 },
-                () => { purplePlayer05KillButton.Timer = purplePlayer05KillButton.MaxTimer; },
+                () => { limePlayer05KillButton.Timer = limePlayer05KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                  new Vector3(0f, 1f, 0),
                 __instance,
                 KeyCode.Mouse1
             );
 
-            // PurplePlayer06 Kill
-            purplePlayer06KillButton = new CustomButton(
+            // LimePlayer06 Kill
+            limePlayer06KillButton = new CustomButton(
                 () => {
-                    PlayerControl target = BattleRoyale.GetPurpleShotPlayer(2 * 0.2f, 6, 6);
+                    PlayerControl target = BattleRoyale.GetLimeShotPlayer(2 * 0.2f, 6, 6);
 
-                    new BattleRoyaleShoot(BattleRoyale.purplePlayer06, 1, BattleRoyale.purplePlayer06mouseAngle);
+                    new BattleRoyaleShoot(BattleRoyale.limePlayer06, 1, BattleRoyale.limePlayer06mouseAngle);
 
                     if (target == null) {
-                        purplePlayer06KillButton.Timer = purplePlayer06KillButton.MaxTimer;
+                        limePlayer06KillButton.Timer = limePlayer06KillButton.MaxTimer;
                         return;
                     }
 
@@ -14223,76 +14222,76 @@ namespace LasMonjas
                         BattleRoyale.pinkPlayer06 != null && target == BattleRoyale.pinkPlayer06 && BattleRoyale.pinkPlayer06IsReviving ||
                         BattleRoyale.pinkPlayer07 != null && target == BattleRoyale.pinkPlayer07 && BattleRoyale.pinkPlayer07IsReviving ||
                         BattleRoyale.serialKiller != null && target == BattleRoyale.serialKiller && BattleRoyale.serialKillerIsReviving) {
-                            purplePlayer06KillButton.Timer = purplePlayer06KillButton.MaxTimer;
+                            limePlayer06KillButton.Timer = limePlayer06KillButton.MaxTimer;
                             return;
                         }
                     }
                     
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
-                    writer.Write(BattleRoyale.purplePlayer06.PlayerId);
+                    writer.Write(BattleRoyale.limePlayer06.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.purplePlayer06.PlayerId);
+                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.limePlayer06.PlayerId);
 
-                    purplePlayer06KillButton.Timer = purplePlayer06KillButton.MaxTimer;
+                    limePlayer06KillButton.Timer = limePlayer06KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
 
                     target = null;
                 },
-                () => { return BattleRoyale.purplePlayer06 != null && BattleRoyale.purplePlayer06 == PlayerControl.LocalPlayer; },
+                () => { return BattleRoyale.limePlayer06 != null && BattleRoyale.limePlayer06 == PlayerControl.LocalPlayer; },
                 () => {
-                    if (BattleRoyale.purplePlayer06Wep == null) {
-                        BattleRoyale.purplePlayer06Wep = new GameObject("Weapon");
-                        var renderer = BattleRoyale.purplePlayer06Wep.AddComponent<SpriteRenderer>();
+                    if (BattleRoyale.limePlayer06Wep == null) {
+                        BattleRoyale.limePlayer06Wep = new GameObject("Weapon");
+                        var renderer = BattleRoyale.limePlayer06Wep.AddComponent<SpriteRenderer>();
 
                         renderer.sprite = Archer.getBowSprite();
-                        renderer.transform.parent = BattleRoyale.purplePlayer06.transform;
+                        renderer.transform.parent = BattleRoyale.limePlayer06.transform;
                         renderer.color = new Color(1, 1, 1, 1);
                         renderer.transform.position = new Vector3(0, 0, -30f);
                     }
                     else {
 
                         if (PlayerControl.LocalPlayer.Data.IsDead && BattleRoyale.matchType != 2) {
-                            BattleRoyale.purplePlayer06Wep.SetActive(false);
+                            BattleRoyale.limePlayer06Wep.SetActive(false);
                         }
 
                         Vector3 mouseDirection = Input.mousePosition - new Vector3(Screen.width / 2, Screen.height / 2);
-                        BattleRoyale.purplePlayer06mouseAngle = Mathf.Atan2(mouseDirection.y, mouseDirection.x);
+                        BattleRoyale.limePlayer06mouseAngle = Mathf.Atan2(mouseDirection.y, mouseDirection.x);
 
-                        var targetPosition = BattleRoyale.purplePlayer06.transform.position + new Vector3(0.8f * (float)Math.Cos(BattleRoyale.purplePlayer06mouseAngle), 0.8f * (float)Math.Sin(BattleRoyale.purplePlayer06mouseAngle));
-                        BattleRoyale.purplePlayer06Wep.transform.position += (targetPosition - BattleRoyale.purplePlayer06Wep.transform.position) * 0.4f;
-                        BattleRoyale.purplePlayer06Wep.GetComponent<SpriteRenderer>().transform.eulerAngles = new Vector3(0f, 0f, (float)(BattleRoyale.purplePlayer06mouseAngle * 360f / Math.PI / 2f));
-                        if (Math.Cos(BattleRoyale.purplePlayer06mouseAngle) < 0.0) {
-                            if (BattleRoyale.purplePlayer06Wep.GetComponent<SpriteRenderer>().transform.localScale.y > 0)
-                                BattleRoyale.purplePlayer06Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, -1f);
+                        var targetPosition = BattleRoyale.limePlayer06.transform.position + new Vector3(0.8f * (float)Math.Cos(BattleRoyale.limePlayer06mouseAngle), 0.8f * (float)Math.Sin(BattleRoyale.limePlayer06mouseAngle));
+                        BattleRoyale.limePlayer06Wep.transform.position += (targetPosition - BattleRoyale.limePlayer06Wep.transform.position) * 0.4f;
+                        BattleRoyale.limePlayer06Wep.GetComponent<SpriteRenderer>().transform.eulerAngles = new Vector3(0f, 0f, (float)(BattleRoyale.limePlayer06mouseAngle * 360f / Math.PI / 2f));
+                        if (Math.Cos(BattleRoyale.limePlayer06mouseAngle) < 0.0) {
+                            if (BattleRoyale.limePlayer06Wep.GetComponent<SpriteRenderer>().transform.localScale.y > 0)
+                                BattleRoyale.limePlayer06Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, -1f);
                         }
                         else {
-                            if (BattleRoyale.purplePlayer06Wep.GetComponent<SpriteRenderer>().transform.localScale.y < 0)
-                                BattleRoyale.purplePlayer06Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, 1f);
+                            if (BattleRoyale.limePlayer06Wep.GetComponent<SpriteRenderer>().transform.localScale.y < 0)
+                                BattleRoyale.limePlayer06Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, 1f);
                         }
                     }
                     bool CanUse = true;
-                    if (BattleRoyale.purplePlayer06IsReviving) {
+                    if (BattleRoyale.limePlayer06IsReviving) {
                         CanUse = false;
                     }
                     return CanUse && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead;
                 },
-                () => { purplePlayer06KillButton.Timer = purplePlayer06KillButton.MaxTimer; },
+                () => { limePlayer06KillButton.Timer = limePlayer06KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                  new Vector3(0f, 1f, 0),
                 __instance,
                 KeyCode.Mouse1
             );
 
-            // PurplePlayer07 Kill
-            purplePlayer07KillButton = new CustomButton(
+            // LimePlayer07 Kill
+            limePlayer07KillButton = new CustomButton(
                 () => {
-                    PlayerControl target = BattleRoyale.GetPurpleShotPlayer(2 * 0.2f, 6, 7);
+                    PlayerControl target = BattleRoyale.GetLimeShotPlayer(2 * 0.2f, 6, 7);
 
-                    new BattleRoyaleShoot(BattleRoyale.purplePlayer07, 1, BattleRoyale.purplePlayer07mouseAngle);
+                    new BattleRoyaleShoot(BattleRoyale.limePlayer07, 1, BattleRoyale.limePlayer07mouseAngle);
 
                     if (target == null) {
-                        purplePlayer07KillButton.Timer = purplePlayer07KillButton.MaxTimer;
+                        limePlayer07KillButton.Timer = limePlayer07KillButton.MaxTimer;
                         return;
                     }
 
@@ -14305,61 +14304,61 @@ namespace LasMonjas
                         BattleRoyale.pinkPlayer06 != null && target == BattleRoyale.pinkPlayer06 && BattleRoyale.pinkPlayer06IsReviving ||
                         BattleRoyale.pinkPlayer07 != null && target == BattleRoyale.pinkPlayer07 && BattleRoyale.pinkPlayer07IsReviving ||
                         BattleRoyale.serialKiller != null && target == BattleRoyale.serialKiller && BattleRoyale.serialKillerIsReviving) {
-                            purplePlayer07KillButton.Timer = purplePlayer07KillButton.MaxTimer;
+                            limePlayer07KillButton.Timer = limePlayer07KillButton.MaxTimer;
                             return;
                         }
                     }
                     
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
-                    writer.Write(BattleRoyale.purplePlayer07.PlayerId);
+                    writer.Write(BattleRoyale.limePlayer07.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.purplePlayer07.PlayerId);
+                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.limePlayer07.PlayerId);
 
-                    purplePlayer07KillButton.Timer = purplePlayer07KillButton.MaxTimer;
+                    limePlayer07KillButton.Timer = limePlayer07KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
 
                     target = null;
                 },
-                () => { return BattleRoyale.purplePlayer07 != null && BattleRoyale.purplePlayer07 == PlayerControl.LocalPlayer; },
+                () => { return BattleRoyale.limePlayer07 != null && BattleRoyale.limePlayer07 == PlayerControl.LocalPlayer; },
                 () => {
-                    if (BattleRoyale.purplePlayer07Wep == null) {
-                        BattleRoyale.purplePlayer07Wep = new GameObject("Weapon");
-                        var renderer = BattleRoyale.purplePlayer07Wep.AddComponent<SpriteRenderer>();
+                    if (BattleRoyale.limePlayer07Wep == null) {
+                        BattleRoyale.limePlayer07Wep = new GameObject("Weapon");
+                        var renderer = BattleRoyale.limePlayer07Wep.AddComponent<SpriteRenderer>();
 
                         renderer.sprite = Archer.getBowSprite();
-                        renderer.transform.parent = BattleRoyale.purplePlayer07.transform;
+                        renderer.transform.parent = BattleRoyale.limePlayer07.transform;
                         renderer.color = new Color(1, 1, 1, 1);
                         renderer.transform.position = new Vector3(0, 0, -30f);
                     }
                     else {
 
                         if (PlayerControl.LocalPlayer.Data.IsDead && BattleRoyale.matchType != 2) {
-                            BattleRoyale.purplePlayer07Wep.SetActive(false);
+                            BattleRoyale.limePlayer07Wep.SetActive(false);
                         }
 
                         Vector3 mouseDirection = Input.mousePosition - new Vector3(Screen.width / 2, Screen.height / 2);
-                        BattleRoyale.purplePlayer07mouseAngle = Mathf.Atan2(mouseDirection.y, mouseDirection.x);
+                        BattleRoyale.limePlayer07mouseAngle = Mathf.Atan2(mouseDirection.y, mouseDirection.x);
 
-                        var targetPosition = BattleRoyale.purplePlayer07.transform.position + new Vector3(0.8f * (float)Math.Cos(BattleRoyale.purplePlayer07mouseAngle), 0.8f * (float)Math.Sin(BattleRoyale.purplePlayer07mouseAngle));
-                        BattleRoyale.purplePlayer07Wep.transform.position += (targetPosition - BattleRoyale.purplePlayer07Wep.transform.position) * 0.4f;
-                        BattleRoyale.purplePlayer07Wep.GetComponent<SpriteRenderer>().transform.eulerAngles = new Vector3(0f, 0f, (float)(BattleRoyale.purplePlayer07mouseAngle * 360f / Math.PI / 2f));
-                        if (Math.Cos(BattleRoyale.purplePlayer07mouseAngle) < 0.0) {
-                            if (BattleRoyale.purplePlayer07Wep.GetComponent<SpriteRenderer>().transform.localScale.y > 0)
-                                BattleRoyale.purplePlayer07Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, -1f);
+                        var targetPosition = BattleRoyale.limePlayer07.transform.position + new Vector3(0.8f * (float)Math.Cos(BattleRoyale.limePlayer07mouseAngle), 0.8f * (float)Math.Sin(BattleRoyale.limePlayer07mouseAngle));
+                        BattleRoyale.limePlayer07Wep.transform.position += (targetPosition - BattleRoyale.limePlayer07Wep.transform.position) * 0.4f;
+                        BattleRoyale.limePlayer07Wep.GetComponent<SpriteRenderer>().transform.eulerAngles = new Vector3(0f, 0f, (float)(BattleRoyale.limePlayer07mouseAngle * 360f / Math.PI / 2f));
+                        if (Math.Cos(BattleRoyale.limePlayer07mouseAngle) < 0.0) {
+                            if (BattleRoyale.limePlayer07Wep.GetComponent<SpriteRenderer>().transform.localScale.y > 0)
+                                BattleRoyale.limePlayer07Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, -1f);
                         }
                         else {
-                            if (BattleRoyale.purplePlayer07Wep.GetComponent<SpriteRenderer>().transform.localScale.y < 0)
-                                BattleRoyale.purplePlayer07Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, 1f);
+                            if (BattleRoyale.limePlayer07Wep.GetComponent<SpriteRenderer>().transform.localScale.y < 0)
+                                BattleRoyale.limePlayer07Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, 1f);
                         }
                     }
                     bool CanUse = true;
-                    if (BattleRoyale.purplePlayer07IsReviving) {
+                    if (BattleRoyale.limePlayer07IsReviving) {
                         CanUse = false;
                     }
                     return CanUse && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead;
                 },
-                () => { purplePlayer07KillButton.Timer = purplePlayer07KillButton.MaxTimer; },
+                () => { limePlayer07KillButton.Timer = limePlayer07KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                  new Vector3(0f, 1f, 0),
                 __instance,
@@ -14379,13 +14378,13 @@ namespace LasMonjas
                     }
 
                     if (BattleRoyale.matchType == 2) {
-                        if (BattleRoyale.purplePlayer01 != null && target == BattleRoyale.purplePlayer01 && BattleRoyale.purplePlayer01IsReviving ||
-                        BattleRoyale.purplePlayer02 != null && target == BattleRoyale.purplePlayer02 && BattleRoyale.purplePlayer02IsReviving ||
-                        BattleRoyale.purplePlayer03 != null && target == BattleRoyale.purplePlayer03 && BattleRoyale.purplePlayer03IsReviving ||
-                        BattleRoyale.purplePlayer04 != null && target == BattleRoyale.purplePlayer04 && BattleRoyale.purplePlayer04IsReviving ||
-                        BattleRoyale.purplePlayer05 != null && target == BattleRoyale.purplePlayer05 && BattleRoyale.purplePlayer05IsReviving ||
-                        BattleRoyale.purplePlayer06 != null && target == BattleRoyale.purplePlayer06 && BattleRoyale.purplePlayer06IsReviving ||
-                        BattleRoyale.purplePlayer07 != null && target == BattleRoyale.purplePlayer07 && BattleRoyale.purplePlayer07IsReviving ||
+                        if (BattleRoyale.limePlayer01 != null && target == BattleRoyale.limePlayer01 && BattleRoyale.limePlayer01IsReviving ||
+                        BattleRoyale.limePlayer02 != null && target == BattleRoyale.limePlayer02 && BattleRoyale.limePlayer02IsReviving ||
+                        BattleRoyale.limePlayer03 != null && target == BattleRoyale.limePlayer03 && BattleRoyale.limePlayer03IsReviving ||
+                        BattleRoyale.limePlayer04 != null && target == BattleRoyale.limePlayer04 && BattleRoyale.limePlayer04IsReviving ||
+                        BattleRoyale.limePlayer05 != null && target == BattleRoyale.limePlayer05 && BattleRoyale.limePlayer05IsReviving ||
+                        BattleRoyale.limePlayer06 != null && target == BattleRoyale.limePlayer06 && BattleRoyale.limePlayer06IsReviving ||
+                        BattleRoyale.limePlayer07 != null && target == BattleRoyale.limePlayer07 && BattleRoyale.limePlayer07IsReviving ||
                         BattleRoyale.serialKiller != null && target == BattleRoyale.serialKiller && BattleRoyale.serialKillerIsReviving) {
                             pinkPlayer01KillButton.Timer = pinkPlayer01KillButton.MaxTimer;
                             return;
@@ -14461,13 +14460,13 @@ namespace LasMonjas
                     }
 
                     if (BattleRoyale.matchType == 2) {
-                        if (BattleRoyale.purplePlayer01 != null && target == BattleRoyale.purplePlayer01 && BattleRoyale.purplePlayer01IsReviving ||
-                        BattleRoyale.purplePlayer02 != null && target == BattleRoyale.purplePlayer02 && BattleRoyale.purplePlayer02IsReviving ||
-                        BattleRoyale.purplePlayer03 != null && target == BattleRoyale.purplePlayer03 && BattleRoyale.purplePlayer03IsReviving ||
-                        BattleRoyale.purplePlayer04 != null && target == BattleRoyale.purplePlayer04 && BattleRoyale.purplePlayer04IsReviving ||
-                        BattleRoyale.purplePlayer05 != null && target == BattleRoyale.purplePlayer05 && BattleRoyale.purplePlayer05IsReviving ||
-                        BattleRoyale.purplePlayer06 != null && target == BattleRoyale.purplePlayer06 && BattleRoyale.purplePlayer06IsReviving ||
-                        BattleRoyale.purplePlayer07 != null && target == BattleRoyale.purplePlayer07 && BattleRoyale.purplePlayer07IsReviving ||
+                        if (BattleRoyale.limePlayer01 != null && target == BattleRoyale.limePlayer01 && BattleRoyale.limePlayer01IsReviving ||
+                        BattleRoyale.limePlayer02 != null && target == BattleRoyale.limePlayer02 && BattleRoyale.limePlayer02IsReviving ||
+                        BattleRoyale.limePlayer03 != null && target == BattleRoyale.limePlayer03 && BattleRoyale.limePlayer03IsReviving ||
+                        BattleRoyale.limePlayer04 != null && target == BattleRoyale.limePlayer04 && BattleRoyale.limePlayer04IsReviving ||
+                        BattleRoyale.limePlayer05 != null && target == BattleRoyale.limePlayer05 && BattleRoyale.limePlayer05IsReviving ||
+                        BattleRoyale.limePlayer06 != null && target == BattleRoyale.limePlayer06 && BattleRoyale.limePlayer06IsReviving ||
+                        BattleRoyale.limePlayer07 != null && target == BattleRoyale.limePlayer07 && BattleRoyale.limePlayer07IsReviving ||
                         BattleRoyale.serialKiller != null && target == BattleRoyale.serialKiller && BattleRoyale.serialKillerIsReviving) {
                             pinkPlayer02KillButton.Timer = pinkPlayer02KillButton.MaxTimer;
                             return;
@@ -14543,13 +14542,13 @@ namespace LasMonjas
                     }
 
                     if (BattleRoyale.matchType == 2) {
-                        if (BattleRoyale.purplePlayer01 != null && target == BattleRoyale.purplePlayer01 && BattleRoyale.purplePlayer01IsReviving ||
-                        BattleRoyale.purplePlayer02 != null && target == BattleRoyale.purplePlayer02 && BattleRoyale.purplePlayer02IsReviving ||
-                        BattleRoyale.purplePlayer03 != null && target == BattleRoyale.purplePlayer03 && BattleRoyale.purplePlayer03IsReviving ||
-                        BattleRoyale.purplePlayer04 != null && target == BattleRoyale.purplePlayer04 && BattleRoyale.purplePlayer04IsReviving ||
-                        BattleRoyale.purplePlayer05 != null && target == BattleRoyale.purplePlayer05 && BattleRoyale.purplePlayer05IsReviving ||
-                        BattleRoyale.purplePlayer06 != null && target == BattleRoyale.purplePlayer06 && BattleRoyale.purplePlayer06IsReviving ||
-                        BattleRoyale.purplePlayer07 != null && target == BattleRoyale.purplePlayer07 && BattleRoyale.purplePlayer07IsReviving ||
+                        if (BattleRoyale.limePlayer01 != null && target == BattleRoyale.limePlayer01 && BattleRoyale.limePlayer01IsReviving ||
+                        BattleRoyale.limePlayer02 != null && target == BattleRoyale.limePlayer02 && BattleRoyale.limePlayer02IsReviving ||
+                        BattleRoyale.limePlayer03 != null && target == BattleRoyale.limePlayer03 && BattleRoyale.limePlayer03IsReviving ||
+                        BattleRoyale.limePlayer04 != null && target == BattleRoyale.limePlayer04 && BattleRoyale.limePlayer04IsReviving ||
+                        BattleRoyale.limePlayer05 != null && target == BattleRoyale.limePlayer05 && BattleRoyale.limePlayer05IsReviving ||
+                        BattleRoyale.limePlayer06 != null && target == BattleRoyale.limePlayer06 && BattleRoyale.limePlayer06IsReviving ||
+                        BattleRoyale.limePlayer07 != null && target == BattleRoyale.limePlayer07 && BattleRoyale.limePlayer07IsReviving ||
                         BattleRoyale.serialKiller != null && target == BattleRoyale.serialKiller && BattleRoyale.serialKillerIsReviving) {
                             pinkPlayer03KillButton.Timer = pinkPlayer03KillButton.MaxTimer;
                             return;
@@ -14625,13 +14624,13 @@ namespace LasMonjas
                     }
 
                     if (BattleRoyale.matchType == 2) {
-                        if (BattleRoyale.purplePlayer01 != null && target == BattleRoyale.purplePlayer01 && BattleRoyale.purplePlayer01IsReviving ||
-                        BattleRoyale.purplePlayer02 != null && target == BattleRoyale.purplePlayer02 && BattleRoyale.purplePlayer02IsReviving ||
-                        BattleRoyale.purplePlayer03 != null && target == BattleRoyale.purplePlayer03 && BattleRoyale.purplePlayer03IsReviving ||
-                        BattleRoyale.purplePlayer04 != null && target == BattleRoyale.purplePlayer04 && BattleRoyale.purplePlayer04IsReviving ||
-                        BattleRoyale.purplePlayer05 != null && target == BattleRoyale.purplePlayer05 && BattleRoyale.purplePlayer05IsReviving ||
-                        BattleRoyale.purplePlayer06 != null && target == BattleRoyale.purplePlayer06 && BattleRoyale.purplePlayer06IsReviving ||
-                        BattleRoyale.purplePlayer07 != null && target == BattleRoyale.purplePlayer07 && BattleRoyale.purplePlayer07IsReviving ||
+                        if (BattleRoyale.limePlayer01 != null && target == BattleRoyale.limePlayer01 && BattleRoyale.limePlayer01IsReviving ||
+                        BattleRoyale.limePlayer02 != null && target == BattleRoyale.limePlayer02 && BattleRoyale.limePlayer02IsReviving ||
+                        BattleRoyale.limePlayer03 != null && target == BattleRoyale.limePlayer03 && BattleRoyale.limePlayer03IsReviving ||
+                        BattleRoyale.limePlayer04 != null && target == BattleRoyale.limePlayer04 && BattleRoyale.limePlayer04IsReviving ||
+                        BattleRoyale.limePlayer05 != null && target == BattleRoyale.limePlayer05 && BattleRoyale.limePlayer05IsReviving ||
+                        BattleRoyale.limePlayer06 != null && target == BattleRoyale.limePlayer06 && BattleRoyale.limePlayer06IsReviving ||
+                        BattleRoyale.limePlayer07 != null && target == BattleRoyale.limePlayer07 && BattleRoyale.limePlayer07IsReviving ||
                         BattleRoyale.serialKiller != null && target == BattleRoyale.serialKiller && BattleRoyale.serialKillerIsReviving) {
                             pinkPlayer04KillButton.Timer = pinkPlayer04KillButton.MaxTimer;
                             return;
@@ -14707,13 +14706,13 @@ namespace LasMonjas
                     }
 
                     if (BattleRoyale.matchType == 2) {
-                        if (BattleRoyale.purplePlayer01 != null && target == BattleRoyale.purplePlayer01 && BattleRoyale.purplePlayer01IsReviving ||
-                        BattleRoyale.purplePlayer02 != null && target == BattleRoyale.purplePlayer02 && BattleRoyale.purplePlayer02IsReviving ||
-                        BattleRoyale.purplePlayer03 != null && target == BattleRoyale.purplePlayer03 && BattleRoyale.purplePlayer03IsReviving ||
-                        BattleRoyale.purplePlayer04 != null && target == BattleRoyale.purplePlayer04 && BattleRoyale.purplePlayer04IsReviving ||
-                        BattleRoyale.purplePlayer05 != null && target == BattleRoyale.purplePlayer05 && BattleRoyale.purplePlayer05IsReviving ||
-                        BattleRoyale.purplePlayer06 != null && target == BattleRoyale.purplePlayer06 && BattleRoyale.purplePlayer06IsReviving ||
-                        BattleRoyale.purplePlayer07 != null && target == BattleRoyale.purplePlayer07 && BattleRoyale.purplePlayer07IsReviving ||
+                        if (BattleRoyale.limePlayer01 != null && target == BattleRoyale.limePlayer01 && BattleRoyale.limePlayer01IsReviving ||
+                        BattleRoyale.limePlayer02 != null && target == BattleRoyale.limePlayer02 && BattleRoyale.limePlayer02IsReviving ||
+                        BattleRoyale.limePlayer03 != null && target == BattleRoyale.limePlayer03 && BattleRoyale.limePlayer03IsReviving ||
+                        BattleRoyale.limePlayer04 != null && target == BattleRoyale.limePlayer04 && BattleRoyale.limePlayer04IsReviving ||
+                        BattleRoyale.limePlayer05 != null && target == BattleRoyale.limePlayer05 && BattleRoyale.limePlayer05IsReviving ||
+                        BattleRoyale.limePlayer06 != null && target == BattleRoyale.limePlayer06 && BattleRoyale.limePlayer06IsReviving ||
+                        BattleRoyale.limePlayer07 != null && target == BattleRoyale.limePlayer07 && BattleRoyale.limePlayer07IsReviving ||
                         BattleRoyale.serialKiller != null && target == BattleRoyale.serialKiller && BattleRoyale.serialKillerIsReviving) {
                             pinkPlayer05KillButton.Timer = pinkPlayer05KillButton.MaxTimer;
                             return;
@@ -14789,13 +14788,13 @@ namespace LasMonjas
                     }
 
                     if (BattleRoyale.matchType == 2) {
-                        if (BattleRoyale.purplePlayer01 != null && target == BattleRoyale.purplePlayer01 && BattleRoyale.purplePlayer01IsReviving ||
-                        BattleRoyale.purplePlayer02 != null && target == BattleRoyale.purplePlayer02 && BattleRoyale.purplePlayer02IsReviving ||
-                        BattleRoyale.purplePlayer03 != null && target == BattleRoyale.purplePlayer03 && BattleRoyale.purplePlayer03IsReviving ||
-                        BattleRoyale.purplePlayer04 != null && target == BattleRoyale.purplePlayer04 && BattleRoyale.purplePlayer04IsReviving ||
-                        BattleRoyale.purplePlayer05 != null && target == BattleRoyale.purplePlayer05 && BattleRoyale.purplePlayer05IsReviving ||
-                        BattleRoyale.purplePlayer06 != null && target == BattleRoyale.purplePlayer06 && BattleRoyale.purplePlayer06IsReviving ||
-                        BattleRoyale.purplePlayer07 != null && target == BattleRoyale.purplePlayer07 && BattleRoyale.purplePlayer07IsReviving ||
+                        if (BattleRoyale.limePlayer01 != null && target == BattleRoyale.limePlayer01 && BattleRoyale.limePlayer01IsReviving ||
+                        BattleRoyale.limePlayer02 != null && target == BattleRoyale.limePlayer02 && BattleRoyale.limePlayer02IsReviving ||
+                        BattleRoyale.limePlayer03 != null && target == BattleRoyale.limePlayer03 && BattleRoyale.limePlayer03IsReviving ||
+                        BattleRoyale.limePlayer04 != null && target == BattleRoyale.limePlayer04 && BattleRoyale.limePlayer04IsReviving ||
+                        BattleRoyale.limePlayer05 != null && target == BattleRoyale.limePlayer05 && BattleRoyale.limePlayer05IsReviving ||
+                        BattleRoyale.limePlayer06 != null && target == BattleRoyale.limePlayer06 && BattleRoyale.limePlayer06IsReviving ||
+                        BattleRoyale.limePlayer07 != null && target == BattleRoyale.limePlayer07 && BattleRoyale.limePlayer07IsReviving ||
                         BattleRoyale.serialKiller != null && target == BattleRoyale.serialKiller && BattleRoyale.serialKillerIsReviving) {
                             pinkPlayer06KillButton.Timer = pinkPlayer06KillButton.MaxTimer;
                             return;
@@ -14871,13 +14870,13 @@ namespace LasMonjas
                     }
 
                     if (BattleRoyale.matchType == 2) {
-                        if (BattleRoyale.purplePlayer01 != null && target == BattleRoyale.purplePlayer01 && BattleRoyale.purplePlayer01IsReviving ||
-                        BattleRoyale.purplePlayer02 != null && target == BattleRoyale.purplePlayer02 && BattleRoyale.purplePlayer02IsReviving ||
-                        BattleRoyale.purplePlayer03 != null && target == BattleRoyale.purplePlayer03 && BattleRoyale.purplePlayer03IsReviving ||
-                        BattleRoyale.purplePlayer04 != null && target == BattleRoyale.purplePlayer04 && BattleRoyale.purplePlayer04IsReviving ||
-                        BattleRoyale.purplePlayer05 != null && target == BattleRoyale.purplePlayer05 && BattleRoyale.purplePlayer05IsReviving ||
-                        BattleRoyale.purplePlayer06 != null && target == BattleRoyale.purplePlayer06 && BattleRoyale.purplePlayer06IsReviving ||
-                        BattleRoyale.purplePlayer07 != null && target == BattleRoyale.purplePlayer07 && BattleRoyale.purplePlayer07IsReviving ||
+                        if (BattleRoyale.limePlayer01 != null && target == BattleRoyale.limePlayer01 && BattleRoyale.limePlayer01IsReviving ||
+                        BattleRoyale.limePlayer02 != null && target == BattleRoyale.limePlayer02 && BattleRoyale.limePlayer02IsReviving ||
+                        BattleRoyale.limePlayer03 != null && target == BattleRoyale.limePlayer03 && BattleRoyale.limePlayer03IsReviving ||
+                        BattleRoyale.limePlayer04 != null && target == BattleRoyale.limePlayer04 && BattleRoyale.limePlayer04IsReviving ||
+                        BattleRoyale.limePlayer05 != null && target == BattleRoyale.limePlayer05 && BattleRoyale.limePlayer05IsReviving ||
+                        BattleRoyale.limePlayer06 != null && target == BattleRoyale.limePlayer06 && BattleRoyale.limePlayer06IsReviving ||
+                        BattleRoyale.limePlayer07 != null && target == BattleRoyale.limePlayer07 && BattleRoyale.limePlayer07IsReviving ||
                         BattleRoyale.serialKiller != null && target == BattleRoyale.serialKiller && BattleRoyale.serialKillerIsReviving) {
                             pinkPlayer07KillButton.Timer = pinkPlayer07KillButton.MaxTimer;
                             return;
@@ -14953,13 +14952,13 @@ namespace LasMonjas
                     }
 
                     if (BattleRoyale.matchType == 2) {
-                        if (BattleRoyale.purplePlayer01 != null && target == BattleRoyale.purplePlayer01 && BattleRoyale.purplePlayer01IsReviving ||
-                        BattleRoyale.purplePlayer02 != null && target == BattleRoyale.purplePlayer02 && BattleRoyale.purplePlayer02IsReviving ||
-                        BattleRoyale.purplePlayer03 != null && target == BattleRoyale.purplePlayer03 && BattleRoyale.purplePlayer03IsReviving ||
-                        BattleRoyale.purplePlayer04 != null && target == BattleRoyale.purplePlayer04 && BattleRoyale.purplePlayer04IsReviving ||
-                        BattleRoyale.purplePlayer05 != null && target == BattleRoyale.purplePlayer05 && BattleRoyale.purplePlayer05IsReviving ||
-                        BattleRoyale.purplePlayer06 != null && target == BattleRoyale.purplePlayer06 && BattleRoyale.purplePlayer06IsReviving ||
-                        BattleRoyale.purplePlayer07 != null && target == BattleRoyale.purplePlayer07 && BattleRoyale.purplePlayer07IsReviving ||
+                        if (BattleRoyale.limePlayer01 != null && target == BattleRoyale.limePlayer01 && BattleRoyale.limePlayer01IsReviving ||
+                        BattleRoyale.limePlayer02 != null && target == BattleRoyale.limePlayer02 && BattleRoyale.limePlayer02IsReviving ||
+                        BattleRoyale.limePlayer03 != null && target == BattleRoyale.limePlayer03 && BattleRoyale.limePlayer03IsReviving ||
+                        BattleRoyale.limePlayer04 != null && target == BattleRoyale.limePlayer04 && BattleRoyale.limePlayer04IsReviving ||
+                        BattleRoyale.limePlayer05 != null && target == BattleRoyale.limePlayer05 && BattleRoyale.limePlayer05IsReviving ||
+                        BattleRoyale.limePlayer06 != null && target == BattleRoyale.limePlayer06 && BattleRoyale.limePlayer06IsReviving ||
+                        BattleRoyale.limePlayer07 != null && target == BattleRoyale.limePlayer07 && BattleRoyale.limePlayer07IsReviving ||
                         BattleRoyale.pinkPlayer01 != null && target == BattleRoyale.pinkPlayer01 && BattleRoyale.pinkPlayer01IsReviving ||
                         BattleRoyale.pinkPlayer02 != null && target == BattleRoyale.pinkPlayer02 && BattleRoyale.pinkPlayer02IsReviving ||
                         BattleRoyale.pinkPlayer03 != null && target == BattleRoyale.pinkPlayer03 && BattleRoyale.pinkPlayer03IsReviving ||
@@ -15019,7 +15018,13 @@ namespace LasMonjas
                     if (BattleRoyale.serialKillerIsReviving) {
                         CanUse = false;
                     }
-                    return CanUse && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead;
+                    bool canSpawnKill = true;
+                    foreach (GameObject spawns in BattleRoyale.serialKillerSpawns) {
+                        if (spawns != null && BattleRoyale.matchType == 2 && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, spawns.transform.position) < 3f) {
+                            canSpawnKill = false;
+                        }
+                    }
+                    return CanUse && canSpawnKill && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead;
                 },
                 () => { serialKillerKillButton.Timer = serialKillerKillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,

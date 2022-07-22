@@ -4417,42 +4417,42 @@ namespace LasMonjas
         public static GameObject soloPlayer15Wep = null;
         public static float soloPlayer15Lifes = 3;
 
-        public static List<PlayerControl> purpleTeam = new List<PlayerControl>();
-        public static PlayerControl purplePlayer01 = null;
-        public static float purplePlayer01mouseAngle = 0f;
-        public static GameObject purplePlayer01Wep = null;
-        public static float purplePlayer01Lifes = 3;
-        public static bool purplePlayer01IsReviving = false;
-        public static PlayerControl purplePlayer02 = null;
-        public static float purplePlayer02mouseAngle = 0f;
-        public static GameObject purplePlayer02Wep = null;
-        public static float purplePlayer02Lifes = 3;
-        public static bool purplePlayer02IsReviving = false;
-        public static PlayerControl purplePlayer03 = null;
-        public static float purplePlayer03mouseAngle = 0f;
-        public static GameObject purplePlayer03Wep = null;
-        public static float purplePlayer03Lifes = 3;
-        public static bool purplePlayer03IsReviving = false;
-        public static PlayerControl purplePlayer04 = null;
-        public static float purplePlayer04mouseAngle = 0f;
-        public static GameObject purplePlayer04Wep = null;
-        public static float purplePlayer04Lifes = 3;
-        public static bool purplePlayer04IsReviving = false;
-        public static PlayerControl purplePlayer05 = null;
-        public static float purplePlayer05mouseAngle = 0f;
-        public static GameObject purplePlayer05Wep = null;
-        public static float purplePlayer05Lifes = 3;
-        public static bool purplePlayer05IsReviving = false;
-        public static PlayerControl purplePlayer06 = null;
-        public static float purplePlayer06mouseAngle = 0f;
-        public static GameObject purplePlayer06Wep = null;
-        public static float purplePlayer06Lifes = 3;
-        public static bool purplePlayer06IsReviving = false;
-        public static PlayerControl purplePlayer07 = null;
-        public static float purplePlayer07mouseAngle = 0f;
-        public static GameObject purplePlayer07Wep = null;
-        public static float purplePlayer07Lifes = 3;
-        public static bool purplePlayer07IsReviving = false;
+        public static List<PlayerControl> limeTeam = new List<PlayerControl>();
+        public static PlayerControl limePlayer01 = null;
+        public static float limePlayer01mouseAngle = 0f;
+        public static GameObject limePlayer01Wep = null;
+        public static float limePlayer01Lifes = 3;
+        public static bool limePlayer01IsReviving = false;
+        public static PlayerControl limePlayer02 = null;
+        public static float limePlayer02mouseAngle = 0f;
+        public static GameObject limePlayer02Wep = null;
+        public static float limePlayer02Lifes = 3;
+        public static bool limePlayer02IsReviving = false;
+        public static PlayerControl limePlayer03 = null;
+        public static float limePlayer03mouseAngle = 0f;
+        public static GameObject limePlayer03Wep = null;
+        public static float limePlayer03Lifes = 3;
+        public static bool limePlayer03IsReviving = false;
+        public static PlayerControl limePlayer04 = null;
+        public static float limePlayer04mouseAngle = 0f;
+        public static GameObject limePlayer04Wep = null;
+        public static float limePlayer04Lifes = 3;
+        public static bool limePlayer04IsReviving = false;
+        public static PlayerControl limePlayer05 = null;
+        public static float limePlayer05mouseAngle = 0f;
+        public static GameObject limePlayer05Wep = null;
+        public static float limePlayer05Lifes = 3;
+        public static bool limePlayer05IsReviving = false;
+        public static PlayerControl limePlayer06 = null;
+        public static float limePlayer06mouseAngle = 0f;
+        public static GameObject limePlayer06Wep = null;
+        public static float limePlayer06Lifes = 3;
+        public static bool limePlayer06IsReviving = false;
+        public static PlayerControl limePlayer07 = null;
+        public static float limePlayer07mouseAngle = 0f;
+        public static GameObject limePlayer07Wep = null;
+        public static float limePlayer07Lifes = 3;
+        public static bool limePlayer07IsReviving = false;
 
         public static List<PlayerControl> pinkTeam = new List<PlayerControl>();
         public static PlayerControl pinkPlayer01 = null;
@@ -4498,6 +4498,7 @@ namespace LasMonjas
         public static float serialKillerLifes = 3;
         public static float serialKillerCooldown = 3;
         public static bool serialKillerIsReviving = false;
+        public static List<GameObject> serialKillerSpawns = new List<GameObject>();
 
         public static List<Vector3> soloPlayersSpawnPositions = new List<Vector3>();
         public static bool battleRoyaleSenseiMapMode = false;
@@ -4511,13 +4512,13 @@ namespace LasMonjas
         public static float reviveTime = 5f;
         public static float invincibilityTimeAfterRevive = 3f;
 
-        public static int purplePoints = 0;
+        public static int limePoints = 0;
         public static int pinkPoints = 0;
         public static int serialKillerPoints = 0;
 
         public static bool triggerSoloWin = false;
         public static bool triggerTimeWin = false;
-        public static bool triggerPurpleTeamWin = false;
+        public static bool triggerLimeTeamWin = false;
         public static bool triggerPinkTeamWin = false;
         public static bool triggerSerialKillerWin = false;
         public static bool triggerDrawWin = false;
@@ -4529,7 +4530,7 @@ namespace LasMonjas
 
             soloPlayersSpawnPositions.Clear();
             soloPlayerTeam.Clear();
-            purpleTeam.Clear();
+            limeTeam.Clear();
             pinkTeam.Clear();
             serialKillerTeam.Clear();
             soloPlayer01 = null;
@@ -4593,41 +4594,41 @@ namespace LasMonjas
             soloPlayer15Wep = null;
             soloPlayer15Lifes = fighterLifes;
 
-            purplePlayer01 = null;
-            purplePlayer01mouseAngle = 0;
-            purplePlayer01Wep = null;
-            purplePlayer01Lifes = fighterLifes;
-            purplePlayer01IsReviving = false;
-            purplePlayer02 = null;
-            purplePlayer02mouseAngle = 0;
-            purplePlayer02Wep = null;
-            purplePlayer02Lifes = fighterLifes;
-            purplePlayer02IsReviving = false;
-            purplePlayer03 = null;
-            purplePlayer03mouseAngle = 0;
-            purplePlayer03Wep = null;
-            purplePlayer03Lifes = fighterLifes;
-            purplePlayer03IsReviving = false;
-            purplePlayer04 = null;
-            purplePlayer04mouseAngle = 0;
-            purplePlayer04Wep = null;
-            purplePlayer04Lifes = fighterLifes;
-            purplePlayer04IsReviving = false;
-            purplePlayer05 = null;
-            purplePlayer05mouseAngle = 0;
-            purplePlayer05Wep = null;
-            purplePlayer05Lifes = fighterLifes;
-            purplePlayer05IsReviving = false;
-            purplePlayer06 = null;
-            purplePlayer06mouseAngle = 0;
-            purplePlayer06Wep = null;
-            purplePlayer06Lifes = fighterLifes;
-            purplePlayer06IsReviving = false;
-            purplePlayer07 = null;
-            purplePlayer07mouseAngle = 0;
-            purplePlayer07Wep = null;
-            purplePlayer07Lifes = fighterLifes;
-            purplePlayer07IsReviving = false;
+            limePlayer01 = null;
+            limePlayer01mouseAngle = 0;
+            limePlayer01Wep = null;
+            limePlayer01Lifes = fighterLifes;
+            limePlayer01IsReviving = false;
+            limePlayer02 = null;
+            limePlayer02mouseAngle = 0;
+            limePlayer02Wep = null;
+            limePlayer02Lifes = fighterLifes;
+            limePlayer02IsReviving = false;
+            limePlayer03 = null;
+            limePlayer03mouseAngle = 0;
+            limePlayer03Wep = null;
+            limePlayer03Lifes = fighterLifes;
+            limePlayer03IsReviving = false;
+            limePlayer04 = null;
+            limePlayer04mouseAngle = 0;
+            limePlayer04Wep = null;
+            limePlayer04Lifes = fighterLifes;
+            limePlayer04IsReviving = false;
+            limePlayer05 = null;
+            limePlayer05mouseAngle = 0;
+            limePlayer05Wep = null;
+            limePlayer05Lifes = fighterLifes;
+            limePlayer05IsReviving = false;
+            limePlayer06 = null;
+            limePlayer06mouseAngle = 0;
+            limePlayer06Wep = null;
+            limePlayer06Lifes = fighterLifes;
+            limePlayer06IsReviving = false;
+            limePlayer07 = null;
+            limePlayer07mouseAngle = 0;
+            limePlayer07Wep = null;
+            limePlayer07Lifes = fighterLifes;
+            limePlayer07IsReviving = false;
             pinkPlayer01 = null;
             pinkPlayer01mouseAngle = 0;
             pinkPlayer01Wep = null;
@@ -4668,6 +4669,7 @@ namespace LasMonjas
             serialKillerWep = null;
             serialKillerLifes = fighterLifes * 3;
             serialKillerIsReviving = false;
+            serialKillerSpawns.Clear();
             if (CustomOptionHolder.battleRoyaleMode.getBool() == true) {
                 battleRoyaleMode = true;
             }
@@ -4688,13 +4690,13 @@ namespace LasMonjas
             reviveTime = CustomOptionHolder.battleRoyaleReviveTime.getFloat();
             invincibilityTimeAfterRevive = CustomOptionHolder.battleRoyaleInvincibilityTimeAfterRevive.getFloat();
 
-            purplePoints = 0;
+            limePoints = 0;
             pinkPoints = 0;
             serialKillerPoints = 0; 
         
             triggerSoloWin = false;
             triggerTimeWin = false;
-            triggerPurpleTeamWin = false;
+            triggerLimeTeamWin = false;
             triggerPinkTeamWin = false;
             triggerSerialKillerWin = false;
             triggerDrawWin = false;
@@ -4705,18 +4707,18 @@ namespace LasMonjas
                     break;
                 case 1:
                     if (serialKiller != null) {
-                        battleRoyalepointCounter = "Purple Team: " + "<color=#5E3E7DFF>" + purpleTeam.Count + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + pinkTeam.Count + "</color> | " + "Serial Killer: " + "<color=#808080FF>" + serialKillerTeam.Count + "</color>";
+                        battleRoyalepointCounter = "Lime Team: " + "<color=#39FF14FF>" + limeTeam.Count + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + pinkTeam.Count + "</color> | " + "Serial Killer: " + "<color=#808080FF>" + serialKillerTeam.Count + "</color>";
                     }
                     else {
-                        battleRoyalepointCounter = "Purple Team: " + "<color=#5E3E7DFF>" + purpleTeam.Count + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + pinkTeam.Count + "</color>";
+                        battleRoyalepointCounter = "Lime Team: " + "<color=#39FF14FF>" + limeTeam.Count + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + pinkTeam.Count + "</color>";
                     }
                     break;
                 case 2:
                     if (serialKiller != null) {
-                        battleRoyalepointCounter = "Goal: " + requiredScore + " | <color=#5E3E7DFF>Purple Team: " + purplePoints + "</color> | " + "<color=#F2BEFFFF>Pink Team: " + pinkPoints + "</color> | " + "<color=#808080FF>Serial Killer Points: " + serialKillerPoints + "</color>";
+                        battleRoyalepointCounter = "Goal: " + requiredScore + " | <color=#39FF14FF>Lime Team: " + limePoints + "</color> | " + "<color=#F2BEFFFF>Pink Team: " + pinkPoints + "</color> | " + "<color=#808080FF>Serial Killer Points: " + serialKillerPoints + "</color>";
                     }
                     else {
-                        battleRoyalepointCounter = "Goal: " + requiredScore + " | <color=#5E3E7DFF>Purple Team: " + purplePoints + "</color> | " + "<color=#F2BEFFFF>Pink Team: " + pinkPoints + "</color>";
+                        battleRoyalepointCounter = "Goal: " + requiredScore + " | <color=#39FF14FF>Lime Team: " + limePoints + "</color> | " + "<color=#F2BEFFFF>Pink Team: " + pinkPoints + "</color>";
                     }
                     break;
             }
@@ -4910,37 +4912,37 @@ namespace LasMonjas
             }
             return result;
         }
-        public static PlayerControl GetPurpleShotPlayer(float shotSize, float effectiveRange, int whichPlayerShot) {
+        public static PlayerControl GetLimeShotPlayer(float shotSize, float effectiveRange, int whichPlayerShot) {
             float playerMouse = 0;
             Vector2 originPlayer = new Vector2(0, 0);
             switch (whichPlayerShot) {
                 case 1:
-                    playerMouse = purplePlayer01mouseAngle;
-                    originPlayer = purplePlayer01.GetTruePosition();
+                    playerMouse = limePlayer01mouseAngle;
+                    originPlayer = limePlayer01.GetTruePosition();
                     break;
                 case 2:
-                    playerMouse = purplePlayer02mouseAngle;
-                    originPlayer = purplePlayer02.GetTruePosition();
+                    playerMouse = limePlayer02mouseAngle;
+                    originPlayer = limePlayer02.GetTruePosition();
                     break;
                 case 3:
-                    playerMouse = purplePlayer03mouseAngle;
-                    originPlayer = purplePlayer03.GetTruePosition();
+                    playerMouse = limePlayer03mouseAngle;
+                    originPlayer = limePlayer03.GetTruePosition();
                     break;
                 case 4:
-                    playerMouse = purplePlayer04mouseAngle;
-                    originPlayer = purplePlayer04.GetTruePosition();
+                    playerMouse = limePlayer04mouseAngle;
+                    originPlayer = limePlayer04.GetTruePosition();
                     break;
                 case 5:
-                    playerMouse = purplePlayer05mouseAngle;
-                    originPlayer = purplePlayer05.GetTruePosition();
+                    playerMouse = limePlayer05mouseAngle;
+                    originPlayer = limePlayer05.GetTruePosition();
                     break;
                 case 6:
-                    playerMouse = purplePlayer06mouseAngle;
-                    originPlayer = purplePlayer06.GetTruePosition();
+                    playerMouse = limePlayer06mouseAngle;
+                    originPlayer = limePlayer06.GetTruePosition();
                     break;
                 case 7:
-                    playerMouse = purplePlayer07mouseAngle;
-                    originPlayer = purplePlayer07.GetTruePosition();
+                    playerMouse = limePlayer07mouseAngle;
+                    originPlayer = limePlayer07.GetTruePosition();
                     break;
             }
             PlayerControl result = null;
@@ -5028,7 +5030,7 @@ namespace LasMonjas
             float num = effectiveRange;
             Vector3 pos;
             float mouseAngle = playerMouse;
-            foreach (PlayerControl player in purpleTeam) {
+            foreach (PlayerControl player in limeTeam) {
                 if (player.PlayerId == PlayerControl.LocalPlayer.PlayerId) continue;
 
                 if (player.Data.IsDead || player.inVent) continue;
