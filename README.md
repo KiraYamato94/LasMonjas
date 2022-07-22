@@ -33,6 +33,14 @@ Las Monjas is a Spanish mod (translated and published on English) for Among Us m
 <details>
   <summary>Click to show</summary>
 
+**Version 2.1.1 (22nd July 2022)**
+- Changed purple team color to lime on Battle Royale
+- Added that Serial Killer can't kill close to any team's spawn on Score Battle Royale
+- Added that ghosts can see remaining player's lifes only on All VS All Battle Royale
+- Added two ground sprites to indicate team's spawn on Team and Score Battles
+- Changed Necromancer's revived player's arrow color to green
+- 1 new visor
+
 **Version 2.1.0 (15th July 2022)**
 - New Gamemode: Battle Royale
 - 11 new hats, 3 new visors and 1 new nameplate
@@ -1373,13 +1381,13 @@ On this gamemode everyone has a ranged kill button with the Archer's mechanic (u
 - Nobody can vent.
 - If the time reaches 0, all alive players will win (except on Score Battle).
 - All VS All is an individual deathmatch where players spawn on 15 different selected spawn points (this doesn't apply to Airship or Submerged) and the last alive player wins.
-- Team Battle is a team deathmatch between 2 teams (purple and pink with 7 max players) where the team that kill the enemy team first wins.
+- Team Battle is a team deathmatch between 2 teams (lime and pink with 7 max players) where the team that kill the enemy team first wins.
 - Score Battle is the same as Team Battle but instead of permadeath, players revive and gain points each time they kill someone, upon reaching the needed score they win. You get 10 points for killing anyone and 30 points if you kill the neutral role detailed below.
 - On odd player number games for Team and Score Battle there will be a powerful neutral role called Serial Killer which act as a solo team player that can also win killing everyone or reaching the needed score. This role has x3 lifes and half kill cooldown on games with less than 11 players. If you're 11 or more players it will have even less kill cooldown. 
 - Player's lifes are shown after their names but you can't see other player's remaining lifes. On the other hand, on Team and Score Battle you can see your teammates remaining lifes, also you can't hit or kill your teammates.
 - The ranged kill can't go across walls or other collision props like the Archer's impostor role and if you miss the shot it just enters cooldown. Also a straight line player color based will appear everytime you shoot to serve as guidance.
 - You will hear a sound if you hit someone or you get hit. Also there's a special bell sound when someone dies on All VS All or Team Battle.
-- Player's color ground splashes will appear when someone gets hit on All VS All, on Team and Score Battle they will be purple, pink or grey. It will stay there the entire match except for Score Battle, where it disappears after 5 seconds.
+- Player's color ground splashes will appear when someone gets hit on All VS All, on Team and Score Battle they will be lime, pink or grey. It will stay there the entire match except for Score Battle, where it disappears after 5 seconds.
 - Revive Time value is calculated by subtracting Invincibility Time value from it, for example if Revive Time is 8 and Invincibility Time is 3, players will revive after 5 seconds but will be invincible for another 3 seconds after reviving.
 
 -----------------------
