@@ -66,6 +66,8 @@ namespace LasMonjas.Objects
             if (!anonymousFootprints && owner != null) {
                 if (owner == Mimic.mimic && Mimic.transformTimer > 0 && Mimic.transformTarget?.Data != null)
                     c = Palette.ShadowColors[Mimic.transformTarget.Data.DefaultOutfit.ColorId];
+                else if (owner == Puppeteer.puppeteer && Puppeteer.morphed && Puppeteer.transformTarget?.Data != null)
+                    c = Palette.ShadowColors[Puppeteer.transformTarget.Data.DefaultOutfit.ColorId];
                 else if (Painter.painterTimer > 0)
                     c = Palette.PlayerColors[Detective.footprintcolor];
                 else if (Challenger.isDueling)
