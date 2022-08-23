@@ -33,6 +33,14 @@ Las Monjas is a Spanish mod (translated and published on English) for Among Us m
 <details>
   <summary>Click to show</summary>
 
+**Version 2.1.2 (23rd August 2022)**
+- For Among Us 2022.8.23s, quick BETA compatibilty patch, Submerged isn't available until they update from they side.
+- Fixed a bug with Sorcerer where it could Hex impostors or the same player more than one time.
+- Fixed a bug with Bounty Hunter, when its target disconnects he dies now.
+- Fixed two bugs with Puppeteer, one where it didn't get the Squire's shield outline after transforming and another where Detective could see the original Puppeteer's footprints color while transformed.
+- Added for Poisoner that each 100% poisoned player counts now for poisoning other players, but % doesn't go faster even if two or more poisoned players are around the same player.
+- Added "Allul was Here" to the lobby
+
 **Version 2.1.1 (22nd July 2022)**
 - Changed purple team color to lime on Battle Royale
 - Added that Serial Killer can't kill close to any team's spawn on Score Battle Royale
