@@ -58,8 +58,9 @@ namespace LasMonjas.Patches {
                 if (target == null || target.cosmetics.currentBodySprite.BodySprite == null) continue;
 
                 bool isTransformedMimic = target == Mimic.mimic && Mimic.transformTarget != null && Mimic.transformTimer > 0f;
+                bool isTransformedPuppeteer = target == Puppeteer.puppeteer && Puppeteer.transformTarget != null && Puppeteer.morphed;
                 bool hasVisibleShield = false;
-                if (Painter.painterTimer <= 0f && Squire.shielded != null && !Challenger.isDueling && ((target == Squire.shielded && !isTransformedMimic) || (isTransformedMimic && !Challenger.isDueling && Mimic.transformTarget == Squire.shielded))) {
+                if (Painter.painterTimer <= 0f && Squire.shielded != null && !Challenger.isDueling && ((target == Squire.shielded && !isTransformedMimic) || (isTransformedMimic && Mimic.transformTarget == Squire.shielded) || (isTransformedPuppeteer && Puppeteer.transformTarget == Squire.shielded))) {
                     hasVisibleShield = Squire.showShielded == 0 && PlayerControl.LocalPlayer == Squire.squire // Squire only
                         || (Squire.showShielded == 1 && (PlayerControl.LocalPlayer == Squire.shielded || PlayerControl.LocalPlayer == Squire.squire)) // Shielded + Squire
                         || (Squire.showShielded == 2); // Everyone
@@ -590,7 +591,7 @@ namespace LasMonjas.Patches {
             if (Sorcerer.spellTarget != null)
                 untargetables = PlayerControl.AllPlayerControls.ToArray().Where(x => x.PlayerId != Sorcerer.spellTarget.PlayerId).ToList(); // Don't switch the target from the the one you're currently casting a spell on
             else {
-                untargetables = new List<PlayerControl>(); // Also target players that have already been spelled, to hide spells that were jinxs/blocked by shields
+                untargetables = Sorcerer.spelledPlayers;
             }
             Sorcerer.currentTarget = setTarget(onlyCrewmates: false, untargetablePlayers: untargetables);
             setPlayerOutline(Sorcerer.currentTarget, Sorcerer.color);

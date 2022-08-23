@@ -890,6 +890,13 @@ namespace LasMonjas.Patches {
                 Chameleon.resetChameleon();
             }
         }
+        static void bountyHunterSuicideIfDisconnect() {
+            if (BountyHunter.bountyhunter == null) return;
+
+            if (BountyHunter.usedTarget && BountyHunter.hasToKill.Data.Disconnected && BountyHunter.bountyhunter == PlayerControl.LocalPlayer && !BountyHunter.bountyhunter.Data.IsDead) {
+                BountyHunter.bountyhunter.MurderPlayer(BountyHunter.bountyhunter);
+            }
+        }
         static void yinyangerUpdate() {
 
             if (Yinyanger.yinyanger == null || Yinyanger.yinyanger.Data.IsDead) {
@@ -2474,6 +2481,9 @@ namespace LasMonjas.Patches {
             // Chameleon update
             chameleonUpdate();
 
+            //BountyHunter update
+            bountyHunterSuicideIfDisconnect(); 
+            
             // Yinyanger update
             yinyangerUpdate();
 
