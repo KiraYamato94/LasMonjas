@@ -1829,7 +1829,7 @@ namespace LasMonjas
                     }
 
                     foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                        if (player != Kid.kid && player != Modifiers.lover1 && player != Modifiers.lover2 && player != BountyHunter.bountyhunter && player != Modifiers.bigchungus && player != Modifiers.lighter && player != Modifiers.blind && player != Modifiers.flash && player != Modifiers.pro && player != Modifiers.theChosenOne && player != Modifiers.performer) {
+                        if (player != Kid.kid && player != BountyHunter.bountyhunter) {
                             BountyHunter.possibleTargets.Add(player);
                         }
                     }
@@ -2803,6 +2803,9 @@ namespace LasMonjas
                             foreach (PlayerControl poisoned in Poisoner.poisonedPlayers) {
                                 if (poisoned == player) {
                                     break;
+                                }
+                                if (MeetingHud.Instance == null && poisoned != null && !poisoned.Data.IsDead && Vector2.Distance(poisoned.transform.position, player.transform.position) < (1f * Poisoner.infectRange) && !Challenger.isDueling) {
+                                    infectProceedFlag = true;
                                 }
                             }
 
