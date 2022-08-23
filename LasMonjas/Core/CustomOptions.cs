@@ -452,7 +452,7 @@ namespace LasMonjas.Core
         }
     }
 
-    [HarmonyPatch(typeof(GameSettingMenu), nameof(GameSettingMenu.Start))]
+    /*[HarmonyPatch(typeof(GameSettingMenu), nameof(GameSettingMenu.Start))]
     class GameSettingMenuStartPatch
     {
         public static void Prefix(GameSettingMenu __instance) {
@@ -485,7 +485,7 @@ namespace LasMonjas.Core
             }
             __instance.Scroller.ContentYBounds.max += 0.5F;
         }
-    }
+    }*/
 
     /*[HarmonyPatch(typeof(Constants), nameof(Constants.ShouldFlipSkeld))]
     class ConstantsShouldFlipSkeldPatch
