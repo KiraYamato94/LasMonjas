@@ -43,9 +43,9 @@ namespace LasMonjas.Objects {
             if (color.HasValue) image.color = color.Value;
 
             arrowBehaviour.target = target;
-            //arrowBehaviour.Update(); // Use submerged arrows                        
+            arrowBehaviour.Update(); // Use submerged arrows                        
 
-            Camera main = Camera.main;
+            /*Camera main = Camera.main;
             Vector2 vector = target - main.transform.position;
             float num = vector.magnitude / (main.orthographicSize * perc);
             image.enabled = ((double)num > 0.3);
@@ -77,7 +77,7 @@ namespace LasMonjas.Objects {
         }
 
         private bool Between(float value, float min, float max) {
-            return value > min && value < max;
+            return value > min && value < max;*/
         }
     }
 }
