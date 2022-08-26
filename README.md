@@ -33,6 +33,10 @@ Las Monjas is a Spanish mod (translated and published on English) for Among Us m
 <details>
   <summary>Click to show</summary>
 
+**Version 2.1.3 (26th August 2022)**
+- (Re)Added Submerged
+- Arrow's behaviour are again Submerged ones.
+
 **Version 2.1.2 (23rd August 2022)**
 - For Among Us 2022.8.23s, quick BETA compatibilty patch, Submerged isn't available until they update from they side.
 - Fixed a bug with Sorcerer where it could Hex impostors or the same player more than one time.
