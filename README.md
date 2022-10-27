@@ -1,17 +1,18 @@
 # Las Monjas
 ![LasMonjas_banner](./gitHubImages/LasMonjas_banner.png)
 
-Las Monjas is a Spanish mod (translated and published on English) for Among Us made by fans for fans without being affiliated with Among Us or Innersloth Team, all rights reserved to them. This mod features the following:
+Las Monjas is a Spanish mod (available on English, Spanish, Chinese and Japanese) for Among Us made by fans for fans without being affiliated with Among Us or Innersloth Team, all rights reserved to them. This mod features the following:
 
-  1. [50 roles](#roles)
-  2. [8 modifiers and 7 game mechanics](#modifiers)
+  1. [60 roles](#roles)
+  2. [10 modifiers and 8 game mechanics](#modifiers)
   3. [1 custom map](https://youtu.be/9tDh9eYqAgk)
   4. [6 custom gamemodes](#gamemodes)
-  5. [4 new colors](#settings)
+  5. [5 new colors](#settings)
   6. [Custom Music](#settings)
   7. [Custom Lobby](#settings)
   8. [Custom Hats, Visors and Nameplates](#customcosmetics)
   9. [Submerged Compatibility](#submerged)
+  10. [Multiple Language](#language)
 
 -----------------------
 
@@ -23,15 +24,40 @@ Las Monjas is a Spanish mod (translated and published on English) for Among Us m
 
   1. Download the latest [Release](https://github.com/KiraYamato94/LasMonjas/releases) of Las Monjas.
   2. Find where your Among Us game is installed (make sure you have a clean game installation).
-  3. Extract the files inside "Las Monjas modVersion" in the game folder (where the Among Us.exe file is) selecting replace if necessary.
-  4. Open Among Us.exe, the first time takes a bit to load, don't worry.
-  5. If there's a Submerged update, you can update it with the "Download/Update Submerged" cyan's button on the main menu.
+  2. Extract "Las Monjas modVersion.zip" files inside the "Among Us" folder (where the Among Us.exe file is) selecting replace if necessary.
+  3. Open Among Us.exe, the first time takes a bit to load, don't worry.
+  4. If there's a Submerged update avaiable, you can update it with the "Download/Update Submerged" cyan's button on the main menu.
+  5. The mod includes a file called "LasMonjasDownloader.exe" which can be used to reinstall the mod from zero, keep in mind that this file deletes "BepInEx" and "dotnet" folders in order to install them again.
 
 -----------------------
 
 # Changelog
 <details>
   <summary>Click to show</summary>
+  
+**Version 3.0.0 (27th October 2022)**
+- 2 New impostors: Plumber and Librarian.
+- 3 New Rebels: Yandere, Stranded and Monja.
+- 3 New Neutrals: Exiler, Amnesiac and Seeker.
+- 2 New Crewmates: Task Master and Jailer.
+- 2 New Modifiers: Paintball and Electrician.
+- Added Find a Role Mode for roles games, where everyone spawns vanilla but can find a role inside boxes around the map.
+- Added a new ability for Captain, he can force vote out a player once per game but if that player is a crewmate the Captain gets also exiled.
+- Added a new ability for Mechanic, he can fix double sabotages without the needing of other player.
+- Added another win condition for Challenger, if he wins X number of duels, he wins the game.
+- Treasure Hunter reworked, now he can make emergency meetings and spawn another chest right after finding one. 
+- On Zombie Laboratory, reduced the cooldown to enter Infirmary from 10 to 5 seconds and added an individual timer for each Survivor, no matter how many times you get infected, if that timer reaches 0 you turn into a Zombie.
+- Added Modded Asia as a new custom region.
+- Added LasMonjasDownloader to the mod release, this program install the mod from zero on your Among Us folder.
+- Added the Zoom out/in button to Hot Potato and Battle Royale (only for All VS All).
+- Added sound effects for almost every button use and for the intro screen.
+- Added /help and /h roleName command to the lobby, it will display a specific role's summary.
+- Added /myrole and /m command to the meeting chat, it will display a summary of your role.
+- Added /mymodifier and /mymod command to the meeting chat, it will display a summary of your modifier.
+- Added /language X command to the lobby to change the mod language (where X can be english, spanish, chinese and japanese).
+- Roles based on specific targets have the target's name above the buttons now.
+- Roles based on uses have a counter above the buttons now.
+- More than 30 new cosmetics, including a new color.
 
 **Version 2.1.3 (26th August 2022)**
 - (Re)Added Submerged
@@ -92,7 +118,7 @@ Las Monjas is a Spanish mod (translated and published on English) for Among Us m
 - Added that Zombies can't kill near the Infirmary to prevent spawn camping
 - Added that Nurse gets a speed boost and more vision after delivering 3 of 6 key items
 - On PAT, removed 1 thief role, added 1 police role and changed 2 police roles to 2 taser roles, they can throw an electric discharge with right clic on the mouse direction to paralyze a Thief for a few seconds, this also change the jewel that Thief is delivering back to its original position, if they miss shot the Taser gets paralyzed instead.
-- Changed the "Thiefs can kill" option to "Who can Thiefs kill?: Taser / All / Nobody"
+- Changed the "Thieves can kill" option to "Who can Thieves kill?: Taser / All / Nobody"
 - Removed police can kill near prison option, they can never kill close to the prison
 - Added that police and taser can't arrest or tase close to the jewel deliver button to prevent spawn camping
 - Added 2 lobby options, taser cooldown and duration
@@ -191,7 +217,7 @@ Las Monjas is a Spanish mod (translated and published on English) for Among Us m
 - Fixed Vigilant remote camera button, it can no longer be used while Challenger's duel is happening
 - Added some quality of life changes, like Las Monjas discord's button on the main menu, moved custom ip and port label so they don't hide regions for people with a lot of them, and settings are now divided on 6 tabs (settings, gamemodes, impostors, rebels, neutrals and cremates)
 - Increased maximum initial zombis from 3 to 5 on Zombie Laboratory.
-- Lowered Police and Thiefs music volume.
+- Lowered Police and Thieves music volume.
 - Added 6 new hats and 3 visors.
 
 **Version 1.4.0 (22th April 2022)**
@@ -212,7 +238,7 @@ Las Monjas is a Spanish mod (translated and published on English) for Among Us m
 - This is a BETA for testing in Among Us 2022.3.29s, please take a note this isn't the final 1.3.3 version and have some issues.
 - Added Horse Mode as a client option, when enabled remember to take off your player skin, otherwise you'll get a black skin shadow visual bug after being revived.
 - Added same vision range for all players on Capture the Flag and King Of The Hill (based on crewmate's vision option)
-- Added a trigger on Police And Thiefs, if all Police players disconnect, the game will end with the Thiefs winning.
+- Added a trigger on Police And Thieves, if all Police players disconnect, the game will end with the Thieves winning.
 - Fixed a bug that prevented the gamemodes to continue if a player disconnected sometimes.
 - Fixed a bug on King Of The Hill where the new assigned King from disconnect would have both King and Minion role.
 - Reduced challenger's minimum cooldown from 20 to 15 sec.
@@ -229,7 +255,7 @@ Known 1.3.3 BETA issues:
 - Removed "how many impostors are in game" text from the load screen for all gamemodes and added the gamemode name instead (thx JustASysAdmin for the idea)
 - 5 new hats and upgraded old ones
 - Added a client option to define if ghosts can see role names (only after being reported)
-- Reduced lag on Police And Thiefs games
+- Reduced lag on Police And Thieves games
 - Added two options for Hot Potato, one to define if hot potato time limit resets after giving it to other player and another to define the new extra time for hot potato timit limit
 
 **Version 1.3.1 (19th March 2022)**
@@ -285,11 +311,11 @@ Known 1.3.3 BETA issues:
 - New Gamemode: King Of The Hill
   
 **Version 1.0.5 (21th February 2022)**
-- Added kill cooldown option for both teams separately on Police and Thiefs
+- Added kill cooldown option for both teams separately on Police and Thieves
 - Added a new option to define if Police can or not kill near the prison
 - Added an option to define Police vision range with a button to increase vision during the game
-- Added an option to define if Police can see Jewels on the map (they'll only see when the Thiefs has it)
-- Added revivie time option for both teams separately on Police and Thiefs
+- Added an option to define if Police can see Jewels on the map (they'll only see when the Thieves has it)
+- Added revivie time option for both teams separately on Police and Thieves
 - Added invincibility time after reviving for Police and Thief
   
 **Version 1.0.4 (20th February 2022)**
@@ -305,7 +331,7 @@ Known 1.3.3 BETA issues:
 - Updated Reactor.dll which fixed an issue selecting regions on 2022.2.8s
   
 **Version 1.0.1 (18th February 2022)**
-- Added an option for choosing if Thiefs can or not kill on Police And Thiefs gamemode
+- Added an option for choosing if Thieves can or not kill on Police And Thieves gamemode
 
 **Version 1.0.0 (14th February 2022)**
 - Initial Release
@@ -314,12 +340,12 @@ Known 1.3.3 BETA issues:
 -----------------------
 
 # Custom Servers
-I recommend to play this mod only on custom servers (for example [Impostor](https://github.com/Impostor/Impostor), note that modded handshake is required to play the mod [Example Modded Handshake by js6pak](https://github.com/NuclearPowered/Reactor.Impostor)), if you own an Impostor server, make sure AntiCheat and BanIpFromGame are set to false in the config.json file. This mod adds two custom server regions to play with, Modded NA (MNA) and Modded EU (MEU), and also has [Unify by Daemon](https://github.com/MoltenMods/Unify) implemented, which you can use to select the custom region to join a custom server by entering the IP or domain name and the port of the server.
+I recommend to play this mod only on custom servers (for example [Impostor](https://github.com/Impostor/Impostor), note that modded handshake is required to play the mod [Example Modded Handshake by js6pak](https://github.com/NuclearPowered/Reactor.Impostor)), if you own an Impostor server, make sure AntiCheat and BanIpFromGame are set to false in the config.json file. This mod adds three custom server regions to play with, Modded NA (MNA), Modded EU (MEU) and Modded Asia (MAS), and also has [Unify by Daemon](https://github.com/MoltenMods/Unify) implemented, which you can use to select the custom region to join a custom server by entering the IP or domain name and the port of the server.
 
 -----------------------
 
 # Settings
-This mod adds a custom lobby which I won't spoil to you, it also adds four colors (Lavender, Petrol, Mint and Olive), a button to zoom out / in the map if you're dead and have all tasks done, and five settings to the client option tab:
+This mod adds a custom lobby which I won't spoil to you, it also adds five colors (Lavender, Petrol, Mint, Olive and Ice), a button to zoom out / in the map if you're dead and have all tasks done, and five settings to the client option tab:
 - **Game Summary:** Activating this option will create a list containing which role and task progress the players had after the game ends.
 - **Activate Music:** Music pack containing 7 songs from Kevin MacLeod (1 for Lobby, 3 for Tasks and 3 for Meeting depending of how many players are alive)
 - **Ghost Can See Roles:** Only after being reported, ghosts will be able to see which role the players have.
@@ -341,14 +367,14 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 | [Illusionist](#illusionist) | [Forensic](#forensic) | [Devourer](#devourer) | [Challenger](#challenger) | [Big Chungus](#bigchungus) |
 | [Manipulator](#manipulator) | [Time Traveler](#timetraveler) | [Poisoner](#poisoner) | [Ninja](#ninja) |  [The Chosen One](#thechosenone) |
 | [Bomberman](#bomberman) | [Squire](#squire) | [Puppeteer](#puppeteer) | [Berserker](#berserker) |  [Performer](#performer) |
-| [Chameleon](#chameleon) | [Cheater](#cheater) |  |  | [Pro](#pro) |
-| [Gambler](#gambler)  | [Fortune Teller](#fortuneteller) |  |  |  |
-| [Sorcerer](#sorcerer) | [Hacker](#hacker) |  |  |  |
+| [Chameleon](#chameleon) | [Cheater](#cheater) | [Exiler](#exiler) | [Yandere](#yandere) | [Pro](#pro) |
+| [Gambler](#gambler)  | [Fortune Teller](#fortuneteller) | [Amnesiac](#amnesiac) | [Stranded](#stranded) | [Paintall](#paintball) |
+| [Sorcerer](#sorcerer) | [Hacker](#hacker) | [Seeker](#seeker) | [Monja](#monja) | [Electrician](#electrician) |
 | [Medusa](#medusa) | [Sleuth](#sleuth) |  | |  |
 | [Hypnotist](#hypnotist) | [Fink](#fink) |  |  |  |
 | [Archer](#archer) | [Kid](#kid) |  |  |  |
-|  | [Welder](#welder) |  |  |  |
-|  | [Spiritualist](#spiritualist) |  |  |  |
+| [Plumber](#plumber) | [Welder](#welder) |  |  |  |
+| [Librarian](#librarian) | [Spiritualist](#spiritualist) |  |  |  |
 |  | [Vigilant](#vigilant) |  | |  |
 |  |  [Hunter](#hunter) |  |  |  |
 |  |  [Jinx](#jinx) |  | |  |
@@ -357,6 +383,8 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 |  |  [Necromancer](#necromancer) |  | |  |
 |  |  [Engineer](#engineer) |  | |  |
 |  |  [Shy](#shy) |  | |  |
+|  |  [Task Master](#taskmaster) |  | |  |
+|  |  [Jailer](#jailer) |  | |  |
 
 -----------------------
 
@@ -570,11 +598,34 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 
 -----------------------
 
+## Plumber
+| Team and Options  | Description |
+|----------|-------------|
+| Impostors | Can create new vents |
+| Cooldown | Ability Cooldown |
+| Number of Vents | Maxumum Vents per game |
+
+**Additional Ability Notes:**
+- The new vents become available to any role who can vent after placing the maximum vent's number and calling a meeting, they can also be sealed.
+
+-----------------------
+
+## Librarian
+| Team and Options  | Description |
+|----------|-------------|
+| Impostors | Can mute a player |
+| Cooldown | Ability Cooldown |
+
+**Additional Ability Notes:**
+- The muted player won't be able to talk during the next meeting and will have the "Silenced" text over his nameplate.
+- If the muted player gets killed, he can select another player to mute on the same round, otherwise he has to wait until next meeting.
+
+-----------------------
+
 ## Renegade
 | Team and Options  | Description |
 |----------|-------------|
 | Rebels | Can recruit a minion and has to kill everyone to win |
-| Recruit Minion Cooldown | Cooldown for recruit a minion | 
 | Can use vents | Define if they can use or not vents | 
 | Can recruit a Minion | Define if he can recruit a Minion to help him | 
 
@@ -584,7 +635,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 - Recruiting a Minion will make a green screen flash exclusively for both and trigger a sound to indicate that the recruitment has been done.
 - Renegade and Minion see their names green and can't kill between them.
 - They have impostor vision but can't make sabotages.
-- He can't be in the same game as Bounty Hunter, Trapper, Yinyanger, Challenger, Ninja and Berserker.
+- He can't be in the same game as Bounty Hunter, Trapper, Yinyanger, Challenger, Ninja, Berserker, Yandere, Stranded and Monja.
 - If they can use vents and are inside them, Impostors will see the vents highlighted on green.
 - Fink can reveal them if the Reveal Rebel option is set to true.
 
@@ -594,7 +645,6 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 | Team and Options  | Description |
 |----------|-------------|
 | Rebels | Has to kill a specific player to win |
-| Cooldown | Ability Cooldown | 
 
 **Additional Ability Notes:**
 - Can make tasks to disguise himself but won't count for the tasks progress.
@@ -603,7 +653,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 - Find Target button can be use whenever he wants, but if it assigns a dead target the Bounty Hunter dies.
 - If his target is exiled or killed, Bounty Hunter also dies.
 - If his target gets revived, Bounty Hunter also revives.
-- He can't be in the same game as Renegade, Trapper, Yinyanger, Challenger, Ninja and Berserker.
+- He can't be in the same game as Renegade, Trapper, Yinyanger, Challenger, Ninja, Berserker, Yandere, Stranded and Monja.
 
 -----------------------
 
@@ -621,12 +671,12 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 - Can make tasks to disguise himself but won't count for the tasks progress.
 - Mines and Traps are only visible to him but become visible if other player collides with them.
 - Mines and Traps can't be placed near other mines, traps or players.
-- Colliding with a mine will trigger a sound and stops the player for one second, the mine becomes visible and kills that player. Afterwards the mine dissapears.
-- One mine can kill multiple players if they collide with it at the same time or during the second the mine appears.
+- Stepping on a mine triggers a sound and stops the player for one second, then the mine becomes visible and kills that player. Afterwards the mine disappears.
+- One mine can kill multiple players if they step on it at the same time or during the second the mine appears.
 - Mines only kill if the Trapper is alive.
-- Traps don't kill players but they trigger a sound and stop the player for 5 seconds.
+- Traps don't kill players but stepping on it triggers a sound and stops the player for 5 seconds.
 - Shields block the mine kill and destroys it.
-- He can't be in the same game as Renegade, Bounty Hunter, Yinyanger, Challenger, Ninja and Berserker.
+- He can't be in the same game as Renegade, Bounty Hunter, Yinyanger, Challenger, Ninja, Berserker, Yandere, Stranded and Monja.
 - There's a special game condition called 1vs1, when the remaining alive players are the Impostor and the Trapper. On this condition he can't place any mines or traps, instead the normal Kill button will appear. The Impostor can't make sabotages on the 1vs1 condition so this will be the fasted click in the west.
 
 -----------------------
@@ -639,12 +689,12 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 
 **Additional Ability Notes:**
 - Can make tasks to disguise himself but won't count for the tasks progress.
-- Can mark a player with the Yin and another one with the Yang, if they collide both die ignoring any shields they could have (can't mark the same player for both buttons)
-- After marking one player, he can't make the other one if the already marked is too close to him.
+- Can mark a player with the Yin and another one with the Yang, if they collide both die ignoring any shields they could have (can't mark the same player with both buttons)
+- After marking one player, he can't mark the other one if the already marked one is too close to him.
 - Both Yin and Yang buttons share their cooldown.
-- Can only mark 1 time per round and can mark again after a succesfully YinYang or a meeting.
+- Can only mark 1 time per round and can mark again after a successfully YinYang or a meeting.
 - If a marked player disconnects, he recovers the button use.
-- He can't be in the same game as Renegade, Bounty Hunter, Trapper, Challenger, Ninja and Berserker.
+- He can't be in the same game as Renegade, Bounty Hunter, Trapper, Challenger, Ninja, Berserker, Yandere, Stranded and Monja.
 - There's a special game condition called 1vs1, when the remaining alive players are the Impostor and the Yinyanger. On this condition he can't mark any player, instead the normal Kill button will appear. The Impostor can't make sabotages on the 1vs1 condition so this will be the fasted click in the west.
 
 -----------------------
@@ -652,8 +702,9 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 ## Challenger
 | Team and Options  | Description |
 |----------|-------------|
-| Rebels | Has to kill everyone challenging players to a rock-paper-scissors duel |
+| Rebels | Has to kill a few players challenging them to a rock-paper-scissors duel |
 | Cooldown | Ability Cooldown | 
+| Cooldown | Kills to Win | 
 
 **Additional Ability Notes:**
 - Can make tasks to disguise himself but won't count for the tasks progress.
@@ -666,7 +717,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 - If one of the duelist selects and attack and the other doesn't select anything, automatically he will die and the other player wins the duel.
 - Nobody can use his abilities, make sabotages or report a body during the duel.
 - After the duel, everyone get teleported to the position where they were before the duel, the same goes with the corpses.
-- He can't be in the same game as Renegade, Bounty Hunter, Trapper, Yinyanger, Ninja and Berserker.
+- He can't be in the same game as Renegade, Bounty Hunter, Trapper, Yinyanger, Ninja, Berserker, Yandere, Stranded and Monja.
 - There's a special game condition called 1vs1, when the remaining alive players are the Impostor and the Challenger. On this condition he can't duel, instead the normal Kill button will appear. The Impostor can't make sabotages on the 1vs1 condition so this will be the fasted click in the west.
 
 -----------------------
@@ -682,14 +733,14 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 - To make double kills, he must first kill with the Target/Ninja Time button.
 - Ninja Time button can't be used if the targeted player is inside a vent, and resets if the targeted player gets killed by other player.
 - Ninja time button allows the Ninja to teleport himself to the targeted player position killing it in the process. He can kill another player afterwards with the normal kill button, allowing a double kill.
-- He can't be in the same game as Renegade, Bounty Hunter, Trapper, Yinyanger, Challenger and Berserker.
+- He can't be in the same game as Renegade, Bounty Hunter, Trapper, Yinyanger, Challenger, Berserker, Yandere, Stranded and Monja.
 
 -----------------------
 
 ## Berserker
 | Team and Options  | Description |
 |----------|-------------|
-| Rebels | Has to kill everyone to win but can't stop killing after killing for first time |
+| Rebels | Has to kill everyone to win but can't stop killing after killing for the first time |
 | Kill Time Limit | Remaining time for killing |
 
 **Additional Ability Notes:**
@@ -697,7 +748,50 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 - Kill Time Limit countdown doesn't start until he kills for the first time.
 - Countdown appears above the kill button and freezes during a meeting.
 - After killing for first time, his kill button gets a permanent 10 seconds cooldown.
-- He can't be in the same game as Renegade, Bounty Hunter, Trapper, Yinyanger, Challenger and Ninja.
+- He can't be in the same game as Renegade, Bounty Hunter, Trapper, Yinyanger, Challenger, Ninja, Yandere, Stranded and Monja.
+
+-----------------------
+
+## Yandere
+| Team and Options  | Description |
+|----------|-------------|
+| Rebels | Has to stalk a few times a specific player and kill it afterwards |
+| Cooldown | Ability Cooldown |
+| Stare Times | Times she has to stalk the player |
+| Stare Duration | How much many she has to stay next to the player |
+
+**Additional Ability Notes:**
+- Can make tasks to disguise himself but won't count for the tasks progress.
+- This role has two ways of winning, the first one is stalking the target the needed times and then killing it.
+- The second way happens when that target gets killed by another player, this trigger the Yandere's rampage mode, where she has to kill everyone to win.
+- She can't be in the same game as Renegade, Bounty Hunter, Trapper, Yinyanger, Challenger, Ninja, Berserker, Stranded and Monja.
+
+-----------------------
+
+## Stranded
+| Team and Options  | Description |
+|----------|-------------|
+| Rebels | Has to find shoots inside boxes on the map and kill three players |
+
+**Additional Ability Notes:**
+- Can make tasks to disguise himself but won't count for the tasks progress.
+- This role is based on Zombie Laboratory gamemode, there are 30 boxes on the map and inside them can be 3 shoots (1 on each box), the vent ability or the invisible ability (only one use per game).
+- He can't kill while invisible but he can keep searching boxes undetectable.
+- On 1vs1 condition he doesn't need to have shoots to kill the remaining player.
+- He can't be in the same game as Renegade, Bounty Hunter, Trapper, Yinyanger, Challenger, Ninja, Berserker, Yandere and Monja.
+
+-----------------------
+
+## Monja
+| Team and Options  | Description |
+|----------|-------------|
+| Rebels | Has to find items to become the Monja |
+
+**Additional Ability Notes:**
+- Can make tasks to disguise himself but won't count for the tasks progress.
+- There will be 5 mini colores monjas on the map that the Monja needs to find and deliver to the ritual spot. Upon delivering all the mini monjas, she can transform into the Monja to kill everyone within 60 seconds to win, otherwise she'll die.
+- When the Monja awakens, nobody can do anything but tasks or running away for their lifes.
+- She can't be in the same game as Renegade, Bounty Hunter, Trapper, Yinyanger, Challenger, Ninja, Berserker, Yandere and Stranded.
 
 -----------------------
 
@@ -710,7 +804,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 **Additional Ability Notes:**
 - Can make tasks to disguise himself but won't count for the tasks progress.
 - If he can sabotage, he can only do while being alive.
-- He can't be in the same game as Role Thief, Pyromaniac, Treasure Hunter, Devourer, Poisoner and Puppeteer.
+- He can't be in the same game as Role Thief, Pyromaniac, Treasure Hunter, Devourer, Poisoner, Puppeteer, Exiler, Amnesiac and Seeker.
 - If Can Sabotage is enabled, Joker needs to open the map 1 time to activate the Sabotage button.
 
 -----------------------
@@ -725,7 +819,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 - Can make tasks to disguise himself but won't count for the tasks progress.
 - He doesn't have any win condition, think about his role like a hot potato, if you're the Role Thief when the game ends, you lose.
 - If he tries to steal an Impostor or Rebel role, he dies instead.
-- He can't be in the same game as Joker, Pyromaniac, Treasure Hunter, Devourer, Poisoner and Puppeteer.
+- He can't be in the same game as Joker, Pyromaniac, Treasure Hunter, Devourer, Poisoner, Puppeteer, Exiler, Amnesiac and Seeker.
 
 -----------------------
 
@@ -742,7 +836,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 - Once he sprayed everyone he can press the Ignite button to trigger the win sound.
 - Ignite duration for a player resets if the player moves far away.
 - Dead players won't be needed to spray.
-- He can't be in the same game as Joker, Role Thief, Treasure Hunter, Devourer, Poisoner and Puppeteer.
+- He can't be in the same game as Joker, Role Thief, Treasure Hunter, Devourer, Poisoner, Puppeteer, Exiler, Amnesiac and Seeker.
 
 -----------------------
 
@@ -750,17 +844,15 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 | Team and Options  | Description |
 |----------|-------------|
 | Neutrals | Has to find treasures to win |
-| Cooldown | Ability Cooldown | 
 | Treasures to Win | Number of needed treasures to win | 
-| Can use emergency button | His ability depends on calling meetings, define if he can or not use the button |  
 
 **Additional Ability Notes:**
 - Can make tasks to disguise himself but won't count for the tasks progress.
-- He can spawn one treasure randomly on the map one time per meeting.
+- He can spawn one treasure randomly on the map after finding the previously spawned one.
 - Treasures stays the whole game and only dissapears when the Treasure Hunter touch them.
 - Treasures are only visible for Treasure Hunter.
 - He can't get treasures or spawn them if he's dead.
-- He can't be in the same game as Joker, Role Thief, Pyromaniac, Devourer, Poisoner and Puppeteer.
+- He can't be in the same game as Joker, Role Thief, Pyromaniac, Devourer, Poisoner, Puppeteer, Exiler, Amnesiac and Seeker.
 
 -----------------------
 
@@ -768,14 +860,13 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 | Team and Options  | Description |
 |----------|-------------|
 | Neutrals | Has to eat corpses to win |
-| Cooldown | Ability Cooldown | 
 | Devours to Win | Number of needed corpses to win | 
 
 **Additional Ability Notes:**
 - Can make tasks to disguise himself but won't count for the tasks progress.
 - When a player dies, a sound will be played only for Devourer, indicating him there's a body somewhere.
 - He can't devour if he's dead.
-- He can't be in the same game as Joker, Role Thief, Pyromaniac, Treasure Hunter, Poisoner and Puppeteer.
+- He can't be in the same game as Joker, Role Thief, Pyromaniac, Treasure Hunter, Poisoner, Puppeteer, Exiler, Amnesiac and Seeker.
 
 -----------------------
 
@@ -783,7 +874,6 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 | Team and Options  | Description |
 |----------|-------------|
 | Neutrals | Has to poison everyone to win |
-| Cooldown | Ability Cooldown | 
 | Time to Poison | Time needed to make the poisoned player | 
 | Poison Infect Range | Poisoned player range to infect others | 
 | Time to fully Poison | Time needed for players to reach 100% after staying near to poisoned player | 
@@ -791,12 +881,12 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 
 **Additional Ability Notes:**
 - Can make tasks to disguise himself but won't count for the tasks progress.
-- He can only select one poisoned target at a time, reseting it if the poisoned target dies or gets exiled.
-- On the bottom-left of the screen, he will have a sprite of everyplayer in the game with a %.
+- He can only select one poisoned target at a time, resetting it if the poisoned target dies or gets exiled.
+- On the bottom-left of the screen, he will have a sprite of every player in the game with a %.
 - The poisoned player will increase that % for the players that stays near of him.
 - After getting every player's % to 100%, he can win the game with the Poisoned button.
-- Only the Poisoned target can infect other players, meaning that players who reached 100% can't infect others.
-- He can't be in the same game as Joker, Role Thief, Pyromaniac, Treasure Hunter, Devourer and Puppeteer.
+- Players who reached 100% can infect others.
+- He can't be in the same game as Joker, Role Thief, Pyromaniac, Treasure Hunter, Devourer, Puppeteer, Exiler, Amnesiac and Seeker.
 
 -----------------------
 
@@ -814,7 +904,52 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 - The player who kills the morphed Puppeteer will hear a crow sound.
 - If he decides to uncover himself, he gets teleported to the spot where he started the morph.
 - He has to pick a new sample if he uncovers himself, a meeting is called or he gets killed while being morphed.
-- He can't be in the same game as Joker, Role Thief, Pyromaniac, Treasure Hunter, Devourer and Poisoner.
+- He can't be in the same game as Joker, Role Thief, Pyromaniac, Treasure Hunter, Devourer, Poisoner, Exiler, Amnesiac and Seeker.
+
+-----------------------
+
+## Exiler
+| Team and Options  | Description |
+|----------|-------------|
+| Neutrals | Has to vote out a specific player to win |
+
+**Additional Ability Notes:**
+- Can make tasks to disguise himself but won't count for the tasks progress.
+- If the target gets killed or is already dead, he dies, but if the target disconnects he automatically wins.
+- He can't be in the same game as Joker, Role Thief, Pyromaniac, Treasure Hunter, Devourer, Poisoner, Amnesiac and Seeker.
+
+-----------------------
+
+## Amnesiac
+| Team and Options  | Description |
+|----------|-------------|
+| Neutrals | Can get a role from a body |
+
+**Additional Ability Notes:**
+- Can make tasks to disguise himself but won't count for the tasks progress.
+- There are 4 Rebel roles he can't get, when that happens he gets a warning on the chat.
+- He can't be in the same game as Joker, Role Thief, Pyromaniac, Treasure Hunter, Devourer, Poisoner, Exiler and Seeker.
+
+-----------------------
+
+## Seeker
+| Team and Options  | Description |
+|----------|-------------|
+| Neutrals | Has to get points playing hide and seek |
+| Cooldown | Ability Cooldown |
+| Points to Win | Needed points to win |
+
+**Additional Ability Notes:**
+- Can make tasks to disguise himself but won't count for the tasks progress.
+- He selects from 1 to 3 players and then start a hide and seek minigame on a new map area where the selected players have to hide on 3 different places, then the Seeker choose one of that places and he gets one point per game hiding there.
+- He can't be in the same game as Joker, Role Thief, Pyromaniac, Treasure Hunter, Devourer, Poisoner, Exiler and Amnesiac.
+- The minigame can't start if there's a sabotage.
+- If there's a Demon in game and a player is bitten, if that player isn't the Seeker or one of the selected players, that player will die before starting the minigame.
+- Performing the minigame will teleport all the players to the minigame arena, with custom music and divided by Seeker and spectators zone, and hiders players zone.
+- Everyone will have grey color during the minigame without anything distinctive.
+- The minigame have a 20 seconds duration, if one of the selected players don't choose where to hide, it will give 1 point to the Seeker automatically, but if the Seeker doesn't choose any hide, no points will be given.
+- Nobody can use his abilities, make sabotages or report a body during the minigame.
+- After the minigame, everyone get teleported to the position where they were before the minigame.
 
 -----------------------
 
@@ -822,10 +957,12 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 | Team and Options  | Description |
 |----------|-------------|
 | Crewmates | His vote counts double |
+| Can Special Vote | Define if he can force vote out |
 
 **Additional Ability Notes:**
 - There's a special game condition called 1vs1, when the remaining alive players are the Impostor or Rebel and the Captain. On this condition he gains the ability to make a emergency meeting from anywhere which fix any active sabotages, so he can exile the remaining player with his double vote. The Impostor can't make sabotages on the 1vs1 condition.
 - There's another special game condition called 2vs2, when the remaining alive players are a crewmate + Captain vs Impostor and Rebel or Two Impostors or Two Rebels. On this condition he gains the ability to make a emergency meeting from anywhere which fix any active sabotages, so he can work with the other crewmate exile the remaining players with his double vote. The Impostor can make sabotages on the 2vs2 condition.
+- Force vote out ability can be used one time per game and makes all the votes go towards the selected player, but if that player is crewmate, the Captain gets exiled too.
 
 -----------------------
 
@@ -834,10 +971,12 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 |----------|-------------|
 | Crewmates | Can fix sabotages from anywhere |
 | Repairs Number | Number of sabotages he can repair |
+| Expert Repairs | Define if the ability is active |
 
 **Additional Ability Notes:**
 - He can fix Bomberman's Bomb, but he can't fix Illusionist's Blackout.
 - Remaining uses will be displayed above the repair button.
+- Expert repairs makes the Mechanic able to fix duo sabotages by himself.
 
 -----------------------
 
@@ -878,7 +1017,6 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 | Time to know the name | Time limit to report a body to obtain the killer's name |
 | Time to know the color type | Time limit to report a body to obtain the killer's color type ||
 | Time to know about the killer's appearance | Time limit to report a body to obtain if the killer has hat, outfit, pet or visor |
-| Cooldown | Ability Cooldown |
 | Question Duration | Time need to talk to a ghost |
 | One question per Ghost | Limits the question to one per ghost |
 
@@ -1054,7 +1192,6 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 |----------|-------------|
 | Crewmates | Can place 4 additional cameras on the map |
 | Cooldown | Ability Cooldown |
-| Camera Number | Fixed to 4 |
 | Remote Camera Duration | Can check cameras from anywhere during a set amount of time |
 | Battery Uses | Times he can check the cameras |
 | Tasks for recharge batteries | Tasks needed to recharge 1 battery |
@@ -1170,21 +1307,52 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 
 -----------------------
 
+## TaskMaster
+| Team and Options  | Description |
+|----------|-------------|
+| Crewmates | Upon completing the tasks, he gets extra tasks, completing them achieves a crewmate win |
+| Extra Common Tasks | How many extra common tasks |
+| Extra Long Tasks | How many extra long tasks |
+| Extra Short Tasks Range | How many extra short tasks |
+| Speed Cooldown | Ability Cooldown |
+| Duration | Speed Duration |
+
+**Additional Ability Notes:**
+- If he's doing the extra tasks and gets his role stolen, the extra tasks progress resets and randomizes again.
+
+-----------------------
+
+## Jailer
+| Team and Options  | Description |
+|----------|-------------|
+| Crewmates | Teleport people to Prison |
+| Cooldown | Ability Cooldown |
+| Duration | How much time people will be jailed |
+
+**Additional Ability Notes:**
+- This role is based on Police and Thieves gamemode, he can promote a player to be the Prison Guard, if a player tries to kill the Prison Guard, that player gets teleported to Prison for a while and the Jailer can select a new player to become the Prison Guard (removing the old one). In other means, if a player is inside the Prison it means it has at least one way to kill a player.
+
+-----------------------
+
 # Modifiers
 
 This mod also features some game mechanic modifiers, one of them being a [custom map](https://youtu.be/9tDh9eYqAgk), some of them aren't considered as a separate role, instead they're added as a player attribute which can be good or bad. To activate them, Modifiers option has to be On.
 
 | Global Setting  | Description |
 |----------|-------------|
-| Activate Mod Roles | Activate this option to play mod roles and deactivate it to play with vanilla ones |
+| Activate Mod Roles and Gamemodes | Activate this option to play mod roles and gamemodes, and turn it off to play vanilla games |
 | Activate Custom Skeld Map | If enabled and Skeld is selected as the game map, the custom map will load instead the normal Skeld |
+| Hide Vent Anim on Shadows | Remove being able to see a vent opening or closing inside shadows |
+
+| Roles Setting  | Description |
+|----------|-------------|
+| Find a Role Mode | Activate this to play games where everyone is vanilla and have to get a role from a box |
 | Remove Swipe Card Task | I hate this task so I made an option to remove it |
 | Remove Airship Doors | After reading what is written above this, you can guess why this option is here |
 | Night Vision for Lights Sabotage | Security Cameras will have night vision when lights are sabotaged making all players lime color with "Player" as their names (not available on Submerged) |
 | Screen Shake for Reactor Sabotage | Add a player's screen shake visual effect during reactor sabotage. Graphic's game option "screen shake" has to be active |
 | Anomymous Players for Comms Sabotage | Makes the players grey with "Player" as their names during Cooms sabotage |
 | Decrease Players Speed for Oxygen Sabotage | Player's speed will keep getting lower based of how much time passed since Oxygen had been sabotaged |
-| Hide Vent Anim on Shadows | Remove being able to see a vent opening or closing inside shadows |
 
 ## Lovers
   - Two players linked, they die and get exiled together.
@@ -1208,12 +1376,18 @@ This mod also features some game mechanic modifiers, one of them being a [custom
 ## Pro
   - His movement controls are inverted
   - Stepping into the Hypnotist trap makes the Pro able to move normally during the trap effect. 
-
+## Paintball
+  - His killer leaves a paint trail based on the Paintball's color.
+  - It has an option to configure the paint duration. 
+## Electrician
+  - His killer gets paralyzed in place.
+  - It has an option to configure the paralyze duration.
+  
 -----------------------
 
 # GameModes
 
-This mods adds five gamemodes, which can be played on everymap including the custom one and Submerged. Mod roles won't spawn and map abilities (admin, sabotage, reports, emergency button...) can't be used on custom gamemodes.
+This mods adds six gamemodes, which can be played on everymap including the custom one and Submerged. Mod roles won't spawn and map abilities (admin, sabotage, reports, emergency button...) can't be used on custom gamemodes.
 
 ## CaptureTheFlag
 
@@ -1241,9 +1415,9 @@ Match between red and blue team where each team has to steal the enemy flag and 
 
 -----------------------
 
-## PoliceAndThiefs
+## PoliceAndThieves
 
-Match between cyan (Police) and brown (Thiefs) team. This gamemode adds a new map room, the Prison. Police team have to capture all the Thiefs by sending them to Prison, while Thief team have to steal all the jewels on the map without being captured. The player assignment is like 1.5 Thief per 1 Police, being the max 9 Thiefs and 6 Polices (divided by 4 Police and 2 Tasers).
+Match between cyan (Police) and brown (Thieves) team. This gamemode adds a new map room, the Prison. Police team have to capture all the Thieves by sending them to Prison, while Thief team have to steal all the jewels on the map without being captured. The player assignment is like 1.5 Thief per 1 Police, being the max 9 Thieves and 6 Polices (divided by 4 Police and 2 Tasers).
 
 | Option  | Description |
 |----------|-------------|
@@ -1257,13 +1431,13 @@ Match between cyan (Police) and brown (Thiefs) team. This gamemode adds a new ma
 | Police Can See Jewels | Define if police team can see jewels on the map |
 | Police Vision Range | Define light range for Police |
 | Police Revive Time | Wait time for Police team to revive |
-| Who Can Thiefs Kill | Define if Thief team can kill Tasers, All Police team or nobody |
-| Thiefs Kill Cooldown | Thief team kill cooldown if they can kill |
-| Thiefs Revive Time | Wait time for Thief team to revive |
+| Who Can Thieves Kill | Define if Thief team can kill Tasers, All Police team or nobody |
+| Thieves Kill Cooldown | Thief team kill cooldown if they can kill |
+| Thieves Revive Time | Wait time for Thief team to revive |
 | Invincibility Time After Revive | Players can't use their abilities, vent or get killed during this time |
 
 **Additional Gamemode Notes:**
-- Police team always win on match time out and capturing all the Thiefs.
+- Police team always win on match time out and capturing all the Thieves.
 - Thief team only win if they manage to steal all the Jewels.
 - Each player name color will be the same as the team color.
 - Capturing a Thief teleports him to the Prison, another Thief has to push the button outside the prison to release it.
@@ -1361,7 +1535,7 @@ A random player gets the Zombie role, another player the Nurse role and the rest
 **Additional Gamemode Notes:**
 - Only Zombies can use vents.
 - Zombies can infect other player by standing near to him the needed time. Infected players name will turn from blue to yellow but they remain as Survivor during the time limit to use medkit.
-- If the time to use medkit reach 0 (this timer doesn't show anywhere to add tension), that Survivor will turn into a Zombie.
+- If the time to use medkit reach 0 (this timer is only visible for Survivor team), that Survivor will turn into a Zombie.
 - Nurse is immune to the infection, she can pick a medkit (pointed by pink arrows) from 3 different map location and use it on a infected player (yellow name) to cure it or on a zombie to kill it. She can carry only 1 medkit at once and will lose it if she gets killed. A healed player will have a pink screen flash, and everyone will hear a heal sound, also that player has to be infected again to try to turn it into a zombie. The Nurse gets a permanent speed and vision boost if Survivors delivered 3 or more key items.
 - Infirmary is the Nurse's spawn and only survivors can enter in it. After 10 seconds, survivors will be forced to exit it. The Nurse can enter and stay in it anytime she wants, also she can leave from 3 different location to prevent Zombie spawn camping. There's 2 switches in the Infirmary, the left one is for delivering a key item and the right one is to create the cure when all key items are delivered, making the Survivor team the winner.
 - Survivors have to look for the key items hided in the boxes around the map and deliver them to the Infirmary.
@@ -1406,7 +1580,7 @@ On this gamemode everyone has a ranged kill button with the Archer's mechanic (u
 
 # CustomCosmetics
 
-A custom hats system (adapted from [xxomega77](https://github.com/xxomega77xx/HatPack)) has been added, also thanks to that I could add a method to add custom visors and nameplates too. Hats don't replace visors and some have adaptative color. It can also have some color or position bugs, we'll try to fix them in the future while also adding new hats.
+A custom hats system (adapted from [xxomega77](https://github.com/xxomega77xx/HatPack)) has been added, also thanks to that I could add a method to add custom visors and nameplates too. It can have some color or position bugs, we'll try to fix them in the future while also adding new cosmetics.
 
 -----------------------
 
@@ -1425,7 +1599,17 @@ From Las Monjas 1.5.0 version, [Submerged](https://github.com/SubmergedAmongUs/S
 - Archer only gets aim assist for the players on the same floor as him.
 - Ninja can't use Ninja Time if his target is on the other floor.
 - Puppeteer initial transform position gets replaced by Medbey on the upper floor and security on the lower one.
+- Seeker's arena has a visual bug, players won't see the others on the other floor.
+- Jailer's spawns two prison, one for each floor.
 - All gamemodes use both floors, there's two revive points based on the player's floor and central vents can't be used.
+
+-----------------------
+
+# Language
+
+Las Monjas language can be changed inside the lobby by writting /language X, where X can be english, spanish, japanese or chinese. More languages will be added in the future. Also the selected language is saved between game seasons. When doing a clean mod installation, default language will be English.\
+[Allul](https://github.com/KiraYamato94/LasMonjas) - English and Spanish translations.\
+[xiaojinna](https://github.com/xiaojinna), [Dawn66642](https://github.com/Dawn66642), [MC-AS-Huier](https://github.com/MC-AS-Huier) - Chinese translation.
 
 -----------------------
 
@@ -1436,21 +1620,22 @@ If you use something from Las Monjas on your mod, please credit me on your mod's
 [Reactor](https://github.com/NuclearPowered/Reactor) - The main framework used\
 [BepInEx](https://github.com/BepInEx) - Used to hook game functions\
 [KevinMacLeod](https://www.youtube.com/user/kmmusic) - For the music used\
+[Makai Symphony](https://www.youtube.com/user/Makai-symphony) - For the music used\
 [Enterbrain Inc.](https://www.rpgmakerweb.com/) - For some of the sound effects used\
 [Essentials](https://github.com/Eisbison/TheOtherRoles) - Custom game options by TheOtherRoles team\
 [tomozbot](https://github.com/tomozbot) - Original idea for the Mayor (Captain) and Lighter\
 [NotHunter101](https://github.com/NotHunter101) - Original idea for the Medic (Squire and Forensic) and Engineer (Mechanic)\
 [Woodi-dev](https://github.com/Woodi-dev) - Original idea for the Sheriff, Lovers mod and the Jailer mod reference\
 [Hardel-DW](https://github.com/Hardel-DW) - Original idea came for the Investigator (Detective) and Time Master (Time Traveler)\
-[TheOtherRoles](https://github.com/Eisbison/TheOtherRoles) - Original idea for Medium (Forensic), Time Master (Time Traveler), Seer (Fortune Teller), Hacker, Tracker (Sleuth), Mini (Kid), Security Guard (Welder and Vigilant), Bait (The Chosen One), Pursuer (Jinx),  Vampire (Demon), Trickster (Illusionist), Warlock (Manipulator), Guesser (Gambler) and Witch (Sorcerer). Also used Submerged's update button.\
-[Town-Of-Us](https://github.com/eDonnes124/Town-Of-Us-R) - Original idea for Swapper (Cheater), Altruist (Spiritualist), Flash, Giant (Big Chungus), Shifter (Role Thief), Arsonist (Pyromaniac) and Undertaker (Janitor)\
+[TheOtherRoles](https://github.com/Eisbison/TheOtherRoles) - Original idea for Medium (Forensic), Time Master (Time Traveler), Seer (Fortune Teller), Hacker, Tracker (Sleuth), Mini (Kid), Security Guard (Welder and Vigilant), Bait (The Chosen One), Pursuer (Jinx),  Vampire (Demon), Trickster (Illusionist), Warlock (Manipulator), Guesser (Gambler), Witch (Sorcerer) and Paintball (Bloody). Also used Submerged's update button.\
+[Town-Of-Us](https://github.com/eDonnes124/Town-Of-Us-R) - Original idea for Swapper (Cheater), Altruist (Spiritualist), Flash, Giant (Big Chungus), Shifter (Role Thief), Arsonist (Pyromaniac), Undertaker (Janitor), Plumber (Miner), Librarian (Blackmailer), Exiler (Executioner) and Amnesiac\
 [ottomated_](https://twitter.com/ottomated_) - Original idea for Morphling (Mimic), Camouflager (Painter) and Snitch (Fink)\
 [Wunax](https://github.com/Wunax/Among-Us-Chameleon-Mod) - Original idea for Chameleon\
 [dhalucard](https://www.twitch.tv/dhalucard) - Original idea for Jackal and Sidekick (Renegade and Minion)\
 [Lunastellia](https://github.com/Lunastellia/Challenger-Among-Us) - Original idea for Hunter\
 [Maartii](https://github.com/Maartii) - Original idea for Jester (Joker)\
 [Cheep](https://cheep-yt.com/home.php) - Original idea for Capture the Flag mod\
-[Allul](https://github.com/KiraYamato94/LasMonjas) - Coded the gamemodes, custom map, Bomberman, Medusa, Hypnotist, Bounty Hunter, Trapper, Yinyanger, Challenger, Ninja, Berserker, Treasure Hunter, Devourer, Puppeteer, Coward, Performer, Blind, and some more that weren't original ideas\
+[Allul](https://github.com/KiraYamato94/LasMonjas) - Coded the gamemodes, custom map, Bomberman, Medusa, Hypnotist, Bounty Hunter, Trapper, Yinyanger, Challenger, Ninja, Berserker, Yandere, Stranded, Monja, Treasure Hunter, Devourer, Puppeteer, Seeker, Coward, Jailer, Performer, Blind, Electrician, and some more that weren't original ideas\
 [Sensei](https://github.com/TheCollectionMod) - Made button sprites, custom map sprite and some hats\
 [xxomega77](https://github.com/xxomega77xx/HatPack) - Adapted Custom Hats System\
 [AlexejheroYTB](https://github.com/AlexejheroYTB) - Made Submerged compatible with Las Monjas\
@@ -1458,7 +1643,8 @@ If you use something from Las Monjas on your mod, please credit me on your mod's
 [Pandraghon](https://github.com/Pandraghon) - Original idea for the Better Reactor, Comms and Oxygen sabotage\
 [eDonnes124](https://github.com/eDonnes124) - Original idea for Drunk (Pro)\
 [Dolly1016](https://github.com/Dolly1016) - Original idea for Sniper (Archer), Empiric (Poisoner), Alien (Bat), Necromancer and Trapper (Engineer)\
-[Herysia](https://github.com/Herysia) - Original idea for the try hard vents
+[Herysia](https://github.com/Herysia) - Original idea for the try hard vents\
+[Twix](https://github.com/whichtwix/Modinstaller) - Downloader tool used to make Las Monjas Downloader
 
 -----------------------
 
