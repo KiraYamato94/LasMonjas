@@ -35,6 +35,10 @@ Las Monjas is a Spanish mod (available on English, Spanish, Chinese and Japanese
 <details>
   <summary>Click to show</summary>
   
+**Version 3.0.1 (27th October 2022)**
+
+- Fixed an issue with Captain's special ability that was preventing him to vote on next meetings after using his ability
+
 **Version 3.0.0 (27th October 2022)**
 - 2 New impostors: Plumber and Librarian.
 - 3 New Rebels: Yandere, Stranded and Monja.
