@@ -1613,7 +1613,8 @@ From Las Monjas 1.5.0 version, [Submerged](https://github.com/SubmergedAmongUs/S
 
 Las Monjas language can be changed inside the lobby by writting /language X, where X can be english, spanish, japanese or chinese. More languages will be added in the future. Also the selected language is saved between game seasons. When doing a clean mod installation, default language will be English.\
 [Allul](https://github.com/KiraYamato94/LasMonjas) - English and Spanish translations.\
-[xiaojinna](https://github.com/xiaojinna), [Dawn66642](https://github.com/Dawn66642), [MC-AS-Huier](https://github.com/MC-AS-Huier) - Chinese translation.
+[四个憨批汉化组](https://amonguscn.club/) - Partial Chinese translation.\
+[xiaojinna](https://github.com/xiaojinna), [Dawn66642](https://github.com/Dawn66642), [MC-AS-Huier](https://github.com/MC-AS-Huier) - Partial Chinese translation.
 
 -----------------------
 
