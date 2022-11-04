@@ -4,14 +4,18 @@ using System.Reflection;
 using System.Collections.Generic;
 using Hazel;
 using System;
-using UnhollowerBaseLib;
+using Il2CppInterop;
 using System.Linq;
+using System.Collections;
+using Reactor;
+using Il2CppSystem.Security.Cryptography;
 
 namespace LasMonjas.Patches
 {
     public static class LobbyBehaviour_Patch
     {
         private static GameObject prefab = null;
+
         private static GameObject getOldLobby(string name = "Lobby(Clone)") {
 
             GameObject lobby = GameObject.Find(name);
@@ -52,20 +56,7 @@ namespace LasMonjas.Patches
             }
 
         }
-        
-        /*private static string lobbyCodeText = "";
 
-        [HarmonyPatch(typeof(GameStartManager), nameof(GameStartManager.Start))]
-        public class GameStartManagerStartPatch
-        {
-            public static void Postfix(GameStartManager __instance) {
-                // Copy lobby code before hide room code
-                string code = InnerNet.GameCode.IntToGameName(AmongUsClient.Instance.GameId);
-                GUIUtility.systemCopyBuffer = code;
-                lobbyCodeText = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.RoomCode, new Il2CppReferenceArray<Il2CppSystem.Object>(0)) + "\r\n" + code;
-            }
-        }*/
-        
         [HarmonyPatch(typeof(LobbyBehaviour), nameof(LobbyBehaviour.Start))]
 
         class LobbyBehavour_Start_Patch
@@ -115,6 +106,7 @@ namespace LasMonjas.Patches
                 GameObject.Find("Lobby(Clone)/LeftEngine").transform.position = new Vector3(-4.775f, -3f, 0.5f);
                 GameObject myLeftEngine = GameObject.Find("Lobby(Clone)/LeftEngine");
                 GameObject.Instantiate(myLeftEngine, new Vector3(-4.775f, 1.75f, 0.5f), Quaternion.identity);
+
             }
         }
 
@@ -138,6 +130,6 @@ namespace LasMonjas.Patches
                     }
                 }
             }
-        }
+        }       
     }
 }

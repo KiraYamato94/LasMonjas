@@ -8,6 +8,7 @@ using static LasMonjas.GameHistory;
 using static LasMonjas.MapOptions;
 using System.Collections.Generic;
 using PowerTools;
+using LasMonjas.Core;
 
 namespace LasMonjas.Patches
 {
@@ -242,23 +243,23 @@ namespace LasMonjas.Patches
         static bool Prefix(SabotageButton __instance) {
 
             // Block sabotage button on custom gamemodes
-            if (howmanygamemodesareon == 1) {
+            if (howmanygamemodesareon == 1 || Monja.awakened) {
                 return false;
             }
             else {
 
                 // Block sabotage button if Bomberman bomb, lights out, duel or special condition 1vs1 is active
-                bool blockSabotage = (PlayerControl.LocalPlayer.Data.Role.IsImpostor || (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead) || (Poisoner.canSabotage && Poisoner.poisoner != null && Poisoner.poisoner == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead)) && (alivePlayers <= 2 || Bomberman.activeBomb || Challenger.isDueling || Illusionist.lightsOutTimer > 0);
+                bool blockSabotage = (PlayerControl.LocalPlayer.Data.Role.IsImpostor || (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead) || (Poisoner.canSabotage && Poisoner.poisoner != null && Poisoner.poisoner == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead)) && (alivePlayers <= 2 || Bomberman.activeBomb || Challenger.isDueling || Seeker.isMinigaming || Illusionist.lightsOutTimer > 0);
                 if (blockSabotage) return false;
 
                 // Joker sabotage
-                if (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && Illusionist.lightsOutTimer <= 0) {
+                if (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && !Seeker.isMinigaming && Illusionist.lightsOutTimer <= 0) {
                     MapBehaviour.Instance.ShowSabotageMap();
                     return false;
                 }
 
                 // Poisoner sabotage
-                if (Poisoner.canSabotage && Poisoner.poisoner != null && Poisoner.poisoner == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && Illusionist.lightsOutTimer <= 0) {
+                if (Poisoner.canSabotage && Poisoner.poisoner != null && Poisoner.poisoner == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && !Seeker.isMinigaming && Illusionist.lightsOutTimer <= 0) {
                     MapBehaviour.Instance.ShowSabotageMap();
                     return false;
                 }
@@ -274,19 +275,19 @@ namespace LasMonjas.Patches
         static void Postfix() {
 
             // Change sabotage button image and block sabotages if capture the flag mode or police and thief mode
-            if (howmanygamemodesareon == 1) {
+            if (howmanygamemodesareon == 1 || Monja.awakened) {
                 HudManager.Instance.SabotageButton.Hide();
             }
 
             else {
 
                 // Block sabotage button if Bomberman bomb, lights out, duel or special condition 1vs1 is active
-                bool blockSabotage = (PlayerControl.LocalPlayer.Data.Role.IsImpostor || (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead) || (Poisoner.canSabotage && Poisoner.poisoner != null && Poisoner.poisoner == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead)) && (alivePlayers <= 2 || Bomberman.activeBomb == true || Challenger.isDueling || Illusionist.lightsOutTimer > 0);
+                bool blockSabotage = (PlayerControl.LocalPlayer.Data.Role.IsImpostor || (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead) || (Poisoner.canSabotage && Poisoner.poisoner != null && Poisoner.poisoner == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead)) && (alivePlayers <= 2 || Bomberman.activeBomb || Challenger.isDueling || Seeker.isMinigaming || Illusionist.lightsOutTimer > 0);
                 if (blockSabotage) {
                     HudManager.Instance.SabotageButton.SetDisabled();
                 }
 
-                if (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && Illusionist.lightsOutTimer <= 0) {
+                if (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && !Seeker.isMinigaming && Illusionist.lightsOutTimer <= 0) {
                     if (MapBehaviour.Instance != null && !MapBehaviour.Instance.IsOpen && MeetingHud.Instance == null) {
                         HudManager.Instance.SabotageButton.Show();
                     }
@@ -295,7 +296,7 @@ namespace LasMonjas.Patches
                     }
                 }
 
-                if (Poisoner.canSabotage && Poisoner.poisoner != null && Poisoner.poisoner == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && Illusionist.lightsOutTimer <= 0) {
+                if (Poisoner.canSabotage && Poisoner.poisoner != null && Poisoner.poisoner == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && !Seeker.isMinigaming && Illusionist.lightsOutTimer <= 0) {
                     if (MapBehaviour.Instance != null && !MapBehaviour.Instance.IsOpen && MeetingHud.Instance == null) {
                         HudManager.Instance.SabotageButton.Show();
                     }
@@ -313,7 +314,7 @@ namespace LasMonjas.Patches
         static bool Prefix(ReportButton __instance) {
 
             // Block report button if dueling or gamemodes)
-            bool blockReport = Challenger.isDueling || Spiritualist.preventReport || howmanygamemodesareon == 1;
+            bool blockReport = Challenger.isDueling || Spiritualist.preventReport || howmanygamemodesareon == 1 || Monja.awakened || Seeker.isMinigaming;
             if (blockReport) return false;
 
             return true;
@@ -330,42 +331,42 @@ namespace LasMonjas.Patches
             // Deactivate emergency button for custom gamemodes
             if (howmanygamemodesareon == 1) {
                 roleCanCallEmergency = false;
-                statusText = "Can't use the emergency button \non custom gamemodes!";
+                statusText = Language.usablesTexts[0];
             }
             // Deactivate emergency button for Cheater
             if (Cheater.cheater != null && Cheater.cheater == PlayerControl.LocalPlayer && !Cheater.canCallEmergency) {
                 roleCanCallEmergency = false;
-                statusText = "The Cheater can't use the emergency button!";
+                statusText = Language.usablesTexts[1];
             }
 
             // Deactivate emergency button for Gambler
             if (Gambler.gambler != null && Gambler.gambler == PlayerControl.LocalPlayer && !Gambler.canCallEmergency) {
                 roleCanCallEmergency = false;
-                statusText = "The Gambler can't use the emergency button!";
+                statusText = Language.usablesTexts[2];
             }
 
             // Deactivate emergency button for Sorcerer
             if (Sorcerer.sorcerer != null && Sorcerer.sorcerer == PlayerControl.LocalPlayer && !Sorcerer.canCallEmergency) {
                 roleCanCallEmergency = false;
-                statusText = "The Sorcerer can't use the emergency button!";
-            }
-
-            // Deactivate emergency button for TreasureHunter
-            if (TreasureHunter.treasureHunter != null && TreasureHunter.treasureHunter == PlayerControl.LocalPlayer && !TreasureHunter.canCallEmergency) {
-                roleCanCallEmergency = false;
-                statusText = "The Treasure Hunter can't use the emergency button!";
+                statusText = Language.usablesTexts[3];
             }
 
             // Deactivate emergency button if there's a bomb
             if (Bomberman.bomberman != null && Bomberman.activeBomb == true) {
                 roleCanCallEmergency = false;
-                statusText = "There's a Bomb, you can't use the emergency button!";
+                statusText = Language.usablesTexts[4];
             }
 
             // Deactivate emergency button if there's lights out
             if (Illusionist.illusionist != null && Illusionist.lightsOutTimer > 0) {
                 roleCanCallEmergency = false;
-                statusText = "There's a Blackout, emergency button doesn't work!";
+                statusText = Language.usablesTexts[5];
+            }
+            
+            // Deactivate emergency button if Monja awakened
+            if (Monja.monja != null && Monja.awakened) {
+                roleCanCallEmergency = false;
+                statusText = Language.usablesTexts[6];
             }
 
             if (!roleCanCallEmergency) {
@@ -426,7 +427,7 @@ namespace LasMonjas.Patches
                         // Hacker update
                         if (vitalsPanel.IsDead) {
                             DeadPlayer deadPlayer = deadPlayers?.Where(x => x.player?.PlayerId == player?.PlayerId)?.FirstOrDefault();
-                            if (deadPlayer != null && deadPlayer.timeOfDeath != null && k < hackerTexts.Count && hackerTexts[k] != null) {
+                            if (deadPlayer != null && k < hackerTexts.Count && hackerTexts[k] != null) {
                                 float timeSinceDeath = ((float)(DateTime.UtcNow - deadPlayer.timeOfDeath).TotalMilliseconds);
                                 hackerTexts[k].gameObject.SetActive(true);
                                 hackerTexts[k].text = Math.Round(timeSinceDeath / 1000) + "s";

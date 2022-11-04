@@ -100,7 +100,7 @@ namespace LasMonjas.Patches
             moreOptions.transform.localScale = new Vector3(0.66f, 1, 1); 
             
             moreOptions.gameObject.SetActive(true);
-            moreOptions.Text.text = "Las Monjas Options";
+            moreOptions.Text.text = "<color=#CC00FFFF>Las Monjas Options</color>";
             moreOptions.Text.transform.localScale = new Vector3(1 / 0.66f, 1, 1);
             var moreOptionsButton = moreOptions.GetComponent<PassiveButton>();
             moreOptionsButton.OnClick = new ButtonClickedEvent();

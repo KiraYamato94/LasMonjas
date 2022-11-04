@@ -45,14 +45,12 @@ namespace LasMonjas.Patches {
             }
             return result;
         }
-
         static void setPlayerOutline(PlayerControl target, Color color) {
             if (target == null || target.cosmetics.currentBodySprite.BodySprite == null) return;
 
             target.cosmetics.currentBodySprite.BodySprite.material.SetFloat("_Outline", 1f);
             target.cosmetics.currentBodySprite.BodySprite.material.SetColor("_OutlineColor", color);
         }
-
         static void setBasePlayerOutlines() {
             foreach (PlayerControl target in PlayerControl.AllPlayerControls) {
                 if (target == null || target.cosmetics.currentBodySprite.BodySprite == null) continue;
@@ -60,7 +58,7 @@ namespace LasMonjas.Patches {
                 bool isTransformedMimic = target == Mimic.mimic && Mimic.transformTarget != null && Mimic.transformTimer > 0f;
                 bool isTransformedPuppeteer = target == Puppeteer.puppeteer && Puppeteer.transformTarget != null && Puppeteer.morphed;
                 bool hasVisibleShield = false;
-                if (Painter.painterTimer <= 0f && Squire.shielded != null && !Challenger.isDueling && ((target == Squire.shielded && !isTransformedMimic) || (isTransformedMimic && Mimic.transformTarget == Squire.shielded) || (isTransformedPuppeteer && Puppeteer.transformTarget == Squire.shielded))) {
+                if (Painter.painterTimer <= 0f && Squire.shielded != null && !Challenger.isDueling && !Seeker.isMinigaming && ((target == Squire.shielded && !isTransformedMimic) || (isTransformedMimic && Mimic.transformTarget == Squire.shielded) || (isTransformedPuppeteer && Puppeteer.transformTarget == Squire.shielded))) {
                     hasVisibleShield = Squire.showShielded == 0 && PlayerControl.LocalPlayer == Squire.squire // Squire only
                         || (Squire.showShielded == 1 && (PlayerControl.LocalPlayer == Squire.shielded || PlayerControl.LocalPlayer == Squire.squire)) // Shielded + Squire
                         || (Squire.showShielded == 2); // Everyone
@@ -68,14 +66,295 @@ namespace LasMonjas.Patches {
 
                 if (hasVisibleShield) {
                     target.cosmetics.currentBodySprite.BodySprite.material.SetFloat("_Outline", 1f);
-                    target.cosmetics.currentBodySprite.BodySprite.material.SetColor("_OutlineColor", Squire.shieldedColor);
+                    target.cosmetics.currentBodySprite.BodySprite.material.SetColor("_OutlineColor", Squire.color);
                 }
                 else {
                     target.cosmetics.currentBodySprite.BodySprite.material.SetFloat("_Outline", 0f);
                 }
             }
         }
+        // Show player roles on meeting for dead players
+        public static void ghostsSeePlayerRoles() {
+            if (howmanygamemodesareon != 1) {
+                foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
+                    if (p == PlayerControl.LocalPlayer || PlayerControl.LocalPlayer.Data.IsDead) {
 
+                        PlayerVoteArea playerVoteArea = MeetingHud.Instance?.playerStates?.FirstOrDefault(x => x.TargetPlayerId == p.PlayerId);
+                        Transform meetingInfoTransform = playerVoteArea != null ? playerVoteArea.NameText.transform.parent.FindChild("Info") : null;
+                        TMPro.TextMeshPro meetingInfo = meetingInfoTransform != null ? meetingInfoTransform.GetComponent<TMPro.TextMeshPro>() : null;
+                        if (meetingInfo == null && playerVoteArea != null) {
+                            meetingInfo = UnityEngine.Object.Instantiate(playerVoteArea.NameText, playerVoteArea.NameText.transform.parent);
+                            meetingInfo.transform.localPosition += Vector3.down * 0.10f;
+                            meetingInfo.fontSize *= 0.60f;
+                            meetingInfo.gameObject.name = "Info";
+                        }
+
+                        // Set player name higher to align in middle
+                        if (meetingInfo != null && playerVoteArea != null) {
+                            var playerName = playerVoteArea.NameText;
+                            playerName.transform.localPosition = new Vector3(0.3384f, (0.0311f + 0.0683f), -0.1f);
+                        }
+
+                        string roleNames = RoleInfo.GetRolesString(p, true);
+
+                        string playerInfoText = "";
+                        string meetingInfoText = "";
+                        if (MapOptions.ghostsSeeRoles && PlayerControl.LocalPlayer.Data.IsDead) {
+                            playerInfoText = $"{roleNames}";
+                            meetingInfoText = playerInfoText;
+                        }
+
+                        if (meetingInfo != null) meetingInfo.text = MeetingHud.Instance.state == MeetingHud.VoteStates.Results ? "" : meetingInfoText;
+                    }
+                }
+            }
+        }
+        static void ventColorUpdate() {
+            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor && ShipStatus.Instance?.AllVents != null) {
+                foreach (Vent vent in ShipStatus.Instance.AllVents) {
+                    try {
+                        if (vent?.myRend?.material != null) {
+                            if (Renegade.renegade != null && Renegade.renegade.inVent || Minion.minion != null && Minion.minion.inVent) {
+                                vent.myRend.material.SetFloat("_Outline", 1f);
+                                vent.myRend.material.SetColor("_OutlineColor", Renegade.color);
+                            }
+                            else if (vent.myRend.material.GetColor("_AddColor") != Color.red) {
+                                vent.myRend.material.SetFloat("_Outline", 0);
+                            }
+                        }
+                    }
+                    catch { }
+                }
+            }
+        }
+        static void impostorSetTarget() {
+            if (!PlayerControl.LocalPlayer.Data.Role.IsImpostor || Archer.archer != null && PlayerControl.LocalPlayer == Archer.archer || Demon.demon != null && PlayerControl.LocalPlayer == Demon.demon || !PlayerControl.LocalPlayer.CanMove || PlayerControl.LocalPlayer.Data.IsDead || howmanygamemodesareon == 1) { // !isImpostor || !canMove || isDead
+                HudManager.Instance.KillButton.SetTarget(null);
+                return;
+            }
+
+            PlayerControl target = null;
+            target = setTarget(true, true);
+
+            HudManager.Instance.KillButton.SetTarget(target);
+        }
+        static void mimicSetTarget() {
+            if (Mimic.mimic == null || Mimic.mimic != PlayerControl.LocalPlayer) return;
+            Mimic.currentTarget = setTarget();
+            setPlayerOutline(Mimic.currentTarget, Mimic.color);
+        }
+
+        static void mimicAndPainterUpdate() {
+            float oldPaintTimer = Painter.painterTimer;
+            float oldMimicTimer = Mimic.transformTimer;
+            Painter.painterTimer = Mathf.Max(0f, Painter.painterTimer - Time.fixedDeltaTime);
+            Mimic.transformTimer = Mathf.Max(0f, Mimic.transformTimer - Time.fixedDeltaTime);
+
+            // Paint reset and set Mimic look if necessary
+            if (oldPaintTimer > 0f && Painter.painterTimer <= 0f) {
+                Painter.resetPaint();
+                if (Mimic.transformTimer > 0f && Mimic.mimic != null && Mimic.transformTarget != null) {
+                    PlayerControl target = Mimic.transformTarget;
+                    Mimic.mimic.setLook(target.Data.PlayerName, target.Data.DefaultOutfit.ColorId, target.Data.DefaultOutfit.HatId, target.Data.DefaultOutfit.VisorId, target.Data.DefaultOutfit.SkinId, target.Data.DefaultOutfit.PetId);
+                }
+            }
+
+            // Mimic reset (only if paint is inactive)
+            if (Painter.painterTimer <= 0f && oldMimicTimer > 0f && Mimic.transformTimer <= 0f && Mimic.mimic != null)
+                Mimic.resetMimic();
+        }
+        static void demonSetTarget() {
+            if (Demon.demon == null || Demon.demon != PlayerControl.LocalPlayer) return;
+
+            PlayerControl target = null;
+            target = setTarget(true, true);
+
+            bool targetNearNun = false;
+            if (target != null) {
+                foreach (Nun nun in Nun.nuns) {
+                    if (Vector2.Distance(nun.nun.transform.position, target.transform.position) <= 1.91f) {
+                        targetNearNun = true;
+                    }
+                }
+            }
+            Demon.targetNearNun = targetNearNun;
+            Demon.currentTarget = target;
+            setPlayerOutline(Demon.currentTarget, Demon.color);
+        }
+        static void manipulatorSetTarget() {
+            if (Manipulator.manipulator == null || Manipulator.manipulator != PlayerControl.LocalPlayer) return;
+            if (Manipulator.manipulatedVictim != null && (Manipulator.manipulatedVictim.Data.Disconnected || Manipulator.manipulatedVictim.Data.IsDead)) {
+                // If the manipulated victim is disconnected or dead reset the manipulate so a new manipulate can be applied
+                Manipulator.resetManipulate();
+            }
+            if (Manipulator.manipulatedVictim == null) {
+                Manipulator.currentTarget = setTarget();
+                setPlayerOutline(Manipulator.currentTarget, Manipulator.color);
+            }
+            else {
+                Manipulator.manipulatedVictimTarget = setTarget(targetingPlayer: Manipulator.manipulatedVictim);
+                setPlayerOutline(Manipulator.manipulatedVictimTarget, Manipulator.color);
+            }
+        }
+        static void sorcererSetTarget() {
+            if (Sorcerer.sorcerer == null || Sorcerer.sorcerer != PlayerControl.LocalPlayer) return;
+            List<PlayerControl> untargetables;
+            if (Sorcerer.spellTarget != null)
+                untargetables = PlayerControl.AllPlayerControls.ToArray().Where(x => x.PlayerId != Sorcerer.spellTarget.PlayerId).ToList(); // Don't switch the target from the the one you're currently casting a spell on
+            else {
+                untargetables = Sorcerer.spelledPlayers; 
+            }
+            Sorcerer.currentTarget = setTarget(true, untargetablePlayers: untargetables);
+            setPlayerOutline(Sorcerer.currentTarget, Sorcerer.color);
+        }
+        static void medusaSetTarget() {
+            if (Medusa.medusa == null || Medusa.medusa != PlayerControl.LocalPlayer) return;
+            PlayerControl target = null;
+
+            target = setTarget(true, false);
+            Medusa.currentTarget = target;
+            setPlayerOutline(Medusa.currentTarget, Medusa.color);
+        }
+        static void librarianSetTarget() {
+            if (Librarian.librarian == null || Librarian.librarian != PlayerControl.LocalPlayer) return;
+            Librarian.currentTarget = setTarget(true, false);
+            setPlayerOutline(Librarian.currentTarget, Librarian.color);
+        }
+        static void renegadeSetTarget() {
+            if (Renegade.renegade == null || Renegade.renegade != PlayerControl.LocalPlayer) return;
+            var untargetablePlayers = new List<PlayerControl>();
+            if (Minion.minion != null) untargetablePlayers.Add(Minion.minion);
+            Renegade.currentTarget = setTarget(untargetablePlayers: untargetablePlayers);
+            setPlayerOutline(Renegade.currentTarget, Palette.ImpostorRed);
+        }
+        static void minionSetTarget() {
+            if (Minion.minion == null || Minion.minion != PlayerControl.LocalPlayer) return;
+            var untargetablePlayers = new List<PlayerControl>();
+            if (Renegade.renegade != null) untargetablePlayers.Add(Renegade.renegade);
+            Minion.currentTarget = setTarget(untargetablePlayers: untargetablePlayers);
+            setPlayerOutline(Minion.currentTarget, Palette.ImpostorRed);
+        }
+        static void bountyHunterSetTarget() {
+            if (BountyHunter.bountyhunter == null || BountyHunter.bountyhunter != PlayerControl.LocalPlayer) return;
+            BountyHunter.currentTarget = setTarget();
+            setPlayerOutline(BountyHunter.currentTarget, BountyHunter.color);
+        }
+        static void trapperSetTarget() {
+            if (Trapper.trapper == null || Trapper.trapper != PlayerControl.LocalPlayer) return;
+            Trapper.currentTarget = setTarget();
+            setPlayerOutline(Trapper.currentTarget, Trapper.color);
+        }
+        static void yinyangerSetTarget() {
+            if (Yinyanger.yinyanger == null || Yinyanger.yinyanger != PlayerControl.LocalPlayer) return;
+            Yinyanger.currentTarget = setTarget();
+            setPlayerOutline(Yinyanger.currentTarget, Yinyanger.color);
+        }
+        static void challengerSetTarget() {
+            if (Challenger.challenger == null || Challenger.challenger != PlayerControl.LocalPlayer) return;
+            Challenger.currentTarget = setTarget();
+            setPlayerOutline(Challenger.currentTarget, Challenger.color);
+        }
+        static void ninjaSetTarget() {
+            if (Ninja.ninja == null || Ninja.ninja != PlayerControl.LocalPlayer) return;
+            Ninja.currentTarget = setTarget();
+            setPlayerOutline(Ninja.currentTarget, Ninja.color);
+        }
+        static void berserkerSetTarget() {
+            if (Berserker.berserker == null || Berserker.berserker != PlayerControl.LocalPlayer) return;
+            Berserker.currentTarget = setTarget();
+            setPlayerOutline(Berserker.currentTarget, Berserker.color);
+        }
+        static void yandereSetTarget() {
+            if (Yandere.yandere == null || Yandere.yandere != PlayerControl.LocalPlayer) return;
+            if (Yandere.target == null) return;
+
+            if (!Yandere.rampageMode) {
+                var untargetables = PlayerControl.AllPlayerControls.ToArray().Where(x => x.PlayerId != Yandere.target.PlayerId).ToList();
+                Yandere.currentTarget = setTarget(untargetablePlayers: untargetables);
+            } else {
+                Yandere.currentTarget = setTarget();
+            }
+            setPlayerOutline(Yandere.currentTarget, Yandere.color);
+        }
+        static void strandedSetTarget() {
+            if (Stranded.stranded == null || Stranded.stranded != PlayerControl.LocalPlayer) return;
+            Stranded.currentTarget = setTarget();
+            setPlayerOutline(Stranded.currentTarget, Stranded.color);
+        }
+        static void monjaSetTarget() {
+            if (Monja.monja == null || Monja.monja != PlayerControl.LocalPlayer) return;
+            Monja.currentTarget = setTarget();
+            setPlayerOutline(Monja.currentTarget, Monja.color);
+        }
+        static void roleThiefSetTarget() {
+            if (RoleThief.rolethief == null || RoleThief.rolethief != PlayerControl.LocalPlayer) return;
+            RoleThief.currentTarget = setTarget();
+            setPlayerOutline(RoleThief.currentTarget, RoleThief.color);
+        }
+        public static void pyromaniacSetTarget() {
+            if (Pyromaniac.pyromaniac == null || Pyromaniac.pyromaniac != PlayerControl.LocalPlayer) return;
+            List<PlayerControl> untargetables;
+            if (Pyromaniac.sprayTarget != null)
+                untargetables = PlayerControl.AllPlayerControls.ToArray().Where(x => x.PlayerId != Pyromaniac.sprayTarget.PlayerId).ToList();
+            else
+                untargetables = Pyromaniac.sprayedPlayers;
+            Pyromaniac.currentTarget = setTarget(untargetablePlayers: untargetables);
+            if (Pyromaniac.currentTarget != null) setPlayerOutline(Pyromaniac.currentTarget, Pyromaniac.color);
+        }
+        public static void poisonerSetTarget() {
+            if (Poisoner.poisoner == null || Poisoner.poisoner != PlayerControl.LocalPlayer) return;
+            List<PlayerControl> untargetables;
+            if (Poisoner.poisonTarget != null)
+                untargetables = PlayerControl.AllPlayerControls.ToArray().Where(x => x.PlayerId != Poisoner.poisonTarget.PlayerId).ToList();
+            else
+                untargetables = Poisoner.poisonedPlayers;
+            Poisoner.currentTarget = setTarget(untargetablePlayers: untargetables);
+            if (Poisoner.currentTarget != null) setPlayerOutline(Poisoner.currentTarget, Poisoner.color);
+        }
+        static void puppeteerSetTarget() {
+            if (Puppeteer.puppeteer == null || Puppeteer.puppeteer != PlayerControl.LocalPlayer) return;
+            Puppeteer.currentTarget = setTarget();
+            setPlayerOutline(Puppeteer.currentTarget, Puppeteer.color);
+        }
+        static void seekerSetTarget() {
+            if (Seeker.seeker == null || Seeker.seeker != PlayerControl.LocalPlayer) return;
+            Seeker.currentTarget = setTarget();
+            setPlayerOutline(Seeker.currentTarget, Seeker.color);
+        }
+        static void sheriffSetTarget() {
+            if (Sheriff.sheriff == null || Sheriff.sheriff != PlayerControl.LocalPlayer) return;
+            Sheriff.currentTarget = setTarget();
+            setPlayerOutline(Sheriff.currentTarget, Sheriff.color);
+        }
+        static void detectiveUpdateFootPrints() {
+            if (Detective.detective == null || Detective.detective != PlayerControl.LocalPlayer) return;
+
+            Detective.timer -= Time.fixedDeltaTime;
+            if (Detective.timer <= 0f) {
+                Detective.timer = Detective.footprintIntervall;
+                foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                    if (player != null && player != PlayerControl.LocalPlayer && !player.Data.IsDead && !player.inVent && !PlayerControl.LocalPlayer.Data.IsDead) {
+                        new Footprint(Detective.footprintDuration, Detective.anonymousFootprints, player);
+                    }
+                }
+            }
+        }
+        public static void forensicSetTarget() {
+            if (Forensic.forensic == null || Forensic.forensic != PlayerControl.LocalPlayer || Forensic.forensic.Data.IsDead || Forensic.deadBodies == null || ShipStatus.Instance?.AllVents == null) return;
+
+            DeadPlayer target = null;
+            Vector2 truePosition = PlayerControl.LocalPlayer.GetTruePosition();
+            float closestDistance = float.MaxValue;
+            float usableDistance = ShipStatus.Instance.AllVents.FirstOrDefault().UsableDistance;
+            foreach ((DeadPlayer dp, Vector3 ps) in Forensic.deadBodies) {
+                float distance = Vector2.Distance(ps, truePosition);
+                if (distance <= usableDistance && distance < closestDistance) {
+                    closestDistance = distance;
+                    target = dp;
+                }
+            }
+            Forensic.target = target;
+        }
         public static void bendTimeUpdate() {
             if (TimeTraveler.isRewinding) {
                 if (localPlayerPositions.Count > 0) {
@@ -135,17 +414,10 @@ namespace LasMonjas.Patches {
                 localPlayerPositions.Insert(0, new Tuple<Vector3, DateTime>(PlayerControl.LocalPlayer.transform.position, DateTime.UtcNow)); // CanMove = CanMove
             }
         }
-
         static void squireSetTarget() {
             if (Squire.squire == null || Squire.squire != PlayerControl.LocalPlayer) return;
             Squire.currentTarget = setTarget();
-            if (!Squire.usedShield) setPlayerOutline(Squire.currentTarget, Squire.shieldedColor);
-        }
-
-        static void roleThiefSetTarget() {
-            if (RoleThief.rolethief == null || RoleThief.rolethief != PlayerControl.LocalPlayer) return;
-            RoleThief.currentTarget = setTarget();
-            setPlayerOutline(RoleThief.currentTarget, RoleThief.color);
+            if (!Squire.usedShield) setPlayerOutline(Squire.currentTarget, Squire.color);
         }
         static void fortuneTellerSetTarget() {
             if (FortuneTeller.fortuneTeller == null || FortuneTeller.fortuneTeller != PlayerControl.LocalPlayer) return;
@@ -153,130 +425,25 @@ namespace LasMonjas.Patches {
             setPlayerOutline(FortuneTeller.currentTarget, FortuneTeller.color);
             if (FortuneTeller.currentTarget != null && FortuneTeller.revealedPlayers.Any(p => p.Data.PlayerId == FortuneTeller.currentTarget.Data.PlayerId)) FortuneTeller.currentTarget = null; // Remove target if already revealed
         }
-
-        static void mimicSetTarget() {
-            if (Mimic.mimic == null || Mimic.mimic != PlayerControl.LocalPlayer) return;
-            Mimic.currentTarget = setTarget();
-            setPlayerOutline(Mimic.currentTarget, Mimic.color);
+        public static void hackerUpdate() {
+            if (Hacker.hacker == null || PlayerControl.LocalPlayer != Hacker.hacker || Hacker.hacker.Data.IsDead) return;
+            var (playerCompleted, _) = TasksHandler.taskInfo(Hacker.hacker.Data);
+            if (playerCompleted == Hacker.rechargedTasks) {
+                MessageWriter usedRechargeWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.HackerAbilityUses, Hazel.SendOption.Reliable, -1);
+                usedRechargeWriter.Write(2);
+                AmongUsClient.Instance.FinishRpcImmediately(usedRechargeWriter);
+                RPCProcedure.hackerAbilityUses(2);
+            }
         }
-
-        static void sheriffSetTarget() {
-            if (Sheriff.sheriff == null || Sheriff.sheriff != PlayerControl.LocalPlayer) return;
-            Sheriff.currentTarget = setTarget();
-            setPlayerOutline(Sheriff.currentTarget, Sheriff.color);
-        }
-
         static void sleuthSetTarget() {
             if (Sleuth.sleuth == null || Sleuth.sleuth != PlayerControl.LocalPlayer) return;
             Sleuth.currentTarget = setTarget();
             if (!Sleuth.usedLocate) setPlayerOutline(Sleuth.currentTarget, Sleuth.color);
         }
-
-        static void detectiveUpdateFootPrints() {
-            if (Detective.detective == null || Detective.detective != PlayerControl.LocalPlayer) return;
-
-            Detective.timer -= Time.fixedDeltaTime;
-            if (Detective.timer <= 0f) {
-                Detective.timer = Detective.footprintIntervall;
-                foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                    if (player != null && player != PlayerControl.LocalPlayer && !player.Data.IsDead && !player.inVent && !PlayerControl.LocalPlayer.Data.IsDead) {
-                        new Footprint(Detective.footprintDuration, Detective.anonymousFootprints, player);
-                    }
-                }
-            }
-        }
-
-        static void demonSetTarget() {
-            if (Demon.demon == null || Demon.demon != PlayerControl.LocalPlayer) return;
-
-            PlayerControl target = null;
-            target = setTarget(true, true);
-
-            bool targetNearNun = false;
-            if (target != null) {
-                foreach (Nun nun in Nun.nuns) {
-                    if (Vector2.Distance(nun.nun.transform.position, target.transform.position) <= 1.91f) {
-                        targetNearNun = true;
-                    }
-                }
-            }
-            Demon.targetNearNun = targetNearNun;
-            Demon.currentTarget = target;
-            setPlayerOutline(Demon.currentTarget, Demon.color);
-        }
-
-        static void renegadeSetTarget() {
-            if (Renegade.renegade == null || Renegade.renegade != PlayerControl.LocalPlayer) return;
-            var untargetablePlayers = new List<PlayerControl>();
-            if (Minion.minion != null) untargetablePlayers.Add(Minion.minion);
-            Renegade.currentTarget = setTarget(untargetablePlayers: untargetablePlayers);
-            setPlayerOutline(Renegade.currentTarget, Palette.ImpostorRed);
-        }
-
-        static void minionSetTarget() {
-            if (Minion.minion == null || Minion.minion != PlayerControl.LocalPlayer) return;
-            var untargetablePlayers = new List<PlayerControl>();
-            if (Renegade.renegade != null) untargetablePlayers.Add(Renegade.renegade);
-            Minion.currentTarget = setTarget(untargetablePlayers: untargetablePlayers);
-            setPlayerOutline(Minion.currentTarget, Palette.ImpostorRed);
-        }
-
-        static void trapperSetTarget() {
-            if (Trapper.trapper == null || Trapper.trapper != PlayerControl.LocalPlayer) return;
-            Trapper.currentTarget = setTarget();
-            setPlayerOutline(Trapper.currentTarget, Trapper.color);
-        }
-        static void ventColorUpdate() {
-            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor && ShipStatus.Instance?.AllVents != null) {
-                foreach (Vent vent in ShipStatus.Instance.AllVents) {
-                    try {
-                        if (vent?.myRend?.material != null) {
-                            if (Renegade.renegade != null && Renegade.renegade.inVent || Minion.minion != null && Minion.minion.inVent) {
-                                vent.myRend.material.SetFloat("_Outline", 1f);
-                                vent.myRend.material.SetColor("_OutlineColor", Renegade.color);
-                            }
-                            else if (vent.myRend.material.GetColor("_AddColor") != Color.red) {
-                                vent.myRend.material.SetFloat("_Outline", 0);
-                            }
-                        }
-                    }
-                    catch { }
-                }
-            }
-        }
-
-        static void impostorSetTarget() {
-            if (!PlayerControl.LocalPlayer.Data.Role.IsImpostor || Archer.archer != null && PlayerControl.LocalPlayer == Archer.archer || Demon.demon != null && PlayerControl.LocalPlayer == Demon.demon || !PlayerControl.LocalPlayer.CanMove || PlayerControl.LocalPlayer.Data.IsDead || howmanygamemodesareon == 1) { // !isImpostor || !canMove || isDead
-                HudManager.Instance.KillButton.SetTarget(null);
-                return;
-            }
-
-            PlayerControl target = null;
-            target = setTarget(true, true);
-
-            HudManager.Instance.KillButton.SetTarget(target); 
-        }
-
-        static void manipulatorSetTarget() {
-            if (Manipulator.manipulator == null || Manipulator.manipulator != PlayerControl.LocalPlayer) return;
-            if (Manipulator.manipulatedVictim != null && (Manipulator.manipulatedVictim.Data.Disconnected || Manipulator.manipulatedVictim.Data.IsDead)) {
-                // If the manipulated victim is disconnected or dead reset the manipulate so a new manipulate can be applied
-                Manipulator.resetManipulate();
-            }
-            if (Manipulator.manipulatedVictim == null) {
-                Manipulator.currentTarget = setTarget();
-                setPlayerOutline(Manipulator.currentTarget, Manipulator.color);
-            }
-            else {
-                Manipulator.manipulatedVictimTarget = setTarget(targetingPlayer: Manipulator.manipulatedVictim);
-                setPlayerOutline(Manipulator.manipulatedVictimTarget, Manipulator.color);
-            }
-        }
-
         static void sleuthUpdate() {
             // Handle player locate
             if (Sleuth.arrow?.arrow != null) {
-                if (Sleuth.sleuth == null || PlayerControl.LocalPlayer != Sleuth.sleuth || Challenger.isDueling || isHappeningAnonymousComms) {
+                if (Sleuth.sleuth == null || PlayerControl.LocalPlayer != Sleuth.sleuth || Challenger.isDueling || Seeker.isMinigaming || isHappeningAnonymousComms) {
                     Sleuth.arrow.arrow.SetActive(false);
                     return;
                 }
@@ -298,7 +465,8 @@ namespace LasMonjas.Patches {
                         Sleuth.arrow.Update(position);
                         Sleuth.arrow.arrow.SetActive(locatedOnMap);
                         Sleuth.timeUntilUpdate = Sleuth.updateIntervall;
-                    } else {
+                    }
+                    else {
                         Sleuth.arrow.Update();
                     }
                 }
@@ -321,88 +489,20 @@ namespace LasMonjas.Patches {
                     if (Sleuth.localArrows[index] != null) Sleuth.localArrows[index].Update(position);
                     index++;
                 }
-            } else if (Sleuth.localArrows.Count > 0) { 
+            }
+            else if (Sleuth.localArrows.Count > 0) {
                 foreach (Arrow arrow in Sleuth.localArrows) UnityEngine.Object.Destroy(arrow.arrow);
                 Sleuth.localArrows = new List<Arrow>();
             }
         }
-
-        public static void welderSetTarget() {
-            if (Welder.welder == null || Welder.welder != PlayerControl.LocalPlayer || ShipStatus.Instance == null || ShipStatus.Instance.AllVents == null) return;
-
-            Vent target = null;
-            Vector2 truePosition = PlayerControl.LocalPlayer.GetTruePosition();
-            float closestDistance = float.MaxValue;
-            for (int i = 0; i < ShipStatus.Instance.AllVents.Length; i++) {
-                Vent vent = ShipStatus.Instance.AllVents[i];
-                if (vent.gameObject.name.StartsWith("Hat_") || vent.gameObject.name.StartsWith("SealedVent_") || vent.gameObject.name.StartsWith("FutureSealedVent_")) continue;
-                float distance = Vector2.Distance(vent.transform.position, truePosition);
-                if (distance <= vent.UsableDistance && distance < closestDistance) {
-                    closestDistance = distance;
-                    target = vent;
-                }
-            }
-            Welder.ventTarget = target;
-        }      
-
-        public static void pyromaniacSetTarget() {
-            if (Pyromaniac.pyromaniac == null || Pyromaniac.pyromaniac != PlayerControl.LocalPlayer) return;
-            List<PlayerControl> untargetables;
-            if (Pyromaniac.sprayTarget != null)
-                untargetables = PlayerControl.AllPlayerControls.ToArray().Where(x => x.PlayerId != Pyromaniac.sprayTarget.PlayerId).ToList();
-            else
-                untargetables = Pyromaniac.sprayedPlayers;
-            Pyromaniac.currentTarget = setTarget(untargetablePlayers: untargetables);
-            if (Pyromaniac.currentTarget != null) setPlayerOutline(Pyromaniac.currentTarget, Pyromaniac.color);
-        }
-
-        public static void poisonerSetTarget() {
-            if (Poisoner.poisoner == null || Poisoner.poisoner != PlayerControl.LocalPlayer) return;
-            List<PlayerControl> untargetables;
-            if (Poisoner.poisonTarget != null)
-                untargetables = PlayerControl.AllPlayerControls.ToArray().Where(x => x.PlayerId != Poisoner.poisonTarget.PlayerId).ToList();
-            else
-                untargetables = Poisoner.poisonedPlayers;
-            Poisoner.currentTarget = setTarget(untargetablePlayers: untargetables);
-            if (Poisoner.currentTarget != null) setPlayerOutline(Poisoner.currentTarget, Poisoner.color);
-        }
-        
-        static void bountyHunterSetTarget() {
-            if (BountyHunter.bountyhunter == null || BountyHunter.bountyhunter != PlayerControl.LocalPlayer) return;
-            BountyHunter.currentTarget = setTarget();
-            setPlayerOutline(BountyHunter.currentTarget, BountyHunter.color);
-        }
-
-        static void yinyangerSetTarget() {
-            if (Yinyanger.yinyanger == null || Yinyanger.yinyanger != PlayerControl.LocalPlayer) return;
-            Yinyanger.currentTarget = setTarget();
-            setPlayerOutline(Yinyanger.currentTarget, Yinyanger.color);
-        }
-
-        static void challengerSetTarget() {
-            if (Challenger.challenger == null || Challenger.challenger != PlayerControl.LocalPlayer) return;
-            Challenger.currentTarget = setTarget();
-            setPlayerOutline(Challenger.currentTarget, Challenger.color);
-        }
-        static void ninjaSetTarget() {
-            if (Ninja.ninja == null || Ninja.ninja != PlayerControl.LocalPlayer) return;
-            Ninja.currentTarget = setTarget();
-            setPlayerOutline(Ninja.currentTarget, Ninja.color);
-        }
-        static void berserkerSetTarget() {
-            if (Berserker.berserker == null || Berserker.berserker != PlayerControl.LocalPlayer) return;
-            Berserker.currentTarget = setTarget();
-            setPlayerOutline(Berserker.currentTarget, Berserker.color);
-        }
-
         static void finkUpdate() {
 
             if (Fink.fink == null || Fink.fink.Data.IsDead) return;
 
             if (Fink.localArrows == null) return;
-            
+
             foreach (Arrow arrow in Fink.localArrows) arrow.arrow.SetActive(false);
-            
+
             var (playerCompleted, playerTotal) = TasksHandler.taskInfo(Fink.fink.Data);
             int numberOfTasks = playerTotal - playerCompleted;
 
@@ -413,7 +513,7 @@ namespace LasMonjas.Patches {
                     Fink.localArrows[0].Update(Fink.fink.transform.position);
                 }
             }
-            else if (PlayerControl.LocalPlayer == Fink.fink && numberOfTasks == 0 && !Challenger.isDueling && !isHappeningAnonymousComms) {
+            else if (PlayerControl.LocalPlayer == Fink.fink && numberOfTasks == 0 && !Challenger.isDueling && !Seeker.isMinigaming && !isHappeningAnonymousComms) {
                 int arrowIndex = 0;
                 foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
                     bool arrowForImp = p.Data.Role.IsImpostor;
@@ -433,10 +533,26 @@ namespace LasMonjas.Patches {
                 }
             }
         }
+        public static void welderSetTarget() {
+            if (Welder.welder == null || Welder.welder != PlayerControl.LocalPlayer || ShipStatus.Instance == null || ShipStatus.Instance.AllVents == null) return;
 
-        static void spiritualistUpdate() {
+            Vent target = null;
+            Vector2 truePosition = PlayerControl.LocalPlayer.GetTruePosition();
+            float closestDistance = float.MaxValue;
+            for (int i = 0; i < ShipStatus.Instance.AllVents.Length; i++) {
+                Vent vent = ShipStatus.Instance.AllVents[i];
+                if (vent.gameObject.name.StartsWith("Hat_") || vent.gameObject.name.StartsWith("SealedVent_") || vent.gameObject.name.StartsWith("FutureSealedVent_")) continue;
+                float distance = Vector2.Distance(vent.transform.position, truePosition);
+                if (distance <= vent.UsableDistance && distance < closestDistance) {
+                    closestDistance = distance;
+                    target = vent;
+                }
+            }
+            Welder.ventTarget = target;
+        }
+        static void spiritualistAndNecromancerUpdate() {
             if (Spiritualist.revivedPlayer != null) {
-                if (!Spiritualist.revivedPlayer.Data.IsDead && (PlayerControl.LocalPlayer.Data.Role.IsImpostor || PlayerControl.LocalPlayer == Renegade.renegade || PlayerControl.LocalPlayer == Minion.minion || PlayerControl.LocalPlayer == BountyHunter.bountyhunter || PlayerControl.LocalPlayer == Trapper.trapper || PlayerControl.LocalPlayer == Yinyanger.yinyanger || PlayerControl.LocalPlayer == Challenger.challenger || PlayerControl.LocalPlayer == Ninja.ninja || PlayerControl.LocalPlayer == Berserker.berserker)) {
+                if (!Spiritualist.revivedPlayer.Data.IsDead && (PlayerControl.LocalPlayer.Data.Role.IsImpostor || PlayerControl.LocalPlayer == Renegade.renegade || PlayerControl.LocalPlayer == Minion.minion || PlayerControl.LocalPlayer == BountyHunter.bountyhunter || PlayerControl.LocalPlayer == Trapper.trapper || PlayerControl.LocalPlayer == Yinyanger.yinyanger || PlayerControl.LocalPlayer == Challenger.challenger || PlayerControl.LocalPlayer == Ninja.ninja || PlayerControl.LocalPlayer == Berserker.berserker || PlayerControl.LocalPlayer == Yandere.yandere || PlayerControl.LocalPlayer == Stranded.stranded || PlayerControl.LocalPlayer == Monja.monja)) {
                     if (Spiritualist.localSpiritArrows.Count == 0) Spiritualist.localSpiritArrows.Add(new Arrow(Spiritualist.color));
                     if (Spiritualist.localSpiritArrows.Count != 0 && Spiritualist.localSpiritArrows[0] != null) {
                         Spiritualist.localSpiritArrows[0].arrow.SetActive(true);
@@ -449,168 +565,8 @@ namespace LasMonjas.Patches {
                     }
                 }
             }
-        }
-
-        static void theChosenOneUpdate() {
-            if (Modifiers.theChosenOne == null || Modifiers.theChosenOne != PlayerControl.LocalPlayer) return;
-
-            // TheChosenOne report
-            if (Modifiers.theChosenOne.Data.IsDead && !Modifiers.chosenOneReported) {
-                Modifiers.chosenOneReportDelay -= Time.fixedDeltaTime;
-                DeadPlayer deadPlayer = deadPlayers?.Where(x => x.player?.PlayerId == Modifiers.theChosenOne.PlayerId)?.FirstOrDefault();
-                if (deadPlayer.killerIfExisting != null && Modifiers.chosenOneReportDelay <= 0f) {
-                    // Bomberman bomb reset when report the chosen one
-                    if (Bomberman.bomberman != null && Bomberman.activeBomb == true) {
-                        MessageWriter bombwriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.FixBomb, Hazel.SendOption.Reliable, -1);
-                        AmongUsClient.Instance.FinishRpcImmediately(bombwriter);
-                        RPCProcedure.fixBomb();
-                    }
-                    
-                    Helpers.handleDemonBiteOnBodyReport(); // Manually call Demon handling, since the CmdReportDeadBody Prefix won't be called
-                    RPCProcedure.uncheckedCmdReportDeadBody(deadPlayer.killerIfExisting.PlayerId, Modifiers.theChosenOne.PlayerId);
-
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.UncheckedCmdReportDeadBody, Hazel.SendOption.Reliable, -1);
-                    writer.Write(deadPlayer.killerIfExisting.PlayerId);
-                    writer.Write(Modifiers.theChosenOne.PlayerId);
-                    AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    Modifiers.chosenOneReported = true;
-
-                    MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
-                    writermusic.Write(1);
-                    AmongUsClient.Instance.FinishRpcImmediately(writermusic);
-                    RPCProcedure.changeMusic(1);
-                }
-            }
-        }
-
-        static void performerUpdate() {
-            if (Modifiers.performer != null) {
-                if (Modifiers.performerDuration > 0 && Modifiers.performer.Data.IsDead && !Modifiers.performerReported && (PlayerControl.LocalPlayer != Modifiers.performer && PlayerControl.LocalPlayer != Spiritualist.spiritualist && PlayerControl.LocalPlayer != TimeTraveler.timeTraveler)) {
-                    if (Modifiers.performerLocalPerformerArrows.Count == 0) Modifiers.performerLocalPerformerArrows.Add(new Arrow(Modifiers.color));
-                    if (Modifiers.performerLocalPerformerArrows.Count != 0 && Modifiers.performerLocalPerformerArrows[0] != null) {
-                        Modifiers.performerLocalPerformerArrows[0].arrow.SetActive(true);
-                        var bodyPerformer = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == Modifiers.performer.PlayerId);
-                        Modifiers.performerLocalPerformerArrows[0].Update(bodyPerformer.transform.position);
-                    }
-                }
-                else {
-                    if (Modifiers.performerLocalPerformerArrows.Count != 0) {
-                        Modifiers.performerLocalPerformerArrows[0].arrow.SetActive(false);
-
-                    }
-                }
-
-                // Upon performer duration, stop the music and play bomb music if there's a bomb or normal task music
-                if (Modifiers.performer.Data.IsDead && Modifiers.performerDuration <= 0 && !Modifiers.performerMusicStop && !Modifiers.performerReported && (PlayerControl.LocalPlayer != Spiritualist.spiritualist && PlayerControl.LocalPlayer != TimeTraveler.timeTraveler)) {
-                    Modifiers.performerMusicStop = true;
-                    SoundManager.Instance.StopSound(CustomMain.customAssets.performerMusic);
-                    if (Bomberman.activeBomb) {
-                        SoundManager.Instance.PlaySound(CustomMain.customAssets.bombermanBombMusic, true, 75f);
-                    }
-                    else {
-                        RPCProcedure.changeMusic(2);
-                    }
-                }
-            }
-        }
-
-        public static void forensicSetTarget() {
-            if (Forensic.forensic == null || Forensic.forensic != PlayerControl.LocalPlayer || Forensic.forensic.Data.IsDead || Forensic.deadBodies == null || ShipStatus.Instance?.AllVents == null) return;
-
-            DeadPlayer target = null;
-            Vector2 truePosition = PlayerControl.LocalPlayer.GetTruePosition();
-            float closestDistance = float.MaxValue;
-            float usableDistance = ShipStatus.Instance.AllVents.FirstOrDefault().UsableDistance;
-            foreach ((DeadPlayer dp, Vector3 ps) in Forensic.deadBodies) {
-                float distance = Vector2.Distance(ps, truePosition);
-                if (distance <= usableDistance && distance < closestDistance) {
-                    closestDistance = distance;
-                    target = dp;
-                }
-            }
-            Forensic.target = target;
-        }
-
-        static void medusaSetTarget() {
-            if (Medusa.medusa == null || Medusa.medusa != PlayerControl.LocalPlayer) return;
-            PlayerControl target = null;
-
-            target = setTarget(true, false);
-            Medusa.currentTarget = target;
-            setPlayerOutline(Medusa.currentTarget, Medusa.color);
-        }
-
-        static void hunterSetTarget() {
-            if (Hunter.hunter == null || Hunter.hunter != PlayerControl.LocalPlayer) return;
-            Hunter.currentTarget = setTarget();
-            if (!Hunter.usedHunted) setPlayerOutline(Hunter.currentTarget, Hunter.color);
-        }
-        
-        static void mimicAndPainterUpdate() {
-            float oldPaintTimer = Painter.painterTimer;
-            float oldMimicTimer = Mimic.transformTimer;
-            Painter.painterTimer = Mathf.Max(0f, Painter.painterTimer - Time.fixedDeltaTime);
-            Mimic.transformTimer = Mathf.Max(0f, Mimic.transformTimer - Time.fixedDeltaTime);
-
-
-            // Paint reset and set Mimic look if necessary
-            if (oldPaintTimer > 0f && Painter.painterTimer <= 0f) {
-                Painter.resetPaint();
-                if (Mimic.transformTimer > 0f && Mimic.mimic != null && Mimic.transformTarget != null) {
-                    PlayerControl target = Mimic.transformTarget;
-                    Mimic.mimic.setLook(target.Data.PlayerName, target.Data.DefaultOutfit.ColorId, target.Data.DefaultOutfit.HatId, target.Data.DefaultOutfit.VisorId, target.Data.DefaultOutfit.SkinId, target.Data.DefaultOutfit.PetId);
-                }
-            }
-
-            // Mimic reset (only if paint is inactive)
-            if (Painter.painterTimer <= 0f && oldMimicTimer > 0f && Mimic.transformTimer <= 0f && Mimic.mimic != null)
-                Mimic.resetMimic();
-        }
-
-        public static void hackerUpdate() {
-            if (Hacker.hacker == null || PlayerControl.LocalPlayer != Hacker.hacker || Hacker.hacker.Data.IsDead) return;
-            var (playerCompleted, _) = TasksHandler.taskInfo(Hacker.hacker.Data);
-            if (playerCompleted == Hacker.rechargedTasks) {
-                MessageWriter usedRechargeWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.HackerAbilityUses, Hazel.SendOption.Reliable, -1);
-                usedRechargeWriter.Write(2);
-                AmongUsClient.Instance.FinishRpcImmediately(usedRechargeWriter);
-                RPCProcedure.hackerAbilityUses(2); 
-            }
-        }
-
-        static void jinxSetTarget() {
-            if (Jinx.jinx == null || Jinx.jinx != PlayerControl.LocalPlayer) return;
-            Jinx.target = setTarget();
-            setPlayerOutline(Jinx.target, Jinx.color);
-            if (Jinx.target != null && Jinx.jinxedList.Any(p => p.Data.PlayerId == Jinx.target.Data.PlayerId)) Jinx.target = null; // Remove target if already Jinxed and didn't trigger the jinx
-        }
-
-        static void sorcererSetTarget() {
-            if (Sorcerer.sorcerer == null || Sorcerer.sorcerer != PlayerControl.LocalPlayer) return;
-            List<PlayerControl> untargetables;
-            if (Sorcerer.spellTarget != null)
-                untargetables = PlayerControl.AllPlayerControls.ToArray().Where(x => x.PlayerId != Sorcerer.spellTarget.PlayerId).ToList(); // Don't switch the target from the the one you're currently casting a spell on
-            else {
-                untargetables = Sorcerer.spelledPlayers;
-            }
-            Sorcerer.currentTarget = setTarget(onlyCrewmates: false, untargetablePlayers: untargetables);
-            setPlayerOutline(Sorcerer.currentTarget, Sorcerer.color);
-        }
-
-        public static void vigilantUpdate() {
-            if (Vigilant.vigilant == null || PlayerControl.LocalPlayer != Vigilant.vigilant || Vigilant.vigilant.Data.IsDead) return;
-            var (playerCompleted, _) = TasksHandler.taskInfo(Vigilant.vigilant.Data);
-            if (playerCompleted == Vigilant.rechargedTasks) {
-                MessageWriter usedRechargeWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.VigilantAbilityUses, Hazel.SendOption.Reliable, -1);
-                usedRechargeWriter.Write(2);
-                AmongUsClient.Instance.FinishRpcImmediately(usedRechargeWriter);
-                RPCProcedure.vigilantAbilityUses(2); 
-            }
-        }
-
-        static void necromancerUpdate() {
             if (Necromancer.revivedPlayer != null) {
-                if (!Necromancer.revivedPlayer.Data.IsDead && (PlayerControl.LocalPlayer.Data.Role.IsImpostor || PlayerControl.LocalPlayer == Renegade.renegade || PlayerControl.LocalPlayer == Minion.minion || PlayerControl.LocalPlayer == BountyHunter.bountyhunter || PlayerControl.LocalPlayer == Trapper.trapper || PlayerControl.LocalPlayer == Yinyanger.yinyanger || PlayerControl.LocalPlayer == Challenger.challenger || PlayerControl.LocalPlayer == Ninja.ninja || PlayerControl.LocalPlayer == Berserker.berserker)) {
+                if (!Necromancer.revivedPlayer.Data.IsDead && (PlayerControl.LocalPlayer.Data.Role.IsImpostor || PlayerControl.LocalPlayer == Renegade.renegade || PlayerControl.LocalPlayer == Minion.minion || PlayerControl.LocalPlayer == BountyHunter.bountyhunter || PlayerControl.LocalPlayer == Trapper.trapper || PlayerControl.LocalPlayer == Yinyanger.yinyanger || PlayerControl.LocalPlayer == Challenger.challenger || PlayerControl.LocalPlayer == Ninja.ninja || PlayerControl.LocalPlayer == Berserker.berserker || PlayerControl.LocalPlayer == Yandere.yandere || PlayerControl.LocalPlayer == Stranded.stranded || PlayerControl.LocalPlayer == Monja.monja)) {
                     if (Necromancer.localNecromancerArrows.Count == 0) Necromancer.localNecromancerArrows.Add(new Arrow(Color.green));
                     if (Necromancer.localNecromancerArrows.Count != 0 && Necromancer.localNecromancerArrows[0] != null) {
                         Necromancer.localNecromancerArrows[0].arrow.SetActive(true);
@@ -624,7 +580,30 @@ namespace LasMonjas.Patches {
                 }
             }
         }
-        
+        public static void vigilantUpdate() {
+            if (Vigilant.vigilant == null || PlayerControl.LocalPlayer != Vigilant.vigilant || Vigilant.vigilant.Data.IsDead) return;
+            var (playerCompleted, _) = TasksHandler.taskInfo(Vigilant.vigilant.Data);
+            if (playerCompleted == Vigilant.rechargedTasks) {
+                MessageWriter usedRechargeWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.VigilantAbilityUses, Hazel.SendOption.Reliable, -1);
+                usedRechargeWriter.Write(2);
+                AmongUsClient.Instance.FinishRpcImmediately(usedRechargeWriter);
+                RPCProcedure.vigilantAbilityUses(2);
+            }
+        }
+        static void hunterSetTarget() {
+            if (Hunter.hunter == null || Hunter.hunter != PlayerControl.LocalPlayer) return;
+            Hunter.currentTarget = setTarget();
+            if (!Hunter.usedHunted) setPlayerOutline(Hunter.currentTarget, Hunter.color);
+        }
+        static void jinxSetTarget() {
+            if (Jinx.jinx == null || Jinx.jinx != PlayerControl.LocalPlayer) return;
+            Jinx.target = setTarget();
+            setPlayerOutline(Jinx.target, Jinx.color);
+            if (Jinx.target != null && Jinx.jinxedList.Any(p => p.Data.PlayerId == Jinx.target.Data.PlayerId)) Jinx.target = null; // Remove target if already Jinxed and didn't trigger the jinx
+        }
+        static void necromancerUpdate() {
+            
+        }        
         static void shyUpdate() {
 
             if (Shy.shy == null)
@@ -672,49 +651,92 @@ namespace LasMonjas.Patches {
                 }
             }
         }
+        static void jailerSetTarget() {
+            if (Jailer.jailer == null || Jailer.jailer != PlayerControl.LocalPlayer) return;
+            Jailer.currentTarget = setTarget();
+            if (!Jailer.usedJail) setPlayerOutline(Jailer.currentTarget, Jailer.color);
+        }        
+        static void theChosenOneUpdate() {
+            if (Modifiers.theChosenOne == null || Modifiers.theChosenOne != PlayerControl.LocalPlayer) return;
 
-        static void puppeteerSetTarget() {
-            if (Puppeteer.puppeteer == null || Puppeteer.puppeteer != PlayerControl.LocalPlayer) return;
-            Puppeteer.currentTarget = setTarget();
-            setPlayerOutline(Puppeteer.currentTarget, Puppeteer.color);
-        }
+            // TheChosenOne report
+            if (Modifiers.theChosenOne.Data.IsDead && !Modifiers.chosenOneReported) {
+                Modifiers.chosenOneReportDelay -= Time.fixedDeltaTime;
+                DeadPlayer deadPlayer = deadPlayers?.Where(x => x.player?.PlayerId == Modifiers.theChosenOne.PlayerId)?.FirstOrDefault();
+                if (deadPlayer.killerIfExisting != null && Modifiers.chosenOneReportDelay <= 0f) {
+                    Modifiers.chosenOneReported = true;
 
-        // Show player roles on meeting for dead players
-        public static void ghostsSeePlayerRoles() {
-            if (howmanygamemodesareon != 1) {
-                foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
-                    if (p == PlayerControl.LocalPlayer || PlayerControl.LocalPlayer.Data.IsDead) {
-
-                        PlayerVoteArea playerVoteArea = MeetingHud.Instance?.playerStates?.FirstOrDefault(x => x.TargetPlayerId == p.PlayerId);
-                        Transform meetingInfoTransform = playerVoteArea != null ? playerVoteArea.NameText.transform.parent.FindChild("Info") : null;
-                        TMPro.TextMeshPro meetingInfo = meetingInfoTransform != null ? meetingInfoTransform.GetComponent<TMPro.TextMeshPro>() : null;
-                        if (meetingInfo == null && playerVoteArea != null) {
-                            meetingInfo = UnityEngine.Object.Instantiate(playerVoteArea.NameText, playerVoteArea.NameText.transform.parent);
-                            meetingInfo.transform.localPosition += Vector3.down * 0.10f;
-                            meetingInfo.fontSize *= 0.60f;
-                            meetingInfo.gameObject.name = "Info";
+                    if (!Monja.awakened) {
+                        // Bomberman bomb reset when report the chosen one
+                        if (Bomberman.bomberman != null && Bomberman.activeBomb == true) {
+                            MessageWriter bombwriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.FixBomb, Hazel.SendOption.Reliable, -1);
+                            AmongUsClient.Instance.FinishRpcImmediately(bombwriter);
+                            RPCProcedure.fixBomb();
                         }
 
-                        // Set player name higher to align in middle
-                        if (meetingInfo != null && playerVoteArea != null) {
-                            var playerName = playerVoteArea.NameText;
-                            playerName.transform.localPosition = new Vector3(0.3384f, (0.0311f + 0.0683f), -0.1f);
-                        }
+                        Helpers.handleDemonBiteOnBodyReport(); // Manually call Demon handling, since the CmdReportDeadBody Prefix won't be called
+                        RPCProcedure.uncheckedCmdReportDeadBody(deadPlayer.killerIfExisting.PlayerId, Modifiers.theChosenOne.PlayerId);
 
-                        string roleNames = RoleInfo.GetRolesString(p, true);
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.UncheckedCmdReportDeadBody, Hazel.SendOption.Reliable, -1);
+                        writer.Write(deadPlayer.killerIfExisting.PlayerId);
+                        writer.Write(Modifiers.theChosenOne.PlayerId);
+                        AmongUsClient.Instance.FinishRpcImmediately(writer);
 
-                        string playerInfoText = "";
-                        string meetingInfoText = "";
-                        if (MapOptions.ghostsSeeRoles && PlayerControl.LocalPlayer.Data.IsDead) {
-                            playerInfoText = $"{roleNames}";
-                            meetingInfoText = playerInfoText;
-                        }
-
-                        if (meetingInfo != null) meetingInfo.text = MeetingHud.Instance.state == MeetingHud.VoteStates.Results ? "" : meetingInfoText;
+                        MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
+                        writermusic.Write(1);
+                        AmongUsClient.Instance.FinishRpcImmediately(writermusic);
+                        RPCProcedure.changeMusic(1);
                     }
                 }
             }
         }
+        static void performerUpdate() {
+            if (Modifiers.performer != null) {
+                if (Modifiers.performerDuration > 0 && Modifiers.performer.Data.IsDead && !Modifiers.performerReported && (PlayerControl.LocalPlayer != Modifiers.performer && PlayerControl.LocalPlayer != Spiritualist.spiritualist && PlayerControl.LocalPlayer != TimeTraveler.timeTraveler)) {
+                    if (Modifiers.performerLocalPerformerArrows.Count == 0) Modifiers.performerLocalPerformerArrows.Add(new Arrow(Modifiers.color));
+                    if (Modifiers.performerLocalPerformerArrows.Count != 0 && Modifiers.performerLocalPerformerArrows[0] != null) {
+                        Modifiers.performerLocalPerformerArrows[0].arrow.SetActive(true);
+                        var bodyPerformer = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == Modifiers.performer.PlayerId);
+                        Modifiers.performerLocalPerformerArrows[0].Update(bodyPerformer.transform.position);
+                    }
+                }
+                else {
+                    if (Modifiers.performerLocalPerformerArrows.Count != 0) {
+                        Modifiers.performerLocalPerformerArrows[0].arrow.SetActive(false);
+
+                    }
+                }
+
+                // Upon performer duration, stop the music and play bomb music if there's a bomb or normal task music
+                if (Modifiers.performer.Data.IsDead && Modifiers.performerDuration <= 0 && !Modifiers.performerMusicStop && !Modifiers.performerReported && (PlayerControl.LocalPlayer != Spiritualist.spiritualist && PlayerControl.LocalPlayer != TimeTraveler.timeTraveler)) {
+                    Modifiers.performerMusicStop = true;
+                    SoundManager.Instance.StopSound(CustomMain.customAssets.performerMusic);
+                    if (Bomberman.activeBomb) {
+                        SoundManager.Instance.PlaySound(CustomMain.customAssets.bombermanBombMusic, true, 75f);
+                    }
+                    else {
+                        RPCProcedure.changeMusic(2);
+                    }
+                }
+            }
+        }
+        static void paintballTrail() {
+            if (!Modifiers.active.Any()) return;
+            foreach (KeyValuePair<byte, float> entry in new Dictionary<byte, float>(Modifiers.active)) {
+                PlayerControl player = Helpers.playerById(entry.Key);
+                PlayerControl killerPlayer = Helpers.playerById(Modifiers.paintballKillerMap[player.PlayerId]);
+
+                Modifiers.active[entry.Key] = entry.Value - Time.fixedDeltaTime;
+                if (entry.Value <= 0 || player.Data.IsDead) {
+                    Modifiers.active.Remove(entry.Key);
+                    continue;  // Stop creating paint if timer reaches 0, the killer died or is in vent
+                }
+                // Don't create paint inside vents
+                if (!player.inVent) {
+                    new PaintballTrail(player, killerPlayer);
+                }
+            }
+        }              
         
         static void captureTheFlagSetTarget() {
 
@@ -1326,17 +1348,8 @@ namespace LasMonjas.Patches {
             }
 
             if (ZombieLaboratory.nursePlayer != null) {
-                untargetableSurvivorsPlayers.Add(ZombieLaboratory.nursePlayer);
-                if (ZombieLaboratory.whoCanZombiesKill == 1) {
-                    if (ZombieLaboratory.nursePlayerIsReviving) {
-                        untargetableZombiePlayers.Add(ZombieLaboratory.nursePlayer);
-                    }
-                    else {
-                        untargetableZombiePlayers.Remove(ZombieLaboratory.nursePlayer);
-                    }
-                } else {
-                    untargetableZombiePlayers.Add(ZombieLaboratory.nursePlayer);
-                }              
+                untargetableSurvivorsPlayers.Add(ZombieLaboratory.nursePlayer);                
+                untargetableZombiePlayers.Add(ZombieLaboratory.nursePlayer);                            
             }
 
             // Prevent killing reviving players
@@ -1633,50 +1646,20 @@ namespace LasMonjas.Patches {
 
                 // Show roles for dead players on meeting
                 ghostsSeePlayerRoles();
+
+                // Ventcolor
+                ventColorUpdate();
                 
-                // TimeTraveler
-                bendTimeUpdate();
+                // Impostor
+                impostorSetTarget();
 
-                // Mimic
+                // Mimic and Painter
                 mimicSetTarget();
-
-                // Squire
-                squireSetTarget();
-
-                // RoleThief
-                roleThiefSetTarget();
-
-                // FortuneTeller
-                fortuneTellerSetTarget();
-
-                // Sheriff
-                sheriffSetTarget();
-
-                // Detective
-                detectiveUpdateFootPrints();
-
-                // Sleuth
-                sleuthSetTarget();
-                sleuthUpdate();
+                mimicAndPainterUpdate();
 
                 // Demon
                 demonSetTarget();
                 Nun.UpdateAll();
-
-                // Ventcolor
-                ventColorUpdate();
-
-                // Renegade
-                renegadeSetTarget();
-
-                // Minion
-                minionSetTarget();
-
-                // Puppeteer
-                puppeteerSetTarget();
-
-                // Impostor
-                impostorSetTarget();
 
                 // Manipulator
                 manipulatorSetTarget();
@@ -1684,71 +1667,117 @@ namespace LasMonjas.Patches {
                 // Sorcerer
                 sorcererSetTarget();
 
-                // Welder
-                welderSetTarget();
+                // Medusa
+                medusaSetTarget();
 
-                // Vigilant
-                vigilantUpdate();
+                // Librarian
+                librarianSetTarget();
+
+                // Renegade
+                renegadeSetTarget();
+
+                // Minion
+                minionSetTarget();
+
+                // BountyHunter
+                bountyHunterSetTarget();
+
+                // Trapper
+                trapperSetTarget();
+                
+                // Yinyanger
+                yinyangerSetTarget();
+
+                // Challenger
+                challengerSetTarget();
+                
+                // Ninja
+                ninjaSetTarget();
+
+                // Berserker
+                berserkerSetTarget();
+
+                // Yandere
+                yandereSetTarget();
+
+                // Stranded
+                strandedSetTarget();
+
+                // Monja
+                monjaSetTarget();
+
+                // RoleThief
+                roleThiefSetTarget();
 
                 // Pyromaniac
                 pyromaniacSetTarget();
 
                 // Poisoner
                 poisonerSetTarget();
-                
-                // Fink
-                finkUpdate();
 
-                // BountyHunter
-                bountyHunterSetTarget();
+                // Puppeteer
+                puppeteerSetTarget();
 
-                // Yinyanger
-                yinyangerSetTarget();
+                // Seeker
+                seekerSetTarget();
 
-                // Ninja
-                ninjaSetTarget();
+                // Sheriff
+                sheriffSetTarget();
 
-                // Berserker
-                berserkerSetTarget();
-                
-                // TheChosenOne
-                theChosenOneUpdate();
-
-                // Spiritualist Update
-                spiritualistUpdate();
-
-                // Trapper
-                trapperSetTarget();
-
-                // Challenger
-                challengerSetTarget();
-
-                // Performer Update
-                performerUpdate();
-
-                // Medusa
-                medusaSetTarget();
-                
-                // Hunter
-                hunterSetTarget();
-
-                // Mimic and Painter
-                mimicAndPainterUpdate();
+                // Detective
+                detectiveUpdateFootPrints();
 
                 // Forensic
                 forensicSetTarget();
 
-                // Jinx
-                jinxSetTarget();
+                // TimeTraveler
+                bendTimeUpdate();
+
+                // Squire
+                squireSetTarget();
+
+                // FortuneTeller
+                fortuneTellerSetTarget();
 
                 // Hacker
                 hackerUpdate();
 
+                // Sleuth
+                sleuthSetTarget();
+                sleuthUpdate();
+
+                // Fink
+                finkUpdate();       
+
+                // Welder
+                welderSetTarget();
+
+                // Spiritualist and Necromancer Update
+                spiritualistAndNecromancerUpdate();
+
+                // Vigilant
+                vigilantUpdate();
+
+                // Hunter
+                hunterSetTarget();
+
+                // Jinx
+                jinxSetTarget();
+
                 // Shy
                 shyUpdate();
 
-                // Necromancer
-                necromancerUpdate();
+                // Jailer
+                jailerSetTarget();
+
+                // TheChosenOne
+                theChosenOneUpdate();
+
+                // Performer Update
+                performerUpdate();
+                
+                // Paintball
+                paintballTrail();
                 
                 // Capture the flag update
                 captureTheFlagSetTarget();
@@ -1787,27 +1816,15 @@ namespace LasMonjas.Patches {
             }
 
             // Murder the bitten player before the meeting starts or reset the bitten player
-            Helpers.handleDemonBiteOnBodyReport();
-
+            Helpers.handleDemonBiteOnBodyReport();        
+            
             // Murder the Spiritualist if someone reports a body or call emergency while trying to revive another player
             if (Spiritualist.spiritualist != null && Spiritualist.isReviving && Spiritualist.canRevive) {
                 MessageWriter murderSpiritualist = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MurderSpiritualistIfReportWhileReviving, Hazel.SendOption.Reliable, -1);
                 AmongUsClient.Instance.FinishRpcImmediately(murderSpiritualist);
                 RPCProcedure.murderSpiritualistIfReportWhileReviving();
             }
-
-            // Chameleon reset when emergency call or report body
-            if (Chameleon.chameleon != null) {
-                Chameleon.resetChameleon();
-            }
-
-            // Challenger prevent duel if there's a meeting
-            if (Challenger.challenger != null) {
-                MessageWriter notifyCantDuel = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChallengerCantDuel, Hazel.SendOption.Reliable, -1);
-                AmongUsClient.Instance.FinishRpcImmediately(notifyCantDuel);
-                RPCProcedure.challengerCantDuel();
-            }
-
+            
             // Performer isreported
             if (Modifiers.performer != null && Modifiers.performer.Data.IsDead && !Modifiers.performerReported) {
                 MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PerformerIsReported, Hazel.SendOption.Reliable, -1);
@@ -1833,63 +1850,63 @@ namespace LasMonjas.Patches {
 
                     if (isForensicReport) {
                         if (deadPlayer.player == RoleThief.rolethief && deadPlayer.killerIfExisting.Data.PlayerName == RoleThief.rolethief.Data.PlayerName) {
-                            msg = $"Body Report (Role Thief): It appears to be a suicide! ({Math.Round(timeSinceDeath / 1000)} seconds ago)";
+                            msg = $"Body Report (Role Thief): {Language.playerControlTexts[0]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                         }
                         else if (deadPlayer.player == BountyHunter.bountyhunter && deadPlayer.killerIfExisting.Data.PlayerName == BountyHunter.bountyhunter.Data.PlayerName) {
-                            msg = $"Body Report (Bounty Hunter): It appears to be a suicide! ({Math.Round(timeSinceDeath / 1000)} seconds ago)";
+                            msg = $"Body Report (Bounty Hunter): {Language.playerControlTexts[0]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                         }
                         else if (deadPlayer.player == Modifiers.lover1 && deadPlayer.killerIfExisting.Data.PlayerName == Modifiers.lover1.Data.PlayerName || deadPlayer.player == Modifiers.lover2 && deadPlayer.killerIfExisting.Data.PlayerName == Modifiers.lover2.Data.PlayerName) {
-                            msg = $"Body Report (Lover): It appears to be a suicide! ({Math.Round(timeSinceDeath / 1000)} seconds ago)";
+                            msg = $"Body Report (Lover): {Language.playerControlTexts[0]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                         }
                         else if (deadPlayer.player == Sheriff.sheriff && deadPlayer.killerIfExisting.Data.PlayerName == Sheriff.sheriff.Data.PlayerName) {
-                            msg = $"Body Report (Sheriff): It appears to be a suicide! ({Math.Round(timeSinceDeath / 1000)} seconds ago)";
+                            msg = $"Body Report (Sheriff): {Language.playerControlTexts[0]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                         }
                         else if (timeSinceDeath < Forensic.reportNameDuration * 1000) {
-                            msg = $"Body Report: The killer appears to be {deadPlayer.killerIfExisting.Data.PlayerName}! ({Math.Round(timeSinceDeath / 1000)} seconds ago)";
+                            msg = $"Body Report: {Language.playerControlTexts[1]} {deadPlayer.killerIfExisting.Data.PlayerName}! ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                         }
                         else if (timeSinceDeath < Forensic.reportColorDuration * 1000) {
-                            var typeOfColor = Helpers.isLighterColor(deadPlayer.killerIfExisting.Data.DefaultOutfit.ColorId) ? "lighter (L)" : "darker (D)";
-                            msg = $"Body Report: The killer appears to have a {typeOfColor} color! ({Math.Round(timeSinceDeath / 1000)} seconds ago)";
+                            var typeOfColor = Helpers.isLighterColor(deadPlayer.killerIfExisting.Data.DefaultOutfit.ColorId) ? Language.playerControlTexts[2] : Language.playerControlTexts[3];
+                            msg = $"Body Report: {Language.playerControlTexts[4]} {typeOfColor} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                         }
                         else if (timeSinceDeath < Forensic.reportClueDuration * 1000) {
                             int randomClue = rnd.Next(1, 5);
                             switch (randomClue) {
                                 case 1:
                                     if (deadPlayer.killerIfExisting.Data.DefaultOutfit.HatId != null) {
-                                        msg = $"Body Report: The killer appears to wear a hat! ({Math.Round(timeSinceDeath / 1000)} seconds ago)";
+                                        msg = $"Body Report: {Language.playerControlTexts[5]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                                     }
                                     else {
-                                        msg = $"Body Report: The killer doesn't wear a hat! ({Math.Round(timeSinceDeath / 1000)} seconds ago)";
+                                        msg = $"Body Report: {Language.playerControlTexts[6]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                                     }
                                     break;
                                 case 2:
                                     if (deadPlayer.killerIfExisting.Data.DefaultOutfit.SkinId != null) {
-                                        msg = $"Body Report: The killer appears to wear an outfit! ({Math.Round(timeSinceDeath / 1000)} seconds ago)";
+                                        msg = $"Body Report: {Language.playerControlTexts[7]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                                     }
                                     else {
-                                        msg = $"Body Report: The killer doesn't wear an outfit! ({Math.Round(timeSinceDeath / 1000)} seconds ago)";
+                                        msg = $"Body Report: {Language.playerControlTexts[8]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                                     }
                                     break;
                                 case 3:
                                     if (deadPlayer.killerIfExisting.Data.DefaultOutfit.PetId != null) {
-                                        msg = $"Body Report: The killer appears to have a pet! ({Math.Round(timeSinceDeath / 1000)} seconds ago)";
+                                        msg = $"Body Report: {Language.playerControlTexts[9]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                                     }
                                     else {
-                                        msg = $"Body Report: The killer hasn't got a pet! ({Math.Round(timeSinceDeath / 1000)} seconds ago)";
+                                        msg = $"Body Report: {Language.playerControlTexts[10]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                                     }
                                     break;
                                 case 4:
                                     if (deadPlayer.killerIfExisting.Data.DefaultOutfit.VisorId != null) {
-                                        msg = $"Body Report: The killer appears to wear a visor! ({Math.Round(timeSinceDeath / 1000)} seconds ago)";
+                                        msg = $"Body Report: {Language.playerControlTexts[11]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                                     }
                                     else {
-                                        msg = $"Body Report: The killer doesn't wear a visor! ({Math.Round(timeSinceDeath / 1000)} seconds ago)";
+                                        msg = $"Body Report: {Language.playerControlTexts[12]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                                     }
                                     break;
                             }
                         }
                         else {
-                            msg = $"Body Report: The body is too old to gain information from! ({Math.Round(timeSinceDeath / 1000)} seconds ago)";
+                            msg = $"Body Report: {Language.playerControlTexts[13]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                         }
                     }
 
@@ -1941,14 +1958,33 @@ namespace LasMonjas.Patches {
                 }
             }
 
+            // Teleport body if killed while Monja Awakened
+            if (Monja.awakened) {
+                var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
+                body.transform.position = new Vector3(50, 50, 1);
+                if (target == Monja.monja) {
+                    RPCProcedure.monjaReset();
+                }
+            }
+
             // Lover suicide trigger on murder
             if ((Modifiers.lover1 != null && target == Modifiers.lover1) || (Modifiers.lover2 != null && target == Modifiers.lover2)) {
                 PlayerControl otherLover = target == Modifiers.lover1 ? Modifiers.lover2 : Modifiers.lover1;
                 if (otherLover != null && !otherLover.Data.IsDead) {
                     otherLover.MurderPlayer(otherLover);
+                    if (Monja.awakened) {
+                        var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == otherLover.PlayerId);
+                        body.transform.position = new Vector3(50, 50, 1);
+                    }
                 }
             }
 
+            // Kid trigger win on murder
+            if (Kid.kid != null && target == Kid.kid) {
+                Kid.triggerKidLose = true;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.KidLose, false);
+            }
+            
             // Janitor Button Sync
             if (Janitor.janitor != null && PlayerControl.LocalPlayer == Janitor.janitor && __instance == Janitor.janitor && HudManagerStartPatch.janitorCleanButton != null)
                 HudManagerStartPatch.janitorCleanButton.Timer = Janitor.janitor.killTimer;
@@ -1964,35 +2000,32 @@ namespace LasMonjas.Patches {
                 }
             }
 
-            // Ninja reset marked if killed
-            if (Ninja.ninja != null && Ninja.markedTarget != null && target == Ninja.markedTarget) {
-                Ninja.markedTarget = null;
+            // Chameleon reset invisibility
+            if (Chameleon.chameleon != null && target == Chameleon.chameleon) {
+                Chameleon.resetChameleon();
             }
-
-            // Berserker reset if revived later
-            if (Berserker.berserker != null && target == Berserker.berserker) {
-                Berserker.killedFirstTime = false;
-                Berserker.timeToKill = Berserker.backupTimeToKill;
-            }
-
+            
             // Sorcerer Button Sync
             if (Sorcerer.sorcerer != null && PlayerControl.LocalPlayer == Sorcerer.sorcerer && __instance == Sorcerer.sorcerer && HudManagerStartPatch.sorcererSpellButton != null)
                 HudManagerStartPatch.sorcererSpellButton.Timer = HudManagerStartPatch.sorcererSpellButton.MaxTimer;
 
-            // Kid trigger win on murder
-            if (Kid.kid != null && target == Kid.kid) {
-                Kid.triggerKidLose = true;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.KidLose, false);
+            // Archer dead
+            if (Archer.archer != null && target == Archer.archer) {
+                if (Archer.Guides.Count != 0) {
+                    foreach (var guide in Archer.Guides) {
+                        guide.Value.color = Color.clear;
+                    }
+                }
+                Archer.weaponEquiped = false;
+                if (Archer.bow != null) {
+                    Archer.bow.gameObject.SetActive(Archer.weaponEquiped);
+                }
             }
-
-            // Fink reset camera on dead
-            if (Fink.fink != null && target == Fink.fink) {
-                Fink.resetCamera();
-            }
-
-            //Chameleon reset invisibility
-            if (Chameleon.chameleon != null && target == Chameleon.chameleon) {
-                Chameleon.resetChameleon();
+            
+            // Librarian restore abilty use if silenced target died
+            if (Librarian.librarian != null && Librarian.targetLibrary != null && target == Librarian.targetLibrary) {
+                Librarian.targetLibrary = null;
+                Librarian.targetNameButtonText.text = "";
             }
 
             // BountyHunter suicide trigger if his target is murdered
@@ -2009,67 +2042,52 @@ namespace LasMonjas.Patches {
             }
 
             // Yinyanger reset the selected target if one of them gets killed
-            if (Yinyanger.yinyanger != null && Yinyanger.yinyanger != __instance && (target == Yinyanger.yinyedplayer || target == Yinyanger.yangyedplayer)) {
-                Yinyanger.yinyedplayer = null;
-                Yinyanger.yangyedplayer = null;
+            if (Yinyanger.yinyanger != null && Yinyanger.yinyanger != __instance) {
+                if (Yinyanger.yinyedplayer != null && target == Yinyanger.yinyedplayer) {
+                    Yinyanger.resetYined();
+                }
+                if (Yinyanger.yangyedplayer != null && target == Yinyanger.yangyedplayer) {
+                    Yinyanger.resetYanged();
+                }
+            }
+            
+            // Ninja reset marked if killed
+            if (Ninja.ninja != null && Ninja.markedTarget != null && target == Ninja.markedTarget) {
+                Ninja.markedTarget = null;
+                Ninja.targetNameButtonText.text = "";
+            }
+
+            // Berserker reset if revived later
+            if (Berserker.berserker != null && target == Berserker.berserker) {
+                Berserker.killedFirstTime = false;
+                Berserker.timeToKill = Berserker.backupTimeToKill;
+            }
+            
+            // Yandere rampage mode
+            if (Yandere.yandere != null && Yandere.yandere != __instance && Yandere.target != null && target == Yandere.target && !Yandere.rampageMode) {
+                Yandere.rampageMode = true;
+                Yandere.yandereTargetButtonText.text = Language.statusRolesTexts[2];
+                Yandere.yandereKillButtonText.text = Language.statusRolesTexts[3];
+                if (PlayerControl.LocalPlayer == Yandere.yandere) {
+                    SoundManager.Instance.PlaySound(CustomMain.customAssets.hunterTarget, false, 100f);
+                }
+            }
+
+            // Stranded reset invisibility
+            if (Stranded.stranded != null && (target == Stranded.stranded || __instance == Stranded.stranded && Stranded.isInvisible)) {
+                Stranded.resetStranded();
+            }
+            
+            // Monja revert item if killed
+            if (Monja.monja != null && target.PlayerId == Monja.monja.PlayerId) {
+                if (Monja.isDeliveringItem) {
+                    RPCProcedure.monjaRevertItemPosition(Monja.itemId);
+                }
             }
 
             // Devourer play sound when someone dies
             if (Devourer.devourer != null && Devourer.devourer == PlayerControl.LocalPlayer && !Devourer.devourer.Data.IsDead) {
                 SoundManager.Instance.PlaySound(CustomMain.customAssets.devourerDingClip, false, 100f);
-            }
-
-            // Vigilant delete doorlog item when killed
-            if (Vigilant.vigilantMira != null && target == Vigilant.vigilantMira) {
-                GameObject vigilantdoorlog = GameObject.Find("VigilantDoorLog");
-                if (vigilantdoorlog != null) {
-                    vigilantdoorlog.SetActive(false);
-                }
-            }
-
-            // Performer timer upon death
-            if (Modifiers.performer != null && target == Modifiers.performer) {
-                Modifiers.performerDuration = CustomOptionHolder.performerDuration.getFloat();
-                // Ace Attorney Music Stop and play theater music
-                if (PlayerControl.LocalPlayer != Spiritualist.spiritualist && PlayerControl.LocalPlayer != TimeTraveler.timeTraveler) {
-                    RPCProcedure.changeMusic(7);
-                    SoundManager.Instance.PlaySound(CustomMain.customAssets.performerMusic, false, 5f);
-                    new DIO(Modifiers.performerDuration, Modifiers.performer);
-                }
-                Modifiers.performerMusicStop = false;
-            }
-
-            // Hunter target suicide trigger on Hunter murder
-            if (Hunter.hunter != null && target == Hunter.hunter) {
-                if (Hunter.hunted != null && !Hunter.hunted.Data.IsDead) {
-                    Hunter.hunted.MurderPlayer(Hunter.hunted);
-                }
-            }
-
-            // Sleuth store body positions
-            if (Sleuth.deadBodyPositions != null) Sleuth.deadBodyPositions.Add(target.transform.position);
-
-            // Forensic add body
-            if (Forensic.deadBodies != null) {
-                Forensic.featureDeadBodies.Add(new Tuple<DeadPlayer, Vector3>(deadPlayer, target.transform.position));
-            }
-
-            // Archer dead
-            if (Archer.archer != null && target == Archer.archer) {
-                if (Archer.Guides.Count != 0) {
-                    foreach (var guide in Archer.Guides) {
-                        guide.Value.color = Color.clear;
-                    }
-                }
-                Archer.weaponEquiped = false;
-                if (Archer.bow != null) {
-                    Archer.bow.gameObject.SetActive(Archer.weaponEquiped);
-                }
-            }
-
-            // Necromancer dead
-            if (Necromancer.necromancer != null && target == Necromancer.necromancer && Necromancer.dragginBody) {
-                Necromancer.necromancerResetValuesAtDead();
             }
 
             // Poisoner restore Poison ability if poisonTarget died
@@ -2090,7 +2108,8 @@ namespace LasMonjas.Patches {
                             else {
                                 Puppeteer.puppeteer.transform.position = new Vector3(-4.75f, -33.25f, -5);
                             }
-                        } else {
+                        }
+                        else {
                             Puppeteer.puppeteer.transform.position = Puppeteer.positionPreMorphed;
                         }
                     }
@@ -2126,6 +2145,109 @@ namespace LasMonjas.Patches {
                 }
             }
 
+            // Kill Exiler if the target is killed
+            if (Exiler.exiler != null && Exiler.target != null && target == Exiler.target && !Exiler.exiler.Data.IsDead) {
+                Exiler.exiler.MurderPlayer(Exiler.exiler);
+            }
+            
+            // Reset hided player if killed
+            if (Seeker.seeker != null) {
+                if (Seeker.seeker == target) {
+                    Seeker.ResetValues(false);
+                }
+                if (Seeker.hidedPlayerOne != null && target == Seeker.hidedPlayerOne) {
+                    Seeker.ResetOnePlayer(1);                    
+                }
+                if (Seeker.hidedPlayerTwo != null && target == Seeker.hidedPlayerTwo) {
+                    Seeker.ResetOnePlayer(2);
+                }
+                if (Seeker.hidedPlayerThree != null && target == Seeker.hidedPlayerThree) {
+                    Seeker.ResetOnePlayer(3);
+                }
+            }
+
+            // If Squire killed, remove the shield
+            if (Squire.squire != null && Squire.shielded != null && target == Squire.squire) {
+                Squire.shielded = null;
+            }
+            
+            // Forensic add body
+            if (Forensic.deadBodies != null) {
+                Forensic.featureDeadBodies.Add(new Tuple<DeadPlayer, Vector3>(deadPlayer, target.transform.position));
+            }
+            
+            // Sleuth store body positions
+            if (Sleuth.deadBodyPositions != null) Sleuth.deadBodyPositions.Add(target.transform.position);
+
+            // Fink reset camera on dead
+            if (Fink.fink != null && target == Fink.fink) {
+                Fink.resetCamera();
+            }
+
+            // Vigilant delete doorlog item when killed
+            if (Vigilant.vigilantMira != null && target == Vigilant.vigilantMira) {
+                GameObject vigilantdoorlog = GameObject.Find("VigilantDoorLog");
+                if (vigilantdoorlog != null) {
+                    vigilantdoorlog.SetActive(false);
+                }
+            }           
+
+            // Hunter target suicide trigger on Hunter murder
+            if (Hunter.hunter != null && target == Hunter.hunter) {
+                if (Hunter.hunted != null && !Hunter.hunted.Data.IsDead) {
+                    Hunter.hunted.MurderPlayer(Hunter.hunted);
+                    Hunter.targetButtonText.text = $" ";
+                }
+            }
+
+            // Necromancer dead
+            if (Necromancer.necromancer != null && target == Necromancer.necromancer && Necromancer.dragginBody) {
+                Necromancer.necromancerResetValuesAtDead();
+            }
+            
+            // Task Master clear extra tasks if killed while doing them
+            if (TaskMaster.taskMaster != null && target == TaskMaster.taskMaster && TaskMaster.clearedInitialTasks) {
+                target.clearAllTasks();
+            }
+            
+            // If Jailer killed, remove the jailed
+            if (Jailer.jailer != null && Jailer.jailedPlayer != null && target == Jailer.jailer) {
+                Jailer.jailedPlayer = null;
+            }
+
+            // Performer timer upon death
+            if (Modifiers.performer != null && target == Modifiers.performer) {
+                Modifiers.performerDuration = CustomOptionHolder.performerDuration.getFloat();
+                // Ace Attorney Music Stop and play theater music
+                if (PlayerControl.LocalPlayer != Spiritualist.spiritualist && PlayerControl.LocalPlayer != TimeTraveler.timeTraveler) {
+                    if (!Monja.awakened) {
+                        RPCProcedure.changeMusic(7);
+                        SoundManager.Instance.PlaySound(CustomMain.customAssets.performerMusic, false, 5f);
+                    }
+                    new DIO(Modifiers.performerDuration, Modifiers.performer);
+                }
+                Modifiers.performerMusicStop = false;
+            }
+
+            // Paintball trigger on death
+            if (Modifiers.paintball != null && target == Modifiers.paintball) {
+                if (PlayerControl.LocalPlayer == __instance) {
+                    SoundManager.Instance.PlaySound(CustomMain.customAssets.paintballDeath, false, 100f);
+                }
+                Modifiers.active = new Dictionary<byte, float>();
+                Modifiers.paintballKillerMap = new Dictionary<byte, byte>();
+                Modifiers.active.Add(__instance.PlayerId, Modifiers.paintballDuration);
+                Modifiers.paintballKillerMap.Add(__instance.PlayerId, target.PlayerId);
+            }
+
+            // Electrician discharge trigger on death
+            if (Modifiers.electrician != null && target == Modifiers.electrician) {
+                if (PlayerControl.LocalPlayer == __instance) {
+                    SoundManager.Instance.PlaySound(CustomMain.customAssets.policeTaser, false, 100f);
+                }
+                new Tased(Modifiers.electricianDuration, __instance);
+            }
+            
             if (howmanygamemodesareon == 1) {
                 // Capture the flag revive player
                 if (CaptureTheFlag.captureTheFlagMode) {
@@ -2211,37 +2333,11 @@ namespace LasMonjas.Patches {
                         var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
                         body.transform.position = new Vector3(50, 50, 1);
                         CaptureTheFlag.stealerPlayerIsReviving = true;
-                        CaptureTheFlag.stealerPlayer.cosmetics.nameText.color = new Color(CaptureTheFlag.stealerPlayer.cosmetics.nameText.color.r, CaptureTheFlag.stealerPlayer.cosmetics.nameText.color.g, CaptureTheFlag.stealerPlayer.cosmetics.nameText.color.b, 0.5f);
-                        if (CaptureTheFlag.stealerPlayer.cosmetics.currentPet != null && CaptureTheFlag.stealerPlayer.cosmetics.currentPet.rend != null && CaptureTheFlag.stealerPlayer.cosmetics.currentPet.shadowRend != null) {
-                            CaptureTheFlag.stealerPlayer.cosmetics.currentPet.rend.color = new Color(CaptureTheFlag.stealerPlayer.cosmetics.currentPet.rend.color.r, CaptureTheFlag.stealerPlayer.cosmetics.currentPet.rend.color.g, CaptureTheFlag.stealerPlayer.cosmetics.currentPet.rend.color.b, 0.5f);
-                            CaptureTheFlag.stealerPlayer.cosmetics.currentPet.shadowRend.color = new Color(CaptureTheFlag.stealerPlayer.cosmetics.currentPet.shadowRend.color.r, CaptureTheFlag.stealerPlayer.cosmetics.currentPet.shadowRend.color.g, CaptureTheFlag.stealerPlayer.cosmetics.currentPet.shadowRend.color.b, 0.5f);
-                        }
-                        if (CaptureTheFlag.stealerPlayer.cosmetics.hat != null) {
-                            CaptureTheFlag.stealerPlayer.cosmetics.hat.Parent.color = new Color(CaptureTheFlag.stealerPlayer.cosmetics.hat.Parent.color.r, CaptureTheFlag.stealerPlayer.cosmetics.hat.Parent.color.g, CaptureTheFlag.stealerPlayer.cosmetics.hat.Parent.color.b, 0.5f);
-                            CaptureTheFlag.stealerPlayer.cosmetics.hat.BackLayer.color = new Color(CaptureTheFlag.stealerPlayer.cosmetics.hat.BackLayer.color.r, CaptureTheFlag.stealerPlayer.cosmetics.hat.BackLayer.color.g, CaptureTheFlag.stealerPlayer.cosmetics.hat.BackLayer.color.b, 0.5f);
-                            CaptureTheFlag.stealerPlayer.cosmetics.hat.FrontLayer.color = new Color(CaptureTheFlag.stealerPlayer.cosmetics.hat.FrontLayer.color.r, CaptureTheFlag.stealerPlayer.cosmetics.hat.FrontLayer.color.g, CaptureTheFlag.stealerPlayer.cosmetics.hat.FrontLayer.color.b, 0.5f);
-                        }
-                        if (CaptureTheFlag.stealerPlayer.cosmetics.visor != null) {
-                            CaptureTheFlag.stealerPlayer.cosmetics.visor.Image.color = new Color(CaptureTheFlag.stealerPlayer.cosmetics.visor.Image.color.r, CaptureTheFlag.stealerPlayer.cosmetics.visor.Image.color.g, CaptureTheFlag.stealerPlayer.cosmetics.visor.Image.color.b, 0.5f);
-                        }
-                        CaptureTheFlag.stealerPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(CaptureTheFlag.stealerPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, CaptureTheFlag.stealerPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, CaptureTheFlag.stealerPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
+                        Helpers.alphaPlayer(true, CaptureTheFlag.stealerPlayer.PlayerId);
                         HudManager.Instance.StartCoroutine(Effects.Lerp(CaptureTheFlag.reviveTime, new Action<float>((p) => {
                             if (p == 1f && CaptureTheFlag.stealerPlayer != null) {
                                 CaptureTheFlag.stealerPlayerIsReviving = false;
-                                CaptureTheFlag.stealerPlayer.cosmetics.nameText.color = new Color(CaptureTheFlag.stealerPlayer.cosmetics.nameText.color.r, CaptureTheFlag.stealerPlayer.cosmetics.nameText.color.g, CaptureTheFlag.stealerPlayer.cosmetics.nameText.color.b, 1f);
-                                if (CaptureTheFlag.stealerPlayer.cosmetics.currentPet != null && CaptureTheFlag.stealerPlayer.cosmetics.currentPet.rend != null && CaptureTheFlag.stealerPlayer.cosmetics.currentPet.shadowRend != null) {
-                                    CaptureTheFlag.stealerPlayer.cosmetics.currentPet.rend.color = new Color(CaptureTheFlag.stealerPlayer.cosmetics.currentPet.rend.color.r, CaptureTheFlag.stealerPlayer.cosmetics.currentPet.rend.color.g, CaptureTheFlag.stealerPlayer.cosmetics.currentPet.rend.color.b, 1f);
-                                    CaptureTheFlag.stealerPlayer.cosmetics.currentPet.shadowRend.color = new Color(CaptureTheFlag.stealerPlayer.cosmetics.currentPet.shadowRend.color.r, CaptureTheFlag.stealerPlayer.cosmetics.currentPet.shadowRend.color.g, CaptureTheFlag.stealerPlayer.cosmetics.currentPet.shadowRend.color.b, 1f);
-                                }
-                                if (CaptureTheFlag.stealerPlayer.cosmetics.hat != null) {
-                                    CaptureTheFlag.stealerPlayer.cosmetics.hat.Parent.color = new Color(CaptureTheFlag.stealerPlayer.cosmetics.hat.Parent.color.r, CaptureTheFlag.stealerPlayer.cosmetics.hat.Parent.color.g, CaptureTheFlag.stealerPlayer.cosmetics.hat.Parent.color.b, 1f);
-                                    CaptureTheFlag.stealerPlayer.cosmetics.hat.BackLayer.color = new Color(CaptureTheFlag.stealerPlayer.cosmetics.hat.BackLayer.color.r, CaptureTheFlag.stealerPlayer.cosmetics.hat.BackLayer.color.g, CaptureTheFlag.stealerPlayer.cosmetics.hat.BackLayer.color.b, 1f);
-                                    CaptureTheFlag.stealerPlayer.cosmetics.hat.FrontLayer.color = new Color(CaptureTheFlag.stealerPlayer.cosmetics.hat.FrontLayer.color.r, CaptureTheFlag.stealerPlayer.cosmetics.hat.FrontLayer.color.g, CaptureTheFlag.stealerPlayer.cosmetics.hat.FrontLayer.color.b, 1f);
-                                }
-                                if (CaptureTheFlag.stealerPlayer.cosmetics.visor != null) {
-                                    CaptureTheFlag.stealerPlayer.cosmetics.visor.Image.color = new Color(CaptureTheFlag.stealerPlayer.cosmetics.visor.Image.color.r, CaptureTheFlag.stealerPlayer.cosmetics.visor.Image.color.g, CaptureTheFlag.stealerPlayer.cosmetics.visor.Image.color.b, 1f);
-                                }
-                                CaptureTheFlag.stealerPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(CaptureTheFlag.stealerPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, CaptureTheFlag.stealerPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, CaptureTheFlag.stealerPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
+                                Helpers.alphaPlayer(false, CaptureTheFlag.stealerPlayer.PlayerId);
                             }
                         })));
                         HudManager.Instance.StartCoroutine(Effects.Lerp(CaptureTheFlag.reviveTime - CaptureTheFlag.invincibilityTimeAfterRevive, new Action<float>((p) => {
@@ -2317,21 +2413,7 @@ namespace LasMonjas.Patches {
                             else if (CaptureTheFlag.redplayer07 != null && target.PlayerId == CaptureTheFlag.redplayer07.PlayerId) {
                                 CaptureTheFlag.redplayer07IsReviving = true;
                             }
-                            player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0.5f);
-                            if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
-                                player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 0.5f);
-                                player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 0.5f);
-                            }
-                            if (player.cosmetics.hat != null) {
-                                player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0.5f);
-                                player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 0.5f);
-                                player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 0.5f);
-                            }
-                            if (player.cosmetics.visor != null) {
-                                player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 0.5f);
-                            }
-                            player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
-
+                            Helpers.alphaPlayer(true, player.PlayerId);                            
                             HudManager.Instance.StartCoroutine(Effects.Lerp(CaptureTheFlag.reviveTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     if (CaptureTheFlag.redplayer01 != null && target.PlayerId == CaptureTheFlag.redplayer01.PlayerId) {
@@ -2355,21 +2437,7 @@ namespace LasMonjas.Patches {
                                     else if (CaptureTheFlag.redplayer07 != null && target.PlayerId == CaptureTheFlag.redplayer07.PlayerId) {
                                         CaptureTheFlag.redplayer07IsReviving = false;
                                     }
-                                    player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 1f);
-                                    if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
-                                        player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 1f);
-                                        player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 1f);
-                                    }
-                                    if (player.cosmetics.hat != null) {
-                                        player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 1f);
-                                        player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 1f);
-                                        player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 1f);
-                                    }
-                                    if (player.cosmetics.visor != null) {
-                                        player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 1f);
-                                    }
-                                    player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
-
+                                    Helpers.alphaPlayer(false, player.PlayerId);                                   
                                 }
                             })));
 
@@ -2446,21 +2514,7 @@ namespace LasMonjas.Patches {
                             else if (CaptureTheFlag.blueplayer07 != null && target.PlayerId == CaptureTheFlag.blueplayer07.PlayerId) {
                                 CaptureTheFlag.blueplayer07IsReviving = true;
                             }
-                            player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0.5f);
-                            if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
-                                player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 0.5f);
-                                player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 0.5f);
-                            }
-                            if (player.cosmetics.hat != null) {
-                                player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0.5f);
-                                player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 0.5f);
-                                player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 0.5f);
-                            }
-                            if (player.cosmetics.visor != null) {
-                                player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 0.5f);
-                            }
-                            player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
-
+                            Helpers.alphaPlayer(true, player.PlayerId);                           
                             HudManager.Instance.StartCoroutine(Effects.Lerp(CaptureTheFlag.reviveTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     if (CaptureTheFlag.blueplayer01 != null && target.PlayerId == CaptureTheFlag.blueplayer01.PlayerId) {
@@ -2484,21 +2538,7 @@ namespace LasMonjas.Patches {
                                     else if (CaptureTheFlag.blueplayer07 != null && target.PlayerId == CaptureTheFlag.blueplayer07.PlayerId) {
                                         CaptureTheFlag.blueplayer07IsReviving = false;
                                     }
-                                    player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 1f);
-                                    if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
-                                        player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 1f);
-                                        player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 1f);
-                                    }
-                                    if (player.cosmetics.hat != null) {
-                                        player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 1f);
-                                        player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 1f);
-                                        player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 1f);
-                                    }
-                                    if (player.cosmetics.visor != null) {
-                                        player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 1f);
-                                    }
-                                    player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
-
+                                    Helpers.alphaPlayer(false, player.PlayerId);                                    
                                 }
                             })));
 
@@ -2576,21 +2616,7 @@ namespace LasMonjas.Patches {
                             else if (PoliceAndThief.policeplayer06 != null && target.PlayerId == PoliceAndThief.policeplayer06.PlayerId) {
                                 PoliceAndThief.policeplayer06IsReviving = true;
                             }
-                            player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0.5f);
-                            if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
-                                player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 0.5f);
-                                player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 0.5f);
-                            }
-                            if (player.cosmetics.hat != null) {
-                                player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0.5f);
-                                player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 0.5f);
-                                player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 0.5f);
-                            }
-                            if (player.cosmetics.visor != null) {
-                                player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 0.5f);
-                            }
-                            player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
-
+                            Helpers.alphaPlayer(true, player.PlayerId);                            
                             HudManager.Instance.StartCoroutine(Effects.Lerp(PoliceAndThief.policeReviveTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     if (PoliceAndThief.policeplayer01 != null && target.PlayerId == PoliceAndThief.policeplayer01.PlayerId) {
@@ -2611,21 +2637,7 @@ namespace LasMonjas.Patches {
                                     else if (PoliceAndThief.policeplayer06 != null && target.PlayerId == PoliceAndThief.policeplayer06.PlayerId) {
                                         PoliceAndThief.policeplayer06IsReviving = false;
                                     }
-                                    player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 1f);
-                                    if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
-                                        player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 1f);
-                                        player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 1f);
-                                    }
-                                    if (player.cosmetics.hat != null) {
-                                        player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 1f);
-                                        player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 1f);
-                                        player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 1f);
-                                    }
-                                    if (player.cosmetics.visor != null) {
-                                        player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 1f);
-                                    }
-                                    player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
-
+                                    Helpers.alphaPlayer(false, player.PlayerId);                                    
                                 }
                             })));
 
@@ -2734,22 +2746,8 @@ namespace LasMonjas.Patches {
                                     RPCProcedure.policeandThiefRevertedJewelPosition(target.PlayerId, PoliceAndThief.thiefplayer09JewelId);
                                 }
                                 PoliceAndThief.thiefplayer09IsReviving = true;
-                            }                            
-                            player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0.5f);
-                            if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
-                                player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 0.5f);
-                                player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 0.5f);
                             }
-                            if (player.cosmetics.hat != null) {
-                                player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0.5f);
-                                player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 0.5f);
-                                player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 0.5f);
-                            }
-                            if (player.cosmetics.visor != null) {
-                                player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 0.5f);
-                            }
-                            player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
-
+                            Helpers.alphaPlayer(true, player.PlayerId);
                             HudManager.Instance.StartCoroutine(Effects.Lerp(PoliceAndThief.thiefReviveTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     if (PoliceAndThief.thiefplayer01 != null && target.PlayerId == PoliceAndThief.thiefplayer01.PlayerId) {
@@ -2779,21 +2777,7 @@ namespace LasMonjas.Patches {
                                     else if (PoliceAndThief.thiefplayer09 != null && target.PlayerId == PoliceAndThief.thiefplayer09.PlayerId) {
                                         PoliceAndThief.thiefplayer09IsReviving = false;
                                     }
-                                    player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 1f);
-                                    if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
-                                        player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 1f);
-                                        player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 1f);
-                                    }
-                                    if (player.cosmetics.hat != null) {
-                                        player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 1f);
-                                        player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 1f);
-                                        player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 1f);
-                                    }
-                                    if (player.cosmetics.visor != null) {
-                                        player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 1f);
-                                    }
-                                    player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
-
+                                    Helpers.alphaPlayer(false, player.PlayerId);
                                 }
                             })));
 
@@ -2853,38 +2837,12 @@ namespace LasMonjas.Patches {
                         var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
                         body.transform.position = new Vector3(50, 50, 1);
                         KingOfTheHill.usurperPlayerIsReviving = true;
-                        KingOfTheHill.usurperPlayer.cosmetics.nameText.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.nameText.color.r, KingOfTheHill.usurperPlayer.cosmetics.nameText.color.g, KingOfTheHill.usurperPlayer.cosmetics.nameText.color.b, 0.5f);
-                        if (KingOfTheHill.usurperPlayer.cosmetics.currentPet != null && KingOfTheHill.usurperPlayer.cosmetics.currentPet.rend != null && KingOfTheHill.usurperPlayer.cosmetics.currentPet.shadowRend != null) {
-                            KingOfTheHill.usurperPlayer.cosmetics.currentPet.rend.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.currentPet.rend.color.r, KingOfTheHill.usurperPlayer.cosmetics.currentPet.rend.color.g, KingOfTheHill.usurperPlayer.cosmetics.currentPet.rend.color.b, 0.5f);
-                            KingOfTheHill.usurperPlayer.cosmetics.currentPet.shadowRend.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.currentPet.shadowRend.color.r, KingOfTheHill.usurperPlayer.cosmetics.currentPet.shadowRend.color.g, KingOfTheHill.usurperPlayer.cosmetics.currentPet.shadowRend.color.b, 0.5f);
-                        }
-                        if (KingOfTheHill.usurperPlayer.cosmetics.hat != null) {
-                            KingOfTheHill.usurperPlayer.cosmetics.hat.Parent.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.hat.Parent.color.r, KingOfTheHill.usurperPlayer.cosmetics.hat.Parent.color.g, KingOfTheHill.usurperPlayer.cosmetics.hat.Parent.color.b, 0.5f);
-                            KingOfTheHill.usurperPlayer.cosmetics.hat.BackLayer.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.hat.BackLayer.color.r, KingOfTheHill.usurperPlayer.cosmetics.hat.BackLayer.color.g, KingOfTheHill.usurperPlayer.cosmetics.hat.BackLayer.color.b, 0.5f);
-                            KingOfTheHill.usurperPlayer.cosmetics.hat.FrontLayer.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.hat.FrontLayer.color.r, KingOfTheHill.usurperPlayer.cosmetics.hat.FrontLayer.color.g, KingOfTheHill.usurperPlayer.cosmetics.hat.FrontLayer.color.b, 0.5f);
-                        }
-                        if (KingOfTheHill.usurperPlayer.cosmetics.visor != null) {
-                            KingOfTheHill.usurperPlayer.cosmetics.visor.Image.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.visor.Image.color.r, KingOfTheHill.usurperPlayer.cosmetics.visor.Image.color.g, KingOfTheHill.usurperPlayer.cosmetics.visor.Image.color.b, 0.5f);
-                        }
-                        KingOfTheHill.usurperPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(KingOfTheHill.usurperPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, KingOfTheHill.usurperPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, KingOfTheHill.usurperPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
+                        Helpers.alphaPlayer(true, KingOfTheHill.usurperPlayer.PlayerId);
                         HudManager.Instance.StartCoroutine(Effects.Lerp(KingOfTheHill.reviveTime, new Action<float>((p) => {
                             if (p == 1f && KingOfTheHill.usurperPlayer != null) {
                                 KingOfTheHill.usurperPlayerIsReviving = false;
                                 KingOfTheHill.usurperPlayer.cosmetics.nameText.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.nameText.color.r, KingOfTheHill.usurperPlayer.cosmetics.nameText.color.g, KingOfTheHill.usurperPlayer.cosmetics.nameText.color.b, 1f);
-                                if (KingOfTheHill.usurperPlayer.cosmetics.currentPet != null && KingOfTheHill.usurperPlayer.cosmetics.currentPet.rend != null && KingOfTheHill.usurperPlayer.cosmetics.currentPet.shadowRend != null) {
-                                    KingOfTheHill.usurperPlayer.cosmetics.currentPet.rend.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.currentPet.rend.color.r, KingOfTheHill.usurperPlayer.cosmetics.currentPet.rend.color.g, KingOfTheHill.usurperPlayer.cosmetics.currentPet.rend.color.b, 1f);
-                                    KingOfTheHill.usurperPlayer.cosmetics.currentPet.shadowRend.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.currentPet.shadowRend.color.r, KingOfTheHill.usurperPlayer.cosmetics.currentPet.shadowRend.color.g, KingOfTheHill.usurperPlayer.cosmetics.currentPet.shadowRend.color.b, 1f);
-                                }
-                                if (KingOfTheHill.usurperPlayer.cosmetics.hat != null) {
-                                    KingOfTheHill.usurperPlayer.cosmetics.hat.Parent.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.hat.Parent.color.r, KingOfTheHill.usurperPlayer.cosmetics.hat.Parent.color.g, KingOfTheHill.usurperPlayer.cosmetics.hat.Parent.color.b, 1f);
-                                    KingOfTheHill.usurperPlayer.cosmetics.hat.BackLayer.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.hat.BackLayer.color.r, KingOfTheHill.usurperPlayer.cosmetics.hat.BackLayer.color.g, KingOfTheHill.usurperPlayer.cosmetics.hat.BackLayer.color.b, 1f);
-                                    KingOfTheHill.usurperPlayer.cosmetics.hat.FrontLayer.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.hat.FrontLayer.color.r, KingOfTheHill.usurperPlayer.cosmetics.hat.FrontLayer.color.g, KingOfTheHill.usurperPlayer.cosmetics.hat.FrontLayer.color.b, 1f);
-                                }
-                                if (KingOfTheHill.usurperPlayer.cosmetics.visor != null) {
-                                    KingOfTheHill.usurperPlayer.cosmetics.visor.Image.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.visor.Image.color.r, KingOfTheHill.usurperPlayer.cosmetics.visor.Image.color.g, KingOfTheHill.usurperPlayer.cosmetics.visor.Image.color.b, 1f);
-                                }
-                                KingOfTheHill.usurperPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(KingOfTheHill.usurperPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, KingOfTheHill.usurperPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, KingOfTheHill.usurperPlayer.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
-
+                                Helpers.alphaPlayer(false, KingOfTheHill.usurperPlayer.PlayerId);
                             }
                         })));
                         HudManager.Instance.StartCoroutine(Effects.Lerp(KingOfTheHill.reviveTime - KingOfTheHill.kingInvincibilityTimeAfterRevive, new Action<float>((p) => {
@@ -2966,7 +2924,7 @@ namespace LasMonjas.Patches {
                                     KingOfTheHill.greenteamAlerted = true;
                                     foreach (PlayerControl greenplayer in KingOfTheHill.greenTeam) {
                                         if (greenplayer == PlayerControl.LocalPlayer && greenplayer != null) {
-                                            new CustomMessage("Your King has been killed!", 5, -1, 1f, 11);
+                                            new CustomMessage(Language.statusKingOfTheHillTexts[4], 5, -1, 1f, 11);
                                         }
                                     }
                                 }
@@ -3003,20 +2961,7 @@ namespace LasMonjas.Patches {
                             else if (KingOfTheHill.greenplayer06 != null && target.PlayerId == KingOfTheHill.greenplayer06.PlayerId) {
                                 KingOfTheHill.greenplayer06IsReviving = true;
                             }
-                            player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0.5f);
-                            if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
-                                player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 0.5f);
-                                player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 0.5f);
-                            }
-                            if (player.cosmetics.hat != null) {
-                                player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0.5f);
-                                player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 0.5f);
-                                player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 0.5f);
-                            }
-                            if (player.cosmetics.visor != null) {
-                                player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 0.5f);
-                            }
-                            player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
+                            Helpers.alphaPlayer(true, player.PlayerId);
                             HudManager.Instance.StartCoroutine(Effects.Lerp(KingOfTheHill.reviveTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     if (KingOfTheHill.greenKingplayer != null && target.PlayerId == KingOfTheHill.greenKingplayer.PlayerId) {
@@ -3040,21 +2985,7 @@ namespace LasMonjas.Patches {
                                     else if (KingOfTheHill.greenplayer06 != null && target.PlayerId == KingOfTheHill.greenplayer06.PlayerId) {
                                         KingOfTheHill.greenplayer06IsReviving = false;
                                     }
-                                    player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 1f);
-                                    if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
-                                        player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 1f);
-                                        player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 1f);
-                                    }
-                                    if (player.cosmetics.hat != null) {
-                                        player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 1f);
-                                        player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 1f);
-                                        player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 1f);
-                                    }
-                                    if (player.cosmetics.visor != null) {
-                                        player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 1f);
-                                    }
-                                    player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
-
+                                    Helpers.alphaPlayer(false, player.PlayerId);
                                 }
                             })));
                             HudManager.Instance.StartCoroutine(Effects.Lerp(KingOfTheHill.reviveTime - KingOfTheHill.kingInvincibilityTimeAfterRevive, new Action<float>((p) => {
@@ -3136,7 +3067,7 @@ namespace LasMonjas.Patches {
                                     KingOfTheHill.yellowteamAlerted = true;
                                     foreach (PlayerControl yellowplayer in KingOfTheHill.yellowTeam) {
                                         if (yellowplayer == PlayerControl.LocalPlayer && yellowplayer != null) {
-                                            new CustomMessage("Your King has been killed!", 5, -1, 1f, 11);
+                                            new CustomMessage(Language.statusKingOfTheHillTexts[4], 5, -1, 1f, 11);
                                         }
                                     }
                                 }
@@ -3173,21 +3104,7 @@ namespace LasMonjas.Patches {
                             else if (KingOfTheHill.yellowplayer06 != null && target.PlayerId == KingOfTheHill.yellowplayer06.PlayerId) {
                                 KingOfTheHill.yellowplayer06IsReviving = true;
                             }
-                            player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0.5f);
-                            if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
-                                player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 0.5f);
-                                player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 0.5f);
-                            }
-                            if (player.cosmetics.hat != null) {
-                                player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0.5f);
-                                player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 0.5f);
-                                player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 0.5f);
-                            }
-                            if (player.cosmetics.visor != null) {
-                                player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 0.5f);
-                            }
-                            player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
-
+                            Helpers.alphaPlayer(true, player.PlayerId);
                             HudManager.Instance.StartCoroutine(Effects.Lerp(KingOfTheHill.reviveTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     if (KingOfTheHill.yellowKingplayer != null && target.PlayerId == KingOfTheHill.yellowKingplayer.PlayerId) {
@@ -3211,21 +3128,7 @@ namespace LasMonjas.Patches {
                                     else if (KingOfTheHill.yellowplayer06 != null && target.PlayerId == KingOfTheHill.yellowplayer06.PlayerId) {
                                         KingOfTheHill.yellowplayer06IsReviving = false;
                                     }
-                                    player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 1f);
-                                    if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
-                                        player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 1f);
-                                        player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 1f);
-                                    }
-                                    if (player.cosmetics.hat != null) {
-                                        player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 1f);
-                                        player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 1f);
-                                        player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 1f);
-                                    }
-                                    if (player.cosmetics.visor != null) {
-                                        player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 1f);
-                                    }
-                                    player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
-
+                                    Helpers.alphaPlayer(false, player.PlayerId);
                                 }
                             })));
 
@@ -3422,8 +3325,8 @@ namespace LasMonjas.Patches {
                                     }
                                 })));
 
-                                new CustomMessage("<color=#808080FF>" + HotPotato.hotPotatoPlayer.name + "</color> is the new Hot Potato!", 5, -1, 1f, 16);
-                                HotPotato.hotpotatopointCounter = "Hot Potato: " + "<color=#808080FF>" + HotPotato.hotPotatoPlayer.name + "</color> | " + "Cold Potatoes: " + "<color=#00F7FFFF>" + notPotatosAlives + "</color>";
+                                new CustomMessage("<color=#808080FF>" + HotPotato.hotPotatoPlayer.name + "</color>" + Language.statusHotPotatoTexts[0], 5, -1, 1f, 16);
+                                HotPotato.hotpotatopointCounter = Language.introTexts[5] + "<color=#808080FF>" + HotPotato.hotPotatoPlayer.name + "</color> | " + Language.introTexts[6] + "<color=#00F7FFFF>" + notPotatosAlives + "</color>";
                             }
                         })));
                     }
@@ -3437,13 +3340,7 @@ namespace LasMonjas.Patches {
                         if (player.PlayerId == target.PlayerId) {
                             var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
                             body.transform.position = new Vector3(50, 50, 1);
-                            if (ZombieLaboratory.nursePlayer != null && target.PlayerId == ZombieLaboratory.nursePlayer.PlayerId) {
-                                ZombieLaboratory.nursePlayerIsReviving = true;
-                                ZombieLaboratory.nursePlayerHasMedKit = false;
-                                ZombieLaboratory.nursePlayerInsideLaboratory = true;
-                                ZombieLaboratory.laboratoryNurseMedKit.SetActive(false);
-                            }
-                            else if (ZombieLaboratory.survivorPlayer01 != null && target.PlayerId == ZombieLaboratory.survivorPlayer01.PlayerId) {
+                            if (ZombieLaboratory.survivorPlayer01 != null && target.PlayerId == ZombieLaboratory.survivorPlayer01.PlayerId) {
                                 ZombieLaboratory.survivorPlayer01IsReviving = true;
                                 ZombieLaboratory.survivorPlayer01CanKill = false;
                                 if (ZombieLaboratory.survivorPlayer01IsInfected) {
@@ -3599,27 +3496,10 @@ namespace LasMonjas.Patches {
                                     RPCProcedure.zombieLaboratoryRevertedKeyPosition(target.PlayerId, ZombieLaboratory.survivorPlayer13FoundBox);
                                 }
                             }
-                            player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0.5f);
-                            if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
-                                player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 0.5f);
-                                player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 0.5f);
-                            }
-                            if (player.cosmetics.hat != null) {
-                                player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0.5f);
-                                player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 0.5f);
-                                player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 0.5f);
-                            }
-                            if (player.cosmetics.visor != null) {
-                                player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 0.5f);
-                            }
-                            player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
-
+                            Helpers.alphaPlayer(true, player.PlayerId);
                             HudManager.Instance.StartCoroutine(Effects.Lerp(ZombieLaboratory.reviveTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
-                                    if (ZombieLaboratory.nursePlayer != null && target.PlayerId == ZombieLaboratory.nursePlayer.PlayerId) {
-                                        ZombieLaboratory.nursePlayerIsReviving = false;
-                                    }
-                                    else if (ZombieLaboratory.survivorPlayer01 != null && target.PlayerId == ZombieLaboratory.survivorPlayer01.PlayerId) {
+                                    if (ZombieLaboratory.survivorPlayer01 != null && target.PlayerId == ZombieLaboratory.survivorPlayer01.PlayerId) {
                                         ZombieLaboratory.survivorPlayer01IsReviving = false;
                                     }
                                     else if (ZombieLaboratory.survivorPlayer02 != null && target.PlayerId == ZombieLaboratory.survivorPlayer02.PlayerId) {
@@ -3658,21 +3538,7 @@ namespace LasMonjas.Patches {
                                     else if (ZombieLaboratory.survivorPlayer13 != null && target.PlayerId == ZombieLaboratory.survivorPlayer13.PlayerId) {
                                         ZombieLaboratory.survivorPlayer13IsReviving = false;
                                     }
-                                    player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 1f);
-                                    if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
-                                        player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 1f);
-                                        player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 1f);
-                                    }
-                                    if (player.cosmetics.hat != null) {
-                                        player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 1f);
-                                        player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 1f);
-                                        player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 1f);
-                                    }
-                                    if (player.cosmetics.visor != null) {
-                                        player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 1f);
-                                    }
-                                    player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
-
+                                    Helpers.alphaPlayer(false, player.PlayerId);
                                 }
                             })));
 
@@ -3809,21 +3675,7 @@ namespace LasMonjas.Patches {
                             else if (ZombieLaboratory.zombiePlayer14 != null && target.PlayerId == ZombieLaboratory.zombiePlayer14.PlayerId) {
                                 ZombieLaboratory.zombiePlayer14IsReviving = true;
                             }
-                            player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0.5f);
-                            if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
-                                player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 0.5f);
-                                player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 0.5f);
-                            }
-                            if (player.cosmetics.hat != null) {
-                                player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0.5f);
-                                player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 0.5f);
-                                player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 0.5f);
-                            }
-                            if (player.cosmetics.visor != null) {
-                                player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 0.5f);
-                            }
-                            player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
-
+                            Helpers.alphaPlayer(true, player.PlayerId);
                             HudManager.Instance.StartCoroutine(Effects.Lerp(ZombieLaboratory.reviveTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     if (ZombieLaboratory.zombiePlayer01 != null && target.PlayerId == ZombieLaboratory.zombiePlayer01.PlayerId) {
@@ -3868,21 +3720,7 @@ namespace LasMonjas.Patches {
                                     else if (ZombieLaboratory.zombiePlayer14 != null && target.PlayerId == ZombieLaboratory.zombiePlayer14.PlayerId) {
                                         ZombieLaboratory.zombiePlayer14IsReviving = false;
                                     }
-                                    player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 1f);
-                                    if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
-                                        player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 1f);
-                                        player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 1f);
-                                    }
-                                    if (player.cosmetics.hat != null) {
-                                        player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 1f);
-                                        player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 1f);
-                                        player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 1f);
-                                    }
-                                    if (player.cosmetics.visor != null) {
-                                        player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 1f);
-                                    }
-                                    player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
-
+                                    Helpers.alphaPlayer(false, player.PlayerId);
                                 }
                             })));
 
@@ -3934,7 +3772,7 @@ namespace LasMonjas.Patches {
 
                         }
                     }
-                    ZombieLaboratory.zombieLaboratoryCounter = "Key Items: " + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + "Survivors: " + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> " + "| " + "Infected: " + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> " + "| " + "Zombies: " + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
+                    ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
                 }
 
                 // Battle Royale
@@ -3945,39 +3783,12 @@ namespace LasMonjas.Patches {
                     if (BattleRoyale.matchType == 2) {
                         if (BattleRoyale.serialKiller != null && BattleRoyale.serialKiller.PlayerId == target.PlayerId) {
                             BattleRoyale.serialKillerIsReviving = true;
-                            BattleRoyale.serialKiller.cosmetics.nameText.color = new Color(BattleRoyale.serialKiller.cosmetics.nameText.color.r, BattleRoyale.serialKiller.cosmetics.nameText.color.g, BattleRoyale.serialKiller.cosmetics.nameText.color.b, 0.5f);
-                            if (BattleRoyale.serialKiller.cosmetics.currentPet != null && BattleRoyale.serialKiller.cosmetics.currentPet.rend != null && BattleRoyale.serialKiller.cosmetics.currentPet.shadowRend != null) {
-                                BattleRoyale.serialKiller.cosmetics.currentPet.rend.color = new Color(BattleRoyale.serialKiller.cosmetics.currentPet.rend.color.r, BattleRoyale.serialKiller.cosmetics.currentPet.rend.color.g, BattleRoyale.serialKiller.cosmetics.currentPet.rend.color.b, 0.5f);
-                                BattleRoyale.serialKiller.cosmetics.currentPet.shadowRend.color = new Color(BattleRoyale.serialKiller.cosmetics.currentPet.shadowRend.color.r, BattleRoyale.serialKiller.cosmetics.currentPet.shadowRend.color.g, BattleRoyale.serialKiller.cosmetics.currentPet.shadowRend.color.b, 0.5f);
-                            }
-                            if (BattleRoyale.serialKiller.cosmetics.hat != null) {
-                                BattleRoyale.serialKiller.cosmetics.hat.Parent.color = new Color(BattleRoyale.serialKiller.cosmetics.hat.Parent.color.r, BattleRoyale.serialKiller.cosmetics.hat.Parent.color.g, BattleRoyale.serialKiller.cosmetics.hat.Parent.color.b, 0.5f);
-                                BattleRoyale.serialKiller.cosmetics.hat.BackLayer.color = new Color(BattleRoyale.serialKiller.cosmetics.hat.BackLayer.color.r, BattleRoyale.serialKiller.cosmetics.hat.BackLayer.color.g, BattleRoyale.serialKiller.cosmetics.hat.BackLayer.color.b, 0.5f);
-                                BattleRoyale.serialKiller.cosmetics.hat.FrontLayer.color = new Color(BattleRoyale.serialKiller.cosmetics.hat.FrontLayer.color.r, BattleRoyale.serialKiller.cosmetics.hat.FrontLayer.color.g, BattleRoyale.serialKiller.cosmetics.hat.FrontLayer.color.b, 0.5f);
-                            }
-                            if (BattleRoyale.serialKiller.cosmetics.visor != null) {
-                                BattleRoyale.serialKiller.cosmetics.visor.Image.color = new Color(BattleRoyale.serialKiller.cosmetics.visor.Image.color.r, BattleRoyale.serialKiller.cosmetics.visor.Image.color.g, BattleRoyale.serialKiller.cosmetics.visor.Image.color.b, 0.5f);
-                            }
-                            BattleRoyale.serialKiller.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(BattleRoyale.serialKiller.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, BattleRoyale.serialKiller.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, BattleRoyale.serialKiller.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
+                            Helpers.alphaPlayer(true, BattleRoyale.serialKiller.PlayerId);
                             HudManager.Instance.StartCoroutine(Effects.Lerp(BattleRoyale.reviveTime, new Action<float>((p) => {
                                 if (p == 1f && BattleRoyale.serialKiller != null) {
                                     BattleRoyale.serialKillerIsReviving = false;
                                     BattleRoyale.serialKillerLifes = BattleRoyale.fighterLifes * 3;
-                                    BattleRoyale.serialKiller.cosmetics.nameText.color = new Color(BattleRoyale.serialKiller.cosmetics.nameText.color.r, BattleRoyale.serialKiller.cosmetics.nameText.color.g, BattleRoyale.serialKiller.cosmetics.nameText.color.b, 1f);
-                                    if (BattleRoyale.serialKiller.cosmetics.currentPet != null && BattleRoyale.serialKiller.cosmetics.currentPet.rend != null && BattleRoyale.serialKiller.cosmetics.currentPet.shadowRend != null) {
-                                        BattleRoyale.serialKiller.cosmetics.currentPet.rend.color = new Color(BattleRoyale.serialKiller.cosmetics.currentPet.rend.color.r, BattleRoyale.serialKiller.cosmetics.currentPet.rend.color.g, BattleRoyale.serialKiller.cosmetics.currentPet.rend.color.b, 1f);
-                                        BattleRoyale.serialKiller.cosmetics.currentPet.shadowRend.color = new Color(BattleRoyale.serialKiller.cosmetics.currentPet.shadowRend.color.r, BattleRoyale.serialKiller.cosmetics.currentPet.shadowRend.color.g, BattleRoyale.serialKiller.cosmetics.currentPet.shadowRend.color.b, 1f);
-                                    }
-                                    if (BattleRoyale.serialKiller.cosmetics.hat != null) {
-                                        BattleRoyale.serialKiller.cosmetics.hat.Parent.color = new Color(BattleRoyale.serialKiller.cosmetics.hat.Parent.color.r, BattleRoyale.serialKiller.cosmetics.hat.Parent.color.g, BattleRoyale.serialKiller.cosmetics.hat.Parent.color.b, 1f);
-                                        BattleRoyale.serialKiller.cosmetics.hat.BackLayer.color = new Color(BattleRoyale.serialKiller.cosmetics.hat.BackLayer.color.r, BattleRoyale.serialKiller.cosmetics.hat.BackLayer.color.g, BattleRoyale.serialKiller.cosmetics.hat.BackLayer.color.b, 1f);
-                                        BattleRoyale.serialKiller.cosmetics.hat.FrontLayer.color = new Color(BattleRoyale.serialKiller.cosmetics.hat.FrontLayer.color.r, BattleRoyale.serialKiller.cosmetics.hat.FrontLayer.color.g, BattleRoyale.serialKiller.cosmetics.hat.FrontLayer.color.b, 1f);
-                                    }
-                                    if (BattleRoyale.serialKiller.cosmetics.visor != null) {
-                                        BattleRoyale.serialKiller.cosmetics.visor.Image.color = new Color(BattleRoyale.serialKiller.cosmetics.visor.Image.color.r, BattleRoyale.serialKiller.cosmetics.visor.Image.color.g, BattleRoyale.serialKiller.cosmetics.visor.Image.color.b, 1f);
-                                    }
-                                    BattleRoyale.serialKiller.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(BattleRoyale.serialKiller.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, BattleRoyale.serialKiller.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, BattleRoyale.serialKiller.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
-
+                                    Helpers.alphaPlayer(false, BattleRoyale.serialKiller.PlayerId);
                                 }
                             })));
                             HudManager.Instance.StartCoroutine(Effects.Lerp(BattleRoyale.reviveTime - BattleRoyale.invincibilityTimeAfterRevive, new Action<float>((p) => {
@@ -4052,20 +3863,7 @@ namespace LasMonjas.Patches {
                                 else if (BattleRoyale.limePlayer07 != null && target.PlayerId == BattleRoyale.limePlayer07.PlayerId) {
                                     BattleRoyale.limePlayer07IsReviving = true;
                                 }
-                                player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0.5f);
-                                if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
-                                    player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 0.5f);
-                                    player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 0.5f);
-                                }
-                                if (player.cosmetics.hat != null) {
-                                    player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0.5f);
-                                    player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 0.5f);
-                                    player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 0.5f);
-                                }
-                                if (player.cosmetics.visor != null) {
-                                    player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 0.5f);
-                                }
-                                player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
+                                Helpers.alphaPlayer(true, player.PlayerId);
                                 HudManager.Instance.StartCoroutine(Effects.Lerp(BattleRoyale.reviveTime, new Action<float>((p) => {
                                     if (p == 1f && player != null) {
                                         if (BattleRoyale.limePlayer01 != null && target.PlayerId == BattleRoyale.limePlayer01.PlayerId) {
@@ -4096,21 +3894,7 @@ namespace LasMonjas.Patches {
                                             BattleRoyale.limePlayer07IsReviving = false;
                                             BattleRoyale.limePlayer07Lifes = BattleRoyale.fighterLifes;
                                         }
-                                        player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 1f);
-                                        if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
-                                            player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 1f);
-                                            player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 1f);
-                                        }
-                                        if (player.cosmetics.hat != null) {
-                                            player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 1f);
-                                            player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 1f);
-                                            player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 1f);
-                                        }
-                                        if (player.cosmetics.visor != null) {
-                                            player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 1f);
-                                        }
-                                        player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
-
+                                        Helpers.alphaPlayer(false, player.PlayerId);
                                     }
                                 })));
                                 HudManager.Instance.StartCoroutine(Effects.Lerp(BattleRoyale.reviveTime - BattleRoyale.invincibilityTimeAfterRevive, new Action<float>((p) => {
@@ -4185,21 +3969,7 @@ namespace LasMonjas.Patches {
                                 else if (BattleRoyale.pinkPlayer01 != null && target.PlayerId == BattleRoyale.pinkPlayer07.PlayerId) {
                                     BattleRoyale.pinkPlayer07IsReviving = true;
                                 }
-                                player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0.5f);
-                                if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
-                                    player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 0.5f);
-                                    player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 0.5f);
-                                }
-                                if (player.cosmetics.hat != null) {
-                                    player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0.5f);
-                                    player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 0.5f);
-                                    player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 0.5f);
-                                }
-                                if (player.cosmetics.visor != null) {
-                                    player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 0.5f);
-                                }
-                                player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
-
+                                Helpers.alphaPlayer(true, player.PlayerId);
                                 HudManager.Instance.StartCoroutine(Effects.Lerp(BattleRoyale.reviveTime, new Action<float>((p) => {
                                     if (p == 1f && player != null) {
                                         if (BattleRoyale.pinkPlayer01 != null && target.PlayerId == BattleRoyale.pinkPlayer01.PlayerId) {
@@ -4230,21 +4000,7 @@ namespace LasMonjas.Patches {
                                             BattleRoyale.pinkPlayer07IsReviving = false;
                                             BattleRoyale.pinkPlayer07Lifes = BattleRoyale.fighterLifes;
                                         }
-                                        player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 1f);
-                                        if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
-                                            player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 1f);
-                                            player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 1f);
-                                        }
-                                        if (player.cosmetics.hat != null) {
-                                            player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 1f);
-                                            player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 1f);
-                                            player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 1f);
-                                        }
-                                        if (player.cosmetics.visor != null) {
-                                            player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 1f);
-                                        }
-                                        player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
-
+                                        Helpers.alphaPlayer(false, player.PlayerId);
                                     }
                                 })));
 
@@ -4306,7 +4062,7 @@ namespace LasMonjas.Patches {
                         alivePlayers += 1;
                     }
                 }
-            }           
+            }          
         }
     }
 
@@ -4325,7 +4081,7 @@ namespace LasMonjas.Patches {
         private static int? colorId = null;
         public static void Prefix(PlayerControl source, bool canMove) {
             Color color = source.cosmetics.currentBodySprite.BodySprite.material.GetColor("_BodyColor");
-            if (color != null && Mimic.mimic != null && source.Data.PlayerId == Mimic.mimic.PlayerId) {
+            if (Mimic.mimic != null && source.Data.PlayerId == Mimic.mimic.PlayerId) {
                 var index = Palette.PlayerColors.IndexOf(color);
                 if (index != -1) colorId = index;
             }

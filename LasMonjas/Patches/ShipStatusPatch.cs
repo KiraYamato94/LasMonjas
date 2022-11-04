@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
 using HarmonyLib;
-using UnhollowerRuntimeLib;
+using Il2CppInterop.Runtime;
 using static LasMonjas.LasMonjas;
 using UnityEngine;
 
@@ -202,6 +202,63 @@ namespace LasMonjas.Patches
             __result = false;
         }
 
-    }
+        [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.RepairSystem))]
+        class RepairSystemPatch {
+            public static bool Prefix(ShipStatus __instance, [HarmonyArgument(0)] SystemTypes systemType, [HarmonyArgument(1)] PlayerControl player, [HarmonyArgument(2)] byte amount) {
 
+                // Mechanic expert repairs
+                if (Mechanic.mechanic != null && Mechanic.mechanic == player && Mechanic.expertRepairs) {
+                    switch (systemType) {
+                        case SystemTypes.Reactor:
+                            if (amount == 64 || amount == 65) {
+                                ShipStatus.Instance.RpcRepairSystem(SystemTypes.Reactor, 67);
+                                ShipStatus.Instance.RpcRepairSystem(SystemTypes.Reactor, 66);
+                            }
+                            if (amount == 16 || amount == 17) {
+                                ShipStatus.Instance.RpcRepairSystem(SystemTypes.Reactor, 19);
+                                ShipStatus.Instance.RpcRepairSystem(SystemTypes.Reactor, 18);
+                            }
+                            break;
+                        case SystemTypes.Laboratory:
+                            if (amount == 64 || amount == 65) {
+                                ShipStatus.Instance.RpcRepairSystem(SystemTypes.Laboratory, 67);
+                                ShipStatus.Instance.RpcRepairSystem(SystemTypes.Laboratory, 66);
+                            }
+                            break;
+                        case SystemTypes.LifeSupp:
+                            if (amount == 64 || amount == 65) {
+                                ShipStatus.Instance.RpcRepairSystem(SystemTypes.LifeSupp, 67);
+                                ShipStatus.Instance.RpcRepairSystem(SystemTypes.LifeSupp, 66);
+                            }
+                            break;
+                        case SystemTypes.Comms:
+                            if (amount == 16 || amount == 17) {
+                                ShipStatus.Instance.RpcRepairSystem(SystemTypes.Comms, 19);
+                                ShipStatus.Instance.RpcRepairSystem(SystemTypes.Comms, 18);
+                            }
+                            break;
+                    }
+                }
+                
+                return true;
+            }
+        }
+            
+        [HarmonyPatch(typeof(SwitchSystem), nameof(SwitchSystem.RepairDamage))]
+        class SwitchSystemRepairPatch
+        {
+            public static void Postfix(SwitchSystem __instance, [HarmonyArgument(0)] PlayerControl player, [HarmonyArgument(1)] byte amount) {
+                
+                // Mechanic expert lights repairs
+                if (Mechanic.mechanic != null && Mechanic.mechanic == player && Mechanic.expertRepairs) {
+
+                    if (amount >= 0 && amount <= 4) {
+                        __instance.ActualSwitches = 0;
+                        __instance.ExpectedSwitches = 0;
+                    }
+
+                }
+            }
+        }
+    }
 }

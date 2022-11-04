@@ -1,3 +1,5 @@
+using AmongUs.Data;
+using AmongUs.Data.Legacy;
 using HarmonyLib;
 
 namespace LasMonjas.Patches {
@@ -6,9 +8,9 @@ namespace LasMonjas.Patches {
         [HarmonyPatch(typeof(AccountManager), nameof(AccountManager.RandomizeName))]
         public static class RandomizeNamePatch {
             static bool Prefix(AccountManager __instance) {  
-                if (SaveManager.lastPlayerName == null)
+                if (LegacySaveManager.lastPlayerName == null)
                     return true;
-                SaveManager.PlayerName = SaveManager.lastPlayerName;
+                DataManager.Player.Customization.Name = LegacySaveManager.lastPlayerName;
 		        __instance.accountTab.UpdateNameDisplay();
                 return false; 
             }

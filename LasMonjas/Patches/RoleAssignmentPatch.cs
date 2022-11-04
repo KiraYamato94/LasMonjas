@@ -2,7 +2,7 @@
 using Hazel;
 using System.Collections.Generic;
 using System.Linq;
-using UnhollowerBaseLib;
+using Il2CppInterop;
 using UnityEngine;
 using System;
 using static LasMonjas.LasMonjas;
@@ -20,18 +20,8 @@ namespace LasMonjas.Patches
     [HarmonyPatch(typeof(RoleManager), nameof(RoleManager.SelectRoles))]
     class RoleManagerSelectRolesPatch
     {
-        public static List<int> myroles = new List<int>();
 
-        private static List<int> myimpostorroles = new List<int>();
-
-        private static List<int> mymodifiers = new List<int>();
-
-        private static List<int> myCapturetheflag = new List<int>();
-        private static List<int> myPoliceandthief = new List<int>();
-        private static List<int> myKingoftheHill = new List<int>();
-        private static List<int> myHotPotato = new List<int>();
-        private static List<int> myZombie = new List<int>();
-        private static List<int> myBattleRoyale = new List<int>();
+        private static List<int> myGamemodeList = new List<int>();
 
         public static void Postfix() {
             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ResetVaribles, Hazel.SendOption.Reliable, -1);
@@ -72,114 +62,126 @@ namespace LasMonjas.Patches
             // Assign roles only if the game won't be a custom gamemode
             if (howmanygamemodesareon != 1) {
 
-                int crewmateMax = 15;
-                int neutralMax = 1;
-                int impostorMax = 3;
-                int rebelMax = 1;
+                if (!whoAmIMode) {
 
-                // Fill in the lists with the roles that are active in the settings
-                Dictionary<byte, int> impSettings = new Dictionary<byte, int>();
-                Dictionary<byte, int> rebelSettings = new Dictionary<byte, int>();
-                Dictionary<byte, int> neutralSettings = new Dictionary<byte, int>();
-                Dictionary<byte, int> crewSettings = new Dictionary<byte, int>();
+                    int crewmateMax = 15;
+                    int neutralMax = 1;
+                    int impostorMax = 3;
+                    int rebelMax = 1;
 
-                impSettings.Add((byte)RoleId.Mimic, CustomOptionHolder.mimicSpawnRate.getSelection());
-                impSettings.Add((byte)RoleId.Painter, CustomOptionHolder.painterSpawnRate.getSelection());
-                impSettings.Add((byte)RoleId.Demon, CustomOptionHolder.demonSpawnRate.getSelection());
-                impSettings.Add((byte)RoleId.Illusionist, CustomOptionHolder.illusionistSpawnRate.getSelection());
-                impSettings.Add((byte)RoleId.Janitor, CustomOptionHolder.janitorSpawnRate.getSelection());
-                impSettings.Add((byte)RoleId.Manipulator, CustomOptionHolder.manipulatorSpawnRate.getSelection());
-                impSettings.Add((byte)RoleId.Bomberman, CustomOptionHolder.bombermanSpawnRate.getSelection());
-                impSettings.Add((byte)RoleId.Chameleon, CustomOptionHolder.chameleonSpawnRate.getSelection());
-                impSettings.Add((byte)RoleId.Gambler, CustomOptionHolder.gamblerSpawnRate.getSelection());
-                impSettings.Add((byte)RoleId.Sorcerer, CustomOptionHolder.sorcererSpawnRate.getSelection());
-                impSettings.Add((byte)RoleId.Medusa, CustomOptionHolder.medusaSpawnRate.getSelection());
-                impSettings.Add((byte)RoleId.Hypnotist, CustomOptionHolder.hypnotistSpawnRate.getSelection());
-                impSettings.Add((byte)RoleId.Archer, CustomOptionHolder.archerSpawnRate.getSelection());
+                    // Fill in the lists with the roles that are active in the settings
+                    Dictionary<byte, int> impSettings = new Dictionary<byte, int>();
+                    Dictionary<byte, int> rebelSettings = new Dictionary<byte, int>();
+                    Dictionary<byte, int> neutralSettings = new Dictionary<byte, int>();
+                    Dictionary<byte, int> crewSettings = new Dictionary<byte, int>();
 
-                rebelSettings.Add((byte)RoleId.Renegade, CustomOptionHolder.renegadeSpawnRate.getSelection());
-                rebelSettings.Add((byte)RoleId.BountyHunter, CustomOptionHolder.bountyHunterSpawnRate.getSelection());
-                rebelSettings.Add((byte)RoleId.Trapper, CustomOptionHolder.trapperSpawnRate.getSelection());
-                rebelSettings.Add((byte)RoleId.Yinyanger, CustomOptionHolder.yinyangerSpawnRate.getSelection());
-                rebelSettings.Add((byte)RoleId.Challenger, CustomOptionHolder.challengerSpawnRate.getSelection());
-                rebelSettings.Add((byte)RoleId.Ninja, CustomOptionHolder.ninjaSpawnRate.getSelection());
-                rebelSettings.Add((byte)RoleId.Berserker, CustomOptionHolder.berserkerSpawnRate.getSelection());
+                    impSettings.Add((byte)RoleId.Mimic, CustomOptionHolder.mimicSpawnRate.getSelection());
+                    impSettings.Add((byte)RoleId.Painter, CustomOptionHolder.painterSpawnRate.getSelection());
+                    impSettings.Add((byte)RoleId.Demon, CustomOptionHolder.demonSpawnRate.getSelection());
+                    impSettings.Add((byte)RoleId.Illusionist, CustomOptionHolder.illusionistSpawnRate.getSelection());
+                    impSettings.Add((byte)RoleId.Janitor, CustomOptionHolder.janitorSpawnRate.getSelection());
+                    impSettings.Add((byte)RoleId.Manipulator, CustomOptionHolder.manipulatorSpawnRate.getSelection());
+                    impSettings.Add((byte)RoleId.Bomberman, CustomOptionHolder.bombermanSpawnRate.getSelection());
+                    impSettings.Add((byte)RoleId.Chameleon, CustomOptionHolder.chameleonSpawnRate.getSelection());
+                    impSettings.Add((byte)RoleId.Gambler, CustomOptionHolder.gamblerSpawnRate.getSelection());
+                    impSettings.Add((byte)RoleId.Sorcerer, CustomOptionHolder.sorcererSpawnRate.getSelection());
+                    impSettings.Add((byte)RoleId.Medusa, CustomOptionHolder.medusaSpawnRate.getSelection());
+                    impSettings.Add((byte)RoleId.Hypnotist, CustomOptionHolder.hypnotistSpawnRate.getSelection());
+                    impSettings.Add((byte)RoleId.Archer, CustomOptionHolder.archerSpawnRate.getSelection());
+                    impSettings.Add((byte)RoleId.Plumber, CustomOptionHolder.plumberSpawnRate.getSelection());
+                    impSettings.Add((byte)RoleId.Librarian, CustomOptionHolder.librarianSpawnRate.getSelection());
 
-                neutralSettings.Add((byte)RoleId.Joker, CustomOptionHolder.jokerSpawnRate.getSelection());
-                neutralSettings.Add((byte)RoleId.Pyromaniac, CustomOptionHolder.pyromaniacSpawnRate.getSelection());
-                neutralSettings.Add((byte)RoleId.RoleThief, CustomOptionHolder.rolethiefSpawnRate.getSelection());
-                neutralSettings.Add((byte)RoleId.TreasureHunter, CustomOptionHolder.treasureHunterSpawnRate.getSelection());
-                neutralSettings.Add((byte)RoleId.Devourer, CustomOptionHolder.devourerSpawnRate.getSelection());
-                neutralSettings.Add((byte)RoleId.Poisoner, CustomOptionHolder.poisonerSpawnRate.getSelection());
-                neutralSettings.Add((byte)RoleId.Puppeteer, CustomOptionHolder.puppeteerSpawnRate.getSelection());
+                    rebelSettings.Add((byte)RoleId.Renegade, CustomOptionHolder.renegadeSpawnRate.getSelection());
+                    rebelSettings.Add((byte)RoleId.BountyHunter, CustomOptionHolder.bountyHunterSpawnRate.getSelection());
+                    rebelSettings.Add((byte)RoleId.Trapper, CustomOptionHolder.trapperSpawnRate.getSelection());
+                    rebelSettings.Add((byte)RoleId.Yinyanger, CustomOptionHolder.yinyangerSpawnRate.getSelection());
+                    rebelSettings.Add((byte)RoleId.Challenger, CustomOptionHolder.challengerSpawnRate.getSelection());
+                    rebelSettings.Add((byte)RoleId.Ninja, CustomOptionHolder.ninjaSpawnRate.getSelection());
+                    rebelSettings.Add((byte)RoleId.Berserker, CustomOptionHolder.berserkerSpawnRate.getSelection());
+                    rebelSettings.Add((byte)RoleId.Yandere, CustomOptionHolder.yandereSpawnRate.getSelection());
+                    rebelSettings.Add((byte)RoleId.Stranded, CustomOptionHolder.strandedSpawnRate.getSelection());
+                    rebelSettings.Add((byte)RoleId.Monja, CustomOptionHolder.monjaSpawnRate.getSelection());
 
-                crewSettings.Add((byte)RoleId.Captain, CustomOptionHolder.captainSpawnRate.getSelection());
-                crewSettings.Add((byte)RoleId.Mechanic, CustomOptionHolder.mechanicSpawnRate.getSelection());
-                crewSettings.Add((byte)RoleId.Sheriff, CustomOptionHolder.sheriffSpawnRate.getSelection());
-                crewSettings.Add((byte)RoleId.Detective, CustomOptionHolder.detectiveSpawnRate.getSelection());
-                crewSettings.Add((byte)RoleId.Forensic, CustomOptionHolder.forensicSpawnRate.getSelection());
-                crewSettings.Add((byte)RoleId.TimeTraveler, CustomOptionHolder.timeTravelerSpawnRate.getSelection());
-                crewSettings.Add((byte)RoleId.Squire, CustomOptionHolder.squireSpawnRate.getSelection());
-                crewSettings.Add((byte)RoleId.Cheater, CustomOptionHolder.cheaterSpawnRate.getSelection());
-                crewSettings.Add((byte)RoleId.FortuneTeller, CustomOptionHolder.fortuneTellerSpawnRate.getSelection());
-                crewSettings.Add((byte)RoleId.Hacker, CustomOptionHolder.hackerSpawnRate.getSelection());
-                crewSettings.Add((byte)RoleId.Sleuth, CustomOptionHolder.sleuthSpawnRate.getSelection());
-                crewSettings.Add((byte)RoleId.Fink, CustomOptionHolder.finkSpawnRate.getSelection());
-                crewSettings.Add((byte)RoleId.Kid, CustomOptionHolder.kidSpawnRate.getSelection());
-                crewSettings.Add((byte)RoleId.Welder, CustomOptionHolder.welderSpawnRate.getSelection());
-                crewSettings.Add((byte)RoleId.Spiritualist, CustomOptionHolder.spiritualistSpawnRate.getSelection());
-                if (PlayerControl.GameOptions.MapId != 1) {
-                    crewSettings.Add((byte)RoleId.Vigilant, CustomOptionHolder.vigilantSpawnRate.getSelection());
-                }
-                else {
-                    crewSettings.Add((byte)RoleId.VigilantMira, CustomOptionHolder.vigilantSpawnRate.getSelection());
-                }
-                crewSettings.Add((byte)RoleId.Hunter, CustomOptionHolder.hunterSpawnRate.getSelection());
-                crewSettings.Add((byte)RoleId.Jinx, CustomOptionHolder.jinxSpawnRate.getSelection());
-                crewSettings.Add((byte)RoleId.Coward, CustomOptionHolder.cowardSpawnRate.getSelection());
-                crewSettings.Add((byte)RoleId.Bat, CustomOptionHolder.batSpawnRate.getSelection());
-                crewSettings.Add((byte)RoleId.Necromancer, CustomOptionHolder.necromancerSpawnRate.getSelection());
-                crewSettings.Add((byte)RoleId.Engineer, CustomOptionHolder.engineerSpawnRate.getSelection());
-                crewSettings.Add((byte)RoleId.Shy, CustomOptionHolder.shySpawnRate.getSelection());
+                    neutralSettings.Add((byte)RoleId.Joker, CustomOptionHolder.jokerSpawnRate.getSelection());
+                    neutralSettings.Add((byte)RoleId.Pyromaniac, CustomOptionHolder.pyromaniacSpawnRate.getSelection());
+                    neutralSettings.Add((byte)RoleId.RoleThief, CustomOptionHolder.rolethiefSpawnRate.getSelection());
+                    neutralSettings.Add((byte)RoleId.TreasureHunter, CustomOptionHolder.treasureHunterSpawnRate.getSelection());
+                    neutralSettings.Add((byte)RoleId.Devourer, CustomOptionHolder.devourerSpawnRate.getSelection());
+                    neutralSettings.Add((byte)RoleId.Poisoner, CustomOptionHolder.poisonerSpawnRate.getSelection());
+                    neutralSettings.Add((byte)RoleId.Puppeteer, CustomOptionHolder.puppeteerSpawnRate.getSelection());
+                    neutralSettings.Add((byte)RoleId.Exiler, CustomOptionHolder.exilerSpawnRate.getSelection());
+                    neutralSettings.Add((byte)RoleId.Amnesiac, CustomOptionHolder.amnesiacSpawnRate.getSelection());
+                    neutralSettings.Add((byte)RoleId.Seeker, CustomOptionHolder.seekerSpawnRate.getSelection());
 
-                // Get all roles where the chance to occur is set to 100%
-                List<byte> ensuredImpostorRoles = impSettings.Where(x => x.Value == 1).Select(x => x.Key).ToList();
-                List<byte> ensuredRebelRoles = rebelSettings.Where(x => x.Value == 1).Select(x => x.Key).ToList();
-                List<byte> ensuredNeutralRoles = neutralSettings.Where(x => x.Value == 1).Select(x => x.Key).ToList();
-                List<byte> ensuredCrewmateRoles = crewSettings.Where(x => x.Value == 1).Select(x => x.Key).ToList();
+                    crewSettings.Add((byte)RoleId.Captain, CustomOptionHolder.captainSpawnRate.getSelection());
+                    crewSettings.Add((byte)RoleId.Mechanic, CustomOptionHolder.mechanicSpawnRate.getSelection());
+                    crewSettings.Add((byte)RoleId.Sheriff, CustomOptionHolder.sheriffSpawnRate.getSelection());
+                    crewSettings.Add((byte)RoleId.Detective, CustomOptionHolder.detectiveSpawnRate.getSelection());
+                    crewSettings.Add((byte)RoleId.Forensic, CustomOptionHolder.forensicSpawnRate.getSelection());
+                    crewSettings.Add((byte)RoleId.TimeTraveler, CustomOptionHolder.timeTravelerSpawnRate.getSelection());
+                    crewSettings.Add((byte)RoleId.Squire, CustomOptionHolder.squireSpawnRate.getSelection());
+                    crewSettings.Add((byte)RoleId.Cheater, CustomOptionHolder.cheaterSpawnRate.getSelection());
+                    crewSettings.Add((byte)RoleId.FortuneTeller, CustomOptionHolder.fortuneTellerSpawnRate.getSelection());
+                    crewSettings.Add((byte)RoleId.Hacker, CustomOptionHolder.hackerSpawnRate.getSelection());
+                    crewSettings.Add((byte)RoleId.Sleuth, CustomOptionHolder.sleuthSpawnRate.getSelection());
+                    crewSettings.Add((byte)RoleId.Fink, CustomOptionHolder.finkSpawnRate.getSelection());
+                    crewSettings.Add((byte)RoleId.Kid, CustomOptionHolder.kidSpawnRate.getSelection());
+                    crewSettings.Add((byte)RoleId.Welder, CustomOptionHolder.welderSpawnRate.getSelection());
+                    crewSettings.Add((byte)RoleId.Spiritualist, CustomOptionHolder.spiritualistSpawnRate.getSelection());
+                    if (PlayerControl.GameOptions.MapId != 1) {
+                        crewSettings.Add((byte)RoleId.Vigilant, CustomOptionHolder.vigilantSpawnRate.getSelection());
+                    }
+                    else {
+                        crewSettings.Add((byte)RoleId.VigilantMira, CustomOptionHolder.vigilantSpawnRate.getSelection());
+                    }
+                    crewSettings.Add((byte)RoleId.Hunter, CustomOptionHolder.hunterSpawnRate.getSelection());
+                    crewSettings.Add((byte)RoleId.Jinx, CustomOptionHolder.jinxSpawnRate.getSelection());
+                    crewSettings.Add((byte)RoleId.Coward, CustomOptionHolder.cowardSpawnRate.getSelection());
+                    crewSettings.Add((byte)RoleId.Bat, CustomOptionHolder.batSpawnRate.getSelection());
+                    crewSettings.Add((byte)RoleId.Necromancer, CustomOptionHolder.necromancerSpawnRate.getSelection());
+                    crewSettings.Add((byte)RoleId.Engineer, CustomOptionHolder.engineerSpawnRate.getSelection());
+                    crewSettings.Add((byte)RoleId.Shy, CustomOptionHolder.shySpawnRate.getSelection());
+                    crewSettings.Add((byte)RoleId.TaskMaster, CustomOptionHolder.taskMasterSpawnRate.getSelection());
+                    crewSettings.Add((byte)RoleId.Jailer, CustomOptionHolder.jailerSpawnRate.getSelection());
 
-                // Assign roles until we run out of either players we can assign roles to or run out of roles we can assign to players
-                while (
-                    (impostors.Count > 0 && impostorMax > 0 && ensuredImpostorRoles.Count > 0) ||
-                    (crewmates.Count > 0 && (
-                        (rebelMax > 0 && ensuredRebelRoles.Count > 0) ||
-                        (neutralMax > 0 && ensuredNeutralRoles.Count > 0) ||
-                        (crewmateMax > 0 && ensuredCrewmateRoles.Count > 0)
-                    ))) {
+                    // Get all roles where the chance to occur is set to 100%
+                    List<byte> ensuredImpostorRoles = impSettings.Where(x => x.Value == 1).Select(x => x.Key).ToList();
+                    List<byte> ensuredRebelRoles = rebelSettings.Where(x => x.Value == 1).Select(x => x.Key).ToList();
+                    List<byte> ensuredNeutralRoles = neutralSettings.Where(x => x.Value == 1).Select(x => x.Key).ToList();
+                    List<byte> ensuredCrewmateRoles = crewSettings.Where(x => x.Value == 1).Select(x => x.Key).ToList();
 
-                    Dictionary<RoleType, List<byte>> rolesToAssign = new Dictionary<RoleType, List<byte>>();
-                    if (impostors.Count > 0 && impostorMax > 0 && ensuredImpostorRoles.Count > 0) rolesToAssign.Add(RoleType.Impostor, ensuredImpostorRoles);
-                    if (crewmates.Count > 0 && rebelMax > 0 && ensuredRebelRoles.Count > 0) rolesToAssign.Add(RoleType.Rebel, ensuredRebelRoles);
-                    if (crewmates.Count > 0 && neutralMax > 0 && ensuredNeutralRoles.Count > 0) rolesToAssign.Add(RoleType.Neutral, ensuredNeutralRoles);
-                    if (crewmates.Count > 0 && crewmateMax > 0 && ensuredCrewmateRoles.Count > 0) rolesToAssign.Add(RoleType.Crewmate, ensuredCrewmateRoles);
+                    // Assign roles until we run out of either players we can assign roles to or run out of roles we can assign to players
+                    while (
+                        (impostors.Count > 0 && impostorMax > 0 && ensuredImpostorRoles.Count > 0) ||
+                        (crewmates.Count > 0 && (
+                            (rebelMax > 0 && ensuredRebelRoles.Count > 0) ||
+                            (neutralMax > 0 && ensuredNeutralRoles.Count > 0) ||
+                            (crewmateMax > 0 && ensuredCrewmateRoles.Count > 0)
+                        ))) {
 
-                    // Randomly select a pool of roles to assign a role from (Crewmate role, Neutral role, Impostor role or Rebel role) then select one of the roles from the selected pool to a player and remove the rol from the pool
-                    var roleType = rolesToAssign.Keys.ElementAt(rnd.Next(0, rolesToAssign.Keys.Count()));
-                    var players = roleType == RoleType.Crewmate || roleType == RoleType.Neutral || roleType == RoleType.Rebel ? crewmates : impostors;
-                    var index = rnd.Next(0, rolesToAssign[roleType].Count);
-                    var roleId = rolesToAssign[roleType][index];
-                    setRoleToRandomPlayer(rolesToAssign[roleType][index], players);
-                    rolesToAssign[roleType].RemoveAt(index);
+                        Dictionary<RoleType, List<byte>> rolesToAssign = new Dictionary<RoleType, List<byte>>();
+                        if (impostors.Count > 0 && impostorMax > 0 && ensuredImpostorRoles.Count > 0) rolesToAssign.Add(RoleType.Impostor, ensuredImpostorRoles);
+                        if (crewmates.Count > 0 && rebelMax > 0 && ensuredRebelRoles.Count > 0) rolesToAssign.Add(RoleType.Rebel, ensuredRebelRoles);
+                        if (crewmates.Count > 0 && neutralMax > 0 && ensuredNeutralRoles.Count > 0) rolesToAssign.Add(RoleType.Neutral, ensuredNeutralRoles);
+                        if (crewmates.Count > 0 && crewmateMax > 0 && ensuredCrewmateRoles.Count > 0) rolesToAssign.Add(RoleType.Crewmate, ensuredCrewmateRoles);
 
-                    // Adjust the role limit
-                    switch (roleType) {
-                        case RoleType.Impostor: impostorMax--; break;
-                        case RoleType.Rebel: rebelMax--; break;
-                        case RoleType.Neutral: neutralMax--; break;
-                        case RoleType.Crewmate: crewmateMax--; break;
+                        // Randomly select a pool of roles to assign a role from (Crewmate role, Neutral role, Impostor role or Rebel role) then select one of the roles from the selected pool to a player and remove the rol from the pool
+                        var roleType = rolesToAssign.Keys.ElementAt(rnd.Next(0, rolesToAssign.Keys.Count()));
+                        var players = roleType == RoleType.Crewmate || roleType == RoleType.Neutral || roleType == RoleType.Rebel ? crewmates : impostors;
+                        var index = rnd.Next(0, rolesToAssign[roleType].Count);
+                        var roleId = rolesToAssign[roleType][index];
+                        setRoleToRandomPlayer(rolesToAssign[roleType][index], players);
+                        rolesToAssign[roleType].RemoveAt(index);
+
+                        // Adjust the role limit
+                        switch (roleType) {
+                            case RoleType.Impostor: impostorMax--; break;
+                            case RoleType.Rebel: rebelMax--; break;
+                            case RoleType.Neutral: neutralMax--; break;
+                            case RoleType.Crewmate: crewmateMax--; break;
+                        }
                     }
                 }
-
                 // Add modifiers after selecting the roles
                 if (CustomOptionHolder.activateModifiers.getSelection() == 1) {
                     assignModifiers();
@@ -188,14 +190,14 @@ namespace LasMonjas.Patches
             else {
                 if (CaptureTheFlag.captureTheFlagMode) {
                     // Capture the flag    
-                    myCapturetheflag.Clear();
+                    myGamemodeList.Clear();
                     bool oddNumber = false;
                     if (Mathf.Ceil(PlayerControl.AllPlayerControls.Count) % 2 != 0) {
                         oddNumber = true;
                         setRoleToRandomPlayer((byte)RoleId.StealerPlayer, modifiers);
                     }
                     int myflag = 1;
-                    while (myCapturetheflag.Count < (Mathf.Round(PlayerControl.AllPlayerControls.Count / 2))) {
+                    while (myGamemodeList.Count < (Mathf.Round(PlayerControl.AllPlayerControls.Count / 2))) {
                         switch (myflag) {
                             case 1:
                                 setRoleToRandomPlayer((byte)RoleId.RedPlayer01, modifiers);
@@ -219,11 +221,11 @@ namespace LasMonjas.Patches
                                 setRoleToRandomPlayer((byte)RoleId.RedPlayer07, modifiers);
                                 break;
                         }
-                        myCapturetheflag.Add(myflag);
+                        myGamemodeList.Add(myflag);
                         myflag += 1;
                     }
                     int myblueflag = 9;
-                    while (!oddNumber && myCapturetheflag.Count < PlayerControl.AllPlayerControls.Count || oddNumber && myCapturetheflag.Count < PlayerControl.AllPlayerControls.Count - 1) {
+                    while (!oddNumber && myGamemodeList.Count < PlayerControl.AllPlayerControls.Count || oddNumber && myGamemodeList.Count < PlayerControl.AllPlayerControls.Count - 1) {
                         switch (myblueflag) {
                             case 9:
                                 setRoleToRandomPlayer((byte)RoleId.BluePlayer01, modifiers);
@@ -247,15 +249,15 @@ namespace LasMonjas.Patches
                                 setRoleToRandomPlayer((byte)RoleId.BluePlayer07, modifiers);
                                 break;
                         }
-                        myCapturetheflag.Add(myblueflag);
+                        myGamemodeList.Add(myblueflag);
                         myblueflag += 1;
                     }
                 }
                 else if (PoliceAndThief.policeAndThiefMode) {
                     // Police and Thief    
-                    myPoliceandthief.Clear();
+                    myGamemodeList.Clear();
                     int mypolice = 1;
-                    while (myPoliceandthief.Count < (Mathf.Round(PlayerControl.AllPlayerControls.Count / 2.39f))) {
+                    while (myGamemodeList.Count < (Mathf.Round(PlayerControl.AllPlayerControls.Count / 2.39f))) {
                         switch (mypolice) {
                             case 1:
                                 setRoleToRandomPlayer((byte)RoleId.PolicePlayer01, modifiers);
@@ -276,11 +278,11 @@ namespace LasMonjas.Patches
                                 setRoleToRandomPlayer((byte)RoleId.PolicePlayer06, modifiers);
                                 break;
                         }
-                        myPoliceandthief.Add(mypolice);
+                        myGamemodeList.Add(mypolice);
                         mypolice += 1;
                     }
                     int mythief = 7;
-                    while (myPoliceandthief.Count < PlayerControl.AllPlayerControls.Count) {
+                    while (myGamemodeList.Count < PlayerControl.AllPlayerControls.Count) {
                         switch (mythief) {
                             case 7:
                                 setRoleToRandomPlayer((byte)RoleId.ThiefPlayer01, modifiers);
@@ -310,20 +312,20 @@ namespace LasMonjas.Patches
                                 setRoleToRandomPlayer((byte)RoleId.ThiefPlayer09, modifiers);
                                 break;
                         }
-                        myPoliceandthief.Add(mythief);
+                        myGamemodeList.Add(mythief);
                         mythief += 1;
                     }
                 }
                 else if (KingOfTheHill.kingOfTheHillMode) {
                     // King of the hill    
-                    myKingoftheHill.Clear();
+                    myGamemodeList.Clear();
                     bool oddNumber = false;
                     if (Mathf.Ceil(PlayerControl.AllPlayerControls.Count) % 2 != 0) {
                         oddNumber = true;
                         setRoleToRandomPlayer((byte)RoleId.UsurperPlayer, modifiers);
                     }
                     int myking = 1;
-                    while (myKingoftheHill.Count < (Mathf.Round(PlayerControl.AllPlayerControls.Count / 2))) {
+                    while (myGamemodeList.Count < (Mathf.Round(PlayerControl.AllPlayerControls.Count / 2))) {
                         switch (myking) {
                             case 1:
                                 setRoleToRandomPlayer((byte)RoleId.GreenKing, modifiers);
@@ -347,11 +349,11 @@ namespace LasMonjas.Patches
                                 setRoleToRandomPlayer((byte)RoleId.GreenPlayer06, modifiers);
                                 break;
                         }
-                        myKingoftheHill.Add(myking);
+                        myGamemodeList.Add(myking);
                         myking += 1;
                     }
                     int myyellowking = 9;
-                    while (!oddNumber && myKingoftheHill.Count < PlayerControl.AllPlayerControls.Count || oddNumber && myKingoftheHill.Count < PlayerControl.AllPlayerControls.Count - 1) {
+                    while (!oddNumber && myGamemodeList.Count < PlayerControl.AllPlayerControls.Count || oddNumber && myGamemodeList.Count < PlayerControl.AllPlayerControls.Count - 1) {
                         switch (myyellowking) {
                             case 9:
                                 setRoleToRandomPlayer((byte)RoleId.YellowKing, modifiers);
@@ -375,15 +377,15 @@ namespace LasMonjas.Patches
                                 setRoleToRandomPlayer((byte)RoleId.YellowPlayer06, modifiers);
                                 break;
                         }
-                        myKingoftheHill.Add(myyellowking);
+                        myGamemodeList.Add(myyellowking);
                         myyellowking += 1;
                     }
                 }
                 else if (HotPotato.hotPotatoMode) {
                     // Hot Potato   
-                    myHotPotato.Clear();
+                    myGamemodeList.Clear();
                     int mypotato = 1;
-                    while (myHotPotato.Count < PlayerControl.AllPlayerControls.Count) {
+                    while (myGamemodeList.Count < PlayerControl.AllPlayerControls.Count) {
                         switch (mypotato) {
                             case 1:
                                 setRoleToRandomPlayer((byte)RoleId.HotPotato, modifiers);
@@ -431,15 +433,15 @@ namespace LasMonjas.Patches
                                 setRoleToRandomPlayer((byte)RoleId.NotPotato14, modifiers);
                                 break;
                         }
-                        myHotPotato.Add(mypotato);
+                        myGamemodeList.Add(mypotato);
                         mypotato += 1;
                     }
                 }
                 else if (ZombieLaboratory.zombieLaboratoryMode) {
                     // ZombieLaboratory
-                    myZombie.Clear();
+                    myGamemodeList.Clear();
                     int myzombie = 1;
-                    while (myZombie.Count < PlayerControl.AllPlayerControls.Count) {
+                    while (myGamemodeList.Count < PlayerControl.AllPlayerControls.Count) {
                         switch (ZombieLaboratory.startZombies) {
                             case 1:
                                 switch (myzombie) {
@@ -687,16 +689,16 @@ namespace LasMonjas.Patches
                                 }
                                 break;
                         }
-                        myZombie.Add(myzombie);
+                        myGamemodeList.Add(myzombie);
                         myzombie += 1;
                     }
                 }
                 else if (BattleRoyale.battleRoyaleMode) {
                     // Battle Royale   
-                    myBattleRoyale.Clear();
+                    myGamemodeList.Clear();
                     if (BattleRoyale.matchType == 0) {
                         int myBattle = 1;
-                        while (myBattleRoyale.Count < PlayerControl.AllPlayerControls.Count) {
+                        while (myGamemodeList.Count < PlayerControl.AllPlayerControls.Count) {
                             switch (myBattle) {
                                 case 1:
                                     setRoleToRandomPlayer((byte)RoleId.SoloPlayer01, modifiers);
@@ -744,20 +746,20 @@ namespace LasMonjas.Patches
                                     setRoleToRandomPlayer((byte)RoleId.SoloPlayer15, modifiers);
                                     break;
                             }
-                            myBattleRoyale.Add(myBattle);
+                            myGamemodeList.Add(myBattle);
                             myBattle += 1;
                         }
                     }
                     else {
                         // Battle Royale Teams   
-                        myBattleRoyale.Clear();
+                        myGamemodeList.Clear();
                         bool oddNumber = false;
                         if (Mathf.Ceil(PlayerControl.AllPlayerControls.Count) % 2 != 0) {
                             oddNumber = true;
                             setRoleToRandomPlayer((byte)RoleId.SerialKiller, modifiers);
                         }
                         int myBattleLime = 1;
-                        while (myBattleRoyale.Count < (Mathf.Round(PlayerControl.AllPlayerControls.Count / 2))) {
+                        while (myGamemodeList.Count < (Mathf.Round(PlayerControl.AllPlayerControls.Count / 2))) {
                             switch (myBattleLime) {
                                 case 1:
                                     setRoleToRandomPlayer((byte)RoleId.LimePlayer01, modifiers);
@@ -781,11 +783,11 @@ namespace LasMonjas.Patches
                                     setRoleToRandomPlayer((byte)RoleId.LimePlayer07, modifiers);
                                     break;
                             }
-                            myBattleRoyale.Add(myBattleLime);
+                            myGamemodeList.Add(myBattleLime);
                             myBattleLime += 1;
                         }
                         int myBattlePink = 9;
-                        while (!oddNumber && myBattleRoyale.Count < PlayerControl.AllPlayerControls.Count || oddNumber && myBattleRoyale.Count < PlayerControl.AllPlayerControls.Count - 1) {
+                        while (!oddNumber && myGamemodeList.Count < PlayerControl.AllPlayerControls.Count || oddNumber && myGamemodeList.Count < PlayerControl.AllPlayerControls.Count - 1) {
                             switch (myBattlePink) {
                                 case 9:
                                     setRoleToRandomPlayer((byte)RoleId.PinkPlayer01, modifiers);
@@ -809,7 +811,7 @@ namespace LasMonjas.Patches
                                     setRoleToRandomPlayer((byte)RoleId.PinkPlayer07, modifiers);
                                     break;
                             }
-                            myBattleRoyale.Add(myBattlePink);
+                            myGamemodeList.Add(myBattlePink);
                             myBattlePink += 1;
                         }
                     }
@@ -834,7 +836,9 @@ namespace LasMonjas.Patches
                 RoleId.BigChungus,
                 RoleId.TheChosenOne,
                 RoleId.Performer,
-                RoleId.Pro
+                RoleId.Pro,
+                RoleId.Paintball,
+                RoleId.Electrician
             });
 
             if (Kid.kid == null && rnd.Next(1, 2) <= CustomOptionHolder.loverPlayer.getSelection()) { // Assign lover
@@ -902,6 +906,12 @@ namespace LasMonjas.Patches
                     break;
                 case RoleId.Pro:
                     selection = CustomOptionHolder.proPlayer.getSelection();
+                    break;
+                case RoleId.Paintball:
+                    selection = CustomOptionHolder.paintballPlayer.getSelection();
+                    break;
+                case RoleId.Electrician:
+                    selection = CustomOptionHolder.electricianPlayer.getSelection();
                     break;
             }
             return selection;

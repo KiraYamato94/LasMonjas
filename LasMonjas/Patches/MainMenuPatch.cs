@@ -23,9 +23,6 @@ namespace LasMonjas.Patches
             var discordButton = UnityEngine.Object.Instantiate(exitButton, exitButton.transform.parent);
             discordButton.name = "LMJDiscordButton";
             discordButton.transform.position = new Vector3(exitButton.transform.position.x, exitButton.transform.position.y + 0.6f, exitButton.transform.position.z);
-
-            var discordButtonSceneChanger = discordButton.GetComponent<SceneChanger>();
-            UnityEngine.Object.Destroy(discordButtonSceneChanger); 
             
             SpriteRenderer discordButtonSprite = discordButton.GetComponent<SpriteRenderer>();
 
@@ -37,6 +34,7 @@ namespace LasMonjas.Patches
             discordButtonSprite.color = discordButtonText.color = discordButtonColor;
 
             PassiveButton btnDiscordPassive = discordButton.GetComponent<PassiveButton>();
+            btnDiscordPassive.OnClick = new Button.ButtonClickedEvent();
             btnDiscordPassive.OnClick.AddListener((UnityEngine.Events.UnityAction)delegate {
                 Application.OpenURL("https://discord.gg/UPCSqnD4NU");
             });

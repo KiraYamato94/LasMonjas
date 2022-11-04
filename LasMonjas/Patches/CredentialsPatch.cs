@@ -8,11 +8,15 @@ using UnityEngine;
 
 namespace LasMonjas.Patches {
     [HarmonyPatch]
+    [HarmonyPriority(Priority.First)]
+
     public static class CredentialsPatch {
 
         public static string mainMenuCredentials = $@"By <color=#CC00FFFF>Allul</color>";
 
         [HarmonyPatch(typeof(VersionShower), nameof(VersionShower.Start))]
+        [HarmonyPriority(Priority.First)]
+
         private static class VersionShowerPatch
         {
             static void Postfix(VersionShower __instance) {
@@ -30,17 +34,25 @@ namespace LasMonjas.Patches {
         }
 
         [HarmonyPatch(typeof(PingTracker), nameof(PingTracker.Update))]
+        [HarmonyPriority(Priority.First)]
+
+        // IF YOU FORK THIS MOD, PLEASE DON'T REMOVE THIS
+
         private static class PingTrackerPatch
         {
 
             static void Postfix(PingTracker __instance) {
 
-                __instance.text.text += "\n<color=#CC00FFFF>Las Monjas v2.1.3</color>";
+                __instance.text.text += "\n<color=#CC00FFFF>Las Monjas "+ LasMonjasPlugin.Version.ToString() +"</color>";
                 __instance.transform.localPosition = new Vector3(1.25f, 3f, __instance.transform.localPosition.z);
             }
         }     
 
+        //
+
         [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.Start))]
+        [HarmonyPriority(Priority.First)]
+
         private static class LogoPatch
         {
             static void Postfix(PingTracker __instance) {

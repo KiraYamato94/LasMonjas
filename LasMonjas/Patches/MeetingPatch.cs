@@ -2,7 +2,7 @@ using HarmonyLib;
 using Hazel;
 using System.Collections.Generic;
 using System.Linq;
-using UnhollowerBaseLib;
+using Il2CppInterop;
 using static LasMonjas.LasMonjas;
 using static LasMonjas.MapOptions;
 using System.Collections;
@@ -10,6 +10,7 @@ using System;
 using System.Text;
 using UnityEngine;
 using System.Reflection;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
 namespace LasMonjas.Patches {
     [HarmonyPatch]
@@ -67,16 +68,25 @@ namespace LasMonjas.Patches {
 			        KeyValuePair<byte, int> max = self.MaxPair(out tie);
                     GameData.PlayerInfo exiled = GameData.Instance.AllPlayers.ToArray().FirstOrDefault(v => !tie && v.PlayerId == max.Key && !v.IsDead);
 
+                    byte forceTargetPlayerId = Captain.captain != null && !Captain.captain.Data.IsDead && Captain.specialVoteTargetPlayerId != byte.MaxValue ? Captain.specialVoteTargetPlayerId : byte.MaxValue;
+                    if (forceTargetPlayerId != byte.MaxValue)
+                        tie = false; 
+                    
                     MeetingHud.VoterState[] array = new MeetingHud.VoterState[__instance.playerStates.Length];
                     for (int i = 0; i < __instance.playerStates.Length; i++)
                     {
                         PlayerVoteArea playerVoteArea = __instance.playerStates[i];
+                        if (forceTargetPlayerId != byte.MaxValue)
+                            playerVoteArea.VotedFor = forceTargetPlayerId; 
                         array[i] = new MeetingHud.VoterState {
                             VoterId = playerVoteArea.TargetPlayerId,
                             VotedForId = playerVoteArea.VotedFor
                         };
                     }
 
+                    if (forceTargetPlayerId != byte.MaxValue)
+                        exiled = GameData.Instance.AllPlayers.ToArray().FirstOrDefault(v => v.PlayerId == forceTargetPlayerId && !v.IsDead); 
+                    
                     __instance.RpcVotingComplete(array, exiled, tie);
                 }
                 return false;
@@ -104,7 +114,7 @@ namespace LasMonjas.Patches {
         class MeetingHudPopulateVotesPatch {
             
             static bool Prefix(MeetingHud __instance, Il2CppStructArray<MeetingHud.VoterState> states) {
-                
+
                 // Cheater cheat
                 PlayerVoteArea cheated1 = null;
                 PlayerVoteArea cheated2 = null;
@@ -160,6 +170,16 @@ namespace LasMonjas.Patches {
         class MeetingHudVotingCompletedPatch {
             static void Postfix(MeetingHud __instance, [HarmonyArgument(0)]byte[] states, [HarmonyArgument(1)]GameData.PlayerInfo exiled, [HarmonyArgument(2)]bool tie)
             {
+                
+                if (Captain.captain != null && Captain.captain == PlayerControl.LocalPlayer && Captain.specialVoteTargetPlayerId == byte.MaxValue) {
+                    for (int i = 0; i < __instance.playerStates.Length; i++) {
+                        PlayerVoteArea voteArea = __instance.playerStates[i];
+                        Transform t = voteArea.transform.FindChild("SpecialVoteButton");
+                        if (t != null)
+                            t.gameObject.SetActive(false);
+                    }
+                }
+                
                 // Reset cheater values
                 Cheater.playerId1 = Byte.MaxValue;
                 Cheater.playerId2 = Byte.MaxValue;
@@ -250,7 +270,7 @@ namespace LasMonjas.Patches {
                 foreach (RoleInfo roleInfo in RoleInfo.allRoleInfos) {
                     // Not gambled roles
                     if (/* Special roles */ roleInfo.roleId == RoleId.Lover || roleInfo.roleId == RoleId.Kid || (roleInfo == RoleInfo.vigilantMira && PlayerControl.GameOptions.MapId != 1) || (roleInfo == RoleInfo.vigilant && PlayerControl.GameOptions.MapId == 1)
-                        /* Impostor roles*/ || roleInfo.roleId == RoleId.Mimic || roleInfo.roleId == RoleId.Painter || roleInfo.roleId == RoleId.Demon || roleInfo.roleId == RoleId.Janitor || roleInfo.roleId == RoleId.Illusionist || roleInfo.roleId == RoleId.Manipulator || roleInfo.roleId == RoleId.Bomberman || roleInfo.roleId == RoleId.Chameleon || roleInfo.roleId == RoleId.Gambler || roleInfo.roleId == RoleId.Sorcerer || roleInfo.roleId == RoleId.Medusa || roleInfo.roleId == RoleId.Hypnotist || roleInfo.roleId == RoleId.Archer || roleInfo.roleId == RoleId.Impostor
+                        /* Impostor roles*/ || roleInfo.roleId == RoleId.Mimic || roleInfo.roleId == RoleId.Painter || roleInfo.roleId == RoleId.Demon || roleInfo.roleId == RoleId.Janitor || roleInfo.roleId == RoleId.Illusionist || roleInfo.roleId == RoleId.Manipulator || roleInfo.roleId == RoleId.Bomberman || roleInfo.roleId == RoleId.Chameleon || roleInfo.roleId == RoleId.Gambler || roleInfo.roleId == RoleId.Sorcerer || roleInfo.roleId == RoleId.Medusa || roleInfo.roleId == RoleId.Hypnotist || roleInfo.roleId == RoleId.Archer || roleInfo.roleId == RoleId.Plumber || roleInfo.roleId == RoleId.Librarian || roleInfo.roleId == RoleId.Impostor
                         /* Modifiers*/ || roleInfo.roleId == RoleId.BigChungus)
                         continue;
 
@@ -324,9 +344,40 @@ namespace LasMonjas.Patches {
             container.transform.localScale *= 0.75f;
         }
 
+        static void captainOnClick(int buttonTarget, MeetingHud __instance) {
+            if (Captain.captain != null && (Captain.captain.Data.IsDead || Captain.specialVoteTargetPlayerId != byte.MaxValue)) return;
+            if (!(__instance.state == MeetingHud.VoteStates.Voted || __instance.state == MeetingHud.VoteStates.NotVoted || __instance.state == MeetingHud.VoteStates.Results)) return;
+            if (__instance.playerStates[buttonTarget].AmDead) return;
+
+            byte targetId = __instance.playerStates[buttonTarget].TargetPlayerId;
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.CaptainSpecialVote, Hazel.SendOption.Reliable, -1);
+            writer.Write(PlayerControl.LocalPlayer.PlayerId);
+            writer.Write(targetId);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+            RPCProcedure.captainSpecialVote(PlayerControl.LocalPlayer.PlayerId, targetId);
+
+            __instance.SkipVoteButton.gameObject.SetActive(false);
+            for (int i = 0; i < __instance.playerStates.Length; i++) {
+                PlayerVoteArea voteArea = __instance.playerStates[i];
+                voteArea.ClearButtons();
+                Transform t = voteArea.transform.FindChild("SpecialVoteButton");
+                if (t != null && voteArea.TargetPlayerId != targetId)
+                    t.gameObject.SetActive(false);
+            }
+            if (AmongUsClient.Instance.AmHost) {
+                PlayerControl target = Helpers.playerById(targetId);
+                if (target != null)
+                    MeetingHud.Instance.CmdCastVote(PlayerControl.LocalPlayer.PlayerId, target.PlayerId);
+            }
+        }
+
         [HarmonyPatch(typeof(PlayerVoteArea), nameof(PlayerVoteArea.Select))]
         class PlayerVoteAreaSelectPatch {
             static bool Prefix(MeetingHud __instance) {
+
+                if (PlayerControl.LocalPlayer != null && PlayerControl.LocalPlayer == Captain.captain && Captain.specialVoteTargetPlayerId != byte.MaxValue)
+                    return false;
+
                 return !(PlayerControl.LocalPlayer != null && PlayerControl.LocalPlayer == Gambler.gambler && gamblerUI != null);
             }
         }
@@ -398,6 +449,30 @@ namespace LasMonjas.Patches {
                     button.OnClick.AddListener((System.Action)(() => gamblerOnClick(copiedIndex, __instance)));
                 }
             }
+
+            // Add Captain Special Buttons
+            if (Captain.captain != null && PlayerControl.LocalPlayer == Captain.captain && !Captain.captain.Data.IsDead && !Captain.usedSpecialVote && Captain.canUseSpecialVote) {
+                for (int i = 0; i < __instance.playerStates.Length; i++) {
+                    PlayerVoteArea playerVoteArea = __instance.playerStates[i];
+                    if (playerVoteArea.AmDead || playerVoteArea.TargetPlayerId == PlayerControl.LocalPlayer.PlayerId) continue;
+
+                    GameObject template = playerVoteArea.Buttons.transform.Find("CancelButton").gameObject;
+                    GameObject targetBox = UnityEngine.Object.Instantiate(template, playerVoteArea.transform);
+                    targetBox.name = "SpecialVoteButton";
+                    targetBox.transform.localPosition = new Vector3(-0.95f, 0.03f, -2.5f);
+                    SpriteRenderer renderer = targetBox.GetComponent<SpriteRenderer>();
+                    renderer.sprite = Captain.getTargetSprite();
+                    PassiveButton button = targetBox.GetComponent<PassiveButton>();
+                    button.OnClick.RemoveAllListeners();
+                    int copiedIndex = i;
+                    button.OnClick.AddListener((UnityEngine.Events.UnityAction)(() => captainOnClick(copiedIndex, __instance)));
+
+                    TMPro.TextMeshPro targetBoxRemainText = UnityEngine.Object.Instantiate(__instance.playerStates[0].NameText, targetBox.transform);
+                    targetBoxRemainText.alignment = TMPro.TextAlignmentOptions.Center;
+                    targetBoxRemainText.transform.localPosition = new Vector3(0.2f, -0.3f, targetBoxRemainText.transform.localPosition.z);
+                    targetBoxRemainText.transform.localScale *= 1.7f;
+                }
+            }
         }
 
         [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.ServerStart))]
@@ -437,6 +512,7 @@ namespace LasMonjas.Patches {
                 // Reset medusa target
                 Medusa.petrified = null;
 
+                // Reset necromancer Arrow
                 Necromancer.CleanArrow();
 
                 // Add 20 seconds for Berserker
@@ -449,17 +525,58 @@ namespace LasMonjas.Patches {
                     }
                 }
 
-                // Reset Puppeteer morph
-                if (Puppeteer.puppeteer != null) {
-                    Puppeteer.morphed = false;
-                    Puppeteer.puppeteer.setDefaultLook();
-                    Puppeteer.transformTarget = null;
-                    Puppeteer.pickTarget = null;
-                    Puppeteer.currentTarget = null;
+                // Monja reset item 
+                if (Monja.monja != null && Monja.isDeliveringItem && Monja.monja == PlayerControl.LocalPlayer) {
+                    RPCProcedure.monjaRevertItemPosition(Monja.itemId);
                 }
                 
+                // If Jailer jailed exists, remove the jailed
+                if (Jailer.jailer != null && Jailer.jailedPlayer != null) {
+                    Jailer.jailedPlayer = null;
+                }
+
+                // Chameleon reset when emergency call or report body
+                if (Chameleon.chameleon != null) {
+                    Chameleon.resetChameleon();
+                }
+
+                // Stranded reset when emergency call or report body
+                if (Stranded.stranded != null) {
+                    Stranded.resetStranded();
+                }
+
+                // Reset Seeker
+                if (Seeker.seeker != null) {
+                    Seeker.ResetValues(false);
+                }
+
                 // Reset zoomed out ghosts
                 Helpers.toggleZoom(reset: true);
+            }
+        }
+
+        [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Update))]
+        class MeetingHudUpdatePatch
+        {
+            static void Postfix(MeetingHud __instance) {
+
+                // Librarian text overlay on target
+                if (Librarian.librarian != null && Librarian.targetLibrary) {
+                    var playerState = __instance.playerStates.FirstOrDefault(x => x.TargetPlayerId == Librarian.targetLibrary.PlayerId);
+                    playerState.Overlay.gameObject.SetActive(true);
+                    playerState.Overlay.sprite = Librarian.getLibrarianOverlaySprite();
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(TextBoxTMP), nameof(TextBoxTMP.SetText))]
+        public class BlockChatAbility
+        {
+            public static bool Prefix(TextBoxTMP __instance) {
+                if (Librarian.librarian != null && Librarian.targetLibrary != null && Librarian.targetLibrary == PlayerControl.LocalPlayer) {
+                    return false;
+                }
+                return true; 
             }
         }
     }

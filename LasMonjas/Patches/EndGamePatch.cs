@@ -6,83 +6,95 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using Hazel;
-using UnhollowerBaseLib;
+using Il2CppInterop;
 using System;
 using System.Text;
 
 namespace LasMonjas.Patches {
     enum CustomGameOverReason {
-        LoversWin = 10,
+        BombExploded = 10,
         TeamRenegadeWin = 11,
-        KidLose = 12,
-        JokerWin = 13,
-        PyromaniacWin = 14,
-        BombExploded = 15,
-        BountyHunterWin = 16,
-        TreasureHunterWin = 17,
-        DevourerWin = 18,
-        TrapperWin = 19,
-        YinyangerWin = 20,
-        ChallengerWin = 21,
-        RedTeamFlagWin = 22,
-        BlueTeamFlagWin = 23,
-        DrawTeamWin = 24,
-        ThiefModeThiefWin = 25,
-        ThiefModePoliceWin = 26, 
-        GreenTeamHillWin = 27,
-        YellowTeamHillWin = 28,
-        TeamHillDraw = 29,
-        HotPotatoEnd = 30,
-        ZombieWin = 31,
-        SurvivorWin = 32,
-        PoisonerWin = 33,
-        PuppeteerWin = 34,
-        NinjaWin = 35,
-        BerserkerWin = 36,
-        BattleRoyaleSoloWin = 37,
-        BattleRoyaleTimeWin = 38,
-        BattleRoyaleLimeTeamWin = 39,
-        BattleRoyalePinkTeamWin = 40,
-        BattleRoyaleSerialKillerWin = 41,
-        BattleRoyaleDraw = 42
+        BountyHunterWin = 12,
+        TrapperWin = 13,
+        YinyangerWin = 14,
+        ChallengerWin = 15,
+        NinjaWin = 16,
+        BerserkerWin = 17,
+        YandereWin = 18,
+        StrandedWin = 19,
+        MonjaWin = 20,
+        JokerWin = 21,
+        PyromaniacWin = 22,
+        TreasureHunterWin = 23,
+        DevourerWin = 24,
+        PoisonerWin = 25,
+        PuppeteerWin = 26,
+        ExilerWin = 27,
+        SeekerWin = 28,
+        LoversWin = 29,
+        KidLose = 30,
+        TaskMasterCrewWin = 31,
+        DrawTeamWin = 32,
+        RedTeamFlagWin = 33,
+        BlueTeamFlagWin = 34,
+        ThiefModeThiefWin = 35,
+        ThiefModePoliceWin = 36,
+        TeamHillDraw = 37,
+        GreenTeamHillWin = 38,
+        YellowTeamHillWin = 39,
+        HotPotatoEnd = 40,
+        ZombieWin = 41,
+        SurvivorWin = 42,               
+        BattleRoyaleSoloWin = 43,
+        BattleRoyaleTimeWin = 44,
+        BattleRoyaleDraw = 45,
+        BattleRoyaleLimeTeamWin = 46,
+        BattleRoyalePinkTeamWin = 47,
+        BattleRoyaleSerialKillerWin = 48
     }
 
     enum WinCondition {
         Default,
-        LoversTeamWin,
-        LoversSoloWin,
-        JokerWin,
-        RenegadeWin,
-        KidLose,
-        PyromaniacWin,
         BombExploded,
+        RenegadeWin,
         BountyHunterWin,
-        TreasureHunterWin,
-        DevourerWin,
         TrapperWin,
         YinyangerWin,
         ChallengerWin,
-        RedTeamFlagWin,
-        BlueTeamFlagWin,
-        DrawTeamWin,
-        ThiefModeThiefWin,
-        ThiefModePoliceWin,
-        GreenTeamHillWin,
-        YellowTeamHillWin,
-        TeamHillDraw,
-        HotPotatoEnd,
-        ZombieWin,
-        SurvivorWin,
-        PoisonerWin,
-        PuppeteerWin,
         NinjaWin,
         BerserkerWin,
+        YandereWin,
+        StrandedWin,
+        MonjaWin,
+        JokerWin,
+        PyromaniacWin,
+        TreasureHunterWin,
+        DevourerWin,
+        PoisonerWin,
+        PuppeteerWin,
+        ExilerWin,
+        SeekerWin,
+        LoversTeamWin,
+        LoversSoloWin,
+        KidLose,
+        TaskMasterCrewWin,
+        DrawTeamWin,
+        RedTeamFlagWin,
+        BlueTeamFlagWin,
+        ThiefModeThiefWin,
+        ThiefModePoliceWin,
+        TeamHillDraw,
+        GreenTeamHillWin,
+        YellowTeamHillWin,
+        HotPotatoEnd,
+        ZombieWin,
+        SurvivorWin,       
         BattleRoyaleSoloWin,
         BattleRoyaleTimeWin,
+        BattleRoyaleDraw,
         BattleRoyaleLimeTeamWin,
         BattleRoyalePinkTeamWin,
-        BattleRoyaleSerialKillerWin,
-        BattleRoyaleDraw
+        BattleRoyaleSerialKillerWin
     }
 
     static class AdditionalTempData {
@@ -124,7 +136,22 @@ namespace LasMonjas.Patches {
                 AdditionalTempData.playerRoles.Add(new AdditionalTempData.PlayerRoleInfo() { PlayerName = playerControl.Data.PlayerName, Roles = roles, TasksTotal = tasksTotal, TasksCompleted = tasksCompleted });
             }
 
+            // Remove rebel roles from winners
             List<PlayerControl> notWinners = new List<PlayerControl>();
+            if (Renegade.renegade != null) notWinners.Add(Renegade.renegade);
+            if (Minion.minion != null) notWinners.Add(Minion.minion);
+            notWinners.AddRange(Renegade.formerRenegades);
+            if (BountyHunter.bountyhunter != null) notWinners.Add(BountyHunter.bountyhunter);
+            if (Trapper.trapper != null) notWinners.Add(Trapper.trapper);
+            if (Yinyanger.yinyanger != null) notWinners.Add(Yinyanger.yinyanger);
+            if (Challenger.challenger != null) notWinners.Add(Challenger.challenger);
+            if (Ninja.ninja != null) notWinners.Add(Ninja.ninja);
+            if (Berserker.berserker != null) notWinners.Add(Berserker.berserker);
+            if (Yandere.yandere != null) notWinners.Add(Yandere.yandere);
+            if (Stranded.stranded != null) notWinners.Add(Stranded.stranded);
+            if (Monja.monja != null) notWinners.Add(Monja.monja);
+
+            // Remove neutral roles from winners
             if (Joker.joker != null) notWinners.Add(Joker.joker);
             if (RoleThief.rolethief != null) notWinners.Add(RoleThief.rolethief);
             if (Pyromaniac.pyromaniac != null) notWinners.Add(Pyromaniac.pyromaniac);
@@ -132,21 +159,14 @@ namespace LasMonjas.Patches {
             if (Devourer.devourer != null) notWinners.Add(Devourer.devourer);
             if (Poisoner.poisoner != null) notWinners.Add(Poisoner.poisoner);
             if (Puppeteer.puppeteer != null) notWinners.Add(Puppeteer.puppeteer); 
-            if (Renegade.renegade != null) notWinners.Add(Renegade.renegade);
-            if (Minion.minion != null) notWinners.Add(Minion.minion);
-            if (BountyHunter.bountyhunter != null) notWinners.Add(BountyHunter.bountyhunter);
-            if (Trapper.trapper != null) notWinners.Add(Trapper.trapper);
-            if (Yinyanger.yinyanger != null) notWinners.Add(Yinyanger.yinyanger);
-            if (Challenger.challenger != null) notWinners.Add(Challenger.challenger);           
-            if (Ninja.ninja != null) notWinners.Add(Ninja.ninja);
-            if (Berserker.berserker != null) notWinners.Add(Berserker.berserker);
+            if (Exiler.exiler != null) notWinners.Add(Exiler.exiler);           
+            if (Amnesiac.amnesiac != null) notWinners.Add(Amnesiac.amnesiac);           
+            if (Seeker.seeker != null) notWinners.Add(Seeker.seeker);           
 
             // Remove neutral custom gamemode roles from winners
             if (CaptureTheFlag.stealerPlayer != null) notWinners.Add(CaptureTheFlag.stealerPlayer);
             if (KingOfTheHill.usurperPlayer != null) notWinners.Add(KingOfTheHill.usurperPlayer);
             if (HotPotato.hotPotatoPlayer != null) notWinners.Add(HotPotato.hotPotatoPlayer);
-
-            notWinners.AddRange(Renegade.formerRenegades);
 
             List<WinningPlayerData> winnersToRemove = new List<WinningPlayerData>();
             foreach (WinningPlayerData winner in TempData.winners) {
@@ -154,39 +174,45 @@ namespace LasMonjas.Patches {
             }
             foreach (var winner in winnersToRemove) TempData.winners.Remove(winner);
 
-            bool jokerWin = Joker.joker != null && gameOverReason == (GameOverReason)CustomGameOverReason.JokerWin;
-            bool pyromaniacWin = Pyromaniac.pyromaniac != null && gameOverReason == (GameOverReason)CustomGameOverReason.PyromaniacWin;
             bool kidLose = Kid.kid != null && gameOverReason == (GameOverReason)CustomGameOverReason.KidLose;
-            bool loversWin = Modifiers.existingAndAlive() && (gameOverReason == (GameOverReason)CustomGameOverReason.LoversWin || (TempData.DidHumansWin(gameOverReason) && !Modifiers.existingWithKiller())); 
-            bool teamRenegadeWin = gameOverReason == (GameOverReason)CustomGameOverReason.TeamRenegadeWin && ((Renegade.renegade != null && !Renegade.renegade.Data.IsDead) || (Minion.minion != null && !Minion.minion.Data.IsDead));
             bool bombExploded = Bomberman.bomberman != null && gameOverReason == (GameOverReason)CustomGameOverReason.BombExploded;
+            bool teamRenegadeWin = gameOverReason == (GameOverReason)CustomGameOverReason.TeamRenegadeWin && ((Renegade.renegade != null && !Renegade.renegade.Data.IsDead) || (Minion.minion != null && !Minion.minion.Data.IsDead));
             bool bountyhunterWin = BountyHunter.bountyhunter != null && gameOverReason == (GameOverReason)CustomGameOverReason.BountyHunterWin;
-            bool treasurehunterWin = TreasureHunter.treasureHunter != null && gameOverReason == (GameOverReason)CustomGameOverReason.TreasureHunterWin;
-            bool devourerWin = Devourer.devourer != null && gameOverReason == (GameOverReason)CustomGameOverReason.DevourerWin;
-            bool poisonerWin = Poisoner.poisoner != null && gameOverReason == (GameOverReason)CustomGameOverReason.PoisonerWin;
-            bool puppeteerWin = Puppeteer.puppeteer != null && gameOverReason == (GameOverReason)CustomGameOverReason.PuppeteerWin;
             bool trapperWin = Trapper.trapper != null && gameOverReason == (GameOverReason)CustomGameOverReason.TrapperWin;
             bool yinyangerWin = Yinyanger.yinyanger != null && gameOverReason == (GameOverReason)CustomGameOverReason.YinyangerWin;
             bool challengerWin = Challenger.challenger != null && gameOverReason == (GameOverReason)CustomGameOverReason.ChallengerWin;
             bool ninjaWin = Ninja.ninja != null && gameOverReason == (GameOverReason)CustomGameOverReason.NinjaWin;
             bool berserkerWin = Berserker.berserker != null && gameOverReason == (GameOverReason)CustomGameOverReason.BerserkerWin;
+            bool yandereWin = Yandere.yandere != null && gameOverReason == (GameOverReason)CustomGameOverReason.YandereWin;
+            bool strandedWin = Stranded.stranded != null && gameOverReason == (GameOverReason)CustomGameOverReason.StrandedWin;
+            bool monjaWin = Monja.monja != null && gameOverReason == (GameOverReason)CustomGameOverReason.MonjaWin;
+            bool jokerWin = Joker.joker != null && gameOverReason == (GameOverReason)CustomGameOverReason.JokerWin;
+            bool pyromaniacWin = Pyromaniac.pyromaniac != null && gameOverReason == (GameOverReason)CustomGameOverReason.PyromaniacWin;
+            bool treasurehunterWin = TreasureHunter.treasureHunter != null && gameOverReason == (GameOverReason)CustomGameOverReason.TreasureHunterWin;
+            bool devourerWin = Devourer.devourer != null && gameOverReason == (GameOverReason)CustomGameOverReason.DevourerWin;
+            bool poisonerWin = Poisoner.poisoner != null && gameOverReason == (GameOverReason)CustomGameOverReason.PoisonerWin;
+            bool puppeteerWin = Puppeteer.puppeteer != null && gameOverReason == (GameOverReason)CustomGameOverReason.PuppeteerWin;
+            bool exilerWin = Exiler.exiler != null && gameOverReason == (GameOverReason)CustomGameOverReason.ExilerWin;
+            bool seekerWin = Seeker.seeker != null && gameOverReason == (GameOverReason)CustomGameOverReason.SeekerWin;
+            bool loversWin = Modifiers.existingAndAlive() && (gameOverReason == (GameOverReason)CustomGameOverReason.LoversWin || (TempData.DidHumansWin(gameOverReason) && !Modifiers.existingWithKiller()));
+            bool taskMasterCrewWin = TaskMaster.taskMaster != null && gameOverReason == (GameOverReason)CustomGameOverReason.TaskMasterCrewWin;
+            bool drawTeamWin = CaptureTheFlag.captureTheFlagMode && gameOverReason == (GameOverReason)CustomGameOverReason.DrawTeamWin;
             bool redTeamFlagWin = CaptureTheFlag.captureTheFlagMode && gameOverReason == (GameOverReason)CustomGameOverReason.RedTeamFlagWin;
             bool blueTeamFlagWin = CaptureTheFlag.captureTheFlagMode && gameOverReason == (GameOverReason)CustomGameOverReason.BlueTeamFlagWin;
-            bool drawTeamWin = CaptureTheFlag.captureTheFlagMode && gameOverReason == (GameOverReason)CustomGameOverReason.DrawTeamWin;
             bool thiefModeThiefWin = PoliceAndThief.policeAndThiefMode && gameOverReason == (GameOverReason)CustomGameOverReason.ThiefModeThiefWin;
             bool thiefModePoliceWin = PoliceAndThief.policeAndThiefMode && gameOverReason == (GameOverReason)CustomGameOverReason.ThiefModePoliceWin;
+            bool teamHillDraw = KingOfTheHill.kingOfTheHillMode && gameOverReason == (GameOverReason)CustomGameOverReason.TeamHillDraw;
             bool greenTeamHillWin = KingOfTheHill.kingOfTheHillMode && gameOverReason == (GameOverReason)CustomGameOverReason.GreenTeamHillWin;
             bool yellowTeamHillWin = KingOfTheHill.kingOfTheHillMode && gameOverReason == (GameOverReason)CustomGameOverReason.YellowTeamHillWin;
-            bool teamHillDraw = KingOfTheHill.kingOfTheHillMode && gameOverReason == (GameOverReason)CustomGameOverReason.TeamHillDraw;
             bool hotPotatoEnd = HotPotato.hotPotatoMode && gameOverReason == (GameOverReason)CustomGameOverReason.HotPotatoEnd;
             bool zombieWin = ZombieLaboratory.zombieLaboratoryMode && gameOverReason == (GameOverReason)CustomGameOverReason.ZombieWin;
             bool survivorWin = ZombieLaboratory.zombieLaboratoryMode && gameOverReason == (GameOverReason)CustomGameOverReason.SurvivorWin;
             bool battleRoyaleSoloWin = BattleRoyale.battleRoyaleMode && gameOverReason == (GameOverReason)CustomGameOverReason.BattleRoyaleSoloWin;
             bool battleRoyaleTimeWin = BattleRoyale.battleRoyaleMode && gameOverReason == (GameOverReason)CustomGameOverReason.BattleRoyaleTimeWin;
+            bool battleRoyaleDraw = BattleRoyale.battleRoyaleMode && gameOverReason == (GameOverReason)CustomGameOverReason.BattleRoyaleDraw;
             bool battleRoyaleLimeTeamWin = BattleRoyale.battleRoyaleMode && gameOverReason == (GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin;
             bool battleRoyalePinkTeamWin = BattleRoyale.battleRoyaleMode && gameOverReason == (GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin;
             bool battleRoyaleSerialKillerWin = BattleRoyale.battleRoyaleMode && gameOverReason == (GameOverReason)CustomGameOverReason.BattleRoyaleSerialKillerWin;
-            bool battleRoyaleDraw = BattleRoyale.battleRoyaleMode && gameOverReason == (GameOverReason)CustomGameOverReason.BattleRoyaleDraw;
 
             // Kid lose
             if (kidLose) {
@@ -208,7 +234,42 @@ namespace LasMonjas.Patches {
                 }
                 AdditionalTempData.winCondition = WinCondition.BombExploded;
             }
+
+            // Lovers win conditions
+            else if (loversWin) {
+                // Double win for lovers with crewmates
+                if (!Modifiers.existingWithKiller()) {
+                    TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                    foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
+                        if (p == null) continue;
+                        if (p == Modifiers.lover1 || p == Modifiers.lover2)
+                            TempData.winners.Add(new WinningPlayerData(p.Data));
+                        else if (p != Joker.joker && p != RoleThief.rolethief && p != Pyromaniac.pyromaniac && p != TreasureHunter.treasureHunter && p != Devourer.devourer && p != Poisoner.poisoner && p != Puppeteer.puppeteer && p != Exiler.exiler && p != Amnesiac.amnesiac && p != Seeker.seeker && p != Renegade.renegade && p != Minion.minion && !Renegade.formerRenegades.Contains(p) && p != BountyHunter.bountyhunter && p != Trapper.trapper && p != Yinyanger.yinyanger && p != Challenger.challenger && p != Ninja.ninja && p != Berserker.berserker && p != Yandere.yandere && p != Stranded.stranded && p != Monja.monja && !p.Data.Role.IsImpostor)
+                            TempData.winners.Add(new WinningPlayerData(p.Data));
+                    }
+                    AdditionalTempData.winCondition = WinCondition.LoversTeamWin;
+
+                }
+                // Lovers solo win
+                else {
+                    TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                    TempData.winners.Add(new WinningPlayerData(Modifiers.lover1.Data));
+                    TempData.winners.Add(new WinningPlayerData(Modifiers.lover2.Data));
+                    AdditionalTempData.winCondition = WinCondition.LoversSoloWin;
+                }
+            }
             
+            // TaskMaster crew win
+            else if (taskMasterCrewWin) {
+                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
+                    if (p == null) continue;
+                    if (p != Joker.joker && p != RoleThief.rolethief && p != Pyromaniac.pyromaniac && p != TreasureHunter.treasureHunter && p != Devourer.devourer && p != Poisoner.poisoner && p != Puppeteer.puppeteer && p != Exiler.exiler && p != Amnesiac.amnesiac && p != Seeker.seeker && p != Renegade.renegade && p != Minion.minion && !Renegade.formerRenegades.Contains(p) && p != BountyHunter.bountyhunter && p != Trapper.trapper && p != Yinyanger.yinyanger && p != Challenger.challenger && p != Ninja.ninja && p != Berserker.berserker && p != Yandere.yandere && p != Stranded.stranded && p != Monja.monja && !p.Data.Role.IsImpostor)
+                        TempData.winners.Add(new WinningPlayerData(p.Data));
+                }
+                AdditionalTempData.winCondition = WinCondition.TaskMasterCrewWin;
+            }
+
             // Joker win
             else if (jokerWin) {
                 TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
@@ -256,28 +317,21 @@ namespace LasMonjas.Patches {
                 TempData.winners.Add(wpd);
                 AdditionalTempData.winCondition = WinCondition.PuppeteerWin;
             }
+
+            // Exiler win
+            else if (exilerWin) {
+                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                WinningPlayerData wpd = new WinningPlayerData(Exiler.exiler.Data);
+                TempData.winners.Add(wpd);
+                AdditionalTempData.winCondition = WinCondition.ExilerWin;
+            }       
             
-            // Lovers win conditions
-            else if (loversWin) {
-                // Double win for lovers with crewmates
-                if (!Modifiers.existingWithKiller()) {
-                    AdditionalTempData.winCondition = WinCondition.LoversTeamWin;
-                    TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                    foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
-                        if (p == null) continue;
-                        if (p == Modifiers.lover1 || p == Modifiers.lover2)
-                            TempData.winners.Add(new WinningPlayerData(p.Data));
-                        else if (p != Joker.joker && p != RoleThief.rolethief && p != Pyromaniac.pyromaniac && p != TreasureHunter.treasureHunter && p != Devourer.devourer && p != Poisoner.poisoner && p != Puppeteer.puppeteer && p != Renegade.renegade && p != Minion.minion && !Renegade.formerRenegades.Contains(p) && p != BountyHunter.bountyhunter && p != Trapper.trapper && p != Yinyanger.yinyanger && p != Challenger.challenger && p != Ninja.ninja && p != Berserker.berserker && !p.Data.Role.IsImpostor)
-                            TempData.winners.Add(new WinningPlayerData(p.Data));
-                    }
-                }
-                // Lovers solo win
-                else {
-                    AdditionalTempData.winCondition = WinCondition.LoversSoloWin;
-                    TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                    TempData.winners.Add(new WinningPlayerData(Modifiers.lover1.Data));
-                    TempData.winners.Add(new WinningPlayerData(Modifiers.lover2.Data));
-                }
+            // Seeker win
+            else if (seekerWin) {
+                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                WinningPlayerData wpd = new WinningPlayerData(Seeker.seeker.Data);
+                TempData.winners.Add(wpd);
+                AdditionalTempData.winCondition = WinCondition.SeekerWin;
             }
 
             // Renegade win condition
@@ -353,6 +407,30 @@ namespace LasMonjas.Patches {
                 AdditionalTempData.winCondition = WinCondition.BerserkerWin;
             }
             
+            // Yandere win
+            else if (yandereWin) {
+                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                WinningPlayerData wpd = new WinningPlayerData(Yandere.yandere.Data);
+                TempData.winners.Add(wpd);
+                AdditionalTempData.winCondition = WinCondition.YandereWin;
+            }
+            
+            // Stranded win
+            else if (strandedWin) {
+                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                WinningPlayerData wpd = new WinningPlayerData(Stranded.stranded.Data);
+                TempData.winners.Add(wpd);
+                AdditionalTempData.winCondition = WinCondition.StrandedWin;
+            }
+            
+            // Monja win
+            else if (monjaWin) {
+                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                WinningPlayerData wpd = new WinningPlayerData(Monja.monja.Data);
+                TempData.winners.Add(wpd);
+                AdditionalTempData.winCondition = WinCondition.MonjaWin;
+            }
+
             // Flag Game Mode Win
             // Draw
             else if (drawTeamWin) {
@@ -541,210 +619,226 @@ namespace LasMonjas.Patches {
             TMPro.TMP_Text textRenderer = bonusText.GetComponent<TMPro.TMP_Text>();
             textRenderer.text = "";
 
-            if (AdditionalTempData.winCondition == WinCondition.JokerWin) {
-                textRenderer.text = "Joker Wins";
-                textRenderer.color = Joker.color;
-                MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
-                writermusic.Write(3);
-                AmongUsClient.Instance.FinishRpcImmediately(writermusic);
-                RPCProcedure.changeMusic(3);
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.PyromaniacWin) {
-                textRenderer.text = "Pyromaniac Wins";
-                textRenderer.color = Pyromaniac.color;
-                MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
-                writermusic.Write(3);
-                AmongUsClient.Instance.FinishRpcImmediately(writermusic);
-                RPCProcedure.changeMusic(3);
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.LoversTeamWin) {
-                textRenderer.text = "Lovers and Crewmates Win";
-                textRenderer.color = Modifiers.loverscolor;
-                __instance.BackgroundBar.material.SetColor("_Color", Modifiers.loverscolor);
-                MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
-                writermusic.Write(5);
-                AmongUsClient.Instance.FinishRpcImmediately(writermusic);
-                RPCProcedure.changeMusic(5);
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.LoversSoloWin) {
-                textRenderer.text = "Lover Team Win";
-                textRenderer.color = Modifiers.loverscolor;
-                __instance.BackgroundBar.material.SetColor("_Color", Modifiers.loverscolor);
-                MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
-                writermusic.Write(6);
-                AmongUsClient.Instance.FinishRpcImmediately(writermusic);
-                RPCProcedure.changeMusic(6);
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.RenegadeWin) {
-                textRenderer.text = "Renegade Team Win";
-                textRenderer.color = Renegade.color;
-                MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
-                writermusic.Write(4);
-                AmongUsClient.Instance.FinishRpcImmediately(writermusic);
-                RPCProcedure.changeMusic(4);
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.KidLose) {
-                textRenderer.text = "Kid Win";
-                textRenderer.color = Kid.color;
-                MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
-                writermusic.Write(6);
-                AmongUsClient.Instance.FinishRpcImmediately(writermusic);
-                RPCProcedure.changeMusic(6);
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.BombExploded) {
-                textRenderer.text = "Bomb Exploded";
-                textRenderer.color = Bomberman.color;
-                MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
-                writermusic.Write(6);
-                AmongUsClient.Instance.FinishRpcImmediately(writermusic);
-                RPCProcedure.changeMusic(6);
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.BountyHunterWin) {
-                textRenderer.text = "Bounty Hunter Wins";
-                textRenderer.color = BountyHunter.color;
-                MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
-                writermusic.Write(4);
-                AmongUsClient.Instance.FinishRpcImmediately(writermusic);
-                RPCProcedure.changeMusic(4);
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.TreasureHunterWin) {
-                textRenderer.text = "Treasure Hunter Wins";
-                textRenderer.color = TreasureHunter.color;
-                MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
-                writermusic.Write(3);
-                AmongUsClient.Instance.FinishRpcImmediately(writermusic);
-                RPCProcedure.changeMusic(3);
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.DevourerWin) {
-                textRenderer.text = "Devourer Wins";
-                textRenderer.color = Devourer.color;
-                MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
-                writermusic.Write(3);
-                AmongUsClient.Instance.FinishRpcImmediately(writermusic);
-                RPCProcedure.changeMusic(3);
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.PuppeteerWin) {
-                textRenderer.text = "Puppeteer Wins";
-                textRenderer.color = Puppeteer.color;
-                MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
-                writermusic.Write(3);
-                AmongUsClient.Instance.FinishRpcImmediately(writermusic);
-                RPCProcedure.changeMusic(3);
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.PoisonerWin) {
-                textRenderer.text = "Poisoner Wins";
-                textRenderer.color = Poisoner.color;
-                MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
-                writermusic.Write(3);
-                AmongUsClient.Instance.FinishRpcImmediately(writermusic);
-                RPCProcedure.changeMusic(3);
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.TrapperWin) {
-                textRenderer.text = "Trapper Wins";
-                textRenderer.color = Trapper.color;
-                MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
-                writermusic.Write(4);
-                AmongUsClient.Instance.FinishRpcImmediately(writermusic);
-                RPCProcedure.changeMusic(4);
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.YinyangerWin) {
-                textRenderer.text = "Yinyanger Wins";
-                textRenderer.color = Yinyanger.color;
-                MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
-                writermusic.Write(4);
-                AmongUsClient.Instance.FinishRpcImmediately(writermusic);
-                RPCProcedure.changeMusic(4);
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.ChallengerWin) {
-                textRenderer.text = "Challenger Wins";
-                textRenderer.color = Challenger.color;
-                MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
-                writermusic.Write(4);
-                AmongUsClient.Instance.FinishRpcImmediately(writermusic);
-                RPCProcedure.changeMusic(4);
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.NinjaWin) {
-                textRenderer.text = "Ninja Wins";
-                textRenderer.color = Ninja.color;
-                MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
-                writermusic.Write(4);
-                AmongUsClient.Instance.FinishRpcImmediately(writermusic);
-                RPCProcedure.changeMusic(4);
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.BerserkerWin) {
-                textRenderer.text = "Berserker Wins";
-                textRenderer.color = Berserker.color;
-                MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
-                writermusic.Write(4);
-                AmongUsClient.Instance.FinishRpcImmediately(writermusic);
-                RPCProcedure.changeMusic(4);
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.DrawTeamWin || AdditionalTempData.winCondition == WinCondition.TeamHillDraw || AdditionalTempData.winCondition == WinCondition.BattleRoyaleDraw) {
-                textRenderer.text = "Draw";
-                textRenderer.color = new Color32(255, 128, 0, byte.MaxValue); 
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.RedTeamFlagWin) {
-                textRenderer.text = "Red Team Wins";
-                textRenderer.color = Color.red; 
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.BlueTeamFlagWin) {
-                textRenderer.text = "Blue Team Wins";
-                textRenderer.color = Color.blue; 
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.ThiefModePoliceWin) {
-                textRenderer.text = "Police Team Wins";
-                textRenderer.color = Color.cyan; 
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.ThiefModeThiefWin) {
-                textRenderer.text = "Thief Team Wins";
-                textRenderer.color = Mechanic.color;
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.GreenTeamHillWin) {
-                textRenderer.text = "Green Team Wins";
-                textRenderer.color = Color.green;
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.YellowTeamHillWin) {
-                textRenderer.text = "Yellow Team Wins";
-                textRenderer.color = Color.yellow;
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.HotPotatoEnd) {
-                textRenderer.text = "Cold Potato Team Wins";
-                textRenderer.color = Color.cyan;
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.ZombieWin) {
-                textRenderer.text = "Zombie Team Wins";
-                textRenderer.color = Mechanic.color;
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.SurvivorWin) {
-                textRenderer.text = "Survivor Team Wins";
-                textRenderer.color = Shy.color;
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.BattleRoyaleSoloWin) {
-                textRenderer.text = "Battle Royale Champion";
-                textRenderer.color = Sleuth.color;
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.BattleRoyaleTimeWin) {
-                textRenderer.text = "Battle Royale Champions";
-                textRenderer.color = Sleuth.color;
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.BattleRoyaleLimeTeamWin) {
-                textRenderer.text = "Lime Team Wins";
-                textRenderer.color = FortuneTeller.color;
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.BattleRoyalePinkTeamWin) {
-                textRenderer.text = "Pink Team Wins";
-                textRenderer.color = Shy.color;
-            }
-            else if (AdditionalTempData.winCondition == WinCondition.BattleRoyaleSerialKillerWin) {
-                textRenderer.text = "Serial Killer Wins";
-                textRenderer.color = Joker.color;
-            }
-            else {
-                MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
-                writermusic.Write(5);
-                AmongUsClient.Instance.FinishRpcImmediately(writermusic);
-                RPCProcedure.changeMusic(5);
-            }
+            switch (AdditionalTempData.winCondition) {
+                case WinCondition.KidLose:
+                    textRenderer.text = "Kid Wins";
+                    textRenderer.color = Kid.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Kid.color);
+                    Helpers.playEndMusic(5);
+                    break;
+                case WinCondition.BombExploded:
+                    textRenderer.text = "Bomb Exploded";
+                    textRenderer.color = Bomberman.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Bomberman.color);
+                    Helpers.playEndMusic(6);
+                    break;               
+                case WinCondition.LoversTeamWin:
+                    textRenderer.text = "Lovers and Crewmates Win";
+                    textRenderer.color = Modifiers.loverscolor;
+                    __instance.BackgroundBar.material.SetColor("_Color", Modifiers.loverscolor);
+                    Helpers.playEndMusic(5);
+                    break;
+                case WinCondition.LoversSoloWin:
+                    textRenderer.text = "Lovers Team Wins";
+                    textRenderer.color = Modifiers.loverscolor;
+                    __instance.BackgroundBar.material.SetColor("_Color", Modifiers.loverscolor);
+                    Helpers.playEndMusic(6);
+                    break;
+                case WinCondition.TaskMasterCrewWin:
+                    textRenderer.text = "Task Master and Crewmates Win";
+                    textRenderer.color = TaskMaster.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", TaskMaster.color);
+                    Helpers.playEndMusic(5);
+                    break;
+                case WinCondition.JokerWin:
+                    textRenderer.text = "Joker Wins";
+                    textRenderer.color = Joker.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Joker.color);
+                    Helpers.playEndMusic(3);
+                    break;
+                case WinCondition.PyromaniacWin:
+                    textRenderer.text = "Pyromaniac Wins";
+                    textRenderer.color = Pyromaniac.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Pyromaniac.color);
+                    Helpers.playEndMusic(3);
+                    break;
+                case WinCondition.TreasureHunterWin:
+                    textRenderer.text = "Treasure Hunter Wins";
+                    textRenderer.color = TreasureHunter.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", TreasureHunter.color);
+                    Helpers.playEndMusic(3);
+                    break;
+                case WinCondition.DevourerWin:
+                    textRenderer.text = "Devourer Wins";
+                    textRenderer.color = Devourer.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Devourer.color);
+                    Helpers.playEndMusic(3);
+                    break;
+                case WinCondition.PoisonerWin:
+                    textRenderer.text = "Poisoner Wins";
+                    textRenderer.color = Poisoner.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Poisoner.color);
+                    Helpers.playEndMusic(3);
+                    break;
+                case WinCondition.PuppeteerWin:
+                    textRenderer.text = "Puppeteer Wins";
+                    textRenderer.color = Puppeteer.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Puppeteer.color);
+                    Helpers.playEndMusic(3);
+                    break;
+                case WinCondition.ExilerWin:
+                    textRenderer.text = "Exiler Wins";
+                    textRenderer.color = Exiler.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Exiler.color);
+                    Helpers.playEndMusic(3);
+                    break;
+                case WinCondition.SeekerWin:
+                    textRenderer.text = "Seeker Wins";
+                    textRenderer.color = Seeker.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Seeker.color);
+                    Helpers.playEndMusic(3);
+                    break;
+                case WinCondition.RenegadeWin:
+                    textRenderer.text = "Renegade Team Wins";
+                    textRenderer.color = Renegade.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Renegade.color);
+                    Helpers.playEndMusic(4);
+                    break;
+                case WinCondition.BountyHunterWin:
+                    textRenderer.text = "Bounty Hunter Wins";
+                    textRenderer.color = BountyHunter.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", BountyHunter.color);
+                    Helpers.playEndMusic(4);
+                    break;
+                case WinCondition.TrapperWin:
+                    textRenderer.text = "Trapper Wins";
+                    textRenderer.color = Trapper.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Trapper.color);
+                    Helpers.playEndMusic(4);
+                    break;
+                case WinCondition.YinyangerWin:
+                    textRenderer.text = "Yinyanger Wins";
+                    textRenderer.color = Yinyanger.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Yinyanger.color);
+                    Helpers.playEndMusic(4);
+                    break;
+                case WinCondition.ChallengerWin:
+                    textRenderer.text = "Challenger Wins";
+                    textRenderer.color = Challenger.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Challenger.color);
+                    Helpers.playEndMusic(4);
+                    break;
+                case WinCondition.NinjaWin:
+                    textRenderer.text = "Ninja Wins";
+                    textRenderer.color = Ninja.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Ninja.color);
+                    Helpers.playEndMusic(4);
+                    break;
+                case WinCondition.BerserkerWin:
+                    textRenderer.text = "Berserker Wins";
+                    textRenderer.color = Berserker.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Berserker.color);
+                    Helpers.playEndMusic(4);
+                    break;
+                case WinCondition.YandereWin:
+                    textRenderer.text = "Yandere Wins";
+                    textRenderer.color = Yandere.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Yandere.color);
+                    Helpers.playEndMusic(4);
+                    break;
+                case WinCondition.StrandedWin:
+                    textRenderer.text = "Stranded Wins";
+                    textRenderer.color = Stranded.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Stranded.color);
+                    Helpers.playEndMusic(4);
+                    break;
+                case WinCondition.MonjaWin:
+                    textRenderer.text = "Monja Wins";
+                    textRenderer.color = Monja.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Monja.color);
+                    Helpers.playEndMusic(4);
+                    break;
+                case WinCondition.DrawTeamWin:
+                case WinCondition.TeamHillDraw:
+                case WinCondition.BattleRoyaleDraw:
+                    textRenderer.text = "Draw";
+                    textRenderer.color = new Color32(255, 128, 0, byte.MaxValue);
+                    __instance.BackgroundBar.material.SetColor("_Color", Joker.color);
+                    break;
+                case WinCondition.RedTeamFlagWin:
+                    textRenderer.text = "Red Team Wins";
+                    textRenderer.color = Color.red;
+                    __instance.BackgroundBar.material.SetColor("_Color", Color.red);
+                    break;
+                case WinCondition.BlueTeamFlagWin:
+                    textRenderer.text = "Blue Team Wins";
+                    textRenderer.color = Color.blue;
+                    __instance.BackgroundBar.material.SetColor("_Color", Color.blue);
+                    break;
+                case WinCondition.ThiefModePoliceWin:
+                    textRenderer.text = "Police Team Wins";
+                    textRenderer.color = Color.cyan;
+                    __instance.BackgroundBar.material.SetColor("_Color", Color.cyan);
+                    break;
+                case WinCondition.ThiefModeThiefWin:
+                    textRenderer.text = "Thief Team Wins";
+                    textRenderer.color = Mechanic.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Mechanic.color);
+                    break;
+                case WinCondition.GreenTeamHillWin:
+                    textRenderer.text = "Green Team Wins";
+                    textRenderer.color = Color.green;
+                    __instance.BackgroundBar.material.SetColor("_Color", Color.green);
+                    break;
+                case WinCondition.YellowTeamHillWin:
+                    textRenderer.text = "Yellow Team Wins";
+                    textRenderer.color = Color.yellow;
+                    __instance.BackgroundBar.material.SetColor("_Color", Color.yellow);
+                    break;
+                case WinCondition.HotPotatoEnd:
+                    textRenderer.text = "Cold Potato Team Wins";
+                    textRenderer.color = Color.cyan;
+                    __instance.BackgroundBar.material.SetColor("_Color", Color.cyan);
+                    break;
+                case WinCondition.ZombieWin:
+                    textRenderer.text = "Zombie Team Wins";
+                    textRenderer.color = Mechanic.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Mechanic.color);
+                    break;
+                case WinCondition.SurvivorWin:
+                    textRenderer.text = "Survivor Team Wins";
+                    textRenderer.color = Shy.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Shy.color);
+                    break;
+                case WinCondition.BattleRoyaleSoloWin:
+                    textRenderer.text = "Battle Royale Champion";
+                    textRenderer.color = Sleuth.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Sleuth.color);
+                    break;
+                case WinCondition.BattleRoyaleTimeWin:
+                    textRenderer.text = "Battle Royale Champions";
+                    textRenderer.color = Sleuth.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Sleuth.color);
+                    break;
+                case WinCondition.BattleRoyaleLimeTeamWin:
+                    textRenderer.text = "Lime Team Wins";
+                    textRenderer.color = FortuneTeller.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", FortuneTeller.color);
+                    break;
+                case WinCondition.BattleRoyalePinkTeamWin:
+                    textRenderer.text = "Pink Team Wins";
+                    textRenderer.color = Shy.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Shy.color);
+                    break;
+                case WinCondition.BattleRoyaleSerialKillerWin:
+                    textRenderer.text = "Serial Killer Wins";
+                    textRenderer.color = Joker.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Joker.color);
+                    break;
+                default:
+                    Helpers.playEndMusic(5);
+                    break;
+            }              
 
             if (MapOptions.showRoleSummary) {
                 var position = Camera.main.ViewportToWorldPoint(new Vector3(0f, 1f, Camera.main.nearClipPlane));
@@ -781,14 +875,18 @@ namespace LasMonjas.Patches {
             if (DestroyableSingleton<TutorialManager>.InstanceExists) 
                 return true;
             var statistics = new PlayerStatistics(__instance);
-            if (CheckAndEndGameForPyromaniacWin(__instance)) return false;
-            if (CheckAndEndGameForKidLose(__instance)) return false;
             if (CheckAndEndGameForBombExploded(__instance)) return false;
+            if (CheckAndEndGameForLoverWin(__instance, statistics)) return false;
+            if (CheckAndEndGameForTaskMasterWin(__instance)) return false;
             if (CheckAndEndGameForJokerWin(__instance)) return false;
+            if (CheckAndEndGameForPyromaniacWin(__instance)) return false;
             if (CheckAndEndGameForTreasureHunterWin(__instance)) return false;
             if (CheckAndEndGameForDevourerWin(__instance)) return false;
-            if (CheckAndEndGameForPuppeteerWin(__instance)) return false;
             if (CheckAndEndGameForPoisonerWin(__instance)) return false;
+            if (CheckAndEndGameForPuppeteerWin(__instance)) return false;
+            if (CheckAndEndGameForExilerWin(__instance)) return false;
+            if (CheckAndEndGameForSeekerWin(__instance)) return false;
+            if (CheckAndEndGameForKidLose(__instance)) return false;
             if (CheckAndEndGameForRenegadeWin(__instance, statistics)) return false;
             if (CheckAndEndGameForBountyHunterWin(__instance)) return false;
             if (CheckAndEndGameForTrapperWin(__instance, statistics)) return false;
@@ -796,48 +894,57 @@ namespace LasMonjas.Patches {
             if (CheckAndEndGameForChallengerWin(__instance, statistics)) return false;
             if (CheckAndEndGameForNinjaWin(__instance, statistics)) return false;
             if (CheckAndEndGameForBerserkerWin(__instance, statistics)) return false;
+            if (CheckAndEndGameForYandereWin(__instance, statistics)) return false;
+            if (CheckAndEndGameForStrandedWin(__instance, statistics)) return false;
+            if (CheckAndEndGameForMonjaWin(__instance, statistics)) return false;
             if (CheckAndEndGameForSabotageWin(__instance)) return false;
             if (CheckAndEndGameForTaskWin(__instance)) return false;
-            if (CheckAndEndGameForLoverWin(__instance, statistics)) return false;
             if (CheckAndEndGameForImpostorWin(__instance, statistics)) return false;
             if (CheckAndEndGameForCrewmateWin(__instance, statistics)) return false;
+            if (CheckAndEndGameForDrawFlagWin(__instance)) return false;
             if (CheckAndEndGameForRedTeamFlagWin(__instance)) return false;
             if (CheckAndEndGameForBlueTeamFlagWin(__instance)) return false;
-            if (CheckAndEndGameForDrawFlagWin(__instance)) return false;
             if (CheckAndEndGameForThiefModeThiefWin(__instance)) return false;
             if (CheckAndEndGameForThiefModePoliceWin(__instance)) return false;
+            if (CheckAndEndGameForDrawHillWin(__instance)) return false;
             if (CheckAndEndGameForGreenTeamHillWin(__instance)) return false;
             if (CheckAndEndGameForYellowTeamHillWin(__instance)) return false;
-            if (CheckAndEndGameForDrawHillWin(__instance)) return false;
             if (CheckAndEndGameForHotPotatoEnd(__instance)) return false;
             if (CheckAndEndGameForZombieWin(__instance)) return false;
             if (CheckAndEndGameForSurvivorWin(__instance)) return false;
             if (CheckAndEndGameForBattleRoyaleSoloWin(__instance)) return false;
             if (CheckAndEndGameForBattleRoyaleTimeWin(__instance)) return false;
+            if (CheckAndEndGameForBattleRoyaleDraw(__instance)) return false;
             if (CheckAndEndGameForBattleRoyaleLimeTeamWin(__instance)) return false;
             if (CheckAndEndGameForBattleRoyalePinkTeamWin(__instance)) return false;
             if (CheckAndEndGameForBattleRoyaleSerialKillerWin(__instance)) return false; 
-            if (CheckAndEndGameForBattleRoyaleDraw(__instance)) return false; 
             return false;
         }
 
-        private static bool CheckAndEndGameForKidLose(ShipStatus __instance) {
-            if (Kid.triggerKidLose) {
+        private static bool CheckAndEndGameForBombExploded(ShipStatus __instance) {
+            if (Bomberman.triggerBombExploded) {
                 __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.KidLose, false);
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BombExploded, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForBountyHunterWin(ShipStatus __instance) {
-            if (BountyHunter.triggerBountyHunterWin) {
+        private static bool CheckAndEndGameForLoverWin(ShipStatus __instance, PlayerStatistics statistics) {
+            if (statistics.TeamLoversAlive == 2 && statistics.TotalAlive <= 3) {
                 __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BountyHunterWin, false);
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.LoversWin, false);
                 return true;
             }
             return false;
         }
-
+        private static bool CheckAndEndGameForTaskMasterWin(ShipStatus __instance) {
+            if (TaskMaster.triggerTaskMasterCrewWin) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.TaskMasterCrewWin, false);
+                return true;
+            }
+            return false;
+        }
         private static bool CheckAndEndGameForJokerWin(ShipStatus __instance) {
             if (Joker.triggerJokerWin) {
                 __instance.enabled = false;
@@ -846,7 +953,6 @@ namespace LasMonjas.Patches {
             }
             return false;
         }
-
         private static bool CheckAndEndGameForPyromaniacWin(ShipStatus __instance) {
             if (Pyromaniac.triggerPyromaniacWin) {
                 __instance.enabled = false;
@@ -871,16 +977,6 @@ namespace LasMonjas.Patches {
             }
             return false;
         }
-
-        private static bool CheckAndEndGameForPuppeteerWin(ShipStatus __instance) {
-            if (Puppeteer.triggerPuppeteerWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.PuppeteerWin, false);
-                return true;
-            }
-            return false;
-        }
-
         private static bool CheckAndEndGameForPoisonerWin(ShipStatus __instance) {
             if (Poisoner.triggerPoisonerWin) {
                 __instance.enabled = false;
@@ -889,7 +985,130 @@ namespace LasMonjas.Patches {
             }
             return false;
         }
-        
+        private static bool CheckAndEndGameForPuppeteerWin(ShipStatus __instance) {
+            if (Puppeteer.triggerPuppeteerWin) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.PuppeteerWin, false);
+                return true;
+            }
+            return false;
+        }
+       
+        private static bool CheckAndEndGameForExilerWin(ShipStatus __instance) {
+            if (Exiler.triggerExilerWin) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.ExilerWin, false);
+                return true;
+            }
+            return false;
+        }
+        private static bool CheckAndEndGameForSeekerWin(ShipStatus __instance) {
+            if (Seeker.triggerSeekerWin) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.SeekerWin, false);
+                return true;
+            }
+            return false;
+        }
+        private static bool CheckAndEndGameForKidLose(ShipStatus __instance) {
+            if (Kid.triggerKidLose) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.KidLose, false);
+                return true;
+            }
+            return false;
+        }           
+        private static bool CheckAndEndGameForRenegadeWin(ShipStatus __instance, PlayerStatistics statistics) {
+            if (statistics.TeamRenegadeAlive >= statistics.TotalAlive - statistics.TeamRenegadeAlive + statistics.TeamCaptainAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive != statistics.TeamRenegadeAlive && !(statistics.TeamRenegadeHasAliveLover && statistics.TeamLoversAlive == 2)) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.TeamRenegadeWin, false);
+                return true;
+            }
+            return false;
+        }
+        private static bool CheckAndEndGameForBountyHunterWin(ShipStatus __instance) {
+            if (BountyHunter.triggerBountyHunterWin) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BountyHunterWin, false);
+                return true;
+            }
+            return false;
+        }
+        private static bool CheckAndEndGameForTrapperWin(ShipStatus __instance, PlayerStatistics statistics) {
+            if (statistics.TeamTrapperAlive >= statistics.TotalAlive - statistics.TeamTrapperAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.TrapperWin, false);
+                return true;
+            }
+            return false;
+        }
+        private static bool CheckAndEndGameForYinyangerWin(ShipStatus __instance, PlayerStatistics statistics) {
+            if (statistics.TeamYinyangerAlive >= statistics.TotalAlive - statistics.TeamYinyangerAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.YinyangerWin, false);
+                return true;
+            }
+            return false;
+        }
+        private static bool CheckAndEndGameForChallengerWin(ShipStatus __instance, PlayerStatistics statistics) {
+            if (Challenger.triggerChallengerWin || (statistics.TeamChallengerAlive >= statistics.TotalAlive - statistics.TeamChallengerAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2))) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.ChallengerWin, false);
+                return true;
+            }
+            return false;
+        }
+        private static bool CheckAndEndGameForNinjaWin(ShipStatus __instance, PlayerStatistics statistics) {
+            if (statistics.TeamNinjaAlive >= statistics.TotalAlive - statistics.TeamNinjaAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.NinjaWin, false);
+                return true;
+            }
+            return false;
+        }
+        private static bool CheckAndEndGameForBerserkerWin(ShipStatus __instance, PlayerStatistics statistics) {
+            if (statistics.TeamBerserkerAlive >= statistics.TotalAlive - statistics.TeamBerserkerAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BerserkerWin, false);
+                return true;
+            }
+            return false;
+        }        
+        private static bool CheckAndEndGameForYandereWin(ShipStatus __instance, PlayerStatistics statistics) {
+            if (Yandere.triggerYandereWin && !Yandere.rampageMode) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.YandereWin, false);
+                return true;
+            }
+            
+            if (Yandere.rampageMode && statistics.TeamYandereAlive >= statistics.TotalAlive - statistics.TeamYandereAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.YandereWin, false);
+                return true;
+            }
+            return false;
+        }
+        private static bool CheckAndEndGameForStrandedWin(ShipStatus __instance, PlayerStatistics statistics) {
+            if (Stranded.triggerStrandedWin) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.StrandedWin, false);
+                return true;
+            }
+            if (statistics.TeamStrandedAlive >= statistics.TotalAlive - statistics.TeamStrandedAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.StrandedWin, false);
+                return true;
+            }
+            return false;
+        }
+        private static bool CheckAndEndGameForMonjaWin(ShipStatus __instance, PlayerStatistics statistics) {
+            if (statistics.TeamMonjaAlive >= statistics.TotalAlive - statistics.TeamMonjaAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.MonjaWin, false);
+                return true;
+            }
+            return false;
+        }
         private static bool CheckAndEndGameForSabotageWin(ShipStatus __instance) {
             if (__instance.Systems == null) return false;
             ISystemType systemType = __instance.Systems.ContainsKey(SystemTypes.LifeSupp) ? __instance.Systems[SystemTypes.LifeSupp] : null;
@@ -915,7 +1134,6 @@ namespace LasMonjas.Patches {
             }
             return false;
         }
-
         private static bool CheckAndEndGameForTaskWin(ShipStatus __instance) {
             if (GameData.Instance.TotalTasks <= GameData.Instance.CompletedTasks && howmanygamemodesareon != 1) {
                 __instance.enabled = false;
@@ -924,67 +1142,8 @@ namespace LasMonjas.Patches {
             }
             return false;
         }
-
-        private static bool CheckAndEndGameForLoverWin(ShipStatus __instance, PlayerStatistics statistics) {
-            if (statistics.TeamLoversAlive == 2 && statistics.TotalAlive <= 3) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.LoversWin, false);
-                return true;
-            }
-            return false;
-        }
-
-        private static bool CheckAndEndGameForRenegadeWin(ShipStatus __instance, PlayerStatistics statistics) {
-            if (statistics.TeamRenegadeAlive >= statistics.TotalAlive - statistics.TeamRenegadeAlive + statistics.TeamCaptainAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive != statistics.TeamRenegadeAlive && !(statistics.TeamRenegadeHasAliveLover && statistics.TeamLoversAlive == 2)) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.TeamRenegadeWin, false);
-                return true;
-            }
-            return false;
-        }
-        private static bool CheckAndEndGameForTrapperWin(ShipStatus __instance, PlayerStatistics statistics) {
-            if (statistics.TeamTrapperAlive >= statistics.TotalAlive - statistics.TeamTrapperAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.TrapperWin, false);
-                return true;
-            }
-            return false;
-        }
-        private static bool CheckAndEndGameForYinyangerWin(ShipStatus __instance, PlayerStatistics statistics) {
-            if (statistics.TeamYinyangerAlive >= statistics.TotalAlive - statistics.TeamYinyangerAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.YinyangerWin, false);
-                return true;
-            }
-            return false;
-        }
-        private static bool CheckAndEndGameForChallengerWin(ShipStatus __instance, PlayerStatistics statistics) {
-            if (statistics.TeamChallengerAlive >= statistics.TotalAlive - statistics.TeamChallengerAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.ChallengerWin, false);
-                return true;
-            }
-            return false;
-        }
-        private static bool CheckAndEndGameForNinjaWin(ShipStatus __instance, PlayerStatistics statistics) {
-            if (statistics.TeamNinjaAlive >= statistics.TotalAlive - statistics.TeamNinjaAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.NinjaWin, false);
-                return true;
-            }
-            return false;
-        }
-        private static bool CheckAndEndGameForBerserkerWin(ShipStatus __instance, PlayerStatistics statistics) {
-            if (statistics.TeamBerserkerAlive >= statistics.TotalAlive - statistics.TeamBerserkerAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BerserkerWin, false);
-                return true;
-            }
-            return false;
-        }
-        
         private static bool CheckAndEndGameForImpostorWin(ShipStatus __instance, PlayerStatistics statistics) {
-            if (howmanygamemodesareon != 1 && statistics.TeamImpostorsAlive >= statistics.TotalAlive - statistics.TeamImpostorsAlive + statistics.TeamCaptainAlive && statistics.TeamRenegadeAlive == 0 && statistics.TeamBountyHunterAlive == 0 && statistics.TeamTrapperAlive == 0 && statistics.TeamYinyangerAlive == 0 && statistics.TeamChallengerAlive == 0 && statistics.TeamNinjaAlive == 0 && statistics.TeamBerserkerAlive == 0 && statistics.TeamCaptainAlive != statistics.TeamImpostorsAlive && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
+            if (howmanygamemodesareon != 1 && statistics.TeamImpostorsAlive >= statistics.TotalAlive - statistics.TeamImpostorsAlive + statistics.TeamCaptainAlive && statistics.TeamRenegadeAlive == 0 && statistics.TeamBountyHunterAlive == 0 && statistics.TeamTrapperAlive == 0 && statistics.TeamYinyangerAlive == 0 && statistics.TeamChallengerAlive == 0 && statistics.TeamNinjaAlive == 0 && statistics.TeamBerserkerAlive == 0 && statistics.TeamYandereAlive == 0 && statistics.TeamStrandedAlive == 0 && statistics.TeamMonjaAlive == 0 && statistics.TeamCaptainAlive != statistics.TeamImpostorsAlive && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
                 __instance.enabled = false;
                 GameOverReason endReason;
                 switch (TempData.LastDeathReason) {
@@ -1003,25 +1162,23 @@ namespace LasMonjas.Patches {
             }
             return false;
         }
-
         private static bool CheckAndEndGameForCrewmateWin(ShipStatus __instance, PlayerStatistics statistics) {
-            if (howmanygamemodesareon != 1 && statistics.TeamImpostorsAlive == 0 && statistics.TeamRenegadeAlive == 0 && statistics.TeamBountyHunterAlive == 0 && statistics.TeamTrapperAlive == 0 && statistics.TeamYinyangerAlive == 0 && statistics.TeamChallengerAlive == 0 && statistics.TeamNinjaAlive == 0 && statistics.TeamBerserkerAlive == 0) {
+            if (howmanygamemodesareon != 1 && statistics.TeamImpostorsAlive == 0 && statistics.TeamRenegadeAlive == 0 && statistics.TeamBountyHunterAlive == 0 && statistics.TeamTrapperAlive == 0 && statistics.TeamYinyangerAlive == 0 && statistics.TeamChallengerAlive == 0 && statistics.TeamNinjaAlive == 0 && statistics.TeamBerserkerAlive == 0 && statistics.TeamYandereAlive == 0 && statistics.TeamStrandedAlive == 0 && statistics.TeamMonjaAlive == 0) {
                 __instance.enabled = false;
                 ShipStatus.RpcEndGame(GameOverReason.HumansByVote, false);
                 return true;
             }
             return false;
         }
-
         private static void EndGameForSabotage(ShipStatus __instance) {
             __instance.enabled = false;
             ShipStatus.RpcEndGame(GameOverReason.ImpostorBySabotage, false);
             return;
         }
-        private static bool CheckAndEndGameForBombExploded(ShipStatus __instance) {
-            if (Bomberman.triggerBombExploded) {
+        private static bool CheckAndEndGameForDrawFlagWin(ShipStatus __instance) {
+            if (CaptureTheFlag.triggerDrawWin) {
                 __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BombExploded, false);
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.DrawTeamWin, false);
                 return true;
             }
             return false;
@@ -1041,15 +1198,7 @@ namespace LasMonjas.Patches {
                 return true;
             }
             return false;
-        }
-        private static bool CheckAndEndGameForDrawFlagWin(ShipStatus __instance) {
-            if (CaptureTheFlag.triggerDrawWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.DrawTeamWin, false);
-                return true;
-            }
-            return false;
-        }
+        }        
         private static bool CheckAndEndGameForThiefModeThiefWin(ShipStatus __instance) {
             if (PoliceAndThief.triggerThiefWin) {
                 __instance.enabled = false;
@@ -1062,6 +1211,14 @@ namespace LasMonjas.Patches {
             if (PoliceAndThief.triggerPoliceWin) {
                 __instance.enabled = false;
                 ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.ThiefModePoliceWin, false);
+                return true;
+            }
+            return false;
+        }
+        private static bool CheckAndEndGameForDrawHillWin(ShipStatus __instance) {
+            if (KingOfTheHill.triggerDrawWin) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.TeamHillDraw, false);
                 return true;
             }
             return false;
@@ -1081,15 +1238,7 @@ namespace LasMonjas.Patches {
                 return true;
             }
             return false;
-        }
-        private static bool CheckAndEndGameForDrawHillWin(ShipStatus __instance) {
-            if (KingOfTheHill.triggerDrawWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.TeamHillDraw, false);
-                return true;
-            }
-            return false;
-        }
+        }        
         private static bool CheckAndEndGameForHotPotatoEnd(ShipStatus __instance) {
             if (HotPotato.triggerHotPotatoEnd) {
                 __instance.enabled = false;
@@ -1130,6 +1279,14 @@ namespace LasMonjas.Patches {
             }
             return false;
         }
+        private static bool CheckAndEndGameForBattleRoyaleDraw(ShipStatus __instance) {
+            if (BattleRoyale.triggerDrawWin) {
+                __instance.enabled = false;
+                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleDraw, false);
+                return true;
+            }
+            return false;
+        }
         private static bool CheckAndEndGameForBattleRoyaleLimeTeamWin(ShipStatus __instance) {
             if (BattleRoyale.triggerLimeTeamWin) {
                 __instance.enabled = false;
@@ -1153,34 +1310,28 @@ namespace LasMonjas.Patches {
                 return true;
             }
             return false;
-        }
-        private static bool CheckAndEndGameForBattleRoyaleDraw(ShipStatus __instance) {
-            if (BattleRoyale.triggerDrawWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleDraw, false);
-                return true;
-            }
-            return false;
-        }
-
+        }       
     }
 
     internal class PlayerStatistics
     {
-        public int TeamImpostorsAlive { get; set; }
-        public int TeamRenegadeAlive { get; set; }
-        public int TeamLoversAlive { get; set; }
         public int TotalAlive { get; set; }
+        public int TeamImpostorsAlive { get; set; }
+        public int TeamLoversAlive { get; set; }
         public bool TeamImpostorHasAliveLover { get; set; }
+        public int TeamRenegadeAlive { get; set; }
         public bool TeamRenegadeHasAliveLover { get; set; }
-        public int TeamTrapperAlive { get; set; }
         public int TeamBountyHunterAlive { get; set; }
+        public int TeamTrapperAlive { get; set; }
         public int TeamYinyangerAlive { get; set; }
-        public int TeamCaptainAlive { get; set; }
         public int TeamChallengerAlive { get; set; }
         public int TeamNinjaAlive { get; set; }
         public int TeamBerserkerAlive { get; set; }
-        
+        public int TeamYandereAlive { get; set; }
+        public int TeamStrandedAlive { get; set; }
+        public int TeamMonjaAlive { get; set; }
+        public int TeamCaptainAlive { get; set; }
+
         public PlayerStatistics(ShipStatus __instance) {
             GetPlayerCounts();
         }
@@ -1190,19 +1341,22 @@ namespace LasMonjas.Patches {
         }
 
         private void GetPlayerCounts() {
-            int numRenegadeAlive = 0;
+            int numTotalAlive = 0;
             int numImpostorsAlive = 0;
             int numLoversAlive = 0;
-            int numTotalAlive = 0;
             bool impLover = false;
+            int numRenegadeAlive = 0;
             bool renegadeLover = false;
-            int numTrapperAlive = 0;
             int numBountyHunterAlive = 0;
+            int numTrapperAlive = 0;
             int numYinyangerAlive = 0;
-            int numCaptainAlive = 0;
             int numChallengerAlive = 0;
             int numNinjaAlive = 0;
             int numBerserkerAlive = 0;
+            int numYandereAlive = 0;
+            int numStrandedAlive = 0;
+            int numMonjaAlive = 0;
+            int numCaptainAlive = 0;
 
             for (int i = 0; i < GameData.Instance.PlayerCount; i++) {
                 GameData.PlayerInfo playerInfo = GameData.Instance.AllPlayers[i];
@@ -1225,17 +1379,14 @@ namespace LasMonjas.Patches {
                             numRenegadeAlive++;
                             if (lover) renegadeLover = true;
                         }
-                        if (Trapper.trapper != null && Trapper.trapper.PlayerId == playerInfo.PlayerId) {
-                            numTrapperAlive++;
-                        }
                         if (BountyHunter.bountyhunter != null && BountyHunter.bountyhunter.PlayerId == playerInfo.PlayerId) {
                             numBountyHunterAlive++;
                         }
+                        if (Trapper.trapper != null && Trapper.trapper.PlayerId == playerInfo.PlayerId) {
+                            numTrapperAlive++;
+                        }                       
                         if (Yinyanger.yinyanger != null && Yinyanger.yinyanger.PlayerId == playerInfo.PlayerId) {
                             numYinyangerAlive++;
-                        }
-                        if (Captain.captain != null && Captain.captain.PlayerId == playerInfo.PlayerId) {
-                            numCaptainAlive++;
                         }
                         if (Challenger.challenger != null && Challenger.challenger.PlayerId == playerInfo.PlayerId) {
                             numChallengerAlive++;
@@ -1246,23 +1397,38 @@ namespace LasMonjas.Patches {
                         if (Berserker.berserker != null && Berserker.berserker.PlayerId == playerInfo.PlayerId) {
                             numBerserkerAlive++;
                         }
+                        if (Yandere.yandere != null && Yandere.yandere.PlayerId == playerInfo.PlayerId) {
+                            numYandereAlive++;
+                        }
+                        if (Stranded.stranded != null && Stranded.stranded.PlayerId == playerInfo.PlayerId) {
+                            numStrandedAlive++;
+                        }
+                        if (Monja.monja != null && Monja.monja.PlayerId == playerInfo.PlayerId) {
+                            numMonjaAlive++;
+                        }
+                        if (Captain.captain != null && Captain.captain.PlayerId == playerInfo.PlayerId) {
+                            numCaptainAlive++;
+                        }
                     }
                 }
             }
 
-            TeamRenegadeAlive = numRenegadeAlive;
+            TotalAlive = numTotalAlive;
             TeamImpostorsAlive = numImpostorsAlive;
             TeamLoversAlive = numLoversAlive;
-            TotalAlive = numTotalAlive;
             TeamImpostorHasAliveLover = impLover;
+            TeamRenegadeAlive = numRenegadeAlive;
             TeamRenegadeHasAliveLover = renegadeLover;
-            TeamTrapperAlive = numTrapperAlive;
             TeamBountyHunterAlive = numBountyHunterAlive;
+            TeamTrapperAlive = numTrapperAlive;
             TeamYinyangerAlive = numYinyangerAlive;
-            TeamCaptainAlive = numCaptainAlive;
             TeamChallengerAlive = numChallengerAlive;
             TeamNinjaAlive = numNinjaAlive;
             TeamBerserkerAlive = numBerserkerAlive;
+            TeamYandereAlive = numYandereAlive;
+            TeamStrandedAlive = numStrandedAlive;
+            TeamMonjaAlive = numMonjaAlive;
+            TeamCaptainAlive = numCaptainAlive;
         }
     }
 }
