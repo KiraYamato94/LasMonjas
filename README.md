@@ -27,7 +27,7 @@ Las Monjas is a Spanish mod (available on English, Spanish, Chinese and Japanese
   2. Extract "Las Monjas modVersion.zip" files inside the "Among Us" folder (where the Among Us.exe file is) selecting replace if necessary.
   3. Open Among Us.exe, the first time takes a bit to load, don't worry.
   4. If there's a Submerged update avaiable, you can update it with the "Download/Update Submerged" cyan's button on the main menu.
-  5. The mod includes a file called "LasMonjasDownloader.exe" which can be used to reinstall the mod from zero, keep in mind that this file deletes "BepInEx" and "dotnet" folders in order to install them again.
+  5. The mod includes a file called [LasMonjasDownloader](https://github.com/KiraYamato94/LasMonjas/releases/download/3.0.0/LasMonjasDownloader.exe) which can be used to reinstall the mod from zero, keep in mind that this file deletes "BepInEx" and "dotnet" folders in order to install them again.
 
 -----------------------
 
@@ -35,6 +35,10 @@ Las Monjas is a Spanish mod (available on English, Spanish, Chinese and Japanese
 <details>
   <summary>Click to show</summary>
   
+**Version 3.0.2 (4th November 2022)**
+
+- Fixed zoom out/in button on Hot Potato gamemode
+
 **Version 3.0.1 (27th October 2022)**
 
 - Fixed an issue with Captain's special ability that was preventing him to vote on next meetings after using his ability
@@ -53,7 +57,7 @@ Las Monjas is a Spanish mod (available on English, Spanish, Chinese and Japanese
 - On Zombie Laboratory, reduced the cooldown to enter Infirmary from 10 to 5 seconds and added an individual timer for each Survivor, no matter how many times you get infected, if that timer reaches 0 you turn into a Zombie.
 - Added Modded Asia as a new custom region.
 - Added LasMonjasDownloader to the mod release, this program install the mod from zero on your Among Us folder.
-- Added the Zoom out/in button to Hot Potato and Battle Royale (only for All VS All).
+- Added the Zoom out/in button to Hot Potato.
 - Added sound effects for almost every button use and for the intro screen.
 - Added /help and /h roleName command to the lobby, it will display a specific role's summary.
 - Added /myrole and /m command to the meeting chat, it will display a summary of your role.
