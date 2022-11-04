@@ -42,14 +42,14 @@ namespace LasMonjas.Objects
             tasers.Add(this);
 
             HudManager.Instance.StartCoroutine(Effects.Lerp(taserDuration, new Action<float>((p) => {
-
-                if (p == 1f && taser != null) {
+                player.moveable = false;
+                player.NetTransform.Halt(); // Stop current movement
+                if (p == 1f) {
+                    player.moveable = true;
                     UnityEngine.Object.Destroy(taser);
                     tasers.Remove(this);
                 }
-
             })));
-
         }
     }
 }

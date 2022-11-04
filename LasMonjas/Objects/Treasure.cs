@@ -26,7 +26,7 @@ namespace LasMonjas.Objects
             return sprite;
         }
 
-        public Treasure(float chestDuration, PlayerControl player) {
+        public Treasure(float chestDuration) {
 
             this.color = new Color(1f, 1f, 1f, 1f);
 
@@ -176,64 +176,64 @@ namespace LasMonjas.Objects
                 case 2:
                     switch (TreasureHunter.randomSpawn) {
                         case 1:
-                            position = new Vector3(16.65f, -2, 1f);
+                            position = new Vector3(16.65f, -2, -1f);
                             break;
                         case 2:
-                            position = new Vector3(3.5f, -7.75f, 1f);
+                            position = new Vector3(3.5f, -7.75f, -1f);
                             break;
                         case 3:
-                            position = new Vector3(3.75f, -11.75f, 1f);
+                            position = new Vector3(3.75f, -11.75f, -1f);
                             break;
                         case 4:
-                            position = new Vector3(10.6f, -12.25f, 1f);
+                            position = new Vector3(10.6f, -12.25f, -1f);
                             break;
                         case 5:
-                            position = new Vector3(20.65f, -12.25f, 1f);
+                            position = new Vector3(20.65f, -12.25f, -1f);
                             break;
                         case 6:
-                            position = new Vector3(32.5f, -15.85f, 1f);
+                            position = new Vector3(32.5f, -15.85f, -1f);
                             break;
                         case 7:
-                            position = new Vector3(34.9f, -9.75f, 1f);
+                            position = new Vector3(34.9f, -9.75f, -1f);
                             break;
                         case 8:
-                            position = new Vector3(40.3f, -8.15f, 1f);
+                            position = new Vector3(40.3f, -8.15f, -1f);
                             break;
                         case 9:
-                            position = new Vector3(29.75f, -7.5f, 1f);
+                            position = new Vector3(29.75f, -7.5f, -1f);
                             break;
                         case 10:
-                            position = new Vector3(25.5f, -7.5f, 1f);
+                            position = new Vector3(25.5f, -7.5f, -1f);
                             break;
                         case 11:
-                            position = new Vector3(36.5f, -21.75f, 1f);
+                            position = new Vector3(36.5f, -21.75f, -1f);
                             break;
                         case 12:
-                            position = new Vector3(22.1f, -25.25f, 1f);
+                            position = new Vector3(22.1f, -25.25f, -1f);
                             break;
                         case 13:
-                            position = new Vector3(16.25f, -25.25f, 1f);
+                            position = new Vector3(16.25f, -25.25f, -1f);
                             break;
                         case 14:
-                            position = new Vector3(12.75f, -24.25f, 1f);
+                            position = new Vector3(12.75f, -24.25f, -1f);
                             break;
                         case 15:
-                            position = new Vector3(2.25f, -24.25f, 1f);
+                            position = new Vector3(2.25f, -24.25f, -1f);
                             break;
                         case 16:
-                            position = new Vector3(12.5f, -17.25f, 1f);
+                            position = new Vector3(12.5f, -17.25f, -1f);
                             break;
                         case 17:
-                            position = new Vector3(1.5f, -18.9f, 1f);
+                            position = new Vector3(1.5f, -18.9f, -1f);
                             break;
                         case 18:
-                            position = new Vector3(-1.25f, -17.5f, 1f);
+                            position = new Vector3(-1.25f, -17.5f, -1f);
                             break;
                         case 19:
-                            position = new Vector3(8.25f, -16.5f, 1f);
+                            position = new Vector3(8.25f, -16.5f, -1f);
                             break;
                         case 20:
-                            position = new Vector3(23.05f, -17.15f, 1f);
+                            position = new Vector3(23.05f, -17.15f, -1f);
                             break;
                     }
                     treasure.transform.position = position;

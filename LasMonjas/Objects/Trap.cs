@@ -25,21 +25,21 @@ namespace LasMonjas.Objects
             return sprite;
         }
 
-        public Trap(float duration, PlayerControl player) {
+        public Trap(float duration, Vector2 player) {
 
             this.color = new Color(1f, 1f, 1f, 1f);
 
             trap = new GameObject("Trap" + traps.Count.ToString());
             trap.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
             if (PlayerControl.GameOptions.MapId == 5) {
-                position = new Vector3(player.transform.position.x, player.transform.position.y, -0.5f);
+                position = new Vector3(player.x, player.y, -0.5f);
             }
             else {
-                position = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z + 1f);
+                position = new Vector3(player.x, player.y, 1f);
             }
             trap.transform.position = position;
             trap.transform.localPosition = position;
-            trap.transform.SetParent(player.transform.parent);
+            trap.transform.SetParent(Trapper.trapper.transform.parent);
 
             spriteRenderer = trap.AddComponent<SpriteRenderer>();
             spriteRenderer.sprite = getTrapSprite();

@@ -42,21 +42,21 @@ namespace LasMonjas.Objects
             return positionSprite;
         }
 
-        public EngineerTrap(float duration, PlayerControl player, byte trapType) {
+        public EngineerTrap(float duration, Vector2 player, byte trapType) {
 
             this.color = new Color(1f, 1f, 1f, 1f);
 
             engineerTrap = new GameObject("EngineerTrap" + engineerTraps.Count.ToString());
             engineerTrap.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
             if (PlayerControl.GameOptions.MapId == 5) {
-                position = new Vector3(player.transform.position.x, player.transform.position.y, -0.5f);
+                position = new Vector3(player.x, player.y, -0.5f);
             }
             else {
-                position = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z + 1f);
+                position = new Vector3(player.x, player.y, 1f);
             }
             engineerTrap.transform.position = position;
             engineerTrap.transform.localPosition = position;
-            engineerTrap.transform.SetParent(player.transform.parent);
+            engineerTrap.transform.SetParent(Engineer.engineer.transform.parent);
 
             spriteRenderer = engineerTrap.AddComponent<SpriteRenderer>();
             switch (trapType) {
@@ -143,7 +143,7 @@ namespace LasMonjas.Objects
                                 MapBehaviour.Instance.Close();
                             }
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.treasureHunterPlaceTreasure, false, 100f);
-                            new CustomMessage("Speed changed!", 5, -1, 1f, 23);
+                            new CustomMessage(Language.statusRolesTexts[0], 5, -1, 1f, 23);
                         }
 
                         PlayerControl target = Helpers.playerById(player.PlayerId);

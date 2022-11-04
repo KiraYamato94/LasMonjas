@@ -29,21 +29,21 @@ namespace LasMonjas.Objects
             return spiralSprite;
         }
 
-        public HypnotistSpiral(float duration, PlayerControl player) {
+        public HypnotistSpiral(float duration, Vector2 player) {
 
             this.color = new Color(1f, 1f, 1f, 1f);
 
             hypnotistSpiral = new GameObject("HypnotistSpiral" + hypnotistSpirals.Count.ToString());
             hypnotistSpiral.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
             if (PlayerControl.GameOptions.MapId == 5) {
-                position = new Vector3(player.transform.position.x, player.transform.position.y, -0.5f);
+                position = new Vector3(player.x, player.y, -0.5f);
             }
             else {
-                position = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z + 1f);
+                position = new Vector3(player.x, player.y, 1f);
             }
             hypnotistSpiral.transform.position = position;
             hypnotistSpiral.transform.localPosition = position;
-            hypnotistSpiral.transform.SetParent(player.transform.parent);
+            hypnotistSpiral.transform.SetParent(Hypnotist.hypnotist.transform.parent);
 
             spriteRenderer = hypnotistSpiral.AddComponent<SpriteRenderer>();
             spriteRenderer.sprite = getSpiralSprite();
@@ -144,7 +144,7 @@ namespace LasMonjas.Objects
                                 break;
                         }
 
-                        // Assign hypnotized to renegade and minion so they can't vent
+                        // Assign hypnotized to renegade and minion and stranded so they can't vent
                         if (Renegade.renegade != null && player == Renegade.renegade) {
                             Renegade.isHypnotized = true;
                             rebelHypnotized(1);
@@ -153,13 +153,17 @@ namespace LasMonjas.Objects
                             Minion.isHypnotized = true;
                             rebelHypnotized(2);
                         }
+                        if (Stranded.stranded != null && player == Stranded.stranded) {
+                            Stranded.isHypnotized = true;
+                            rebelHypnotized(3);
+                        }
 
                         Hypnotist.messageTimer = Hypnotist.spiralDuration;
                         SoundManager.Instance.PlaySound(CustomMain.customAssets.medusaPetrify, false, 100f);
                         if (MapBehaviour.Instance) {
                             MapBehaviour.Instance.Close();
                         }
-                        new CustomMessage("Hypnotized!", Hypnotist.spiralDuration, -1, 1.3f, 22);
+                        new CustomMessage(Language.statusRolesTexts[1], Hypnotist.spiralDuration, -1, 1.3f, 22);
                         PlayerControl target = Helpers.playerById(player.PlayerId);
                         MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ActivateSpiralTrap, Hazel.SendOption.Reliable, -1);
                         killWriter.Write(player.PlayerId);
@@ -187,6 +191,9 @@ namespace LasMonjas.Objects
                             break;
                         case 2:
                             Minion.isHypnotized = false;
+                            break;
+                        case 3:
+                            Stranded.isHypnotized = false;
                             break;
                     }
                 }

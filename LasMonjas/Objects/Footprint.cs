@@ -70,7 +70,7 @@ namespace LasMonjas.Objects
                     c = Palette.ShadowColors[Puppeteer.transformTarget.Data.DefaultOutfit.ColorId];
                 else if (Painter.painterTimer > 0)
                     c = Palette.PlayerColors[Detective.footprintcolor];
-                else if (Challenger.isDueling)
+                else if (Challenger.isDueling || Seeker.isMinigaming)
                     c = Palette.PlayerColors[6];
             }
 

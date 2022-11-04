@@ -25,21 +25,21 @@ namespace LasMonjas.Objects
             return sprite;
         }
 
-        public Mine(float duration, PlayerControl player) {
+        public Mine(float duration, Vector2 player) {
 
             this.color = new Color(1f, 1f, 1f, 1f);
 
             mine = new GameObject("Mine" + mines.Count.ToString());
             mine.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
             if (PlayerControl.GameOptions.MapId == 5) {
-                position = new Vector3(player.transform.position.x, player.transform.position.y, -0.5f);
+                position = new Vector3(player.x, player.y, -0.5f);
             }
             else {
-                position = new Vector3(player.transform.position.x, player.transform.position.y, player.transform.position.z + 1f);
+                position = new Vector3(player.x, player.y, 1f);
             }
             mine.transform.position = position;
             mine.transform.localPosition = position;
-            mine.transform.SetParent(player.transform.parent);
+            mine.transform.SetParent(Trapper.trapper.transform.parent);
 
             spriteRenderer = mine.AddComponent<SpriteRenderer>();
             spriteRenderer.sprite = getMineSprite();

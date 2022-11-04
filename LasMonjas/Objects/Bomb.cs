@@ -26,16 +26,16 @@ namespace LasMonjas.Objects
             return sprite;
         }
 
-        public Bomb(float bombDuration, PlayerControl player, int localcurrentBombNumber) {
+        public Bomb(float bombDuration, Vector2 player, int localcurrentBombNumber) {
 
             this.color = new Color(1f, 1f, 1f, 1f);
 
             bomb = new GameObject("Bomb");
             bomb.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-            Vector3 position = new Vector3(player.transform.position.x, player.transform.position.y, -0.5f);
+            Vector3 position = new Vector3(player.x, player.y, -0.5f);
             bomb.transform.position = position;
             bomb.transform.localPosition = position;
-            bomb.transform.SetParent(player.transform.parent);
+            bomb.transform.SetParent(Bomberman.bomberman.transform.parent);
 
             spriteRenderer = bomb.AddComponent<SpriteRenderer>();
             spriteRenderer.sprite = getBombSprite();
