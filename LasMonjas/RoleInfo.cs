@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using static LasMonjas.LasMonjas;
 using UnityEngine;
+using LasMonjas.Core;
 
 namespace LasMonjas
 {
@@ -16,8 +17,9 @@ namespace LasMonjas
         public RoleId roleId;
         public bool isNeutral;
         public bool isRebel;
+        public bool isModifier;
 
-        RoleInfo(string name, Color color, string introDescription, string shortDescription, RoleId roleId, bool isNeutral = false, bool isRebel = false) {
+        RoleInfo(string name, Color color, string introDescription, string shortDescription, RoleId roleId, bool isNeutral = false, bool isRebel = false, bool isModifier = false) {
             this.color = color;
             this.name = name;
             this.introDescription = introDescription;
@@ -25,224 +27,237 @@ namespace LasMonjas
             this.roleId = roleId;
             this.isNeutral = isNeutral;
             this.isRebel = isRebel;
+            this.isModifier = isModifier;
         }
 
         // Capture the Flag Teams
-        public static RoleInfo redplayer01 = new RoleInfo("Red Team", Color.red, "Steal <color=#0000FFFF>Blue Team</color> flag", "Steal <color=#0000FFFF>Blue Team</color> flag", RoleId.RedPlayer01);
-        public static RoleInfo redplayer02 = new RoleInfo("Red Team", Color.red, "Steal <color=#0000FFFF>Blue Team</color> flag", "Steal <color=#0000FFFF>Blue Team</color> flag", RoleId.RedPlayer02);
-        public static RoleInfo redplayer03 = new RoleInfo("Red Team", Color.red, "Steal <color=#0000FFFF>Blue Team</color> flag", "Steal <color=#0000FFFF>Blue Team</color> flag", RoleId.RedPlayer03);
-        public static RoleInfo redplayer04 = new RoleInfo("Red Team", Color.red, "Steal <color=#0000FFFF>Blue Team</color> flag", "Steal <color=#0000FFFF>Blue Team</color> flag", RoleId.RedPlayer04);
-        public static RoleInfo redplayer05 = new RoleInfo("Red Team", Color.red, "Steal <color=#0000FFFF>Blue Team</color> flag", "Steal <color=#0000FFFF>Blue Team</color> flag", RoleId.RedPlayer05);
-        public static RoleInfo redplayer06 = new RoleInfo("Red Team", Color.red, "Steal <color=#0000FFFF>Blue Team</color> flag", "Steal <color=#0000FFFF>Blue Team</color> flag", RoleId.RedPlayer06);
-        public static RoleInfo redplayer07 = new RoleInfo("Red Team", Color.red, "Steal <color=#0000FFFF>Blue Team</color> flag", "Steal <color=#0000FFFF>Blue Team</color> flag", RoleId.RedPlayer07);
-        public static RoleInfo blueplayer01 = new RoleInfo("Blue Team", Color.blue, "Steal <color=#FF0000FF>Red Team</color> flag", "Steal <color=#FF0000FF>Red Team</color> flag", RoleId.BluePlayer01);
-        public static RoleInfo blueplayer02 = new RoleInfo("Blue Team", Color.blue, "Steal <color=#FF0000FF>Red Team</color> flag", "Steal <color=#FF0000FF>Red Team</color> flag", RoleId.BluePlayer02);
-        public static RoleInfo blueplayer03 = new RoleInfo("Blue Team", Color.blue, "Steal <color=#FF0000FF>Red Team</color> flag", "Steal <color=#FF0000FF>Red Team</color> flag", RoleId.BluePlayer03);
-        public static RoleInfo blueplayer04 = new RoleInfo("Blue Team", Color.blue, "Steal <color=#FF0000FF>Red Team</color> flag", "Steal <color=#FF0000FF>Red Team</color> flag", RoleId.BluePlayer04);
-        public static RoleInfo blueplayer05 = new RoleInfo("Blue Team", Color.blue, "Steal <color=#FF0000FF>Red Team</color> flag", "Steal <color=#FF0000FF>Red Team</color> flag", RoleId.BluePlayer05);
-        public static RoleInfo blueplayer06 = new RoleInfo("Blue Team", Color.blue, "Steal <color=#FF0000FF>Red Team</color> flag", "Steal <color=#FF0000FF>Red Team</color> flag", RoleId.BluePlayer06);
-        public static RoleInfo blueplayer07 = new RoleInfo("Blue Team", Color.blue, "Steal <color=#FF0000FF>Red Team</color> flag", "Steal <color=#FF0000FF>Red Team</color> flag", RoleId.BluePlayer07);
-        public static RoleInfo stealerplayer = new RoleInfo("Flag Stealer", Color.grey, "Kill the player with a flag to switch teams with it", "Kill the player with \na flag to switch teams with it", RoleId.StealerPlayer);
+        public static RoleInfo redplayer01 = new RoleInfo("Red Team", Color.red, Language.roleInfoNames[0], Language.roleInfoNames[0], RoleId.RedPlayer01);
+        public static RoleInfo redplayer02 = new RoleInfo("Red Team", Color.red, Language.roleInfoNames[0], Language.roleInfoNames[0], RoleId.RedPlayer02);
+        public static RoleInfo redplayer03 = new RoleInfo("Red Team", Color.red, Language.roleInfoNames[0], Language.roleInfoNames[0], RoleId.RedPlayer03);
+        public static RoleInfo redplayer04 = new RoleInfo("Red Team", Color.red, Language.roleInfoNames[0], Language.roleInfoNames[0], RoleId.RedPlayer04);
+        public static RoleInfo redplayer05 = new RoleInfo("Red Team", Color.red, Language.roleInfoNames[0], Language.roleInfoNames[0], RoleId.RedPlayer05);
+        public static RoleInfo redplayer06 = new RoleInfo("Red Team", Color.red, Language.roleInfoNames[0], Language.roleInfoNames[0], RoleId.RedPlayer06);
+        public static RoleInfo redplayer07 = new RoleInfo("Red Team", Color.red, Language.roleInfoNames[0], Language.roleInfoNames[0], RoleId.RedPlayer07);
+        public static RoleInfo blueplayer01 = new RoleInfo("Blue Team", Color.blue, Language.roleInfoNames[1], Language.roleInfoNames[1], RoleId.BluePlayer01);
+        public static RoleInfo blueplayer02 = new RoleInfo("Blue Team", Color.blue, Language.roleInfoNames[1], Language.roleInfoNames[1], RoleId.BluePlayer02);
+        public static RoleInfo blueplayer03 = new RoleInfo("Blue Team", Color.blue, Language.roleInfoNames[1], Language.roleInfoNames[1], RoleId.BluePlayer03);
+        public static RoleInfo blueplayer04 = new RoleInfo("Blue Team", Color.blue, Language.roleInfoNames[1], Language.roleInfoNames[1], RoleId.BluePlayer04);
+        public static RoleInfo blueplayer05 = new RoleInfo("Blue Team", Color.blue, Language.roleInfoNames[1], Language.roleInfoNames[1], RoleId.BluePlayer05);
+        public static RoleInfo blueplayer06 = new RoleInfo("Blue Team", Color.blue, Language.roleInfoNames[1], Language.roleInfoNames[1], RoleId.BluePlayer06);
+        public static RoleInfo blueplayer07 = new RoleInfo("Blue Team", Color.blue, Language.roleInfoNames[1], Language.roleInfoNames[1], RoleId.BluePlayer07);
+        public static RoleInfo stealerplayer = new RoleInfo("Flag Stealer", Color.grey, Language.roleInfoNames[2], Language.roleInfoNames[3], RoleId.StealerPlayer);
 
         // Police and Thief Teams
-        public static RoleInfo policeplayer01 = new RoleInfo("Police Officer", Color.cyan, "Capture all the <color=#D2B48CFF>Thiefs</color>", "Capture all the <color=#D2B48CFF>Thiefs</color>", RoleId.PolicePlayer01);
-        public static RoleInfo policeplayer02 = new RoleInfo("Taser", Color.yellow, "Tase the <color=#D2B48CFF>Thiefs</color>", "Tase the <color=#D2B48CFF>Thiefs \n with right clic</color>", RoleId.PolicePlayer02);
-        public static RoleInfo policeplayer03 = new RoleInfo("Police Officer", Color.cyan, "Capture all the <color=#D2B48CFF>Thiefs</color>", "Capture all the <color=#D2B48CFF>Thiefs</color>", RoleId.PolicePlayer03);
-        public static RoleInfo policeplayer04 = new RoleInfo("Taser", Color.yellow, "Tase the <color=#D2B48CFF>Thiefs</color>", "Tase the <color=#D2B48CFF>Thiefs \n with right clic</color>", RoleId.PolicePlayer04);
-        public static RoleInfo policeplayer05 = new RoleInfo("Police Officer", Color.cyan, "Capture all the <color=#D2B48CFF>Thiefs</color>", "Capture all the <color=#D2B48CFF>Thiefs</color>", RoleId.PolicePlayer05);
-        public static RoleInfo policeplayer06 = new RoleInfo("Police Officer", Color.cyan, "Capture all the <color=#D2B48CFF>Thiefs</color>", "Capture all the <color=#D2B48CFF>Thiefs</color>", RoleId.PolicePlayer06);
-        public static RoleInfo thiefplayer01 = new RoleInfo("Thief", Mechanic.color, "Steal all the jewels without getting captured", "Steal all the jewels \nwithout getting captured", RoleId.ThiefPlayer01);
-        public static RoleInfo thiefplayer02 = new RoleInfo("Thief", Mechanic.color, "Steal all the jewels without getting captured", "Steal all the jewels \nwithout getting captured", RoleId.ThiefPlayer02);
-        public static RoleInfo thiefplayer03 = new RoleInfo("Thief", Mechanic.color, "Steal all the jewels without getting captured", "Steal all the jewels \nwithout getting captured", RoleId.ThiefPlayer03);
-        public static RoleInfo thiefplayer04 = new RoleInfo("Thief", Mechanic.color, "Steal all the jewels without getting captured", "Steal all the jewels \nwithout getting captured", RoleId.ThiefPlayer04);
-        public static RoleInfo thiefplayer05 = new RoleInfo("Thief", Mechanic.color, "Steal all the jewels without getting captured", "Steal all the jewels \nwithout getting captured", RoleId.ThiefPlayer05);
-        public static RoleInfo thiefplayer06 = new RoleInfo("Thief", Mechanic.color, "Steal all the jewels without getting captured", "Steal all the jewels \nwithout getting captured", RoleId.ThiefPlayer06);
-        public static RoleInfo thiefplayer07 = new RoleInfo("Thief", Mechanic.color, "Steal all the jewels without getting captured", "Steal all the jewels \nwithout getting captured", RoleId.ThiefPlayer07);
-        public static RoleInfo thiefplayer08 = new RoleInfo("Thief", Mechanic.color, "Steal all the jewels without getting captured", "Steal all the jewels \nwithout getting captured", RoleId.ThiefPlayer08);
-        public static RoleInfo thiefplayer09 = new RoleInfo("Thief", Mechanic.color, "Steal all the jewels without getting captured", "Steal all the jewels \nwithout getting captured", RoleId.ThiefPlayer09);
+        public static RoleInfo policeplayer01 = new RoleInfo("Police Officer", Color.cyan, Language.roleInfoNames[4], Language.roleInfoNames[4], RoleId.PolicePlayer01);
+        public static RoleInfo policeplayer02 = new RoleInfo("Taser", Color.yellow, Language.roleInfoNames[5], Language.roleInfoNames[6], RoleId.PolicePlayer02);
+        public static RoleInfo policeplayer03 = new RoleInfo("Police Officer", Color.cyan, Language.roleInfoNames[4], Language.roleInfoNames[4], RoleId.PolicePlayer03);
+        public static RoleInfo policeplayer04 = new RoleInfo("Taser", Color.yellow, Language.roleInfoNames[5], Language.roleInfoNames[6], RoleId.PolicePlayer04);
+        public static RoleInfo policeplayer05 = new RoleInfo("Police Officer", Color.cyan, Language.roleInfoNames[4], Language.roleInfoNames[4], RoleId.PolicePlayer05);
+        public static RoleInfo policeplayer06 = new RoleInfo("Police Officer", Color.cyan, Language.roleInfoNames[4], Language.roleInfoNames[4], RoleId.PolicePlayer06);
+        public static RoleInfo thiefplayer01 = new RoleInfo("Thief", Mechanic.color, Language.roleInfoNames[7], Language.roleInfoNames[8], RoleId.ThiefPlayer01);
+        public static RoleInfo thiefplayer02 = new RoleInfo("Thief", Mechanic.color, Language.roleInfoNames[7], Language.roleInfoNames[8], RoleId.ThiefPlayer02);
+        public static RoleInfo thiefplayer03 = new RoleInfo("Thief", Mechanic.color, Language.roleInfoNames[7], Language.roleInfoNames[8], RoleId.ThiefPlayer03);
+        public static RoleInfo thiefplayer04 = new RoleInfo("Thief", Mechanic.color, Language.roleInfoNames[7], Language.roleInfoNames[8], RoleId.ThiefPlayer04);
+        public static RoleInfo thiefplayer05 = new RoleInfo("Thief", Mechanic.color, Language.roleInfoNames[7], Language.roleInfoNames[8], RoleId.ThiefPlayer05);
+        public static RoleInfo thiefplayer06 = new RoleInfo("Thief", Mechanic.color, Language.roleInfoNames[7], Language.roleInfoNames[8], RoleId.ThiefPlayer06);
+        public static RoleInfo thiefplayer07 = new RoleInfo("Thief", Mechanic.color, Language.roleInfoNames[7], Language.roleInfoNames[8], RoleId.ThiefPlayer07);
+        public static RoleInfo thiefplayer08 = new RoleInfo("Thief", Mechanic.color, Language.roleInfoNames[7], Language.roleInfoNames[8], RoleId.ThiefPlayer08);
+        public static RoleInfo thiefplayer09 = new RoleInfo("Thief", Mechanic.color, Language.roleInfoNames[7], Language.roleInfoNames[8], RoleId.ThiefPlayer09);
 
         // King of the hill Teams
-        public static RoleInfo greenKing = new RoleInfo("Green King", Color.green, "Capture the zones", "Capture the zones", RoleId.GreenKing);
-        public static RoleInfo greenplayer01 = new RoleInfo("Green Team", Color.green, "Protect your King", "Protect your King", RoleId.GreenPlayer01);
-        public static RoleInfo greenplayer02 = new RoleInfo("Green Team", Color.green, "Protect your King", "Protect your King", RoleId.GreenPlayer02);
-        public static RoleInfo greenplayer03 = new RoleInfo("Green Team", Color.green, "Protect your King", "Protect your King", RoleId.GreenPlayer03);
-        public static RoleInfo greenplayer04 = new RoleInfo("Green Team", Color.green, "Protect your King", "Protect your King", RoleId.GreenPlayer04);
-        public static RoleInfo greenplayer05 = new RoleInfo("Green Team", Color.green, "Protect your King", "Protect your King", RoleId.GreenPlayer05);
-        public static RoleInfo greenplayer06 = new RoleInfo("Green Team", Color.green, "Protect your King", "Protect your King", RoleId.GreenPlayer06);
-        public static RoleInfo yellowKing = new RoleInfo("Yellow King", Color.yellow, "Capture the zones", "Capture the zones", RoleId.YellowKing);
-        public static RoleInfo yellowplayer01 = new RoleInfo("Yellow Team", Color.yellow, "Protect your King", "Protect your King", RoleId.YellowPlayer01);
-        public static RoleInfo yellowplayer02 = new RoleInfo("Yellow Team", Color.yellow, "Protect your King", "Protect your King", RoleId.YellowPlayer02);
-        public static RoleInfo yellowplayer03 = new RoleInfo("Yellow Team", Color.yellow, "Protect your King", "Protect your King", RoleId.YellowPlayer03);
-        public static RoleInfo yellowplayer04 = new RoleInfo("Yellow Team", Color.yellow, "Protect your King", "Protect your King", RoleId.YellowPlayer04);
-        public static RoleInfo yellowplayer05 = new RoleInfo("Yellow Team", Color.yellow, "Protect your King", "Protect your King", RoleId.YellowPlayer05);
-        public static RoleInfo yellowplayer06 = new RoleInfo("Yellow Team", Color.yellow, "Protect your King", "Protect your King", RoleId.YellowPlayer06);
-        public static RoleInfo usurperplayer = new RoleInfo("Usurper", Color.grey, "Kill a King to become one", "Kill a King to become one", RoleId.UsurperPlayer);
+        public static RoleInfo greenKing = new RoleInfo("Green King", Color.green, Language.roleInfoNames[9], Language.roleInfoNames[9], RoleId.GreenKing);
+        public static RoleInfo greenplayer01 = new RoleInfo("Green Team", Color.green, Language.roleInfoNames[10], Language.roleInfoNames[10], RoleId.GreenPlayer01);
+        public static RoleInfo greenplayer02 = new RoleInfo("Green Team", Color.green, Language.roleInfoNames[10], Language.roleInfoNames[10], RoleId.GreenPlayer02);
+        public static RoleInfo greenplayer03 = new RoleInfo("Green Team", Color.green, Language.roleInfoNames[10], Language.roleInfoNames[10], RoleId.GreenPlayer03);
+        public static RoleInfo greenplayer04 = new RoleInfo("Green Team", Color.green, Language.roleInfoNames[10], Language.roleInfoNames[10], RoleId.GreenPlayer04);
+        public static RoleInfo greenplayer05 = new RoleInfo("Green Team", Color.green, Language.roleInfoNames[10], Language.roleInfoNames[10], RoleId.GreenPlayer05);
+        public static RoleInfo greenplayer06 = new RoleInfo("Green Team", Color.green, Language.roleInfoNames[10], Language.roleInfoNames[10], RoleId.GreenPlayer06);
+        public static RoleInfo yellowKing = new RoleInfo("Yellow King", Color.yellow, Language.roleInfoNames[9], Language.roleInfoNames[9], RoleId.YellowKing);
+        public static RoleInfo yellowplayer01 = new RoleInfo("Yellow Team", Color.yellow, Language.roleInfoNames[10], Language.roleInfoNames[10], RoleId.YellowPlayer01);
+        public static RoleInfo yellowplayer02 = new RoleInfo("Yellow Team", Color.yellow, Language.roleInfoNames[10], Language.roleInfoNames[10], RoleId.YellowPlayer02);
+        public static RoleInfo yellowplayer03 = new RoleInfo("Yellow Team", Color.yellow, Language.roleInfoNames[10], Language.roleInfoNames[10], RoleId.YellowPlayer03);
+        public static RoleInfo yellowplayer04 = new RoleInfo("Yellow Team", Color.yellow, Language.roleInfoNames[10], Language.roleInfoNames[10], RoleId.YellowPlayer04);
+        public static RoleInfo yellowplayer05 = new RoleInfo("Yellow Team", Color.yellow, Language.roleInfoNames[10], Language.roleInfoNames[10], RoleId.YellowPlayer05);
+        public static RoleInfo yellowplayer06 = new RoleInfo("Yellow Team", Color.yellow, Language.roleInfoNames[10], Language.roleInfoNames[10], RoleId.YellowPlayer06);
+        public static RoleInfo usurperplayer = new RoleInfo("Usurper", Color.grey, Language.roleInfoNames[11], Language.roleInfoNames[11], RoleId.UsurperPlayer);
 
         // Hot Potato Teams
-        public static RoleInfo hotPotatoPlayer = new RoleInfo("Hot Potato", Color.grey, "Give the hot potato to other player", "Give the hot potato \nto other player", RoleId.HotPotato);
-        public static RoleInfo notPotato01 = new RoleInfo("Cold Potato", Color.cyan, "Run from the Hot Potato", "Run from the Hot Potato", RoleId.NotPotato01);
-        public static RoleInfo notPotato02 = new RoleInfo("Cold Potato", Color.cyan, "Run from the Hot Potato", "Run from the Hot Potato", RoleId.NotPotato02);
-        public static RoleInfo notPotato03 = new RoleInfo("Cold Potato", Color.cyan, "Run from the Hot Potato", "Run from the Hot Potato", RoleId.NotPotato03);
-        public static RoleInfo notPotato04 = new RoleInfo("Cold Potato", Color.cyan, "Run from the Hot Potato", "Run from the Hot Potato", RoleId.NotPotato04);
-        public static RoleInfo notPotato05 = new RoleInfo("Cold Potato", Color.cyan, "Run from the Hot Potato", "Run from the Hot Potato", RoleId.NotPotato05);
-        public static RoleInfo notPotato06 = new RoleInfo("Cold Potato", Color.cyan, "Run from the Hot Potato", "Run from the Hot Potato", RoleId.NotPotato06);
-        public static RoleInfo notPotato07 = new RoleInfo("Cold Potato", Color.cyan, "Run from the Hot Potato", "Run from the Hot Potato", RoleId.NotPotato07);
-        public static RoleInfo notPotato08 = new RoleInfo("Cold Potato", Color.cyan, "Run from the Hot Potato", "Run from the Hot Potato", RoleId.NotPotato08);
-        public static RoleInfo notPotato09 = new RoleInfo("Cold Potato", Color.cyan, "Run from the Hot Potato", "Run from the Hot Potato", RoleId.NotPotato09);
-        public static RoleInfo notPotato10 = new RoleInfo("Cold Potato", Color.cyan, "Run from the Hot Potato", "Run from the Hot Potato", RoleId.NotPotato10);
-        public static RoleInfo notPotato11 = new RoleInfo("Cold Potato", Color.cyan, "Run from the Hot Potato", "Run from the Hot Potato", RoleId.NotPotato11);
-        public static RoleInfo notPotato12 = new RoleInfo("Cold Potato", Color.cyan, "Run from the Hot Potato", "Run from the Hot Potato", RoleId.NotPotato12);
-        public static RoleInfo notPotato13 = new RoleInfo("Cold Potato", Color.cyan, "Run from the Hot Potato", "Run from the Hot Potato", RoleId.NotPotato13);
-        public static RoleInfo notPotato14 = new RoleInfo("Cold Potato", Color.cyan, "Run from the Hot Potato", "Run from the Hot Potato", RoleId.NotPotato14);
-        public static RoleInfo explodedPotato01 = new RoleInfo("Burnt Potato", Mechanic.color, "You are burnt", "You are burnt", RoleId.ExplodedPotato01);
-        public static RoleInfo explodedPotato02 = new RoleInfo("Burnt Potato", Mechanic.color, "You are burnt", "You are burnt", RoleId.ExplodedPotato02);
-        public static RoleInfo explodedPotato03 = new RoleInfo("Burnt Potato", Mechanic.color, "You are burnt", "You are burnt", RoleId.ExplodedPotato03);
-        public static RoleInfo explodedPotato04 = new RoleInfo("Burnt Potato", Mechanic.color, "You are burnt", "You are burnt", RoleId.ExplodedPotato04);
-        public static RoleInfo explodedPotato05 = new RoleInfo("Burnt Potato", Mechanic.color, "You are burnt", "You are burnt", RoleId.ExplodedPotato05);
-        public static RoleInfo explodedPotato06 = new RoleInfo("Burnt Potato", Mechanic.color, "You are burnt", "You are burnt", RoleId.ExplodedPotato06);
-        public static RoleInfo explodedPotato07 = new RoleInfo("Burnt Potato", Mechanic.color, "You are burnt", "You are burnt", RoleId.ExplodedPotato07);
-        public static RoleInfo explodedPotato08 = new RoleInfo("Burnt Potato", Mechanic.color, "You are burnt", "You are burnt", RoleId.ExplodedPotato08);
-        public static RoleInfo explodedPotato09 = new RoleInfo("Burnt Potato", Mechanic.color, "You are burnt", "You are burnt", RoleId.ExplodedPotato09);
-        public static RoleInfo explodedPotato10 = new RoleInfo("Burnt Potato", Mechanic.color, "You are burnt", "You are burnt", RoleId.ExplodedPotato10);
-        public static RoleInfo explodedPotato11 = new RoleInfo("Burnt Potato", Mechanic.color, "You are burnt", "You are burnt", RoleId.ExplodedPotato11);
-        public static RoleInfo explodedPotato12 = new RoleInfo("Burnt Potato", Mechanic.color, "You are burnt", "You are burnt", RoleId.ExplodedPotato12);
-        public static RoleInfo explodedPotato13 = new RoleInfo("Burnt Potato", Mechanic.color, "You are burnt", "You are burnt", RoleId.ExplodedPotato13);
-        public static RoleInfo explodedPotato14 = new RoleInfo("Burnt Potato", Mechanic.color, "You are burnt", "You are burnt", RoleId.ExplodedPotato14);
+        public static RoleInfo hotPotatoPlayer = new RoleInfo("Hot Potato", Color.grey, Language.roleInfoNames[12], Language.roleInfoNames[13], RoleId.HotPotato);
+        public static RoleInfo notPotato01 = new RoleInfo("Cold Potato", Color.cyan, Language.roleInfoNames[14], Language.roleInfoNames[14], RoleId.NotPotato01);
+        public static RoleInfo notPotato02 = new RoleInfo("Cold Potato", Color.cyan, Language.roleInfoNames[14], Language.roleInfoNames[14], RoleId.NotPotato02);
+        public static RoleInfo notPotato03 = new RoleInfo("Cold Potato", Color.cyan, Language.roleInfoNames[14], Language.roleInfoNames[14], RoleId.NotPotato03);
+        public static RoleInfo notPotato04 = new RoleInfo("Cold Potato", Color.cyan, Language.roleInfoNames[14], Language.roleInfoNames[14], RoleId.NotPotato04);
+        public static RoleInfo notPotato05 = new RoleInfo("Cold Potato", Color.cyan, Language.roleInfoNames[14], Language.roleInfoNames[14], RoleId.NotPotato05);
+        public static RoleInfo notPotato06 = new RoleInfo("Cold Potato", Color.cyan, Language.roleInfoNames[14], Language.roleInfoNames[14], RoleId.NotPotato06);
+        public static RoleInfo notPotato07 = new RoleInfo("Cold Potato", Color.cyan, Language.roleInfoNames[14], Language.roleInfoNames[14], RoleId.NotPotato07);
+        public static RoleInfo notPotato08 = new RoleInfo("Cold Potato", Color.cyan, Language.roleInfoNames[14], Language.roleInfoNames[14], RoleId.NotPotato08);
+        public static RoleInfo notPotato09 = new RoleInfo("Cold Potato", Color.cyan, Language.roleInfoNames[14], Language.roleInfoNames[14], RoleId.NotPotato09);
+        public static RoleInfo notPotato10 = new RoleInfo("Cold Potato", Color.cyan, Language.roleInfoNames[14], Language.roleInfoNames[14], RoleId.NotPotato10);
+        public static RoleInfo notPotato11 = new RoleInfo("Cold Potato", Color.cyan, Language.roleInfoNames[14], Language.roleInfoNames[14], RoleId.NotPotato11);
+        public static RoleInfo notPotato12 = new RoleInfo("Cold Potato", Color.cyan, Language.roleInfoNames[14], Language.roleInfoNames[14], RoleId.NotPotato12);
+        public static RoleInfo notPotato13 = new RoleInfo("Cold Potato", Color.cyan, Language.roleInfoNames[14], Language.roleInfoNames[14], RoleId.NotPotato13);
+        public static RoleInfo notPotato14 = new RoleInfo("Cold Potato", Color.cyan, Language.roleInfoNames[14], Language.roleInfoNames[14], RoleId.NotPotato14);
+        public static RoleInfo explodedPotato01 = new RoleInfo("Burnt Potato", Mechanic.color, Language.roleInfoNames[15], Language.roleInfoNames[15], RoleId.ExplodedPotato01);
+        public static RoleInfo explodedPotato02 = new RoleInfo("Burnt Potato", Mechanic.color, Language.roleInfoNames[15], Language.roleInfoNames[15], RoleId.ExplodedPotato02);
+        public static RoleInfo explodedPotato03 = new RoleInfo("Burnt Potato", Mechanic.color, Language.roleInfoNames[15], Language.roleInfoNames[15], RoleId.ExplodedPotato03);
+        public static RoleInfo explodedPotato04 = new RoleInfo("Burnt Potato", Mechanic.color, Language.roleInfoNames[15], Language.roleInfoNames[15], RoleId.ExplodedPotato04);
+        public static RoleInfo explodedPotato05 = new RoleInfo("Burnt Potato", Mechanic.color, Language.roleInfoNames[15], Language.roleInfoNames[15], RoleId.ExplodedPotato05);
+        public static RoleInfo explodedPotato06 = new RoleInfo("Burnt Potato", Mechanic.color, Language.roleInfoNames[15], Language.roleInfoNames[15], RoleId.ExplodedPotato06);
+        public static RoleInfo explodedPotato07 = new RoleInfo("Burnt Potato", Mechanic.color, Language.roleInfoNames[15], Language.roleInfoNames[15], RoleId.ExplodedPotato07);
+        public static RoleInfo explodedPotato08 = new RoleInfo("Burnt Potato", Mechanic.color, Language.roleInfoNames[15], Language.roleInfoNames[15], RoleId.ExplodedPotato08);
+        public static RoleInfo explodedPotato09 = new RoleInfo("Burnt Potato", Mechanic.color, Language.roleInfoNames[15], Language.roleInfoNames[15], RoleId.ExplodedPotato09);
+        public static RoleInfo explodedPotato10 = new RoleInfo("Burnt Potato", Mechanic.color, Language.roleInfoNames[15], Language.roleInfoNames[15], RoleId.ExplodedPotato10);
+        public static RoleInfo explodedPotato11 = new RoleInfo("Burnt Potato", Mechanic.color, Language.roleInfoNames[15], Language.roleInfoNames[15], RoleId.ExplodedPotato11);
+        public static RoleInfo explodedPotato12 = new RoleInfo("Burnt Potato", Mechanic.color, Language.roleInfoNames[15], Language.roleInfoNames[15], RoleId.ExplodedPotato12);
+        public static RoleInfo explodedPotato13 = new RoleInfo("Burnt Potato", Mechanic.color, Language.roleInfoNames[15], Language.roleInfoNames[15], RoleId.ExplodedPotato13);
+        public static RoleInfo explodedPotato14 = new RoleInfo("Burnt Potato", Mechanic.color, Language.roleInfoNames[15], Language.roleInfoNames[15], RoleId.ExplodedPotato14);
 
         // ZombieLaboratory Teams
-        public static RoleInfo nursePlayer = new RoleInfo("Nurse", Shy.color, "Heal survivors and create the cure", "Heal survivors and create the cure", RoleId.NursePlayer);
-        public static RoleInfo survivorPlayer01 = new RoleInfo("Survivor", Color.cyan, "Survive while looking for items to make the cure", "Survive while looking \nfor items to make the cure", RoleId.SurvivorPlayer01);
-        public static RoleInfo survivorPlayer02 = new RoleInfo("Survivor", Color.cyan, "Survive while looking for items to make the cure", "Survive while looking \nfor items to make the cure", RoleId.SurvivorPlayer02);
-        public static RoleInfo survivorPlayer03 = new RoleInfo("Survivor", Color.cyan, "Survive while looking for items to make the cure", "Survive while looking \nfor items to make the cure", RoleId.SurvivorPlayer03);
-        public static RoleInfo survivorPlayer04 = new RoleInfo("Survivor", Color.cyan, "Survive while looking for items to make the cure", "Survive while looking \nfor items to make the cure", RoleId.SurvivorPlayer04);
-        public static RoleInfo survivorPlayer05 = new RoleInfo("Survivor", Color.cyan, "Survive while looking for items to make the cure", "Survive while looking \nfor items to make the cure", RoleId.SurvivorPlayer05);
-        public static RoleInfo survivorPlayer06 = new RoleInfo("Survivor", Color.cyan, "Survive while looking for items to make the cure", "Survive while looking \nfor items to make the cure", RoleId.SurvivorPlayer06);
-        public static RoleInfo survivorPlayer07 = new RoleInfo("Survivor", Color.cyan, "Survive while looking for items to make the cure", "Survive while looking \nfor items to make the cure", RoleId.SurvivorPlayer07);
-        public static RoleInfo survivorPlayer08 = new RoleInfo("Survivor", Color.cyan, "Survive while looking for items to make the cure", "Survive while looking \nfor items to make the cure", RoleId.SurvivorPlayer08);
-        public static RoleInfo survivorPlayer09 = new RoleInfo("Survivor", Color.cyan, "Survive while looking for items to make the cure", "Survive while looking \nfor items to make the cure", RoleId.SurvivorPlayer09);
-        public static RoleInfo survivorPlayer10 = new RoleInfo("Survivor", Color.cyan, "Survive while looking for items to make the cure", "Survive while looking \nfor items to make the cure", RoleId.SurvivorPlayer10);
-        public static RoleInfo survivorPlayer11 = new RoleInfo("Survivor", Color.cyan, "Survive while looking for items to make the cure", "Survive while looking \nfor items to make the cure", RoleId.SurvivorPlayer11);
-        public static RoleInfo survivorPlayer12 = new RoleInfo("Survivor", Color.cyan, "Survive while looking for items to make the cure", "Survive while looking \nfor items to make the cure", RoleId.SurvivorPlayer12);
-        public static RoleInfo survivorPlayer13 = new RoleInfo("Survivor", Color.cyan, "Survive while looking for items to make the cure", "Survive while looking \nfor items to make the cure", RoleId.SurvivorPlayer13);
-        public static RoleInfo zombiePlayer01 = new RoleInfo("Zombie", Mechanic.color, "Infect all survivors", "Infect all survivors", RoleId.ZombiePlayer01);
-        public static RoleInfo zombiePlayer02 = new RoleInfo("Zombie", Mechanic.color, "Infect all survivors", "Infect all survivors", RoleId.ZombiePlayer02);
-        public static RoleInfo zombiePlayer03 = new RoleInfo("Zombie", Mechanic.color, "Infect all survivors", "Infect all survivors", RoleId.ZombiePlayer03);
-        public static RoleInfo zombiePlayer04 = new RoleInfo("Zombie", Mechanic.color, "Infect all survivors", "Infect all survivors", RoleId.ZombiePlayer04);
-        public static RoleInfo zombiePlayer05 = new RoleInfo("Zombie", Mechanic.color, "Infect all survivors", "Infect all survivors", RoleId.ZombiePlayer05);
-        public static RoleInfo zombiePlayer06 = new RoleInfo("Zombie", Mechanic.color, "Infect all survivors", "Infect all survivors", RoleId.ZombiePlayer06);
-        public static RoleInfo zombiePlayer07 = new RoleInfo("Zombie", Mechanic.color, "Infect all survivors", "Infect all survivors", RoleId.ZombiePlayer07);
-        public static RoleInfo zombiePlayer08 = new RoleInfo("Zombie", Mechanic.color, "Infect all survivors", "Infect all survivors", RoleId.ZombiePlayer08);
-        public static RoleInfo zombiePlayer09 = new RoleInfo("Zombie", Mechanic.color, "Infect all survivors", "Infect all survivors", RoleId.ZombiePlayer09);
-        public static RoleInfo zombiePlayer10 = new RoleInfo("Zombie", Mechanic.color, "Infect all survivors", "Infect all survivors", RoleId.ZombiePlayer10);
-        public static RoleInfo zombiePlayer11 = new RoleInfo("Zombie", Mechanic.color, "Infect all survivors", "Infect all survivors", RoleId.ZombiePlayer11);
-        public static RoleInfo zombiePlayer12 = new RoleInfo("Zombie", Mechanic.color, "Infect all survivors", "Infect all survivors", RoleId.ZombiePlayer12);
-        public static RoleInfo zombiePlayer13 = new RoleInfo("Zombie", Mechanic.color, "Infect all survivors", "Infect all survivors", RoleId.ZombiePlayer13);
-        public static RoleInfo zombiePlayer14 = new RoleInfo("Zombie", Mechanic.color, "Infect all survivors", "Infect all survivors", RoleId.ZombiePlayer14);
+        public static RoleInfo nursePlayer = new RoleInfo("Nurse", Shy.color, Language.roleInfoNames[16], Language.roleInfoNames[17], RoleId.NursePlayer);
+        public static RoleInfo survivorPlayer01 = new RoleInfo("Survivor", Color.cyan, Language.roleInfoNames[18], Language.roleInfoNames[19], RoleId.SurvivorPlayer01);
+        public static RoleInfo survivorPlayer02 = new RoleInfo("Survivor", Color.cyan, Language.roleInfoNames[18], Language.roleInfoNames[19], RoleId.SurvivorPlayer02);
+        public static RoleInfo survivorPlayer03 = new RoleInfo("Survivor", Color.cyan, Language.roleInfoNames[18], Language.roleInfoNames[19], RoleId.SurvivorPlayer03);
+        public static RoleInfo survivorPlayer04 = new RoleInfo("Survivor", Color.cyan, Language.roleInfoNames[18], Language.roleInfoNames[19], RoleId.SurvivorPlayer04);
+        public static RoleInfo survivorPlayer05 = new RoleInfo("Survivor", Color.cyan, Language.roleInfoNames[18], Language.roleInfoNames[19], RoleId.SurvivorPlayer05);
+        public static RoleInfo survivorPlayer06 = new RoleInfo("Survivor", Color.cyan, Language.roleInfoNames[18], Language.roleInfoNames[19], RoleId.SurvivorPlayer06);
+        public static RoleInfo survivorPlayer07 = new RoleInfo("Survivor", Color.cyan, Language.roleInfoNames[18], Language.roleInfoNames[19], RoleId.SurvivorPlayer07);
+        public static RoleInfo survivorPlayer08 = new RoleInfo("Survivor", Color.cyan, Language.roleInfoNames[18], Language.roleInfoNames[19], RoleId.SurvivorPlayer08);
+        public static RoleInfo survivorPlayer09 = new RoleInfo("Survivor", Color.cyan, Language.roleInfoNames[18], Language.roleInfoNames[19], RoleId.SurvivorPlayer09);
+        public static RoleInfo survivorPlayer10 = new RoleInfo("Survivor", Color.cyan, Language.roleInfoNames[18], Language.roleInfoNames[19], RoleId.SurvivorPlayer10);
+        public static RoleInfo survivorPlayer11 = new RoleInfo("Survivor", Color.cyan, Language.roleInfoNames[18], Language.roleInfoNames[19], RoleId.SurvivorPlayer11);
+        public static RoleInfo survivorPlayer12 = new RoleInfo("Survivor", Color.cyan, Language.roleInfoNames[18], Language.roleInfoNames[19], RoleId.SurvivorPlayer12);
+        public static RoleInfo survivorPlayer13 = new RoleInfo("Survivor", Color.cyan, Language.roleInfoNames[18], Language.roleInfoNames[19], RoleId.SurvivorPlayer13);
+        public static RoleInfo zombiePlayer01 = new RoleInfo("Zombie", Mechanic.color, Language.roleInfoNames[20], Language.roleInfoNames[20], RoleId.ZombiePlayer01);
+        public static RoleInfo zombiePlayer02 = new RoleInfo("Zombie", Mechanic.color, Language.roleInfoNames[20], Language.roleInfoNames[20], RoleId.ZombiePlayer02);
+        public static RoleInfo zombiePlayer03 = new RoleInfo("Zombie", Mechanic.color, Language.roleInfoNames[20], Language.roleInfoNames[20], RoleId.ZombiePlayer03);
+        public static RoleInfo zombiePlayer04 = new RoleInfo("Zombie", Mechanic.color, Language.roleInfoNames[20], Language.roleInfoNames[20], RoleId.ZombiePlayer04);
+        public static RoleInfo zombiePlayer05 = new RoleInfo("Zombie", Mechanic.color, Language.roleInfoNames[20], Language.roleInfoNames[20], RoleId.ZombiePlayer05);
+        public static RoleInfo zombiePlayer06 = new RoleInfo("Zombie", Mechanic.color, Language.roleInfoNames[20], Language.roleInfoNames[20], RoleId.ZombiePlayer06);
+        public static RoleInfo zombiePlayer07 = new RoleInfo("Zombie", Mechanic.color, Language.roleInfoNames[20], Language.roleInfoNames[20], RoleId.ZombiePlayer07);
+        public static RoleInfo zombiePlayer08 = new RoleInfo("Zombie", Mechanic.color, Language.roleInfoNames[20], Language.roleInfoNames[20], RoleId.ZombiePlayer08);
+        public static RoleInfo zombiePlayer09 = new RoleInfo("Zombie", Mechanic.color, Language.roleInfoNames[20], Language.roleInfoNames[20], RoleId.ZombiePlayer09);
+        public static RoleInfo zombiePlayer10 = new RoleInfo("Zombie", Mechanic.color, Language.roleInfoNames[20], Language.roleInfoNames[20], RoleId.ZombiePlayer10);
+        public static RoleInfo zombiePlayer11 = new RoleInfo("Zombie", Mechanic.color, Language.roleInfoNames[20], Language.roleInfoNames[20], RoleId.ZombiePlayer11);
+        public static RoleInfo zombiePlayer12 = new RoleInfo("Zombie", Mechanic.color, Language.roleInfoNames[20], Language.roleInfoNames[20], RoleId.ZombiePlayer12);
+        public static RoleInfo zombiePlayer13 = new RoleInfo("Zombie", Mechanic.color, Language.roleInfoNames[20], Language.roleInfoNames[20], RoleId.ZombiePlayer13);
+        public static RoleInfo zombiePlayer14 = new RoleInfo("Zombie", Mechanic.color, Language.roleInfoNames[20], Language.roleInfoNames[20], RoleId.ZombiePlayer14);
 
         // Battle Royale
-        public static RoleInfo soloPlayer01 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer01);
-        public static RoleInfo soloPlayer02 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer02);
-        public static RoleInfo soloPlayer03 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer03);
-        public static RoleInfo soloPlayer04 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer04);
-        public static RoleInfo soloPlayer05 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer05);
-        public static RoleInfo soloPlayer06 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer06);
-        public static RoleInfo soloPlayer07 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer07);
-        public static RoleInfo soloPlayer08 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer08);
-        public static RoleInfo soloPlayer09 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer09);
-        public static RoleInfo soloPlayer10 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer10);
-        public static RoleInfo soloPlayer11 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer11);
-        public static RoleInfo soloPlayer12 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer12);
-        public static RoleInfo soloPlayer13 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer13);
-        public static RoleInfo soloPlayer14 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer14);
-        public static RoleInfo soloPlayer15 = new RoleInfo("Fighter", Sleuth.color, "Be the last one alive", "Be the last one alive", RoleId.SoloPlayer15);
+        public static RoleInfo soloPlayer01 = new RoleInfo("Fighter", Sleuth.color, Language.roleInfoNames[21], Language.roleInfoNames[21], RoleId.SoloPlayer01);
+        public static RoleInfo soloPlayer02 = new RoleInfo("Fighter", Sleuth.color, Language.roleInfoNames[21], Language.roleInfoNames[21], RoleId.SoloPlayer02);
+        public static RoleInfo soloPlayer03 = new RoleInfo("Fighter", Sleuth.color, Language.roleInfoNames[21], Language.roleInfoNames[21], RoleId.SoloPlayer03);
+        public static RoleInfo soloPlayer04 = new RoleInfo("Fighter", Sleuth.color, Language.roleInfoNames[21], Language.roleInfoNames[21], RoleId.SoloPlayer04);
+        public static RoleInfo soloPlayer05 = new RoleInfo("Fighter", Sleuth.color, Language.roleInfoNames[21], Language.roleInfoNames[21], RoleId.SoloPlayer05);
+        public static RoleInfo soloPlayer06 = new RoleInfo("Fighter", Sleuth.color, Language.roleInfoNames[21], Language.roleInfoNames[21], RoleId.SoloPlayer06);
+        public static RoleInfo soloPlayer07 = new RoleInfo("Fighter", Sleuth.color, Language.roleInfoNames[21], Language.roleInfoNames[21], RoleId.SoloPlayer07);
+        public static RoleInfo soloPlayer08 = new RoleInfo("Fighter", Sleuth.color, Language.roleInfoNames[21], Language.roleInfoNames[21], RoleId.SoloPlayer08);
+        public static RoleInfo soloPlayer09 = new RoleInfo("Fighter", Sleuth.color, Language.roleInfoNames[21], Language.roleInfoNames[21], RoleId.SoloPlayer09);
+        public static RoleInfo soloPlayer10 = new RoleInfo("Fighter", Sleuth.color, Language.roleInfoNames[21], Language.roleInfoNames[21], RoleId.SoloPlayer10);
+        public static RoleInfo soloPlayer11 = new RoleInfo("Fighter", Sleuth.color, Language.roleInfoNames[21], Language.roleInfoNames[21], RoleId.SoloPlayer11);
+        public static RoleInfo soloPlayer12 = new RoleInfo("Fighter", Sleuth.color, Language.roleInfoNames[21], Language.roleInfoNames[21], RoleId.SoloPlayer12);
+        public static RoleInfo soloPlayer13 = new RoleInfo("Fighter", Sleuth.color, Language.roleInfoNames[21], Language.roleInfoNames[21], RoleId.SoloPlayer13);
+        public static RoleInfo soloPlayer14 = new RoleInfo("Fighter", Sleuth.color, Language.roleInfoNames[21], Language.roleInfoNames[21], RoleId.SoloPlayer14);
+        public static RoleInfo soloPlayer15 = new RoleInfo("Fighter", Sleuth.color, Language.roleInfoNames[21], Language.roleInfoNames[21], RoleId.SoloPlayer15);
 
-        public static RoleInfo limePlayer01 = new RoleInfo("Lime Team", FortuneTeller.color, "Kill <color=#F2BEFFFF>Pink</color> Team", "Kill <color=#F2BEFFFF>Pink</color> Team", RoleId.LimePlayer01);
-        public static RoleInfo limePlayer02 = new RoleInfo("Lime Team", FortuneTeller.color, "Kill <color=#F2BEFFFF>Pink</color> Team", "Kill <color=#F2BEFFFF>Pink</color> Team", RoleId.LimePlayer02);
-        public static RoleInfo limePlayer03 = new RoleInfo("Lime Team", FortuneTeller.color, "Kill <color=#F2BEFFFF>Pink</color> Team", "Kill <color=#F2BEFFFF>Pink</color> Team", RoleId.LimePlayer03);
-        public static RoleInfo limePlayer04 = new RoleInfo("Lime Team", FortuneTeller.color, "Kill <color=#F2BEFFFF>Pink</color> Team", "Kill <color=#F2BEFFFF>Pink</color> Team", RoleId.LimePlayer04);
-        public static RoleInfo limePlayer05 = new RoleInfo("Lime Team", FortuneTeller.color, "Kill <color=#F2BEFFFF>Pink</color> Team", "Kill <color=#F2BEFFFF>Pink</color> Team", RoleId.LimePlayer05);
-        public static RoleInfo limePlayer06 = new RoleInfo("Lime Team", FortuneTeller.color, "Kill <color=#F2BEFFFF>Pink</color> Team", "Kill <color=#F2BEFFFF>Pink</color> Team", RoleId.LimePlayer06);
-        public static RoleInfo limePlayer07 = new RoleInfo("Lime Team", FortuneTeller.color, "Kill <color=#F2BEFFFF>Pink</color> Team", "Kill <color=#F2BEFFFF>Pink</color> Team", RoleId.LimePlayer07);
-        public static RoleInfo pinkPlayer01 = new RoleInfo("Pink Team", Shy.color, "Kill <color=#39FF14FF>Lime</color> Team", "Kill <color=#39FF14FF>Lime</color> Team", RoleId.PinkPlayer01);
-        public static RoleInfo pinkPlayer02 = new RoleInfo("Pink Team", Shy.color, "Kill <color=#39FF14FF>Lime</color> Team", "Kill <color=#39FF14FF>Lime</color> Team", RoleId.PinkPlayer02);
-        public static RoleInfo pinkPlayer03 = new RoleInfo("Pink Team", Shy.color, "Kill <color=#39FF14FF>Lime</color> Team", "Kill <color=#39FF14FF>Lime</color> Team", RoleId.PinkPlayer03);
-        public static RoleInfo pinkPlayer04 = new RoleInfo("Pink Team", Shy.color, "Kill <color=#39FF14FF>Lime</color> Team", "Kill <color=#39FF14FF>Lime</color> Team", RoleId.PinkPlayer04);
-        public static RoleInfo pinkPlayer05 = new RoleInfo("Pink Team", Shy.color, "Kill <color=#39FF14FF>Lime</color> Team", "Kill <color=#39FF14FF>Lime</color> Team", RoleId.PinkPlayer05);
-        public static RoleInfo pinkPlayer06 = new RoleInfo("Pink Team", Shy.color, "Kill <color=#39FF14FF>Lime</color> Team", "Kill <color=#39FF14FF>Lime</color> Team", RoleId.PinkPlayer06);
-        public static RoleInfo pinkPlayer07 = new RoleInfo("Pink Team", Shy.color, "Kill <color=#39FF14FF>Lime</color> Team", "Kill <color=#39FF14FF>Lime</color> Team", RoleId.PinkPlayer07);
-        public static RoleInfo serialKiller = new RoleInfo("Serial Killer", Joker.color, "Kill Everyone", "Kill Everyone", RoleId.SerialKiller);
+        public static RoleInfo limePlayer01 = new RoleInfo("Lime Team", FortuneTeller.color, Language.roleInfoNames[22], Language.roleInfoNames[22], RoleId.LimePlayer01);
+        public static RoleInfo limePlayer02 = new RoleInfo("Lime Team", FortuneTeller.color, Language.roleInfoNames[22], Language.roleInfoNames[22], RoleId.LimePlayer02);
+        public static RoleInfo limePlayer03 = new RoleInfo("Lime Team", FortuneTeller.color, Language.roleInfoNames[22], Language.roleInfoNames[22], RoleId.LimePlayer03);
+        public static RoleInfo limePlayer04 = new RoleInfo("Lime Team", FortuneTeller.color, Language.roleInfoNames[22], Language.roleInfoNames[22], RoleId.LimePlayer04);
+        public static RoleInfo limePlayer05 = new RoleInfo("Lime Team", FortuneTeller.color, Language.roleInfoNames[22], Language.roleInfoNames[22], RoleId.LimePlayer05);
+        public static RoleInfo limePlayer06 = new RoleInfo("Lime Team", FortuneTeller.color, Language.roleInfoNames[22], Language.roleInfoNames[22], RoleId.LimePlayer06);
+        public static RoleInfo limePlayer07 = new RoleInfo("Lime Team", FortuneTeller.color, Language.roleInfoNames[22], Language.roleInfoNames[22], RoleId.LimePlayer07);
+        public static RoleInfo pinkPlayer01 = new RoleInfo("Pink Team", Shy.color, Language.roleInfoNames[23], Language.roleInfoNames[23], RoleId.PinkPlayer01);
+        public static RoleInfo pinkPlayer02 = new RoleInfo("Pink Team", Shy.color, Language.roleInfoNames[23], Language.roleInfoNames[23], RoleId.PinkPlayer02);
+        public static RoleInfo pinkPlayer03 = new RoleInfo("Pink Team", Shy.color, Language.roleInfoNames[23], Language.roleInfoNames[23], RoleId.PinkPlayer03);
+        public static RoleInfo pinkPlayer04 = new RoleInfo("Pink Team", Shy.color, Language.roleInfoNames[23], Language.roleInfoNames[23], RoleId.PinkPlayer04);
+        public static RoleInfo pinkPlayer05 = new RoleInfo("Pink Team", Shy.color, Language.roleInfoNames[23], Language.roleInfoNames[23], RoleId.PinkPlayer05);
+        public static RoleInfo pinkPlayer06 = new RoleInfo("Pink Team", Shy.color, Language.roleInfoNames[23], Language.roleInfoNames[23], RoleId.PinkPlayer06);
+        public static RoleInfo pinkPlayer07 = new RoleInfo("Pink Team", Shy.color, Language.roleInfoNames[23], Language.roleInfoNames[23], RoleId.PinkPlayer07);
+        public static RoleInfo serialKiller = new RoleInfo("Serial Killer", Joker.color, Language.helpersTexts[1], Language.helpersTexts[1], RoleId.SerialKiller);
         
         
         // Impostor roles
-        public static RoleInfo mimic = new RoleInfo("Mimic", Mimic.color, "Mimic other player's look", "Mimic other player's look", RoleId.Mimic);
-        public static RoleInfo painter = new RoleInfo("Painter", Painter.color, "Paint players with the same color", "Paint players with the same color", RoleId.Painter);
-        public static RoleInfo demon = new RoleInfo("Demon", Demon.color, "Bite players to delay their death", "Bite players to delay their death", RoleId.Demon);
-        public static RoleInfo janitor = new RoleInfo("Janitor", Janitor.color, "Remove and move bodies from the crime scene", "Remove and move bodies from the crime scene", RoleId.Janitor);
-        public static RoleInfo illusionist = new RoleInfo("Illusionist", Illusionist.color, "Create your own vent network and turn off the lights", "Create your own vent network \nand turn off the lights", RoleId.Illusionist);
-        public static RoleInfo manipulator = new RoleInfo("Manipulator", Manipulator.color, "Manipulate a player to kill his adjacent", "Manipulate a player to kill his adjacent", RoleId.Manipulator);
-        public static RoleInfo bomberman = new RoleInfo("Bomberman", Bomberman.color, "Sabotage by putting bombs", "Sabotage by putting bombs", RoleId.Bomberman);
-        public static RoleInfo chameleon = new RoleInfo("Chameleon", Chameleon.color, "Make yourself invisible", "Make yourself invisible", RoleId.Chameleon);
-        public static RoleInfo gambler = new RoleInfo("Gambler", Gambler.color, "Shoot a player choosing their role during the meeting", "Shoot a player choosing \ntheir role during the meeting", RoleId.Gambler);
-        public static RoleInfo sorcerer = new RoleInfo("Sorcerer", Sorcerer.color, "Casts spells on players", "Casts spells on players", RoleId.Sorcerer);
-        public static RoleInfo medusa = new RoleInfo("Medusa", Medusa.color, "Petrify players", "Petrify players", RoleId.Medusa);
-        public static RoleInfo hypnotist = new RoleInfo("Hypnotist", Hypnotist.color, "Invert player movement controls", "Invert player movement controls", RoleId.Hypnotist);
-        public static RoleInfo archer = new RoleInfo("Archer", Archer.color, "Make range kills", "Pick bow with F \nand right click to shoot", RoleId.Archer);
+        public static RoleInfo mimic = new RoleInfo("Mimic", Mimic.color, Language.roleInfoNames[24], Language.roleInfoNames[24], RoleId.Mimic);
+        public static RoleInfo painter = new RoleInfo("Painter", Painter.color, Language.roleInfoNames[25], Language.roleInfoNames[25], RoleId.Painter);
+        public static RoleInfo demon = new RoleInfo("Demon", Demon.color, Language.roleInfoNames[26], Language.roleInfoNames[26], RoleId.Demon);
+        public static RoleInfo janitor = new RoleInfo("Janitor", Janitor.color, Language.roleInfoNames[27], Language.roleInfoNames[28], RoleId.Janitor);
+        public static RoleInfo illusionist = new RoleInfo("Illusionist", Illusionist.color, Language.roleInfoNames[29], Language.roleInfoNames[30], RoleId.Illusionist);
+        public static RoleInfo manipulator = new RoleInfo("Manipulator", Manipulator.color, Language.roleInfoNames[31], Language.roleInfoNames[31], RoleId.Manipulator);
+        public static RoleInfo bomberman = new RoleInfo("Bomberman", Bomberman.color, Language.roleInfoNames[32], Language.roleInfoNames[32], RoleId.Bomberman);
+        public static RoleInfo chameleon = new RoleInfo("Chameleon", Chameleon.color, Language.roleInfoNames[33], Language.roleInfoNames[33], RoleId.Chameleon);
+        public static RoleInfo gambler = new RoleInfo("Gambler", Gambler.color, Language.roleInfoNames[34], Language.roleInfoNames[35], RoleId.Gambler);
+        public static RoleInfo sorcerer = new RoleInfo("Sorcerer", Sorcerer.color, Language.roleInfoNames[36], Language.roleInfoNames[36], RoleId.Sorcerer);
+        public static RoleInfo medusa = new RoleInfo("Medusa", Medusa.color, Language.roleInfoNames[37], Language.roleInfoNames[37], RoleId.Medusa);
+        public static RoleInfo hypnotist = new RoleInfo("Hypnotist", Hypnotist.color, Language.roleInfoNames[38], Language.roleInfoNames[38], RoleId.Hypnotist);
+        public static RoleInfo archer = new RoleInfo("Archer", Archer.color, Language.roleInfoNames[39], Language.roleInfoNames[40], RoleId.Archer);
+        public static RoleInfo plumber = new RoleInfo("Plumber", Plumber.color, Language.roleInfoNames[41], Language.roleInfoNames[41], RoleId.Plumber);
+        public static RoleInfo librarian = new RoleInfo("Librarian", Librarian.color, Language.roleInfoNames[42], Language.roleInfoNames[43], RoleId.Librarian);
 
         // Rebelde roles
-        public static RoleInfo renegade = new RoleInfo("Renegade", Renegade.color, "Recruit a Minion and kill everyone", "Recruit a Minion and kill everyone", RoleId.Renegade, false, true);
-        public static RoleInfo minion = new RoleInfo("Minion", Minion.color, "Help the Renegade killing everyone", "Help the Renegade killing everyone", RoleId.Minion, false, true);
-        public static RoleInfo bountyHunter = new RoleInfo("Bounty Hunter", BountyHunter.color, "Hunt down your target" + BountyHunter.rolName, "Hunt down your target" + BountyHunter.rolName, RoleId.BountyHunter, false, true);
-        public static RoleInfo trapper = new RoleInfo("Trapper", Trapper.color, "Place landmines and root traps", "Place landmines and root traps", RoleId.Trapper, false, true);
-        public static RoleInfo yinyanger = new RoleInfo("Yinyanger", Yinyanger.color, "Mark two players to die if they collide", "Mark two players to die if they collide", RoleId.Yinyanger, false, true);
-        public static RoleInfo challenger = new RoleInfo("Challenger", Challenger.color, "Challenge a player to a rock-paper-scissors duel", "Challenge a player to \na rock-paper-scissors duel", RoleId.Challenger, false, true);
-        public static RoleInfo ninja = new RoleInfo("Ninja", Ninja.color, "Mark and make double kills", "Mark and make double kills", RoleId.Ninja, false, true);
-        public static RoleInfo berserker = new RoleInfo("Berserker", Berserker.color, "You can't stop killing", "You can't stop killing", RoleId.Berserker, false, true);
+        public static RoleInfo renegade = new RoleInfo("Renegade", Renegade.color, Language.roleInfoNames[44], Language.roleInfoNames[44], RoleId.Renegade, false, true);
+        public static RoleInfo minion = new RoleInfo("Minion", Minion.color, Language.roleInfoNames[45], Language.roleInfoNames[45], RoleId.Minion, false, true);
+        public static RoleInfo bountyHunter = new RoleInfo("Bounty Hunter", BountyHunter.color, Language.roleInfoNames[46], Language.roleInfoNames[46], RoleId.BountyHunter, false, true);
+        public static RoleInfo trapper = new RoleInfo("Trapper", Trapper.color, Language.roleInfoNames[47], Language.roleInfoNames[47], RoleId.Trapper, false, true);
+        public static RoleInfo yinyanger = new RoleInfo("Yinyanger", Yinyanger.color, Language.roleInfoNames[48], Language.roleInfoNames[49], RoleId.Yinyanger, false, true);
+        public static RoleInfo challenger = new RoleInfo("Challenger", Challenger.color, Language.roleInfoNames[50], Language.roleInfoNames[51], RoleId.Challenger, false, true);
+        public static RoleInfo ninja = new RoleInfo("Ninja", Ninja.color, Language.roleInfoNames[52], Language.roleInfoNames[52], RoleId.Ninja, false, true);
+        public static RoleInfo berserker = new RoleInfo("Berserker", Berserker.color, Language.roleInfoNames[53], Language.roleInfoNames[53], RoleId.Berserker, false, true);
+        public static RoleInfo yandere = new RoleInfo("Yandere", Yandere.color, Language.roleInfoNames[54], Language.roleInfoNames[54], RoleId.Yandere, false, true);
+        public static RoleInfo stranded = new RoleInfo("Stranded", Stranded.color, Language.roleInfoNames[55], Language.roleInfoNames[55], RoleId.Stranded, false, true);
+        public static RoleInfo monja = new RoleInfo("Monja", Monja.color, Language.roleInfoNames[56], Language.roleInfoNames[57], RoleId.Monja, false, true);
 
         // Neutral roles
-        public static RoleInfo joker = new RoleInfo("Joker", Joker.color, "Get voted out to win", "Get voted out to win \nOpen the map to activate the sabotage button", RoleId.Joker, true, false);
-        public static RoleInfo rolethief = new RoleInfo("Role Thief", RoleThief.color, "Steal other player role", "Steal other player role", RoleId.RoleThief, true, false);
-        public static RoleInfo pyromaniac = new RoleInfo("Pyromaniac", Pyromaniac.color, "Ignite all survivors to win", "Ignite all survivors to win", RoleId.Pyromaniac, true, false);
-        public static RoleInfo treasureHunter = new RoleInfo("Treasure Hunter", TreasureHunter.color, "Find treasures to win", "Find treasures to win", RoleId.TreasureHunter, true, false);
-        public static RoleInfo devourer = new RoleInfo("Devourer", Devourer.color, "Devour bodies to win", "Devour bodies to win", RoleId.Devourer, true, false);
-        public static RoleInfo poisoner = new RoleInfo("Poisoner", Poisoner.color, "Poison all player", "Poison all player \nOpen the map to activate the sabotage button", RoleId.Poisoner, true, false);
-        public static RoleInfo puppeteer = new RoleInfo("Puppeteer", Puppeteer.color, "Make dummies and get them killed", "Make dummies and get them killed", RoleId.Puppeteer, true, false);
+        public static RoleInfo joker = new RoleInfo("Joker", Joker.color, Language.roleInfoNames[58], Language.roleInfoNames[59], RoleId.Joker, true, false);
+        public static RoleInfo rolethief = new RoleInfo("Role Thief", RoleThief.color, Language.roleInfoNames[60], Language.roleInfoNames[60], RoleId.RoleThief, true, false);
+        public static RoleInfo pyromaniac = new RoleInfo("Pyromaniac", Pyromaniac.color, Language.roleInfoNames[61], Language.roleInfoNames[61], RoleId.Pyromaniac, true, false);
+        public static RoleInfo treasureHunter = new RoleInfo("Treasure Hunter", TreasureHunter.color, Language.roleInfoNames[62], Language.roleInfoNames[62], RoleId.TreasureHunter, true, false);
+        public static RoleInfo devourer = new RoleInfo("Devourer", Devourer.color, Language.roleInfoNames[63], Language.roleInfoNames[63], RoleId.Devourer, true, false);
+        public static RoleInfo poisoner = new RoleInfo("Poisoner", Poisoner.color, Language.roleInfoNames[64], Language.roleInfoNames[65], RoleId.Poisoner, true, false);
+        public static RoleInfo puppeteer = new RoleInfo("Puppeteer", Puppeteer.color, Language.roleInfoNames[66], Language.roleInfoNames[67], RoleId.Puppeteer, true, false);
+        public static RoleInfo exiler = new RoleInfo("Exiler", Exiler.color, Language.roleInfoNames[68], Language.roleInfoNames[68], RoleId.Exiler, true, false);
+        public static RoleInfo amnesiac = new RoleInfo("Amnesiac", Amnesiac.color, Language.roleInfoNames[69], Language.roleInfoNames[69], RoleId.Amnesiac, true, false);
+        public static RoleInfo seeker = new RoleInfo("Seeker", Seeker.color, Language.roleInfoNames[70], Language.roleInfoNames[70], RoleId.Seeker, true, false);
 
         // Crewmate roles
-        public static RoleInfo captain = new RoleInfo("Captain", Captain.color, "Your vote counts twice", "Your vote counts twice", RoleId.Captain);
-        public static RoleInfo mechanic = new RoleInfo("Mechanic", Mechanic.color, "Repair sabotages on the ship", "Repair sabotages on the ship", RoleId.Mechanic);
-        public static RoleInfo sheriff = new RoleInfo("Sheriff", Sheriff.color, "Kill the <color=#FF0000FF>Impostors</color>", "Kill the <color=#FF0000FF>Impostors</color>", RoleId.Sheriff);
-        public static RoleInfo detective = new RoleInfo("Detective", Detective.color, "Examine footprints", "Examine footprints", RoleId.Detective);
-        public static RoleInfo forensic = new RoleInfo("Forensic", Forensic.color, "Find clues reporting bodies and asking their ghosts", "Find clues reporting bodies \nand asking their ghosts", RoleId.Forensic);
-        public static RoleInfo timeTraveler = new RoleInfo("Time Traveler", TimeTraveler.color, "Rewind the time", "Rewind the time", RoleId.TimeTraveler);
-        public static RoleInfo squire = new RoleInfo("Squire", Squire.color, "Protect a player with your shield", "Protect a player with your shield", RoleId.Squire);
-        public static RoleInfo cheater = new RoleInfo("Cheater", Cheater.color, "Swap the votes of two players", "Swap the votes of two players", RoleId.Cheater);
-        public static RoleInfo fortuneTeller = new RoleInfo("Fortune Teller", FortuneTeller.color, "Reveal who are the <color=#FF0000FF>Impostors</color>", "Reveal who are the <color=#FF0000FF>Impostors</color>", RoleId.FortuneTeller);
-        public static RoleInfo hacker = new RoleInfo("Hacker", Hacker.color, "Use Admin and Vitals from anywhere", "Use Admin and Vitals from anywhere", RoleId.Hacker);
-        public static RoleInfo sleuth = new RoleInfo("Sleuth", Sleuth.color, "Track down a player and corpses", "Track down a player and corpses", RoleId.Sleuth);
-        public static RoleInfo fink = new RoleInfo("Fink", Fink.color, "Finish your tasks to reveal the <color=#FF0000FF>Impostors</color>", "Finish your tasks to reveal the <color=#FF0000FF>Impostors</color>", RoleId.Fink);
-        public static RoleInfo kid = new RoleInfo("Kid", Kid.color, "Everyone lose if you die or get voted out", "Everyone lose if you die or get voted out", RoleId.Kid);
-        public static RoleInfo welder = new RoleInfo("Welder", Welder.color, "Seal vents", "Seal vents", RoleId.Welder);
-        public static RoleInfo spiritualist = new RoleInfo("Spiritualist", Spiritualist.color, "Sacrifice yourself to revive a player", "Sacrifice yourself to revive a player", RoleId.Spiritualist);
-        public static RoleInfo coward = new RoleInfo("Coward", Coward.color, "Call meetings from anywhere", "Call meetings from anywhere", RoleId.Coward);
-        public static RoleInfo vigilant = new RoleInfo("Vigilant", Vigilant.color, "Put additional cameras on the map", "Put additional cameras on the map", RoleId.Vigilant);
-        public static RoleInfo vigilantMira = new RoleInfo("Vigilant", Vigilant.color, "Activate remote Doorlog with Q key", "Activate remote Doorlog with Q key", RoleId.VigilantMira);
-        public static RoleInfo hunter = new RoleInfo("Hunter", Hunter.color, "Mark a player to die if you get killed", "Mark a player to die if you get killed", RoleId.Hunter);
-        public static RoleInfo jinx = new RoleInfo("Jinx", Jinx.color, "Jinx players abilities", "Jinx players abilities", RoleId.Jinx);
-        public static RoleInfo bat = new RoleInfo("Bat", Bat.color, "Reduce buttons cooldown and increase impostor ones", "Reduce buttons cooldown \nand increase impostor ones", RoleId.Bat);
-        public static RoleInfo necromancer = new RoleInfo("Necromancer", Necromancer.color, "Take a body to its room and revive it", "Take a body to its room and revive it", RoleId.Necromancer);
-        public static RoleInfo engineer = new RoleInfo("Engineer", Engineer.color, "Place speed and position traps", "Place speed and position traps \nSwitch trap type with Q key", RoleId.Engineer);
-        public static RoleInfo shy = new RoleInfo("Shy", Shy.color, "Check close players", "Check close players", RoleId.Shy);
-        public static RoleInfo impostor = new RoleInfo("Impostor", Palette.ImpostorRed, Helpers.cs(Palette.ImpostorRed, "Sabotage and kill everyone"), "Sabotage and kill everyone", RoleId.Impostor);
-        public static RoleInfo crewmate = new RoleInfo("Crewmate", Kid.color, "Find and exile the <color=#FF0000FF>Impostors</color>", "Find and exile the <color=#FF0000FF>Impostors</color>", RoleId.Crewmate);
-        public static RoleInfo lighter = new RoleInfo("Lighter", Modifiers.color, "You have more vision", "You have more vision", RoleId.Lighter);
-        public static RoleInfo blind = new RoleInfo("Blind", Modifiers.color, "You have less vision", "You have less vision", RoleId.Blind);
-        public static RoleInfo flash = new RoleInfo("Flash", Modifiers.color, "You're faster", "You're faster", RoleId.Flash);
-        public static RoleInfo bigchungus = new RoleInfo("Big Chungus", Modifiers.color, "You're bigger and slower", "You're bigger and slower", RoleId.BigChungus);
-        public static RoleInfo theChosenOne = new RoleInfo("The Chosen One", Modifiers.color, "Your killer will report your body", "Your killer will report your body", RoleId.TheChosenOne);
-        public static RoleInfo performer = new RoleInfo("Performer", Modifiers.color, "Your death will trigger an alarm and reveal where your body is", "Your death will trigger an alarm \nand reveal where your body is", RoleId.Performer);
-        public static RoleInfo pro = new RoleInfo("Pro", Modifiers.color, "Your movement controls are inverted", "Your movement controls are inverted", RoleId.Pro);
-        public static RoleInfo lover = new RoleInfo("Lover", Modifiers.loverscolor, $"♥Survive as a couple with your partner♥", $"♥Survive as a couple with your partner♥", RoleId.Lover);
-        public static RoleInfo badlover = new RoleInfo("Loverstor", Palette.ImpostorRed, $"<color=#FF00D1FF>♥Survive as a couple with your partner♥. </color><color=#FF1919FF>Kill the rest</color>", $"<color=#FF00D1FF>♥Survive as a couple with your partner♥. \n</color><color=#FF1919FF>Kill the rest</color>", RoleId.Lover);
+        public static RoleInfo captain = new RoleInfo("Captain", Captain.color, Language.roleInfoNames[71], Language.roleInfoNames[71], RoleId.Captain);
+        public static RoleInfo mechanic = new RoleInfo("Mechanic", Mechanic.color, Language.roleInfoNames[72], Language.roleInfoNames[72], RoleId.Mechanic);
+        public static RoleInfo sheriff = new RoleInfo("Sheriff", Sheriff.color, Language.roleInfoNames[73], Language.roleInfoNames[73], RoleId.Sheriff);
+        public static RoleInfo detective = new RoleInfo("Detective", Detective.color, Language.roleInfoNames[74], Language.roleInfoNames[74], RoleId.Detective);
+        public static RoleInfo forensic = new RoleInfo("Forensic", Forensic.color, Language.roleInfoNames[75], Language.roleInfoNames[76], RoleId.Forensic);
+        public static RoleInfo timeTraveler = new RoleInfo("Time Traveler", TimeTraveler.color, Language.roleInfoNames[77], Language.roleInfoNames[77], RoleId.TimeTraveler);
+        public static RoleInfo squire = new RoleInfo("Squire", Squire.color, Language.roleInfoNames[78], Language.roleInfoNames[78], RoleId.Squire);
+        public static RoleInfo cheater = new RoleInfo("Cheater", Cheater.color, Language.roleInfoNames[79], Language.roleInfoNames[79], RoleId.Cheater);
+        public static RoleInfo fortuneTeller = new RoleInfo("Fortune Teller", FortuneTeller.color, Language.roleInfoNames[80], Language.roleInfoNames[80], RoleId.FortuneTeller);
+        public static RoleInfo hacker = new RoleInfo("Hacker", Hacker.color, Language.roleInfoNames[81], Language.roleInfoNames[81], RoleId.Hacker);
+        public static RoleInfo sleuth = new RoleInfo("Sleuth", Sleuth.color, Language.roleInfoNames[82], Language.roleInfoNames[82], RoleId.Sleuth);
+        public static RoleInfo fink = new RoleInfo("Fink", Fink.color, Language.roleInfoNames[83], Language.roleInfoNames[83], RoleId.Fink);
+        public static RoleInfo kid = new RoleInfo("Kid", Kid.color, Language.roleInfoNames[84], Language.roleInfoNames[84], RoleId.Kid);
+        public static RoleInfo welder = new RoleInfo("Welder", Welder.color, Language.roleInfoNames[85], Language.roleInfoNames[85], RoleId.Welder);
+        public static RoleInfo spiritualist = new RoleInfo("Spiritualist", Spiritualist.color, Language.roleInfoNames[86], Language.roleInfoNames[86], RoleId.Spiritualist);
+        public static RoleInfo coward = new RoleInfo("Coward", Coward.color, Language.roleInfoNames[87], Language.roleInfoNames[87], RoleId.Coward);
+        public static RoleInfo vigilant = new RoleInfo("Vigilant", Vigilant.color, Language.roleInfoNames[88], Language.roleInfoNames[88], RoleId.Vigilant);
+        public static RoleInfo vigilantMira = new RoleInfo("Vigilant", Vigilant.color, Language.roleInfoNames[89], Language.roleInfoNames[89], RoleId.VigilantMira);
+        public static RoleInfo hunter = new RoleInfo("Hunter", Hunter.color, Language.roleInfoNames[90], Language.roleInfoNames[90], RoleId.Hunter);
+        public static RoleInfo jinx = new RoleInfo("Jinx", Jinx.color, Language.roleInfoNames[91], Language.roleInfoNames[91], RoleId.Jinx);
+        public static RoleInfo bat = new RoleInfo("Bat", Bat.color, Language.roleInfoNames[92], Language.roleInfoNames[93], RoleId.Bat);
+        public static RoleInfo necromancer = new RoleInfo("Necromancer", Necromancer.color, Language.roleInfoNames[94], Language.roleInfoNames[94], RoleId.Necromancer);
+        public static RoleInfo engineer = new RoleInfo("Engineer", Engineer.color, Language.roleInfoNames[95], Language.roleInfoNames[96], RoleId.Engineer);
+        public static RoleInfo shy = new RoleInfo("Shy", Shy.color, Language.roleInfoNames[97], Language.roleInfoNames[97], RoleId.Shy);
+        public static RoleInfo taskMaster = new RoleInfo("Task Master", TaskMaster.color, Language.roleInfoNames[98], Language.roleInfoNames[99], RoleId.TaskMaster);
+        public static RoleInfo jailer = new RoleInfo("Jailer", Jailer.color, Language.roleInfoNames[100], Language.roleInfoNames[100], RoleId.Jailer);
+        public static RoleInfo impostor = new RoleInfo("Impostor", Palette.ImpostorRed, Helpers.cs(Palette.ImpostorRed, Language.roleInfoNames[101]), Language.roleInfoNames[101], RoleId.Impostor);
+        public static RoleInfo crewmate = new RoleInfo("Crewmate", Kid.color, Language.roleInfoNames[102], Language.roleInfoNames[102], RoleId.Crewmate);
+        public static RoleInfo lighter = new RoleInfo("Lighter", Modifiers.color, Language.roleInfoNames[103], Language.roleInfoNames[103], RoleId.Lighter, false, false, true);
+        public static RoleInfo blind = new RoleInfo("Blind", Modifiers.color, Language.roleInfoNames[104], Language.roleInfoNames[104], RoleId.Blind, false, false, true);
+        public static RoleInfo flash = new RoleInfo("Flash", Modifiers.color, Language.roleInfoNames[105], Language.roleInfoNames[105], RoleId.Flash, false, false, true);
+        public static RoleInfo bigchungus = new RoleInfo("Big Chungus", Modifiers.color, Language.roleInfoNames[106], Language.roleInfoNames[106], RoleId.BigChungus, false, false, true);
+        public static RoleInfo theChosenOne = new RoleInfo("The Chosen One", Modifiers.color, Language.roleInfoNames[107], Language.roleInfoNames[107], RoleId.TheChosenOne, false, false, true);
+        public static RoleInfo performer = new RoleInfo("Performer", Modifiers.color, Language.roleInfoNames[108], Language.roleInfoNames[109], RoleId.Performer, false, false, true);
+        public static RoleInfo pro = new RoleInfo("Pro", Modifiers.color, Language.roleInfoNames[110], Language.roleInfoNames[110], RoleId.Pro, false, false, true);
+        public static RoleInfo paintball = new RoleInfo("Paintball", Modifiers.color, Language.roleInfoNames[111], Language.roleInfoNames[111], RoleId.Paintball, false, false, true);
+        public static RoleInfo electrician = new RoleInfo("Electrician", Modifiers.color, Language.roleInfoNames[112], Language.roleInfoNames[112], RoleId.Electrician, false, false, true);
+        public static RoleInfo lover = new RoleInfo("Lover", Modifiers.loverscolor, $"{Language.roleInfoNames[113]}", $"{Language.roleInfoNames[114]}", RoleId.Lover, false, false, true);
+        public static RoleInfo badlover = new RoleInfo("Loverstor", Palette.ImpostorRed, $"{Language.roleInfoNames[115]}", $"{Language.roleInfoNames[116]}", RoleId.Lover, false, false, true);
 
 
         public static List<RoleInfo> allRoleInfos = new List<RoleInfo>() {
@@ -260,6 +275,8 @@ namespace LasMonjas
             medusa,
             hypnotist,
             archer,
+            plumber,
+            librarian,
             renegade,
             minion,
             bountyHunter,
@@ -268,6 +285,9 @@ namespace LasMonjas
             challenger,
             ninja,
             berserker,
+            yandere,
+            stranded,
+            monja,
             joker,
             rolethief,
             pyromaniac,
@@ -275,6 +295,9 @@ namespace LasMonjas
             devourer,
             poisoner,
             puppeteer,
+            exiler,
+            amnesiac,
+            seeker,
             crewmate,
             captain,
             mechanic,
@@ -301,12 +324,16 @@ namespace LasMonjas
             necromancer,
             engineer,
             shy,
+            taskMaster,
+            jailer,
             lighter,
             blind,
             flash,
             bigchungus,
             theChosenOne,
             performer,
+            paintball,
+            electrician,
             pro,
             lover,
             badlover,
@@ -610,6 +637,8 @@ namespace LasMonjas
             if (p == Medusa.medusa) infos.Add(medusa);
             if (p == Hypnotist.hypnotist) infos.Add(hypnotist);
             if (p == Archer.archer) infos.Add(archer);
+            if (p == Plumber.plumber) infos.Add(plumber);
+            if (p == Librarian.librarian) infos.Add(librarian);
 
             // Rebels roles
             if (p == Renegade.renegade || (Renegade.formerRenegades != null && Renegade.formerRenegades.Any(x => x.PlayerId == p.PlayerId))) infos.Add(renegade);
@@ -620,6 +649,9 @@ namespace LasMonjas
             if (p == Challenger.challenger) infos.Add(challenger);
             if (p == Ninja.ninja) infos.Add(ninja);
             if (p == Berserker.berserker) infos.Add(berserker);
+            if (p == Yandere.yandere) infos.Add(yandere);
+            if (p == Stranded.stranded) infos.Add(stranded);
+            if (p == Monja.monja) infos.Add(monja);
 
             // Neutral roles
             if (p == Joker.joker) infos.Add(joker);
@@ -629,6 +661,9 @@ namespace LasMonjas
             if (p == Devourer.devourer) infos.Add(devourer);
             if (p == Poisoner.poisoner) infos.Add(poisoner);
             if (p == Puppeteer.puppeteer) infos.Add(puppeteer);
+            if (p == Exiler.exiler) infos.Add(exiler);
+            if (p == Amnesiac.amnesiac) infos.Add(amnesiac);
+            if (p == Seeker.seeker) infos.Add(seeker);
 
             // Crewmate roles
             if (p == Captain.captain) infos.Add(captain);
@@ -655,6 +690,8 @@ namespace LasMonjas
             if (p == Necromancer.necromancer) infos.Add(necromancer);
             if (p == Engineer.engineer) infos.Add(engineer);
             if (p == Shy.shy) infos.Add(shy);
+            if (p == TaskMaster.taskMaster) infos.Add(taskMaster);
+            if (p == Jailer.jailer) infos.Add(jailer);
 
             // Modifier
             if (p == Modifiers.lighter) infos.Add(lighter);
@@ -664,6 +701,8 @@ namespace LasMonjas
             if (p == Modifiers.theChosenOne) infos.Add(theChosenOne);
             if (p == Modifiers.performer) infos.Add(performer);
             if (p == Modifiers.pro) infos.Add(pro);
+            if (p == Modifiers.paintball) infos.Add(paintball);
+            if (p == Modifiers.electrician) infos.Add(electrician);
             if (p == Modifiers.lover1 || p == Modifiers.lover2) infos.Add(p.Data.Role.IsImpostor ? badlover : lover);
 
             // Default roles
@@ -793,6 +832,14 @@ namespace LasMonjas
                     name = "Shy";
                     color = Shy.color;
                 }
+                else if (TaskMaster.taskMaster != null && p == TaskMaster.taskMaster) {
+                    name = "Task Master";
+                    color = TaskMaster.color;
+                }
+                else if (Jailer.jailer != null && p == Jailer.jailer) {
+                    name = "Jailer";
+                    color = Jailer.color;
+                }
                 else if (Mimic.mimic != null && p == Mimic.mimic) {
                     name = "Mimic";
                     color = Mimic.color;
@@ -857,7 +904,17 @@ namespace LasMonjas
                     name = "Archer";
                     color = Palette.ImpostorRed;
                     isGood = false;
-                }               
+                }
+                else if (Plumber.plumber != null && p == Plumber.plumber) {
+                    name = "Plumber";
+                    color = Palette.ImpostorRed;
+                    isGood = false;
+                }
+                else if (Librarian.librarian != null && p == Librarian.librarian) {
+                    name = "Librarian";
+                    color = Palette.ImpostorRed;
+                    isGood = false;
+                }
                 else if (Renegade.renegade != null && p == Renegade.renegade) {
                     name = "Renegade";
                     color = Renegade.color;
@@ -898,6 +955,21 @@ namespace LasMonjas
                     color = Berserker.color;
                     isGood = false;
                 }
+                else if (Yandere.yandere != null && p == Yandere.yandere) {
+                    name = "Yandere";
+                    color = Yandere.color;
+                    isGood = false;
+                }
+                else if (Stranded.stranded != null && p == Stranded.stranded) {
+                    name = "Stranded";
+                    color = Stranded.color;
+                    isGood = false;
+                }
+                else if (Monja.monja != null && p == Monja.monja) {
+                    name = "Monja";
+                    color = Monja.color;
+                    isGood = false;
+                }
                 else if (Joker.joker != null && p == Joker.joker) {
                     name = "Joker";
                     color = Joker.color;
@@ -931,6 +1003,21 @@ namespace LasMonjas
                 else if (Puppeteer.puppeteer != null && p == Puppeteer.puppeteer) {
                     name = "Puppeteer";
                     color = Puppeteer.color;
+                    isGood = false;
+                }
+                else if (Exiler.exiler != null && p == Exiler.exiler) {
+                    name = "Exiler";
+                    color = Exiler.color;
+                    isGood = false;
+                }
+                else if (Amnesiac.amnesiac != null && p == Amnesiac.amnesiac) {
+                    name = "Amnesiac";
+                    color = Amnesiac.color;
+                    isGood = false;
+                }
+                else if (Seeker.seeker != null && p == Seeker.seeker) {
+                    name = "Seeker";
+                    color = Seeker.color;
                     isGood = false;
                 }
                 else if (p.Data.Role.IsImpostor) { // Just Impostor

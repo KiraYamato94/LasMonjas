@@ -12,6 +12,7 @@ using System.IO;
 using UnityEngine;
 using LasMonjas.Objects;
 using LasMonjas.Patches;
+using LasMonjas.Core;
 
 namespace LasMonjas
 {
@@ -31,6 +32,14 @@ namespace LasMonjas
         public static bool updatedSenseiAdminmap = false;
 
         public static bool createdduelarena = false;
+
+        public static bool createdseekerarena = false;
+
+        public static bool createdjail = false;
+
+        public static bool createdStrandedBoxes = false;
+
+        public static bool createdMonjaItems = false;
 
         public static bool createdcapturetheflag = false;
 
@@ -52,6 +61,10 @@ namespace LasMonjas
 
         public static int howmanygamemodesareon = 0;
 
+        public static int whichgamemodeHUD = 0;
+
+        public static int howmanyBattleRoyaleplayers = 0;
+
         public static List<GameObject> nightOverlay = new List<GameObject>();
         public static bool canNightOverlay = true;
         public static bool removeNightOverlay = true;
@@ -67,6 +80,15 @@ namespace LasMonjas
 
         public static bool hideVentAnim = CustomOptionHolder.hideVentAnimOnShadows.getBool();
 
+        public static bool whoAmIMode = CustomOptionHolder.whoAmIMode.getBool();
+        public static List<GameObject> whoAmIModeGlobalItems = new List<GameObject>();
+        public static List<GameObject> whoAmIModeCrewItems = new List<GameObject>();
+        public static List<GameObject> whoAmIModeImpostorItems = new List<GameObject>();
+        public static List<GameObject> whoAmIModeRebelsItems = new List<GameObject>();
+        public static List<GameObject> whoAmIModeNeutralsItems = new List<GameObject>();
+        public static bool createdWhoAmI = false;
+        public static bool whoAmIFoundRole = false;
+
         public static void clearAndReloadRoles() {
             Mimic.clearAndReload();
             Painter.clearAndReload();
@@ -81,6 +103,8 @@ namespace LasMonjas
             Medusa.clearAndReload();
             Hypnotist.clearAndReload();
             Archer.clearAndReload();
+            Plumber.clearAndReload();
+            Librarian.clearAndReload();
 
             Renegade.clearAndReload();
             Minion.clearAndReload();
@@ -90,6 +114,9 @@ namespace LasMonjas
             Challenger.clearAndReload();
             Ninja.clearAndReload();
             Berserker.clearAndReload();
+            Yandere.clearAndReload();
+            Stranded.clearAndReload();
+            Monja.clearAndReload();
 
             Joker.clearAndReload();
             RoleThief.clearAndReload();
@@ -98,6 +125,9 @@ namespace LasMonjas
             Devourer.clearAndReload();
             Poisoner.clearAndReload();
             Puppeteer.clearAndReload();
+            Exiler.clearAndReload();
+            Amnesiac.clearAndReload();
+            Seeker.clearAndReload();
 
             Captain.clearAndReload();
             Mechanic.clearAndReload();
@@ -122,6 +152,8 @@ namespace LasMonjas
             Necromancer.clearAndReload();
             Engineer.clearAndReload();
             Shy.clearAndReload();
+            TaskMaster.clearAndReload();
+            Jailer.clearAndReload();
 
             Modifiers.clearAndReload();
 
@@ -143,6 +175,10 @@ namespace LasMonjas
             updatedSenseiMinimap = false;
             updatedSenseiAdminmap = false;
             createdduelarena = false;
+            createdseekerarena = false;
+            createdjail = false;
+            createdStrandedBoxes = false;
+            createdMonjaItems = false;
             createdcapturetheflag = false;
             createdpoliceandthief = false;
             createdkingofthehill = false;
@@ -153,6 +189,8 @@ namespace LasMonjas
             quackNumber = 0;
             alivePlayers = 15;
             howmanygamemodesareon = 0;
+            whichgamemodeHUD = 0;
+            howmanyBattleRoyaleplayers = 0;
 
             nightOverlay = new List<GameObject>();
             canNightOverlay = true;
@@ -164,6 +202,14 @@ namespace LasMonjas
             isHappeningAnonymousComms = false;
             slowSpeedOxigen = CustomOptionHolder.slowSpeedOxigenSabotage.getBool();
             hideVentAnim = CustomOptionHolder.hideVentAnimOnShadows.getBool();
+            whoAmIMode = CustomOptionHolder.whoAmIMode.getBool();
+            whoAmIModeGlobalItems.Clear();
+            whoAmIModeCrewItems.Clear();
+            whoAmIModeImpostorItems.Clear();
+            whoAmIModeRebelsItems.Clear();
+            whoAmIModeNeutralsItems.Clear();
+            createdWhoAmI = false;
+            whoAmIFoundRole = false;
         }
 
     }
@@ -260,7 +306,6 @@ namespace LasMonjas
         public static float cooldown = 30f;
         public static bool canKillNearNun = true;
         public static bool localPlacedNun = false;
-        public static bool nunsActive = true;
 
         public static PlayerControl currentTarget;
         public static PlayerControl bitten;
@@ -286,7 +331,6 @@ namespace LasMonjas
             targetNearNun = false;
             localPlacedNun = false;
             currentTarget = null;
-            nunsActive = CustomOptionHolder.demonSpawnRate.getSelection() > 0;
             delay = CustomOptionHolder.demonKillDelay.getFloat();
             cooldown = PlayerControl.GameOptions.killCooldown;
             canKillNearNun = CustomOptionHolder.demonCanKillNearNuns.getBool();
@@ -481,21 +525,7 @@ namespace LasMonjas
         public static void resetChameleon() {
             chameleonTimer = 0f;
             if (chameleon != null) {
-                chameleon.cosmetics.nameText.color = new Color(chameleon.cosmetics.nameText.color.r, chameleon.cosmetics.nameText.color.g, chameleon.cosmetics.nameText.color.b, 1);
-                chameleon.cosmetics.colorBlindText.color = new Color(chameleon.cosmetics.colorBlindText.color.r, chameleon.cosmetics.colorBlindText.color.g, chameleon.cosmetics.colorBlindText.color.b, 1);
-                if (chameleon.cosmetics.currentPet != null && chameleon.cosmetics.currentPet.rend != null && chameleon.cosmetics.currentPet.shadowRend != null) {
-                    chameleon.cosmetics.currentPet.rend.color = new Color(chameleon.cosmetics.currentPet.rend.color.r, chameleon.cosmetics.currentPet.rend.color.g, chameleon.cosmetics.currentPet.rend.color.b, 1);
-                    chameleon.cosmetics.currentPet.shadowRend.color = new Color(chameleon.cosmetics.currentPet.shadowRend.color.r, chameleon.cosmetics.currentPet.shadowRend.color.g, chameleon.cosmetics.currentPet.shadowRend.color.b, 1);
-                }
-                if (chameleon.cosmetics.hat != null) {
-                    chameleon.cosmetics.hat.Parent.color = new Color(chameleon.cosmetics.hat.Parent.color.r, chameleon.cosmetics.hat.Parent.color.g, chameleon.cosmetics.hat.Parent.color.b, 1);
-                    chameleon.cosmetics.hat.BackLayer.color = new Color(chameleon.cosmetics.hat.BackLayer.color.r, chameleon.cosmetics.hat.BackLayer.color.g, chameleon.cosmetics.hat.BackLayer.color.b, 1);
-                    chameleon.cosmetics.hat.FrontLayer.color = new Color(chameleon.cosmetics.hat.FrontLayer.color.r, chameleon.cosmetics.hat.FrontLayer.color.g, chameleon.cosmetics.hat.FrontLayer.color.b, 1);
-                }
-                if (chameleon.cosmetics.visor != null) {
-                    chameleon.cosmetics.visor.Image.color = new Color(chameleon.cosmetics.visor.Image.color.r, chameleon.cosmetics.visor.Image.color.g, chameleon.cosmetics.visor.Image.color.b, 1);
-                }
-                chameleon.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(chameleon.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, chameleon.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, chameleon.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1);
+                Helpers.alphaPlayer(false, chameleon.PlayerId);
             }
         }
 
@@ -622,6 +652,8 @@ namespace LasMonjas
 
         public static List<GameObject> objectsCantPlaceTraps = new List<GameObject>();
 
+        public static TMPro.TMP_Text trapsCounterButtonText;
+        
         private static Sprite spiralSprite;
         public static Sprite getSpiralSprite() {
             if (spiralSprite) return spiralSprite;
@@ -735,6 +767,70 @@ namespace LasMonjas
         }
 
     }
+
+    public class Plumber
+    {
+        public static PlayerControl plumber;
+        public static Color color = Palette.ImpostorRed;
+        
+        public static float cooldown = 30f;
+        public static float currentVents = 0f;
+        public static float maxVents = 0f;
+        public static List<Vent> Vents = new List<Vent>();
+        public static bool madeVents = false;
+        public static Vector2 VentSize { get; set; }
+        public static TMPro.TMP_Text plumberVentButtonText;
+
+        public static Sprite buttonSprite;
+        public static Sprite getPlumberButtonSprite() {
+            if (buttonSprite) return buttonSprite;
+            buttonSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.PlumberMakeVentButton.png", 90f);
+            return buttonSprite;
+        }
+
+        public static void clearAndReload() {
+            plumber = null;
+            cooldown = CustomOptionHolder.plumberCooldown.getFloat();
+            currentVents = 0;
+            maxVents = CustomOptionHolder.plumberVentNumber.getFloat();
+            Vents = new List<Vent>();
+            madeVents = false;
+        }
+    }
+
+    public static class Librarian
+    {
+        public static PlayerControl librarian;
+        public static Color color = Palette.ImpostorRed;
+
+        public static PlayerControl currentTarget;
+        public static PlayerControl targetLibrary;
+        public static float cooldown = 30f;
+
+        public static TMPro.TMP_Text targetNameButtonText;
+        
+        private static Sprite overlaySprite;
+        public static Sprite getLibrarianOverlaySprite() {
+            if (overlaySprite) return overlaySprite;
+            overlaySprite = Helpers.loadSpriteFromResources("LasMonjas.Images.LibrarianOverlay.png", 100f);
+            return overlaySprite;
+        }
+        
+        private static Sprite librarianButtonSprite;
+
+        public static Sprite getLibrarianButtonSprite() {
+            if (librarianButtonSprite) return librarianButtonSprite;
+            librarianButtonSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.LibrarianSilenceButton.png", 90f);
+            return librarianButtonSprite;
+        }
+
+        public static void clearAndReload() {
+            librarian = null;
+            currentTarget = null;
+            targetLibrary = null;
+            cooldown = CustomOptionHolder.librarianCooldown.getFloat();
+        }
+    }
     
     public static class Renegade
     {
@@ -745,7 +841,6 @@ namespace LasMonjas
         public static List<PlayerControl> formerRenegades = new List<PlayerControl>();
 
         public static float cooldown = 30f;
-        public static float createMinionCooldown = 30f;
         public static bool canUseVents = true;
         public static bool canRecruitMinion = true;
         public static Sprite buttonSprite;
@@ -764,7 +859,6 @@ namespace LasMonjas
             currentTarget = null;
             fakeMinion = null;
             cooldown = PlayerControl.GameOptions.killCooldown;
-            createMinionCooldown = CustomOptionHolder.renegadeCreateMinionCooldown.getFloat();
         }
 
         public static void clearAndReload() {
@@ -772,7 +866,6 @@ namespace LasMonjas
             currentTarget = null;
             fakeMinion = null;
             cooldown = PlayerControl.GameOptions.killCooldown;
-            createMinionCooldown = CustomOptionHolder.renegadeCreateMinionCooldown.getFloat();
             canUseVents = CustomOptionHolder.renegadeCanUseVents.getBool();
             canRecruitMinion = CustomOptionHolder.renegadeCanRecruitMinion.getBool();
             usedRecruit = false;
@@ -807,8 +900,6 @@ namespace LasMonjas
 
         public static List<PlayerControl> possibleTargets = new List<PlayerControl>();
 
-        public static float cooldown = 30f;
-
         public static float killCooldown = 30f;
 
         public static PlayerControl currentTarget;
@@ -821,6 +912,8 @@ namespace LasMonjas
 
         public static bool usedTarget;
 
+        public static TMPro.TMP_Text targetNameButtonText;
+        
         private static Sprite buttonSprite;
         public static Sprite getButtonSprite() {
             if (buttonSprite) return buttonSprite;
@@ -832,11 +925,9 @@ namespace LasMonjas
             bountyhunter = null;
             currentTarget = null;
             hasToKill = null;
-            cooldown = CustomOptionHolder.bountyHunterCooldown.getFloat();
             killCooldown = PlayerControl.GameOptions.killCooldown;
             triggerBountyHunterWin = false;
             rolName = "";
-            RoleInfo.bountyHunter.shortDescription = "Hunt down your target" + rolName;
             usedTarget = false;
             possibleTargets = new List<PlayerControl>();
         }
@@ -916,6 +1007,11 @@ namespace LasMonjas
 
         public static PlayerControl yanedPlayer;
 
+        public static TMPro.TMP_Text yinedButtonText;
+
+        public static TMPro.TMP_Text yanedButtonText;
+
+
         private static Sprite buttonSpriteYang;
         public static Sprite getYangButtonSprite() {
             if (buttonSpriteYang) return buttonSpriteYang;
@@ -946,11 +1042,13 @@ namespace LasMonjas
             yinyedplayer = null;
             usedYined = false;
             yinedPlayer = null;
+            yinedButtonText.text = "";
         }
         public static void resetYanged() {
             yangyedplayer = null;
             usedYanged = false;
             yanedPlayer = null;
+            yanedButtonText.text = "";
         }
     }
 
@@ -986,8 +1084,10 @@ namespace LasMonjas
         public static float duelDuration = 30f;
 
         public static bool timeOutDuel = false;
-
-        public static bool challengerIsInMeeting = false;
+        public static bool triggerChallengerWin = false;
+        public static float duelKills = 0;
+        public static float neededKills = 0;
+        public static TMPro.TMP_Text challengerDuelButtonText;
 
         private static Sprite buttonChallengeSprite;
         public static Sprite getChallengeButtonSprite() {
@@ -1033,7 +1133,9 @@ namespace LasMonjas
             onlyOneFinishDuel = true;
             duelDuration = 30f;
             timeOutDuel = false;
-            challengerIsInMeeting = false;
+            triggerChallengerWin = false;
+            duelKills = 0;
+            neededKills = CustomOptionHolder.challengerKillsForWin.getFloat();
         }
 
         public static void ResetValues() {
@@ -1047,7 +1149,46 @@ namespace LasMonjas
             isDueling = false;
             onlyOneFinishDuel = true;
             duelDuration = 30f;
-            challengerIsInMeeting = false;
+            if (Jailer.prisonPlayer != null) {
+                switch (PlayerControl.GameOptions.MapId) {
+                    // Skeld
+                    case 0:
+                        if (LasMonjas.activatedSensei) {
+                            Jailer.prisonPlayer.transform.position = new Vector3(-0.6f, 3.5f, Jailer.prisonPlayer.transform.position.z);
+                        }
+                        else {
+                            Jailer.prisonPlayer.transform.position = new Vector3(-0.75f, 5.25f, Jailer.prisonPlayer.transform.position.z);
+                        }
+                        break;
+                    // MiraHQ
+                    case 1:
+                        Jailer.prisonPlayer.transform.position = new Vector3(25.5f, 4.75f, Jailer.prisonPlayer.transform.position.z);
+                        break;
+                    // Polus
+                    case 2:
+                        Jailer.prisonPlayer.transform.position = new Vector3(17.15f, -17.15f, Jailer.prisonPlayer.transform.position.z);
+                        break;
+                    // Dleks
+                    case 3:
+                        Jailer.prisonPlayer.transform.position = new Vector3(0.75f, 5.25f, Jailer.prisonPlayer.transform.position.z);
+                        break;
+                    // Airship
+                    case 4:
+                        Jailer.prisonPlayer.transform.position = new Vector3(16.25f, 15.25f, Jailer.prisonPlayer.transform.position.z);
+                        break;
+                    // Submerged
+                    case 5:
+                        if (Jailer.prisonPlayer.transform.position.y > 0) {
+                            Jailer.prisonPlayer.transform.position = new Vector3(-4.3f, 13.5f, Jailer.prisonPlayer.transform.position.z);
+                        }
+                        else {
+                            Jailer.prisonPlayer.transform.position = new Vector3(1.85f, -26.65f, Jailer.prisonPlayer.transform.position.z);
+                        }
+                        break;
+                }
+                Jailer.prisonPlayer = null;
+                Jailer.usedJail = false;
+            }
         }
     }
 
@@ -1062,6 +1203,8 @@ namespace LasMonjas
 
         public static PlayerControl markedTarget;
 
+        public static TMPro.TMP_Text targetNameButtonText;
+        
         private static Sprite buttonMarkSprite;
         public static Sprite getMarkSprite() {
             if (buttonMarkSprite) return buttonMarkSprite;
@@ -1105,6 +1248,553 @@ namespace LasMonjas
             timeToKill = CustomOptionHolder.berserkerTimeToKill.getFloat();
             killedFirstTime = false;
             backupTimeToKill = timeToKill;
+        }
+    }
+    public static class Yandere
+    {
+        public static PlayerControl yandere;
+        public static Color color = new Color32(79, 125, 0, byte.MaxValue);
+
+        public static PlayerControl currentTarget;
+        public static PlayerControl stalkTarget;
+        public static PlayerControl target;
+
+        public static float killCooldown = 30f;
+        public static float stareCooldown = 30f;
+        public static float stareTimes = 5f;
+        public static float currenStareTimes = 0f;
+        public static float stareDuration = 3f;
+        public static bool usedTarget;
+        public static bool rampageMode;
+        public static bool triggerYandereWin = false;
+
+        public static TMPro.TMP_Text yandereTargetButtonText;
+        public static TMPro.TMP_Text yandereKillButtonText;
+        public static List<PlayerControl> possibleTargets = new List<PlayerControl>();
+
+        private static Sprite buttonTargetSprite;
+        public static Sprite getTargetSprite() {
+            if (buttonTargetSprite) return buttonTargetSprite;
+            buttonTargetSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.YandereTarget.png", 90f);
+            return buttonTargetSprite;
+        }
+
+        private static Sprite buttonStareSprite;
+        public static Sprite getStareSprite() {
+            if (buttonStareSprite) return buttonStareSprite;
+            buttonStareSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.YandereStalk.png", 90f);
+            return buttonStareSprite;
+        }
+
+        public static void clearAndReload() {
+            yandere = null;
+            currentTarget = null;
+            target = null;
+            killCooldown = PlayerControl.GameOptions.killCooldown;
+            stareCooldown = CustomOptionHolder.yandereCooldown.getFloat();
+            stareTimes = CustomOptionHolder.yandereStareTimes.getFloat();
+            stareDuration = CustomOptionHolder.yandereStareDuration.getFloat();
+            possibleTargets = new List<PlayerControl>();
+            usedTarget = false;
+            rampageMode = false;
+            currenStareTimes = 0;
+            stalkTarget = null;
+            triggerYandereWin = false;
+        }
+    }
+
+    public static class Stranded
+    {
+        public static PlayerControl stranded;
+        public static Color color = new Color32(79, 125, 0, byte.MaxValue);
+
+        public static List<Vector3> susBoxPositions = new List<Vector3>();
+        public static GameObject selectedBox = null;
+        public static GameObject currentBox = null;
+        public static List<GameObject> groundItems = new List<GameObject>();
+        public static byte foundBox = 0;
+        public static bool spawnBoxOnCustomSkeld = false;
+        public static PlayerControl currentTarget;
+        public static float killCooldown = 30f;                
+        public static bool triggerStrandedWin = false;
+        public static int howManyKills = 0;
+        public static int storedAmmo = 0;
+        public static bool canVent = false;
+        public static bool canTurnInvisible = false;
+        public static bool isInvisible = false;
+        public static float invisibleTimer = 0;
+        public static bool isHypnotized = false;
+
+        public static TMPro.TMP_Text strandedSearchButtonText;
+        public static TMPro.TMP_Text strandedKillButtonText;
+
+        private static Sprite buttonSurvivorTakeBox;
+
+        public static Sprite getSurvivorTakeBoxButtonSprite() {
+            if (buttonSurvivorTakeBox) return buttonSurvivorTakeBox;
+            buttonSurvivorTakeBox = Helpers.loadSpriteFromResources("LasMonjas.Images.StrandedSearchButton.png", 90f);
+            return buttonSurvivorTakeBox;
+        }
+
+        private static Sprite buttonInvisibleSprite;
+        public static Sprite getInvisibleButtonSprite() {
+            if (buttonInvisibleSprite) return buttonInvisibleSprite;
+            buttonInvisibleSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.StrandedInvisibleButton.png", 90f);
+            return buttonInvisibleSprite;
+        }
+        
+        public static void resetStranded() {
+            invisibleTimer = 0f;
+            isInvisible = false;
+            if (stranded != null) {
+                Helpers.alphaPlayer(false, stranded.PlayerId);
+            }
+        }
+        
+        public static void clearAndReload() {
+            susBoxPositions.Clear();
+            groundItems.Clear();            
+            stranded = null;
+            currentTarget = null;
+            killCooldown = PlayerControl.GameOptions.killCooldown;
+            foundBox = 0;
+            selectedBox = null;
+            currentBox = null;
+            triggerStrandedWin = false;
+            spawnBoxOnCustomSkeld = CustomOptionHolder.activateSenseiMap.getBool();
+            howManyKills = 0;
+            storedAmmo = 0;
+            canVent = false;
+            canTurnInvisible = false;
+            isInvisible = false;
+            isHypnotized = false;
+            invisibleTimer = 0;
+
+            switch (PlayerControl.GameOptions.MapId) {
+                case 0:
+                    if (spawnBoxOnCustomSkeld) {
+                        susBoxPositions.Add(new Vector3(-5.25f, -0.75f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-4.5f, 1.25f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-3.85f, 5.25f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-20, -1.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-16f, -1.5f, 0.4f));                        
+                        susBoxPositions.Add(new Vector3(-17.85f, 5.25f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-18.85f, -8f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-14.25f, -12.35f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-10.75f, -9f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-5.5f, -12.75f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-7.75f, -11.75f, 0.4f));
+                        susBoxPositions.Add(new Vector3(1f, -12f, 0.4f));
+                        susBoxPositions.Add(new Vector3(6.5f, -14f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-8.5f, -0.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(12.5f, -0.25f, 0.4f));
+                        susBoxPositions.Add(new Vector3(10f, -2.15f, 0.4f));
+                        susBoxPositions.Add(new Vector3(6.75f, 5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(5f, -9f, 0.4f));
+                        susBoxPositions.Add(new Vector3(5f, -5.25f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-3.35f, 8f, 0.4f));
+                        susBoxPositions.Add(new Vector3(7.5f, -1f, 0.4f));
+                        susBoxPositions.Add(new Vector3(4.6f, -1f, 0.4f));
+                        susBoxPositions.Add(new Vector3(1f, 3f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-0.75f, -4f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-13.5f, -1.75f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-6.85f, -6.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-10.35f, 2.85f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-6.75f, 3.75f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-6.75f, 8f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-6.75f, 10.85f, 0.4f));
+                    }
+                    else {
+                        susBoxPositions.Add(new Vector3(-15.75f, -0.9f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-7.85f, -11.75f, 0.4f));
+                        susBoxPositions.Add(new Vector3(4.5f, -9.75f, 0.4f));
+                        susBoxPositions.Add(new Vector3(5.75f, -15f, 0.4f));
+                        susBoxPositions.Add(new Vector3(1.75f, -3.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-18.5f, -9.65f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-3.5f, 1.15f, 0.4f));
+                        susBoxPositions.Add(new Vector3(16.75f, -6f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-3f, -10f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-21.5f, -2.15f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-20f, -4f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-21.5f, -8f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-16.9f, -5.4f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-13.5f, -6.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-18f, 2.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-10.1f, 1.15f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-9.4f, -4.65f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-18.5f, -13.15f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-12.1f, -14.5f, 0.4f));                        
+                        susBoxPositions.Add(new Vector3(-6.5f, -8.25f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-3.55f, -15f, 0.4f));
+                        susBoxPositions.Add(new Vector3(6.3f, -7.25f, 0.4f));
+                        susBoxPositions.Add(new Vector3(2.5f, -12.25f, 0.4f));
+                        susBoxPositions.Add(new Vector3(2.15f, -15f, 0.4f));
+                        susBoxPositions.Add(new Vector3(9.4f, -12.25f, 0.4f));
+                        susBoxPositions.Add(new Vector3(11.75f, -6.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(5.2f, -4.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(9.5f, 0f, 0.4f));
+                        susBoxPositions.Add(new Vector3(6f, 1.15f, 0.4f));
+                        susBoxPositions.Add(new Vector3(1.75f, 5.5f, 0.4f));
+                    }
+                    break;
+                case 1:
+                    susBoxPositions.Add(new Vector3(-3.5f, 3.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-5.4f, -1.35f, 0.4f));
+                    susBoxPositions.Add(new Vector3(1.55f, -1.35f, 0.4f));
+                    susBoxPositions.Add(new Vector3(7.75f, -1.35f, 0.4f));
+                    susBoxPositions.Add(new Vector3(15.4f, -0.85f, 0.4f));
+                    susBoxPositions.Add(new Vector3(12.5f, 2.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(16f, 4f, 0.4f));
+                    susBoxPositions.Add(new Vector3(9.25f, 1.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(6f, 6f, 0.4f));
+                    susBoxPositions.Add(new Vector3(6f, 12f, 0.4f));
+                    susBoxPositions.Add(new Vector3(7.8f, 10.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(10.7f, 12.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(3.75f, 13.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(1.25f, 10.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(17.85f, 11.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(17.85f, 20.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(15.75f, 17.75f, 0.4f));
+                    susBoxPositions.Add(new Vector3(14.75f, 20.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(22f, 20.65f, 0.4f));
+                    susBoxPositions.Add(new Vector3(21f, 17.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(13.5f, 23.4f, 0.4f));
+                    susBoxPositions.Add(new Vector3(22.15f, 23.4f, 0.4f));
+                    susBoxPositions.Add(new Vector3(20.15f, 24.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(16.25f, 24.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(19.5f, 4.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(19.5f, 2.15f, 0.4f));
+                    susBoxPositions.Add(new Vector3(22f, 4.75f, 0.4f));
+                    susBoxPositions.Add(new Vector3(22f, -1.75f, 0.4f));
+                    susBoxPositions.Add(new Vector3(25.5f, 2.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(28.25f, 0.25f, 0.4f));
+                    break;
+                case 2:
+                    susBoxPositions.Add(new Vector3(13.75f, -9.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(2.75f, -11.75f, 0.4f));
+                    susBoxPositions.Add(new Vector3(5.5f, -11.75f, 0.4f));
+                    susBoxPositions.Add(new Vector3(9.75f, -12.15f, 0.4f));
+                    susBoxPositions.Add(new Vector3(24f, -12.15f, 0.4f));
+                    susBoxPositions.Add(new Vector3(9.25f, -16.15f, 0.4f));
+                    susBoxPositions.Add(new Vector3(12.45f, -14.15f, 0.4f));
+                    susBoxPositions.Add(new Vector3(19.85f, -19f, 0.4f));
+                    susBoxPositions.Add(new Vector3(1.35f, -17.4f, 0.4f));
+                    susBoxPositions.Add(new Vector3(1.35f, -20f, 0.4f));
+                    susBoxPositions.Add(new Vector3(2.25f, -23.75f, 0.4f));
+                    susBoxPositions.Add(new Vector3(8f, -24.15f, 0.4f));
+                    susBoxPositions.Add(new Vector3(16.5f, -25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(22f, -25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(20.75f, -21.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(20.65f, -14.45f, 0.4f));
+                    susBoxPositions.Add(new Vector3(24.5f, -17f, 0.4f));
+                    susBoxPositions.Add(new Vector3(31f, -20.65f, 0.4f));
+                    susBoxPositions.Add(new Vector3(38.35f, -20.65f, 0.4f));
+                    susBoxPositions.Add(new Vector3(36.5f, -21.75f, 0.4f));
+                    susBoxPositions.Add(new Vector3(35.5f, -19.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(32f, -15.75f, 0.4f));
+                    susBoxPositions.Add(new Vector3(27.75f, -7.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(30f, -7.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(36.4f, -6.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(40.35f, -8f, 0.4f));
+                    susBoxPositions.Add(new Vector3(39.1f, -14.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(31.5f, -9.75f, 0.4f));
+                    susBoxPositions.Add(new Vector3(25.5f, -9.75f, 0.4f));
+                    susBoxPositions.Add(new Vector3(6.5f, -7.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(15.75f, -21.75f, 0.4f));
+                    break;
+                case 3:
+                    susBoxPositions.Add(new Vector3(15.75f, -0.9f, 0.4f));
+                    susBoxPositions.Add(new Vector3(7.85f, -11.75f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-4.5f, -9.75f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-5.75f, -15f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-1.75f, -3.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(18.5f, -9.65f, 0.4f));
+                    susBoxPositions.Add(new Vector3(3.5f, 1.15f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-16.75f, -6f, 0.4f));
+                    susBoxPositions.Add(new Vector3(3f, -10f, 0.4f));
+                    susBoxPositions.Add(new Vector3(21.5f, -2.15f, 0.4f));
+                    susBoxPositions.Add(new Vector3(20f, -4f, 0.4f));
+                    susBoxPositions.Add(new Vector3(21.5f, -8f, 0.4f));
+                    susBoxPositions.Add(new Vector3(16.9f, -5.4f, 0.4f));
+                    susBoxPositions.Add(new Vector3(13.5f, -6.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(18f, 2.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(10.1f, 1.15f, 0.4f));
+                    susBoxPositions.Add(new Vector3(9.4f, -4.65f, 0.4f));
+                    susBoxPositions.Add(new Vector3(18.5f, -13.15f, 0.4f));
+                    susBoxPositions.Add(new Vector3(12.1f, -14.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(6.5f, -8.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(3.55f, -15f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-6.3f, -7.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-2.5f, -12.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-2.15f, -15f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-9.4f, -12.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-11.75f, -6.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-5.2f, -4.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-9.5f, 0f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-6f, 1.15f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-1.75f, 5.5f, 0.4f));
+                    break;
+                case 4:
+                    susBoxPositions.Add(new Vector3(12.5f, -2.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(6.25f, -2.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(9.25f, 2f, 0.4f));
+                    susBoxPositions.Add(new Vector3(15.25f, 2f, 0.4f));
+                    susBoxPositions.Add(new Vector3(24f, 2.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(25.75f, 0.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(13.5f, 6f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-23.25f, -0.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-7.5f, -7.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-7.5f, -1f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-14.25f, 1.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-14.25f, -4.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-14.25f, -8.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-13.75f, -14.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-10.25f, -12.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(1.5f, -12.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(5.75f, -10.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(8.25f, -12.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(10.25f, -6.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(19.25f, -4f, 0.4f));
+                    susBoxPositions.Add(new Vector3(13.25f, -6.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(16.25f, -8.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(29f, -6f, 0.4f));
+                    susBoxPositions.Add(new Vector3(29f, -1.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(37.25f, -3.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(33.75f, 7.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(29.25f, 7.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(24.75f, 7.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(20f, 11.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(4.25f, 8.75f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-8.75f, 12.5f, 0.4f));
+                    break;
+                case 5:
+                    susBoxPositions.Add(new Vector3(0, -33.75f, -1f));
+                    susBoxPositions.Add(new Vector3(5.25f, -33.5f, -1f));
+                    susBoxPositions.Add(new Vector3(7.8f, -39.5f, -1f));
+                    susBoxPositions.Add(new Vector3(2.3f, -39.5f, -1f));
+                    susBoxPositions.Add(new Vector3(-10.95f, -39f, -1f));
+                    susBoxPositions.Add(new Vector3(-6.75f, -42.75f, -1f));
+                    susBoxPositions.Add(new Vector3(-13.75f, -34.25f, -1f));
+                    susBoxPositions.Add(new Vector3(-11.5f, -31.15f, -1f));
+                    susBoxPositions.Add(new Vector3(-13.75f, -27.75f, -1f));
+                    susBoxPositions.Add(new Vector3(-4.15f, -34f, -1f));
+                    susBoxPositions.Add(new Vector3(13f, -25.25f, -1f));
+                    susBoxPositions.Add(new Vector3(12.75f, -31.5f, -1f));
+                    susBoxPositions.Add(new Vector3(4.75f, -26.75f, -1f));
+                    susBoxPositions.Add(new Vector3(4f, -20.25f, -1f));
+                    susBoxPositions.Add(new Vector3(7.7f, -23.25f, -1f));
+                    susBoxPositions.Add(new Vector3(14.25f, 24.65f, -1f));
+                    susBoxPositions.Add(new Vector3(5.75f, 31.5f, -1f));
+                    susBoxPositions.Add(new Vector3(0f, 34f, -1f));
+                    susBoxPositions.Add(new Vector3(4.5f, 8.4f, -1f));
+                    susBoxPositions.Add(new Vector3(10.45f, 17.25f, -1f));
+                    susBoxPositions.Add(new Vector3(5.75f, 20.25f, -1f));
+                    susBoxPositions.Add(new Vector3(1f, 10f, -1f));
+                    susBoxPositions.Add(new Vector3(1.35f, 14.5f, -1f));
+                    susBoxPositions.Add(new Vector3(-6.4f, 14.15f, -1f));
+                    susBoxPositions.Add(new Vector3(-6.7f, 10.25f, -1f));
+                    susBoxPositions.Add(new Vector3(-15f, 18f, -1f));
+                    susBoxPositions.Add(new Vector3(-12.15f, 20.25f, -1f));
+                    susBoxPositions.Add(new Vector3(-10.25f, 25.5f, -1f));
+                    susBoxPositions.Add(new Vector3(-4.75f, 28.45f, -1f));
+                    susBoxPositions.Add(new Vector3(-12.25f, 31f, -1f));
+                    break;
+            }
+            susBoxPositions.Shuffle();
+        }
+    }
+
+    public static class Monja
+    {
+        public static PlayerControl monja;
+        public static Color color = new Color32(79, 125, 0, byte.MaxValue);
+
+        public static PlayerControl currentTarget;
+        public static bool awakened;
+        public static float awakenTimer;
+        public static bool canAwake;
+        public static bool isDeliveringItem;
+        public static float killTimer;
+        public static int deliveredItems;
+        public static byte itemId;
+        public static TMPro.TMP_Text killTimerButtonText;
+        public static TMPro.TMP_Text objectCountButtonText;
+        public static List<GameObject> objectList = new List<GameObject>();
+        public static GameObject ritualObject = null;
+        public static List<Vector3> itemListPositions = new List<Vector3>();
+        public static bool spawnBoxOnCustomSkeld = false;
+        public static GameObject item01 = null;
+        public static GameObject item02 = null;
+        public static GameObject item03 = null;
+        public static GameObject item04 = null;
+        public static GameObject item05 = null;
+        public static GameObject monjaSprite = null;
+
+        private static Sprite buttonSprite;
+        public static Sprite getAwakeButtonSprite() {
+            if (buttonSprite) return buttonSprite;
+            buttonSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.MonjaRitual.png", 90f);
+            return buttonSprite;
+        }
+
+        private static Sprite buttonSpriteDeliver;
+        public static Sprite getDeliverButtonSprite() {
+            if (buttonSpriteDeliver) return buttonSpriteDeliver;
+            buttonSpriteDeliver = Helpers.loadSpriteFromResources("LasMonjas.Images.MonjaPlace.png", 90f);
+            return buttonSpriteDeliver;
+        }
+
+        private static Sprite buttonSpritePick;
+        public static Sprite getPickButtonSprite() {
+            if (buttonSpritePick) return buttonSpritePick;
+            buttonSpritePick = Helpers.loadSpriteFromResources("LasMonjas.Images.MonjaPick.png", 90f);
+            return buttonSpritePick;
+        }
+
+        public static void clearAndReload() {
+            monja = null;
+            currentTarget = null;
+            awakened = false;
+            awakenTimer = 0;
+            killTimer = 0f;
+            deliveredItems = 0;
+            canAwake = false;
+            isDeliveringItem = false;
+            itemId = 0;
+            objectList = new List<GameObject>();
+            ritualObject = null;
+            itemListPositions.Clear();
+            spawnBoxOnCustomSkeld = CustomOptionHolder.activateSenseiMap.getBool();
+            item01 = null;
+            item02 = null;
+            item03 = null;
+            item04 = null;
+            item05 = null;
+            monjaSprite = null;
+            switch (PlayerControl.GameOptions.MapId) {
+                case 0:
+                    if (spawnBoxOnCustomSkeld) {
+                        itemListPositions.Add(new Vector3(-5.25f, -0.75f, 0.4f));
+                        itemListPositions.Add(new Vector3(-3.85f, 5.25f, 0.4f));
+                        itemListPositions.Add(new Vector3(-20, -1.5f, 0.4f));
+                        itemListPositions.Add(new Vector3(-17.85f, 5.25f, 0.4f));
+                        itemListPositions.Add(new Vector3(-18.85f, -8f, 0.4f));
+                        itemListPositions.Add(new Vector3(-14.25f, -12.35f, 0.4f));
+                        itemListPositions.Add(new Vector3(-5.5f, -12.75f, 0.4f));
+                        itemListPositions.Add(new Vector3(6.5f, -14f, 0.4f));
+                        itemListPositions.Add(new Vector3(-8.5f, -0.5f, 0.4f));
+                        itemListPositions.Add(new Vector3(12.5f, -0.25f, 0.4f));
+                        itemListPositions.Add(new Vector3(6.75f, 5f, 0.4f));
+                        itemListPositions.Add(new Vector3(5f, -9f, 0.4f));
+                        itemListPositions.Add(new Vector3(7.5f, -1f, 0.4f));
+                        itemListPositions.Add(new Vector3(4.6f, -1f, 0.4f));
+                        itemListPositions.Add(new Vector3(-6.75f, 10.85f, 0.4f));
+                    }
+                    else {
+                        itemListPositions.Add(new Vector3(-18f, 2.5f, 0.4f));
+                        itemListPositions.Add(new Vector3(4.5f, -9.75f, 0.4f));
+                        itemListPositions.Add(new Vector3(5.75f, -15f, 0.4f));
+                        itemListPositions.Add(new Vector3(16.75f, -6f, 0.4f));
+                        itemListPositions.Add(new Vector3(-21.5f, -2.15f, 0.4f));
+                        itemListPositions.Add(new Vector3(-21.5f, -8f, 0.4f));
+                        itemListPositions.Add(new Vector3(-13.5f, -6.5f, 0.4f));
+                        itemListPositions.Add(new Vector3(-9.4f, -4.65f, 0.4f));
+                        itemListPositions.Add(new Vector3(-18.5f, -13.15f, 0.4f));
+                        itemListPositions.Add(new Vector3(-6.5f, -8.25f, 0.4f));
+                        itemListPositions.Add(new Vector3(-3.55f, -15f, 0.4f));
+                        itemListPositions.Add(new Vector3(2.15f, -15f, 0.4f));
+                        itemListPositions.Add(new Vector3(8, -14.25f, 0.4f));
+                        itemListPositions.Add(new Vector3(5.2f, -4.5f, 0.4f));
+                        itemListPositions.Add(new Vector3(10.5f, 2.35f, 0.4f));
+                    }
+                    break;
+                case 1:
+                    itemListPositions.Add(new Vector3(-3.5f, 3.25f, 0.4f));
+                    itemListPositions.Add(new Vector3(15.4f, -0.85f, 0.4f));
+                    itemListPositions.Add(new Vector3(16f, 4f, 0.4f));
+                    itemListPositions.Add(new Vector3(9.25f, 1.25f, 0.4f));
+                    itemListPositions.Add(new Vector3(6f, 6f, 0.4f));
+                    itemListPositions.Add(new Vector3(6f, 12f, 0.4f));
+                    itemListPositions.Add(new Vector3(10.7f, 12.25f, 0.4f));
+                    itemListPositions.Add(new Vector3(1.25f, 10.5f, 0.4f));
+                    itemListPositions.Add(new Vector3(14.75f, 20.25f, 0.4f));
+                    itemListPositions.Add(new Vector3(22f, 20.65f, 0.4f));
+                    itemListPositions.Add(new Vector3(13.5f, 23.4f, 0.4f));
+                    itemListPositions.Add(new Vector3(22.15f, 23.4f, 0.4f));
+                    itemListPositions.Add(new Vector3(19.5f, 4.5f, 0.4f));
+                    itemListPositions.Add(new Vector3(22f, -1.75f, 0.4f));
+                    itemListPositions.Add(new Vector3(28.25f, 4.75f, 0.4f));
+                    break;
+                case 2:
+                    itemListPositions.Add(new Vector3(2.75f, -11.75f, 0.4f));
+                    itemListPositions.Add(new Vector3(9.75f, -12.15f, 0.4f));
+                    itemListPositions.Add(new Vector3(16f, -12.15f, 0.4f));
+                    itemListPositions.Add(new Vector3(19.85f, -19f, 0.4f));
+                    itemListPositions.Add(new Vector3(1.35f, -17.4f, 0.4f));
+                    itemListPositions.Add(new Vector3(1.35f, -20f, 0.4f));
+                    itemListPositions.Add(new Vector3(2.25f, -23.75f, 0.4f));
+                    itemListPositions.Add(new Vector3(16.5f, -25f, 0.4f));
+                    itemListPositions.Add(new Vector3(22f, -25f, 0.4f));
+                    itemListPositions.Add(new Vector3(24.5f, -17f, 0.4f));
+                    itemListPositions.Add(new Vector3(38.35f, -20.65f, 0.4f));
+                    itemListPositions.Add(new Vector3(32f, -15.75f, 0.4f));
+                    itemListPositions.Add(new Vector3(27.75f, -7.5f, 0.4f));
+                    itemListPositions.Add(new Vector3(40.35f, -8f, 0.4f));
+                    itemListPositions.Add(new Vector3(6.5f, -7.5f, 0.4f));
+                    break;
+                case 3:
+                    itemListPositions.Add(new Vector3(18f, 2.5f, 0.4f));
+                    itemListPositions.Add(new Vector3(-4.5f, -9.75f, 0.4f));
+                    itemListPositions.Add(new Vector3(-5.75f, -15f, 0.4f));
+                    itemListPositions.Add(new Vector3(-16.75f, -6f, 0.4f));
+                    itemListPositions.Add(new Vector3(21.5f, -2.15f, 0.4f));
+                    itemListPositions.Add(new Vector3(21.5f, -8f, 0.4f));
+                    itemListPositions.Add(new Vector3(13.5f, -6.5f, 0.4f));
+                    itemListPositions.Add(new Vector3(9.4f, -4.65f, 0.4f));
+                    itemListPositions.Add(new Vector3(18.5f, -13.15f, 0.4f));
+                    itemListPositions.Add(new Vector3(6.5f, -8.25f, 0.4f));
+                    itemListPositions.Add(new Vector3(3.55f, -15f, 0.4f));
+                    itemListPositions.Add(new Vector3(-2.15f, -15f, 0.4f));
+                    itemListPositions.Add(new Vector3(-8, -14.25f, 0.4f));
+                    itemListPositions.Add(new Vector3(-5.2f, -4.5f, 0.4f));
+                    itemListPositions.Add(new Vector3(-10.5f, 2.35f, 0.4f));
+                    break;
+                case 4:
+                    itemListPositions.Add(new Vector3(12.5f, -2.5f, 0.4f));
+                    itemListPositions.Add(new Vector3(24f, 2.5f, 0.4f));
+                    itemListPositions.Add(new Vector3(13.5f, 6f, 0.4f));
+                    itemListPositions.Add(new Vector3(-23.25f, -0.25f, 0.4f));
+                    itemListPositions.Add(new Vector3(-14.25f, 1.5f, 0.4f));
+                    itemListPositions.Add(new Vector3(-14.25f, -4.5f, 0.4f));
+                    itemListPositions.Add(new Vector3(-14.25f, -8.25f, 0.4f));
+                    itemListPositions.Add(new Vector3(-13.75f, -14.5f, 0.4f));
+                    itemListPositions.Add(new Vector3(5.75f, -10.5f, 0.4f));
+                    itemListPositions.Add(new Vector3(19.25f, -4f, 0.4f));
+                    itemListPositions.Add(new Vector3(29f, -1.5f, 0.4f));
+                    itemListPositions.Add(new Vector3(37.25f, -3.25f, 0.4f));
+                    itemListPositions.Add(new Vector3(33.75f, 7.25f, 0.4f));
+                    itemListPositions.Add(new Vector3(20f, 11.5f, 0.4f));
+                    itemListPositions.Add(new Vector3(-8.75f, 12.5f, 0.4f));
+                    break;
+                case 5:
+                    itemListPositions.Add(new Vector3(0, -33.75f, -1f));
+                    itemListPositions.Add(new Vector3(7.8f, -39.5f, -1f));
+                    itemListPositions.Add(new Vector3(-10.95f, -39f, -1f));
+                    itemListPositions.Add(new Vector3(-13.75f, -34.25f, -1f));
+                    itemListPositions.Add(new Vector3(-4.15f, -34f, -1f));
+                    itemListPositions.Add(new Vector3(12.75f, -31.5f, -1f));
+                    itemListPositions.Add(new Vector3(7.7f, -23.25f, -1f));
+                    itemListPositions.Add(new Vector3(14.25f, 24.65f, -1f));
+                    itemListPositions.Add(new Vector3(5.75f, 31.5f, -1f));
+                    itemListPositions.Add(new Vector3(0f, 34f, -1f));
+                    itemListPositions.Add(new Vector3(4.5f, 8.4f, -1f));
+                    itemListPositions.Add(new Vector3(1f, 10f, -1f));
+                    itemListPositions.Add(new Vector3(-6.7f, 10.25f, -1f));
+                    itemListPositions.Add(new Vector3(-15f, 18f, -1f));
+                    itemListPositions.Add(new Vector3(-12.25f, 31f, -1f));
+                    break;
+            }
+            itemListPositions.Shuffle();            
         }
     }
     
@@ -1197,12 +1887,12 @@ namespace LasMonjas
         public static Color color = new Color32(128, 128, 128, byte.MaxValue);
 
         public static bool triggertreasureHunterWin = false;
-        public static bool canCallEmergency = true;
-        public static float cooldown = 30f;
         public static bool canPlace = true;
         public static int treasureCollected = 0;
         public static float neededTreasure = 3;
         public static int randomSpawn = 0;
+
+        public static TMPro.TMP_Text treasureCounterButtonText;
 
         private static Sprite buttonSprite;
         public static Sprite getButtonSprite() {
@@ -1214,8 +1904,6 @@ namespace LasMonjas
         public static void clearAndReload() {
             treasureHunter = null;
             triggertreasureHunterWin = false;
-            cooldown = CustomOptionHolder.treasureHunterCooldown.getFloat();
-            canCallEmergency = CustomOptionHolder.treasureHunterCanCallEmergency.getBool();
             canPlace = true;
             treasureCollected = 0;
             neededTreasure = CustomOptionHolder.treasureHunterTreasureNumber.getFloat();
@@ -1229,9 +1917,10 @@ namespace LasMonjas
         public static Color color = new Color32(128, 128, 128, byte.MaxValue);
 
         public static bool triggerdevourerWin = false;
-        public static float cooldown = 30f;
         public static int devouredBodies = 0;
         public static float neededBodies = 3;
+
+        public static TMPro.TMP_Text devourCounterButtonText;
 
         private static Sprite buttonSprite;
         public static Sprite getButtonSprite() {
@@ -1243,7 +1932,6 @@ namespace LasMonjas
         public static void clearAndReload() {
             devourer = null;
             triggerdevourerWin = false;
-            cooldown = CustomOptionHolder.devourerCooldown.getFloat();
             devouredBodies = 0;
             neededBodies = CustomOptionHolder.devourerBodiesNumber.getFloat();
         }
@@ -1254,7 +1942,6 @@ namespace LasMonjas
         public static PlayerControl poisoner;
         public static Color color = new Color32(128, 128, 128, byte.MaxValue);
 
-        public static float cooldown = 30f;
         public static float duration = 3f;
         public static bool triggerPoisonerWin = false;
         public static float infectRange = 1f;
@@ -1295,7 +1982,6 @@ namespace LasMonjas
             foreach (PoolablePlayer p in MapOptions.playerIcons.Values) {
                 if (p != null && p.gameObject != null) p.gameObject.SetActive(false);
             }
-            cooldown = CustomOptionHolder.poisonerCooldown.getFloat();
             duration = CustomOptionHolder.poisonerDuration.getFloat();
             infectRange = CustomOptionHolder.poisonerInfectRange.getFloat();
             infectDuration = CustomOptionHolder.poisonerInfectDuration.getFloat();
@@ -1353,6 +2039,283 @@ namespace LasMonjas
             transformTarget = null;
             positionPreMorphed = new Vector3 (0,0,0);
         }
+
+        public static void Reset() {
+            morphed = false;
+            puppeteer.setDefaultLook();
+            transformTarget = null;
+            pickTarget = null;
+            currentTarget = null;
+        }
+    }
+
+    public static class Exiler
+    {
+        public static PlayerControl exiler;
+        public static PlayerControl target;
+        public static Color color = new Color32(128, 128, 128, byte.MaxValue);
+        public static Color targetColor = new Color32(0, 0, 0, byte.MaxValue);
+
+        public static bool triggerExilerWin = false;
+        public static List<PlayerControl> possibleTargets = new List<PlayerControl>();
+        public static bool usedTarget = false;
+        public static TMPro.TMP_Text targetNameButtonText;
+
+        private static Sprite targetButtonSprite;
+        public static Sprite getTargetButtonSprite() {
+            if (targetButtonSprite) return targetButtonSprite;
+            targetButtonSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.ExilerTargetButton.png", 90f);
+            return targetButtonSprite;
+        }
+
+        public static void clearAndReload() {
+            exiler = null;
+            triggerExilerWin = false;
+            target = null;
+            possibleTargets = new List<PlayerControl>();
+            usedTarget = false;
+        }
+    }
+
+    public static class Amnesiac
+    {
+        public static PlayerControl amnesiac;
+        public static Color color = new Color32(128, 128, 128, byte.MaxValue);
+        
+        private static Sprite buttonSprite;
+        public static Sprite getButtonSprite() {
+            if (buttonSprite) return buttonSprite;
+            buttonSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.AmnesiacRememberButton.png", 90f);
+            return buttonSprite;
+        }
+
+        public static void clearAndReload() {
+            amnesiac = null;
+
+        }
+    }
+
+    public static class Seeker
+    {
+        public static PlayerControl seeker;
+        public static Color color = new Color32(128, 128, 128, byte.MaxValue);
+
+        public static bool triggerSeekerWin = false;
+        public static float cooldown = 0;
+        public static float currentPlayers = 0;
+        public static float minigameDuration = 20;
+        public static float currentPoints = 0;
+        public static float neededPoints = 0;
+        public static PlayerControl hidedPlayerOne = null;
+        public static PlayerControl hidedPlayerTwo = null;
+        public static PlayerControl hidedPlayerThree = null;
+        public static PlayerControl currentTarget = null;
+        public static bool isMinigaming = false;
+        public static bool minigameReady = false;
+        public static bool onlyOneFinishMinigame = true;
+        public static bool timeOutMinigame = false;
+        public static float seekerSelectedHiding = 0;
+        public static float hidedPlayerOneSelectedHiding = 0;
+        public static float hidedPlayerTwoSelectedHiding = 0;
+        public static float hidedPlayerThreeSelectedHiding = 0;
+        public static float howmanyselectedattacks = 0;
+        public static GameObject minigameArenaHideOnePointOne = null;
+        public static GameObject minigameArenaHideOnePointTwo = null;
+        public static GameObject minigameArenaHideOnePointThree = null;
+        public static GameObject minigameArenaHideTwoPointOne = null;
+        public static GameObject minigameArenaHideTwoPointTwo = null;
+        public static GameObject minigameArenaHideTwoPointThree = null;
+        public static GameObject minigameArenaHideThreePointOne = null;
+        public static GameObject minigameArenaHideThreePointTwo = null;
+        public static GameObject minigameArenaHideThreePointThree = null; 
+        public static TMPro.TMP_Text seekerPlayerPointsCount;
+        public static TMPro.TMP_Text seekerPerformMinigamePlayerPointsCount;
+        public static GameObject lowerminigameArenaHideOnePointOne = null;
+        public static GameObject lowerminigameArenaHideOnePointTwo = null;
+        public static GameObject lowerminigameArenaHideOnePointThree = null;
+        public static GameObject lowerminigameArenaHideTwoPointOne = null;
+        public static GameObject lowerminigameArenaHideTwoPointTwo = null;
+        public static GameObject lowerminigameArenaHideTwoPointThree = null;
+        public static GameObject lowerminigameArenaHideThreePointOne = null;
+        public static GameObject lowerminigameArenaHideThreePointTwo = null;
+        public static GameObject lowerminigameArenaHideThreePointThree = null;
+
+        private static Sprite buttonTargetSprite;
+        public static Sprite getTargetButtonSprite() {
+            if (buttonTargetSprite) return buttonTargetSprite;
+            buttonTargetSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.SeekerTarget.png", 90f);
+            return buttonTargetSprite;
+        }
+        
+        private static Sprite buttonMinigameSprite;
+        public static Sprite getMinigameButtonSprite() {
+            if (buttonMinigameSprite) return buttonMinigameSprite;
+            buttonMinigameSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.SeekerMinigameButton.png", 90f);
+            return buttonMinigameSprite;
+        }
+
+        private static Sprite buttonMonjaSprite;
+        public static Sprite getMonjaButtonSprite() {
+            if (buttonMonjaSprite) return buttonMonjaSprite;
+            buttonMonjaSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.SeekerMonjaButton.png", 90f);
+            return buttonMonjaSprite;
+        }
+
+        private static Sprite buttonCuloSprite;
+        public static Sprite getCuloButtonSprite() {
+            if (buttonCuloSprite) return buttonCuloSprite;
+            buttonCuloSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.SeekerCuloButton.png", 90f);
+            return buttonCuloSprite;
+        }
+
+        private static Sprite buttonDioSprite;
+        public static Sprite getDioButtonSprite() {
+            if (buttonDioSprite) return buttonDioSprite;
+            buttonDioSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.SeekerDioButton.png", 90f);
+            return buttonDioSprite;
+        }
+
+        private static Sprite buttonSearchMonjaSprite;
+        public static Sprite getSearchMonjaButtonSprite() {
+            if (buttonSearchMonjaSprite) return buttonSearchMonjaSprite;
+            buttonSearchMonjaSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.SeekerSearchMonja.png", 90f);
+            return buttonSearchMonjaSprite;
+        }
+
+        private static Sprite buttonSearchCuloSprite;
+        public static Sprite getSearchCuloButtonSprite() {
+            if (buttonSearchCuloSprite) return buttonSearchCuloSprite;
+            buttonSearchCuloSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.SeekerSearchCulosito.png", 90f);
+            return buttonSearchCuloSprite;
+        }
+
+        private static Sprite buttonSearchDioSprite;
+        public static Sprite getSearchDioButtonSprite() {
+            if (buttonSearchDioSprite) return buttonSearchDioSprite;
+            buttonSearchDioSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.SeekerSearchDio.png", 90f);
+            return buttonSearchDioSprite;
+        }
+
+
+        public static void clearAndReload() {
+            seeker = null;
+            triggerSeekerWin = false;
+            cooldown = CustomOptionHolder.seekerCooldown.getFloat();
+            currentTarget = null;
+            hidedPlayerOne = null;
+            hidedPlayerTwo = null;
+            hidedPlayerThree = null;
+            isMinigaming = false;
+            minigameReady = false;
+            currentPlayers = 0;
+            minigameDuration = 20f;
+            onlyOneFinishMinigame = true;
+            timeOutMinigame = false;
+            seekerSelectedHiding = 0;
+            hidedPlayerOneSelectedHiding = 0;
+            hidedPlayerTwoSelectedHiding = 0;
+            hidedPlayerThreeSelectedHiding = 0;
+            currentPoints = 0;
+            neededPoints = CustomOptionHolder.seekerPointsNumber.getFloat();
+            minigameArenaHideOnePointOne = null;
+            minigameArenaHideOnePointTwo = null;
+            minigameArenaHideOnePointThree = null;
+            minigameArenaHideTwoPointOne = null;
+            minigameArenaHideTwoPointTwo = null;
+            minigameArenaHideTwoPointThree = null;
+            minigameArenaHideThreePointOne = null;
+            minigameArenaHideThreePointTwo = null;
+            minigameArenaHideThreePointThree = null;
+            lowerminigameArenaHideOnePointOne = null;
+            lowerminigameArenaHideOnePointTwo = null;
+            lowerminigameArenaHideOnePointThree = null;
+            lowerminigameArenaHideTwoPointOne = null;
+            lowerminigameArenaHideTwoPointTwo = null;
+            lowerminigameArenaHideTwoPointThree = null;
+            lowerminigameArenaHideThreePointOne = null;
+            lowerminigameArenaHideThreePointTwo = null;
+            lowerminigameArenaHideThreePointThree = null;
+            howmanyselectedattacks = 0;
+        }
+        
+        public static void ResetOnePlayer(int whichPlayer) {
+            switch (whichPlayer) {
+                case 1:
+                    hidedPlayerOne = null;                    
+                    break;
+                case 2:
+                    hidedPlayerTwo = null;
+                    break;
+                case 3:
+                    hidedPlayerThree = null;
+                    break;
+            }
+            if (currentPlayers == 3) {
+                minigameReady = false;
+            }
+            currentPlayers -= 1; 
+            seekerPlayerPointsCount.text = $"{currentPlayers} / 3";
+            seekerPerformMinigamePlayerPointsCount.text = $"{currentPoints} / {neededPoints}";
+        }
+
+        public static void ResetValues(bool checkJailer) {
+            currentTarget = null;
+            hidedPlayerOne = null;
+            hidedPlayerTwo = null;
+            hidedPlayerThree = null;
+            seekerSelectedHiding = 0;
+            hidedPlayerOneSelectedHiding = 0;
+            hidedPlayerTwoSelectedHiding = 0;
+            hidedPlayerThreeSelectedHiding = 0;
+            currentPlayers = 0;
+            minigameReady = false;
+            isMinigaming = false;
+            onlyOneFinishMinigame = true;
+            minigameDuration = 20f;
+            howmanyselectedattacks = 0;
+            seekerPlayerPointsCount.text = $"{currentPlayers} / 3";
+            seekerPerformMinigamePlayerPointsCount.text = $"{currentPoints} / {neededPoints}";
+            if (checkJailer && Jailer.prisonPlayer != null) {
+                switch (PlayerControl.GameOptions.MapId) {
+                    // Skeld
+                    case 0:
+                        if (LasMonjas.activatedSensei) {
+                            Jailer.prisonPlayer.transform.position = new Vector3(-0.6f, 3.5f, Jailer.prisonPlayer.transform.position.z);
+                        }
+                        else {
+                            Jailer.prisonPlayer.transform.position = new Vector3(-0.75f, 5.25f, Jailer.prisonPlayer.transform.position.z);
+                        }
+                        break;
+                    // MiraHQ
+                    case 1:
+                        Jailer.prisonPlayer.transform.position = new Vector3(25.5f, 4.75f, Jailer.prisonPlayer.transform.position.z);
+                        break;
+                    // Polus
+                    case 2:
+                        Jailer.prisonPlayer.transform.position = new Vector3(17.15f, -17.15f, Jailer.prisonPlayer.transform.position.z);
+                        break;
+                    // Dleks
+                    case 3:
+                        Jailer.prisonPlayer.transform.position = new Vector3(0.75f, 5.25f, Jailer.prisonPlayer.transform.position.z);
+                        break;
+                    // Airship
+                    case 4:
+                        Jailer.prisonPlayer.transform.position = new Vector3(16.25f, 15.25f, Jailer.prisonPlayer.transform.position.z);
+                        break;
+                    // Submerged
+                    case 5:
+                        if (Jailer.prisonPlayer.transform.position.y > 0) {
+                            Jailer.prisonPlayer.transform.position = new Vector3(-4.3f, 13.5f, Jailer.prisonPlayer.transform.position.z);
+                        }
+                        else {
+                            Jailer.prisonPlayer.transform.position = new Vector3(1.85f, -26.65f, Jailer.prisonPlayer.transform.position.z);
+                        }
+                        break;
+                }
+                Jailer.prisonPlayer = null;
+                Jailer.usedJail = false;
+            }
+        }
     }
 
     public static class Captain
@@ -1360,6 +2323,10 @@ namespace LasMonjas
 
         public static PlayerControl captain;
         public static Color color = new Color32(94, 62, 125, byte.MaxValue);
+        public static byte specialVoteTargetPlayerId = byte.MaxValue;
+        public static bool usedSpecialVote = false;
+        public static PlayerControl specialVoteTarget = null;
+        public static bool canUseSpecialVote = false;
 
         private static Sprite buttonSprite;
 
@@ -1368,8 +2335,21 @@ namespace LasMonjas
             buttonSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.CaptainMeetingButton.png", 90f);
             return buttonSprite;
         }
+
+        private static Sprite targetSprite;
+
+        public static Sprite getTargetSprite() {
+            if (targetSprite) return targetSprite;
+            targetSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.CaptainTargetIcon.png", 150f);
+            return targetSprite;
+        }
+
         public static void clearAndReload() {
-            captain = null;
+            captain = null; 
+            specialVoteTargetPlayerId = byte.MaxValue;
+            usedSpecialVote = false;
+            specialVoteTarget = null;
+            canUseSpecialVote = CustomOptionHolder.captainCanSpecialVoteOneTime.getBool();
         }
     }
 
@@ -1382,6 +2362,7 @@ namespace LasMonjas
         public static int timesUsedRepairs;
         public static TMPro.TMP_Text mechanicRepairButtonText;
         private static Sprite buttonSprite;
+        public static bool expertRepairs;
 
         public static Sprite getButtonSprite() {
             if (buttonSprite) return buttonSprite;
@@ -1394,6 +2375,7 @@ namespace LasMonjas
             usedRepair = false;
             timesUsedRepairs = 0;
             numberOfRepairs = (int)CustomOptionHolder.mechanicNumberOfRepairs.getFloat();
+            expertRepairs = CustomOptionHolder.mechanicExpertRepairs.getBool();
         }
     }
 
@@ -1468,7 +2450,6 @@ namespace LasMonjas
         public static List<Tuple<DeadPlayer, Vector3>> featureDeadBodies = new List<Tuple<DeadPlayer, Vector3>>();
         public static List<SpriteRenderer> souls = new List<SpriteRenderer>();
         public static DateTime meetingStartTime = DateTime.UtcNow;
-        public static float cooldown = 30f;
         public static float duration = 10f;
         public static bool oneTimeUse = false;
 
@@ -1498,7 +2479,6 @@ namespace LasMonjas
             featureDeadBodies = new List<Tuple<DeadPlayer, Vector3>>();
             souls = new List<SpriteRenderer>();
             meetingStartTime = DateTime.UtcNow;
-            cooldown = CustomOptionHolder.forensicCooldown.getFloat();
             duration = CustomOptionHolder.forensicDuration.getFloat();
             oneTimeUse = CustomOptionHolder.forensicOneTimeUse.getBool();
         }
@@ -1559,7 +2539,6 @@ namespace LasMonjas
         public static bool showAttemptToShielded = false;
         public static bool resetShieldAfterMeeting = false;
 
-        public static Color shieldedColor = new Color32(0, 255, 255, byte.MaxValue);
         public static PlayerControl currentTarget;
 
         private static Sprite buttonSprite;
@@ -2018,6 +2997,8 @@ namespace LasMonjas
         public static PlayerControl hunted;
         public static bool usedHunted = false;
 
+        public static TMPro.TMP_Text targetButtonText;
+        
         private static Sprite buttonSprite;
         public static Sprite getButtonSprite() {
             if (buttonSprite) return buttonSprite;
@@ -2027,7 +3008,8 @@ namespace LasMonjas
 
         public static void resetHunted() {
             currentTarget = hunted = null;
-            usedHunted = false;
+            usedHunted = false; 
+            targetButtonText.text = $" ";
         }
 
         public static void clearAndReload() {
@@ -2283,6 +3265,83 @@ namespace LasMonjas
         }
     }
 
+    public static class TaskMaster
+    {
+        public static PlayerControl taskMaster = null;
+        public static Color color = new Color32(153, 153, 255, byte.MaxValue);
+        public static bool clearedInitialTasks = false;
+        public static byte oldTaskMasterPlayerId = byte.MaxValue;
+        public static bool triggerTaskMasterCrewWin = false;
+        public static float taskMasterAddCommonTasks = 0;
+        public static float taskMasterAddLongTasks = 0;
+        public static float taskMasterAddShortTasks = 0;
+        public static float cooldown = 30f;
+        public static float duration = 10f;
+        public static float taskTimer = 0f;
+        public static float backUpduration = 10f;
+
+        private static Sprite taskMasterButtonSprite;
+        public static Sprite gettaskMasterButtonSprite() {
+            if (taskMasterButtonSprite) return taskMasterButtonSprite;
+            taskMasterButtonSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.TaskMasterSpeedButton.png", 90f);
+            return taskMasterButtonSprite;
+        }
+        
+        public static void clearAndReload() {
+            taskMaster = null;
+            clearedInitialTasks = false;
+            oldTaskMasterPlayerId = byte.MaxValue;
+            triggerTaskMasterCrewWin = false;
+            taskMasterAddCommonTasks = Mathf.RoundToInt(CustomOptionHolder.taskMasterExtraCommonTasks.getFloat());
+            taskMasterAddLongTasks = Mathf.RoundToInt(CustomOptionHolder.taskMasterExtraLongTasks.getFloat());
+            taskMasterAddShortTasks = Mathf.RoundToInt(CustomOptionHolder.taskMasterExtraShortTasks.getFloat());
+            taskTimer = 0f;
+            cooldown = CustomOptionHolder.taskMasterCooldown.getFloat();
+            duration = CustomOptionHolder.taskMasterDuration.getFloat();
+            backUpduration = duration;
+        }
+    }
+    public static class Jailer
+    {
+
+        public static PlayerControl jailer;
+        public static Color color = new Color32(204, 255, 204, byte.MaxValue);
+
+        public static float cooldown = 30;
+        public static float prisonDuration = 10;
+        public static PlayerControl currentTarget;
+        public static PlayerControl jailedPlayer;
+        public static PlayerControl prisonPlayer;
+        public static bool usedJail = false;
+
+        public static TMPro.TMP_Text jailButtonText;
+        
+        private static Sprite buttonSprite;
+
+        public static Sprite getButtonSprite() {
+            if (buttonSprite) return buttonSprite;
+            buttonSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.JailerPromoteButton.png", 90f);
+            return buttonSprite;
+        }
+
+        public static void clearAndReload() {
+            jailer = null;
+            cooldown = CustomOptionHolder.jailerCooldown.getFloat();
+            currentTarget = null;
+            jailedPlayer = null;
+            prisonPlayer = null;
+            usedJail = false;
+            prisonDuration = CustomOptionHolder.jailerDuration.getFloat();
+        }
+
+        public static void resetJailed() {
+            jailedPlayer = null;
+            prisonPlayer = null;
+            usedJail = false; 
+            jailButtonText.text = $" ";
+        }
+    }
+
     public static class Modifiers
     {
         public static Color color = new Color32(240, 128, 72, byte.MaxValue);
@@ -2303,6 +3362,13 @@ namespace LasMonjas
         public static bool performerReported = false;
         public static bool performerMusicStop = false;
         public static PlayerControl pro;
+        public static PlayerControl paintball;
+        public static Dictionary<byte, float> active = new Dictionary<byte, float>();
+        public static Dictionary<byte, byte> paintballKillerMap = new Dictionary<byte, byte>();
+        public static float paintballDuration = 10f; 
+        public static PlayerControl electrician;
+        public static float electricianDuration = 5f;
+        public static bool electricianShock = false;
 
         // Lovers save if next to be exiled is a lover, because RPC of ending game comes before RPC of exiled
         public static bool notAckedExiledIsLover = false;
@@ -2343,6 +3409,13 @@ namespace LasMonjas
             performerReported = false;
             performerMusicStop = false;
             pro = null;
+            paintball = null;
+            paintballDuration = CustomOptionHolder.paintballDuration.getFloat();
+            active = new Dictionary<byte, float>();
+            paintballKillerMap = new Dictionary<byte, byte>();
+            electrician = null;
+            electricianDuration = CustomOptionHolder.electricianDuration.getFloat();
+            electricianShock = false;
         }
 
         public static void ClearLovers() {
@@ -2442,7 +3515,7 @@ namespace LasMonjas
         public static bool triggerBlueTeamWin = false;
         public static bool triggerDrawWin = false;
 
-        public static string flagpointCounter = "Score: " + "<color=#FF0000FF>" + currentRedTeamPoints + "</color> - " + "<color=#0000FFFF>" + currentBlueTeamPoints + "</color>";
+        public static string flagpointCounter = Language.introTexts[2] + "<color=#FF0000FF>" + currentRedTeamPoints + "</color> - " + "<color=#0000FFFF>" + currentBlueTeamPoints + "</color>";
 
         private static Sprite buttonSpriteTakeRedFlag;
 
@@ -2551,7 +3624,7 @@ namespace LasMonjas
             blueteamAlerted = false;
             localRedFlagArrow = new List<Arrow>();
             localBlueFlagArrow = new List<Arrow>();
-            flagpointCounter = "Score: " + "<color=#FF0000FF>" + currentRedTeamPoints + "</color> - " + "<color=#0000FFFF>" + currentBlueTeamPoints + "</color>";
+            flagpointCounter = Language.introTexts[2] + "<color=#FF0000FF>" + currentRedTeamPoints + "</color> - " + "<color=#0000FFFF>" + currentBlueTeamPoints + "</color>";
         }
     }
 
@@ -2701,7 +3774,7 @@ namespace LasMonjas
         public static bool triggerThiefWin = false;
         public static bool triggerPoliceWin = false;
 
-        public static string thiefpointCounter = "Stealed Jewels: " + "<color=#FF0000FF>" + currentJewelsStoled + "/" + requiredJewels + "</color> | " + "Captured Thiefs: " + "<color=#0000FFFF>" + currentThiefsCaptured + "/ 10</color>";
+        public static string thiefpointCounter = Language.introTexts[3] + "<color=#FF0000FF>" + currentJewelsStoled + " / " + requiredJewels + "</color> | " + Language.introTexts[4] + "<color=#0000FFFF>" + currentThiefsCaptured + " / 10</color>";
 
         public static List<Arrow> localThiefReleaseArrow = new List<Arrow>();
         public static List<Arrow> localThiefDeliverArrow = new List<Arrow>();
@@ -2913,34 +3986,18 @@ namespace LasMonjas
             triggerThiefWin = false;
             triggerPoliceWin = false;
             currentThiefsCaptured = 0;
-            thiefpointCounter = "Stealed Jewels: " + "<color=#00F7FFFF>" + currentJewelsStoled + "/" + requiredJewels + "</color> | " + "Captured Thiefs: " + "<color=#928B55FF>" + currentThiefsCaptured + "/" + thiefTeam.Count + "</color>";
+            thiefpointCounter = Language.introTexts[3] + "<color=#00F7FFFF>" + currentJewelsStoled + " / " + requiredJewels + "</color> | " + Language.introTexts[4] + " < color=#928B55FF>" + currentThiefsCaptured + " / " + thiefTeam.Count + "</color>";
         }
-        public static PlayerControl GetTasedPlayerTwo(float shotSize, float effectiveRange) {
+        public static PlayerControl GetTasedPlayer(float shotSize, float effectiveRange, bool policeTwo) {
             PlayerControl result = null;
             float num = effectiveRange;
             Vector3 pos;
-            float mouseAngle = policeplayer02mouseAngle;
-            foreach (PlayerControl player in thiefTeam) {
-                if (player.PlayerId == PlayerControl.LocalPlayer.PlayerId) continue;
-
-                if (player.Data.IsDead || player.inVent) continue;
-
-                pos = player.transform.position - PlayerControl.LocalPlayer.transform.position;
-                pos = new Vector3(
-                    pos.x * MathF.Cos(mouseAngle) + pos.y * MathF.Sin(mouseAngle),
-                    pos.y * MathF.Cos(mouseAngle) - pos.x * MathF.Sin(mouseAngle));
-                if (Math.Abs(pos.y) < shotSize && (!(pos.x < 0)) && pos.x < num) {
-                    num = pos.x;
-                    result = player;
-                }
+            float mouseAngle;
+            if (policeTwo) {
+                mouseAngle = policeplayer02mouseAngle;
+            } else {
+                mouseAngle = policeplayer04mouseAngle;
             }
-            return result;
-        }
-        public static PlayerControl GetTasedPlayerFour(float shotSize, float effectiveRange) {
-            PlayerControl result = null;
-            float num = effectiveRange;
-            Vector3 pos;
-            float mouseAngle = policeplayer04mouseAngle;
             foreach (PlayerControl player in thiefTeam) {
                 if (player.PlayerId == PlayerControl.LocalPlayer.PlayerId) continue;
 
@@ -3056,7 +4113,7 @@ namespace LasMonjas
         public static bool triggerYellowTeamWin = false;
         public static bool triggerDrawWin = false;
 
-        public static string kingpointCounter = "Puntuacion: " + "<color=#00FF00FF>" + currentGreenTeamPoints.ToString("F0") + "</color> - " + "<color=#FFFF00FF>" + currentYellowTeamPoints.ToString("F0") + "</color>";
+        public static string kingpointCounter = Language.introTexts[2] + "<color=#00FF00FF>" + currentGreenTeamPoints.ToString("F0") + "</color> - " + "<color=#FFFF00FF>" + currentYellowTeamPoints.ToString("F0") + "</color>";
 
         private static Sprite buttonSpritePlaceGreenFlag;
 
@@ -3175,7 +4232,7 @@ namespace LasMonjas
             triggerDrawWin = false;
 
             localArrows = new List<Arrow>();
-            kingpointCounter = "Puntuacion: " + "<color=#00FF00FF>" + currentGreenTeamPoints.ToString("F0") + "</color> - " + "<color=#FFFF00FF>" + currentYellowTeamPoints.ToString("F0") + "</color>";
+            kingpointCounter = Language.introTexts[2] + "<color=#00FF00FF>" + currentGreenTeamPoints.ToString("F0") + "</color> - " + "<color=#FFFF00FF>" + currentYellowTeamPoints.ToString("F0") + "</color>";
         }
     }
 
@@ -3233,7 +4290,7 @@ namespace LasMonjas
 
         public static bool triggerHotPotatoEnd = false;
 
-        public static string hotpotatopointCounter = "Hot Potato: " + "<color=#808080FF></color> | " + "Cold Potatoes: " + "<color=#00F7FFFF>" + notPotatoTeam.Count + "</color>";
+        public static string hotpotatopointCounter = Language.introTexts[5] + "<color=#808080FF></color> | " + Language.introTexts[6] + "<color=#00F7FFFF>" + notPotatoTeam.Count + "</color>";
 
         private static Sprite buttonPotato;
 
@@ -3296,7 +4353,7 @@ namespace LasMonjas
             firstPotatoTransfered = false;
             hotPotato = null;
 
-            hotpotatopointCounter = "Hot Potato: " + "<color=#00F7FFFF></color> | " + "Cold Potatoes: " + "<color=#928B55FF>" + notPotatoTeam.Count + "</color>";
+            hotpotatopointCounter = Language.introTexts[5] + "<color=#00F7FFFF></color> | " + Language.introTexts[6] + "<color=#928B55FF>" + notPotatoTeam.Count + "</color>";
         }
     }
 
@@ -3315,7 +4372,6 @@ namespace LasMonjas
 
         public static PlayerControl nursePlayer = null;
         public static PlayerControl nursePlayercurrentTarget = null;
-        public static bool nursePlayerIsReviving = false;
         public static bool nursePlayerHasMedKit = false;
         public static bool nursePlayerInsideLaboratory = true;
         public static bool nursePlayerHasCureReady = false;
@@ -3327,6 +4383,7 @@ namespace LasMonjas
         public static bool survivorPlayer01CanKill = false;
         public static bool survivorPlayer01HasKeyItem = false;
         public static byte survivorPlayer01FoundBox = 0;
+        public static float survivorPlayer01Timer = 60;
         public static GameObject survivorPlayer01SelectedBox = null;
         public static GameObject survivorPlayer01CurrentBox = null;
         public static PlayerControl survivorPlayer02 = null;
@@ -3335,7 +4392,8 @@ namespace LasMonjas
         public static bool survivorPlayer02IsInfected = false;
         public static bool survivorPlayer02CanKill = false;
         public static bool survivorPlayer02HasKeyItem = false;
-        public static byte survivorPlayer02FoundBox = 0;
+        public static byte survivorPlayer02FoundBox = 0; 
+        public static float survivorPlayer02Timer = 60;
         public static GameObject survivorPlayer02SelectedBox = null;
         public static GameObject survivorPlayer02CurrentBox = null;
         public static PlayerControl survivorPlayer03 = null;
@@ -3345,6 +4403,7 @@ namespace LasMonjas
         public static bool survivorPlayer03CanKill = false;
         public static bool survivorPlayer03HasKeyItem = false;
         public static byte survivorPlayer03FoundBox = 0;
+        public static float survivorPlayer03Timer = 60;
         public static GameObject survivorPlayer03SelectedBox = null;
         public static GameObject survivorPlayer03CurrentBox = null;
         public static PlayerControl survivorPlayer04 = null;
@@ -3354,6 +4413,7 @@ namespace LasMonjas
         public static bool survivorPlayer04CanKill = false;
         public static bool survivorPlayer04HasKeyItem = false;
         public static byte survivorPlayer04FoundBox = 0;
+        public static float survivorPlayer04Timer = 60;
         public static GameObject survivorPlayer04SelectedBox = null;
         public static GameObject survivorPlayer04CurrentBox = null;
         public static PlayerControl survivorPlayer05 = null;
@@ -3363,6 +4423,7 @@ namespace LasMonjas
         public static bool survivorPlayer05CanKill = false;
         public static bool survivorPlayer05HasKeyItem = false;
         public static byte survivorPlayer05FoundBox = 0;
+        public static float survivorPlayer05Timer = 60;
         public static GameObject survivorPlayer05SelectedBox = null;
         public static GameObject survivorPlayer05CurrentBox = null;
         public static PlayerControl survivorPlayer06 = null;
@@ -3372,6 +4433,7 @@ namespace LasMonjas
         public static bool survivorPlayer06CanKill = false;
         public static bool survivorPlayer06HasKeyItem = false;
         public static byte survivorPlayer06FoundBox = 0;
+        public static float survivorPlayer06Timer = 60;
         public static GameObject survivorPlayer06SelectedBox = null;
         public static GameObject survivorPlayer06CurrentBox = null;
         public static PlayerControl survivorPlayer07 = null;
@@ -3381,6 +4443,7 @@ namespace LasMonjas
         public static bool survivorPlayer07CanKill = false;
         public static bool survivorPlayer07HasKeyItem = false;
         public static byte survivorPlayer07FoundBox = 0;
+        public static float survivorPlayer07Timer = 60;
         public static GameObject survivorPlayer07SelectedBox = null;
         public static GameObject survivorPlayer07CurrentBox = null;
         public static PlayerControl survivorPlayer08 = null;
@@ -3390,6 +4453,7 @@ namespace LasMonjas
         public static bool survivorPlayer08CanKill = false;
         public static bool survivorPlayer08HasKeyItem = false;
         public static byte survivorPlayer08FoundBox = 0;
+        public static float survivorPlayer08Timer = 60;
         public static GameObject survivorPlayer08SelectedBox = null;
         public static GameObject survivorPlayer08CurrentBox = null;
         public static PlayerControl survivorPlayer09 = null;
@@ -3399,6 +4463,7 @@ namespace LasMonjas
         public static bool survivorPlayer09CanKill = false;
         public static bool survivorPlayer09HasKeyItem = false;
         public static byte survivorPlayer09FoundBox = 0;
+        public static float survivorPlayer09Timer = 60;
         public static GameObject survivorPlayer09SelectedBox = null;
         public static GameObject survivorPlayer09CurrentBox = null;
         public static PlayerControl survivorPlayer10 = null;
@@ -3408,6 +4473,7 @@ namespace LasMonjas
         public static bool survivorPlayer10CanKill = false;
         public static bool survivorPlayer10HasKeyItem = false;
         public static byte survivorPlayer10FoundBox = 0;
+        public static float survivorPlayer10Timer = 60;
         public static GameObject survivorPlayer10SelectedBox = null;
         public static GameObject survivorPlayer10CurrentBox = null;
         public static PlayerControl survivorPlayer11 = null;
@@ -3417,6 +4483,7 @@ namespace LasMonjas
         public static bool survivorPlayer11CanKill = false;
         public static bool survivorPlayer11HasKeyItem = false;
         public static byte survivorPlayer11FoundBox = 0;
+        public static float survivorPlayer11Timer = 60;
         public static GameObject survivorPlayer11SelectedBox = null;
         public static GameObject survivorPlayer11CurrentBox = null;
         public static PlayerControl survivorPlayer12 = null;
@@ -3426,6 +4493,7 @@ namespace LasMonjas
         public static bool survivorPlayer12CanKill = false;
         public static bool survivorPlayer12HasKeyItem = false;
         public static byte survivorPlayer12FoundBox = 0;
+        public static float survivorPlayer12Timer = 60;
         public static GameObject survivorPlayer12SelectedBox = null;
         public static GameObject survivorPlayer12CurrentBox = null;
         public static PlayerControl survivorPlayer13 = null;
@@ -3435,6 +4503,7 @@ namespace LasMonjas
         public static bool survivorPlayer13CanKill = false;
         public static bool survivorPlayer13HasKeyItem = false;
         public static byte survivorPlayer13FoundBox = 0;
+        public static float survivorPlayer13Timer = 60;
         public static GameObject survivorPlayer13SelectedBox = null;
         public static GameObject survivorPlayer13CurrentBox = null;
         public static PlayerControl zombiePlayer01 = null;
@@ -3538,13 +4607,13 @@ namespace LasMonjas
         public static float timeForHeal = 20f;
         public static float survivorsVision = 1f;
         public static float searchBoxTimer = 5f;
-        public static int whoCanZombiesKill = 0;
 
         public static int currentKeyItems = 0;
         public static bool triggerZombieWin = false;
         public static bool triggerSurvivorWin = false;
 
-        public static string zombieLaboratoryCounter = "Key Items: " + "<color=#FF00FFFF>" + currentKeyItems + " / 6</color> | " + "Survivors: " + "<color=#00CCFFFF>" + survivorTeam.Count + "</color> " + "| " + "Infected: " + "<color=#FFFF00FF>" + infectedTeam.Count + "</color> " + "| " + "Zombies: " + "<color=#996633FF>" + zombieTeam.Count + "</color>";
+        public static string zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + zombieTeam.Count + "</color>";
+
 
         public static List<Arrow> localSurvivorsDeliverArrow = new List<Arrow>();
         
@@ -3655,10 +4724,10 @@ namespace LasMonjas
             localNurseArrows = new List<Arrow>();
             localSurvivorsDeliverArrow = new List<Arrow>();
             laboratoryEntrances.Clear();
+            timeForHeal = CustomOptionHolder.zombieLaboratoryMaxTimeForHeal.getFloat();
 
             nursePlayer = null;
             nursePlayercurrentTarget = null;
-            nursePlayerIsReviving = false;
             nursePlayerHasMedKit = false;
             nursePlayerInsideLaboratory = true;
             nursePlayerHasCureReady = false;
@@ -3673,6 +4742,7 @@ namespace LasMonjas
             survivorPlayer01FoundBox = 0;
             survivorPlayer01SelectedBox = null;
             survivorPlayer01CurrentBox = null;
+            survivorPlayer01Timer = timeForHeal;
             survivorPlayer02 = null;
             survivorPlayer02currentTarget = null;
             survivorPlayer02IsReviving = false;
@@ -3682,6 +4752,7 @@ namespace LasMonjas
             survivorPlayer02FoundBox = 0;
             survivorPlayer02SelectedBox = null;
             survivorPlayer02CurrentBox = null;
+            survivorPlayer02Timer = timeForHeal;
             survivorPlayer03 = null;
             survivorPlayer03currentTarget = null;
             survivorPlayer03IsReviving = false;
@@ -3691,6 +4762,7 @@ namespace LasMonjas
             survivorPlayer03FoundBox = 0;
             survivorPlayer03SelectedBox = null;
             survivorPlayer03CurrentBox = null;
+            survivorPlayer03Timer = timeForHeal;
             survivorPlayer04 = null;
             survivorPlayer04currentTarget = null;
             survivorPlayer04IsReviving = false;
@@ -3700,6 +4772,7 @@ namespace LasMonjas
             survivorPlayer04FoundBox = 0;
             survivorPlayer04SelectedBox = null;
             survivorPlayer04CurrentBox = null;
+            survivorPlayer04Timer = timeForHeal;
             survivorPlayer05 = null;
             survivorPlayer05currentTarget = null;
             survivorPlayer05IsInfected = false;
@@ -3709,6 +4782,7 @@ namespace LasMonjas
             survivorPlayer05FoundBox = 0;
             survivorPlayer05SelectedBox = null;
             survivorPlayer05CurrentBox = null;
+            survivorPlayer05Timer = timeForHeal;
             survivorPlayer06 = null;
             survivorPlayer06currentTarget = null;
             survivorPlayer06IsReviving = false;
@@ -3718,6 +4792,7 @@ namespace LasMonjas
             survivorPlayer06FoundBox = 0;
             survivorPlayer06SelectedBox = null;
             survivorPlayer06CurrentBox = null;
+            survivorPlayer06Timer = timeForHeal;
             survivorPlayer07 = null;
             survivorPlayer07currentTarget = null;
             survivorPlayer07IsReviving = false;
@@ -3727,6 +4802,7 @@ namespace LasMonjas
             survivorPlayer07FoundBox = 0;
             survivorPlayer07SelectedBox = null;
             survivorPlayer07CurrentBox = null;
+            survivorPlayer07Timer = timeForHeal;
             survivorPlayer08 = null;
             survivorPlayer08currentTarget = null;
             survivorPlayer08IsInfected = false;
@@ -3736,6 +4812,7 @@ namespace LasMonjas
             survivorPlayer08FoundBox = 0;
             survivorPlayer08SelectedBox = null;
             survivorPlayer08CurrentBox = null;
+            survivorPlayer08Timer = timeForHeal;
             survivorPlayer09 = null;
             survivorPlayer09currentTarget = null;
             survivorPlayer09IsReviving = false;
@@ -3745,6 +4822,7 @@ namespace LasMonjas
             survivorPlayer09FoundBox = 0;
             survivorPlayer09SelectedBox = null;
             survivorPlayer09CurrentBox = null;
+            survivorPlayer09Timer = timeForHeal;
             survivorPlayer10 = null;
             survivorPlayer10currentTarget = null;
             survivorPlayer10IsReviving = false;
@@ -3754,6 +4832,7 @@ namespace LasMonjas
             survivorPlayer10FoundBox = 0;
             survivorPlayer10SelectedBox = null;
             survivorPlayer10CurrentBox = null;
+            survivorPlayer10Timer = timeForHeal;
             survivorPlayer11 = null;
             survivorPlayer11currentTarget = null;
             survivorPlayer11IsReviving = false;
@@ -3763,6 +4842,7 @@ namespace LasMonjas
             survivorPlayer11FoundBox = 0;
             survivorPlayer11SelectedBox = null;
             survivorPlayer11CurrentBox = null;
+            survivorPlayer11Timer = timeForHeal;
             survivorPlayer12 = null;
             survivorPlayer12currentTarget = null;
             survivorPlayer12IsReviving = false;
@@ -3772,6 +4852,7 @@ namespace LasMonjas
             survivorPlayer12FoundBox = 0;
             survivorPlayer12SelectedBox = null;
             survivorPlayer12CurrentBox = null;
+            survivorPlayer12Timer = timeForHeal;
             survivorPlayer13 = null;
             survivorPlayer13currentTarget = null;
             survivorPlayer13IsReviving = false;
@@ -3781,6 +4862,7 @@ namespace LasMonjas
             survivorPlayer13FoundBox = 0;
             survivorPlayer13SelectedBox = null;
             survivorPlayer13CurrentBox = null;
+            survivorPlayer13Timer = timeForHeal;
             zombiePlayer01 = null;
             zombiePlayer01currentTarget = null;
             zombiePlayer01infectedTarget = null;
@@ -3870,14 +4952,12 @@ namespace LasMonjas
             reviveTime = CustomOptionHolder.zombieLaboratoryReviveTime.getFloat();
             invincibilityTimeAfterRevive = CustomOptionHolder.zombieLaboratoryInvincibilityTimeAfterRevive.getFloat();
             infectTime = CustomOptionHolder.zombieLaboratoryInfectTime.getFloat();
-            timeForHeal = CustomOptionHolder.zombieLaboratoryTimeForHeal.getFloat();
             survivorsVision = CustomOptionHolder.zombieLaboratorySurvivorsVision.getFloat();
             searchBoxTimer = CustomOptionHolder.zombieLaboratorySearchBoxTimer.getFloat();
             zombieSenseiMapLaboratoryMode = CustomOptionHolder.activateSenseiMap.getBool();
             currentKeyItems = 0;
             triggerZombieWin = false;
             triggerSurvivorWin = false;
-            whoCanZombiesKill = CustomOptionHolder.zombieLaboratoryWhoCanZombiesKill.getSelection();
 
             laboratorytwo = null;
             laboratorytwoEnterButton = null;
@@ -3888,7 +4968,7 @@ namespace LasMonjas
             laboratorytwoExitLeftButton = null;
             laboratorytwoExitRightButton = null;
 
-            zombieLaboratoryCounter = "Key Items: " + "<color=#FF00FFFF>" + currentKeyItems + " / 6</color> | " + "Survivors: " + "<color=#00CCFFFF>" + survivorTeam.Count + "</color> " + "| " + "Infected: " + "<color=#FFFF00FF>" + infectedTeam.Count + "</color> " + "| " + "Zombies: " + "<color=#996633FF>" + zombieTeam.Count + "</color>";
+            zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + infectedTeam.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + zombieTeam.Count + "</color>";
 
             switch (PlayerControl.GameOptions.MapId) {
                 case 0:
@@ -4703,22 +5783,22 @@ namespace LasMonjas
 
             switch (matchType) {
                 case 0:
-                    battleRoyalepointCounter = "Battle Royale Fighters: " + "<color=#009F57FF>" + soloPlayerTeam.Count + "</color>";
+                    battleRoyalepointCounter = Language.introTexts[11] + "<color=#009F57FF>" + soloPlayerTeam.Count + "</color>";
                     break;
                 case 1:
                     if (serialKiller != null) {
-                        battleRoyalepointCounter = "Lime Team: " + "<color=#39FF14FF>" + limeTeam.Count + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + pinkTeam.Count + "</color> | " + "Serial Killer: " + "<color=#808080FF>" + serialKillerTeam.Count + "</color>";
+                        battleRoyalepointCounter = Language.introTexts[12] + "<color=#39FF14FF>" + limeTeam.Count + "</color> | " + Language.introTexts[13] + "<color=#F2BEFFFF>" + pinkTeam.Count + "</color> | " + Language.introTexts[14] + "<color=#808080FF>" + serialKillerTeam.Count + "</color>";
                     }
                     else {
-                        battleRoyalepointCounter = "Lime Team: " + "<color=#39FF14FF>" + limeTeam.Count + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + pinkTeam.Count + "</color>";
+                        battleRoyalepointCounter = Language.introTexts[12] + "<color=#39FF14FF>" + limeTeam.Count + "</color> | " + Language.introTexts[13] + "<color=#F2BEFFFF>" + pinkTeam.Count + "</color>";
                     }
                     break;
                 case 2:
                     if (serialKiller != null) {
-                        battleRoyalepointCounter = "Goal: " + requiredScore + " | <color=#39FF14FF>Lime Team: " + limePoints + "</color> | " + "<color=#F2BEFFFF>Pink Team: " + pinkPoints + "</color> | " + "<color=#808080FF>Serial Killer Points: " + serialKillerPoints + "</color>";
+                        battleRoyalepointCounter = Language.introTexts[15] + requiredScore + " | <color=#39FF14FF>" + Language.introTexts[12] + limePoints + "</color> | " + "<color=#F2BEFFFF>" + Language.introTexts[13] + pinkPoints + " </color> | " + "<color=#808080FF>" + Language.introTexts[16] + serialKillerPoints + " </color>";
                     }
                     else {
-                        battleRoyalepointCounter = "Goal: " + requiredScore + " | <color=#39FF14FF>Lime Team: " + limePoints + "</color> | " + "<color=#F2BEFFFF>Pink Team: " + pinkPoints + "</color>";
+                        battleRoyalepointCounter = Language.introTexts[15] + requiredScore + " | <color=#39FF14FF>" + Language.introTexts[12] + limePoints + "</color> | " + "<color=#F2BEFFFF>" + Language.introTexts[13] + pinkPoints + " </color>";
                     }
                     break;
             }
@@ -5133,6 +6213,16 @@ namespace LasMonjas
         public GameObject challengerPaper;
         public GameObject challengerScissors;
         public AudioClip challengerDuelKillClip;
+        public GameObject monjaRitual;
+        public GameObject monjaSprite;
+        public GameObject monjaOneSprite;
+        public GameObject monjaTwoSprite;
+        public GameObject monjaThreeSprite;
+        public GameObject monjaFourSprite;
+        public GameObject monjaFiveSprite;
+        public GameObject strandedVentBox;
+        public GameObject strandedInviBox;
+        public AudioClip monjaAwakeMusic;
         public AudioClip roleThiefStealRole;
         public AudioClip pyromaniacIgniteClip;
         public GameObject treasureHunterTreasure;
@@ -5142,6 +6232,11 @@ namespace LasMonjas
         public AudioClip devourerDevourClip;
         public AudioClip poisonerPoisonClip;
         public AudioClip puppeteerClip;
+        public GameObject seekerArena;
+        public GameObject monjashow;
+        public GameObject culoshow;
+        public GameObject dioshow;
+        public AudioClip seekerMinigameMusic;
         public AudioClip timeTravelerTimeReverseClip;
         public AudioClip squireShieldClip;
         public AudioClip fortuneTellerRevealClip;
@@ -5152,6 +6247,36 @@ namespace LasMonjas
         public GameObject accelSprite;
         public GameObject decelSprite;
         public GameObject positionSprite;
+        public AudioClip archerPickBow;
+        public AudioClip bountyExilerTarget;
+        public AudioClip chameleonInvisible;
+        public AudioClip demonBite;
+        public AudioClip illusionistHat;
+        public AudioClip illusionistLightsOut;
+        public AudioClip janitorClean;
+        public AudioClip janitorDragBody;
+        public AudioClip janitorDropBody_Fall;
+        public AudioClip mimicPuppeteerTransform;
+        public AudioClip ninjaTime;
+        public AudioClip nunPlace;
+        public AudioClip paintballDeath;
+        public AudioClip painterPaint;
+        public AudioClip sorcererHex;
+        public AudioClip batEmit;
+        public AudioClip detectiveCheck;
+        public AudioClip finkSpy;
+        public AudioClip forensicGhost;
+        public AudioClip hackerHack;
+        public AudioClip hunterTarget;
+        public AudioClip jailerJail;
+        public AudioClip jinxJinx;
+        public AudioClip mechanicWelderAction;
+        public AudioClip shyThere;
+        public AudioClip sleuthBody;
+        public AudioClip sleuthTarget;
+        public AudioClip squireShield;
+        public GameObject susBoxRed;
+        public GameObject susBoxThreeColor;
 
         // Custom Bundle Capture the flag Assets
         public AudioClip captureTheFlagMusic;
@@ -5221,6 +6346,7 @@ namespace LasMonjas
         // Custom Lobby
         public GameObject customLobby;
         public GameObject allulfitti;
+        public GameObject allulbanner;
 
         // Custom Music
         public AudioClip lobbyMusic;

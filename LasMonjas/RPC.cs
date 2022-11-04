@@ -13,6 +13,8 @@ using LasMonjas.Objects;
 using LasMonjas.Patches;
 using static LasMonjas.RoleInfo;
 using LasMonjas.Core;
+using MS.Internal.Xml.XPath;
+using static UnityEngine.GraphicsBuffer;
 
 namespace LasMonjas
 {
@@ -31,6 +33,8 @@ namespace LasMonjas
         Medusa,
         Hypnotist,
         Archer,
+        Plumber,
+        Librarian,
         Renegade,
         Minion,
         BountyHunter,
@@ -39,6 +43,9 @@ namespace LasMonjas
         Challenger,
         Ninja,
         Berserker, 
+        Yandere, 
+        Stranded, 
+        Monja, 
         Joker,
         RoleThief,
         Pyromaniac,
@@ -46,6 +53,9 @@ namespace LasMonjas
         Devourer,
         Poisoner,
         Puppeteer, 
+        Exiler, 
+        Amnesiac, 
+        Seeker, 
         Captain,
         Mechanic,
         Sheriff,
@@ -70,6 +80,8 @@ namespace LasMonjas
         Necromancer,
         Engineer,
         Shy, 
+        TaskMaster,
+        Jailer,
         Lover,
         Lighter,
         Blind,
@@ -78,6 +90,8 @@ namespace LasMonjas
         TheChosenOne,
         Performer,
         Pro,
+        Paintball,
+        Electrician,
         Crewmate,
         Impostor,
 
@@ -242,7 +256,7 @@ namespace LasMonjas
 
         // Role functionality
 
-        MimicTransform = 101,
+        MimicTransform = 75,
         PainterPaint,
         DemonSetBitten,
         PlaceNun,
@@ -258,12 +272,15 @@ namespace LasMonjas
         GamblerShoot,
         SetSpelledPlayer,
         MedusaPetrify,
-        ShowArcherNotification,
         PlaceSpiralTrap,
         ActivateSpiralTrap,
+        ShowArcherNotification,
+        PlumberMakeVent,
+        SilencePlayer,
+        ResetSilenced,
 
         RenegadeRecruitMinion,
-        BountyHunterSetKill,
+        SetRandomTarget,
         BountyHunterKill,
         PlaceMine,
         PlaceTrap,
@@ -273,9 +290,18 @@ namespace LasMonjas
         ChallengerSetRival,
         ChallengerPerformDuel,
         ChallengerSelectAttack,
-        ChallengerCantDuel,
         NinjaKill,
         BerserkerKill,
+        YandereKill,
+        StrandedFindBoxes,
+        StrandedKill,
+        StrandedInvisible,
+        MonjaTakeItem,
+        MonjaDeliverItem,
+        MonjaRevertItemPosition,
+        MonjaAwakened,
+        MonjaKill,
+        MonjaReset,
 
         RoleThiefSteal,
         PyromaniacWin,
@@ -286,7 +312,15 @@ namespace LasMonjas
         PuppeteerWin,
         PuppeteerTransform,
         PuppeteerResetTransform,
+        ExilerTriggerWin,
+        AmnesiacReportAndTakeRole,
+        SeekerSetMinigamePlayers,
+        SeekerResetMinigamePlayers,
+        SeekerPerformMinigame,
+        SeekerSelectAttack,
 
+        CaptainSpecialVote,
+        CaptainAutoCastSpecialVote, 
         MechanicFixLights,
         MechanicUsedRepair,
         SheriffKill,
@@ -314,8 +348,14 @@ namespace LasMonjas
         BatFrequency,
         PlaceEngineerTrap,
         ActivateEngineerTrap,
+        TaskMasterSetExtraTasks,
+        TaskMasterTriggerCrewWin,
+        TaskMasterActivateSpeed,
+        JailerSetJailed,
+        PrisonPlayer,
 
         ChangeMusic,
+        WhoWasI,
 
         // Capture the flag
         CapturetheFlagKills,
@@ -348,10 +388,10 @@ namespace LasMonjas
         ZombieDeliverKeyItem,
         EnterLeaveInfirmary,
         NurseHasMedKit,
+        ZombieLaboratoryTurnZombie,
 
         // Battle Royale
         BattleRoyaleKills
-        //BattleRoyaleShoots
     }
 
     public static class RPCProcedure
@@ -362,13 +402,14 @@ namespace LasMonjas
         public static void resetVariables() {
             Nun.clearNuns();
             Hats.clearHats();
+            HypnotistSpiral.clearHypnotistSpirals();
             Mine.clearMines();
             Trap.clearTraps();
-            EngineerTrap.clearTraps();
-            HypnotistSpiral.clearHypnotistSpirals();
             Footprint.clearFootprints();
+            EngineerTrap.clearTraps();
+            PaintballTrail.resetTrail();
             BattleRoyaleFootprint.clearBattleRoyaleFootprints();
-            BattleRoyaleShoot.clearBattleRoyaleShoots();
+            BattleRoyaleShoot.clearBattleRoyaleShoots(); 
             clearAndReloadMapOptions();
             clearAndReloadRoles();
             clearGameHistory();
@@ -443,6 +484,12 @@ namespace LasMonjas
                         case RoleId.Archer:
                             Archer.archer = player;
                             break;
+                        case RoleId.Plumber:
+                            Plumber.plumber = player;
+                            break;
+                        case RoleId.Librarian:
+                            Librarian.librarian = player;
+                            break;
                         case RoleId.Renegade:
                             Renegade.renegade = player;
                             break;
@@ -467,6 +514,15 @@ namespace LasMonjas
                         case RoleId.Berserker:
                             Berserker.berserker = player;
                             break;
+                        case RoleId.Yandere:
+                            Yandere.yandere = player;
+                            break;
+                        case RoleId.Stranded:
+                            Stranded.stranded = player;
+                            break;
+                        case RoleId.Monja:
+                            Monja.monja = player;
+                            break;
                         case RoleId.Joker:
                             Joker.joker = player;
                             break;
@@ -487,6 +543,15 @@ namespace LasMonjas
                             break;
                         case RoleId.Puppeteer:
                             Puppeteer.puppeteer = player;
+                            break;
+                        case RoleId.Exiler:
+                            Exiler.exiler = player;
+                            break;
+                        case RoleId.Amnesiac:
+                            Amnesiac.amnesiac = player;
+                            break;
+                        case RoleId.Seeker:
+                            Seeker.seeker = player;
                             break;
                         case RoleId.Captain:
                             Captain.captain = player;
@@ -559,6 +624,12 @@ namespace LasMonjas
                             break;
                         case RoleId.Shy:
                             Shy.shy = player;
+                            break;
+                        case RoleId.TaskMaster:
+                            TaskMaster.taskMaster = player;
+                            break;
+                        case RoleId.Jailer:
+                            Jailer.jailer = player;
                             break;
 
                         // Capture the Flag
@@ -1115,6 +1186,12 @@ namespace LasMonjas
                 case RoleId.Pro:
                     Modifiers.pro = player;
                     break;
+                case RoleId.Paintball:
+                    Modifiers.paintball = player;
+                    break;
+                case RoleId.Electrician:
+                    Modifiers.electrician = player;
+                    break;
             }
         }
 
@@ -1134,6 +1211,7 @@ namespace LasMonjas
         }
 
         public static void uncheckedMurderPlayer(byte sourceId, byte targetId, byte showAnimation) {
+            if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) return; 
             PlayerControl source = Helpers.playerById(sourceId);
             PlayerControl target = Helpers.playerById(targetId);
             if (source != null && target != null) {
@@ -1169,6 +1247,7 @@ namespace LasMonjas
         public static void painterPaint(int colorId) {
             if (Painter.painter == null) return;
 
+            SoundManager.Instance.PlaySound(CustomMain.customAssets.painterPaint, false, 100f);
             Painter.painterTimer = Painter.duration;
             Detective.footprintcolor = colorId;
             foreach (PlayerControl player in PlayerControl.AllPlayerControls)
@@ -1293,8 +1372,9 @@ namespace LasMonjas
             }
             Illusionist.lightsOutTimer = Illusionist.lightsOutDuration;
             // If the local player is impostor indicate lights out
+            SoundManager.Instance.PlaySound(CustomMain.customAssets.illusionistLightsOut, false, 100f);
             if (PlayerControl.LocalPlayer.Data.Role.IsImpostor && PlayerControl.LocalPlayer != Illusionist.illusionist) {
-                new CustomMessage("The Illusionist turned off the lights: ", Illusionist.lightsOutDuration, -1, -1.3f, 9);
+                new CustomMessage(Language.statusRolesTexts[5], Illusionist.lightsOutDuration, -1, -1.3f, 9);
             }
         }
 
@@ -1308,7 +1388,10 @@ namespace LasMonjas
             }
         }
 
-        public static void placeBomb() {
+        public static void placeBomb(byte[] buff) {
+            Vector3 position = Vector3.zero;
+            position.x = BitConverter.ToSingle(buff, 0 * sizeof(float));
+            position.y = BitConverter.ToSingle(buff, 1 * sizeof(float));
             if (MapBehaviour.Instance) {
                 MapBehaviour.Instance.Close();
             }
@@ -1340,14 +1423,14 @@ namespace LasMonjas
                 }
             }
             Bomberman.bombTimer = Bomberman.bombDuration;
-            new Bomb(Bomberman.bombDuration, Bomberman.bomberman, Bomberman.currentBombNumber);
+            new Bomb(Bomberman.bombDuration, position, Bomberman.currentBombNumber);
 
             // Music Stop and play bomb music
             changeMusic(7);
             SoundManager.Instance.PlaySound(CustomMain.customAssets.bombermanBombMusic, true, 75f);
             SoundManager.Instance.StopSound(CustomMain.customAssets.performerMusic);
             // Indicate bomb text
-            new CustomMessage("There's a Bomb on the map: ", Bomberman.bombTimer, Bomberman.currentBombNumber, -1.3f, 1);
+            new CustomMessage(Language.statusRolesTexts[6], Bomberman.bombTimer, Bomberman.currentBombNumber, -1.3f, 1);
         }
 
         public static void fixBomb() {
@@ -1359,7 +1442,9 @@ namespace LasMonjas
                 resetBomberBombButton();
 
                 //Music after fix bomb
-                changeMusic(2);
+                if (!Monja.awakened) {
+                    changeMusic(2);
+                }
             }
         }
         public static void bombermanWin() {
@@ -1423,7 +1508,7 @@ namespace LasMonjas
                         if (MapBehaviour.Instance) {
                             MapBehaviour.Instance.Close();
                         }
-                        new CustomMessage("Petrified!", Medusa.duration, -1, 1.6f, 14);
+                        new CustomMessage(Language.statusRolesTexts[7], Medusa.duration, -1, 1.6f, 14);
                     }
                     player.moveable = false;
                     player.NetTransform.Halt(); // Stop current movement
@@ -1433,6 +1518,35 @@ namespace LasMonjas
                         }
                     })));
                     return;
+                }
+            }
+        }        
+
+        public static void placeSpiralTrap(byte[] buff) {
+            Vector3 position = Vector3.zero;
+            position.x = BitConverter.ToSingle(buff, 0 * sizeof(float));
+            position.y = BitConverter.ToSingle(buff, 1 * sizeof(float));
+            Hypnotist.currentSpiralNumber += 1;
+            Hypnotist.trapsCounterButtonText.text = $"{Hypnotist.currentSpiralNumber} / {Hypnotist.numberOfSpirals}";
+            new HypnotistSpiral(Hypnotist.spiralDuration, position);
+        }
+
+        public static void activateSpiralTrap(byte targetId) {
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                if (player.PlayerId == targetId) {
+
+                    player.MyPhysics.Speed *= -1;
+
+                    HudManager.Instance.StartCoroutine(Effects.Lerp(Hypnotist.spiralDuration, new Action<float>((p) => {
+                        if (p == 1f) {
+                            player.MyPhysics.Speed *= -1;
+                            if (player == PlayerControl.LocalPlayer) {
+                                foreach (HypnotistSpiral spiral in HypnotistSpiral.hypnotistSpirals) {
+                                    spiral.isActive = true;
+                                }
+                            }
+                        }
+                    })));
                 }
             }
         }
@@ -1460,30 +1574,48 @@ namespace LasMonjas
                 }
             }
         }
+        
+        public static void plumberMakeVent(byte[] buff) {
 
-        public static void placeSpiralTrap() {
-            Hypnotist.currentSpiralNumber += 1;
-            new HypnotistSpiral(Hypnotist.spiralDuration, Hypnotist.hypnotist);
+            Plumber.currentVents += 1;
+            Plumber.plumberVentButtonText.text = $"{Plumber.currentVents} / {Plumber.maxVents}";
+
+            Vector3 position = Vector3.zero;
+            position.x = BitConverter.ToSingle(buff, 0 * sizeof(float));
+            position.y = BitConverter.ToSingle(buff, 1 * sizeof(float));
+
+            var ventPrefab = UnityEngine.Object.FindObjectOfType<Vent>();
+            var vent = UnityEngine.Object.Instantiate(ventPrefab, ventPrefab.transform.parent);
+            vent.gameObject.GetComponent<BoxCollider2D>().enabled = false;
+            if (PlayerControl.GameOptions.MapId == 5) {
+                vent.gameObject.layer = 12;
+                vent.gameObject.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
+                vent.transform.position = new Vector3(position.x, position.y - 0.25f, -0.5f);
+                vent.gameObject.GetComponent<CircleCollider2D>().enabled = false;
+            }
+            else {
+                vent.transform.position = new Vector3(position.x, position.y - 0.25f, 1f);
+            }
+            var ventRenderer = vent.GetComponent<SpriteRenderer>();
+            vent.myRend = ventRenderer; 
+            if (PlayerControl.LocalPlayer == Plumber.plumber) {
+                ventRenderer.color = new Color(1, 1, 1, 0.5f);
+            }
+            else {
+                ventRenderer.color = new Color(1, 1, 1, 0f);
+            }
+
+            Plumber.Vents.Add(vent);
         }
 
-        public static void activateSpiralTrap(byte targetId) {
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                if (player.PlayerId == targetId) {
-
-                    player.MyPhysics.Speed *= -1;
-
-                    HudManager.Instance.StartCoroutine(Effects.Lerp(Hypnotist.spiralDuration, new Action<float>((p) => {
-                        if (p == 1f) {
-                            player.MyPhysics.Speed *= -1;
-                            if (player == PlayerControl.LocalPlayer) {
-                                foreach (HypnotistSpiral spiral in HypnotistSpiral.hypnotistSpirals) {
-                                    spiral.isActive = true;
-                                }
-                            }
-                        }
-                    })));
-                }
-            }
+        public static void silencePlayer(byte playerId) {
+            PlayerControl target = Helpers.playerById(playerId);
+            Librarian.targetLibrary = target;
+            Librarian.targetNameButtonText.text = Librarian.targetLibrary.name;
+        }
+        public static void resetSilenced() {
+            Librarian.targetLibrary = null;
+            Librarian.targetNameButtonText.text = "";
         }
 
         public static void renegadeRecruitMinion(byte targetId) {
@@ -1568,6 +1700,8 @@ namespace LasMonjas
             if (player == Necromancer.necromancer) Necromancer.clearAndReload();
             if (player == Engineer.engineer) Engineer.clearAndReload();
             if (player == Shy.shy) Shy.clearAndReload();
+            if (player == TaskMaster.taskMaster) TaskMaster.clearAndReload();
+            if (player == Jailer.jailer) Jailer.clearAndReload();
 
             // Impostor roles
             if (player == Mimic.mimic) Mimic.clearAndReload();
@@ -1583,6 +1717,8 @@ namespace LasMonjas
             if (player == Medusa.medusa) Medusa.clearAndReload();
             if (player == Hypnotist.hypnotist) Hypnotist.clearAndReload();
             if (player == Archer.archer) Archer.clearAndReload();
+            if (player == Plumber.plumber) Plumber.clearAndReload();
+            if (player == Librarian.librarian) Librarian.clearAndReload();
 
             // Neutral roles
             if (player == Joker.joker) Joker.clearAndReload();
@@ -1592,6 +1728,9 @@ namespace LasMonjas
             if (player == Devourer.devourer) Devourer.clearAndReload();
             if (player == Poisoner.poisoner) Poisoner.clearAndReload();
             if (player == Puppeteer.puppeteer) Puppeteer.clearAndReload();
+            if (player == Exiler.exiler) Exiler.clearAndReload();
+            if (player == Amnesiac.amnesiac) Amnesiac.clearAndReload();
+            if (player == Seeker.seeker) Seeker.clearAndReload();
 
             if (!ignoreLovers && (player == Modifiers.lover1 || player == Modifiers.lover2)) { // The whole Lover couple is being erased
                 Modifiers.ClearLovers();
@@ -1602,161 +1741,218 @@ namespace LasMonjas
             if (player == Minion.minion) Minion.clearAndReload();
         }
 
+        public static void setRandomTarget(byte playerid, byte whichPlayer) {
+            
+            switch (whichPlayer) {
+                // Bounty Hunter
+                case 0:
+                    if (BountyHunter.bountyhunter == null) return; 
+                    {
+                        foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                            if (player.PlayerId == playerid) {
+                                BountyHunter.hasToKill = player;
+                            }
+                        }
 
-        public static void bountyHunterSetKill(byte playerid) {
-            if (BountyHunter.bountyhunter == null) return;
-            {
-                foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                    if (player.PlayerId == playerid) {
-                        BountyHunter.hasToKill = player;
+                        if (BountyHunter.hasToKill.Data.IsDead) {
+                            BountyHunter.bountyhunter.MurderPlayer(BountyHunter.bountyhunter);
+                        }
+
+                        if (BountyHunter.hasToKill == Joker.joker) {
+                            BountyHunter.rolName = "<color=#808080FF>Joker</color>";
+                        }
+                        else if (BountyHunter.hasToKill == RoleThief.rolethief) {
+                            BountyHunter.rolName = "<color=#808080FF>Role Thief</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Pyromaniac.pyromaniac) {
+                            BountyHunter.rolName = "<color=#808080FF>Pyromaniac</color>";
+                        }
+                        else if (BountyHunter.hasToKill == TreasureHunter.treasureHunter) {
+                            BountyHunter.rolName = "<color=#808080FF>Treasure Hunter</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Devourer.devourer) {
+                            BountyHunter.rolName = "<color=#808080FF>Devourer</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Poisoner.poisoner) {
+                            BountyHunter.rolName = "<color=#808080FF>Poisoner</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Puppeteer.puppeteer) {
+                            BountyHunter.rolName = "<color=#808080FF>Puppeteer</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Exiler.exiler) {
+                            BountyHunter.rolName = "<color=#808080FF>Exiler</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Seeker.seeker) {
+                            BountyHunter.rolName = "<color=#808080FF>Seeker</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Captain.captain) {
+                            BountyHunter.rolName = "<color=#5E3E7DFF>Captain</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Mechanic.mechanic) {
+                            BountyHunter.rolName = "<color=#7F4C00FF>Mechanic</color>"; ;
+                        }
+                        else if (BountyHunter.hasToKill == Sheriff.sheriff) {
+                            BountyHunter.rolName = "<color=#FFFF00FF>Sheriff</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Detective.detective) {
+                            BountyHunter.rolName = "<color=#C85ABEFF>Detective</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Forensic.forensic) {
+                            BountyHunter.rolName = "<color=#4E61FFFF>Forensic</color>";
+                        }
+                        else if (BountyHunter.hasToKill == TimeTraveler.timeTraveler) {
+                            BountyHunter.rolName = "<color=#00BDFFFF>Time Traveler</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Squire.squire) {
+                            BountyHunter.rolName = "<color=#00FF00FF>Squire</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Cheater.cheater) {
+                            BountyHunter.rolName = "<color=#666699FF>Cheater</color>";
+                        }
+                        else if (BountyHunter.hasToKill == FortuneTeller.fortuneTeller) {
+                            BountyHunter.rolName = "<color=#00C642FF>Fortune Teller</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Hacker.hacker) {
+                            BountyHunter.rolName = "<color=#72FFACFF>Hacker</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Sleuth.sleuth) {
+                            BountyHunter.rolName = "<color=#009F57FF>Sleuth</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Fink.fink) {
+                            BountyHunter.rolName = "<color=#FF73F6FF>Fink</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Welder.welder) {
+                            BountyHunter.rolName = "<color=#6D5B2FFF>Welder</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Spiritualist.spiritualist) {
+                            BountyHunter.rolName = "<color=#FFC5E1FF>Spiritualist</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Coward.coward) {
+                            BountyHunter.rolName = "<color=#00F7E1FF>Coward</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Vigilant.vigilant) {
+                            BountyHunter.rolName = "<color=#E3E15AFF>Vigilant</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Vigilant.vigilantMira) {
+                            BountyHunter.rolName = "<color=#E3E15AFF>Vigilant</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Hunter.hunter) {
+                            BountyHunter.rolName = "<color=#E1EB90FF>Hunter</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Jinx.jinx) {
+                            BountyHunter.rolName = "<color=#928B55FF>Jinx</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Bat.bat) {
+                            BountyHunter.rolName = "<color=#A600FFFF>Bat</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Necromancer.necromancer) {
+                            BountyHunter.rolName = "<color=#FF73F6FF>Necromancer</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Engineer.engineer) {
+                            BountyHunter.rolName = "<color=#7F4C00FF>Engineer</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Shy.shy) {
+                            BountyHunter.rolName = "<color=#F2BEFFFF>Shy</color>";
+                        }
+                        else if (BountyHunter.hasToKill == TaskMaster.taskMaster) {
+                            BountyHunter.rolName = "<color=#999999FF>Task Master</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Jailer.jailer) {
+                            BountyHunter.rolName = "<color=#CCFF99FF>Jailer</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Mimic.mimic) {
+                            BountyHunter.rolName = "<color=#FF0000FF>Mimic</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Painter.painter) {
+                            BountyHunter.rolName = "<color=#FF0000FF>Painter</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Demon.demon) {
+                            BountyHunter.rolName = "<color=#FF0000FF>Demon</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Janitor.janitor) {
+                            BountyHunter.rolName = "<color=#FF0000FF>Janitor</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Illusionist.illusionist) {
+                            BountyHunter.rolName = "<color=#FF0000FF>Illusionist</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Manipulator.manipulator) {
+                            BountyHunter.rolName = "<color=#FF0000FF>Manipulator</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Bomberman.bomberman) {
+                            BountyHunter.rolName = "<color=#FF0000FF>Bomberman</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Chameleon.chameleon) {
+                            BountyHunter.rolName = "<color=#FF0000FF>Chameleon</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Gambler.gambler) {
+                            BountyHunter.rolName = "<color=#FF0000FF>Gambler</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Sorcerer.sorcerer) {
+                            BountyHunter.rolName = "<color=#FF0000FF>Sorcerer</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Medusa.medusa) {
+                            BountyHunter.rolName = "<color=#FF0000FF>Medusa</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Archer.archer) {
+                            BountyHunter.rolName = "<color=#FF0000FF>Archer</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Hypnotist.hypnotist) {
+                            BountyHunter.rolName = "<color=#FF0000FF>Hypnotist</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Plumber.plumber) {
+                            BountyHunter.rolName = "<color=#FF0000FF>Plumber</color>";
+                        }
+                        else if (BountyHunter.hasToKill == Librarian.librarian) {
+                            BountyHunter.rolName = "<color=#FF0000FF>Librarian</color>";
+                        }
+                        else if (BountyHunter.hasToKill.Data.Role.IsImpostor) {
+                            BountyHunter.rolName = "<color=#FF0000FF>Impostor</color>";
+                        }
+                        else {
+                            BountyHunter.rolName = "<color=#8DFFFFFF>Crewmate</color>";
+                        }
                     }
-                }
 
-                if (BountyHunter.hasToKill.Data.IsDead) {
-                    BountyHunter.bountyhunter.MurderPlayer(BountyHunter.bountyhunter);
-                }
+                    BountyHunter.targetNameButtonText.text = BountyHunter.rolName;
+                    BountyHunter.usedTarget = true;
+                    break;
+                // Exiler
+                case 1:
+                    if (Exiler.exiler == null) return; 
+                    {
+                        foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                            if (player.PlayerId == playerid) {
+                                Exiler.target = player;
+                            }
+                        }
 
-                if (BountyHunter.hasToKill == Joker.joker) {
-                    BountyHunter.rolName = ": <color=#808080FF>Joker</color>";
-                }
-                else if (BountyHunter.hasToKill == RoleThief.rolethief) {
-                    BountyHunter.rolName = ": <color=#808080FF>Role Thief</color>";
-                }
-                else if (BountyHunter.hasToKill == Pyromaniac.pyromaniac) {
-                    BountyHunter.rolName = ": <color=#808080FF>Pyromaniac</color>";
-                }
-                else if (BountyHunter.hasToKill == TreasureHunter.treasureHunter) {
-                    BountyHunter.rolName = ": <color=#808080FF>Treasure Hunter</color>";
-                }
-                else if (BountyHunter.hasToKill == Devourer.devourer) {
-                    BountyHunter.rolName = ": <color=#808080FF>Devourer</color>";
-                }
-                else if (BountyHunter.hasToKill == Poisoner.poisoner) {
-                    BountyHunter.rolName = ": <color=#808080FF>Poisoner</color>";
-                }
-                else if (BountyHunter.hasToKill == Puppeteer.puppeteer) {
-                    BountyHunter.rolName = ": <color=#808080FF>Puppeteer</color>";
-                }
-                else if (BountyHunter.hasToKill == Captain.captain) {
-                    BountyHunter.rolName = ": <color=#5E3E7DFF>Captain</color>";
-                }
-                else if (BountyHunter.hasToKill == Mechanic.mechanic) {
-                    BountyHunter.rolName = ": <color=#7F4C00FF>Mechanic</color>"; ;
-                }
-                else if (BountyHunter.hasToKill == Sheriff.sheriff) {
-                    BountyHunter.rolName = ": <color=#FFFF00FF>Sheriff</color>";
-                }
-                else if (BountyHunter.hasToKill == Detective.detective) {
-                    BountyHunter.rolName = ": <color=#C85ABEFF>Detective</color>";
-                }
-                else if (BountyHunter.hasToKill == Forensic.forensic) {
-                    BountyHunter.rolName = ": <color=#4E61FFFF>Forensic</color>";
-                }
-                else if (BountyHunter.hasToKill == TimeTraveler.timeTraveler) {
-                    BountyHunter.rolName = ": <color=#00BDFFFF>Time Traveler</color>";
-                }
-                else if (BountyHunter.hasToKill == Squire.squire) {
-                    BountyHunter.rolName = ": <color=#00FF00FF>Squire</color>";
-                }
-                else if (BountyHunter.hasToKill == Cheater.cheater) {
-                    BountyHunter.rolName = ": <color=#666699FF>Cheater</color>";
-                }
-                else if (BountyHunter.hasToKill == FortuneTeller.fortuneTeller) {
-                    BountyHunter.rolName = ": <color=#00C642FF>Fortune Teller</color>";
-                }
-                else if (BountyHunter.hasToKill == Hacker.hacker) {
-                    BountyHunter.rolName = ": <color=#72FFACFF>Hacker</color>";
-                }
-                else if (BountyHunter.hasToKill == Sleuth.sleuth) {
-                    BountyHunter.rolName = ": <color=#009F57FF>Sleuth</color>";
-                }
-                else if (BountyHunter.hasToKill == Fink.fink) {
-                    BountyHunter.rolName = ": <color=#FF73F6FF>Fink</color>";
-                }
-                else if (BountyHunter.hasToKill == Welder.welder) {
-                    BountyHunter.rolName = ": <color=#6D5B2FFF>Welder</color>";
-                }
-                else if (BountyHunter.hasToKill == Spiritualist.spiritualist) {
-                    BountyHunter.rolName = ": <color=#FFC5E1FF>Spiritualist</color>";
-                }
-                else if (BountyHunter.hasToKill == Coward.coward) {
-                    BountyHunter.rolName = ": <color=#00F7E1FF>Coward</color>";
-                }
-                else if (BountyHunter.hasToKill == Vigilant.vigilant) {
-                    BountyHunter.rolName = ": <color=#E3E15AFF>Vigilant</color>";
-                }
-                else if (BountyHunter.hasToKill == Vigilant.vigilantMira) {
-                    BountyHunter.rolName = ": <color=#E3E15AFF>Vigilant</color>";
-                }
-                else if (BountyHunter.hasToKill == Hunter.hunter) {
-                    BountyHunter.rolName = ": <color=#E1EB90FF>Hunter</color>";
-                }
-                else if (BountyHunter.hasToKill == Jinx.jinx) {
-                    BountyHunter.rolName = ": <color=#928B55FF>Jinx</color>";
-                }
-                else if (BountyHunter.hasToKill == Bat.bat) {
-                    BountyHunter.rolName = ": <color=#A600FFFF>Bat</color>";
-                }
-                else if (BountyHunter.hasToKill == Necromancer.necromancer) {
-                    BountyHunter.rolName = ": <color=#FF73F6FF>Necromancer</color>";
-                }
-                else if (BountyHunter.hasToKill == Engineer.engineer) {
-                    BountyHunter.rolName = ": <color=#7F4C00FF>Engineer</color>";
-                }
-                else if (BountyHunter.hasToKill == Shy.shy) {
-                    BountyHunter.rolName = ": <color=#F2BEFFFF>Shy</color>";
-                }
-                else if (BountyHunter.hasToKill == Mimic.mimic) {
-                    BountyHunter.rolName = ": <color=#FF0000FF>Mimic</color>";
-                }
-                else if (BountyHunter.hasToKill == Painter.painter) {
-                    BountyHunter.rolName = ": <color=#FF0000FF>Painter</color>";
-                }
-                else if (BountyHunter.hasToKill == Demon.demon) {
-                    BountyHunter.rolName = ": <color=#FF0000FF>Demon</color>";
-                }
-                else if (BountyHunter.hasToKill == Janitor.janitor) {
-                    BountyHunter.rolName = ": <color=#FF0000FF>Janitor</color>";
-                }
-                else if (BountyHunter.hasToKill == Illusionist.illusionist) {
-                    BountyHunter.rolName = ": <color=#FF0000FF>Illusionist</color>";
-                }
-                else if (BountyHunter.hasToKill == Manipulator.manipulator) {
-                    BountyHunter.rolName = ": <color=#FF0000FF>Manipulator</color>";
-                }
-                else if (BountyHunter.hasToKill == Bomberman.bomberman) {
-                    BountyHunter.rolName = ": <color=#FF0000FF>Bomberman</color>";
-                }
-                else if (BountyHunter.hasToKill == Chameleon.chameleon) {
-                    BountyHunter.rolName = ": <color=#FF0000FF>Chameleon</color>";
-                }
-                else if (BountyHunter.hasToKill == Gambler.gambler) {
-                    BountyHunter.rolName = ": <color=#FF0000FF>Gambler</color>";
-                }
-                else if (BountyHunter.hasToKill == Sorcerer.sorcerer) {
-                    BountyHunter.rolName = ": <color=#FF0000FF>Sorcerer</color>";
-                }
-                else if (BountyHunter.hasToKill == Medusa.medusa) {
-                    BountyHunter.rolName = ": <color=#FF0000FF>Medusa</color>";
-                }
-                else if (BountyHunter.hasToKill == Archer.archer) {
-                    BountyHunter.rolName = ": <color=#FF0000FF>Archer</color>";
-                }
-                else if (BountyHunter.hasToKill == Hypnotist.hypnotist) {
-                    BountyHunter.rolName = ": <color=#FF0000FF>Hypnotist</color>";
-                }
-                else if (BountyHunter.hasToKill.Data.Role.IsImpostor) {
-                    BountyHunter.rolName = ": <color=#FF0000FF>Impostor</color>";
-                }
-                else {
-                    BountyHunter.rolName = ": <color=#8DFFFFFF>Crewmate</color>";
-                }
-            }
+                        if (Exiler.target.Data.IsDead) {
+                            Exiler.exiler.MurderPlayer(Exiler.exiler);
+                        }
+                        Exiler.targetNameButtonText.text = Exiler.target.name;
+                        Exiler.usedTarget = true;
+                    }
+                    break;
+                // Yandere:
+                case 2:
+                    if (Yandere.yandere == null) return; 
+                    {
+                        foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                            if (player.PlayerId == playerid) {
+                                Yandere.target = player;
+                            }
+                        }
 
-            RoleInfo.bountyHunter.shortDescription = "Hunt down your target" + BountyHunter.rolName;
-            BountyHunter.usedTarget = true;
+                        if (Yandere.target.Data.IsDead) {
+                            Yandere.rampageMode = true;
+                        }
+                        Yandere.yandereTargetButtonText.text = Yandere.target.name + " " + Yandere.currenStareTimes + " / " + Yandere.stareTimes;
+                        Yandere.usedTarget = true;
+                    }
+                    break;
+            }          
         }
-
+        
         public static void bountyHunterKill(byte targetId) {
             foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
                 if (player.PlayerId == targetId && BountyHunter.hasToKill.PlayerId == targetId) {
@@ -1771,13 +1967,19 @@ namespace LasMonjas
             }
         }
 
-        public static void placeMine() {
+        public static void placeMine(byte[] buff) {
+            Vector3 position = Vector3.zero;
+            position.x = BitConverter.ToSingle(buff, 0 * sizeof(float));
+            position.y = BitConverter.ToSingle(buff, 1 * sizeof(float));
             Trapper.currentMineNumber += 1;
-            new Mine(Trapper.durationOfMines, Trapper.trapper);
+            new Mine(Trapper.durationOfMines, position);
         }
-        public static void placeTrap() {
+        public static void placeTrap(byte[] buff) {
+            Vector3 position = Vector3.zero;
+            position.x = BitConverter.ToSingle(buff, 0 * sizeof(float));
+            position.y = BitConverter.ToSingle(buff, 1 * sizeof(float));
             Trapper.currentTrapNumber += 1;
-            new Trap(Trapper.durationOfTraps, Trapper.trapper);
+            new Trap(Trapper.durationOfTraps, position);
         }
 
         public static void mineKill(byte targetId) {
@@ -1796,31 +1998,19 @@ namespace LasMonjas
                 if (player.PlayerId == targetId) {
                     player.moveable = false;
                     player.NetTransform.Halt();
-                    HudManager.Instance.StartCoroutine(Effects.Lerp(1, new Action<float>((p) => {
-                        if (p == 1f) {
-                            player.moveable = true;
-
-                        }
-                    })));
-                }
-
-                if (player.PlayerId == targetId) {
+                    Trapper.mined = player;
                     HudManager.Instance.StartCoroutine(Effects.Lerp(1, new Action<float>((p) => {
                         if (player == PlayerControl.LocalPlayer) {
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.trapperStepMineClip, false, 100f);
                         }
-                        Trapper.mined = player;
                         if (p == 1f) {
-                            MurderAttemptResult murderAttemptResult = Helpers.checkMurderAttempt(Trapper.trapper, Trapper.mined);
-                            if (murderAttemptResult == MurderAttemptResult.PerformKill) {
-                                uncheckedMurderPlayer(Trapper.trapper.PlayerId, Trapper.mined.PlayerId, 0);
-                            }
                             player.moveable = true;
+                            if (Jailer.jailedPlayer == null || (Jailer.jailedPlayer != null && player != Jailer.jailedPlayer)) {
+                                uncheckedMurderPlayer(Trapper.trapper.PlayerId, player.PlayerId, 0);
+                            }
                             Trapper.mined = null;
-
                         }
                     })));
-                    return;
                 }
             }
         }
@@ -1858,10 +2048,12 @@ namespace LasMonjas
                     if (yinflag == 0) {
                         Yinyanger.yinyedplayer = player;
                         Yinyanger.usedYined = true;
+                        Yinyanger.yinedButtonText.text = Yinyanger.yinyedplayer.name;
                     }
                     else {
                         Yinyanger.yangyedplayer = player;
                         Yinyanger.usedYanged = true;
+                        Yinyanger.yanedButtonText.text = Yinyanger.yangyedplayer.name;
                     }
                 }
             }
@@ -1887,6 +2079,21 @@ namespace LasMonjas
             if (Janitor.janitor != null && Janitor.dragginBody) {
                 Janitor.janitorResetValuesAtDead();
             }
+            
+            // Remove body dragging for necromancer
+            if (Necromancer.necromancer != null && Necromancer.dragginBody) {
+                Necromancer.necromancerResetValuesAtDead();
+            }
+
+            // Reset chameleon invisibility
+            if (Chameleon.chameleon != null && Chameleon.chameleonTimer > 0) {
+                Chameleon.resetChameleon();
+            }
+
+            // Reset puppeteer morph
+            if (Puppeteer.puppeteer != null && Puppeteer.morphed) {
+                Puppeteer.Reset();
+            }
 
             // Force exit from vents to all players
             if (PlayerControl.LocalPlayer.inVent) {
@@ -1909,7 +2116,7 @@ namespace LasMonjas
             if (Minigame.Instance)
                 Minigame.Instance.ForceClose();
 
-            new CustomMessage("Time Left: ", Challenger.duelDuration, -1, -1.3f, 2);
+            new CustomMessage(Language.introTexts[1], Challenger.duelDuration, -1, -1.3f, 2);
 
             // music stop and play duel music
             changeMusic(8);
@@ -1962,10 +2169,6 @@ namespace LasMonjas
             }
         }
 
-        public static void challengerCantDuel() {
-            Challenger.challengerIsInMeeting = true;
-        }
-
         public static void ninjaKill(byte targetId) {
             foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
                 if (player.PlayerId == targetId) {
@@ -1991,13 +2194,249 @@ namespace LasMonjas
             }
         }
 
+        public static void yandereKill(byte targetId) {
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                if (player.PlayerId == targetId) {
+                    Yandere.yandere.MurderPlayer(player);
+                    if (!Yandere.rampageMode) {
+                        Yandere.yandere.MurderPlayer(Yandere.yandere);
+                        Yandere.triggerYandereWin = true;
+                    }
+                    return;
+                }
+            }
+        }
+
+        public static void strandedFindBoxes(byte strandedFindBoxes) {
+            switch (strandedFindBoxes) {
+                case 1:
+                    Stranded.storedAmmo += 1;
+                    Stranded.strandedSearchButtonText.text = $"{Stranded.storedAmmo} / 3"; 
+                    break;
+                case 2:
+                    Stranded.canVent = true;
+                    break;
+                case 3:
+                    Stranded.canTurnInvisible = true;
+                    break;
+            }
+        }
+        
+        public static void strandedKill(byte targetId) {
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                if (player.PlayerId == targetId) {
+                    Stranded.stranded.MurderPlayer(player);
+                    Stranded.howManyKills += 1;
+                    Stranded.storedAmmo -= 1;
+                    Stranded.strandedSearchButtonText.text = $"{Stranded.storedAmmo} / 3"; 
+                    Stranded.strandedKillButtonText.text = $"{Stranded.howManyKills} / 3"; 
+                    if (Stranded.howManyKills >= 3) {
+                        Stranded.triggerStrandedWin = true;
+                    }
+                    return;
+                }
+            }
+        }
+
+        public static void strandedInvisible() {
+            if (Stranded.stranded == null) return;
+
+            Stranded.invisibleTimer = 60;
+            Stranded.isInvisible = true;
+            Stranded.canTurnInvisible = false;
+        }
+
+        public static void monjaTakeItem(byte monjaItemId) {
+            if (Monja.monja != null) {
+                Monja.isDeliveringItem = true;
+                Monja.itemId = monjaItemId;
+                switch(monjaItemId) {
+                    case 1:
+                        Monja.item01.transform.parent = Monja.monja.transform;
+                        Monja.item01.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
+                        break;
+                    case 2:
+                        Monja.item02.transform.parent = Monja.monja.transform;
+                        Monja.item02.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
+                        break;
+                    case 3:
+                        Monja.item03.transform.parent = Monja.monja.transform;
+                        Monja.item03.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
+                        break;
+                    case 4:
+                        Monja.item04.transform.parent = Monja.monja.transform;
+                        Monja.item04.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
+                        break;
+                    case 5:
+                        Monja.item05.transform.parent = Monja.monja.transform;
+                        Monja.item05.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
+                        break;
+                }
+            }
+        }
+
+        public static void monjaDeliverItem(byte monjaItemId) {
+            if (Monja.monja != null) {
+                Monja.isDeliveringItem = false;
+                Monja.itemId = 0;
+                switch (monjaItemId) {
+                    case 1:
+                        Monja.item01.SetActive(true);
+                        Monja.item01.transform.SetParent(null);
+                        Monja.item01.transform.localPosition = Monja.ritualObject.transform.GetChild(0).transform.position + new Vector3(0f, 0f, -0.1f);
+                        Monja.item01.name = "deliveredItem";
+                        break;
+                    case 2:
+                        Monja.item02.SetActive(true);
+                        Monja.item02.transform.SetParent(null);
+                        Monja.item02.transform.localPosition = Monja.ritualObject.transform.GetChild(1).transform.position + new Vector3(0f, 0f, -0.1f);
+                        Monja.item02.name = "deliveredItem"; 
+                        break;
+                    case 3:
+                        Monja.item03.SetActive(true);
+                        Monja.item03.transform.SetParent(null);
+                        Monja.item03.transform.localPosition = Monja.ritualObject.transform.GetChild(2).transform.position + new Vector3(0f, 0f, -0.1f);
+                        Monja.item03.name = "deliveredItem"; 
+                        break;
+                    case 4:
+                        Monja.item04.SetActive(true);
+                        Monja.item04.transform.SetParent(null);
+                        Monja.item04.transform.localPosition = Monja.ritualObject.transform.GetChild(3).transform.position + new Vector3(0f, 0f, -0.1f);
+                        Monja.item04.name = "deliveredItem"; 
+                        break;
+                    case 5:
+                        Monja.item05.SetActive(true);
+                        Monja.item05.transform.SetParent(null);
+                        Monja.item05.transform.localPosition = Monja.ritualObject.transform.GetChild(4).transform.position + new Vector3(0f, 0f, -0.1f);
+                        Monja.item05.name = "deliveredItem"; 
+                        break;
+                }
+            }                                                   
+            Monja.deliveredItems += 1;
+            Monja.objectCountButtonText.text = $"{Monja.deliveredItems} / 5";
+            if (Monja.deliveredItems >= 5) {
+                Monja.canAwake = true;
+            }
+        }
+
+        public static void monjaRevertItemPosition(byte monjaItemId) {
+            if (Monja.monja != null) {
+                Monja.isDeliveringItem = false;
+                Monja.itemId = 0;
+                switch (monjaItemId) {
+                    case 1:
+                        Monja.item01.transform.SetParent(null);
+                        Monja.item01.transform.localPosition = Monja.itemListPositions[0];
+                        break;
+                    case 2:
+                        Monja.item02.transform.SetParent(null);
+                        Monja.item02.transform.localPosition = Monja.itemListPositions[1];
+                        break;
+                    case 3:
+                        Monja.item03.transform.SetParent(null);
+                        Monja.item03.transform.localPosition = Monja.itemListPositions[2];
+                        break;
+                    case 4:
+                        Monja.item04.transform.SetParent(null);
+                        Monja.item04.transform.localPosition = Monja.itemListPositions[3];
+                        break;
+                    case 5:
+                        Monja.item05.transform.SetParent(null);
+                        Monja.item05.transform.localPosition = Monja.itemListPositions[4];
+                        break;
+                }
+            }
+        }
+
+        public static void monjaAwakened() {
+            if (Monja.monja == null) return;
+
+            // Remove body dragging for janitor
+            if (Janitor.janitor != null && Janitor.dragginBody) {
+                Janitor.janitorResetValuesAtDead();
+            }
+
+            // Remove body dragging for necromancer
+            if (Necromancer.necromancer != null && Necromancer.dragginBody) {
+                Necromancer.necromancerResetValuesAtDead();
+            }
+            
+            Monja.canAwake = false;
+            Monja.awakened = true;
+            Monja.awakenTimer = 60;
+            Monja.monjaSprite.SetActive(true);
+
+            if (MapBehaviour.Instance) {
+                MapBehaviour.Instance.Close();
+            }
+            if (Minigame.Instance) {
+                Minigame.Instance.ForceClose();
+            }
+            // Teleport and bodies to other place
+            DeadBody[] array = UnityEngine.Object.FindObjectsOfType<DeadBody>();
+            if (array.Count() != 0) {
+                for (int i = 0; i < array.Length; i++) {
+                    array[i].gameObject.transform.position = new Vector3(50, 50, array[i].gameObject.transform.position.z);
+                }
+            }
+            // Exit current vent if necessary
+            if (PlayerControl.LocalPlayer.inVent) {
+                foreach (Vent vent in ShipStatus.Instance.AllVents) {
+                    bool canUse;
+                    bool couldUse;
+                    vent.CanUse(PlayerControl.LocalPlayer.Data, out canUse, out couldUse);
+                    if (canUse) {
+                        PlayerControl.LocalPlayer.MyPhysics.RpcExitVent(vent.Id);
+                        vent.SetButtons(false);
+                    }
+                }
+            }
+            // Music Stop and play bomb music
+            changeMusic(7);
+            SoundManager.Instance.PlaySound(CustomMain.customAssets.monjaAwakeMusic, true, 75f);
+            SoundManager.Instance.StopSound(CustomMain.customAssets.bombermanBombMusic);
+            SoundManager.Instance.StopSound(CustomMain.customAssets.performerMusic);
+            // Indicate monja text
+            new CustomMessage(Language.statusRolesTexts[8], 60, -1, 1.6f, 27);
+
+            HudManager.Instance.FullScreen.color = new Color(0.75f, 0f, 0f, 0.5f);
+            HudManager.Instance.FullScreen.enabled = true;
+            HudManager.Instance.FullScreen.gameObject.SetActive(true);
+            HudManager.Instance.StartCoroutine(Effects.Lerp(60, new Action<float>((p) => {
+                if (p == 1f && Monja.monja != null && !Monja.monja.Data.IsDead) {
+                    monjaReset();
+                }
+            })));
+        }
+
+        public static void monjaKill(byte targetId) {
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                if (player.PlayerId == targetId) {
+                    Monja.monja.MurderPlayer(player);                    
+                    return;
+                }
+            }
+        }
+
+        public static void monjaReset () {
+            HudManager.Instance.FullScreen.enabled = false;
+            Monja.monjaSprite.SetActive(false);
+            Monja.awakened = false;
+            timeTravelerRewindTimeButton.Timer = timeTravelerRewindTimeButton.MaxTimer;
+            timeTravelerShieldButton.Timer = timeTravelerShieldButton.MaxTimer;
+            monjaFindDeliverButton.HasEffect = false;
+            HudManager.Instance.PlayerCam.shakeAmount = 0f;
+            HudManager.Instance.PlayerCam.shakePeriod = 0;
+            changeMusic(2);
+        }
+
         public static PlayerControl oldRoleThief = null;
 
         public static void roleThiefSteal(byte targetId) {
             foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
                 if (player.PlayerId == targetId && RoleThief.rolethief != null) {
                     // Suicide when impostor or rebel variants
-                    if (player.Data.Role.IsImpostor || player == Renegade.renegade || player == Minion.minion || player == BountyHunter.bountyhunter || player == Trapper.trapper || player == Yinyanger.yinyanger || player == Challenger.challenger || player == Ninja.ninja || player == Berserker.berserker) {
+                    if (player.Data.Role.IsImpostor || player == Renegade.renegade || player == Minion.minion || player == BountyHunter.bountyhunter || player == Trapper.trapper || player == Yinyanger.yinyanger || player == Challenger.challenger || player == Ninja.ninja || player == Berserker.berserker || player == Yandere.yandere || player == Stranded.stranded || player == Monja.monja) {
                         RoleThief.rolethief.MurderPlayer(RoleThief.rolethief);
                         return;
                     }
@@ -2117,6 +2556,17 @@ namespace LasMonjas
                     else if (Shy.shy != null && Shy.shy == player) {
                         Shy.shy = oldRoleThief;
                     }
+                    else if (TaskMaster.taskMaster != null && TaskMaster.taskMaster == player) {
+                        TaskMaster.taskMaster = oldRoleThief;
+                        // Randomize again and reset the tasks for taskmaster after steal role
+                        if (TaskMaster.clearedInitialTasks) {
+                            byte[] taskTypeIds = TasksHandler.GetTaskMasterTasks(TaskMaster.taskMaster);
+                            taskMasterSetExTasks(TaskMaster.taskMaster.PlayerId, byte.MaxValue, taskTypeIds);
+                        }
+                    }
+                    else if (Jailer.jailer != null && Jailer.jailer == player) {
+                        Jailer.jailer = oldRoleThief;
+                    }
                     else { // Crewmate
                     }
 
@@ -2134,13 +2584,13 @@ namespace LasMonjas
             SoundManager.Instance.PlaySound(CustomMain.customAssets.pyromaniacIgniteClip, false, 100f);
             Pyromaniac.triggerPyromaniacWin = true;
             foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
-                if (p != Pyromaniac.pyromaniac) p.Exiled();
+                if (p != Pyromaniac.pyromaniac && (Kid.kid != null && p != Kid.kid)) p.Exiled();
             }
         }
 
         public static void placeTreasure() {
             TreasureHunter.canPlace = false;
-            new Treasure(1800, TreasureHunter.treasureHunter);
+            new Treasure(1800);
         }
 
         public static void collectedTreasure() {
@@ -2148,6 +2598,8 @@ namespace LasMonjas
                 SoundManager.Instance.PlaySound(CustomMain.customAssets.treasureHunterCollectTreasure, false, 100f);
             }
             TreasureHunter.treasureCollected += 1;
+            TreasureHunter.treasureCounterButtonText.text = $"{TreasureHunter.treasureCollected} / {TreasureHunter.neededTreasure}";
+            TreasureHunter.canPlace = true;
             if (TreasureHunter.treasureCollected >= TreasureHunter.neededTreasure) {
                 TreasureHunter.triggertreasureHunterWin = true;
             }
@@ -2172,6 +2624,7 @@ namespace LasMonjas
                 SoundManager.Instance.PlaySound(CustomMain.customAssets.devourerDevourClip, false, 100f);
             }
             Devourer.devouredBodies += 1;
+            Devourer.devourCounterButtonText.text = $"{Devourer.devouredBodies} / {Devourer.neededBodies}";
             if (Devourer.devouredBodies >= Devourer.neededBodies) {
                 Devourer.triggerdevourerWin = true;
             }
@@ -2181,7 +2634,7 @@ namespace LasMonjas
             SoundManager.Instance.PlaySound(CustomMain.customAssets.poisonerPoisonClip, false, 100f);
             Poisoner.triggerPoisonerWin = true;
             foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
-                if (p != Poisoner.poisoner) p.Exiled();
+                if (p != Poisoner.poisoner && (Kid.kid != null && p != Kid.kid)) p.Exiled();
             }
         }
         public static void puppeteerTransform(byte playerId) {
@@ -2219,13 +2672,668 @@ namespace LasMonjas
             Puppeteer.currentTarget = null;
 
         }
+        
+        public static void exilerWin() {
+            Exiler.triggerExilerWin = true;
+        }
+        
+        public static void amnesiacReportAndTakeRole(byte targetId) {
+            PlayerControl target = Helpers.playerById(targetId);
+            GameData.PlayerInfo playerInfo = GameData.Instance.GetPlayerById(targetId);
+            PlayerControl oldAmnesiac = Amnesiac.amnesiac;
+            if (target == null || oldAmnesiac == null) return;
+            List<RoleInfo> targetInfo = RoleInfo.getRoleInfoForPlayer(target);
+            RoleInfo roleInfo = targetInfo.Where(info => !info.isModifier).FirstOrDefault();
+            switch ((RoleId)roleInfo.roleId) {
+                case RoleId.Mimic:
+                    Helpers.turnIntoImpostor(Amnesiac.amnesiac);
+                    Mimic.clearAndReload();
+                    Mimic.mimic = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    Helpers.turnIntoCrewmate(Amnesiac.amnesiac);
+                    break;
+                case RoleId.Painter:
+                    Helpers.turnIntoImpostor(Amnesiac.amnesiac);
+                    Painter.clearAndReload();
+                    Painter.painter = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    Helpers.turnIntoCrewmate(Amnesiac.amnesiac);
+                    break;
+                case RoleId.Demon:
+                    Helpers.turnIntoImpostor(Amnesiac.amnesiac);
+                    Demon.clearAndReload();
+                    Demon.demon = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    Helpers.turnIntoCrewmate(Amnesiac.amnesiac);
+                    break;
+                case RoleId.Janitor:
+                    Helpers.turnIntoImpostor(Amnesiac.amnesiac);
+                    Janitor.clearAndReload();
+                    Janitor.janitor = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    Helpers.turnIntoCrewmate(Amnesiac.amnesiac);
+                    break;
+                case RoleId.Illusionist:
+                    Helpers.turnIntoImpostor(Amnesiac.amnesiac);
+                    Illusionist.clearAndReload();
+                    Illusionist.illusionist = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    Helpers.turnIntoCrewmate(Amnesiac.amnesiac);
+                    break;
+                case RoleId.Manipulator:
+                    Helpers.turnIntoImpostor(Amnesiac.amnesiac);
+                    Manipulator.clearAndReload();
+                    Manipulator.manipulator = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    Helpers.turnIntoCrewmate(Amnesiac.amnesiac);
+                    break;
+                case RoleId.Bomberman:
+                    Helpers.turnIntoImpostor(Amnesiac.amnesiac);
+                    Bomberman.clearAndReload();
+                    Bomberman.bomberman = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    Helpers.turnIntoCrewmate(Amnesiac.amnesiac);
+                    break;
+                case RoleId.Chameleon:
+                    Helpers.turnIntoImpostor(Amnesiac.amnesiac);
+                    Chameleon.clearAndReload();
+                    Chameleon.chameleon = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    Helpers.turnIntoCrewmate(Amnesiac.amnesiac);
+                    break;
+                case RoleId.Gambler:
+                    Helpers.turnIntoImpostor(Amnesiac.amnesiac);
+                    Gambler.clearAndReload();
+                    Gambler.gambler = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    Helpers.turnIntoCrewmate(Amnesiac.amnesiac);
+                    break;
+                case RoleId.Sorcerer:
+                    Helpers.turnIntoImpostor(Amnesiac.amnesiac);
+                    Sorcerer.clearAndReload();
+                    Sorcerer.sorcerer = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    Helpers.turnIntoCrewmate(Amnesiac.amnesiac);
+                    break;
+                case RoleId.Medusa:
+                    Helpers.turnIntoImpostor(Amnesiac.amnesiac);
+                    Medusa.clearAndReload();
+                    Medusa.medusa = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    Helpers.turnIntoCrewmate(Amnesiac.amnesiac);
+                    break;
+                case RoleId.Hypnotist:
+                    Helpers.turnIntoImpostor(Amnesiac.amnesiac);
+                    Hypnotist.clearAndReload();
+                    Hypnotist.hypnotist = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    Helpers.turnIntoCrewmate(Amnesiac.amnesiac);
+                    break;
+                case RoleId.Archer:
+                    Helpers.turnIntoImpostor(Amnesiac.amnesiac);
+                    Archer.clearAndReload();
+                    Archer.archer = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    Helpers.turnIntoCrewmate(Amnesiac.amnesiac);
+                    break;
+                case RoleId.Plumber:
+                    Helpers.turnIntoImpostor(Amnesiac.amnesiac);
+                    Plumber.clearAndReload();
+                    Plumber.plumber = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    Helpers.turnIntoCrewmate(Amnesiac.amnesiac);
+                    break;
+                case RoleId.Librarian:
+                    Helpers.turnIntoImpostor(Amnesiac.amnesiac);
+                    Librarian.clearAndReload();
+                    Librarian.librarian = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    Helpers.turnIntoCrewmate(Amnesiac.amnesiac);
+                    break;
+                case RoleId.Renegade:
+                    //Renegade.clearAndReload(); Don't reset Renegade to prevent bugs
+                    Renegade.renegade = oldAmnesiac;
+                    Renegade.formerRenegades.Add(oldAmnesiac);
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    Renegade.formerRenegades.Remove(target);
+                    break;
+                case RoleId.Minion:
+                    Renegade.formerRenegades.Add(target);
+                    Minion.clearAndReload();
+                    Minion.minion = oldAmnesiac;
+                    Renegade.formerRenegades.Add(oldAmnesiac);
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    Renegade.formerRenegades.Remove(target);
+                    break;
+                case RoleId.BountyHunter:
+                    // Can't remember BountyHunter role
+                    amnesiacCantRemember();
+                    break;
+                case RoleId.Trapper:
+                    Trapper.clearAndReload();
+                    Trapper.trapper = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+                case RoleId.Yinyanger:
+                    Yinyanger.clearAndReload();
+                    Yinyanger.yinyanger = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+                case RoleId.Challenger:
+                    Challenger.clearAndReload();
+                    Challenger.challenger = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+                case RoleId.Ninja:
+                    Ninja.clearAndReload();
+                    Ninja.ninja = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+                case RoleId.Berserker:
+                    Berserker.clearAndReload();
+                    Berserker.berserker = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+                case RoleId.Yandere:
+                    // Can't remember Yandere role
+                    amnesiacCantRemember();
+                    break;
+                case RoleId.Stranded:
+                    // Can't remember Stranded role
+                    amnesiacCantRemember();
+                    break;
+                case RoleId.Monja:
+                    // Can't remember Monja role
+                    amnesiacCantRemember();
+                    break;
+                case RoleId.Captain:
+                    Captain.clearAndReload();
+                    Captain.captain = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+                case RoleId.Mechanic:
+                    Mechanic.clearAndReload();
+                    Mechanic.mechanic = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+                case RoleId.Sheriff:
+                    //Sheriff.clearAndReload(); No reset needed
+                    Sheriff.sheriff = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+                case RoleId.Detective:
+                    Detective.clearAndReload();
+                    Detective.detective = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+                case RoleId.Forensic:
+                    Forensic.clearAndReload();
+                    Forensic.forensic = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+                case RoleId.TimeTraveler:
+                    TimeTraveler.clearAndReload();
+                    TimeTraveler.timeTraveler = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+                case RoleId.Squire:
+                    Squire.clearAndReload();
+                    Squire.squire = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+                case RoleId.Cheater:
+                    Cheater.clearAndReload();
+                    Cheater.cheater = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+                case RoleId.FortuneTeller:
+                    FortuneTeller.clearAndReload();
+                    FortuneTeller.fortuneTeller = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+                case RoleId.Hacker:
+                    Hacker.clearAndReload();
+                    Hacker.hacker = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+                case RoleId.Sleuth:
+                    Sleuth.clearAndReload();
+                    Sleuth.sleuth = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+                case RoleId.Fink:
+                    Fink.clearAndReload();
+                    Fink.fink = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+                case RoleId.Welder:
+                    // Welder.clearAndReload(); Keep already sealed vents
+                    Welder.welder = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+                case RoleId.Spiritualist:
+                    Spiritualist.clearAndReload();
+                    Spiritualist.spiritualist = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+                case RoleId.Vigilant:
+                    //Vigilant.clearAndReload(); Keep already placed cameras
+                    Vigilant.vigilant = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+                case RoleId.VigilantMira:
+                    // Vigilant delete doorlog item when switch rol
+                    if (Vigilant.vigilantMira != null && Vigilant.vigilantMira == PlayerControl.LocalPlayer) {
+                        GameObject vigilantdoorlog = GameObject.Find("VigilantDoorLog");
+                        if (vigilantdoorlog != null) {
+                            UnityEngine.Object.Destroy(vigilantdoorlog);
+                        }
+                    }
+                    //Vigilant.clearAndReload(); Keep already placed cameras
+                    Vigilant.vigilantMira = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    // Recreate the doorlog access from anywhere to the new Vigilant after rol switch
+                    if (Vigilant.vigilantMira == PlayerControl.LocalPlayer) {
+                        GameObject vigilantDoorLog = GameObject.Find("SurvLogConsole");
+                        Vigilant.doorLog = GameObject.Instantiate(vigilantDoorLog, Vigilant.vigilantMira.transform);
+                        Vigilant.doorLog.name = "VigilantDoorLog";
+                        Vigilant.doorLog.layer = 8; // Player layer to ignore collisions
+                        Vigilant.doorLog.GetComponent<SpriteRenderer>().enabled = false;
+                        Vigilant.doorLog.transform.localPosition = new Vector2(0, -0.5f);
+                    }
+                    break;
+                case RoleId.Hunter:
+                    Hunter.clearAndReload();
+                    Hunter.hunter = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+                case RoleId.Jinx:
+                    Jinx.clearAndReload();
+                    Jinx.jinx = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+                case RoleId.Coward:
+                    Coward.clearAndReload();
+                    Coward.coward = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+                case RoleId.Bat:
+                    Bat.clearAndReload();
+                    Bat.bat = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+                case RoleId.Necromancer:
+                    //Necromancer.clearAndReload(); No reset needed
+                    Necromancer.necromancer = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+                case RoleId.Engineer:
+                    //Engineer.clearAndReload(); Keep placed traps
+                    Engineer.engineer = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+                case RoleId.Shy:
+                    Shy.clearAndReload();
+                    Shy.shy = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+                case RoleId.TaskMaster:
+                    TaskMaster.clearAndReload();
+                    TaskMaster.taskMaster = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    // Randomize again and reset the tasks for taskmaster after steal role
+                    if (TaskMaster.clearedInitialTasks) {
+                        byte[] taskTypeIds = TasksHandler.GetTaskMasterTasks(TaskMaster.taskMaster);
+                        taskMasterSetExTasks(TaskMaster.taskMaster.PlayerId, byte.MaxValue, taskTypeIds);
+                    }
+                    break;
+                case RoleId.Jailer:
+                    Jailer.clearAndReload();
+                    Jailer.jailer = oldAmnesiac;
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+                case RoleId.Crewmate:
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+                case RoleId.Impostor:
+                    Helpers.turnIntoImpostor(Amnesiac.amnesiac);
+                    Amnesiac.clearAndReload();
+                    Amnesiac.amnesiac = target;
+                    break;
+            }
 
+            // Bomberman bomb reset when report the chosen one
+            if (Bomberman.bomberman != null && Bomberman.activeBomb == true) {
+                fixBomb();
+            }
+            Helpers.handleDemonBiteOnBodyReport(); // Manually call Demon handling, since the CmdReportDeadBody Prefix won't be called
+            HudManager.Instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) => { // Delayed action
+                if (p == 1f) {
+                    oldAmnesiac.CmdReportDeadBody(playerInfo);
+                }
+            })));
+            changeMusic(1);
+        }
+
+        public static void amnesiacCantRemember() {
+            if (Amnesiac.amnesiac == PlayerControl.LocalPlayer) {
+                string msg = $"{Language.statusRolesTexts[9]}";
+                if (!string.IsNullOrWhiteSpace(msg)) {
+                    if (AmongUsClient.Instance.AmClient && DestroyableSingleton<HudManager>.Instance) {
+                        DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, msg);
+                    }
+                    if (msg.IndexOf("who", StringComparison.OrdinalIgnoreCase) >= 0) {
+                        DestroyableSingleton<Assets.CoreScripts.Telemetry>.Instance.SendWho();
+                    }
+                }
+            }
+        }
+
+        public static void seekerSetMinigamePlayers(byte targetId) {
+
+            if (Seeker.seeker == null) return;
+
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                if (player.PlayerId == targetId && !player.Data.IsDead) {
+                    if (Seeker.hidedPlayerOne == null) {
+                        Seeker.hidedPlayerOne = player;
+                        Seeker.currentPlayers += 1;
+                    }
+                    else if (Seeker.hidedPlayerTwo == null) {
+                        Seeker.hidedPlayerTwo = player;
+                        Seeker.currentPlayers += 1;
+                    }
+                    else if (Seeker.hidedPlayerThree == null) {
+                        Seeker.hidedPlayerThree = player;
+                        Seeker.currentPlayers += 1;
+                    }
+                }
+                Seeker.seekerPlayerPointsCount.text = $"{Seeker.currentPlayers} / 3";
+            }
+
+            if (Seeker.currentPlayers == 3) {
+                Seeker.minigameReady = true;
+            }
+        }
+
+        public static void seekerResetMinigamePlayers(byte option) {
+
+            if (Seeker.seeker == null) return;
+
+            switch (option) {
+                case 1:
+                    Seeker.ResetOnePlayer(1);
+                    break;
+                case 2:
+                    Seeker.ResetOnePlayer(2);
+                    break;
+                case 3:
+                    Seeker.ResetOnePlayer(3);
+                    break;
+                case 4:
+                    Seeker.ResetValues(false);
+                    break;
+            }
+        }
+
+        public static void seekerPerformMinigame() {
+
+            // Remove body dragging for janitor
+            if (Janitor.janitor != null && Janitor.dragginBody) {
+                Janitor.janitorResetValuesAtDead();
+            }
+
+            // Remove body dragging for necromancer
+            if (Necromancer.necromancer != null && Necromancer.dragginBody) {
+                Necromancer.necromancerResetValuesAtDead();
+            }
+
+            // Force exit from vents to all players
+            if (PlayerControl.LocalPlayer.inVent) {
+                foreach (Vent vent in ShipStatus.Instance.AllVents) {
+                    bool canUse;
+                    bool couldUse;
+                    vent.CanUse(PlayerControl.LocalPlayer.Data, out canUse, out couldUse);
+                    if (canUse) {
+                        PlayerControl.LocalPlayer.MyPhysics.RpcExitVent(vent.Id);
+                        vent.SetButtons(false);
+                    }
+                }
+            }
+
+            // Force map close to all players
+            if (MapBehaviour.Instance) {
+                MapBehaviour.Instance.Close();
+            }
+            // Force task close to all players
+            if (Minigame.Instance)
+                Minigame.Instance.ForceClose();
+
+            new CustomMessage(Language.introTexts[1], Seeker.minigameDuration, -1, -1.3f, 28);
+
+            // music stop and play duel music
+            changeMusic(8);
+            SoundManager.Instance.PlaySound(CustomMain.customAssets.seekerMinigameMusic, false, 5f);
+            SoundManager.Instance.StopSound(CustomMain.customAssets.performerMusic);
+
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                if (player == PlayerControl.LocalPlayer) {
+                    positionBeforeMinigame = player.transform.position;
+                }
+            }
+
+            Seeker.minigameDuration = 20f;
+            Seeker.isMinigaming = true;
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                if (player == Seeker.seeker) {
+                    player.transform.position = new Vector3(-39.5f, 1.9f, player.transform.position.z);
+                }
+                else if (player == Seeker.hidedPlayerOne || player == Seeker.hidedPlayerTwo || player == Seeker.hidedPlayerThree) {
+                    player.transform.position = new Vector3(-37.75f, 0.75f, player.transform.position.z);
+                }
+                else {
+                    player.transform.position = new Vector3(-35.5f, 1.9f, player.transform.position.z);
+                }
+            }
+
+            resetMinigameButtons();
+        }
+
+        public static void seekerSelectAttack(byte whichAttack) {
+            switch (whichAttack) {
+                case 1:
+                    Seeker.seekerSelectedHiding = 1;
+                    break;
+                case 2:
+                    Seeker.seekerSelectedHiding = 2;
+                    break;
+                case 3:
+                    Seeker.seekerSelectedHiding = 3;
+                    break;
+                case 4:
+                    Seeker.hidedPlayerOneSelectedHiding = 1;
+                    if (PlayerControl.GameOptions.MapId != 5 || (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerOne.transform.position.y > 0)) {
+                        Seeker.hidedPlayerOne.transform.position = new Vector3(Seeker.minigameArenaHideOnePointOne.transform.position.x, Seeker.minigameArenaHideOnePointOne.transform.position.y, Seeker.hidedPlayerOne.transform.position.z);
+                    } else if (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerOne.transform.position.y < 0) {
+                        Seeker.hidedPlayerOne.transform.position = new Vector3(Seeker.lowerminigameArenaHideOnePointOne.transform.position.x, Seeker.lowerminigameArenaHideOnePointOne.transform.position.y, Seeker.hidedPlayerOne.transform.position.z);
+                    }
+                    seekerStopMovements(1);
+                    break;
+                case 5:
+                    Seeker.hidedPlayerOneSelectedHiding = 2;
+                    if (PlayerControl.GameOptions.MapId != 5 || (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerOne.transform.position.y > 0)) {
+                        Seeker.hidedPlayerOne.transform.position = new Vector3(Seeker.minigameArenaHideTwoPointOne.transform.position.x, Seeker.minigameArenaHideTwoPointOne.transform.position.y, Seeker.hidedPlayerOne.transform.position.z);
+                    }
+                    else if (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerOne.transform.position.y < 0) {
+                        Seeker.hidedPlayerOne.transform.position = new Vector3(Seeker.lowerminigameArenaHideTwoPointOne.transform.position.x, Seeker.lowerminigameArenaHideTwoPointOne.transform.position.y, Seeker.hidedPlayerOne.transform.position.z);
+                    }
+                    seekerStopMovements(1);
+                    break;
+                case 6:
+                    Seeker.hidedPlayerOneSelectedHiding = 3;
+                    if (PlayerControl.GameOptions.MapId != 5 || (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerOne.transform.position.y > 0)) {
+                        Seeker.hidedPlayerOne.transform.position = new Vector3(Seeker.minigameArenaHideThreePointOne.transform.position.x, Seeker.minigameArenaHideThreePointOne.transform.position.y, Seeker.hidedPlayerOne.transform.position.z);
+                    }
+                    else if (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerOne.transform.position.y < 0) {
+                        Seeker.hidedPlayerOne.transform.position = new Vector3(Seeker.lowerminigameArenaHideThreePointOne.transform.position.x, Seeker.lowerminigameArenaHideThreePointOne.transform.position.y, Seeker.hidedPlayerOne.transform.position.z);
+                    }
+                    seekerStopMovements(1);
+                    break;
+                case 7:
+                    Seeker.hidedPlayerTwoSelectedHiding = 1;
+                    if (PlayerControl.GameOptions.MapId != 5 || (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerTwo.transform.position.y > 0)) {
+                        Seeker.hidedPlayerTwo.transform.position = new Vector3(Seeker.minigameArenaHideOnePointTwo.transform.position.x, Seeker.minigameArenaHideOnePointTwo.transform.position.y, Seeker.hidedPlayerTwo.transform.position.z);
+                    }
+                    else if (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerTwo.transform.position.y < 0) {
+                        Seeker.hidedPlayerTwo.transform.position = new Vector3(Seeker.lowerminigameArenaHideOnePointTwo.transform.position.x, Seeker.lowerminigameArenaHideOnePointTwo.transform.position.y, Seeker.hidedPlayerTwo.transform.position.z);
+                    }
+                    seekerStopMovements(2); 
+                    break;
+                case 8:
+                    Seeker.hidedPlayerTwoSelectedHiding = 2;
+                    if (PlayerControl.GameOptions.MapId != 5 || (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerTwo.transform.position.y > 0)) {
+                        Seeker.hidedPlayerTwo.transform.position = new Vector3(Seeker.minigameArenaHideTwoPointTwo.transform.position.x, Seeker.minigameArenaHideTwoPointTwo.transform.position.y, Seeker.hidedPlayerTwo.transform.position.z);
+                    }
+                    else if (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerTwo.transform.position.y < 0) {
+                        Seeker.hidedPlayerTwo.transform.position = new Vector3(Seeker.lowerminigameArenaHideTwoPointTwo.transform.position.x, Seeker.lowerminigameArenaHideTwoPointTwo.transform.position.y, Seeker.hidedPlayerTwo.transform.position.z);
+                    }
+                    seekerStopMovements(2); 
+                    break;
+                case 9:
+                    Seeker.hidedPlayerTwoSelectedHiding = 3;
+                    if (PlayerControl.GameOptions.MapId != 5 || (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerTwo.transform.position.y > 0)) {
+                        Seeker.hidedPlayerTwo.transform.position = new Vector3(Seeker.minigameArenaHideThreePointTwo.transform.position.x, Seeker.minigameArenaHideThreePointTwo.transform.position.y, Seeker.hidedPlayerTwo.transform.position.z);
+                    }
+                    else if (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerTwo.transform.position.y < 0) {
+                        Seeker.hidedPlayerTwo.transform.position = new Vector3(Seeker.lowerminigameArenaHideThreePointTwo.transform.position.x, Seeker.lowerminigameArenaHideThreePointTwo.transform.position.y, Seeker.hidedPlayerTwo.transform.position.z);
+                    }
+                    seekerStopMovements(2); 
+                    break;
+                case 10:
+                    Seeker.hidedPlayerThreeSelectedHiding = 1;
+                    if (PlayerControl.GameOptions.MapId != 5 || (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerThree.transform.position.y > 0)) {
+                        Seeker.hidedPlayerThree.transform.position = new Vector3(Seeker.minigameArenaHideOnePointThree.transform.position.x, Seeker.minigameArenaHideOnePointThree.transform.position.y, Seeker.hidedPlayerThree.transform.position.z);
+                    }
+                    else if (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerThree.transform.position.y < 0) {
+                        Seeker.hidedPlayerThree.transform.position = new Vector3(Seeker.lowerminigameArenaHideOnePointThree.transform.position.x, Seeker.lowerminigameArenaHideOnePointThree.transform.position.y, Seeker.hidedPlayerThree.transform.position.z);
+                    }
+                    seekerStopMovements(3);
+                    break;
+                case 11:
+                    Seeker.hidedPlayerThreeSelectedHiding = 2;
+                    if (PlayerControl.GameOptions.MapId != 5 || (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerThree.transform.position.y > 0)) {
+                        Seeker.hidedPlayerThree.transform.position = new Vector3(Seeker.minigameArenaHideTwoPointThree.transform.position.x, Seeker.minigameArenaHideTwoPointThree.transform.position.y, Seeker.hidedPlayerThree.transform.position.z);
+                    }
+                    else if (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerThree.transform.position.y < 0) {
+                        Seeker.hidedPlayerThree.transform.position = new Vector3(Seeker.lowerminigameArenaHideTwoPointThree.transform.position.x, Seeker.lowerminigameArenaHideTwoPointThree.transform.position.y, Seeker.hidedPlayerThree.transform.position.z);
+                    }
+                    seekerStopMovements(3); 
+                    break;
+                case 12:
+                    Seeker.hidedPlayerThreeSelectedHiding = 3;
+                    if (PlayerControl.GameOptions.MapId != 5 || (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerThree.transform.position.y > 0)) {
+                        Seeker.hidedPlayerThree.transform.position = new Vector3(Seeker.minigameArenaHideThreePointThree.transform.position.x, Seeker.minigameArenaHideThreePointThree.transform.position.y, Seeker.hidedPlayerThree.transform.position.z);
+                    }
+                    else if (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerThree.transform.position.y < 0) {
+                        Seeker.hidedPlayerThree.transform.position = new Vector3(Seeker.lowerminigameArenaHideThreePointThree.transform.position.x, Seeker.lowerminigameArenaHideThreePointThree.transform.position.y, Seeker.hidedPlayerThree.transform.position.z);
+                    }
+                    seekerStopMovements(3); 
+                    break;
+            }
+            Seeker.howmanyselectedattacks += 1;
+        }
+
+        public static void seekerStopMovements(byte whichHider) {
+            switch (whichHider) {
+                case 1:
+                    Seeker.hidedPlayerOne.moveable = false;
+                    Seeker.hidedPlayerOne.NetTransform.Halt();
+                    break;
+                case 2:
+                    Seeker.hidedPlayerTwo.moveable = false;
+                    Seeker.hidedPlayerTwo.NetTransform.Halt();
+                    break;
+                case 3:
+                    Seeker.hidedPlayerThree.moveable = false;
+                    Seeker.hidedPlayerThree.NetTransform.Halt();
+                    break;
+            }
+        }
+        
+        public static void captainSpecialVote(byte playerid, byte targetid) {
+            if (!MeetingHud.Instance) return;
+            PlayerControl target = Helpers.playerById(targetid);
+            if (target == null) return;
+            Captain.specialVoteTargetPlayerId = targetid;
+            Captain.specialVoteTarget = target;
+            Captain.usedSpecialVote = true;
+            if (Captain.captain.PlayerId != playerid) return;
+            captainAutoCastSpecialVote();
+        }
+
+        public static void captainAutoCastSpecialVote() {
+            if (!MeetingHud.Instance) return;
+            if (Captain.captain != PlayerControl.LocalPlayer) return;
+            PlayerControl target = Helpers.playerById(Captain.specialVoteTargetPlayerId);
+            if (target == null) return;
+            MeetingHud.Instance.CmdCastVote(PlayerControl.LocalPlayer.PlayerId, target.PlayerId);
+        }
+        
         public static void mechanicFixLights() {
             SwitchSystem switchSystem = ShipStatus.Instance.Systems[SystemTypes.Electrical].Cast<SwitchSystem>();
             switchSystem.ActualSwitches = switchSystem.ExpectedSwitches;
         }
 
         public static void mechanicUsedRepair() {
+            SoundManager.Instance.PlaySound(CustomMain.customAssets.mechanicWelderAction, false, 100f);
             if (Mechanic.timesUsedRepairs < Mechanic.numberOfRepairs) {
                 Mechanic.timesUsedRepairs += 1;
                 if (Mechanic.timesUsedRepairs == Mechanic.numberOfRepairs) {
@@ -2302,6 +3410,9 @@ namespace LasMonjas
                     if (Necromancer.necromancer != null && Necromancer.dragginBody) {
                         necromancerResetValues();
                     }
+                    if (TaskMaster.taskMaster != null && player == TaskMaster.taskMaster && TaskMaster.clearedInitialTasks) {
+                        setNewExtraTasks();
+                    }
                     // Reset zoomed out ghosts
                     Helpers.toggleZoom(reset: true);
                 }
@@ -2312,10 +3423,10 @@ namespace LasMonjas
             foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                 if (player.PlayerId == shieldedId)
                     Squire.shielded = player;
-        }
-
+        }        
+        
         public static void shieldedMurderAttempt() {
-            if (Squire.shielded != null && Squire.shielded == PlayerControl.LocalPlayer && Squire.showAttemptToShielded || Squire.showAttemptToShielded && (PlayerControl.LocalPlayer.Data.Role.IsImpostor || Sheriff.sheriff != null && Sheriff.sheriff == PlayerControl.LocalPlayer || Renegade.renegade != null && Renegade.renegade == PlayerControl.LocalPlayer || Minion.minion != null && Minion.minion == PlayerControl.LocalPlayer || BountyHunter.bountyhunter != null && BountyHunter.bountyhunter == PlayerControl.LocalPlayer || Trapper.trapper != null && Trapper.trapper == PlayerControl.LocalPlayer || Yinyanger.yinyanger != null && Yinyanger.yinyanger == PlayerControl.LocalPlayer || Challenger.challenger != null && Challenger.challenger == PlayerControl.LocalPlayer || Ninja.ninja != null && Ninja.ninja == PlayerControl.LocalPlayer || Berserker.berserker != null && Berserker.berserker == PlayerControl.LocalPlayer)) {
+            if (Squire.shielded != null && Squire.shielded == PlayerControl.LocalPlayer && Squire.showAttemptToShielded || Squire.showAttemptToShielded && (PlayerControl.LocalPlayer.Data.Role.IsImpostor || Sheriff.sheriff != null && Sheriff.sheriff == PlayerControl.LocalPlayer || Renegade.renegade != null && Renegade.renegade == PlayerControl.LocalPlayer || Minion.minion != null && Minion.minion == PlayerControl.LocalPlayer || BountyHunter.bountyhunter != null && BountyHunter.bountyhunter == PlayerControl.LocalPlayer || Trapper.trapper != null && Trapper.trapper == PlayerControl.LocalPlayer || Yinyanger.yinyanger != null && Yinyanger.yinyanger == PlayerControl.LocalPlayer || Challenger.challenger != null && Challenger.challenger == PlayerControl.LocalPlayer || Ninja.ninja != null && Ninja.ninja == PlayerControl.LocalPlayer || Berserker.berserker != null && Berserker.berserker == PlayerControl.LocalPlayer || Yandere.yandere != null && Yandere.yandere == PlayerControl.LocalPlayer || Stranded.stranded != null && Stranded.stranded == PlayerControl.LocalPlayer || Monja.monja != null && Monja.monja == PlayerControl.LocalPlayer)) {
                 SoundManager.Instance.PlaySound(CustomMain.customAssets.squireShieldClip, false, 100f);
                 return;
             }
@@ -2380,6 +3491,22 @@ namespace LasMonjas
             FortuneTeller.fortuneTellerRevealButtonText.text = $"{FortuneTeller.numberOfFortunes - FortuneTeller.timesUsedFortune} / {FortuneTeller.numberOfFortunes}";
         }
 
+        public static void hackerAbilityUses(byte value) {
+            if (value == 0) {
+                Hacker.chargesAdminTable--;
+                Hacker.hackerAdminTableChargesText.text = $"{Hacker.chargesAdminTable} / {Hacker.toolsNumber}";
+            }
+            else if (value == 1) {
+                Hacker.chargesVitals--;
+                Hacker.hackerVitalsChargesText.text = $"{Hacker.chargesVitals} / {Hacker.toolsNumber}";
+            }
+            else {
+                Hacker.rechargedTasks += Hacker.rechargeTasksNumber;
+                if (Hacker.toolsNumber > Hacker.chargesVitals) Hacker.chargesVitals++;
+                if (Hacker.toolsNumber > Hacker.chargesAdminTable) Hacker.chargesAdminTable++;
+            }
+        }
+        
         public static void sleuthUsedLocate(byte targetId) {
             Sleuth.usedLocate = true;
             foreach (PlayerControl player in PlayerControl.AllPlayerControls)
@@ -2393,7 +3520,7 @@ namespace LasMonjas
                 if (MapBehaviour.Instance) {
                     MapBehaviour.Instance.Close();
                 }
-                new CustomMessage("Fink is using Hawkeye!", Fink.duration, -1, -1f, 13);
+                new CustomMessage(Language.statusRolesTexts[10], Fink.duration, -1, -1f, 13);
             }
         }
 
@@ -2438,23 +3565,10 @@ namespace LasMonjas
                     if (Necromancer.necromancer != null && Necromancer.necromancer.PlayerId == reviverId) {
                         Necromancer.revivedPlayer = Helpers.playerById(playerId);
                     }
-                    player.Revive();
                     var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == playerId);
-                    if (PlayerControl.GameOptions.MapId == 5) {
-                        if (player.transform.position.y > 0) {
-                            player.transform.position = new Vector3(5.5f, 31.5f, -5);
-                        }
-                        else {
-                            player.transform.position = new Vector3(-4.75f, -33.25f, -5);
-                        }
-                    }
-                    else {
-                        player.transform.position = body.transform.position;
-                    }
-                    DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == playerId).FirstOrDefault();
-                    if (body != null) UnityEngine.Object.Destroy(body.gameObject);
-                    if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
-                    spiritualistPinkScreen(player.PlayerId);
+                    teleportSpiritualistNecromancerBodies(player, body);
+                    
+                    // Check roles that needs reset on revive
                     if (Modifiers.performer != null && player == Modifiers.performer)
                         performerIsReported(1);
                     if (Vigilant.vigilantMira != null && player == Vigilant.vigilantMira)
@@ -2467,127 +3581,51 @@ namespace LasMonjas
                     if (Necromancer.necromancer != null && Necromancer.dragginBody) {
                         necromancerResetValues();
                     }
+                    if (TaskMaster.taskMaster != null && player == TaskMaster.taskMaster && TaskMaster.clearedInitialTasks) {
+                        setNewExtraTasks();
+                    }
+
                     // Check lovers, revive lover2 or lover1 too
                     if (player == Modifiers.lover1) {
                         PlayerControl lovertwo = Modifiers.lover2;
-                        lovertwo.Revive();
                         var bodytwo = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == lovertwo.PlayerId);
-                        if (PlayerControl.GameOptions.MapId == 5) {
-                            if (lovertwo.transform.position.y > 0) {
-                                lovertwo.transform.position = new Vector3(5.5f, 31.5f, -5);
-                            }
-                            else {
-                                lovertwo.transform.position = new Vector3(-4.75f, -33.25f, -5);
-                            }
-                        }
-                        else {
-                            lovertwo.transform.position = bodytwo.transform.position;
-                        }
-                        DeadPlayer deadPlayerEntrytwo = deadPlayers.Where(x => x.player.PlayerId == lovertwo.PlayerId).FirstOrDefault();
-                        if (bodytwo != null) UnityEngine.Object.Destroy(bodytwo.gameObject);
-                        if (deadPlayerEntrytwo != null) deadPlayers.Remove(deadPlayerEntrytwo);
-                        spiritualistPinkScreen(lovertwo.PlayerId);
-                        if (Modifiers.performer != null && player == Modifiers.performer)
-                            performerIsReported(1);
-                        if (Vigilant.vigilantMira != null && player == Vigilant.vigilantMira)
-                            vigilantMiraRestoreDoorlogItem();
-                        if (Hunter.hunter != null && player == Hunter.hunter)
-                            Hunter.resetHunted();
-                        if (Janitor.janitor != null && Janitor.dragginBody) {
-                            janitorResetValues();
-                        }
-                        if (Necromancer.necromancer != null && Necromancer.dragginBody) {
-                            necromancerResetValues();
-                        }
+                        teleportSpiritualistNecromancerBodies(lovertwo, bodytwo);                        
                     }
                     else if (player == Modifiers.lover2) {
                         PlayerControl loverone = Modifiers.lover1;
-                        loverone.Revive();
-                        var bodytwo = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == loverone.PlayerId);
-                        if (PlayerControl.GameOptions.MapId == 5) {
-                            if (loverone.transform.position.y > 0) {
-                                loverone.transform.position = new Vector3(5.5f, 31.5f, -5);
-                            }
-                            else {
-                                loverone.transform.position = new Vector3(-4.75f, -33.25f, -5);
-                            }
-                        }
-                        else {
-                            loverone.transform.position = bodytwo.transform.position;
-                        }
-                        DeadPlayer deadPlayerEntrytwo = deadPlayers.Where(x => x.player.PlayerId == loverone.PlayerId).FirstOrDefault();
-                        if (bodytwo != null) UnityEngine.Object.Destroy(bodytwo.gameObject);
-                        if (deadPlayerEntrytwo != null) deadPlayers.Remove(deadPlayerEntrytwo);
-                        spiritualistPinkScreen(loverone.PlayerId);
-                        if (Modifiers.performer != null && player == Modifiers.performer)
-                            performerIsReported(1);
-                        if (Vigilant.vigilantMira != null && player == Vigilant.vigilantMira)
-                            vigilantMiraRestoreDoorlogItem();
-                        if (Hunter.hunter != null && player == Hunter.hunter)
-                            Hunter.resetHunted();
-                        if (Janitor.janitor != null && Janitor.dragginBody) {
-                            janitorResetValues();
-                        }
-                        if (Necromancer.necromancer != null && Necromancer.dragginBody) {
-                            necromancerResetValues();
-                        }
+                        var bodyone = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == loverone.PlayerId);
+                        teleportSpiritualistNecromancerBodies(loverone, bodyone);                                               
                     }
 
                     // Check bountyhunter kill and revive bountyhunter
                     if (player == BountyHunter.hasToKill) {
                         PlayerControl bountyhunter = BountyHunter.bountyhunter;
-                        bountyhunter.Revive();
                         var bodybountyhunter = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == bountyhunter.PlayerId);
-                        if (PlayerControl.GameOptions.MapId == 5) {
-                            if (bountyhunter.transform.position.y > 0) {
-                                bountyhunter.transform.position = new Vector3(5.5f, 31.5f, -5);
-                            }
-                            else {
-                                bountyhunter.transform.position = new Vector3(-4.75f, -33.25f, -5);
-                            }
-                        }
-                        else {
-                            bountyhunter.transform.position = bodybountyhunter.transform.position;
-                        }
-                        DeadPlayer deadPlayerEntrytwo = deadPlayers.Where(x => x.player.PlayerId == bountyhunter.PlayerId).FirstOrDefault();
-                        if (bodybountyhunter != null) UnityEngine.Object.Destroy(bodybountyhunter.gameObject);
-                        if (deadPlayerEntrytwo != null) deadPlayers.Remove(deadPlayerEntrytwo);
-                        spiritualistPinkScreen(bountyhunter.PlayerId);
-                        if (Modifiers.performer != null && player == Modifiers.performer)
-                            performerIsReported(1);
-                        if (Vigilant.vigilantMira != null && player == Vigilant.vigilantMira)
-                            vigilantMiraRestoreDoorlogItem();
-                        if (Hunter.hunter != null && player == Hunter.hunter)
-                            Hunter.resetHunted();
-                        if (Janitor.janitor != null && Janitor.dragginBody) {
-                            janitorResetValues();
-                        }
-                        if (Necromancer.necromancer != null && Necromancer.dragginBody) {
-                            necromancerResetValues();
-                        }
+                        teleportSpiritualistNecromancerBodies(bountyhunter, bodybountyhunter);                        
                     }
 
                     // Check bountyhunter and try reviving their target
                     if (player == BountyHunter.bountyhunter) {
                         if (BountyHunter.hasToKill != null && BountyHunter.hasToKill.Data.IsDead) {
                             PlayerControl bountytarget = BountyHunter.hasToKill;
-                            bountytarget.Revive();
                             var bodybountytarget = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == bountytarget.PlayerId);
-                            if (PlayerControl.GameOptions.MapId == 5) {
-                                if (bountytarget.transform.position.y > 0) {
-                                    bountytarget.transform.position = new Vector3(5.5f, 31.5f, -5);
-                                }
-                                else {
-                                    bountytarget.transform.position = new Vector3(-4.75f, -33.25f, -5);
-                                }
-                            }
-                            else {
-                                bountytarget.transform.position = bodybountytarget.transform.position;
-                            }
-                            DeadPlayer deadPlayerEntrytwo = deadPlayers.Where(x => x.player.PlayerId == bountytarget.PlayerId).FirstOrDefault();
-                            if (bodybountytarget != null) UnityEngine.Object.Destroy(bodybountytarget.gameObject);
-                            if (deadPlayerEntrytwo != null) deadPlayers.Remove(deadPlayerEntrytwo);
-                            spiritualistPinkScreen(bountytarget.PlayerId);
+                            teleportSpiritualistNecromancerBodies(bountytarget, bodybountytarget);                        
+                        }
+                    }
+
+                    // Check exiler target and revive exiler
+                    if (player == Exiler.target) {
+                        PlayerControl exilerPlayer = Exiler.exiler;
+                        var bodyExilerPlayer = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == exilerPlayer.PlayerId);
+                        teleportSpiritualistNecromancerBodies(exilerPlayer, bodyExilerPlayer);                       
+                    }
+                    
+                    // Check exiler and try reviving their target
+                    if (player == Exiler.exiler) {
+                        if (Exiler.target != null && Exiler.target.Data.IsDead) {
+                            PlayerControl exilerTarget = Exiler.target;
+                            var bodyexilerTarget = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == exilerTarget.PlayerId);
+                            teleportSpiritualistNecromancerBodies(exilerTarget, bodyexilerTarget);                  
                         }
                     }
                 }
@@ -2598,7 +3636,11 @@ namespace LasMonjas
 
             if (Spiritualist.spiritualist != null && Spiritualist.spiritualist.PlayerId == reviverId) {
                 Spiritualist.preventReport = true;
-                murderSpiritualistIfReportWhileReviving();
+                HudManager.Instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) => { // Delayed action
+                    if (p == 1f) {
+                        murderSpiritualistIfReportWhileReviving();
+                    }
+                }))); 
                 HudManager.Instance.StartCoroutine(Effects.Lerp(0.5f, new Action<float>((p) => { // Delayed action
                     if (p == 1f) {
                         removeBody(Spiritualist.spiritualist.PlayerId);
@@ -2610,7 +3652,7 @@ namespace LasMonjas
 
         public static void spiritualistPinkScreen(byte playerId) {
             foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                if (PlayerControl.LocalPlayer.Data.Role.IsImpostor || Renegade.renegade != null && Renegade.renegade == PlayerControl.LocalPlayer || Minion.minion != null && Minion.minion == PlayerControl.LocalPlayer || BountyHunter.bountyhunter != null && BountyHunter.bountyhunter == PlayerControl.LocalPlayer || Trapper.trapper != null && Trapper.trapper == PlayerControl.LocalPlayer || Yinyanger.yinyanger != null && Yinyanger.yinyanger == PlayerControl.LocalPlayer || Challenger.challenger != null && Challenger.challenger == PlayerControl.LocalPlayer || Ninja.ninja != null && Ninja.ninja == PlayerControl.LocalPlayer || Berserker.berserker != null && Berserker.berserker == PlayerControl.LocalPlayer) {
+                if (PlayerControl.LocalPlayer.Data.Role.IsImpostor || Renegade.renegade != null && Renegade.renegade == PlayerControl.LocalPlayer || Minion.minion != null && Minion.minion == PlayerControl.LocalPlayer || BountyHunter.bountyhunter != null && BountyHunter.bountyhunter == PlayerControl.LocalPlayer || Trapper.trapper != null && Trapper.trapper == PlayerControl.LocalPlayer || Yinyanger.yinyanger != null && Yinyanger.yinyanger == PlayerControl.LocalPlayer || Challenger.challenger != null && Challenger.challenger == PlayerControl.LocalPlayer || Ninja.ninja != null && Ninja.ninja == PlayerControl.LocalPlayer || Berserker.berserker != null && Berserker.berserker == PlayerControl.LocalPlayer || Yandere.yandere != null && Yandere.yandere == PlayerControl.LocalPlayer || Stranded.stranded != null && Stranded.stranded == PlayerControl.LocalPlayer || Monja.monja != null && Monja.monja == PlayerControl.LocalPlayer) {
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
                 }
                 if (player.PlayerId == playerId && playerId == PlayerControl.LocalPlayer.PlayerId) {
@@ -2649,6 +3691,25 @@ namespace LasMonjas
             resetSpiritualistReviveButton();
         }
 
+        public static void teleportSpiritualistNecromancerBodies(PlayerControl player, DeadBody body) {
+            player.Revive();
+            if (PlayerControl.GameOptions.MapId == 5) {
+                if (player.transform.position.y > 0) {
+                    player.transform.position = new Vector3(5.5f, 31.5f, -5);
+                }
+                else {
+                    player.transform.position = new Vector3(-4.75f, -33.25f, -5);
+                }
+            }
+            else {
+                player.transform.position = body.transform.position;
+            }
+            DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == player.PlayerId).FirstOrDefault();
+            if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
+            if (body != null) UnityEngine.Object.Destroy(body.gameObject);
+            spiritualistPinkScreen(player.PlayerId);
+        }
+        
         public static void cowardUsedCall() {
             if (Coward.timesUsedCalls < Coward.numberOfCalls) {
                 Coward.timesUsedCalls += 1;
@@ -2688,28 +3749,32 @@ namespace LasMonjas
             Vigilant.vigilantButtonCameraText.text = $"{Vigilant.remainingCameras} / {Vigilant.totalCameras}";
         }
 
+        public static void vigilantAbilityUses(byte value) {
+            if (value == 0) {
+                Vigilant.charges--;
+                Vigilant.vigilantButtonCameraUsesText.text = $"{Vigilant.charges} / {Vigilant.maxCharges}";
+            }
+            else {
+                Vigilant.rechargedTasks += Vigilant.rechargeTasksNumber;
+                if (Vigilant.maxCharges > Vigilant.charges) Vigilant.charges++;
+            }
+        }
+
         public static void vigilantMiraRestoreDoorlogItem() {
             // Vigilant restore doorlog item when revive
             if (Vigilant.vigilantMira != null && PlayerControl.LocalPlayer == Vigilant.vigilantMira) {
                 Vigilant.doorLog.SetActive(true);
             }
-        }
-
-        public static void performerIsReported(byte check) {
-            if (check == 0) {
-                Modifiers.performerReported = true;
-            }
-            else {
-                Modifiers.performerReported = false;
-            }
-            SoundManager.Instance.StopSound(CustomMain.customAssets.performerMusic);
-        }
+        }        
 
         public static void hunterUsedHunted(byte targetId) {
             Hunter.usedHunted = true;
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
-                if (player.PlayerId == targetId)
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                if (player.PlayerId == targetId) {
                     Hunter.hunted = player;
+                }
+            }
+            Hunter.targetButtonText.text = $"{Hunter.hunted.name}";
         }
 
         public static void setJinxed(byte playerId, byte value) {
@@ -2721,34 +3786,7 @@ namespace LasMonjas
                 Jinx.jinxs++;
                 Jinx.jinxButtonJinxsText.text = $"{Jinx.jinxNumber - Jinx.jinxs} / {Jinx.jinxNumber}";
             }
-        }
-
-        public static void hackerAbilityUses(byte value) {
-            if (value == 0) {
-                Hacker.chargesAdminTable--;
-                Hacker.hackerAdminTableChargesText.text = $"{Hacker.chargesAdminTable} / {Hacker.toolsNumber}";
-            }
-            else if (value == 1) {
-                Hacker.chargesVitals--;
-                Hacker.hackerVitalsChargesText.text = $"{Hacker.chargesVitals} / {Hacker.toolsNumber}";
-            }
-            else {
-                Hacker.rechargedTasks += Hacker.rechargeTasksNumber;
-                if (Hacker.toolsNumber > Hacker.chargesVitals) Hacker.chargesVitals++;
-                if (Hacker.toolsNumber > Hacker.chargesAdminTable) Hacker.chargesAdminTable++;
-            }
-        }
-
-        public static void vigilantAbilityUses(byte value) {
-            if (value == 0) {
-                Vigilant.charges--;
-                Vigilant.vigilantButtonCameraUsesText.text = $"{Vigilant.charges} / {Vigilant.maxCharges}";
-            }
-            else {
-                Vigilant.rechargedTasks += Vigilant.rechargeTasksNumber;
-                if (Vigilant.maxCharges > Vigilant.charges) Vigilant.charges++;
-            }
-        }
+        }             
 
         public static void batFrequency() {
             if (Bat.bat == null) return;
@@ -2762,11 +3800,14 @@ namespace LasMonjas
                 Necromancer.dragginBody = false;
                 Necromancer.bodyId = 0;
             }
-        }
+        }        
 
-        public static void placeEngineerTrap(byte trapType) {
+        public static void placeEngineerTrap(byte trapType, byte[] buff) {
+            Vector3 position = Vector3.zero;
+            position.x = BitConverter.ToSingle(buff, 0 * sizeof(float));
+            position.y = BitConverter.ToSingle(buff, 1 * sizeof(float));
             Engineer.currentTrapNumber += 1;
-            new EngineerTrap(Engineer.trapsDuration, Engineer.engineer, trapType);
+            new EngineerTrap(Engineer.trapsDuration, position, trapType);
             if (!Engineer.savedOldSpeed) {
                 if (PlayerControl.LocalPlayer) {
                     Engineer.oldSpeed = PlayerControl.LocalPlayer.MyPhysics.Speed;
@@ -2833,9 +3874,142 @@ namespace LasMonjas
             }
         }
 
+        public static void setNewExtraTasks() {
+            byte[] taskTypeIds = TasksHandler.GetTaskMasterTasks(TaskMaster.taskMaster);
+            taskMasterSetExTasks(TaskMaster.taskMaster.PlayerId, byte.MaxValue, taskTypeIds);
+        }
+
+        public static void taskMasterSetExTasks(byte playerId, byte oldTaskMasterPlayerId, byte[] taskTypeIds) {
+            PlayerControl oldTaskMasterPlayer = Helpers.playerById(oldTaskMasterPlayerId);
+            if (oldTaskMasterPlayer != null) {
+                oldTaskMasterPlayer.clearAllTasks();
+                TaskMaster.oldTaskMasterPlayerId = oldTaskMasterPlayerId;
+            }
+
+            GameData.PlayerInfo player = GameData.Instance.GetPlayerById(playerId);
+            if (player == null)
+                return;
+
+            if (taskTypeIds != null && taskTypeIds.Length > 0) {
+                player.Object.clearAllTasks();
+                player.Tasks = new Il2CppSystem.Collections.Generic.List<GameData.TaskInfo>(taskTypeIds.Length);
+                for (int i = 0; i < taskTypeIds.Length; i++) {
+                    player.Tasks.Add(new GameData.TaskInfo(taskTypeIds[i], (uint)i));
+                    player.Tasks[i].Id = (uint)i;
+                }
+                for (int i = 0; i < player.Tasks.Count; i++) {
+                    GameData.TaskInfo taskInfo = player.Tasks[i];
+                    NormalPlayerTask normalPlayerTask = UnityEngine.Object.Instantiate(ShipStatus.Instance.GetTaskById(taskInfo.TypeId), player.Object.transform);
+                    normalPlayerTask.Id = taskInfo.Id;
+                    normalPlayerTask.Owner = player.Object;
+                    normalPlayerTask.Initialize();
+                    player.Object.myTasks.Add(normalPlayerTask);
+                }
+                TaskMaster.clearedInitialTasks = true;
+            }
+            else {
+                TaskMaster.clearedInitialTasks = false;
+            }
+        }
+
+        public static void taskMasterTriggerCrewWin() {
+            if (TaskMaster.taskMaster == null) return;
+            TaskMaster.triggerTaskMasterCrewWin = true;
+        }
+
+        public static void taskMasterActivateSpeed() {
+            TaskMaster.taskTimer = TaskMaster.duration;
+        }
+
+        public static void jailedSetJailed(byte jailedId) {
+            Jailer.usedJail = true;
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                if (player.PlayerId == jailedId) {
+                    Jailer.jailedPlayer = player;
+                }
+            }
+            Jailer.jailButtonText.text = $"{Jailer.jailedPlayer.name}";
+        }
+        public static void prisonPlayer(byte prisonerId) {
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                if (player.PlayerId == prisonerId) {
+                    if (PlayerControl.LocalPlayer == player) {
+                        SoundManager.Instance.PlaySound(CustomMain.customAssets.jailerJail, false, 100f);
+                    }
+                    if (Ninja.ninja != null && player.PlayerId == Ninja.ninja.PlayerId) {
+                        Ninja.markedTarget = null;
+                    }
+                    var oldPos = player.transform.position;
+                    Jailer.prisonPlayer = player;
+                    Jailer.jailedPlayer = null;
+                    switch (PlayerControl.GameOptions.MapId) {
+                        // Skeld
+                        case 0:
+                            if (activatedSensei) {
+                                player.transform.position = new Vector3(-12f, 7.15f, player.transform.position.z);
+                            }
+                            else {
+                                player.transform.position = new Vector3(-10.2f, 3.6f, player.transform.position.z);
+                            }
+                            break;
+                        // MiraHQ
+                        case 1:
+                            player.transform.position = new Vector3(1.8f, 1.25f, player.transform.position.z);
+                            break;
+                        // Polus
+                        case 2:
+                            player.transform.position = new Vector3(8.25f, -5f, player.transform.position.z);
+                            break;
+                        // Dleks
+                        case 3:
+                            player.transform.position = new Vector3(10.2f, 3.6f, player.transform.position.z);
+                            break;
+                        // Airship
+                        case 4:
+                            player.transform.position = new Vector3(-18.5f, 3.5f, player.transform.position.z);
+                            break;
+                        // Submerged
+                        case 5:
+                            if (player.transform.position.y > 0) {
+                                player.transform.position = new Vector3(-15.25f, 28.4f, player.transform.position.z);
+                            }
+                            else {
+                                player.transform.position = new Vector3(-1.15f, -21f, player.transform.position.z);
+                            }
+                            break;
+                    }
+                    HudManager.Instance.StartCoroutine(Effects.Lerp(Jailer.prisonDuration, new Action<float>((p) => {
+
+                        if (p == 1f && Jailer.prisonPlayer != null && !Challenger.isDueling && !Seeker.isMinigaming) {
+                            if (MeetingHud.Instance == null && !Jailer.prisonPlayer.Data.IsDead) {
+                                Jailer.prisonPlayer.transform.position = oldPos;
+                            }
+                            Jailer.prisonPlayer = null;
+                            Jailer.usedJail = false;
+                            jailerJailButton.Timer = jailerJailButton.MaxTimer;
+                            Jailer.jailButtonText.text = $" ";
+                        }
+
+                    })));
+                }
+            }
+        }
+
+        public static void performerIsReported(byte check) {
+            if (check == 0) {
+                Modifiers.performerReported = true;
+            }
+            else {
+                Modifiers.performerReported = false;
+            }
+            SoundManager.Instance.StopSound(CustomMain.customAssets.performerMusic);
+        }
+        
         public static void changeMusic(byte whichmusic) {
             SoundManager.Instance.StopSound(CustomMain.customAssets.bombermanBombMusic);
             SoundManager.Instance.StopSound(CustomMain.customAssets.challengerDuelMusic);
+            SoundManager.Instance.StopSound(CustomMain.customAssets.seekerMinigameMusic);
+            SoundManager.Instance.StopSound(CustomMain.customAssets.monjaAwakeMusic);
             if (MapOptions.activateMusic && howmanygamemodesareon != 1) {
                 int alivePlayers = 0;
                 int totalPlayers = 0;
@@ -2905,6 +4079,519 @@ namespace LasMonjas
             }
         }
 
+        public static void whoWasI(byte playerId, string roleName) {
+            whoAmIButton.Timer = 1f;
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                if (player.PlayerId == playerId) {
+                    GameObject roleToHide = GameObject.Find(roleName);
+                    roleToHide.transform.position = new Vector3(100, 100, 0);
+                    switch (roleName) {
+                        // Crewmates
+                        case "captainRole":
+                            Captain.captain = player;
+                            break;
+                        case "mechanicRole":
+                            Mechanic.mechanic = player;
+                            break;
+                        case "sheriffRole":
+                            Sheriff.sheriff = player;
+                            break;
+                        case "detectiveRole":
+                            Detective.detective = player;
+                            break;
+                        case "forensicRole":
+                            Forensic.forensic = player;
+                            break;
+                        case "timetravelerRole":
+                            TimeTraveler.timeTraveler = player;
+                            if (player == PlayerControl.LocalPlayer) {
+                                switch (PlayerControl.GameOptions.MapId) {
+                                    case 2:
+                                        GameObject polusvitals = GameObject.Find("panel_vitals");
+                                        polusvitals.GetComponent<BoxCollider2D>().enabled = false;
+                                        break;
+                                    case 4:
+                                        GameObject airshipvitals = GameObject.Find("panel_vitals");
+                                        airshipvitals.GetComponent<CircleCollider2D>().enabled = false;
+                                        break;
+                                    case 5:
+                                        GameObject submergedvitals = GameObject.Find("panel_vitals(Clone)");
+                                        submergedvitals.GetComponent<CircleCollider2D>().enabled = false;
+                                        break;
+                                }
+                            }
+                            break;
+                        case "squireRole":
+                            Squire.squire = player;
+                            break;
+                        case "cheaterRole":
+                            Cheater.cheater = player;
+                            break;
+                        case "fortunetellerRole":
+                            FortuneTeller.fortuneTeller = player;
+                            break;
+                        case "hackerRole":
+                            Hacker.hacker = player;
+                            break;
+                        case "sleuthRole":
+                            Sleuth.sleuth = player;
+                            break;
+                        case "finkRole":
+                            Fink.fink = player;
+                            break;
+                        case "kidRole":
+                            Kid.kid = player;
+                            break;
+                        case "welderRole":
+                            Welder.welder = player;
+                            break;
+                        case "spiritualistRole":
+                            Spiritualist.spiritualist = player;
+                            break;
+                        case "vigilantRole":
+                            if (PlayerControl.GameOptions.MapId == 1 && player == PlayerControl.LocalPlayer) {
+                                Vigilant.vigilantMira = player;
+                                GameObject vigilantDoorLog = GameObject.Find("SurvLogConsole");
+                                Vigilant.doorLog = GameObject.Instantiate(vigilantDoorLog, Vigilant.vigilantMira.transform);
+                                Vigilant.doorLog.name = "VigilantDoorLog";
+                                Vigilant.doorLog.layer = 8; // Assign player layer to ignore collisions
+                                Vigilant.doorLog.GetComponent<SpriteRenderer>().enabled = false;
+                                Vigilant.doorLog.transform.localPosition = new Vector2(0, -0.5f);
+                            } else {
+                                Vigilant.vigilant = player;
+                            }
+                            break;
+                        case "hunterRole":
+                            Hunter.hunter = player;
+                            break;
+                        case "jinxRole":
+                            Jinx.jinx = player;
+                            break;
+                        case "cowardRole":
+                            Coward.coward = player;
+                            break;
+                        case "batRole":
+                            Bat.bat = player;
+                            break;
+                        case "necromancerRole":
+                            Necromancer.necromancer = player;
+                            break;
+                        case "engineerRole":
+                            Engineer.engineer = player;
+                            break;
+                        case "shyRole":
+                            Shy.shy = player;
+                            break;
+                        case "taskmasterRole":
+                            TaskMaster.taskMaster = player;
+                            break;
+                        case "jailerRole":
+                            Jailer.jailer = player;
+                            GameObject cell = GameObject.Instantiate(CustomMain.customAssets.cell, PlayerControl.LocalPlayer.transform.parent);
+                            cell.name = "cell";
+                            cell.gameObject.layer = 9;
+                            cell.transform.GetChild(0).gameObject.layer = 9;
+
+                            switch (PlayerControl.GameOptions.MapId) {
+                                case 0:
+                                    if (activatedSensei) {
+                                        cell.transform.position = new Vector3(-12f, 7.2f, 0.5f);
+                                    }
+                                    else {
+                                        cell.transform.position = new Vector3(-10.25f, 3.38f, 0.5f);
+                                    }
+                                    break;
+                                case 1:
+                                    cell.transform.position = new Vector3(1.75f, 1.125f, 0.5f);
+                                    break;
+                                case 2:
+                                    cell.transform.position = new Vector3(8.25f, -5.15f, 0.5f);
+                                    break;
+                                case 3:
+                                    cell.transform.position = new Vector3(10.25f, 3.38f, 0.5f);
+                                    break;
+                                case 4:
+                                    cell.transform.position = new Vector3(-18.45f, 3.55f, 0.5f);
+                                    break;
+                                case 5:
+                                    cell.transform.position = new Vector3(-15.25f, 28.4f, 0.5f);
+                                    // Create another jail on submerged lower floor
+                                    GameObject celltwo = GameObject.Instantiate(CustomMain.customAssets.cell, PlayerControl.LocalPlayer.transform.parent);
+                                    celltwo.name = "cell_lower";
+                                    celltwo.transform.position = new Vector3(-1.15f, -21f, -0.01f);
+                                    celltwo.gameObject.layer = 9;
+                                    celltwo.transform.GetChild(0).gameObject.layer = 9;
+                                    break;
+                            }
+                            break;
+
+                        // Impostors
+                        case "mimicRole":
+                            Mimic.mimic = player;
+                            break;
+                        case "painterRole":
+                            Painter.painter = player;
+                            break;
+                        case "demonRole":
+                            Demon.demon = player;
+                            break;
+                        case "janitorRole":
+                            Janitor.janitor = player;
+                            break;
+                        case "illusionistRole":
+                            Illusionist.illusionist = player;
+                            break;
+                        case "manipulatorRole":
+                            Manipulator.manipulator = player;
+                            break;
+                        case "bombermanRole":
+                            Bomberman.bomberman = player;
+                            break;
+                        case "chameleonRole":
+                            Chameleon.chameleon = player;
+                            if (PlayerControl.LocalPlayer == player && PlayerControl.GameOptions.MapId == 5) {
+                                GameObject vent = GameObject.Find("LowerCentralVent");
+                                vent.GetComponent<BoxCollider2D>().enabled = false;
+                            }
+                            break;
+                        case "gamblerRole":
+                            Gambler.gambler = player;
+                            break;
+                        case "sorcererRole":
+                            Sorcerer.sorcerer = player;
+                            break;
+                        case "medusaRole":
+                            Medusa.medusa = player;
+                            break;
+                        case "hypnotistRole":
+                            Hypnotist.hypnotist = player;
+                            if (PlayerControl.LocalPlayer == player) {
+                                switch (PlayerControl.GameOptions.MapId) {
+                                    case 0:
+                                        GameObject skeldMedScanner = GameObject.Find("MedScanner");
+                                        Hypnotist.objectsCantPlaceTraps.Add(skeldMedScanner);
+                                        break;
+                                    case 1:
+                                        GameObject miraMedScanner = GameObject.Find("MedScanner");
+                                        Hypnotist.objectsCantPlaceTraps.Add(miraMedScanner);
+                                        break;
+                                    case 2:
+                                        GameObject polusMedScanner = GameObject.Find("panel_medplatform");
+                                        Hypnotist.objectsCantPlaceTraps.Add(polusMedScanner);
+                                        break;
+                                    case 3:
+                                        GameObject dleksMedScanner = GameObject.Find("MedScanner");
+                                        Hypnotist.objectsCantPlaceTraps.Add(dleksMedScanner);
+                                        break;
+                                    case 4:
+                                        GameObject airshipMeetingLadderTop = GameObject.Find("Airship(Clone)/MeetingRoom/ladder_meeting/LadderTop");
+                                        GameObject airshipMeetingLadderBottom = GameObject.Find("Airship(Clone)/MeetingRoom/ladder_meeting/LadderBottom");
+                                        GameObject airshipPlatformLeft = GameObject.Find("PlatformLeft");
+                                        GameObject airshipPlatformRight = GameObject.Find("PlatformRight");
+                                        GameObject airshipgapLadderTop = GameObject.Find("Airship(Clone)/GapRoom/ladder_gap/LadderTop");
+                                        GameObject airshipgapLadderBottom = GameObject.Find("Airship(Clone)/GapRoom/ladder_gap/LadderBottom");
+                                        GameObject airshipelectricalLadderTop = GameObject.Find("Airship(Clone)/HallwayMain/ladder_electrical/LadderTop");
+                                        GameObject airshipelectricalLadderBottom = GameObject.Find("Airship(Clone)/HallwayMain/ladder_electrical/LadderBottom");
+                                        Hypnotist.objectsCantPlaceTraps.Add(airshipMeetingLadderTop);
+                                        Hypnotist.objectsCantPlaceTraps.Add(airshipMeetingLadderBottom);
+                                        Hypnotist.objectsCantPlaceTraps.Add(airshipPlatformLeft);
+                                        Hypnotist.objectsCantPlaceTraps.Add(airshipPlatformRight);
+                                        Hypnotist.objectsCantPlaceTraps.Add(airshipgapLadderTop);
+                                        Hypnotist.objectsCantPlaceTraps.Add(airshipgapLadderBottom);
+                                        Hypnotist.objectsCantPlaceTraps.Add(airshipelectricalLadderTop);
+                                        Hypnotist.objectsCantPlaceTraps.Add(airshipelectricalLadderBottom);
+                                        break;
+                                    case 5:
+                                        GameObject submergedMedScanner = GameObject.Find("console_medscan");
+                                        Hypnotist.objectsCantPlaceTraps.Add(submergedMedScanner);
+                                        break;
+                                }
+                            }
+                            break;
+                        case "archerRole":
+                            Archer.archer = player;
+                            break;
+                        case "plumberRole":
+                            Plumber.plumber = player;
+                            break;
+                        case "librarianRole":
+                            Librarian.librarian = player;
+                            break;
+
+                        // Neutrals:
+                        case "jokerRole":
+                            Joker.joker = player;
+                            hideWhoWasIBoxesForEveryone(true);
+                            break;
+                        case "pyromaniacRole":
+                            Pyromaniac.pyromaniac = player;
+                            if (PlayerControl.LocalPlayer == player) {
+                                int visibleCounter = 0;
+                                Vector3 bottomLeft = new Vector3(-HudManager.Instance.UseButton.transform.localPosition.x, HudManager.Instance.UseButton.transform.localPosition.y, HudManager.Instance.UseButton.transform.localPosition.z);
+                                bottomLeft += new Vector3(-0.25f, -0.25f, 0);
+                                foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
+                                    if (!MapOptions.playerIcons.ContainsKey(p.PlayerId)) continue;
+                                    if (p.Data.IsDead || p.Data.Disconnected || p == Pyromaniac.pyromaniac) {
+                                        MapOptions.playerIcons[p.PlayerId].gameObject.SetActive(false);
+                                    }
+                                    else {
+                                        MapOptions.playerIcons[p.PlayerId].gameObject.SetActive(true);
+                                        MapOptions.playerIcons[p.PlayerId].setSemiTransparent(true);
+                                        MapOptions.playerIcons[p.PlayerId].transform.localPosition = bottomLeft + Vector3.right * visibleCounter * 0.35f;
+                                        MapOptions.playerIcons[p.PlayerId].transform.localScale = Vector3.one * 0.2f;
+                                        visibleCounter++; 
+                                    }
+                                }
+                            }                            
+                            hideWhoWasIBoxesForEveryone(true);
+                            break;
+                        case "treasurehunterRole":
+                            TreasureHunter.treasureHunter = player;
+                            hideWhoWasIBoxesForEveryone(true);
+                            break;
+                        case "devourerRole":
+                            Devourer.devourer = player;
+                            hideWhoWasIBoxesForEveryone(true);
+                            break;
+                        case "poisonerRole":
+                            Poisoner.poisoner = player;
+                            if (PlayerControl.LocalPlayer == player) {
+                                int visibleCounter = 0;
+                                Vector3 bottomLeft = new Vector3(-HudManager.Instance.UseButton.transform.localPosition.x, HudManager.Instance.UseButton.transform.localPosition.y, HudManager.Instance.UseButton.transform.localPosition.z);
+                                bottomLeft += new Vector3(-0.25f, -0.25f, 0);
+                                foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
+                                    if (!MapOptions.playerIcons.ContainsKey(p.PlayerId)) continue;
+                                    if (p.Data.IsDead || p.Data.Disconnected || p == Poisoner.poisoner) {
+                                        MapOptions.playerIcons[p.PlayerId].gameObject.SetActive(false);
+                                    }
+                                    else {
+                                        MapOptions.playerIcons[p.PlayerId].gameObject.SetActive(true);
+                                        MapOptions.playerIcons[p.PlayerId].setSemiTransparent(true);
+                                        MapOptions.playerIcons[p.PlayerId].transform.localPosition = bottomLeft + Vector3.right * visibleCounter * 0.35f;
+                                        MapOptions.playerIcons[p.PlayerId].transform.localScale = Vector3.one * 0.2f; visibleCounter++;
+                                    }
+                                }
+                            }
+                            hideWhoWasIBoxesForEveryone(true);
+                            break;
+                        case "puppeteerRole":
+                            Puppeteer.puppeteer = player;
+                            hideWhoWasIBoxesForEveryone(true);
+                            break;
+                        case "exilerRole":
+                            Exiler.exiler = player;
+                            hideWhoWasIBoxesForEveryone(true);
+                            break;
+                        case "seekerRole":
+                            Seeker.seeker = player;
+                            GameObject seekerArena = GameObject.Instantiate(CustomMain.customAssets.seekerArena, PlayerControl.LocalPlayer.transform.parent);
+                            seekerArena.name = "seekerArena";
+                            seekerArena.transform.position = new Vector3(-40, 0f, 1f);
+                            Seeker.minigameArenaHideOnePointOne = seekerArena.transform.GetChild(0).transform.GetChild(0).gameObject;
+                            Seeker.minigameArenaHideOnePointOne.transform.parent.transform.position = Seeker.minigameArenaHideOnePointOne.transform.parent.transform.position + new Vector3(0, 0, -2);
+                            Seeker.minigameArenaHideOnePointTwo = seekerArena.transform.GetChild(0).transform.GetChild(1).gameObject;
+                            Seeker.minigameArenaHideOnePointThree = seekerArena.transform.GetChild(0).transform.GetChild(2).gameObject;
+                            Seeker.minigameArenaHideTwoPointOne = seekerArena.transform.GetChild(1).transform.GetChild(0).gameObject;
+                            Seeker.minigameArenaHideTwoPointOne.transform.parent.transform.position = Seeker.minigameArenaHideTwoPointOne.transform.parent.transform.position + new Vector3(0, 0, -2);
+                            Seeker.minigameArenaHideTwoPointTwo = seekerArena.transform.GetChild(1).transform.GetChild(1).gameObject;
+                            Seeker.minigameArenaHideTwoPointThree = seekerArena.transform.GetChild(1).transform.GetChild(2).gameObject;
+                            Seeker.minigameArenaHideThreePointOne = seekerArena.transform.GetChild(2).transform.GetChild(0).gameObject;
+                            Seeker.minigameArenaHideThreePointOne.transform.parent.transform.position = Seeker.minigameArenaHideThreePointOne.transform.parent.transform.position + new Vector3(0, 0, -2);
+                            Seeker.minigameArenaHideThreePointTwo = seekerArena.transform.GetChild(2).transform.GetChild(1).gameObject;
+                            Seeker.minigameArenaHideThreePointThree = seekerArena.transform.GetChild(2).transform.GetChild(2).gameObject;
+                            if (PlayerControl.GameOptions.MapId == 5) { // Create another duel arena on submerged lower floor
+                                GameObject lowerseekerArena = GameObject.Instantiate(CustomMain.customAssets.seekerArena, PlayerControl.LocalPlayer.transform.parent);
+                                lowerseekerArena.name = "lowerseekerArena";
+                                lowerseekerArena.transform.position = new Vector3(-40, -48.119f, 1f);
+                                Seeker.lowerminigameArenaHideOnePointOne = lowerseekerArena.transform.GetChild(0).transform.GetChild(0).gameObject;
+                                Seeker.lowerminigameArenaHideOnePointOne.transform.parent.transform.position = Seeker.lowerminigameArenaHideOnePointOne.transform.parent.transform.position + new Vector3(0, 0, -2);
+                                Seeker.lowerminigameArenaHideOnePointTwo = lowerseekerArena.transform.GetChild(0).transform.GetChild(1).gameObject;
+                                Seeker.lowerminigameArenaHideOnePointThree = lowerseekerArena.transform.GetChild(0).transform.GetChild(2).gameObject;
+                                Seeker.lowerminigameArenaHideTwoPointOne = lowerseekerArena.transform.GetChild(1).transform.GetChild(0).gameObject;
+                                Seeker.lowerminigameArenaHideTwoPointOne.transform.parent.transform.position = Seeker.lowerminigameArenaHideTwoPointOne.transform.parent.transform.position + new Vector3(0, 0, -2);
+                                Seeker.lowerminigameArenaHideTwoPointTwo = lowerseekerArena.transform.GetChild(1).transform.GetChild(1).gameObject;
+                                Seeker.lowerminigameArenaHideTwoPointThree = lowerseekerArena.transform.GetChild(1).transform.GetChild(2).gameObject;
+                                Seeker.lowerminigameArenaHideThreePointOne = lowerseekerArena.transform.GetChild(2).transform.GetChild(0).gameObject;
+                                Seeker.lowerminigameArenaHideThreePointOne.transform.parent.transform.position = Seeker.lowerminigameArenaHideThreePointOne.transform.parent.transform.position + new Vector3(0, 0, -2);
+                                Seeker.lowerminigameArenaHideThreePointTwo = lowerseekerArena.transform.GetChild(2).transform.GetChild(1).gameObject;
+                                Seeker.lowerminigameArenaHideThreePointThree = lowerseekerArena.transform.GetChild(2).transform.GetChild(2).gameObject;
+                            }
+                            hideWhoWasIBoxesForEveryone(true);
+                            break;
+                            
+                            // Rebels:
+                        case "renegadeRole":
+                            Renegade.renegade = player;
+                            hideWhoWasIBoxesForEveryone(false);
+                            break;
+                        case "trapperRole":
+                            Trapper.trapper = player;
+                            hideWhoWasIBoxesForEveryone(false);
+                            break;
+                        case "yinyangerRole":
+                            Yinyanger.yinyanger = player;
+                            hideWhoWasIBoxesForEveryone(false);
+                            break;
+                        case "challengerRole":
+                            Challenger.challenger = player;
+                            GameObject duelArena = GameObject.Instantiate(CustomMain.customAssets.challengerDuelArena, PlayerControl.LocalPlayer.transform.parent);
+                            duelArena.name = "duelArena";
+                            duelArena.transform.position = new Vector3(40, 0f, 1f);
+                            if (PlayerControl.GameOptions.MapId == 5) { // Create another duel arena on submerged lower floor
+                                GameObject lowerduelArena = GameObject.Instantiate(CustomMain.customAssets.challengerDuelArena, PlayerControl.LocalPlayer.transform.parent);
+                                lowerduelArena.name = "lowerduelArena";
+                                lowerduelArena.transform.position = new Vector3(40, -48.119f, 1f);
+                            }
+                            hideWhoWasIBoxesForEveryone(false);
+                            break;
+                        case "ninjaRole":
+                            Ninja.ninja = player;
+                            hideWhoWasIBoxesForEveryone(false);
+                            break;
+                        case "berserkerRole":
+                            Berserker.berserker = player;
+                            hideWhoWasIBoxesForEveryone(false);
+                            break;
+                        case "yandereRole":
+                            Yandere.yandere = player;
+                            hideWhoWasIBoxesForEveryone(false);
+                            break;
+                        case "strandedRole":
+                            Stranded.stranded = player;
+                            if (player == PlayerControl.LocalPlayer) {
+                                GameObject ammoBox01 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerControl.LocalPlayer.transform.parent);
+                                ammoBox01.transform.position = Stranded.susBoxPositions[0];
+                                ammoBox01.name = "ammoBox";
+                                GameObject ammoBox02 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerControl.LocalPlayer.transform.parent);
+                                ammoBox02.transform.position = Stranded.susBoxPositions[1];
+                                ammoBox02.name = "ammoBox";
+                                GameObject ammoBox03 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerControl.LocalPlayer.transform.parent);
+                                ammoBox03.transform.position = Stranded.susBoxPositions[2];
+                                ammoBox03.name = "ammoBox";
+                                GameObject ventBox = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerControl.LocalPlayer.transform.parent);
+                                ventBox.transform.position = Stranded.susBoxPositions[3];
+                                ventBox.name = "ventBox";
+                                GameObject invisibleBox = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerControl.LocalPlayer.transform.parent);
+                                invisibleBox.transform.position = Stranded.susBoxPositions[4];
+                                invisibleBox.name = "invisibleBox";
+                                Stranded.groundItems.Add(ammoBox01);
+                                Stranded.groundItems.Add(ammoBox02);
+                                Stranded.groundItems.Add(ammoBox03);
+                                Stranded.groundItems.Add(ventBox);
+                                Stranded.groundItems.Add(invisibleBox);
+                                // Nothing boxes
+                                for (int i = 0; i < Stranded.susBoxPositions.Count - 5; i++) {
+                                    GameObject nothingBox = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerControl.LocalPlayer.transform.parent);
+                                    nothingBox.transform.position = Stranded.susBoxPositions[i + 5];
+                                    nothingBox.name = "nothingBox";
+                                    Stranded.groundItems.Add(nothingBox);
+                                }
+                            }
+                            hideWhoWasIBoxesForEveryone(false);
+                            break;
+                        case "monjaRole":
+                            Monja.monja = player;
+                            GameObject monjaRitual = GameObject.Instantiate(CustomMain.customAssets.monjaRitual, PlayerControl.LocalPlayer.transform.parent);
+                            Monja.ritualObject = monjaRitual;
+                            Monja.ritualObject.layer = 9;
+                            GameObject monjaSprite = GameObject.Instantiate(CustomMain.customAssets.monjaSprite, PlayerControl.LocalPlayer.transform.parent);
+                            Monja.monjaSprite = monjaSprite;
+                            Monja.monjaSprite.transform.parent = Monja.monja.transform;
+                            Monja.monjaSprite.transform.position = new Vector3(0, 0, -1);
+                            Monja.monjaSprite.transform.localPosition = new Vector3(0, 0, -1);
+                            Monja.monjaSprite.SetActive(false);
+                            switch (PlayerControl.GameOptions.MapId) {
+                                case 0:
+                                    if (activatedSensei) {
+                                        Monja.ritualObject.transform.position = new Vector3(3f, 2.5f, 0.5f);
+                                    }
+                                    else {
+                                        Monja.ritualObject.transform.position = new Vector3(-0.9f, 5.25f, 0.5f);
+                                    }
+                                    break;
+                                case 1:
+                                    Monja.ritualObject.transform.position = new Vector3(17.85f, 11.5f, 0.5f);
+                                    break;
+                                case 2:
+                                    Monja.ritualObject.transform.position = new Vector3(13.75f, -9.5f, 0.5f);
+                                    break;
+                                case 3:
+                                    Monja.ritualObject.transform.position = new Vector3(0.9f, 5.25f, 0.5f);
+                                    break;
+                                case 4:
+                                    Monja.ritualObject.transform.position = new Vector3(10.75f, -0.25f, 0.5f);
+                                    break;
+                                case 5:
+                                    Monja.ritualObject.transform.position = new Vector3(-6.35f, 14f, -0.5f);
+                                    break;
+                            }
+                            GameObject keyitem01 = GameObject.Instantiate(CustomMain.customAssets.keyItem01, PlayerControl.LocalPlayer.transform.parent);
+                            keyitem01.transform.position = Monja.itemListPositions[0];
+                            keyitem01.name = "item01";
+                            Monja.item01 = keyitem01;
+                            GameObject keyitem02 = GameObject.Instantiate(CustomMain.customAssets.keyItem02, PlayerControl.LocalPlayer.transform.parent);
+                            keyitem02.transform.position = Monja.itemListPositions[1];
+                            keyitem02.name = "item02";
+                            Monja.item02 = keyitem02;
+                            GameObject keyitem03 = GameObject.Instantiate(CustomMain.customAssets.keyItem03, PlayerControl.LocalPlayer.transform.parent);
+                            keyitem03.transform.position = Monja.itemListPositions[2];
+                            keyitem03.name = "item03";
+                            Monja.item03 = keyitem03;
+                            GameObject keyitem04 = GameObject.Instantiate(CustomMain.customAssets.keyItem04, PlayerControl.LocalPlayer.transform.parent);
+                            keyitem04.transform.position = Monja.itemListPositions[3];
+                            keyitem04.name = "item04";
+                            Monja.item04 = keyitem04;
+                            GameObject keyitem05 = GameObject.Instantiate(CustomMain.customAssets.keyItem05, PlayerControl.LocalPlayer.transform.parent);
+                            keyitem05.transform.position = Monja.itemListPositions[4];
+                            keyitem05.name = "item05";
+                            Monja.item05 = keyitem05;
+                            Monja.objectList.Add(keyitem01);
+                            Monja.objectList.Add(keyitem02);
+                            Monja.objectList.Add(keyitem03);
+                            Monja.objectList.Add(keyitem04);
+                            Monja.objectList.Add(keyitem05);
+                            if (Monja.monja != PlayerControl.LocalPlayer) {
+                                foreach (GameObject keyItem in Monja.objectList) {
+                                    keyItem.SetActive(false);
+                                }
+                            }
+                            hideWhoWasIBoxesForEveryone(false);
+                            break;
+                    }
+                    if (PlayerControl.LocalPlayer == player) {
+                        if (player.Data.Role.IsImpostor) {
+                            foreach (GameObject item in whoAmIModeImpostorItems) {
+                                item.transform.position = new Vector3(100, 100, 0);
+                            }
+                        }
+                        else {
+                            foreach (GameObject item in whoAmIModeCrewItems) {
+                                item.transform.position = new Vector3(100, 100, 0);
+                            }
+                            foreach (GameObject item in whoAmIModeNeutralsItems) {
+                                item.transform.position = new Vector3(100, 100, 0);
+                            }
+                            foreach (GameObject item in whoAmIModeRebelsItems) {
+                                item.transform.position = new Vector3(100, 100, 0);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        public static void hideWhoWasIBoxesForEveryone(bool isNeutral) {
+            if (isNeutral) {
+                foreach (GameObject item in whoAmIModeNeutralsItems) {
+                    item.transform.position = new Vector3(100, 100, 0);
+                }
+            } else {
+                foreach (GameObject item in whoAmIModeRebelsItems) {
+                    item.transform.position = new Vector3(100, 100, 0);
+                }               
+            }
+        }
+
         public static void capturetheFlagKills(byte targetId, int whichplayer) {
             foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
                 if (player.PlayerId == targetId) {
@@ -2954,7 +4641,7 @@ namespace LasMonjas
                         case 16:
                             if (CaptureTheFlag.redPlayerWhoHasBlueFlag != null && player.PlayerId == CaptureTheFlag.redPlayerWhoHasBlueFlag.PlayerId) {
                                 if (PlayerControl.LocalPlayer == CaptureTheFlag.stealerPlayer) {
-                                    new CustomMessage("You're the new <color=#FF0000FF>Red Team</color> player now!", 5, -1, 1f, 4);
+                                    new CustomMessage(Language.statusCaptureTheFlagTexts[0], 5, -1, 1f, 4);
                                 }
                                 if (CaptureTheFlag.redplayer01 != null && CaptureTheFlag.redplayer01 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
                                     CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer01);
@@ -3008,7 +4695,7 @@ namespace LasMonjas
                             }
                             else if (CaptureTheFlag.bluePlayerWhoHasRedFlag != null && player.PlayerId == CaptureTheFlag.bluePlayerWhoHasRedFlag.PlayerId) {
                                 if (PlayerControl.LocalPlayer == CaptureTheFlag.stealerPlayer) {
-                                    new CustomMessage("You're the new <color=#0000FFFF>Blue Team</color> player now!", 5, -1, 1f, 4);
+                                    new CustomMessage(Language.statusCaptureTheFlagTexts[1], 5, -1, 1f, 4);
                                 }
                                 if (CaptureTheFlag.blueplayer01 != null && CaptureTheFlag.blueplayer01 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
                                     CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer01);
@@ -3081,11 +4768,11 @@ namespace LasMonjas
                     CaptureTheFlag.blueflag.transform.localPosition = new Vector3(0f, 0f, -0.1f);
                     foreach (PlayerControl redplayer in CaptureTheFlag.redteamFlag) {
                         if (redplayer == PlayerControl.LocalPlayer && redplayer != null) {
-                            new CustomMessage("<color=#0000FFFF>Blue Flag</color> stolen by <color=#FF0000FF>" + CaptureTheFlag.redPlayerWhoHasBlueFlag.name + "</color>!", 5, -1, 1.6f, 4);
+                            new CustomMessage(Language.statusCaptureTheFlagTexts[2] + CaptureTheFlag.redPlayerWhoHasBlueFlag.name + "</color>!", 5, -1, 1.6f, 4);
                         }
                     }
                     if (CaptureTheFlag.stealerPlayer != null && CaptureTheFlag.stealerPlayer == PlayerControl.LocalPlayer) {
-                        new CustomMessage("<color=#0000FFFF>Blue Flag</color> stolen by <color=#FF0000FF>" + CaptureTheFlag.redPlayerWhoHasBlueFlag.name + "</color>!", 5, -1, 1.6f, 4);
+                        new CustomMessage(Language.statusCaptureTheFlagTexts[2] + CaptureTheFlag.redPlayerWhoHasBlueFlag.name + "</color>!", 5, -1, 1.6f, 4);
                     }
                 }
 
@@ -3094,7 +4781,7 @@ namespace LasMonjas
                     CaptureTheFlag.redteamAlerted = true;
                     foreach (PlayerControl redplayer in CaptureTheFlag.redteamFlag) {
                         if (redplayer == PlayerControl.LocalPlayer && redplayer != null) {
-                            new CustomMessage("Your flag has been stolen!", 5, -1, 1f, 4);
+                            new CustomMessage(Language.statusCaptureTheFlagTexts[3], 5, -1, 1f, 4);
                         }
                     }
                 }
@@ -3108,11 +4795,11 @@ namespace LasMonjas
                     CaptureTheFlag.redflag.transform.localPosition = new Vector3(0f, 0f, -0.1f);
                     foreach (PlayerControl blueplayer in CaptureTheFlag.blueteamFlag) {
                         if (blueplayer == PlayerControl.LocalPlayer && blueplayer != null) {
-                            new CustomMessage("<color=#FF0000FF>Red Flag</color> stolen by <color=#0000FFFF>" + CaptureTheFlag.bluePlayerWhoHasRedFlag.name + "</color>!", 5, -1, 1.6f, 4);
+                            new CustomMessage(Language.statusCaptureTheFlagTexts[4] + CaptureTheFlag.bluePlayerWhoHasRedFlag.name + "</color>!", 5, -1, 1.6f, 4);
                         }
                     }
                     if (CaptureTheFlag.stealerPlayer != null && CaptureTheFlag.stealerPlayer == PlayerControl.LocalPlayer) {
-                        new CustomMessage("<color=#FF0000FF>Red Flag</color> stolen by <color=#0000FFFF>" + CaptureTheFlag.bluePlayerWhoHasRedFlag.name + "</color>!", 5, -1, 1.3f, 4);
+                        new CustomMessage(Language.statusCaptureTheFlagTexts[4] + CaptureTheFlag.bluePlayerWhoHasRedFlag.name + "</color>!", 5, -1, 1.3f, 4);
                     }
                 }
 
@@ -3121,7 +4808,7 @@ namespace LasMonjas
                     CaptureTheFlag.blueteamAlerted = true;
                     foreach (PlayerControl blueplayer in CaptureTheFlag.blueteamFlag) {
                         if (blueplayer == PlayerControl.LocalPlayer && blueplayer != null) {
-                            new CustomMessage("Your flag has been stolen!", 5, -1, 1f, 4);
+                            new CustomMessage(Language.statusCaptureTheFlagTexts[3], 5, -1, 1f, 4);
                         }
                     }
                 }
@@ -3166,8 +4853,8 @@ namespace LasMonjas
                         break;
                 }
                 CaptureTheFlag.currentRedTeamPoints += 1;
-                new CustomMessage("<color=#FF0000FF>Red Team</color> scored!", 5, -1, 1.6f, 4);
-                CaptureTheFlag.flagpointCounter = "Score: " + "<color=#FF0000FF>" + CaptureTheFlag.currentRedTeamPoints + "</color> - " + "<color=#0000FFFF>" + CaptureTheFlag.currentBlueTeamPoints + "</color>";
+                new CustomMessage(Language.statusCaptureTheFlagTexts[5], 5, -1, 1.6f, 4);
+                CaptureTheFlag.flagpointCounter = Language.introTexts[2] + "<color=#FF0000FF>" + CaptureTheFlag.currentRedTeamPoints + "</color> - " + "<color=#0000FFFF>" + CaptureTheFlag.currentBlueTeamPoints + "</color>";
                 if (CaptureTheFlag.currentRedTeamPoints >= CaptureTheFlag.requiredFlags) {
                     CaptureTheFlag.triggerRedTeamWin = true;
                     ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.RedTeamFlagWin, false);
@@ -3211,8 +4898,8 @@ namespace LasMonjas
                         break;
                 }
                 CaptureTheFlag.currentBlueTeamPoints += 1;
-                new CustomMessage("<color=#0000FFFF>Blue Team</color> scored!", 5, -1, 1.3f, 4);
-                CaptureTheFlag.flagpointCounter = "Score: " + "<color=#FF0000FF>" + CaptureTheFlag.currentRedTeamPoints + "</color> - " + "<color=#0000FFFF>" + CaptureTheFlag.currentBlueTeamPoints + "</color>";
+                new CustomMessage(Language.statusCaptureTheFlagTexts[6], 5, -1, 1.3f, 4);
+                CaptureTheFlag.flagpointCounter = Language.introTexts[2] + "<color=#FF0000FF>" + CaptureTheFlag.currentRedTeamPoints + "</color> - " + "<color=#0000FFFF>" + CaptureTheFlag.currentBlueTeamPoints + "</color>";
                 if (CaptureTheFlag.currentBlueTeamPoints >= CaptureTheFlag.requiredFlags) {
                     CaptureTheFlag.triggerBlueTeamWin = true;
                     ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BlueTeamFlagWin, false);
@@ -3288,6 +4975,9 @@ namespace LasMonjas
                                 vent.SetButtons(false);
                             }
                         }
+                    }
+                    if (PlayerControl.LocalPlayer == player) {
+                        SoundManager.Instance.PlaySound(CustomMain.customAssets.jailerJail, false, 100f);
                     }
                     PoliceAndThief.thiefArrested.Add(player);
                     if (PoliceAndThief.thiefplayer01 != null && thiefId == PoliceAndThief.thiefplayer01.PlayerId) {
@@ -3372,8 +5062,8 @@ namespace LasMonjas
                             break;
                     }
                     PoliceAndThief.currentThiefsCaptured += 1;
-                    new CustomMessage("A <color=#928B55FF>Thief</color> has been captured!", 5, -1, 1.3f, 7);
-                    PoliceAndThief.thiefpointCounter = "Stolen Jewels: " + "<color=#00F7FFFF>" + PoliceAndThief.currentJewelsStoled + "/" + PoliceAndThief.requiredJewels + "</color> | " + "Captured Thiefs: " + "<color=#928B55FF>" + PoliceAndThief.currentThiefsCaptured + "/" + PoliceAndThief.thiefTeam.Count + "</color>";
+                    new CustomMessage(Language.statusPoliceAndThiefsTexts[0], 5, -1, 1.3f, 7);
+                    PoliceAndThief.thiefpointCounter = Language.introTexts[3] + "<color=#00F7FFFF>" + PoliceAndThief.currentJewelsStoled + " / " + PoliceAndThief.requiredJewels + "</color> | " + Language.introTexts[4] + "<color=#928B55FF>" + PoliceAndThief.currentThiefsCaptured + " / " + PoliceAndThief.thiefTeam.Count + "</color>";
                     if (PoliceAndThief.currentThiefsCaptured == PoliceAndThief.thiefTeam.Count) {
                         PoliceAndThief.triggerPoliceWin = true;
                         ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.ThiefModePoliceWin, false);
@@ -3422,8 +5112,8 @@ namespace LasMonjas
             }
             PoliceAndThief.thiefArrested.RemoveAt(0);
             PoliceAndThief.currentThiefsCaptured = PoliceAndThief.currentThiefsCaptured - 1;
-            new CustomMessage("A <color=#928B55FF>Thief</color> has been released!", 5, -1, 1f, 7);
-            PoliceAndThief.thiefpointCounter = "Stolen Jewels: " + "<color=#00F7FFFF>" + PoliceAndThief.currentJewelsStoled + "/" + PoliceAndThief.requiredJewels + "</color> | " + "Captured Thiefs: " + "<color=#928B55FF>" + PoliceAndThief.currentThiefsCaptured + "/" + PoliceAndThief.thiefTeam.Count + "</color>";
+            new CustomMessage(Language.statusPoliceAndThiefsTexts[1], 5, -1, 1f, 7);
+            PoliceAndThief.thiefpointCounter = Language.introTexts[3] + "<color=#00F7FFFF>" + PoliceAndThief.currentJewelsStoled + " / " + PoliceAndThief.requiredJewels + "</color> | " + Language.introTexts[4] + "<color=#928B55FF>" + PoliceAndThief.currentThiefsCaptured + " / " + PoliceAndThief.thiefTeam.Count + "</color>";
         }
 
         public static void policeandThiefTakeJewel(byte thiefWhoTookATreasure, byte jewelId) {
@@ -3757,8 +5447,8 @@ namespace LasMonjas
 
             }
             PoliceAndThief.currentJewelsStoled += 1;
-            new CustomMessage("A <color=#00F7FFFF>Jewel</color> has been delivered!", 5, -1, 1.6f, 7);
-            PoliceAndThief.thiefpointCounter = "Stolen Jewels: " + "<color=#00F7FFFF>" + PoliceAndThief.currentJewelsStoled + "/" + PoliceAndThief.requiredJewels + "</color> | " + "Captured Thiefs: " + "<color=#928B55FF>" + PoliceAndThief.currentThiefsCaptured + "/" + PoliceAndThief.thiefTeam.Count + "</color>";
+            new CustomMessage(Language.statusPoliceAndThiefsTexts[2], 5, -1, 1.6f, 7);
+            PoliceAndThief.thiefpointCounter = Language.introTexts[3] + "<color=#00F7FFFF>" + PoliceAndThief.currentJewelsStoled + " / " + PoliceAndThief.requiredJewels + "</color> | " + Language.introTexts[4] + "<color=#928B55FF>" + PoliceAndThief.currentThiefsCaptured + " / " + PoliceAndThief.thiefTeam.Count + "</color>";
             if (PoliceAndThief.currentJewelsStoled >= PoliceAndThief.requiredJewels) {
                 PoliceAndThief.triggerThiefWin = true;
                 ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.ThiefModeThiefWin, false);
@@ -4479,13 +6169,6 @@ namespace LasMonjas
                             policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer09JewelId);
                         }
                     }
-                    player.moveable = false;
-                    player.NetTransform.Halt(); // Stop current movement
-                    HudManager.Instance.StartCoroutine(Effects.Lerp(PoliceAndThief.policeTaseDuration, new Action<float>((p) => { // Delayed action
-                        if (p == 1f) {
-                            player.moveable = true;
-                        }
-                    })));
                     return;
                 }
             }
@@ -4548,7 +6231,7 @@ namespace LasMonjas
                                 }
                                 KingOfTheHill.greenkingaura.transform.parent = KingOfTheHill.greenKingplayer.transform;
                                 if (PlayerControl.LocalPlayer == KingOfTheHill.greenKingplayer) {
-                                    new CustomMessage("You're the new <color=#00FF00FF>Green King</color>!", 5, -1, 1.6f, 11);
+                                    new CustomMessage(Language.statusKingOfTheHillTexts[0], 5, -1, 1.6f, 11);
                                     KingOfTheHill.localArrows[3].arrow.SetActive(false);
                                     KingOfTheHill.localArrows[4].arrow.SetActive(false);
                                     KingOfTheHill.localArrows[5].arrow.SetActive(false);
@@ -4573,7 +6256,7 @@ namespace LasMonjas
                                 }
                                 KingOfTheHill.yellowkingaura.transform.parent = KingOfTheHill.yellowKingplayer.transform;
                                 if (PlayerControl.LocalPlayer == KingOfTheHill.yellowKingplayer) {
-                                    new CustomMessage("You're the new <color=#FFFF00FF>Yellow King</color>!", 5, -1, 1.6f, 11);
+                                    new CustomMessage(Language.statusKingOfTheHillTexts[1], 5, -1, 1.6f, 11);
                                     KingOfTheHill.localArrows[3].arrow.SetActive(false);
                                     KingOfTheHill.localArrows[4].arrow.SetActive(false);
                                     KingOfTheHill.localArrows[5].arrow.SetActive(false);
@@ -4646,7 +6329,7 @@ namespace LasMonjas
                     KingOfTheHill.yellowteamAlerted = true;
                     foreach (PlayerControl yellowplayer in KingOfTheHill.yellowTeam) {
                         if (yellowplayer == PlayerControl.LocalPlayer && yellowplayer != null) {
-                            new CustomMessage("<color=#00FF00FF>Green King</color> has captured a zone!", 5, -1, 1.3f, 11);
+                            new CustomMessage(Language.statusKingOfTheHillTexts[2], 5, -1, 1.3f, 11);
                         }
                     }
                 }
@@ -4698,7 +6381,7 @@ namespace LasMonjas
                     KingOfTheHill.greenteamAlerted = true;
                     foreach (PlayerControl greenplayer in KingOfTheHill.greenTeam) {
                         if (greenplayer == PlayerControl.LocalPlayer && greenplayer != null) {
-                            new CustomMessage("<color=#FFFF00FF>Yellow King</color> has captured a zone!", 5, -1, 1.3f, 11);
+                            new CustomMessage(Language.statusKingOfTheHillTexts[3], 5, -1, 1.3f, 11);
                         }
                     }
                 }
@@ -4713,9 +6396,9 @@ namespace LasMonjas
 
                     if (!HotPotato.firstPotatoTransfered) {
                         HotPotato.firstPotatoTransfered = true;
-                        new CustomMessage("Hot Potato: ", HotPotato.matchDuration, -1, -1f, 18);
-                        new CustomMessage("Time Left: ", HotPotato.matchDuration, -1, -1.3f, 15);
-                        HotPotato.hotpotatopointCounter = "Hot Potato: " + "<color=#808080FF>" + HotPotato.hotPotatoPlayer.name + "</color> | " + "Cold Potatoes: " + "<color=#00F7FFFF>" + HotPotato.notPotatoTeam.Count + "</color>";
+                        new CustomMessage(Language.introTexts[5], HotPotato.matchDuration, -1, -1f, 18);
+                        new CustomMessage(Language.introTexts[1], HotPotato.matchDuration, -1, -1.3f, 15);
+                        HotPotato.hotpotatopointCounter = Language.introTexts[5] + "<color=#808080FF>" + HotPotato.hotPotatoPlayer.name + "</color> | " + Language.introTexts[6] + "<color=#00F7FFFF>" + HotPotato.notPotatoTeam.Count + "</color>";
                         new CustomMessage(HotPotato.hotpotatopointCounter, HotPotato.matchDuration, -1, 1.9f, 17);
                     }
 
@@ -4809,9 +6492,9 @@ namespace LasMonjas
                         }
                     }
 
-                    new CustomMessage("<color=#808080FF>" + HotPotato.hotPotatoPlayer.name + "</color> is the new Hot Potato!", 5, -1, 1f, 16);
+                    new CustomMessage("<color=#808080FF>" + HotPotato.hotPotatoPlayer.name + "</color>" + Language.statusHotPotatoTexts[0], 5, -1, 1f, 16);
 
-                    HotPotato.hotpotatopointCounter = "Hot Potato: " + "<color=#808080FF>" + HotPotato.hotPotatoPlayer.name + "</color> | " + "Cold Potatoes: " + "<color=#00F7FFFF>" + HotPotato.notPotatoTeam.Count + "</color>";
+                    HotPotato.hotpotatopointCounter = Language.introTexts[5] + "<color=#808080FF>" + HotPotato.hotPotatoPlayer.name + "</color> | " + Language.introTexts[6] + "<color=#00F7FFFF>" + HotPotato.notPotatoTeam.Count + "</color>";
 
                     // Set custom cooldown to the hotpotato button
                     hotPotatoButton.Timer = HotPotato.transferCooldown;
@@ -5208,8 +6891,8 @@ namespace LasMonjas
             }
 
             ZombieLaboratory.currentKeyItems += 1;
-            new CustomMessage("A <color=#FF00FFFF>Key Item</color> has been delivered!", 5, -1, 1.6f, 21);
-            ZombieLaboratory.zombieLaboratoryCounter = "Key Items: " + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + "Survivors: " + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> " + "| " + "Infected: " + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> " + "| " + "Zombies: " + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
+            new CustomMessage(Language.statusZombieLaboratoryTexts[0], 5, -1, 1.6f, 21);
+            ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
             if (ZombieLaboratory.currentKeyItems >= 6) {
                 ZombieLaboratory.nursePlayerHasCureReady = true;
             }
@@ -5443,385 +7126,112 @@ namespace LasMonjas
                         }
                     }
 
-                    new CustomMessage("A <color=#00CCFFFF>Survivor</color> has been <color=#FFFF00FF>Infected</color>!", 5, -1, 1.3f, 21);
-                    ZombieLaboratory.zombieLaboratoryCounter = "Key Items: " + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + "Survivors: " + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> " + "| " + "Infected: " + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> " + "| " + "Zombies: " + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
-
-                    HudManager.Instance.StartCoroutine(Effects.Lerp(ZombieLaboratory.timeForHeal, new Action<float>((p) => { // Delayed action
-                        if (p == 1f && !player.Data.IsDead && !player.Data.Disconnected) {
-
-                            // Remove Survivor role
-                            if (ZombieLaboratory.survivorPlayer01 != null && player == ZombieLaboratory.survivorPlayer01) {
-                                if (ZombieLaboratory.survivorPlayer01IsInfected) {
-                                    if (ZombieLaboratory.survivorPlayer01HasKeyItem) {
-                                        ZombieLaboratory.survivorPlayer01HasKeyItem = false;
-                                        zombieLaboratoryRevertedKeyPosition(player.PlayerId, ZombieLaboratory.survivorPlayer01FoundBox);
-                                    }
-                                    ZombieLaboratory.survivorTeam.Remove(ZombieLaboratory.survivorPlayer01);
-                                    ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer01);
-                                    ZombieLaboratory.survivorPlayer01 = null;
-                                    ZombieLaboratory.survivorPlayer01IsInfected = false;
-                                    if (player == PlayerControl.LocalPlayer && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
-                                        ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                                        if (PlayerControl.GameOptions.MapId == 5) {
-                                            ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
-                                        }
-                                    }
-                                }
-                                else {
-                                    return;
-                                }
-                            }
-                            else if (ZombieLaboratory.survivorPlayer02 != null && player == ZombieLaboratory.survivorPlayer02) {
-                                if (ZombieLaboratory.survivorPlayer02IsInfected) {
-                                    if (ZombieLaboratory.survivorPlayer02HasKeyItem) {
-                                        ZombieLaboratory.survivorPlayer02HasKeyItem = false;
-                                        zombieLaboratoryRevertedKeyPosition(player.PlayerId, ZombieLaboratory.survivorPlayer02FoundBox);
-                                    }
-                                    ZombieLaboratory.survivorTeam.Remove(ZombieLaboratory.survivorPlayer02);
-                                    ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer02);
-                                    ZombieLaboratory.survivorPlayer02 = null;
-                                    ZombieLaboratory.survivorPlayer02IsInfected = false;
-                                    if (player == PlayerControl.LocalPlayer && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
-                                        ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                                        if (PlayerControl.GameOptions.MapId == 5) {
-                                            ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
-                                        }
-                                    }
-                                }
-                                else {
-                                    return;
-                                }
-                            }
-                            else if (ZombieLaboratory.survivorPlayer03 != null && player == ZombieLaboratory.survivorPlayer03) {
-                                if (ZombieLaboratory.survivorPlayer03IsInfected) {
-                                    if (ZombieLaboratory.survivorPlayer03HasKeyItem) {
-                                        ZombieLaboratory.survivorPlayer03HasKeyItem = false;
-                                        zombieLaboratoryRevertedKeyPosition(player.PlayerId, ZombieLaboratory.survivorPlayer03FoundBox);
-                                    }
-                                    ZombieLaboratory.survivorTeam.Remove(ZombieLaboratory.survivorPlayer03);
-                                    ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer03);
-                                    ZombieLaboratory.survivorPlayer03 = null;
-                                    ZombieLaboratory.survivorPlayer03IsInfected = false;
-                                    if (player == PlayerControl.LocalPlayer && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
-                                        ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                                        if (PlayerControl.GameOptions.MapId == 5) {
-                                            ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
-                                        }
-                                    }
-                                }
-                                else {
-                                    return;
-                                }
-                            }
-                            else if (ZombieLaboratory.survivorPlayer04 != null && player == ZombieLaboratory.survivorPlayer04) {
-                                if (ZombieLaboratory.survivorPlayer04IsInfected) {
-                                    if (ZombieLaboratory.survivorPlayer04HasKeyItem) {
-                                        ZombieLaboratory.survivorPlayer04HasKeyItem = false;
-                                        zombieLaboratoryRevertedKeyPosition(player.PlayerId, ZombieLaboratory.survivorPlayer04FoundBox);
-                                    }
-                                    ZombieLaboratory.survivorTeam.Remove(ZombieLaboratory.survivorPlayer04);
-                                    ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer04);
-                                    ZombieLaboratory.survivorPlayer04 = null;
-                                    ZombieLaboratory.survivorPlayer04IsInfected = false;
-                                    if (player == PlayerControl.LocalPlayer && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
-                                        ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                                        if (PlayerControl.GameOptions.MapId == 5) {
-                                            ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
-                                        }
-                                    }
-                                }
-                                else {
-                                    return;
-                                }
-                            }
-                            else if (ZombieLaboratory.survivorPlayer05 != null && player == ZombieLaboratory.survivorPlayer05) {
-                                if (ZombieLaboratory.survivorPlayer05IsInfected) {
-                                    if (ZombieLaboratory.survivorPlayer05HasKeyItem) {
-                                        ZombieLaboratory.survivorPlayer05HasKeyItem = false;
-                                        zombieLaboratoryRevertedKeyPosition(player.PlayerId, ZombieLaboratory.survivorPlayer05FoundBox);
-                                    }
-                                    ZombieLaboratory.survivorTeam.Remove(ZombieLaboratory.survivorPlayer05);
-                                    ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer05);
-                                    ZombieLaboratory.survivorPlayer05 = null;
-                                    ZombieLaboratory.survivorPlayer05IsInfected = false;
-                                    if (player == PlayerControl.LocalPlayer && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
-                                        ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                                        if (PlayerControl.GameOptions.MapId == 5) {
-                                            ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
-                                        }
-                                    }
-                                }
-                                else {
-                                    return;
-                                }
-                            }
-                            else if (ZombieLaboratory.survivorPlayer06 != null && player == ZombieLaboratory.survivorPlayer06) {
-                                if (ZombieLaboratory.survivorPlayer06IsInfected) {
-                                    if (ZombieLaboratory.survivorPlayer06HasKeyItem) {
-                                        ZombieLaboratory.survivorPlayer06HasKeyItem = false;
-                                        zombieLaboratoryRevertedKeyPosition(player.PlayerId, ZombieLaboratory.survivorPlayer06FoundBox);
-                                    }
-                                    ZombieLaboratory.survivorTeam.Remove(ZombieLaboratory.survivorPlayer06);
-                                    ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer06);
-                                    ZombieLaboratory.survivorPlayer06 = null;
-                                    ZombieLaboratory.survivorPlayer06IsInfected = false;
-                                    if (player == PlayerControl.LocalPlayer && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
-                                        ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                                        if (PlayerControl.GameOptions.MapId == 5) {
-                                            ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
-                                        }
-                                    }
-                                }
-                                else {
-                                    return;
-                                }
-                            }
-                            else if (ZombieLaboratory.survivorPlayer07 != null && player == ZombieLaboratory.survivorPlayer07) {
-                                if (ZombieLaboratory.survivorPlayer07IsInfected) {
-                                    if (ZombieLaboratory.survivorPlayer07HasKeyItem) {
-                                        ZombieLaboratory.survivorPlayer07HasKeyItem = false;
-                                        zombieLaboratoryRevertedKeyPosition(player.PlayerId, ZombieLaboratory.survivorPlayer07FoundBox);
-                                    }
-                                    ZombieLaboratory.survivorTeam.Remove(ZombieLaboratory.survivorPlayer07);
-                                    ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer07);
-                                    ZombieLaboratory.survivorPlayer07 = null;
-                                    ZombieLaboratory.survivorPlayer07IsInfected = false;
-                                    if (player == PlayerControl.LocalPlayer && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
-                                        ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                                        if (PlayerControl.GameOptions.MapId == 5) {
-                                            ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
-                                        }
-                                    }
-                                }
-                                else {
-                                    return;
-                                }
-                            }
-                            else if (ZombieLaboratory.survivorPlayer08 != null && player == ZombieLaboratory.survivorPlayer08) {
-                                if (ZombieLaboratory.survivorPlayer08IsInfected) {
-                                    if (ZombieLaboratory.survivorPlayer08HasKeyItem) {
-                                        ZombieLaboratory.survivorPlayer08HasKeyItem = false;
-                                        zombieLaboratoryRevertedKeyPosition(player.PlayerId, ZombieLaboratory.survivorPlayer08FoundBox);
-                                    }
-                                    ZombieLaboratory.survivorTeam.Remove(ZombieLaboratory.survivorPlayer08);
-                                    ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer08);
-                                    ZombieLaboratory.survivorPlayer08 = null;
-                                    ZombieLaboratory.survivorPlayer08IsInfected = false;
-                                    if (player == PlayerControl.LocalPlayer && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
-                                        ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                                        if (PlayerControl.GameOptions.MapId == 5) {
-                                            ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
-                                        }
-                                    }
-                                }
-                                else {
-                                    return;
-                                }
-                            }
-                            else if (ZombieLaboratory.survivorPlayer09 != null && player == ZombieLaboratory.survivorPlayer09) {
-                                if (ZombieLaboratory.survivorPlayer09IsInfected) {
-                                    if (ZombieLaboratory.survivorPlayer09HasKeyItem) {
-                                        ZombieLaboratory.survivorPlayer09HasKeyItem = false;
-                                        zombieLaboratoryRevertedKeyPosition(player.PlayerId, ZombieLaboratory.survivorPlayer09FoundBox);
-                                    }
-                                    ZombieLaboratory.survivorTeam.Remove(ZombieLaboratory.survivorPlayer09);
-                                    ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer09);
-                                    ZombieLaboratory.survivorPlayer09 = null;
-                                    ZombieLaboratory.survivorPlayer09IsInfected = false;
-                                    if (player == PlayerControl.LocalPlayer && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
-                                        ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                                        if (PlayerControl.GameOptions.MapId == 5) {
-                                            ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
-                                        }
-                                    }
-                                }
-                                else {
-                                    return;
-                                }
-                            }
-                            else if (ZombieLaboratory.survivorPlayer10 != null && player == ZombieLaboratory.survivorPlayer10) {
-                                if (ZombieLaboratory.survivorPlayer10IsInfected) {
-                                    if (ZombieLaboratory.survivorPlayer10HasKeyItem) {
-                                        ZombieLaboratory.survivorPlayer10HasKeyItem = false;
-                                        zombieLaboratoryRevertedKeyPosition(player.PlayerId, ZombieLaboratory.survivorPlayer10FoundBox);
-                                    }
-                                    ZombieLaboratory.survivorTeam.Remove(ZombieLaboratory.survivorPlayer10);
-                                    ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer10);
-                                    ZombieLaboratory.survivorPlayer10 = null;
-                                    ZombieLaboratory.survivorPlayer10IsInfected = false;
-                                    if (player == PlayerControl.LocalPlayer && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
-                                        ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                                        if (PlayerControl.GameOptions.MapId == 5) {
-                                            ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
-                                        }
-                                    }
-                                }
-                                else {
-                                    return;
-                                }
-                            }
-                            else if (ZombieLaboratory.survivorPlayer11 != null && player == ZombieLaboratory.survivorPlayer11) {
-                                if (ZombieLaboratory.survivorPlayer11IsInfected) {
-                                    if (ZombieLaboratory.survivorPlayer11HasKeyItem) {
-                                        ZombieLaboratory.survivorPlayer11HasKeyItem = false;
-                                        zombieLaboratoryRevertedKeyPosition(player.PlayerId, ZombieLaboratory.survivorPlayer11FoundBox);
-                                    }
-                                    ZombieLaboratory.survivorTeam.Remove(ZombieLaboratory.survivorPlayer11);
-                                    ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer11);
-                                    ZombieLaboratory.survivorPlayer11 = null;
-                                    ZombieLaboratory.survivorPlayer11IsInfected = false;
-                                    if (player == PlayerControl.LocalPlayer && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
-                                        ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                                        if (PlayerControl.GameOptions.MapId == 5) {
-                                            ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
-                                        }
-                                    }
-                                }
-                                else {
-                                    return;
-                                }
-                            }
-                            else if (ZombieLaboratory.survivorPlayer12 != null && player == ZombieLaboratory.survivorPlayer12) {
-                                if (ZombieLaboratory.survivorPlayer12IsInfected) {
-                                    if (ZombieLaboratory.survivorPlayer12HasKeyItem) {
-                                        ZombieLaboratory.survivorPlayer12HasKeyItem = false;
-                                        zombieLaboratoryRevertedKeyPosition(player.PlayerId, ZombieLaboratory.survivorPlayer12FoundBox);
-                                    }
-                                    ZombieLaboratory.survivorTeam.Remove(ZombieLaboratory.survivorPlayer12);
-                                    ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer12);
-                                    ZombieLaboratory.survivorPlayer12 = null;
-                                    ZombieLaboratory.survivorPlayer12IsInfected = false;
-                                    if (player == PlayerControl.LocalPlayer && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
-                                        ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                                        if (PlayerControl.GameOptions.MapId == 5) {
-                                            ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
-                                        }
-                                    }
-                                }
-                                else {
-                                    return;
-                                }
-                            }
-                            else if (ZombieLaboratory.survivorPlayer13 != null && player == ZombieLaboratory.survivorPlayer13) {
-                                if (ZombieLaboratory.survivorPlayer13IsInfected) {
-                                    if (ZombieLaboratory.survivorPlayer13HasKeyItem) {
-                                        ZombieLaboratory.survivorPlayer13HasKeyItem = false;
-                                        zombieLaboratoryRevertedKeyPosition(player.PlayerId, ZombieLaboratory.survivorPlayer13FoundBox);
-                                    }
-                                    ZombieLaboratory.survivorTeam.Remove(ZombieLaboratory.survivorPlayer13);
-                                    ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer13);
-                                    ZombieLaboratory.survivorPlayer13 = null;
-                                    ZombieLaboratory.survivorPlayer13IsInfected = false;
-                                    if (player == PlayerControl.LocalPlayer && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
-                                        ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                                        if (PlayerControl.GameOptions.MapId == 5) {
-                                            ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
-                                        }
-                                    }
-                                }
-                                else {
-                                    return;
-                                }
-                            }
-
-                            // Add zombie role
-                            if (ZombieLaboratory.zombiePlayer02 == null) {
-                                ZombieLaboratory.zombiePlayer02 = player;
-                                ZombieLaboratory.zombieTeam.Add(player);
-                            }
-                            else if (ZombieLaboratory.zombiePlayer03 == null) {
-                                ZombieLaboratory.zombiePlayer03 = player;
-                                ZombieLaboratory.zombieTeam.Add(player);
-                            }
-                            else if (ZombieLaboratory.zombiePlayer04 == null) {
-                                ZombieLaboratory.zombiePlayer04 = player;
-                                ZombieLaboratory.zombieTeam.Add(player);
-                            }
-                            else if (ZombieLaboratory.zombiePlayer05 == null) {
-                                ZombieLaboratory.zombiePlayer05 = player;
-                                ZombieLaboratory.zombieTeam.Add(player);
-                            }
-                            else if (ZombieLaboratory.zombiePlayer06 == null) {
-                                ZombieLaboratory.zombiePlayer06 = player;
-                                ZombieLaboratory.zombieTeam.Add(player);
-                            }
-                            else if (ZombieLaboratory.zombiePlayer07 == null) {
-                                ZombieLaboratory.zombiePlayer07 = player;
-                                ZombieLaboratory.zombieTeam.Add(player);
-                            }
-                            else if (ZombieLaboratory.zombiePlayer08 == null) {
-                                ZombieLaboratory.zombiePlayer08 = player;
-                                ZombieLaboratory.zombieTeam.Add(player);
-                            }
-                            else if (ZombieLaboratory.zombiePlayer09 == null) {
-                                ZombieLaboratory.zombiePlayer09 = player;
-                                ZombieLaboratory.zombieTeam.Add(player);
-                            }
-                            else if (ZombieLaboratory.zombiePlayer10 == null) {
-                                ZombieLaboratory.zombiePlayer10 = player;
-                                ZombieLaboratory.zombieTeam.Add(player);
-                            }
-                            else if (ZombieLaboratory.zombiePlayer11 == null) {
-                                ZombieLaboratory.zombiePlayer11 = player;
-                                ZombieLaboratory.zombieTeam.Add(player);
-                            }
-                            else if (ZombieLaboratory.zombiePlayer12 == null) {
-                                ZombieLaboratory.zombiePlayer12 = player;
-                                ZombieLaboratory.zombieTeam.Add(player);
-                            }
-                            else if (ZombieLaboratory.zombiePlayer13 == null) {
-                                ZombieLaboratory.zombiePlayer13 = player;
-                                ZombieLaboratory.zombieTeam.Add(player);
-                            }
-                            else if (ZombieLaboratory.zombiePlayer14 == null) {
-                                ZombieLaboratory.zombiePlayer14 = player;
-                                ZombieLaboratory.zombieTeam.Add(player);
-                            }
-
-                            if (!player.Data.IsDead) {
-                                switch (PlayerControl.GameOptions.MapId) {
-                                    case 0:
-                                        if (activatedSensei) {
-                                            player.transform.position = new Vector3(-4.85f, 6, player.transform.position.z);
-                                        }
-                                        else {
-                                            player.transform.position = new Vector3(-17.25f, -13.25f, player.transform.position.z);
-                                        }
-                                        break;
-                                    case 1:
-                                        player.transform.position = new Vector3(18.5f, -1.85f, player.transform.position.z);
-                                        break;
-                                    case 2:
-                                        player.transform.position = new Vector3(17.15f, -17.15f, player.transform.position.z);
-                                        break;
-                                    case 3:
-                                        player.transform.position = new Vector3(17.25f, -13.25f, player.transform.position.z);
-                                        break;
-                                    case 4:
-                                        player.transform.position = new Vector3(32.35f, 7.25f, player.transform.position.z);
-                                        break;
-                                    case 5:
-                                        if (player.transform.position.y > 0) {
-                                            player.transform.position = new Vector3(1f, 10f, player.transform.position.z);
-                                        }
-                                        else {
-                                            player.transform.position = new Vector3(-4.15f, -33.5f, player.transform.position.z);
-                                        }
-                                        break;
-                                }
-                            }
-
-                            new CustomMessage("A <color=#00CCFFFF>Survivor</color> turned into a <color=#996633FF>Zombie</color>!", 5, -1, 1f, 21);
-                            ZombieLaboratory.zombieLaboratoryCounter = "Key Items: " + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + "Survivors: " + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> " + "| " + "Infected: " + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> " + "| " + "Zombies: " + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
-                            // Check win condition
-                            if (ZombieLaboratory.survivorTeam.Count == 1) {
-                                ZombieLaboratory.triggerZombieWin = true;
-                            }
-                        }
-                    })));
-                    return;
+                    new CustomMessage(Language.statusZombieLaboratoryTexts[1], 5, -1, 1.3f, 21);
+                    ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
                 }
             }
+        }
+
+        public static void zombieLaboratoryTurnZombie(byte playerId) {
+            PlayerControl player = Helpers.playerById(playerId);
+
+            // Add zombie role
+            if (ZombieLaboratory.zombiePlayer02 == null) {
+                ZombieLaboratory.zombiePlayer02 = player;
+                ZombieLaboratory.zombieTeam.Add(player);
+            }
+            else if (ZombieLaboratory.zombiePlayer03 == null) {
+                ZombieLaboratory.zombiePlayer03 = player;
+                ZombieLaboratory.zombieTeam.Add(player);
+            }
+            else if (ZombieLaboratory.zombiePlayer04 == null) {
+                ZombieLaboratory.zombiePlayer04 = player;
+                ZombieLaboratory.zombieTeam.Add(player);
+            }
+            else if (ZombieLaboratory.zombiePlayer05 == null) {
+                ZombieLaboratory.zombiePlayer05 = player;
+                ZombieLaboratory.zombieTeam.Add(player);
+            }
+            else if (ZombieLaboratory.zombiePlayer06 == null) {
+                ZombieLaboratory.zombiePlayer06 = player;
+                ZombieLaboratory.zombieTeam.Add(player);
+            }
+            else if (ZombieLaboratory.zombiePlayer07 == null) {
+                ZombieLaboratory.zombiePlayer07 = player;
+                ZombieLaboratory.zombieTeam.Add(player);
+            }
+            else if (ZombieLaboratory.zombiePlayer08 == null) {
+                ZombieLaboratory.zombiePlayer08 = player;
+                ZombieLaboratory.zombieTeam.Add(player);
+            }
+            else if (ZombieLaboratory.zombiePlayer09 == null) {
+                ZombieLaboratory.zombiePlayer09 = player;
+                ZombieLaboratory.zombieTeam.Add(player);
+            }
+            else if (ZombieLaboratory.zombiePlayer10 == null) {
+                ZombieLaboratory.zombiePlayer10 = player;
+                ZombieLaboratory.zombieTeam.Add(player);
+            }
+            else if (ZombieLaboratory.zombiePlayer11 == null) {
+                ZombieLaboratory.zombiePlayer11 = player;
+                ZombieLaboratory.zombieTeam.Add(player);
+            }
+            else if (ZombieLaboratory.zombiePlayer12 == null) {
+                ZombieLaboratory.zombiePlayer12 = player;
+                ZombieLaboratory.zombieTeam.Add(player);
+            }
+            else if (ZombieLaboratory.zombiePlayer13 == null) {
+                ZombieLaboratory.zombiePlayer13 = player;
+                ZombieLaboratory.zombieTeam.Add(player);
+            }
+            else if (ZombieLaboratory.zombiePlayer14 == null) {
+                ZombieLaboratory.zombiePlayer14 = player;
+                ZombieLaboratory.zombieTeam.Add(player);
+            }
+
+            if (!player.Data.IsDead) {
+                switch (PlayerControl.GameOptions.MapId) {
+                    case 0:
+                        if (activatedSensei) {
+                            player.transform.position = new Vector3(-4.85f, 6, player.transform.position.z);
+                        }
+                        else {
+                            player.transform.position = new Vector3(-17.25f, -13.25f, player.transform.position.z);
+                        }
+                        break;
+                    case 1:
+                        player.transform.position = new Vector3(18.5f, -1.85f, player.transform.position.z);
+                        break;
+                    case 2:
+                        player.transform.position = new Vector3(17.15f, -17.15f, player.transform.position.z);
+                        break;
+                    case 3:
+                        player.transform.position = new Vector3(17.25f, -13.25f, player.transform.position.z);
+                        break;
+                    case 4:
+                        player.transform.position = new Vector3(32.35f, 7.25f, player.transform.position.z);
+                        break;
+                    case 5:
+                        if (player.transform.position.y > 0) {
+                            player.transform.position = new Vector3(1f, 10f, player.transform.position.z);
+                        }
+                        else {
+                            player.transform.position = new Vector3(-4.15f, -33.5f, player.transform.position.z);
+                        }
+                        break;
+                }
+            }
+
+            new CustomMessage(Language.statusZombieLaboratoryTexts[2], 5, -1, 1f, 21);
+            ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
+            HudManager.Instance.StartCoroutine(Effects.Lerp(1, new Action<float>((p) => { // Delayed action
+                if (p == 1f) {
+                    // Check win condition
+                    if (ZombieLaboratory.survivorTeam.Count == 1) {
+                        ZombieLaboratory.triggerZombieWin = true;
+                    }
+                }
+            })));
         }
 
         public static void zombieKills(byte targetId, int whichplayer) {
@@ -6083,7 +7493,7 @@ namespace LasMonjas
                         ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer14);
                     }
                     ZombieLaboratory.laboratoryNurseMedKit.SetActive(false);
-                    ZombieLaboratory.zombieLaboratoryCounter = "Key Items: " + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + "Survivors: " + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> " + "| " + "Infected: " + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> " + "| " + "Zombies: " + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
+                    ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
                 }
             }
         }
@@ -6269,14 +7679,10 @@ namespace LasMonjas
             ZombieLaboratory.triggerSurvivorWin = true;
         }
 
-        /*public static void battleRoyaleShoots(byte sourceId, byte whichColor, float angle) {
-            new BattleRoyaleShoot(Helpers.playerById(sourceId), whichColor, angle);
-        }*/
-
         public static void battleRoyaleKills(byte targetId, byte sourceId) {
             foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
                 if (player.PlayerId == targetId) {
-                    
+
                     // Hit sound
                     if (player == PlayerControl.LocalPlayer) {
                         SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleGetHit, false, 100f);
@@ -6706,7 +8112,7 @@ namespace LasMonjas
             if (BattleRoyale.matchType == 0) {
                 int soloPlayersAlives = 0;
 
-                new CustomMessage("One <color=#009F57FF>Fighter</color> down!", 5, -1, 1.6f, 26);
+                new CustomMessage(Language.statusBattleRoyaleTexts[0], 5, -1, 1.6f, 26);
 
                 foreach (PlayerControl soloPlayer in BattleRoyale.soloPlayerTeam) {
 
@@ -6716,7 +8122,7 @@ namespace LasMonjas
 
                 }
 
-                BattleRoyale.battleRoyalepointCounter = "Battle Royale Fighters: " + "<color=#009F57FF>" + soloPlayersAlives + "</color>";
+                BattleRoyale.battleRoyalepointCounter = Language.introTexts[11] + "<color=#009F57FF>" + soloPlayersAlives + "</color>";
 
                 if (soloPlayersAlives <= 1) {
                     BattleRoyale.triggerSoloWin = true;
@@ -6746,13 +8152,13 @@ namespace LasMonjas
                 }
 
                 if (whichTeamCheck == 1) {
-                    new CustomMessage("One <color=#39FF14FF>Lime Fighter</color> down!", 5, -1, 1.6f, 26);
+                    new CustomMessage(Language.statusBattleRoyaleTexts[1], 5, -1, 1.6f, 26);
                 }
                 else if (whichTeamCheck == 2) {
-                    new CustomMessage("One <color=#F2BEFFFF>Pink Fighter</color> down!", 5, -1, 1.3f, 26);
+                    new CustomMessage(Language.statusBattleRoyaleTexts[2], 5, -1, 1.3f, 26);
                 }
                 else if (whichTeamCheck == 3) {
-                    new CustomMessage("<color=#808080FF>Serial Killer</color> down!", 5, -1, 1f, 26);
+                    new CustomMessage(Language.statusBattleRoyaleTexts[3], 5, -1, 1f, 26);
                     if (limePlayersAlive <= 0) {
                         BattleRoyale.triggerPinkTeamWin = true;
                         ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
@@ -6774,7 +8180,7 @@ namespace LasMonjas
                         }
 
                     }
-                    BattleRoyale.battleRoyalepointCounter = "Lime Team: " + "<color=#39FF14FF>" + limePlayersAlive + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + pinkPlayersAlive + "</color> | " + "Serial Killer: " + "<color=#808080FF>" + serialKillerAlive + "</color>";
+                    BattleRoyale.battleRoyalepointCounter = Language.introTexts[12] + "<color=#39FF14FF>" + limePlayersAlive + "</color> | " + Language.introTexts[13] + " <color=#F2BEFFFF>" + pinkPlayersAlive + "</color> | " + Language.introTexts[14] + "<color=#808080FF>" + serialKillerAlive + "</color>";
                     if (limePlayersAlive <= 0 && pinkPlayersAlive <= 0 && !BattleRoyale.serialKiller.Data.IsDead) {
                         BattleRoyale.triggerSerialKillerWin = true;
                         ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSerialKillerWin, false);
@@ -6789,7 +8195,7 @@ namespace LasMonjas
                     }
                 }
                 else {
-                    BattleRoyale.battleRoyalepointCounter = "Lime Team: " + "<color=#39FF14FF>" + limePlayersAlive + "</color> | " + "Pink Team: " + "<color=#F2BEFFFF>" + pinkPlayersAlive + "</color>";
+                    BattleRoyale.battleRoyalepointCounter = Language.introTexts[12] + "<color=#39FF14FF>" + limePlayersAlive + "</color> | " + Language.introTexts[13] + "<color=#F2BEFFFF>" + pinkPlayersAlive + "</color>";
                     if (pinkPlayersAlive <= 0) {
                         BattleRoyale.triggerLimeTeamWin = true;
                         ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
@@ -6806,23 +8212,23 @@ namespace LasMonjas
             switch (whichTeamCheck) {
                 case 1:
                     BattleRoyale.limePoints += 10 * multiplier;
-                    new CustomMessage("Points for <color=#39FF14FF>Lime Team</color>!", 5, -1, 1.6f, 26);
+                    new CustomMessage(Language.statusBattleRoyaleTexts[4], 5, -1, 1.6f, 26);
                     break;
                 case 2:
                     BattleRoyale.pinkPoints += 10 * multiplier;
-                    new CustomMessage("Points for <color=#F2BEFFFF>Pink Team</color>!", 5, -1, 1.3f, 26);
+                    new CustomMessage(Language.statusBattleRoyaleTexts[5], 5, -1, 1.3f, 26);
                     break;
                 case 3:
                     BattleRoyale.serialKillerPoints += 10 * multiplier;
-                    new CustomMessage("Points for <color=#808080FF>Serial Killer</color>!", 5, -1, 1f, 26);
+                    new CustomMessage(Language.statusBattleRoyaleTexts[6], 5, -1, 1f, 26);
                     break;
             }
             
             if (BattleRoyale.serialKiller != null) {
-                BattleRoyale.battleRoyalepointCounter = "Goal: " + BattleRoyale.requiredScore + " | <color=#39FF14FF>Lime Team: " + BattleRoyale.limePoints + "</color> | " + "<color=#F2BEFFFF>Pink Team: " + BattleRoyale.pinkPoints + "</color> | " + "<color=#808080FF>Serial Killer Points: " + BattleRoyale.serialKillerPoints + "</color>";
+                BattleRoyale.battleRoyalepointCounter = Language.introTexts[15] + BattleRoyale.requiredScore + " | <color=#39FF14FF>" + Language.introTexts[12] + BattleRoyale.limePoints + " </color> | " + "<color=#F2BEFFFF>" + Language.introTexts[13] + BattleRoyale.pinkPoints + "</color> | " + "<color=#808080FF>" + Language.introTexts[16] + BattleRoyale.serialKillerPoints + " </color>";
             }
             else {
-                BattleRoyale.battleRoyalepointCounter = "Goal: " + BattleRoyale.requiredScore + " | <color=#39FF14FF>Lime Team: " + BattleRoyale.limePoints + "</color> | " + "<color=#F2BEFFFF>Pink Team: " + BattleRoyale.pinkPoints + "</color>";
+                BattleRoyale.battleRoyalepointCounter = Language.introTexts[15] + BattleRoyale.requiredScore + " | <color=#39FF14FF>" + Language.introTexts[12] + BattleRoyale.limePoints + " </color> | " + "<color=#F2BEFFFF>" + Language.introTexts[13] + BattleRoyale.pinkPoints + "</color>";
             }
 
             if (BattleRoyale.limePoints >= BattleRoyale.requiredScore) {
@@ -6924,7 +8330,7 @@ namespace LasMonjas
                     RPCProcedure.manipulatorKill(reader.ReadByte());
                     break;
                 case (byte)CustomRPC.PlaceBomb:
-                    RPCProcedure.placeBomb();
+                    RPCProcedure.placeBomb(reader.ReadBytesAndSize());
                     break;
                 case (byte)CustomRPC.FixBomb:
                     RPCProcedure.fixBomb();
@@ -6945,7 +8351,7 @@ namespace LasMonjas
                     RPCProcedure.medusaPetrify(reader.ReadByte());
                     break;
                 case (byte)CustomRPC.PlaceSpiralTrap:
-                    RPCProcedure.placeSpiralTrap();
+                    RPCProcedure.placeSpiralTrap(reader.ReadBytesAndSize());
                     break;
                 case (byte)CustomRPC.ActivateSpiralTrap:
                     RPCProcedure.activateSpiralTrap(reader.ReadByte());
@@ -6953,24 +8359,35 @@ namespace LasMonjas
                 case (byte)CustomRPC.ShowArcherNotification:
                     RPCProcedure.showArcherNotification(reader.ReadByte());
                     break;
-
+                case (byte)CustomRPC.PlumberMakeVent:
+                    var pos = reader.ReadBytesAndSize();
+                    RPCProcedure.plumberMakeVent(pos);
+                    break;
+                case (byte)CustomRPC.SilencePlayer:
+                    RPCProcedure.silencePlayer(reader.ReadByte());
+                    break;
+                case (byte)CustomRPC.ResetSilenced:
+                    RPCProcedure.resetSilenced();
+                    break;
+                    
                 // Role rebeldes functionality
 
                 case (byte)CustomRPC.RenegadeRecruitMinion:
                     RPCProcedure.renegadeRecruitMinion(reader.ReadByte());
                     break;
-                case (byte)CustomRPC.BountyHunterSetKill:
-                    byte bountyId = reader.ReadByte(); 
-                    RPCProcedure.bountyHunterSetKill(bountyId);
+                case (byte)CustomRPC.SetRandomTarget:
+                    byte bountyId = reader.ReadByte();
+                    byte playerInt = reader.ReadByte();
+                    RPCProcedure.setRandomTarget(bountyId, playerInt);
                     break;
                 case (byte)CustomRPC.BountyHunterKill:
                     RPCProcedure.bountyHunterKill(reader.ReadByte());
                     break;
                 case (byte)CustomRPC.PlaceMine:
-                    RPCProcedure.placeMine();
+                    RPCProcedure.placeMine(reader.ReadBytesAndSize());
                     break;
                 case (byte)CustomRPC.PlaceTrap:
-                    RPCProcedure.placeTrap();
+                    RPCProcedure.placeTrap(reader.ReadBytesAndSize());
                     break;
                 case (byte)CustomRPC.MineKill:
                     RPCProcedure.mineKill(reader.ReadByte());
@@ -6982,9 +8399,6 @@ namespace LasMonjas
                     byte yinedId = reader.ReadByte();
                     byte yinflag = reader.ReadByte();
                     RPCProcedure.yinyangerSetYinyang(yinedId, yinflag);
-                    break;
-                case (byte)CustomRPC.ChallengerCantDuel:
-                    RPCProcedure.challengerCantDuel();
                     break;
                 case (byte)CustomRPC.ChallengerPerformDuel:
                     RPCProcedure.challengerPerformDuel();
@@ -7003,6 +8417,40 @@ namespace LasMonjas
                     break;
                 case (byte)CustomRPC.BerserkerKill:
                     RPCProcedure.berserkerKill(reader.ReadByte());
+                    break;
+                case (byte)CustomRPC.YandereKill:
+                    RPCProcedure.yandereKill(reader.ReadByte());
+                    break;
+                case (byte)CustomRPC.StrandedFindBoxes:
+                    byte strandedBox = reader.ReadByte();
+                    RPCProcedure.strandedFindBoxes(strandedBox);
+                    break;
+                case (byte)CustomRPC.StrandedKill:
+                    RPCProcedure.strandedKill(reader.ReadByte());
+                    break;
+                case (byte)CustomRPC.StrandedInvisible:
+                    RPCProcedure.strandedInvisible();
+                    break;
+                case (byte)CustomRPC.MonjaTakeItem:
+                    byte monjaItemId = reader.ReadByte();
+                    RPCProcedure.monjaTakeItem(monjaItemId);
+                    break;
+                case (byte)CustomRPC.MonjaDeliverItem:
+                    byte monjaDeliveredItemId = reader.ReadByte();
+                    RPCProcedure.monjaDeliverItem(monjaDeliveredItemId);
+                    break;
+                case (byte)CustomRPC.MonjaRevertItemPosition:
+                    byte monjaRevertedItemId = reader.ReadByte();
+                    RPCProcedure.monjaRevertItemPosition(monjaRevertedItemId);
+                    break;
+                case (byte)CustomRPC.MonjaAwakened:
+                    RPCProcedure.monjaAwakened();
+                    break;
+                case (byte)CustomRPC.MonjaKill:
+                    RPCProcedure.monjaKill(reader.ReadByte());
+                    break;
+                case (byte)CustomRPC.MonjaReset:
+                    RPCProcedure.monjaReset();
                     break;
 
                 // Role neutrals functionality
@@ -7034,9 +8482,38 @@ namespace LasMonjas
                 case (byte)CustomRPC.PuppeteerResetTransform:
                     RPCProcedure.puppeteerResetTransform();
                     break;
+                case (byte)CustomRPC.ExilerTriggerWin:
+                    RPCProcedure.exilerWin();
+                    break;
+                case (byte)CustomRPC.AmnesiacReportAndTakeRole:
+                    RPCProcedure.amnesiacReportAndTakeRole(reader.ReadByte());
+                    break;
+                case (byte)CustomRPC.SeekerSetMinigamePlayers:
+                    byte minigamePlayerId = reader.ReadByte();
+                    RPCProcedure.seekerSetMinigamePlayers(minigamePlayerId);
+                    break;
+                case (byte)CustomRPC.SeekerResetMinigamePlayers:
+                    byte minigameFlag = reader.ReadByte();
+                    RPCProcedure.seekerResetMinigamePlayers(minigameFlag);
+                    break;
+                case (byte)CustomRPC.SeekerPerformMinigame:
+                    RPCProcedure.seekerPerformMinigame();
+                    break;
+                case (byte)CustomRPC.SeekerSelectAttack:
+                    byte seekerAttack = reader.ReadByte();
+                    RPCProcedure.seekerSelectAttack(seekerAttack);
+                    break;
 
                 // Role crewmates functionality
 
+                case (byte)CustomRPC.CaptainSpecialVote:
+                    byte id = reader.ReadByte();
+                    byte targetId = reader.ReadByte();
+                    RPCProcedure.captainSpecialVote(id, targetId);
+                    break;
+                case (byte)CustomRPC.CaptainAutoCastSpecialVote:
+                    RPCProcedure.captainAutoCastSpecialVote();
+                    break;
                 case (byte)CustomRPC.MechanicFixLights:
                     RPCProcedure.mechanicFixLights();
                     break;
@@ -7067,8 +8544,8 @@ namespace LasMonjas
                     RPCProcedure.cheaterCheat(playerId1, playerId2);
                     break;
                 case (byte)CustomRPC.FortuneTellerReveal:
-                    byte targetId = reader.ReadByte();
-                    RPCProcedure.fortuneTellerReveal(targetId);
+                    byte targetFortuneId = reader.ReadByte();
+                    RPCProcedure.fortuneTellerReveal(targetFortuneId);
                     break;
                 case (byte)CustomRPC.HackerAbilityUses:
                     byte adminOrVitals = reader.ReadByte();
@@ -7121,10 +8598,29 @@ namespace LasMonjas
                     RPCProcedure.batFrequency();
                     break;
                 case (byte)CustomRPC.PlaceEngineerTrap:
-                    RPCProcedure.placeEngineerTrap(reader.ReadByte());
+                    RPCProcedure.placeEngineerTrap(reader.ReadByte(), reader.ReadBytesAndSize());
                     break;
                 case (byte)CustomRPC.ActivateEngineerTrap:
                     RPCProcedure.activateEngineerTrap(reader.ReadByte(), reader.ReadByte());
+                    break;
+                case (byte)CustomRPC.TaskMasterSetExtraTasks:
+                    playerId = reader.ReadByte();
+                    byte oldTaskMasterPlayerId = reader.ReadByte();
+                    byte[] taskTypeIds = reader.BytesRemaining > 0 ? reader.ReadBytes(reader.BytesRemaining) : null;
+                    RPCProcedure.taskMasterSetExTasks(playerId, oldTaskMasterPlayerId, taskTypeIds);
+                    break;
+                case (byte)CustomRPC.TaskMasterTriggerCrewWin:
+                    RPCProcedure.taskMasterTriggerCrewWin();
+                    break;
+                case (byte)CustomRPC.TaskMasterActivateSpeed:
+                    RPCProcedure.taskMasterActivateSpeed();
+                    break;
+                case (byte)CustomRPC.JailerSetJailed:
+                    RPCProcedure.jailedSetJailed(reader.ReadByte());
+                    break;
+                case (byte)CustomRPC.PrisonPlayer:
+                    byte prisonerId = reader.ReadByte();
+                    RPCProcedure.prisonPlayer(prisonerId);
                     break;
 
                 // Other funtionality
@@ -7132,6 +8628,11 @@ namespace LasMonjas
                 case (byte)CustomRPC.ChangeMusic:
                     byte whichmusic = reader.ReadByte();
                     RPCProcedure.changeMusic(whichmusic);
+                    break;
+                case (byte)CustomRPC.WhoWasI:
+                    byte playerWhoWasID = reader.ReadByte();
+                    string roleName = reader.ReadString();
+                    RPCProcedure.whoWasI(playerWhoWasID, roleName);
                     break;
 
                 // Capture the flag funtionality
@@ -7239,6 +8740,10 @@ namespace LasMonjas
                 case (byte)CustomRPC.NurseHasMedKit:
                     RPCProcedure.nurseHasMedKit();
                     break;
+                case (byte)CustomRPC.ZombieLaboratoryTurnZombie:
+                    byte survivorWhoTurned = reader.ReadByte();
+                    RPCProcedure.zombieLaboratoryTurnZombie(survivorWhoTurned);
+                    break;
 
                 // Battle Royale
                 case (byte)CustomRPC.BattleRoyaleKills:
@@ -7246,12 +8751,6 @@ namespace LasMonjas
                     byte battlewhichplayer = reader.ReadByte();
                     RPCProcedure.battleRoyaleKills(battlekillId, battlewhichplayer);
                     break;
-                /*case (byte)CustomRPC.BattleRoyaleShoots:
-                    byte sourceId = reader.ReadByte();
-                    byte whichColor = reader.ReadByte();
-                    float playerAngle = reader.ReadSingle();
-                    RPCProcedure.battleRoyaleShoots(sourceId, whichColor, playerAngle);
-                    break;*/
             }
         }
     }

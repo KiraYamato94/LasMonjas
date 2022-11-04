@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Collections;
-using UnhollowerBaseLib;
+using Il2CppInterop;
 using UnityEngine;
 using System.Linq;
 using static LasMonjas.LasMonjas;
@@ -12,6 +12,8 @@ using HarmonyLib;
 using Hazel;
 using LasMonjas.Objects;
 using LasMonjas.Patches;
+using Il2CppInterop.Runtime.InteropTypes;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 
 namespace LasMonjas
 {
@@ -62,15 +64,6 @@ namespace LasMonjas
             }
             return null;
         }
-
-        /*internal delegate bool d_LoadImage(IntPtr tex, IntPtr data, bool markNonReadable);
-        internal static d_LoadImage iCall_LoadImage;
-        private static bool LoadImage(Texture2D tex, byte[] data, bool markNonReadable) {
-            if (iCall_LoadImage == null)
-                iCall_LoadImage = IL2CPP.ResolveICall<d_LoadImage>("UnityEngine.ImageConversion::LoadImage");
-            var il2cppArray = (Il2CppStructArray<byte>) data;
-            return iCall_LoadImage.Invoke(tex.Pointer, il2cppArray.Pointer, markNonReadable);
-        }*/
 
         public static PlayerControl playerById(byte id)
         {
@@ -127,8 +120,8 @@ namespace LasMonjas
                 task.transform.SetParent(player.transform, false);
 
                 if (roleInfo.name == "Renegade") {
-                    var getMinionText = Renegade.canRecruitMinion ? " and recruit a Minion" : "";
-                    task.Text = cs(roleInfo.color, $"{roleInfo.name}: Kill everyone{getMinionText}");  
+                    var getMinionText = Renegade.canRecruitMinion ? Language.helpersTexts[0] : "";
+                    task.Text = cs(roleInfo.color, $"{roleInfo.name}: {Language.helpersTexts[1]}{getMinionText}");  
                 } else {
                     task.Text = cs(roleInfo.color, $"{roleInfo.name}: {roleInfo.shortDescription}");  
                 }
@@ -149,7 +142,7 @@ namespace LasMonjas
 
         //Fake tasks for neutral and rebel team
         public static bool hasFakeTasks(this PlayerControl player) {
-            return (player == Joker.joker || player == RoleThief.rolethief || player == Pyromaniac.pyromaniac || player == TreasureHunter.treasureHunter || player == Devourer.devourer || player == Poisoner.poisoner || player == Puppeteer.puppeteer || player == Renegade.renegade || player == Minion.minion || player == BountyHunter.bountyhunter || player == Trapper.trapper || player == Yinyanger.yinyanger || player == Challenger.challenger || player == Ninja.ninja || player == Berserker.berserker || Renegade.formerRenegades.Contains(player));
+            return (player == Joker.joker || player == RoleThief.rolethief || player == Pyromaniac.pyromaniac || player == TreasureHunter.treasureHunter || player == Devourer.devourer || player == Poisoner.poisoner || player == Puppeteer.puppeteer || player == Exiler.exiler || player == Amnesiac.amnesiac || player == Seeker.seeker || player == Renegade.renegade || player == Minion.minion || player == BountyHunter.bountyhunter || player == Trapper.trapper || player == Yinyanger.yinyanger || player == Challenger.challenger || player == Ninja.ninja || player == Berserker.berserker || player == Yandere.yandere || player == Stranded.stranded || player == Monja.monja || Renegade.formerRenegades.Any(x => x == player));
         }
 
         public static bool canBeErased(this PlayerControl player) {
@@ -361,16 +354,23 @@ namespace LasMonjas
                 }
             }
             else {
-                if (Chameleon.chameleon != null && Chameleon.chameleon == player)
+                if (Monja.awakened) {
                     roleCouldUse = false;
-                else if (Janitor.janitor != null && Janitor.janitor == player && Janitor.dragginBody)
-                    roleCouldUse = false;
-                else if (Renegade.canUseVents && Renegade.renegade != null && Renegade.renegade == player && !Renegade.isHypnotized)
-                    roleCouldUse = true;
-                else if (Renegade.canUseVents && Minion.minion != null && Minion.minion == player && !Minion.isHypnotized)
-                    roleCouldUse = true;
-                else if (player.Data.Role.IsImpostor) {
-                    roleCouldUse = true;
+                }
+                else {
+                    if (Chameleon.chameleon != null && Chameleon.chameleon == player)
+                        roleCouldUse = false;
+                    else if (Janitor.janitor != null && Janitor.janitor == player && Janitor.dragginBody)
+                        roleCouldUse = false;
+                    else if (Renegade.canUseVents && Renegade.renegade != null && Renegade.renegade == player && !Renegade.isHypnotized)
+                        roleCouldUse = true;
+                    else if (Renegade.canUseVents && Minion.minion != null && Minion.minion == player && !Minion.isHypnotized)
+                        roleCouldUse = true;
+                    else if (Stranded.canVent && Stranded.invisibleTimer <= 0f && Stranded.stranded != null && Stranded.stranded == player && !Stranded.isHypnotized)
+                        roleCouldUse = true;
+                    else if (player.Data.Role.IsImpostor) {
+                        roleCouldUse = true;
+                    }
                 }
             }
             return roleCouldUse;
@@ -398,6 +398,19 @@ namespace LasMonjas
                 MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(killer.NetId, (byte)CustomRPC.ShieldedMurderAttempt, Hazel.SendOption.Reliable, -1);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
                 RPCProcedure.shieldedMurderAttempt();
+                return MurderAttemptResult.SuppressKill;
+            }
+            
+            // Block impostor jailer kill and teleport the killer to prison
+            else if (Jailer.jailedPlayer != null && Jailer.jailedPlayer == target) {
+                List<RoleInfo> infos = RoleInfo.getRoleInfoForPlayer(killer);
+                RoleInfo roleInfo = infos.FirstOrDefault();
+                if (killer.Data.Role.IsImpostor || roleInfo.isRebel) {
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(killer.NetId, (byte)CustomRPC.PrisonPlayer, Hazel.SendOption.Reliable, -1);
+                    writer.Write(killer.PlayerId);
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    RPCProcedure.prisonPlayer(killer.PlayerId);
+                }
                 return MurderAttemptResult.SuppressKill;
             }
 
@@ -520,5 +533,118 @@ namespace LasMonjas
 
         }
 
+        public static AudioClip GetIntroSound(RoleTypes roleType) {
+            return RoleManager.Instance.AllRoles.Where((role) => role.Role == roleType).FirstOrDefault().IntroSound;
+        }
+
+        public static void playEndMusic(int whichTeamMusic) {
+            MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
+            switch (whichTeamMusic) {
+                case 3: // Neutrals
+                    writermusic.Write(3);
+                    AmongUsClient.Instance.FinishRpcImmediately(writermusic);
+                    RPCProcedure.changeMusic(3);
+                    break;
+                case 4: // Rebels
+                    writermusic.Write(4);
+                    AmongUsClient.Instance.FinishRpcImmediately(writermusic);
+                    RPCProcedure.changeMusic(4);
+                    break;
+                case 5: // Crewmates
+                    writermusic.Write(5);
+                    AmongUsClient.Instance.FinishRpcImmediately(writermusic);
+                    RPCProcedure.changeMusic(5);
+                    break;
+                case 6: // Impostors
+                    writermusic.Write(6);
+                    AmongUsClient.Instance.FinishRpcImmediately(writermusic);
+                    RPCProcedure.changeMusic(6);
+                    break;
+            }
+        }
+
+        public static void alphaPlayer(bool invisible, byte playerId) {
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                if (player.PlayerId == playerId) {
+                    if (invisible) {
+                        player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0.5f);
+                        player.cosmetics.colorBlindText.color = new Color(player.cosmetics.colorBlindText.color.r, player.cosmetics.colorBlindText.color.g, player.cosmetics.colorBlindText.color.b, 0.5f);
+                        if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
+                            player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 0.5f);
+                            player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 0.5f);
+                        }
+                        if (player.cosmetics.hat != null) {
+                            player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0.5f);
+                            player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 0.5f);
+                            player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 0.5f);
+                        }
+                        if (player.cosmetics.visor != null) {
+                            player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 0.5f);
+                        }
+                        player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
+                    }
+                    else {
+                        player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 1f);
+                        player.cosmetics.colorBlindText.color = new Color(player.cosmetics.colorBlindText.color.r, player.cosmetics.colorBlindText.color.g, player.cosmetics.colorBlindText.color.b, 1);
+                        if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
+                            player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 1f);
+                            player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 1f);
+                        }
+                        if (player.cosmetics.hat != null) {
+                            player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 1f);
+                            player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 1f);
+                            player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 1f);
+                        }
+                        if (player.cosmetics.visor != null) {
+                            player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 1f);
+                        }
+                        player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
+                    }
+                }
+            }
+        }
+
+        public static void invisiblePlayer(byte playerId) {
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                if (player.PlayerId == playerId) {
+                    player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0f);
+                    player.cosmetics.colorBlindText.color = new Color(player.cosmetics.colorBlindText.color.r, player.cosmetics.colorBlindText.color.g, player.cosmetics.colorBlindText.color.b, 0);
+                    if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
+                        player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 0f);
+                        player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 0f);
+                    }
+                    if (player.cosmetics.hat != null) {
+                        player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0f);
+                        player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 0f);
+                        player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 0f);
+                    }
+                    if (player.cosmetics.visor != null) {
+                        player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 0f);
+                    }
+                    player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0f);
+                }
+            }
+        }
+        public static void turnIntoImpostor(PlayerControl player) {
+            player.Data.Role.TeamType = RoleTeamTypes.Impostor;
+            RoleManager.Instance.SetRole(player, RoleTypes.Impostor);
+            player.SetKillTimer(PlayerControl.GameOptions.KillCooldown);
+
+            foreach (var localPlayer in PlayerControl.AllPlayerControls) {
+                if (localPlayer.Data.Role.IsImpostor && PlayerControl.LocalPlayer.Data.Role.IsImpostor) {
+                    player.cosmetics.nameText.color = Palette.ImpostorRed;
+                }
+            }
+        }
+        public static void turnIntoCrewmate(PlayerControl player) {
+            player.Data.Role.TeamType = RoleTeamTypes.Crewmate;
+            RoleManager.Instance.SetRole(player, RoleTypes.Crewmate);
+
+            foreach (var localPlayer in PlayerControl.AllPlayerControls) {
+                if (!localPlayer.Data.Role.IsImpostor && !PlayerControl.LocalPlayer.Data.Role.IsImpostor) {
+                    player.cosmetics.nameText.color = Palette.CrewmateBlue;
+                }
+            }
+        }
     }
 }

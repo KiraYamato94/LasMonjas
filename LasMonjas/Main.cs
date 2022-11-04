@@ -10,22 +10,28 @@ using System.Net;
 using System.IO;
 using System;
 using System.Reflection;
-using UnhollowerBaseLib;
+using Il2CppInterop;
 using UnityEngine;
 using LasMonjas.Core;
 using LasMonjas.Patches;
-using Reactor.Extensions;
+using BepInEx.Unity.IL2CPP;
+using Reactor;
+using Reactor.Networking;
+using Reactor.Networking.Attributes;
+using AmongUs.Data;
+using AmongUs.Data.Legacy;
 
 namespace LasMonjas
 {
     [BepInPlugin(Id, "Las Monjas", VersionString)]
     [BepInDependency(SubmergedCompatibility.SUBMERGED_GUID, BepInDependency.DependencyFlags.SoftDependency)]
     [BepInProcess("Among Us.exe")]
+    [ReactorModFlags(ModFlags.RequireOnAllClients)]
     public class LasMonjasPlugin : BasePlugin
     {
         public const string Id = "me.allul.lasmonjas";
 
-        public const string VersionString = "2.1.3";
+        public const string VersionString = "3.0.2";
 
         public static System.Version Version = System.Version.Parse(VersionString);
         internal static BepInEx.Logging.ManualLogSource Logger;
@@ -42,6 +48,7 @@ namespace LasMonjas
         public static ConfigEntry<bool> MonjaCursor { get; set; }
         public static ConfigEntry<string> IpCustom { get; set; }
         public static ConfigEntry<ushort> PortCustom { get; set; }
+        public static ConfigEntry<int> modLanguage { get; set; }
 
 
         public static IRegionInfo[] defaultRegions;
@@ -58,7 +65,6 @@ namespace LasMonjas
         public override void Load() {
             Logger = Log;
             AssetLoader.LoadAssets();
-          
             ShowRoleSummary = Config.Bind("Custom", "Show Role Summary", true);
             ActivateMusic = Config.Bind("Custom", "Activate Music", true);
             GhostsSeeRoles = Config.Bind("Custom", "Ghosts See Roles", true);
@@ -67,7 +73,7 @@ namespace LasMonjas
 
             IpCustom = Config.Bind("Custom", "Custom Server IP", "127.0.0.1");
             PortCustom = Config.Bind("Custom", "Custom Server Port", (ushort)22023);
-
+            modLanguage = Config.Bind("Custom", "Mod Language", 1);
             defaultRegions = ServerManager.DefaultRegions;
 
             UpdateRegions();
@@ -85,6 +91,7 @@ namespace LasMonjas
             if (MonjaCursor.Value) {
                 Helpers.enableCursor("start");
             }
+            Language.LoadLanguage();
         }
     }
 
@@ -101,8 +108,7 @@ namespace LasMonjas
     public static class ChatControllerAwakePatch {
         private static void Prefix() {
             if (!EOSManager.Instance.isKWSMinor) {
-                SaveManager.chatModeType = 1;
-                SaveManager.isGuest = false;
+                DataManager.Settings.Multiplayer.ChatMode = InnerNet.QuickChatModes.FreeChatOrQuickChat;
             }
         }
     }        

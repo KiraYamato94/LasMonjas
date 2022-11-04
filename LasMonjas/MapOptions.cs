@@ -20,6 +20,7 @@ namespace LasMonjas
         public static List<Vent> ventsToSeal = new List<Vent>();
         public static Dictionary<byte, PoolablePlayer> playerIcons = new Dictionary<byte, PoolablePlayer>();
         public static Vector3 positionBeforeDuel = new Vector3();
+        public static Vector3 positionBeforeMinigame = new Vector3();
 
         public static void clearAndReloadMapOptions() {
             camerasToAdd = new List<SurvCamera>();
