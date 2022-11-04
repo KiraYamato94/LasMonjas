@@ -30,7 +30,7 @@ namespace LasMonjas.Core {
                     switch (whichmessage) {
                         case 1:
                             // Bomberman bomb warning
-                            if (Bomberman.activeBomb == true && localBombNumber == Bomberman.currentBombNumber) {
+                            if (Bomberman.activeBomb && localBombNumber == Bomberman.currentBombNumber) {
                                 string prefix = (even ? "<color=#FCBA03FF>" : "<color=#FF0000FF>");
                                 text.text = prefix + message + Bomberman.bombTimer.ToString("F0") + "</color>";
                             }
@@ -40,7 +40,7 @@ namespace LasMonjas.Core {
                             break;
                         case 2:
                             // Challenger duel timer
-                            if (Challenger.isDueling == true && Challenger.duelDuration >= 0 && Challenger.onlyOneFinishDuel) {
+                            if (Challenger.isDueling && Challenger.duelDuration >= 0 && Challenger.onlyOneFinishDuel) {
                                 string prefix = (even ? "<color=#FCBA03FF>" : "<color=#4F7D00FF>");
                                 text.text = prefix + message + Challenger.duelDuration.ToString("F0") + "</color>";
                             }
@@ -282,6 +282,36 @@ namespace LasMonjas.Core {
                             // Battle Royale warnings
                             if (BattleRoyale.battleRoyaleMode && BattleRoyale.matchDuration >= 0) {
                                 string prefix = ("<color=#FF8000FF>");
+                                text.text = prefix + message + "</color>";
+                            }
+                            else {
+                                text.text = "";
+                            }
+                            break;
+                        case 27:
+                            // Monja text
+                            if (Monja.awakened && Monja.awakenTimer > 0) {
+                                string prefix = (even ? "<color=#FCBA03FF>" : "<color=#FF0000FF>");
+                                text.text = prefix + message + Monja.awakenTimer.ToString("F0") + "</color>";
+                            }
+                            else {
+                                text.text = "";
+                            }
+                            break;
+                        case 28:
+                            // Seeker minigame timer
+                            if (Seeker.isMinigaming && Seeker.minigameDuration >= 0 && Seeker.onlyOneFinishMinigame) {
+                                string prefix = (even ? "<color=#FCBA03FF>" : "<color=#808080FF>");
+                                text.text = prefix + message + Seeker.minigameDuration.ToString("F0") + "</color>";
+                            }
+                            else {
+                                text.text = "";
+                            }
+                            break;
+                        case 29:
+                            // Seeker points warning text
+                            if (Seeker.isMinigaming) {
+                                string prefix = (even ? "<color=#FCBA03FF>" : "<color=#808080FF>");
                                 text.text = prefix + message + "</color>";
                             }
                             else {

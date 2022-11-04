@@ -6,6 +6,7 @@ using BepInEx.IL2CPP;
 using HarmonyLib;
 using BepInEx.Logging;
 using UnityEngine;
+using System.Linq;
 
 // Adapted from https://github.com/xxomega77xx/HatPack
 
@@ -55,6 +56,8 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "Sensei", HatName = "Dontaegamez", NoBounce = true},
             new AuthorData {AuthorName = "Sensei", HatName = "Blocky", NoBounce = true},
             new AuthorData {AuthorName = "Sensei", HatName = "Glitch", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "Sensei", HatName = "Boot", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "Sensei", HatName = "Monja Cloth", NoBounce = true, altShader = true},
             new AuthorData {AuthorName = "Muaresito", HatName = "Cell", NoBounce = true, altShader = true},
             new AuthorData {AuthorName = "Muaresito", HatName = "Ghost", NoBounce = true, altShader = true},
             new AuthorData {AuthorName = "Muaresito", HatName = "Goodbye", NoBounce = true},
@@ -79,11 +82,20 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "Muaresito", HatName = "4th Anniversary", NoBounce = true, altShader = true},
             new AuthorData {AuthorName = "Muaresito", HatName = "Exsusdia", NoBounce = true},
             new AuthorData {AuthorName = "Muaresito", HatName = "True Exsusdia", NoBounce = true},
+            new AuthorData {AuthorName = "Muaresito", HatName = "Worker Hat", NoBounce = true},
+            new AuthorData {AuthorName = "Muaresito", HatName = "Raul", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "Muaresito", HatName = "Chainsus Man", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "Muaresito", HatName = "4M0NJ-4S Tank", NoBounce = true},
+            new AuthorData {AuthorName = "Muaresito", HatName = "Too much tasks", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "Muaresito", HatName = "Octosus", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "Muaresito", HatName = "Sustrio", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "Muaresito", HatName = "Penguin", NoBounce = true},
             new AuthorData {AuthorName = "Xago", HatName = "World Destroyer", NoBounce = true},
             new AuthorData {AuthorName = "Xago", HatName = "Amazing Robot", NoBounce = true},
             new AuthorData {AuthorName = "Xago", HatName = "Fourze", NoBounce = true},
             new AuthorData {AuthorName = "Xago", HatName = "Zargothrax", NoBounce = true},
             new AuthorData {AuthorName = "Xago", HatName = "Chaos Wizard", NoBounce = true},
+            new AuthorData {AuthorName = "Xago", HatName = "Robot Armor", NoBounce = true, altShader = true},
             new AuthorData {AuthorName = "Hige", HatName = "Punsus", NoBounce = true},
             new AuthorData {AuthorName = "IceCreamGuy", HatName = "Ice Cream Man", NoBounce = false},
             new AuthorData {AuthorName = "IceCreamGuy", HatName = "Devious Bling", NoBounce = true, altShader = true},
@@ -93,7 +105,8 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "lotty", HatName = "Black Cat", NoBounce = false},
             new AuthorData {AuthorName = "lotty", HatName = "White Cat", NoBounce = false},
             new AuthorData {AuthorName = "lotty", HatName = "Clown", NoBounce = true},
-            new AuthorData {AuthorName = "lotty", HatName = "Raccoon", NoBounce = true},
+            new AuthorData {AuthorName = "lotty", HatName = "Raccoon", NoBounce = false},
+            new AuthorData {AuthorName = "lotty", HatName = "Impostor Raccoon", NoBounce = false},
             new AuthorData {AuthorName = "lotty", HatName = "Periodt", NoBounce = true},
             new AuthorData {AuthorName = "lotty", HatName = "GD", NoBounce = false},
             new AuthorData {AuthorName = "lotty", HatName = "Card", NoBounce = true, altShader = true},
@@ -104,10 +117,28 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "lotty", HatName = "Purple Halo", NoBounce = true},
             new AuthorData {AuthorName = "lotty", HatName = "Sword", NoBounce = true},
             new AuthorData {AuthorName = "lotty", HatName = "uwu", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "lotty", HatName = "Shark", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "lotty", HatName = "All Ears", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "lotty", HatName = "Babies", NoBounce = false},
+            new AuthorData {AuthorName = "lotty", HatName = "Beans", NoBounce = true},
+            new AuthorData {AuthorName = "lotty", HatName = "Cat", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "lotty", HatName = "Dress", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "lotty", HatName = "Ghost Hat", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "lotty", HatName = "Rainbow", NoBounce = false},
+            new AuthorData {AuthorName = "lotty", HatName = "Shark Plush", NoBounce = false},
+            new AuthorData {AuthorName = "lotty", HatName = "Top Hat", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "lotty", HatName = "Umbrella", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "lotty", HatName = "Axolotl", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "lotty", HatName = "(je)Sushi", NoBounce = false},
+            new AuthorData {AuthorName = "lotty", HatName = "Angry Chicken", NoBounce = false},
+            new AuthorData {AuthorName = "lotty", HatName = "Best Friend", NoBounce = true},
+            new AuthorData {AuthorName = "lotty", HatName = "Bug Girl", NoBounce = true},
+            new AuthorData {AuthorName = "lotty", HatName = "Cat Thief", NoBounce = true},
             new AuthorData {AuthorName = "ERIKHAPPY", HatName = "Blue Scarf", NoBounce = true},
             new AuthorData {AuthorName = "ERIKHAPPY", HatName = "Egg", NoBounce = false},
             new AuthorData {AuthorName = "Jesushi", HatName = "Jester", NoBounce = true},
             new AuthorData {AuthorName = "Jesushi", HatName = "Crown", NoBounce = true},
+            new AuthorData {AuthorName = "Booman", HatName = "Sniper", NoBounce = true},
         };
 
         internal static Dictionary<int, AuthorData> IdToData = new Dictionary<int, AuthorData>();
@@ -119,7 +150,7 @@ namespace LasMonjas.Core
             public static void Postfix(HatManager __instance) {
 
                 if (!_customHatsLoaded) {
-                    var allHats = __instance.allHats;
+                    var allHats = __instance.allHats.ToList();
 
                     foreach (var data in authorDatas) {
                         HatID++;
@@ -162,11 +193,12 @@ namespace LasMonjas.Core
                             }
                             
                         }
-                        IdToData.Add(HatManager.Instance.allHats.Count - 1, data);
+                        IdToData.Add(HatManager.Instance.allHats.Count + HatID, data);
 
                         _customHatsLoaded = true;
                     }
                     _customHatsLoaded = true;
+                    __instance.allHats = allHats.ToArray();
                 }
             }
 
@@ -188,8 +220,7 @@ namespace LasMonjas.Core
             private static HatData CreateHat(Sprite sprite, string author, Sprite climb = null, Sprite floor = null, Sprite leftimage = null, bool bounce = false, bool altshader = false) {
 				//Borrowed from Other Roles to get hats alt shaders to work
                 if (MagicShader == null) {
-                    Material hatShader = new Material("PlayerMaterial");
-                    hatShader.shader = Shader.Find("Unlit/PlayerShader");
+                    Material hatShader = DestroyableSingleton<HatManager>.Instance.PlayerMaterial;
                     MagicShader = hatShader;
                 }
 

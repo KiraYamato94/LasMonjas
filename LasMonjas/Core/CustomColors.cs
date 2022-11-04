@@ -5,12 +5,13 @@ using System.Reflection;
 using UnityEngine;
 using Il2CppSystem;
 using HarmonyLib;
-using UnhollowerBaseLib;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using Assets.CoreScripts;
+using AmongUs.Data.Legacy;
 
 namespace LasMonjas.Core {
     public class CustomColors {
-        protected static Dictionary<int, string> ColorStrings = new Dictionary<int, string>();
+        public static Dictionary<int, string> ColorStrings = new Dictionary<int, string>();
         public static List<int> lighterColors = new List<int>(){ 3, 4, 5, 7, 10, 11, 13, 14, 17 };
         public static uint pickableColors = (uint)Palette.ColorNames.Length;
 
@@ -21,22 +22,36 @@ namespace LasMonjas.Core {
 
             List<CustomColor> colors = new List<CustomColor>();
 
-            colors.Add(new CustomColor { longname = "Lavender",
-                                        color = new Color32(207, 161, 241, byte.MaxValue),
-                                        shadow = new Color32(165, 93, 243, byte.MaxValue),
-                                        isLighterColor = true });
-            colors.Add(new CustomColor { longname = "Petrol", 
-                                        color = new Color32(0, 99, 105, byte.MaxValue),
-                                        shadow = new Color32(0, 61, 54, byte.MaxValue),
-                                        isLighterColor = false });
-            colors.Add(new CustomColor { longname = "Mint",
-                                         color = new Color32(168, 235, 195, byte.MaxValue),
-                                         shadow = new Color32(123, 156, 143, byte.MaxValue),
-                                         isLighterColor = true });
-            colors.Add(new CustomColor { longname = "Olive",
-                                         color = new Color32(97, 114, 24, byte.MaxValue),
-                                         shadow = new Color32(66, 91, 15, byte.MaxValue),
-                                         isLighterColor = false }); 
+            colors.Add(new CustomColor {
+                longname = "Lavender",
+                color = new Color32(207, 161, 241, byte.MaxValue),
+                shadow = new Color32(165, 93, 243, byte.MaxValue),
+                isLighterColor = true
+            });
+            colors.Add(new CustomColor {
+                longname = "Petrol",
+                color = new Color32(0, 99, 105, byte.MaxValue),
+                shadow = new Color32(0, 61, 54, byte.MaxValue),
+                isLighterColor = false
+            });
+            colors.Add(new CustomColor {
+                longname = "Mint",
+                color = new Color32(168, 235, 195, byte.MaxValue),
+                shadow = new Color32(123, 156, 143, byte.MaxValue),
+                isLighterColor = true
+            });
+            colors.Add(new CustomColor {
+                longname = "Olive",
+                color = new Color32(97, 114, 24, byte.MaxValue),
+                shadow = new Color32(66, 91, 15, byte.MaxValue),
+                isLighterColor = false
+            });
+            colors.Add(new CustomColor {
+                longname = "Ice",
+                color = new Color32(183, 247, 253, byte.MaxValue),
+                shadow = new Color32(88, 159, 200, byte.MaxValue),
+                isLighterColor = true
+            });
 
             pickableColors += (uint)colors.Count;
                     
@@ -81,16 +96,16 @@ namespace LasMonjas.Core {
                 }
             }
 
-            [HarmonyPatch(typeof(SaveManager), nameof(SaveManager.LoadPlayerPrefs))]
+            [HarmonyPatch(typeof(LegacySaveManager), nameof(LegacySaveManager.LoadPlayerPrefs))]
             private static class LoadPlayerPrefsPatch {
                 private static bool needsPatch = false;
                 public static void Prefix([HarmonyArgument(0)] bool overrideLoad) {
-                    if (!SaveManager.loaded || overrideLoad)
+                    if (!LegacySaveManager.loaded || overrideLoad)
                         needsPatch = true;
                 }
                 public static void Postfix() {
                     if (!needsPatch) return;
-                    SaveManager.colorConfig %= CustomColors.pickableColors;
+                    LegacySaveManager.colorConfig %= CustomColors.pickableColors;
                     needsPatch = false;
                 }
             }

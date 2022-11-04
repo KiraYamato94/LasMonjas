@@ -7,8 +7,8 @@ using System.Reflection;
 using System.Threading.Tasks;
 using BepInEx;
 using BepInEx.Bootstrap;
-using BepInEx.IL2CPP;
-using BepInEx.IL2CPP.Utils;
+using BepInEx.Unity.IL2CPP;
+using BepInEx.Unity.IL2CPP.Utils;
 using Mono.Cecil;
 using Newtonsoft.Json.Linq;
 using TMPro;
@@ -18,7 +18,8 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Version = SemanticVersioning.Version;
 using LasMonjas.Patches;
-using UnhollowerBaseLib.Attributes;
+using Il2CppInterop.Runtime.Attributes;
+using AmongUs.Data;
 
 namespace LasMonjas.Core
 {
@@ -130,7 +131,7 @@ namespace LasMonjas.Core
             while (!download.IsCompleted) yield return null;
 
             button.SetActive(true);
-            popup.TextAreaTMP.text = download.Result ? $"{updateName}\nupdated successfully\nPlease restart the game." : "Update wasn't successful\nTry again later,\nor update manually.";
+            popup.TextAreaTMP.text = download.Result ? $"{updateName}\nupdated successfully\nPlease restart the game." : "Update wasn't successful\nPlease use Las Monjas Downloader\nto update manually.";
         }
 
         [HideFromIl2Cpp]
@@ -138,7 +139,7 @@ namespace LasMonjas.Core
             var popUp = Instantiate(FindObjectOfType<AnnouncementPopUp>(true));
             popUp.gameObject.SetActive(true);
             yield return popUp.Init();
-            var last = SaveManager.LastAnnouncement;
+            var last = DataManager.Announcements.LastViewedAnnouncement;
             last.Id = 1;
             last.Text = announcement;
             SelectableHyperLinkHelper.DestroyGOs(popUp.selectableHyperLinks, name);

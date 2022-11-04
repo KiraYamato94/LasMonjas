@@ -6,6 +6,7 @@ using BepInEx.IL2CPP;
 using HarmonyLib;
 using BepInEx.Logging;
 using UnityEngine;
+using System.Linq;
 
 namespace LasMonjas.Core
 {
@@ -32,7 +33,9 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "Muaresito", NamePlateName = "Challenger"},
             new AuthorData {AuthorName = "Muaresito", NamePlateName = "Ninja"},
             new AuthorData {AuthorName = "Muaresito", NamePlateName = "Objsustion"},
-            new AuthorData {AuthorName = "Muaresito", NamePlateName = "Deal with Pi"},
+            new AuthorData {AuthorName = "Muaresito", NamePlateName = "Deal with Pi"},            
+            new AuthorData {AuthorName = "Muaresito", NamePlateName = "El Mauro"},
+            new AuthorData {AuthorName = "Muaresito", NamePlateName = "The Monja"},
             new AuthorData {AuthorName = "Blocky", NamePlateName = "Submerged"},
             new AuthorData {AuthorName = "Blocky", NamePlateName = "What the cow"},
             new AuthorData {AuthorName = "Blocky", NamePlateName = "Bluescreen"},
@@ -50,18 +53,19 @@ namespace LasMonjas.Core
 
             public static void Postfix(HatManager __instance) {
                 if (!_customNamePlatesLoaded) {
-                    var allPlates = __instance.allNamePlates;
+                    var allPlates = __instance.allNamePlates.ToList();
 
                     foreach (var data in authorDatas) {
                         NamePlateID++;
 
                         allPlates.Add(CreateNamePlate(GetSprite(data.NamePlateName), data.AuthorName));
 
-                        IdToData.Add(HatManager.Instance.allNamePlates.Count - 1, data);
+                        IdToData.Add(HatManager.Instance.allNamePlates.Count + NamePlateID, data);
 
                         _customNamePlatesLoaded = true;
                     }
                     _customNamePlatesLoaded = true;
+                    __instance.allNamePlates = allPlates.ToArray();
                 }
             }
 
