@@ -157,6 +157,10 @@ namespace LasMonjas.Patches {
                     PlayerControl target = Mimic.transformTarget;
                     Mimic.mimic.setLook(target.Data.PlayerName, target.Data.DefaultOutfit.ColorId, target.Data.DefaultOutfit.HatId, target.Data.DefaultOutfit.VisorId, target.Data.DefaultOutfit.SkinId, target.Data.DefaultOutfit.PetId);
                 }
+                if (Puppeteer.puppeteer != null && Puppeteer.morphed) {
+                    PlayerControl target = Puppeteer.transformTarget;
+                    Puppeteer.puppeteer.setLook(target.Data.PlayerName, target.Data.DefaultOutfit.ColorId, target.Data.DefaultOutfit.HatId, target.Data.DefaultOutfit.VisorId, target.Data.DefaultOutfit.SkinId, target.Data.DefaultOutfit.PetId);
+                }                
             }
 
             // Mimic reset (only if paint is inactive)
@@ -2099,7 +2103,7 @@ namespace LasMonjas.Patches {
             if (Puppeteer.puppeteer != null && target == Puppeteer.puppeteer && Puppeteer.morphed) {
                 HudManager.Instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) => { // Delayed action
                     if (p == 1f) {
-                        // revive puppeeteer
+                        // revive puppeteer
                         target.Revive();
                         if (PlayerControl.GameOptions.MapId == 5) {
                             if (Puppeteer.puppeteer.transform.position.y > 0) {
@@ -2114,7 +2118,7 @@ namespace LasMonjas.Patches {
                         }
                     }
                 })));
-                // remove puppeeteer corpse
+                // remove puppeteer corpse
                 DeadBody[] array = UnityEngine.Object.FindObjectsOfType<DeadBody>();
                 for (int i = 0; i < array.Length; i++) {
                     if (GameData.Instance.GetPlayerById(array[i].ParentId).PlayerId == target.PlayerId) {

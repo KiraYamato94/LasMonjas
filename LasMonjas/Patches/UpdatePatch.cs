@@ -1386,7 +1386,7 @@ namespace LasMonjas.Patches {
                 }
             }
             else {
-                body.transform.position = emerButton.transform.position + new Vector3(0.5f, 0f, -0.5f);
+                body.transform.position = emerButton.transform.position + new Vector3(0.75f, 0f, -0.5f);
             }
         }
 
