@@ -139,6 +139,7 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "Jesushi", HatName = "Jester", NoBounce = true},
             new AuthorData {AuthorName = "Jesushi", HatName = "Crown", NoBounce = true},
             new AuthorData {AuthorName = "Booman", HatName = "Sniper", NoBounce = true},
+            new AuthorData {AuthorName = "Boa", HatName = "Cat Princess", FloorHatName ="Cat Princess_climb", ClimbHatName = "Cat Princess_climb", LeftImageName = "Cat Princess", NoBounce = true},
         };
 
         internal static Dictionary<int, AuthorData> IdToData = new Dictionary<int, AuthorData>();
