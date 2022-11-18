@@ -5747,7 +5747,6 @@ namespace LasMonjas
             serialKiller = null;
             serialKillermouseAngle = 0;
             serialKillerWep = null;
-            serialKillerLifes = fighterLifes * 3;
             serialKillerIsReviving = false;
             serialKillerSpawns.Clear();
             if (CustomOptionHolder.battleRoyaleMode.getBool() == true) {
@@ -5762,9 +5761,11 @@ namespace LasMonjas
             matchType = CustomOptionHolder.battleRoyaleMatchType.getSelection();
             if (PlayerControl.AllPlayerControls.Count >= 11) {
                 serialKillerCooldown = killCooldown / 3;
+                serialKillerLifes = fighterLifes * 3;
             }
             else {
                 serialKillerCooldown = killCooldown / 2;
+                serialKillerLifes = fighterLifes * 2;
             }
             requiredScore = CustomOptionHolder.battleRoyaleScoreNeeded.getFloat();
             reviveTime = CustomOptionHolder.battleRoyaleReviveTime.getFloat();
