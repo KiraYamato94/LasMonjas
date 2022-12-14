@@ -16,7 +16,8 @@ Las Monjas is a Spanish mod (available on English, Spanish, Chinese and Japanese
 
 -----------------------
 
-[<p align="center"> <img src="./gitHubImages/LasMonjas_discord.png" width="640" height="320"> </p>](https://discord.gg/UPCSqnD4NU)
+Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqnD4NU)
+<p align="center"> <img src="./gitHubImages/LasMonjas_discord.png" width="640" height="320"> </p>
 
 -----------------------
 
