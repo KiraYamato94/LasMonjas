@@ -1,0 +1,66 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <Version>3.0.4</Version>
+        <Description>Las Monjas</Description>
+        <Authors>Allul</Authors>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <GameVersion>2022.12.14</GameVersion>
+        <DefineConstants>$(DefineConstants);STEAM</DefineConstants>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Remove="Images\MyAssets\allulcustombundle" />
+        <None Remove="Images\MyAssets\allulcustomlobby" />
+        <None Remove="Images\MyAssets\allulcustommap" />
+        <None Remove="Images\MyAssets\allulcustommusic" />
+        <None Remove="Images\MyAssets\allulcustomhats" />
+        <None Remove="Images\MyAssets\allulcustomnameplates" />
+        <None Remove="Images\MyAssets\allulcustomvisors" />
+        <None Remove="Images\MyAssets\allulcustomgamemodemusic" />
+    </ItemGroup>
+  
+    <ItemGroup>        
+        <EmbeddedResource Include="Images\*.png" />
+        <EmbeddedResource Include="Images\IllusionistAnimation\*.png" />
+      
+        <EmbeddedResource Include="Images\MyAssets\allulcustombundle">
+            <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Images\MyAssets\allulcustomlobby">
+            <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Images\MyAssets\allulcustommap">
+            <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Images\MyAssets\allulcustommusic">
+            <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Images\MyAssets\allulcustomhats">
+            <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Images\MyAssets\allulcustomnameplates">
+            <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Images\MyAssets\allulcustomvisors">
+            <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <EmbeddedResource Include="Images\MyAssets\allulcustomgamemodemusic">
+            <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+        </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="$(AmongUs)\BepInEx\core\*.dll" />
+        <Reference Include="$(AmongUs)\BepInEx\interop\*.dll" />
+        <Reference Include="$(AmongUs)\BepInEx\plugins\Reactor.dll" />
+    </ItemGroup>
+
+    <Target Name="CopyCustomContent" AfterTargets="AfterBuild">
+        <Message Text="Second occurrence" />
+        <Copy SourceFiles="$(ProjectDir)\bin\$(Configuration)\net6.0\LasMonjas.dll" DestinationFolder="$(AmongUs)/BepInEx/plugins/" />
+    </Target>
+</Project>

@@ -15,6 +15,7 @@ using static LasMonjas.RoleInfo;
 using LasMonjas.Core;
 using MS.Internal.Xml.XPath;
 using static UnityEngine.GraphicsBuffer;
+using AmongUs.GameOptions;
 
 namespace LasMonjas
 {
@@ -253,6 +254,7 @@ namespace LasMonjas
         UncheckedMurderPlayer,
         UncheckedCmdReportDeadBody,
         UncheckedExilePlayer,
+        RandomizeCustomSkeldOnHS,
 
         // Role functionality
 
@@ -434,7 +436,7 @@ namespace LasMonjas
         public static void forceEnd() {
             foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
                 if (!player.Data.Role.IsImpostor) {
-                    player.RemoveInfected();
+                    //player.RemoveInfected();
                     player.MurderPlayer(player);
                     player.Data.IsDead = true;
                 }
@@ -1231,6 +1233,9 @@ namespace LasMonjas
             if (target != null) target.Exiled();
         }
 
+        public static void randomizeCustomSkeldOnHS(int randomNumber) {
+            customSkeldHS = randomNumber;
+        }
 
         // Role functionality
 
@@ -1251,7 +1256,7 @@ namespace LasMonjas
             Painter.painterTimer = Painter.duration;
             Detective.footprintcolor = colorId;
             foreach (PlayerControl player in PlayerControl.AllPlayerControls)
-                player.setLook("", colorId, "", "", "", "");
+                player.setLook("", colorId, "", "", "", "");           
         }
 
         public static void demonSetBitten(byte targetId, byte performReset) {
@@ -1272,7 +1277,7 @@ namespace LasMonjas
             Vector3 position = Vector3.zero;
             position.x = BitConverter.ToSingle(buff, 0 * sizeof(float));
             position.y = BitConverter.ToSingle(buff, 1 * sizeof(float));
-            if (PlayerControl.GameOptions.MapId == 5) {
+            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                 position.z = -0.5f;
             }
             new Nun(position);
@@ -1298,7 +1303,7 @@ namespace LasMonjas
                             if (!Janitor.dragginBody) {
                                 Janitor.dragginBody = true;
                                 Janitor.bodyId = playerId;
-                                if (PlayerControl.GameOptions.MapId == 5) {
+                                if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                                     GameObject vent = GameObject.Find("LowerCentralVent");
                                     vent.GetComponent<BoxCollider2D>().enabled = false;
                                 }
@@ -1315,7 +1320,7 @@ namespace LasMonjas
                                     Constants.ShipAndObjectsMask,
                                     false
                                 )) {
-                                    if (PlayerControl.GameOptions.MapId == 5) {
+                                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                                         array[i].transform.position = newPos;
                                         array[i].transform.position += new Vector3(0, 0, -0.5f);
                                         GameObject vent = GameObject.Find("LowerCentralVent");
@@ -1397,7 +1402,7 @@ namespace LasMonjas
             }
             Bomberman.activeBomb = true;
             Bomberman.currentBombNumber += 1;
-            switch (PlayerControl.GameOptions.MapId) {
+            switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                 case 0:
                     Bomberman.bombDuration = 60;
                     break;
@@ -1534,19 +1539,21 @@ namespace LasMonjas
         public static void activateSpiralTrap(byte targetId) {
             foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
                 if (player.PlayerId == targetId) {
+                    Hypnotist.hypnotizedPlayers.Add(player);
 
-                    player.MyPhysics.Speed *= -1;
+                    if (player == PlayerControl.LocalPlayer) {
+                        GameObject camera = GameObject.Find("Main Camera");
+                        camera.transform.rotation = Quaternion.Euler(0, 0, 180);
 
-                    HudManager.Instance.StartCoroutine(Effects.Lerp(Hypnotist.spiralDuration, new Action<float>((p) => {
-                        if (p == 1f) {
-                            player.MyPhysics.Speed *= -1;
-                            if (player == PlayerControl.LocalPlayer) {
+                        HudManager.Instance.StartCoroutine(Effects.Lerp(Hypnotist.spiralDuration, new Action<float>((p) => {
+                            if (p == 1f) {
+                                camera.transform.rotation = Quaternion.Euler(0, 0, 0);
                                 foreach (HypnotistSpiral spiral in HypnotistSpiral.hypnotistSpirals) {
                                     spiral.isActive = true;
                                 }
                             }
-                        }
-                    })));
+                        })));
+                    }
                 }
             }
         }
@@ -1587,7 +1594,7 @@ namespace LasMonjas
             var ventPrefab = UnityEngine.Object.FindObjectOfType<Vent>();
             var vent = UnityEngine.Object.Instantiate(ventPrefab, ventPrefab.transform.parent);
             vent.gameObject.GetComponent<BoxCollider2D>().enabled = false;
-            if (PlayerControl.GameOptions.MapId == 5) {
+            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                 vent.gameObject.layer = 12;
                 vent.gameObject.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
                 vent.transform.position = new Vector3(position.x, position.y - 0.25f, -0.5f);
@@ -2281,31 +2288,76 @@ namespace LasMonjas
                 Monja.itemId = 0;
                 switch (monjaItemId) {
                     case 1:
-                        Monja.item01.SetActive(true);
+                        if (PlayerControl.LocalPlayer == Monja.monja) {
+                            Monja.item01.SetActive(true);
+                        }
+                        else {
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(5, new Action<float>((p) => {
+                                if (p == 1f) {
+                                    Monja.item01.SetActive(true);
+                                }
+                            })));
+                        }
                         Monja.item01.transform.SetParent(null);
                         Monja.item01.transform.localPosition = Monja.ritualObject.transform.GetChild(0).transform.position + new Vector3(0f, 0f, -0.1f);
                         Monja.item01.name = "deliveredItem";
                         break;
                     case 2:
-                        Monja.item02.SetActive(true);
+                        if (PlayerControl.LocalPlayer == Monja.monja) {
+                            Monja.item02.SetActive(true);
+                        }
+                        else {
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(5, new Action<float>((p) => {
+                                if (p == 1f) {
+                                    Monja.item02.SetActive(true);
+                                }
+                            })));
+                        }
                         Monja.item02.transform.SetParent(null);
                         Monja.item02.transform.localPosition = Monja.ritualObject.transform.GetChild(1).transform.position + new Vector3(0f, 0f, -0.1f);
                         Monja.item02.name = "deliveredItem"; 
                         break;
                     case 3:
-                        Monja.item03.SetActive(true);
+                        if (PlayerControl.LocalPlayer == Monja.monja) {
+                            Monja.item03.SetActive(true);
+                        }
+                        else {
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(5, new Action<float>((p) => {
+                                if (p == 1f) {
+                                    Monja.item03.SetActive(true);
+                                }
+                            })));
+                        }
                         Monja.item03.transform.SetParent(null);
                         Monja.item03.transform.localPosition = Monja.ritualObject.transform.GetChild(2).transform.position + new Vector3(0f, 0f, -0.1f);
                         Monja.item03.name = "deliveredItem"; 
                         break;
                     case 4:
-                        Monja.item04.SetActive(true);
+                        if (PlayerControl.LocalPlayer == Monja.monja) {
+                            Monja.item04.SetActive(true);
+                        }
+                        else {
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(5, new Action<float>((p) => {
+                                if (p == 1f) {
+                                    Monja.item04.SetActive(true);
+                                }
+                            })));
+                        }
                         Monja.item04.transform.SetParent(null);
                         Monja.item04.transform.localPosition = Monja.ritualObject.transform.GetChild(3).transform.position + new Vector3(0f, 0f, -0.1f);
                         Monja.item04.name = "deliveredItem"; 
                         break;
                     case 5:
-                        Monja.item05.SetActive(true);
+                        if (PlayerControl.LocalPlayer == Monja.monja) {
+                            Monja.item05.SetActive(true);
+                        }
+                        else {
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(5, new Action<float>((p) => {
+                                if (p == 1f) {
+                                    Monja.item05.SetActive(true);
+                                }
+                            })));
+                        }
                         Monja.item05.transform.SetParent(null);
                         Monja.item05.transform.localPosition = Monja.ritualObject.transform.GetChild(4).transform.position + new Vector3(0f, 0f, -0.1f);
                         Monja.item05.name = "deliveredItem"; 
@@ -2529,7 +2581,7 @@ namespace LasMonjas
                         }
                         Vigilant.vigilantMira = oldRoleThief;
                         // Recreate the doorlog access from anywhere to the new Vigilant after rol switch
-                        if (PlayerControl.GameOptions.MapId == 1 && Vigilant.vigilantMira == PlayerControl.LocalPlayer) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 1 && Vigilant.vigilantMira == PlayerControl.LocalPlayer) {
                             GameObject vigilantDoorLog = GameObject.Find("SurvLogConsole");
                             Vigilant.doorLog = GameObject.Instantiate(vigilantDoorLog, Vigilant.vigilantMira.transform);
                             Vigilant.doorLog.name = "VigilantDoorLog";
@@ -2652,7 +2704,7 @@ namespace LasMonjas
         }
 
         public static void puppeteerResetTransform() {
-            if (PlayerControl.GameOptions.MapId == 5) {
+            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                 if (Puppeteer.puppeteer.transform.position.y > 0) {
                     Puppeteer.puppeteer.transform.position = new Vector3(5.5f, 31.5f, -5);
                 }
@@ -3200,89 +3252,89 @@ namespace LasMonjas
                     break;
                 case 4:
                     Seeker.hidedPlayerOneSelectedHiding = 1;
-                    if (PlayerControl.GameOptions.MapId != 5 || (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerOne.transform.position.y > 0)) {
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId != 5 || (GameOptionsManager.Instance.currentGameOptions.MapId == 5 && Seeker.hidedPlayerOne.transform.position.y > 0)) {
                         Seeker.hidedPlayerOne.transform.position = new Vector3(Seeker.minigameArenaHideOnePointOne.transform.position.x, Seeker.minigameArenaHideOnePointOne.transform.position.y, Seeker.hidedPlayerOne.transform.position.z);
-                    } else if (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerOne.transform.position.y < 0) {
+                    } else if (GameOptionsManager.Instance.currentGameOptions.MapId == 5 && Seeker.hidedPlayerOne.transform.position.y < 0) {
                         Seeker.hidedPlayerOne.transform.position = new Vector3(Seeker.lowerminigameArenaHideOnePointOne.transform.position.x, Seeker.lowerminigameArenaHideOnePointOne.transform.position.y, Seeker.hidedPlayerOne.transform.position.z);
                     }
                     seekerStopMovements(1);
                     break;
                 case 5:
                     Seeker.hidedPlayerOneSelectedHiding = 2;
-                    if (PlayerControl.GameOptions.MapId != 5 || (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerOne.transform.position.y > 0)) {
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId != 5 || (GameOptionsManager.Instance.currentGameOptions.MapId == 5 && Seeker.hidedPlayerOne.transform.position.y > 0)) {
                         Seeker.hidedPlayerOne.transform.position = new Vector3(Seeker.minigameArenaHideTwoPointOne.transform.position.x, Seeker.minigameArenaHideTwoPointOne.transform.position.y, Seeker.hidedPlayerOne.transform.position.z);
                     }
-                    else if (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerOne.transform.position.y < 0) {
+                    else if (GameOptionsManager.Instance.currentGameOptions.MapId == 5 && Seeker.hidedPlayerOne.transform.position.y < 0) {
                         Seeker.hidedPlayerOne.transform.position = new Vector3(Seeker.lowerminigameArenaHideTwoPointOne.transform.position.x, Seeker.lowerminigameArenaHideTwoPointOne.transform.position.y, Seeker.hidedPlayerOne.transform.position.z);
                     }
                     seekerStopMovements(1);
                     break;
                 case 6:
                     Seeker.hidedPlayerOneSelectedHiding = 3;
-                    if (PlayerControl.GameOptions.MapId != 5 || (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerOne.transform.position.y > 0)) {
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId != 5 || (GameOptionsManager.Instance.currentGameOptions.MapId == 5 && Seeker.hidedPlayerOne.transform.position.y > 0)) {
                         Seeker.hidedPlayerOne.transform.position = new Vector3(Seeker.minigameArenaHideThreePointOne.transform.position.x, Seeker.minigameArenaHideThreePointOne.transform.position.y, Seeker.hidedPlayerOne.transform.position.z);
                     }
-                    else if (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerOne.transform.position.y < 0) {
+                    else if (GameOptionsManager.Instance.currentGameOptions.MapId == 5 && Seeker.hidedPlayerOne.transform.position.y < 0) {
                         Seeker.hidedPlayerOne.transform.position = new Vector3(Seeker.lowerminigameArenaHideThreePointOne.transform.position.x, Seeker.lowerminigameArenaHideThreePointOne.transform.position.y, Seeker.hidedPlayerOne.transform.position.z);
                     }
                     seekerStopMovements(1);
                     break;
                 case 7:
                     Seeker.hidedPlayerTwoSelectedHiding = 1;
-                    if (PlayerControl.GameOptions.MapId != 5 || (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerTwo.transform.position.y > 0)) {
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId != 5 || (GameOptionsManager.Instance.currentGameOptions.MapId == 5 && Seeker.hidedPlayerTwo.transform.position.y > 0)) {
                         Seeker.hidedPlayerTwo.transform.position = new Vector3(Seeker.minigameArenaHideOnePointTwo.transform.position.x, Seeker.minigameArenaHideOnePointTwo.transform.position.y, Seeker.hidedPlayerTwo.transform.position.z);
                     }
-                    else if (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerTwo.transform.position.y < 0) {
+                    else if (GameOptionsManager.Instance.currentGameOptions.MapId == 5 && Seeker.hidedPlayerTwo.transform.position.y < 0) {
                         Seeker.hidedPlayerTwo.transform.position = new Vector3(Seeker.lowerminigameArenaHideOnePointTwo.transform.position.x, Seeker.lowerminigameArenaHideOnePointTwo.transform.position.y, Seeker.hidedPlayerTwo.transform.position.z);
                     }
                     seekerStopMovements(2); 
                     break;
                 case 8:
                     Seeker.hidedPlayerTwoSelectedHiding = 2;
-                    if (PlayerControl.GameOptions.MapId != 5 || (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerTwo.transform.position.y > 0)) {
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId != 5 || (GameOptionsManager.Instance.currentGameOptions.MapId == 5 && Seeker.hidedPlayerTwo.transform.position.y > 0)) {
                         Seeker.hidedPlayerTwo.transform.position = new Vector3(Seeker.minigameArenaHideTwoPointTwo.transform.position.x, Seeker.minigameArenaHideTwoPointTwo.transform.position.y, Seeker.hidedPlayerTwo.transform.position.z);
                     }
-                    else if (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerTwo.transform.position.y < 0) {
+                    else if (GameOptionsManager.Instance.currentGameOptions.MapId == 5 && Seeker.hidedPlayerTwo.transform.position.y < 0) {
                         Seeker.hidedPlayerTwo.transform.position = new Vector3(Seeker.lowerminigameArenaHideTwoPointTwo.transform.position.x, Seeker.lowerminigameArenaHideTwoPointTwo.transform.position.y, Seeker.hidedPlayerTwo.transform.position.z);
                     }
                     seekerStopMovements(2); 
                     break;
                 case 9:
                     Seeker.hidedPlayerTwoSelectedHiding = 3;
-                    if (PlayerControl.GameOptions.MapId != 5 || (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerTwo.transform.position.y > 0)) {
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId != 5 || (GameOptionsManager.Instance.currentGameOptions.MapId == 5 && Seeker.hidedPlayerTwo.transform.position.y > 0)) {
                         Seeker.hidedPlayerTwo.transform.position = new Vector3(Seeker.minigameArenaHideThreePointTwo.transform.position.x, Seeker.minigameArenaHideThreePointTwo.transform.position.y, Seeker.hidedPlayerTwo.transform.position.z);
                     }
-                    else if (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerTwo.transform.position.y < 0) {
+                    else if (GameOptionsManager.Instance.currentGameOptions.MapId == 5 && Seeker.hidedPlayerTwo.transform.position.y < 0) {
                         Seeker.hidedPlayerTwo.transform.position = new Vector3(Seeker.lowerminigameArenaHideThreePointTwo.transform.position.x, Seeker.lowerminigameArenaHideThreePointTwo.transform.position.y, Seeker.hidedPlayerTwo.transform.position.z);
                     }
                     seekerStopMovements(2); 
                     break;
                 case 10:
                     Seeker.hidedPlayerThreeSelectedHiding = 1;
-                    if (PlayerControl.GameOptions.MapId != 5 || (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerThree.transform.position.y > 0)) {
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId != 5 || (GameOptionsManager.Instance.currentGameOptions.MapId == 5 && Seeker.hidedPlayerThree.transform.position.y > 0)) {
                         Seeker.hidedPlayerThree.transform.position = new Vector3(Seeker.minigameArenaHideOnePointThree.transform.position.x, Seeker.minigameArenaHideOnePointThree.transform.position.y, Seeker.hidedPlayerThree.transform.position.z);
                     }
-                    else if (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerThree.transform.position.y < 0) {
+                    else if (GameOptionsManager.Instance.currentGameOptions.MapId == 5 && Seeker.hidedPlayerThree.transform.position.y < 0) {
                         Seeker.hidedPlayerThree.transform.position = new Vector3(Seeker.lowerminigameArenaHideOnePointThree.transform.position.x, Seeker.lowerminigameArenaHideOnePointThree.transform.position.y, Seeker.hidedPlayerThree.transform.position.z);
                     }
                     seekerStopMovements(3);
                     break;
                 case 11:
                     Seeker.hidedPlayerThreeSelectedHiding = 2;
-                    if (PlayerControl.GameOptions.MapId != 5 || (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerThree.transform.position.y > 0)) {
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId != 5 || (GameOptionsManager.Instance.currentGameOptions.MapId == 5 && Seeker.hidedPlayerThree.transform.position.y > 0)) {
                         Seeker.hidedPlayerThree.transform.position = new Vector3(Seeker.minigameArenaHideTwoPointThree.transform.position.x, Seeker.minigameArenaHideTwoPointThree.transform.position.y, Seeker.hidedPlayerThree.transform.position.z);
                     }
-                    else if (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerThree.transform.position.y < 0) {
+                    else if (GameOptionsManager.Instance.currentGameOptions.MapId == 5 && Seeker.hidedPlayerThree.transform.position.y < 0) {
                         Seeker.hidedPlayerThree.transform.position = new Vector3(Seeker.lowerminigameArenaHideTwoPointThree.transform.position.x, Seeker.lowerminigameArenaHideTwoPointThree.transform.position.y, Seeker.hidedPlayerThree.transform.position.z);
                     }
                     seekerStopMovements(3); 
                     break;
                 case 12:
                     Seeker.hidedPlayerThreeSelectedHiding = 3;
-                    if (PlayerControl.GameOptions.MapId != 5 || (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerThree.transform.position.y > 0)) {
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId != 5 || (GameOptionsManager.Instance.currentGameOptions.MapId == 5 && Seeker.hidedPlayerThree.transform.position.y > 0)) {
                         Seeker.hidedPlayerThree.transform.position = new Vector3(Seeker.minigameArenaHideThreePointThree.transform.position.x, Seeker.minigameArenaHideThreePointThree.transform.position.y, Seeker.hidedPlayerThree.transform.position.z);
                     }
-                    else if (PlayerControl.GameOptions.MapId == 5 && Seeker.hidedPlayerThree.transform.position.y < 0) {
+                    else if (GameOptionsManager.Instance.currentGameOptions.MapId == 5 && Seeker.hidedPlayerThree.transform.position.y < 0) {
                         Seeker.hidedPlayerThree.transform.position = new Vector3(Seeker.lowerminigameArenaHideThreePointThree.transform.position.x, Seeker.lowerminigameArenaHideThreePointThree.transform.position.y, Seeker.hidedPlayerThree.transform.position.z);
                     }
                     seekerStopMovements(3); 
@@ -3534,7 +3586,7 @@ namespace LasMonjas
 
             if (PlayerControl.LocalPlayer == Welder.welder) {
                 // Welder vents seal sprite    
-                if (PlayerControl.GameOptions.MapId != 2) {
+                if (GameOptionsManager.Instance.currentGameOptions.MapId != 2) {
                     PowerTools.SpriteAnim animator = vent.GetComponent<PowerTools.SpriteAnim>();
                     animator?.Stop();
                     vent.EnterVentAnim = vent.ExitVentAnim = null;
@@ -3693,7 +3745,7 @@ namespace LasMonjas
 
         public static void teleportSpiritualistNecromancerBodies(PlayerControl player, DeadBody body) {
             player.Revive();
-            if (PlayerControl.GameOptions.MapId == 5) {
+            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                 if (player.transform.position.y > 0) {
                     player.transform.position = new Vector3(5.5f, 31.5f, -5);
                 }
@@ -3734,7 +3786,7 @@ namespace LasMonjas
             camera.transform.position = new Vector3(position.x, position.y, referenceCamera.transform.position.z - 1f);
             camera.CamName = $"Security Camera {Vigilant.placedCameras}";
             camera.Offset = new Vector3(0f, 0f, camera.Offset.z);
-            if (PlayerControl.GameOptions.MapId == 2 || PlayerControl.GameOptions.MapId == 4) camera.transform.localRotation = new Quaternion(0, 0, 1, 1); // Polus and Airship 
+            if (GameOptionsManager.Instance.currentGameOptions.MapId == 2 || GameOptionsManager.Instance.currentGameOptions.MapId == 4) camera.transform.localRotation = new Quaternion(0, 0, 1, 1); // Polus and Airship 
 
             if (PlayerControl.LocalPlayer == Vigilant.vigilant) {
                 camera.gameObject.SetActive(true);
@@ -3942,7 +3994,7 @@ namespace LasMonjas
                     var oldPos = player.transform.position;
                     Jailer.prisonPlayer = player;
                     Jailer.jailedPlayer = null;
-                    switch (PlayerControl.GameOptions.MapId) {
+                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                         // Skeld
                         case 0:
                             if (activatedSensei) {
@@ -4105,7 +4157,7 @@ namespace LasMonjas
                         case "timetravelerRole":
                             TimeTraveler.timeTraveler = player;
                             if (player == PlayerControl.LocalPlayer) {
-                                switch (PlayerControl.GameOptions.MapId) {
+                                switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                                     case 2:
                                         GameObject polusvitals = GameObject.Find("panel_vitals");
                                         polusvitals.GetComponent<BoxCollider2D>().enabled = false;
@@ -4149,7 +4201,7 @@ namespace LasMonjas
                             Spiritualist.spiritualist = player;
                             break;
                         case "vigilantRole":
-                            if (PlayerControl.GameOptions.MapId == 1 && player == PlayerControl.LocalPlayer) {
+                            if (GameOptionsManager.Instance.currentGameOptions.MapId == 1 && player == PlayerControl.LocalPlayer) {
                                 Vigilant.vigilantMira = player;
                                 GameObject vigilantDoorLog = GameObject.Find("SurvLogConsole");
                                 Vigilant.doorLog = GameObject.Instantiate(vigilantDoorLog, Vigilant.vigilantMira.transform);
@@ -4192,7 +4244,7 @@ namespace LasMonjas
                             cell.gameObject.layer = 9;
                             cell.transform.GetChild(0).gameObject.layer = 9;
 
-                            switch (PlayerControl.GameOptions.MapId) {
+                            switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                                 case 0:
                                     if (activatedSensei) {
                                         cell.transform.position = new Vector3(-12f, 7.2f, 0.5f);
@@ -4249,7 +4301,7 @@ namespace LasMonjas
                             break;
                         case "chameleonRole":
                             Chameleon.chameleon = player;
-                            if (PlayerControl.LocalPlayer == player && PlayerControl.GameOptions.MapId == 5) {
+                            if (PlayerControl.LocalPlayer == player && GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                                 GameObject vent = GameObject.Find("LowerCentralVent");
                                 vent.GetComponent<BoxCollider2D>().enabled = false;
                             }
@@ -4266,7 +4318,7 @@ namespace LasMonjas
                         case "hypnotistRole":
                             Hypnotist.hypnotist = player;
                             if (PlayerControl.LocalPlayer == player) {
-                                switch (PlayerControl.GameOptions.MapId) {
+                                switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                                     case 0:
                                         GameObject skeldMedScanner = GameObject.Find("MedScanner");
                                         Hypnotist.objectsCantPlaceTraps.Add(skeldMedScanner);
@@ -4327,7 +4379,7 @@ namespace LasMonjas
                             Pyromaniac.pyromaniac = player;
                             if (PlayerControl.LocalPlayer == player) {
                                 int visibleCounter = 0;
-                                Vector3 bottomLeft = new Vector3(-HudManager.Instance.UseButton.transform.localPosition.x, HudManager.Instance.UseButton.transform.localPosition.y, HudManager.Instance.UseButton.transform.localPosition.z);
+                                Vector3 bottomLeft = new Vector3(-HudManager.Instance.UseButton.transform.parent.localPosition.x, HudManager.Instance.UseButton.transform.parent.localPosition.y, HudManager.Instance.UseButton.transform.parent.localPosition.z);
                                 bottomLeft += new Vector3(-0.25f, -0.25f, 0);
                                 foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
                                     if (!MapOptions.playerIcons.ContainsKey(p.PlayerId)) continue;
@@ -4357,7 +4409,7 @@ namespace LasMonjas
                             Poisoner.poisoner = player;
                             if (PlayerControl.LocalPlayer == player) {
                                 int visibleCounter = 0;
-                                Vector3 bottomLeft = new Vector3(-HudManager.Instance.UseButton.transform.localPosition.x, HudManager.Instance.UseButton.transform.localPosition.y, HudManager.Instance.UseButton.transform.localPosition.z);
+                                Vector3 bottomLeft = new Vector3(-HudManager.Instance.UseButton.transform.parent.localPosition.x, HudManager.Instance.UseButton.transform.parent.localPosition.y, HudManager.Instance.UseButton.transform.parent.localPosition.z);
                                 bottomLeft += new Vector3(-0.25f, -0.25f, 0);
                                 foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
                                     if (!MapOptions.playerIcons.ContainsKey(p.PlayerId)) continue;
@@ -4399,7 +4451,7 @@ namespace LasMonjas
                             Seeker.minigameArenaHideThreePointOne.transform.parent.transform.position = Seeker.minigameArenaHideThreePointOne.transform.parent.transform.position + new Vector3(0, 0, -2);
                             Seeker.minigameArenaHideThreePointTwo = seekerArena.transform.GetChild(2).transform.GetChild(1).gameObject;
                             Seeker.minigameArenaHideThreePointThree = seekerArena.transform.GetChild(2).transform.GetChild(2).gameObject;
-                            if (PlayerControl.GameOptions.MapId == 5) { // Create another duel arena on submerged lower floor
+                            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) { // Create another duel arena on submerged lower floor
                                 GameObject lowerseekerArena = GameObject.Instantiate(CustomMain.customAssets.seekerArena, PlayerControl.LocalPlayer.transform.parent);
                                 lowerseekerArena.name = "lowerseekerArena";
                                 lowerseekerArena.transform.position = new Vector3(-40, -48.119f, 1f);
@@ -4437,7 +4489,7 @@ namespace LasMonjas
                             GameObject duelArena = GameObject.Instantiate(CustomMain.customAssets.challengerDuelArena, PlayerControl.LocalPlayer.transform.parent);
                             duelArena.name = "duelArena";
                             duelArena.transform.position = new Vector3(40, 0f, 1f);
-                            if (PlayerControl.GameOptions.MapId == 5) { // Create another duel arena on submerged lower floor
+                            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) { // Create another duel arena on submerged lower floor
                                 GameObject lowerduelArena = GameObject.Instantiate(CustomMain.customAssets.challengerDuelArena, PlayerControl.LocalPlayer.transform.parent);
                                 lowerduelArena.name = "lowerduelArena";
                                 lowerduelArena.transform.position = new Vector3(40, -48.119f, 1f);
@@ -4500,7 +4552,7 @@ namespace LasMonjas
                             Monja.monjaSprite.transform.position = new Vector3(0, 0, -1);
                             Monja.monjaSprite.transform.localPosition = new Vector3(0, 0, -1);
                             Monja.monjaSprite.SetActive(false);
-                            switch (PlayerControl.GameOptions.MapId) {
+                            switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                                 case 0:
                                     if (activatedSensei) {
                                         Monja.ritualObject.transform.position = new Vector3(3f, 2.5f, 0.5f);
@@ -4821,7 +4873,7 @@ namespace LasMonjas
                 CaptureTheFlag.blueflagtaken = false;
                 CaptureTheFlag.redPlayerWhoHasBlueFlag = null;
                 CaptureTheFlag.blueflag.transform.parent = CaptureTheFlag.blueflagbase.transform.parent;
-                switch (PlayerControl.GameOptions.MapId) {
+                switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                     // Skeld
                     case 0:
                         if (activatedSensei) {
@@ -4857,7 +4909,7 @@ namespace LasMonjas
                 CaptureTheFlag.flagpointCounter = Language.introTexts[2] + "<color=#FF0000FF>" + CaptureTheFlag.currentRedTeamPoints + "</color> - " + "<color=#0000FFFF>" + CaptureTheFlag.currentBlueTeamPoints + "</color>";
                 if (CaptureTheFlag.currentRedTeamPoints >= CaptureTheFlag.requiredFlags) {
                     CaptureTheFlag.triggerRedTeamWin = true;
-                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.RedTeamFlagWin, false);
+                    GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.RedTeamFlagWin, false);
                 }
             }
 
@@ -4866,7 +4918,7 @@ namespace LasMonjas
                 CaptureTheFlag.redflagtaken = false;
                 CaptureTheFlag.bluePlayerWhoHasRedFlag = null;
                 CaptureTheFlag.redflag.transform.parent = CaptureTheFlag.redflagbase.transform.parent;
-                switch (PlayerControl.GameOptions.MapId) {
+                switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                     // Skeld
                     case 0:
                         if (activatedSensei) {
@@ -4902,7 +4954,7 @@ namespace LasMonjas
                 CaptureTheFlag.flagpointCounter = Language.introTexts[2] + "<color=#FF0000FF>" + CaptureTheFlag.currentRedTeamPoints + "</color> - " + "<color=#0000FFFF>" + CaptureTheFlag.currentBlueTeamPoints + "</color>";
                 if (CaptureTheFlag.currentBlueTeamPoints >= CaptureTheFlag.requiredFlags) {
                     CaptureTheFlag.triggerBlueTeamWin = true;
-                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BlueTeamFlagWin, false);
+                    GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BlueTeamFlagWin, false);
                 }
             }
         }
@@ -5025,7 +5077,7 @@ namespace LasMonjas
                             policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer09JewelId);
                         }
                     }
-                    switch (PlayerControl.GameOptions.MapId) {
+                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                         // Skeld
                         case 0:
                             if (activatedSensei) {
@@ -5066,7 +5118,7 @@ namespace LasMonjas
                     PoliceAndThief.thiefpointCounter = Language.introTexts[3] + "<color=#00F7FFFF>" + PoliceAndThief.currentJewelsStoled + " / " + PoliceAndThief.requiredJewels + "</color> | " + Language.introTexts[4] + "<color=#928B55FF>" + PoliceAndThief.currentThiefsCaptured + " / " + PoliceAndThief.thiefTeam.Count + "</color>";
                     if (PoliceAndThief.currentThiefsCaptured == PoliceAndThief.thiefTeam.Count) {
                         PoliceAndThief.triggerPoliceWin = true;
-                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.ThiefModePoliceWin, false);
+                        GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.ThiefModePoliceWin, false);
                     }
                 }
             }
@@ -5074,7 +5126,7 @@ namespace LasMonjas
         }
 
         public static void policeandThiefFreeThief() {
-            switch (PlayerControl.GameOptions.MapId) {
+            switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                 // Skeld
                 case 0:
                     if (activatedSensei) {
@@ -5365,7 +5417,7 @@ namespace LasMonjas
                             isDiamond = !isDiamond;
                             break;
                     }
-                    switch (PlayerControl.GameOptions.MapId) {
+                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                         // Skeld
                         case 0:
                             if (activatedSensei) {
@@ -5451,7 +5503,7 @@ namespace LasMonjas
             PoliceAndThief.thiefpointCounter = Language.introTexts[3] + "<color=#00F7FFFF>" + PoliceAndThief.currentJewelsStoled + " / " + PoliceAndThief.requiredJewels + "</color> | " + Language.introTexts[4] + "<color=#928B55FF>" + PoliceAndThief.currentThiefsCaptured + " / " + PoliceAndThief.thiefTeam.Count + "</color>";
             if (PoliceAndThief.currentJewelsStoled >= PoliceAndThief.requiredJewels) {
                 PoliceAndThief.triggerThiefWin = true;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.ThiefModeThiefWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.ThiefModeThiefWin, false);
             }
         }
 
@@ -5494,7 +5546,7 @@ namespace LasMonjas
                         PoliceAndThief.thiefplayer09IsStealing = false;
                         PoliceAndThief.thiefplayer09JewelId = 0;
                     }
-                    switch (PlayerControl.GameOptions.MapId) {
+                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                         // Skeld
                         case 0:
                             if (activatedSensei) {
@@ -6223,7 +6275,7 @@ namespace LasMonjas
                                 KingOfTheHill.greenKingplayer = KingOfTheHill.usurperPlayer;
                                 KingOfTheHill.greenTeam.Add(KingOfTheHill.usurperPlayer);
                                 KingOfTheHill.usurperPlayer = player;
-                                if (PlayerControl.GameOptions.MapId == 5) {
+                                if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                                     KingOfTheHill.greenkingaura.transform.position = new Vector3(KingOfTheHill.greenKingplayer.transform.position.x, KingOfTheHill.greenKingplayer.transform.position.y, -0.5f);
                                 }
                                 else {
@@ -6248,7 +6300,7 @@ namespace LasMonjas
                                 KingOfTheHill.yellowKingplayer = KingOfTheHill.usurperPlayer;
                                 KingOfTheHill.yellowTeam.Add(KingOfTheHill.usurperPlayer);
                                 KingOfTheHill.usurperPlayer = player;
-                                if (PlayerControl.GameOptions.MapId == 5) {
+                                if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                                     KingOfTheHill.yellowkingaura.transform.position = new Vector3(KingOfTheHill.yellowKingplayer.transform.position.x, KingOfTheHill.yellowKingplayer.transform.position.y, -0.5f);
                                 }
                                 else {
@@ -6692,7 +6744,7 @@ namespace LasMonjas
                             ZombieLaboratory.keyItem06BeingHeld = true;
                             break;
                     }
-                    switch (PlayerControl.GameOptions.MapId) {
+                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                         // Skeld
                         case 0:
                             if (activatedSensei) {
@@ -7190,7 +7242,7 @@ namespace LasMonjas
             }
 
             if (!player.Data.IsDead) {
-                switch (PlayerControl.GameOptions.MapId) {
+                switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                     case 0:
                         if (activatedSensei) {
                             player.transform.position = new Vector3(-4.85f, 6, player.transform.position.z);
@@ -7523,7 +7575,7 @@ namespace LasMonjas
             foreach (PlayerControl player in ZombieLaboratory.survivorTeam) {
                 if (player.PlayerId == survivorId) {
                     if (isEntering) {
-                        switch (PlayerControl.GameOptions.MapId) {
+                        switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                             case 0:
                                 if (activatedSensei) {
                                     player.transform.position = new Vector3(-12f, 7.15f, player.transform.position.z);
@@ -7555,7 +7607,7 @@ namespace LasMonjas
                         }
                     }
                     else {
-                        switch (PlayerControl.GameOptions.MapId) {
+                        switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                             case 0:
                                 if (activatedSensei) {
                                     switch (whichExit) {
@@ -8126,7 +8178,7 @@ namespace LasMonjas
 
                 if (soloPlayersAlives <= 1) {
                     BattleRoyale.triggerSoloWin = true;
-                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSoloWin, false);
+                    GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSoloWin, false);
                 }
             }
             else {
@@ -8161,11 +8213,11 @@ namespace LasMonjas
                     new CustomMessage(Language.statusBattleRoyaleTexts[3], 5, -1, 1f, 26);
                     if (limePlayersAlive <= 0) {
                         BattleRoyale.triggerPinkTeamWin = true;
-                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
+                        GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
                     }
                     else if (pinkPlayersAlive <= 0) {
                         BattleRoyale.triggerLimeTeamWin = true;
-                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
+                        GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
                     }
                 }
 
@@ -8183,26 +8235,26 @@ namespace LasMonjas
                     BattleRoyale.battleRoyalepointCounter = Language.introTexts[12] + "<color=#39FF14FF>" + limePlayersAlive + "</color> | " + Language.introTexts[13] + " <color=#F2BEFFFF>" + pinkPlayersAlive + "</color> | " + Language.introTexts[14] + "<color=#808080FF>" + serialKillerAlive + "</color>";
                     if (limePlayersAlive <= 0 && pinkPlayersAlive <= 0 && !BattleRoyale.serialKiller.Data.IsDead) {
                         BattleRoyale.triggerSerialKillerWin = true;
-                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSerialKillerWin, false);
+                        GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSerialKillerWin, false);
                     }
                     else if (pinkPlayersAlive <= 0 && BattleRoyale.serialKiller.Data.IsDead) {
                         BattleRoyale.triggerLimeTeamWin = true;
-                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
+                        GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
                     }
                     else if (limePlayersAlive <= 0 && BattleRoyale.serialKiller.Data.IsDead) {
                         BattleRoyale.triggerPinkTeamWin = true;
-                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
+                        GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
                     }
                 }
                 else {
                     BattleRoyale.battleRoyalepointCounter = Language.introTexts[12] + "<color=#39FF14FF>" + limePlayersAlive + "</color> | " + Language.introTexts[13] + "<color=#F2BEFFFF>" + pinkPlayersAlive + "</color>";
                     if (pinkPlayersAlive <= 0) {
                         BattleRoyale.triggerLimeTeamWin = true;
-                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
+                        GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
                     }
                     else if (limePlayersAlive <= 0) {
                         BattleRoyale.triggerPinkTeamWin = true;
-                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
+                        GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
                     }
                 }
             }
@@ -8233,15 +8285,15 @@ namespace LasMonjas
 
             if (BattleRoyale.limePoints >= BattleRoyale.requiredScore) {
                 BattleRoyale.triggerLimeTeamWin = true;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
             }
             else if (BattleRoyale.pinkPoints >= BattleRoyale.requiredScore) {
                 BattleRoyale.triggerPinkTeamWin = true;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
             }
             else if (BattleRoyale.serialKillerPoints >= BattleRoyale.requiredScore) {
                 BattleRoyale.triggerSerialKillerWin = true;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSerialKillerWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSerialKillerWin, false);
             }
         }
     }
@@ -8295,6 +8347,10 @@ namespace LasMonjas
                 case (byte)CustomRPC.UncheckedExilePlayer:
                     byte exileTarget = reader.ReadByte();
                     RPCProcedure.uncheckedExilePlayer(exileTarget);
+                    break;
+                case (byte)CustomRPC.RandomizeCustomSkeldOnHS:
+                    int theNumber = reader.ReadPackedInt32();
+                    RPCProcedure.randomizeCustomSkeldOnHS(theNumber);
                     break;
 
                 // Role impostor functionality

@@ -12,7 +12,7 @@ namespace LasMonjas
         public static bool showRoleSummary = true;
         public static bool activateMusic = false;
         public static bool ghostsSeeRoles = true;
-        public static bool horseMode = false;
+        //public static bool horseMode = false;
         public static bool monjaCursor = true;
 
         // Updating values
@@ -30,7 +30,7 @@ namespace LasMonjas
             showRoleSummary = LasMonjasPlugin.ShowRoleSummary.Value;
             activateMusic = LasMonjasPlugin.ActivateMusic.Value;
             ghostsSeeRoles = LasMonjasPlugin.GhostsSeeRoles.Value;
-            horseMode = LasMonjasPlugin.HorseMode.Value;
+            //horseMode = LasMonjasPlugin.HorseMode.Value;
             monjaCursor = LasMonjasPlugin.MonjaCursor.Value;
         }
 

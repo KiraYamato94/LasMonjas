@@ -6,6 +6,7 @@ using System;
 using UnityEngine;
 using System.Linq;
 using Hazel;
+using AmongUs.GameOptions;
 
 namespace LasMonjas
 {
@@ -17,7 +18,7 @@ namespace LasMonjas
             int CompletedTasks = 0;
             if (!playerInfo.Disconnected && playerInfo.Tasks != null &&
                 playerInfo.Object &&
-                (PlayerControl.GameOptions.GhostsDoTasks || !playerInfo.IsDead) &&
+                (GameOptionsManager.Instance.CurrentGameOptions.GetBool(BoolOptionNames.GhostsDoTasks) || !playerInfo.IsDead) &&
                 playerInfo.Role && playerInfo.Role.TasksCountTowardProgress &&
                 !playerInfo.Object.hasFakeTasks()
                 ) {

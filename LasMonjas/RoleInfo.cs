@@ -174,8 +174,8 @@ namespace LasMonjas
         public static RoleInfo pinkPlayer06 = new RoleInfo("Pink Team", Shy.color, Language.roleInfoNames[23], Language.roleInfoNames[23], RoleId.PinkPlayer06);
         public static RoleInfo pinkPlayer07 = new RoleInfo("Pink Team", Shy.color, Language.roleInfoNames[23], Language.roleInfoNames[23], RoleId.PinkPlayer07);
         public static RoleInfo serialKiller = new RoleInfo("Serial Killer", Joker.color, Language.helpersTexts[1], Language.helpersTexts[1], RoleId.SerialKiller);
-        
-        
+
+
         // Impostor roles
         public static RoleInfo mimic = new RoleInfo("Mimic", Mimic.color, Language.roleInfoNames[24], Language.roleInfoNames[24], RoleId.Mimic);
         public static RoleInfo painter = new RoleInfo("Painter", Painter.color, Language.roleInfoNames[25], Language.roleInfoNames[25], RoleId.Painter);
@@ -313,7 +313,7 @@ namespace LasMonjas
             fink,
             welder,
             spiritualist,
-            coward,         
+            coward,
             vigilant,
             vigilantMira,
             kid,

@@ -20,6 +20,7 @@ using Reactor.Networking;
 using Reactor.Networking.Attributes;
 using AmongUs.Data;
 using AmongUs.Data.Legacy;
+using AmongUs.GameOptions;
 
 namespace LasMonjas
 {
@@ -31,7 +32,7 @@ namespace LasMonjas
     {
         public const string Id = "me.allul.lasmonjas";
 
-        public const string VersionString = "3.0.3";
+        public const string VersionString = "3.0.4";
 
         public static System.Version Version = System.Version.Parse(VersionString);
         internal static BepInEx.Logging.ManualLogSource Logger;
@@ -44,7 +45,7 @@ namespace LasMonjas
         public static ConfigEntry<bool> ShowRoleSummary { get; set; }
         public static ConfigEntry<bool> ActivateMusic { get; set; }
         public static ConfigEntry<bool> GhostsSeeRoles { get; set; }
-        public static ConfigEntry<bool> HorseMode { get; set; }
+        //public static ConfigEntry<bool> HorseMode { get; set; }
         public static ConfigEntry<bool> MonjaCursor { get; set; }
         public static ConfigEntry<string> IpCustom { get; set; }
         public static ConfigEntry<ushort> PortCustom { get; set; }
@@ -68,7 +69,7 @@ namespace LasMonjas
             ShowRoleSummary = Config.Bind("Custom", "Show Role Summary", true);
             ActivateMusic = Config.Bind("Custom", "Activate Music", true);
             GhostsSeeRoles = Config.Bind("Custom", "Ghosts See Roles", true);
-            HorseMode = Config.Bind("Custom", "Horse Mode", false);
+            //HorseMode = Config.Bind("Custom", "Horse Mode", false);
             MonjaCursor = Config.Bind("Custom", "Monja Cursor", true);
 
             IpCustom = Config.Bind("Custom", "Custom Server IP", "127.0.0.1");
@@ -111,5 +112,5 @@ namespace LasMonjas
                 DataManager.Settings.Multiplayer.ChatMode = InnerNet.QuickChatModes.FreeChatOrQuickChat;
             }
         }
-    }        
+    }
 }

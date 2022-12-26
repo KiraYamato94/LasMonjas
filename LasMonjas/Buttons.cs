@@ -7,6 +7,7 @@ using LasMonjas.Objects;
 using System.Linq;
 using LasMonjas.Core;
 using System.Collections.Generic;
+using AmongUs.GameOptions;
 
 namespace LasMonjas
 {
@@ -366,13 +367,13 @@ namespace LasMonjas
             bountyHunterSetKillButton.MaxTimer = 10f;
             trapperMineButton.MaxTimer = Trapper.cooldown;
             trapperTrapButton.MaxTimer = Trapper.cooldown;
-            trapperKillButton.MaxTimer = PlayerControl.GameOptions.killCooldown;
+            trapperKillButton.MaxTimer = GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
             yinyangerYinButton.MaxTimer = Yinyanger.cooldown;
             yinyangerYangButton.MaxTimer = Yinyanger.cooldown;
-            yinyangerKillButton.MaxTimer = PlayerControl.GameOptions.killCooldown;
+            yinyangerKillButton.MaxTimer = GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
             challengerChallengeButton.MaxTimer = Challenger.cooldown;
             challengerChallengeButton.EffectDuration = Challenger.duration;
-            challengerKillButton.MaxTimer = PlayerControl.GameOptions.killCooldown;
+            challengerKillButton.MaxTimer = GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
             challengerRockButton.MaxTimer = 10f;
             challengerPaperButton.MaxTimer = 10f;
             challengerScissorsButton.MaxTimer = 10f;
@@ -833,7 +834,7 @@ namespace LasMonjas
                     Mimic.pickTarget = null;
                 },
                 Mimic.getpickTargetSprite(),
-                new Vector3(-1.9f, -0.06f, 0),
+                new Vector3(-3f, -0.06f, 0),
                 __instance,
                 KeyCode.F,
                 true,
@@ -879,7 +880,7 @@ namespace LasMonjas
                     painterPaintButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
                 Painter.getButtonSprite(),
-                new Vector3(-1.9f, -0.06f, 0),
+                new Vector3(-3f, -0.06f, 0),
                 __instance,
                 KeyCode.F,
                 true,
@@ -959,7 +960,7 @@ namespace LasMonjas
                     demonKillButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
                 Demon.getButtonSprite(),
-                new Vector3(0, 1f, 0),
+                new Vector3(-1f, 1f, 0),
                 __instance,
                 KeyCode.Q,
                 false,
@@ -989,7 +990,7 @@ namespace LasMonjas
                 () => { return PlayerControl.LocalPlayer.CanMove && !Demon.localPlacedNun; },
                 () => { },
                 Demon.getNunButtonSprite(),
-                new Vector3(0, -0.06f, 0),
+                new Vector3(-0.05f, 2f, 0),
                 __instance,
                 null,
                 true
@@ -1042,7 +1043,7 @@ namespace LasMonjas
                 },
                 () => { janitorCleanButton.Timer = janitorCleanButton.MaxTimer; },
                 Janitor.getButtonSprite(),
-                new Vector3(-1.9f, -0.06f, 0),
+                new Vector3(-3f, -0.06f, 0),
                 __instance,
                 KeyCode.F
             );
@@ -1127,7 +1128,7 @@ namespace LasMonjas
                     Janitor.janitorResetValuesAtDead();
                 },
                 Janitor.getDragButtonSprite(),
-                new Vector3(-3f, -0.06f, 0),
+                new Vector3(-4.1f, -0.06f, 0),
                 __instance,
                 KeyCode.T
             );
@@ -1165,7 +1166,7 @@ namespace LasMonjas
                 () => { return PlayerControl.LocalPlayer.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming && !Hats.hasHatLimitReached() && (Jailer.prisonPlayer == null || Jailer.prisonPlayer != null && Jailer.prisonPlayer.PlayerId != Illusionist.illusionist.PlayerId); },
                 () => { placeHatButton.Timer = placeHatButton.MaxTimer; },
                 Illusionist.getPlaceHatButtonSprite(),
-                new Vector3(-1.9f, -0.06f, 0),
+                new Vector3(-3f, -0.06f, 0),
                 __instance,
                 KeyCode.F
             );
@@ -1210,7 +1211,7 @@ namespace LasMonjas
                     illusionistLightsOutButton.actionButton.graphic.color = Palette.EnabledColor;
                 },
                 Illusionist.getLightsOutButtonSprite(),
-                new Vector3(-1.9f, -0.06f, 0),
+                new Vector3(-3f, -0.06f, 0),
                 __instance,
                 KeyCode.F,
                 true,
@@ -1258,7 +1259,7 @@ namespace LasMonjas
                     Manipulator.manipulatedVictimTarget = null;
                 },
                 Manipulator.getManipulateButtonSprite(),
-                new Vector3(-1.9f, -0.06f, 0),
+                new Vector3(-3f, -0.06f, 0),
                 __instance,
                 KeyCode.F
             );
@@ -1279,7 +1280,7 @@ namespace LasMonjas
                         return;
                     }
 
-                    switch (PlayerControl.GameOptions.MapId) {
+                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                         case 0:
                             Bomberman.bombDuration = 60;
                             break;
@@ -1337,7 +1338,7 @@ namespace LasMonjas
                     bombermanBombButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
                 Bomberman.getBombButtonSprite(),
-                new Vector3(-1.9f, -0.06f, 0),
+                new Vector3(-3f, -0.06f, 0),
                 __instance,
                 KeyCode.F,
                 true,
@@ -1378,7 +1379,7 @@ namespace LasMonjas
                     chameleonInvisibleButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
                 Chameleon.getInvisibleButtonSprite(),
-                new Vector3(-1.9f, -0.06f, 0),
+                new Vector3(-3f, -0.06f, 0),
                 __instance,
                 KeyCode.F,
                 true,
@@ -1411,7 +1412,7 @@ namespace LasMonjas
                     Sorcerer.cooldownAddition = Sorcerer.cooldownAdditionInitial;
                 },
                 Sorcerer.getSpellButtonSprite(),
-                new Vector3(-1.9f, -0.06f, 0),
+                new Vector3(-3f, -0.06f, 0),
                 __instance,
                 KeyCode.F,
                 true,
@@ -1429,12 +1430,12 @@ namespace LasMonjas
                     if (attempt == MurderAttemptResult.JinxKill) {
                         SoundManager.Instance.PlaySound(CustomMain.customAssets.jinxQuack, false, 5f);
                         sorcererSpellButton.Timer = sorcererSpellButton.MaxTimer;
-                        Sorcerer.sorcerer.killTimer = PlayerControl.GameOptions.KillCooldown;
+                        Sorcerer.sorcerer.killTimer = GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
                     }
                     else if (attempt == MurderAttemptResult.PerformKill) {
                         sorcererSpellButton.MaxTimer += Sorcerer.cooldownAddition;
                         sorcererSpellButton.Timer = sorcererSpellButton.MaxTimer;
-                        Sorcerer.sorcerer.killTimer = PlayerControl.GameOptions.KillCooldown;
+                        Sorcerer.sorcerer.killTimer = GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
                     }
                     else {
                         sorcererSpellButton.Timer = 0f;
@@ -1462,7 +1463,7 @@ namespace LasMonjas
                     medusaPetrifyButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
                 Medusa.getButtonSprite(),
-                new Vector3(-1.9f, -0.06f, 0),
+                new Vector3(-3f, -0.06f, 0),
                 __instance,
                 KeyCode.F,
                 true,
@@ -1542,7 +1543,7 @@ namespace LasMonjas
                     hypnotistSpiralButton.Timer = hypnotistSpiralButton.MaxTimer;
                 },
                 Hypnotist.getSpiralSprite(),
-                new Vector3(-1.9f, -0.06f, 0),
+                new Vector3(-3f, -0.06f, 0),
                 __instance,
                 KeyCode.F
             );
@@ -1604,7 +1605,7 @@ namespace LasMonjas
                     archerShowWeaponButton.Timer = archerShowWeaponButton.MaxTimer;
                 },
                 Archer.getPickBowButtonSprite(),
-                new Vector3(-1.9f, -0.06f, 0),
+                new Vector3(-3f, -0.06f, 0),
                 __instance,
                 KeyCode.F
             );
@@ -1711,7 +1712,7 @@ namespace LasMonjas
                             if (player.Data.IsDead) continue;
                             if (!Archer.Guides.ContainsKey(player.PlayerId)) continue;
 
-                            if (PlayerControl.GameOptions.MapId == 5) {
+                            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                                 if ((Archer.archer.transform.position.y > 0 && player.transform.position.y > 0) || (Archer.archer.transform.position.y < 0 && player.transform.position.y < 0)) {
                                     Archer.Guides[player.PlayerId].color = color;
                                     Vector3 dir = player.transform.position - PlayerControl.LocalPlayer.transform.position;
@@ -1744,7 +1745,7 @@ namespace LasMonjas
                         }
 
                         foreach (var deadBody in UnityEngine.Object.FindObjectsOfType<DeadBody>()) {
-                            if (PlayerControl.GameOptions.MapId == 5) {
+                            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                                 if ((Archer.archer.transform.position.y > 0 && deadBody.transform.position.y > 0) || (Archer.archer.transform.position.y < 0 && deadBody.transform.position.y < 0)) {
                                     Archer.Guides[deadBody.ParentId].color = color;
                                     Vector3 dir = deadBody.transform.position - PlayerControl.LocalPlayer.transform.position;
@@ -1789,7 +1790,7 @@ namespace LasMonjas
                 },
                 () => { archerKillButton.Timer = archerKillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
-                new Vector3(0, 1f, 0),
+                new Vector3(-1f, 1f, 0),
                 __instance,
                 KeyCode.Mouse1
             );
@@ -1835,7 +1836,7 @@ namespace LasMonjas
                     plumberMakeVentButton.Timer = plumberMakeVentButton.MaxTimer;
                 },
                 Plumber.getPlumberButtonSprite(),
-                new Vector3(-1.9f, -0.06f, 0),
+                new Vector3(-3f, -0.06f, 0),
                 __instance,
                 KeyCode.F
             );
@@ -1875,7 +1876,7 @@ namespace LasMonjas
                },
                () => { librarianSilenceButton.Timer = librarianSilenceButton.MaxTimer; },
                Librarian.getLibrarianButtonSprite(),
-               new Vector3(-1.9f, -0.06f, 0),
+               new Vector3(-3f, -0.06f, 0),
                __instance,
                KeyCode.F
             );
@@ -1943,7 +1944,7 @@ namespace LasMonjas
                 () => { return Renegade.canRecruitMinion && Renegade.currentTarget != null && PlayerControl.LocalPlayer.CanMove && !Renegade.usedRecruit && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => { renegadeMinionButton.Timer = renegadeMinionButton.MaxTimer; },
                 Renegade.getMinionButtonSprite(),
-                new Vector3(-1.9f, -0.06f, 0),
+                new Vector3(-1f, 1f, 0),
                 __instance,
                 KeyCode.F
             );
@@ -2734,7 +2735,7 @@ namespace LasMonjas
                     }
                     bool canUse = true;
                     if (Ninja.markedTarget != null && !Ninja.markedTarget.Data.IsDead && !Ninja.markedTarget.inVent) {
-                        if (PlayerControl.GameOptions.MapId == 5 && ((Ninja.ninja.transform.position.y > 0 && Ninja.markedTarget.transform.position.y < 0) || (Ninja.ninja.transform.position.y < 0 && Ninja.markedTarget.transform.position.y > 0))) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5 && ((Ninja.ninja.transform.position.y > 0 && Ninja.markedTarget.transform.position.y < 0) || (Ninja.ninja.transform.position.y < 0 && Ninja.markedTarget.transform.position.y > 0))) {
                             canUse = false;
                         }
                         if (Vector2.Distance(Ninja.ninja.transform.position, Ninja.markedTarget.transform.position) < 5f && !Ninja.ninja.Data.IsDead) {
@@ -2951,7 +2952,7 @@ namespace LasMonjas
                     Stranded.selectedBox = Stranded.currentBox;   
                     
                 },
-                () => { return Stranded.stranded != null && Stranded.stranded == PlayerControl.LocalPlayer; },
+                () => { return Stranded.stranded != null && Stranded.stranded == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
                     if (strandedFindBoxButton.isEffectActive && Stranded.selectedBox != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, Stranded.selectedBox.transform.position) > 0.5f) {
                         Stranded.selectedBox = null;
@@ -2989,7 +2990,7 @@ namespace LasMonjas
                 },
                 () => { strandedFindBoxButton.Timer = strandedFindBoxButton.MaxTimer; },
                 Stranded.getSurvivorTakeBoxButtonSprite(),
-                new Vector3(-1.9f, -0.06f, 0),
+                new Vector3(-2.1f, 1f, 0),
                 __instance,
                 KeyCode.F,
                 false,
@@ -3118,7 +3119,7 @@ namespace LasMonjas
                     strandedInvisibleButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 },
                 Stranded.getInvisibleButtonSprite(),
-                new Vector3(-3f, -0.06f, 0),
+                new Vector3(-1f, 1f, 0),
                 __instance,
                 KeyCode.T,
                 true,
@@ -3156,7 +3157,7 @@ namespace LasMonjas
                     }
                     monjaFindDeliverButton.Timer = monjaFindDeliverButton.MaxTimer;
                 },
-                () => { return Monja.monja != null && Monja.monja == PlayerControl.LocalPlayer; },
+                () => { return Monja.monja != null && Monja.monja == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
                     bool CanUse = false;
                     bool sabotageActive = false;
@@ -3390,7 +3391,7 @@ namespace LasMonjas
                     }
 
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.treasureHunterPlaceTreasure, false, 100f);
-                    switch (PlayerControl.GameOptions.MapId) {
+                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                         case 0:
                             int skeldNumber = rnd.Next(1, 15);
                             TreasureHunter.randomSpawn = skeldNumber;
@@ -3590,7 +3591,7 @@ namespace LasMonjas
                     Poisoner.poisonTarget = null;
                 },
                 Poisoner.getPoisonSprite(),
-                new Vector3(-1.9f, -0.06f, 0),
+                new Vector3(-3f, -0.06f, 0),
                 __instance,
                 KeyCode.F,
                 true,
@@ -4718,14 +4719,14 @@ namespace LasMonjas
                    hackerAdminTableButton.EffectDuration = Hacker.duration;
 
                    if (!MapBehaviour.Instance || !MapBehaviour.Instance.isActiveAndEnabled)
-                       DestroyableSingleton<HudManager>.Instance.ShowMap((System.Action<MapBehaviour>)(m => m.ShowCountOverlay()));
+                       DestroyableSingleton<HudManager>.Instance.ToggleMapVisible(new global::MapOptions { Mode = global::MapOptions.Modes.CountOverlay, AllowMovementWhileMapOpen = false }); 
 
                    PlayerControl.LocalPlayer.NetTransform.Halt();
 
                    MessageWriter usedAdminWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.HackerAbilityUses, Hazel.SendOption.Reliable, -1);
                    usedAdminWriter.Write(0);
                    AmongUsClient.Instance.FinishRpcImmediately(usedAdminWriter);
-                   RPCProcedure.hackerAbilityUses(0); 
+                   RPCProcedure.hackerAbilityUses(0);
                },
                () => { return Hacker.hacker != null && Hacker.hacker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                () => {
@@ -4788,7 +4789,7 @@ namespace LasMonjas
                    AmongUsClient.Instance.FinishRpcImmediately(usedVitalsWriter);
                    RPCProcedure.hackerAbilityUses(1);
                },
-               () => { return Hacker.hacker != null && Hacker.hacker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && PlayerControl.GameOptions.MapId != 0 && PlayerControl.GameOptions.MapId != 1 && PlayerControl.GameOptions.MapId != 3; },
+               () => { return Hacker.hacker != null && Hacker.hacker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && GameOptionsManager.Instance.currentGameOptions.MapId != 0 && GameOptionsManager.Instance.currentGameOptions.MapId != 1 && GameOptionsManager.Instance.currentGameOptions.MapId != 3; },
                () => {
                 if (Hacker.hackerVitalsChargesText != null) Hacker.hackerVitalsChargesText.text = $"{Hacker.chargesVitals} / {Hacker.toolsNumber}";
                 return PlayerControl.LocalPlayer.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming && Hacker.chargesVitals > 0;
@@ -4989,7 +4990,7 @@ namespace LasMonjas
                 () => {
                     bool canSeal = true;
                     if (Welder.ventTarget != null) {
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             if (Welder.ventTarget.name == "LowerCentralVent" || Welder.ventTarget.name == "UpperCentralVent" || Welder.ventTarget.name == "OpenEngineVent" || Welder.ventTarget.name == "NormalAdminVent") {
                                 canSeal = false;
                             }
@@ -5114,7 +5115,7 @@ namespace LasMonjas
 
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.bombermanPlaceBombClip, false, 100f);
                     
-                    if (PlayerControl.GameOptions.MapId != 1) { 
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId != 1) { 
                         var pos = PlayerControl.LocalPlayer.transform.position;
                         byte[] buff = new byte[sizeof(float) * 2];
                         Buffer.BlockCopy(BitConverter.GetBytes(pos.x), 0, buff, 0 * sizeof(float), sizeof(float));
@@ -5127,7 +5128,7 @@ namespace LasMonjas
                     }
                     vigilantButton.Timer = vigilantButton.MaxTimer;
                 },
-                () => { return Vigilant.vigilant != null && Vigilant.vigilant == PlayerControl.LocalPlayer && Vigilant.placedCameras < 4 && !PlayerControl.LocalPlayer.Data.IsDead && PlayerControl.GameOptions.MapId != 1; },
+                () => { return Vigilant.vigilant != null && Vigilant.vigilant == PlayerControl.LocalPlayer && Vigilant.placedCameras < 4 && !PlayerControl.LocalPlayer.Data.IsDead && GameOptionsManager.Instance.currentGameOptions.MapId != 1; },
                 () => {
                     return Vigilant.remainingCameras > 0 && Vigilant.remainingCameras <= Vigilant.totalCameras && PlayerControl.LocalPlayer.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
                 },
@@ -5162,7 +5163,7 @@ namespace LasMonjas
                         return;
                     }
 
-                    switch (PlayerControl.GameOptions.MapId) {
+                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                         case 0:
                             if (Vigilant.minigame == null) {
                                 var e = UnityEngine.Object.FindObjectsOfType<SystemConsole>().FirstOrDefault(x => x.gameObject.name.Contains("SurvConsole"));
@@ -5213,7 +5214,7 @@ namespace LasMonjas
 
                     PlayerControl.LocalPlayer.NetTransform.Halt();
                 },
-                () => { return Vigilant.vigilant != null && Vigilant.vigilant == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && Vigilant.placedCameras >= 4 && PlayerControl.GameOptions.MapId != 1; },
+                () => { return Vigilant.vigilant != null && Vigilant.vigilant == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && Vigilant.placedCameras >= 4 && GameOptionsManager.Instance.currentGameOptions.MapId != 1; },
                 () => {
                     if (Vigilant.vigilantButtonCameraUsesText != null) Vigilant.vigilantButtonCameraUsesText.text = $"{Vigilant.charges} / {Vigilant.maxCharges}";
                     return PlayerControl.LocalPlayer.CanMove && Vigilant.charges > 0 && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
@@ -5453,7 +5454,7 @@ namespace LasMonjas
                                     if (Vector2.Distance(truePosition2, truePosition) <= PlayerControl.LocalPlayer.MaxReportDistance && PlayerControl.LocalPlayer.CanMove && !PhysicsHelpers.AnythingBetween(truePosition, truePosition2, Constants.ShipAndObjectsMask, false)) {
                                         GameData.PlayerInfo playerInfo = GameData.Instance.GetPlayerById(component.ParentId);
 
-                                        if (PlayerControl.GameOptions.MapId != 5) {
+                                        if (GameOptionsManager.Instance.currentGameOptions.MapId != 5) {
                                             if (activatedSensei) {
                                                 Necromancer.targetRoom = SystemTypes.MedBay;
                                             }
@@ -5848,7 +5849,7 @@ namespace LasMonjas
             zoomOutButton = new CustomButton(
                 () => { Helpers.toggleZoom();
                 },
-                () => { if (PlayerControl.LocalPlayer == null || !PlayerControl.LocalPlayer.Data.IsDead || PlayerControl.LocalPlayer.Data.Role.IsImpostor || TimeTraveler.isRewinding || (howmanygamemodesareon == 1 && !HotPotato.hotPotatoMode)) return false;
+                () => { if (PlayerControl.LocalPlayer == null || !PlayerControl.LocalPlayer.Data.IsDead /*|| PlayerControl.LocalPlayer.Data.Role.IsImpostor*/ || TimeTraveler.isRewinding || (howmanygamemodesareon == 1 && !HotPotato.hotPotatoMode)) return false;
                     var (playerCompleted, playerTotal) = TasksHandler.taskInfo(PlayerControl.LocalPlayer.Data);
                     int numberOfLeftTasks = playerTotal - playerCompleted;
                     return numberOfLeftTasks <= 0;
@@ -6927,7 +6928,7 @@ namespace LasMonjas
                 },
                 () => { return PoliceAndThief.policeplayer01 != null && PoliceAndThief.policeplayer01 == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
-                    if (policeplayer01JailButton.isEffectActive && PoliceAndThief.policeplayer01targetedPlayer != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, PoliceAndThief.policeplayer01targetedPlayer.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(PlayerControl.GameOptions.KillDistance, 0, 2)]) {
+                    if (policeplayer01JailButton.isEffectActive && PoliceAndThief.policeplayer01targetedPlayer != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, PoliceAndThief.policeplayer01targetedPlayer.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         PoliceAndThief.policeplayer01targetedPlayer = null;
                         policeplayer01JailButton.Timer = 0f;
                         policeplayer01JailButton.isEffectActive = false;
@@ -7127,7 +7128,7 @@ namespace LasMonjas
                 },
                 () => { return PoliceAndThief.policeplayer03 != null && PoliceAndThief.policeplayer03 == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
-                    if (policeplayer03JailButton.isEffectActive && PoliceAndThief.policeplayer03targetedPlayer != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, PoliceAndThief.policeplayer03targetedPlayer.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(PlayerControl.GameOptions.KillDistance, 0, 2)]) {
+                    if (policeplayer03JailButton.isEffectActive && PoliceAndThief.policeplayer03targetedPlayer != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, PoliceAndThief.policeplayer03targetedPlayer.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         PoliceAndThief.policeplayer03targetedPlayer = null;
                         policeplayer03JailButton.Timer = 0f;
                         policeplayer03JailButton.isEffectActive = false;
@@ -7328,7 +7329,7 @@ namespace LasMonjas
                 },
                 () => { return PoliceAndThief.policeplayer05 != null && PoliceAndThief.policeplayer05 == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
-                    if (policeplayer05JailButton.isEffectActive && PoliceAndThief.policeplayer05targetedPlayer != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, PoliceAndThief.policeplayer05targetedPlayer.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(PlayerControl.GameOptions.KillDistance, 0, 2)]) {
+                    if (policeplayer05JailButton.isEffectActive && PoliceAndThief.policeplayer05targetedPlayer != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, PoliceAndThief.policeplayer05targetedPlayer.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         PoliceAndThief.policeplayer05targetedPlayer = null;
                         policeplayer05JailButton.Timer = 0f;
                         policeplayer05JailButton.isEffectActive = false;
@@ -7422,7 +7423,7 @@ namespace LasMonjas
                 },
                 () => { return PoliceAndThief.policeplayer06 != null && PoliceAndThief.policeplayer06 == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
-                    if (policeplayer06JailButton.isEffectActive && PoliceAndThief.policeplayer06targetedPlayer != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, PoliceAndThief.policeplayer06targetedPlayer.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(PlayerControl.GameOptions.KillDistance, 0, 2)]) {
+                    if (policeplayer06JailButton.isEffectActive && PoliceAndThief.policeplayer06targetedPlayer != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, PoliceAndThief.policeplayer06targetedPlayer.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         PoliceAndThief.policeplayer06targetedPlayer = null;
                         policeplayer06JailButton.Timer = 0f;
                         policeplayer06JailButton.isEffectActive = false;
@@ -7524,13 +7525,13 @@ namespace LasMonjas
                 () => {
                     if (PoliceAndThief.localThiefReleaseArrow.Count != 0) {
                         PoliceAndThief.localThiefReleaseArrow[0].Update(PoliceAndThief.cellbutton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             PoliceAndThief.localThiefReleaseArrow[1].Update(PoliceAndThief.cellbuttontwo.transform.position);
                         }
                     }
                     if (PoliceAndThief.localThiefDeliverArrow.Count != 0) {
                         PoliceAndThief.localThiefDeliverArrow[0].Update(PoliceAndThief.jewelbutton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             PoliceAndThief.localThiefDeliverArrow[1].Update(PoliceAndThief.jewelbuttontwo.transform.position);
                         }
                     }
@@ -7706,13 +7707,13 @@ namespace LasMonjas
                 () => {
                     if (PoliceAndThief.localThiefReleaseArrow.Count != 0) {
                         PoliceAndThief.localThiefReleaseArrow[0].Update(PoliceAndThief.cellbutton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             PoliceAndThief.localThiefReleaseArrow[1].Update(PoliceAndThief.cellbuttontwo.transform.position);
                         }
                     }
                     if (PoliceAndThief.localThiefDeliverArrow.Count != 0) {
                         PoliceAndThief.localThiefDeliverArrow[0].Update(PoliceAndThief.jewelbutton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             PoliceAndThief.localThiefDeliverArrow[1].Update(PoliceAndThief.jewelbuttontwo.transform.position);
                         }
                     }
@@ -7888,13 +7889,13 @@ namespace LasMonjas
                 () => {
                     if (PoliceAndThief.localThiefReleaseArrow.Count != 0) {
                         PoliceAndThief.localThiefReleaseArrow[0].Update(PoliceAndThief.cellbutton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             PoliceAndThief.localThiefReleaseArrow[1].Update(PoliceAndThief.cellbuttontwo.transform.position);
                         }
                     }
                     if (PoliceAndThief.localThiefDeliverArrow.Count != 0) {
                         PoliceAndThief.localThiefDeliverArrow[0].Update(PoliceAndThief.jewelbutton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             PoliceAndThief.localThiefDeliverArrow[1].Update(PoliceAndThief.jewelbuttontwo.transform.position);
                         }
                     }
@@ -8070,13 +8071,13 @@ namespace LasMonjas
                 () => {
                     if (PoliceAndThief.localThiefReleaseArrow.Count != 0) {
                         PoliceAndThief.localThiefReleaseArrow[0].Update(PoliceAndThief.cellbutton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             PoliceAndThief.localThiefReleaseArrow[1].Update(PoliceAndThief.cellbuttontwo.transform.position);
                         }
                     }
                     if (PoliceAndThief.localThiefDeliverArrow.Count != 0) {
                         PoliceAndThief.localThiefDeliverArrow[0].Update(PoliceAndThief.jewelbutton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             PoliceAndThief.localThiefDeliverArrow[1].Update(PoliceAndThief.jewelbuttontwo.transform.position);
                         }
                     }
@@ -8252,13 +8253,13 @@ namespace LasMonjas
                 () => {
                     if (PoliceAndThief.localThiefReleaseArrow.Count != 0) {
                         PoliceAndThief.localThiefReleaseArrow[0].Update(PoliceAndThief.cellbutton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             PoliceAndThief.localThiefReleaseArrow[1].Update(PoliceAndThief.cellbuttontwo.transform.position);
                         }
                     }
                     if (PoliceAndThief.localThiefDeliverArrow.Count != 0) {
                         PoliceAndThief.localThiefDeliverArrow[0].Update(PoliceAndThief.jewelbutton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             PoliceAndThief.localThiefDeliverArrow[1].Update(PoliceAndThief.jewelbuttontwo.transform.position);
                         }
                     }
@@ -8434,13 +8435,13 @@ namespace LasMonjas
                 () => {
                     if (PoliceAndThief.localThiefReleaseArrow.Count != 0) {
                         PoliceAndThief.localThiefReleaseArrow[0].Update(PoliceAndThief.cellbutton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             PoliceAndThief.localThiefReleaseArrow[1].Update(PoliceAndThief.cellbuttontwo.transform.position);
                         }
                     }
                     if (PoliceAndThief.localThiefDeliverArrow.Count != 0) {
                         PoliceAndThief.localThiefDeliverArrow[0].Update(PoliceAndThief.jewelbutton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             PoliceAndThief.localThiefDeliverArrow[1].Update(PoliceAndThief.jewelbuttontwo.transform.position);
                         }
                     }
@@ -8616,13 +8617,13 @@ namespace LasMonjas
                 () => {
                     if (PoliceAndThief.localThiefReleaseArrow.Count != 0) {
                         PoliceAndThief.localThiefReleaseArrow[0].Update(PoliceAndThief.cellbutton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             PoliceAndThief.localThiefReleaseArrow[1].Update(PoliceAndThief.cellbuttontwo.transform.position);
                         }
                     }
                     if (PoliceAndThief.localThiefDeliverArrow.Count != 0) {
                         PoliceAndThief.localThiefDeliverArrow[0].Update(PoliceAndThief.jewelbutton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             PoliceAndThief.localThiefDeliverArrow[1].Update(PoliceAndThief.jewelbuttontwo.transform.position);
                         }
                     }
@@ -8798,13 +8799,13 @@ namespace LasMonjas
                 () => {
                     if (PoliceAndThief.localThiefReleaseArrow.Count != 0) {
                         PoliceAndThief.localThiefReleaseArrow[0].Update(PoliceAndThief.cellbutton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             PoliceAndThief.localThiefReleaseArrow[1].Update(PoliceAndThief.cellbuttontwo.transform.position);
                         }
                     }
                     if (PoliceAndThief.localThiefDeliverArrow.Count != 0) {
                         PoliceAndThief.localThiefDeliverArrow[0].Update(PoliceAndThief.jewelbutton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             PoliceAndThief.localThiefDeliverArrow[1].Update(PoliceAndThief.jewelbuttontwo.transform.position);
                         }
                     }
@@ -8980,13 +8981,13 @@ namespace LasMonjas
                 () => {
                     if (PoliceAndThief.localThiefReleaseArrow.Count != 0) {
                         PoliceAndThief.localThiefReleaseArrow[0].Update(PoliceAndThief.cellbutton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             PoliceAndThief.localThiefReleaseArrow[1].Update(PoliceAndThief.cellbuttontwo.transform.position);
                         }
                     }
                     if (PoliceAndThief.localThiefDeliverArrow.Count != 0) {
                         PoliceAndThief.localThiefDeliverArrow[0].Update(PoliceAndThief.jewelbutton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             PoliceAndThief.localThiefDeliverArrow[1].Update(PoliceAndThief.jewelbuttontwo.transform.position);
                         }
                     }
@@ -9793,7 +9794,7 @@ namespace LasMonjas
                 },
                 () => { return ZombieLaboratory.zombiePlayer01 != null && ZombieLaboratory.zombiePlayer01 == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
-                    if (zombie01InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer01infectedTarget != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, ZombieLaboratory.zombiePlayer01infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(PlayerControl.GameOptions.KillDistance, 0, 2)]) {
+                    if (zombie01InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer01infectedTarget != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, ZombieLaboratory.zombiePlayer01infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer01infectedTarget = null;
                         zombie01InfectButton.Timer = 0f;
                         zombie01InfectButton.isEffectActive = false;
@@ -9870,7 +9871,7 @@ namespace LasMonjas
                 },
                 () => { return ZombieLaboratory.zombiePlayer02 != null && ZombieLaboratory.zombiePlayer02 == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
-                    if (zombie02InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer02infectedTarget != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, ZombieLaboratory.zombiePlayer02infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(PlayerControl.GameOptions.KillDistance, 0, 2)]) {
+                    if (zombie02InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer02infectedTarget != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, ZombieLaboratory.zombiePlayer02infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer02infectedTarget = null;
                         zombie02InfectButton.Timer = 0f;
                         zombie02InfectButton.isEffectActive = false;
@@ -9947,7 +9948,7 @@ namespace LasMonjas
                 },
                 () => { return ZombieLaboratory.zombiePlayer03 != null && ZombieLaboratory.zombiePlayer03 == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
-                    if (zombie03InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer03infectedTarget != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, ZombieLaboratory.zombiePlayer03infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(PlayerControl.GameOptions.KillDistance, 0, 2)]) {
+                    if (zombie03InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer03infectedTarget != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, ZombieLaboratory.zombiePlayer03infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer03infectedTarget = null;
                         zombie03InfectButton.Timer = 0f;
                         zombie03InfectButton.isEffectActive = false;
@@ -10024,7 +10025,7 @@ namespace LasMonjas
                 },
                 () => { return ZombieLaboratory.zombiePlayer04 != null && ZombieLaboratory.zombiePlayer04 == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
-                    if (zombie04InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer04infectedTarget != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, ZombieLaboratory.zombiePlayer04infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(PlayerControl.GameOptions.KillDistance, 0, 2)]) {
+                    if (zombie04InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer04infectedTarget != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, ZombieLaboratory.zombiePlayer04infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer04infectedTarget = null;
                         zombie04InfectButton.Timer = 0f;
                         zombie04InfectButton.isEffectActive = false;
@@ -10101,7 +10102,7 @@ namespace LasMonjas
                 },
                 () => { return ZombieLaboratory.zombiePlayer05 != null && ZombieLaboratory.zombiePlayer05 == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
-                    if (zombie05InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer05infectedTarget != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, ZombieLaboratory.zombiePlayer05infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(PlayerControl.GameOptions.KillDistance, 0, 2)]) {
+                    if (zombie05InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer05infectedTarget != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, ZombieLaboratory.zombiePlayer05infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer05infectedTarget = null;
                         zombie05InfectButton.Timer = 0f;
                         zombie05InfectButton.isEffectActive = false;
@@ -10178,7 +10179,7 @@ namespace LasMonjas
                 },
                 () => { return ZombieLaboratory.zombiePlayer06 != null && ZombieLaboratory.zombiePlayer06 == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
-                    if (zombie06InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer06infectedTarget != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, ZombieLaboratory.zombiePlayer06infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(PlayerControl.GameOptions.KillDistance, 0, 2)]) {
+                    if (zombie06InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer06infectedTarget != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, ZombieLaboratory.zombiePlayer06infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer06infectedTarget = null;
                         zombie06InfectButton.Timer = 0f;
                         zombie06InfectButton.isEffectActive = false;
@@ -10255,7 +10256,7 @@ namespace LasMonjas
                 },
                 () => { return ZombieLaboratory.zombiePlayer07 != null && ZombieLaboratory.zombiePlayer07 == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
-                    if (zombie07InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer07infectedTarget != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, ZombieLaboratory.zombiePlayer07infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(PlayerControl.GameOptions.KillDistance, 0, 2)]) {
+                    if (zombie07InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer07infectedTarget != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, ZombieLaboratory.zombiePlayer07infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer07infectedTarget = null;
                         zombie07InfectButton.Timer = 0f;
                         zombie07InfectButton.isEffectActive = false;
@@ -10332,7 +10333,7 @@ namespace LasMonjas
                 },
                 () => { return ZombieLaboratory.zombiePlayer08 != null && ZombieLaboratory.zombiePlayer08 == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
-                    if (zombie08InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer08infectedTarget != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, ZombieLaboratory.zombiePlayer08infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(PlayerControl.GameOptions.KillDistance, 0, 2)]) {
+                    if (zombie08InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer08infectedTarget != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, ZombieLaboratory.zombiePlayer08infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer08infectedTarget = null;
                         zombie08InfectButton.Timer = 0f;
                         zombie08InfectButton.isEffectActive = false;
@@ -10409,7 +10410,7 @@ namespace LasMonjas
                 },
                 () => { return ZombieLaboratory.zombiePlayer09 != null && ZombieLaboratory.zombiePlayer09 == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
-                    if (zombie09InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer09infectedTarget != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, ZombieLaboratory.zombiePlayer09infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(PlayerControl.GameOptions.KillDistance, 0, 2)]) {
+                    if (zombie09InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer09infectedTarget != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, ZombieLaboratory.zombiePlayer09infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer09infectedTarget = null;
                         zombie09InfectButton.Timer = 0f;
                         zombie09InfectButton.isEffectActive = false;
@@ -10486,7 +10487,7 @@ namespace LasMonjas
                 },
                 () => { return ZombieLaboratory.zombiePlayer10 != null && ZombieLaboratory.zombiePlayer10 == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
-                    if (zombie10InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer10infectedTarget != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, ZombieLaboratory.zombiePlayer10infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(PlayerControl.GameOptions.KillDistance, 0, 2)]) {
+                    if (zombie10InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer10infectedTarget != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, ZombieLaboratory.zombiePlayer10infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer10infectedTarget = null;
                         zombie10InfectButton.Timer = 0f;
                         zombie10InfectButton.isEffectActive = false;
@@ -10563,7 +10564,7 @@ namespace LasMonjas
                 },
                 () => { return ZombieLaboratory.zombiePlayer11 != null && ZombieLaboratory.zombiePlayer11 == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
-                    if (zombie11InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer11infectedTarget != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, ZombieLaboratory.zombiePlayer11infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(PlayerControl.GameOptions.KillDistance, 0, 2)]) {
+                    if (zombie11InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer11infectedTarget != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, ZombieLaboratory.zombiePlayer11infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer11infectedTarget = null;
                         zombie11InfectButton.Timer = 0f;
                         zombie11InfectButton.isEffectActive = false;
@@ -10640,7 +10641,7 @@ namespace LasMonjas
                 },
                 () => { return ZombieLaboratory.zombiePlayer12 != null && ZombieLaboratory.zombiePlayer12 == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
-                    if (zombie12InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer12infectedTarget != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, ZombieLaboratory.zombiePlayer12infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(PlayerControl.GameOptions.KillDistance, 0, 2)]) {
+                    if (zombie12InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer12infectedTarget != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, ZombieLaboratory.zombiePlayer12infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer12infectedTarget = null;
                         zombie12InfectButton.Timer = 0f;
                         zombie12InfectButton.isEffectActive = false;
@@ -10717,7 +10718,7 @@ namespace LasMonjas
                 },
                 () => { return ZombieLaboratory.zombiePlayer13 != null && ZombieLaboratory.zombiePlayer13 == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
-                    if (zombie13InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer13infectedTarget != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, ZombieLaboratory.zombiePlayer13infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(PlayerControl.GameOptions.KillDistance, 0, 2)]) {
+                    if (zombie13InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer13infectedTarget != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, ZombieLaboratory.zombiePlayer13infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer13infectedTarget = null;
                         zombie13InfectButton.Timer = 0f;
                         zombie13InfectButton.isEffectActive = false;
@@ -10794,7 +10795,7 @@ namespace LasMonjas
                 },
                 () => { return ZombieLaboratory.zombiePlayer14 != null && ZombieLaboratory.zombiePlayer14 == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
-                    if (zombie14InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer14infectedTarget != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, ZombieLaboratory.zombiePlayer14infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(PlayerControl.GameOptions.KillDistance, 0, 2)]) {
+                    if (zombie14InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer14infectedTarget != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, ZombieLaboratory.zombiePlayer14infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer14infectedTarget = null;
                         zombie14InfectButton.Timer = 0f;
                         zombie14InfectButton.isEffectActive = false;
@@ -11582,7 +11583,7 @@ namespace LasMonjas
                 () => {
                     if (ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].Update(ZombieLaboratory.laboratoryEnterButton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].Update(ZombieLaboratory.laboratorytwoEnterButton.transform.position);
                         }
                     }
@@ -11794,7 +11795,7 @@ namespace LasMonjas
                 () => {
                     if (ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].Update(ZombieLaboratory.laboratoryEnterButton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].Update(ZombieLaboratory.laboratorytwoEnterButton.transform.position);
                         }
                     }
@@ -12005,7 +12006,7 @@ namespace LasMonjas
                 () => {
                     if (ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].Update(ZombieLaboratory.laboratoryEnterButton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].Update(ZombieLaboratory.laboratorytwoEnterButton.transform.position);
                         }
                     }
@@ -12216,7 +12217,7 @@ namespace LasMonjas
                 () => {
                     if (ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].Update(ZombieLaboratory.laboratoryEnterButton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].Update(ZombieLaboratory.laboratorytwoEnterButton.transform.position);
                         }
                     }
@@ -12427,7 +12428,7 @@ namespace LasMonjas
                 () => {
                     if (ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].Update(ZombieLaboratory.laboratoryEnterButton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].Update(ZombieLaboratory.laboratorytwoEnterButton.transform.position);
                         }
                     }
@@ -12638,7 +12639,7 @@ namespace LasMonjas
                 () => {
                     if (ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].Update(ZombieLaboratory.laboratoryEnterButton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].Update(ZombieLaboratory.laboratorytwoEnterButton.transform.position);
                         }
                     }
@@ -12849,7 +12850,7 @@ namespace LasMonjas
                 () => {
                     if (ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].Update(ZombieLaboratory.laboratoryEnterButton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].Update(ZombieLaboratory.laboratorytwoEnterButton.transform.position);
                         }
                     }
@@ -13060,7 +13061,7 @@ namespace LasMonjas
                 () => {
                     if (ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].Update(ZombieLaboratory.laboratoryEnterButton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].Update(ZombieLaboratory.laboratorytwoEnterButton.transform.position);
                         }
                     }
@@ -13271,7 +13272,7 @@ namespace LasMonjas
                 () => {
                     if (ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].Update(ZombieLaboratory.laboratoryEnterButton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].Update(ZombieLaboratory.laboratorytwoEnterButton.transform.position);
                         }
                     }
@@ -13482,7 +13483,7 @@ namespace LasMonjas
                 () => {
                     if (ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].Update(ZombieLaboratory.laboratoryEnterButton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].Update(ZombieLaboratory.laboratorytwoEnterButton.transform.position);
                         }
                     }
@@ -13693,7 +13694,7 @@ namespace LasMonjas
                 () => {
                     if (ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].Update(ZombieLaboratory.laboratoryEnterButton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].Update(ZombieLaboratory.laboratorytwoEnterButton.transform.position);
                         }
                     }
@@ -13904,7 +13905,7 @@ namespace LasMonjas
                 () => {
                     if (ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].Update(ZombieLaboratory.laboratoryEnterButton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].Update(ZombieLaboratory.laboratorytwoEnterButton.transform.position);
                         }
                     }
@@ -14115,7 +14116,7 @@ namespace LasMonjas
                 () => {
                     if (ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].Update(ZombieLaboratory.laboratoryEnterButton.transform.position);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].Update(ZombieLaboratory.laboratorytwoEnterButton.transform.position);
                         }
                     }

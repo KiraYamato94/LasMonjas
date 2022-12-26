@@ -13,6 +13,7 @@ using UnityEngine;
 using LasMonjas.Objects;
 using LasMonjas.Patches;
 using LasMonjas.Core;
+using AmongUs.GameOptions;
 
 namespace LasMonjas
 {
@@ -88,6 +89,7 @@ namespace LasMonjas
         public static List<GameObject> whoAmIModeNeutralsItems = new List<GameObject>();
         public static bool createdWhoAmI = false;
         public static bool whoAmIFoundRole = false;
+        public static int customSkeldHS = 0;
 
         public static void clearAndReloadRoles() {
             Mimic.clearAndReload();
@@ -248,7 +250,7 @@ namespace LasMonjas
         }
 
         private static Sprite pickTargetSprite;
-        
+
         public static Sprite getpickTargetSprite() {
             if (pickTargetSprite) return pickTargetSprite;
             pickTargetSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.MimicPickTargetButton.png", 90f);
@@ -256,7 +258,7 @@ namespace LasMonjas
         }
 
         private static Sprite transformSprite;
-        
+
         public static Sprite getTransformSprite() {
             if (transformSprite) return transformSprite;
             transformSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.MimicTransformButton.png", 90f);
@@ -332,17 +334,17 @@ namespace LasMonjas
             localPlacedNun = false;
             currentTarget = null;
             delay = CustomOptionHolder.demonKillDelay.getFloat();
-            cooldown = PlayerControl.GameOptions.killCooldown;
+            cooldown = GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
             canKillNearNun = CustomOptionHolder.demonCanKillNearNuns.getBool();
         }
     }
     public static class Janitor
     {
+        public static bool dragginBody = false;
         public static PlayerControl janitor;
         public static Color color = Palette.ImpostorRed;
 
         public static float cooldown = 30f;
-        public static bool dragginBody = false;
         public static byte bodyId = 0;
 
         private static Sprite buttonSprite;
@@ -376,7 +378,7 @@ namespace LasMonjas
             // Restore janitor values when dead
             dragginBody = false;
             bodyId = 0;
-            if (PlayerControl.GameOptions.MapId == 5) {
+            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                 GameObject vent = GameObject.Find("LowerCentralVent");
                 vent.GetComponent<BoxCollider2D>().enabled = true;
             }
@@ -460,7 +462,7 @@ namespace LasMonjas
             currentTarget = null;
             manipulatedVictim = null;
             manipulatedVictimTarget = null;
-            cooldown = PlayerControl.GameOptions.killCooldown;
+            cooldown = GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
         }
 
         public static void resetManipulate() {
@@ -642,6 +644,7 @@ namespace LasMonjas
 
         public static PlayerControl hypnotist;
         public static Color color = Palette.ImpostorRed;
+        public static List<PlayerControl> hypnotizedPlayers = new List<PlayerControl>();
 
         public static float cooldown = 0;
         public static float currentSpiralNumber = 0;
@@ -669,6 +672,7 @@ namespace LasMonjas
             spiralDuration = CustomOptionHolder.hypnotistSpiralsDuration.getFloat();
             messageTimer = 0f;
             objectsCantPlaceTraps.Clear();
+            hypnotizedPlayers.Clear();
         }
     }
     
@@ -731,7 +735,7 @@ namespace LasMonjas
 
         public static void clearAndReload() {
             archer = null;
-            cooldown = PlayerControl.GameOptions.killCooldown;
+            cooldown = GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
             shotSize = CustomOptionHolder.archerShotSize.getFloat();
             shotRange = CustomOptionHolder.archerShotRange.getFloat();
             noticeRange = CustomOptionHolder.archerNoticeRange.getFloat();
@@ -845,7 +849,6 @@ namespace LasMonjas
         public static bool canRecruitMinion = true;
         public static Sprite buttonSprite;
         public static bool usedRecruit = false;
-        public static bool isHypnotized = false;
 
         public static Sprite getMinionButtonSprite() {
             if (buttonSprite) return buttonSprite;
@@ -858,18 +861,17 @@ namespace LasMonjas
             renegade = null;
             currentTarget = null;
             fakeMinion = null;
-            cooldown = PlayerControl.GameOptions.killCooldown;
+            cooldown = GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
         }
 
         public static void clearAndReload() {
             renegade = null;
             currentTarget = null;
             fakeMinion = null;
-            cooldown = PlayerControl.GameOptions.killCooldown;
+            cooldown = GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
             canUseVents = CustomOptionHolder.renegadeCanUseVents.getBool();
             canRecruitMinion = CustomOptionHolder.renegadeCanRecruitMinion.getBool();
             usedRecruit = false;
-            isHypnotized = false;
             formerRenegades.Clear();
         }
 
@@ -883,13 +885,11 @@ namespace LasMonjas
         public static PlayerControl currentTarget;
 
         public static float cooldown = 30f;
-        public static bool isHypnotized = false;
 
         public static void clearAndReload() {
             minion = null;
             currentTarget = null;
-            cooldown = PlayerControl.GameOptions.killCooldown;
-            isHypnotized = false;
+            cooldown = GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
         }
     }
 
@@ -925,7 +925,7 @@ namespace LasMonjas
             bountyhunter = null;
             currentTarget = null;
             hasToKill = null;
-            killCooldown = PlayerControl.GameOptions.killCooldown;
+            killCooldown = GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
             triggerBountyHunterWin = false;
             rolName = "";
             usedTarget = false;
@@ -1150,7 +1150,7 @@ namespace LasMonjas
             onlyOneFinishDuel = true;
             duelDuration = 30f;
             if (Jailer.prisonPlayer != null) {
-                switch (PlayerControl.GameOptions.MapId) {
+                switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                     // Skeld
                     case 0:
                         if (LasMonjas.activatedSensei) {
@@ -1223,7 +1223,7 @@ namespace LasMonjas
             ninja = null;
             currentTarget = null;
             markedTarget = null;
-            cooldown = PlayerControl.GameOptions.killCooldown;
+            cooldown = GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
         }
     }
 
@@ -1244,7 +1244,7 @@ namespace LasMonjas
         public static void clearAndReload() {
             berserker = null;
             currentTarget = null;
-            cooldown = PlayerControl.GameOptions.killCooldown;
+            cooldown = GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
             timeToKill = CustomOptionHolder.berserkerTimeToKill.getFloat();
             killedFirstTime = false;
             backupTimeToKill = timeToKill;
@@ -1290,7 +1290,7 @@ namespace LasMonjas
             yandere = null;
             currentTarget = null;
             target = null;
-            killCooldown = PlayerControl.GameOptions.killCooldown;
+            killCooldown = GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
             stareCooldown = CustomOptionHolder.yandereCooldown.getFloat();
             stareTimes = CustomOptionHolder.yandereStareTimes.getFloat();
             stareDuration = CustomOptionHolder.yandereStareDuration.getFloat();
@@ -1323,7 +1323,6 @@ namespace LasMonjas
         public static bool canTurnInvisible = false;
         public static bool isInvisible = false;
         public static float invisibleTimer = 0;
-        public static bool isHypnotized = false;
 
         public static TMPro.TMP_Text strandedSearchButtonText;
         public static TMPro.TMP_Text strandedKillButtonText;
@@ -1342,7 +1341,7 @@ namespace LasMonjas
             buttonInvisibleSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.StrandedInvisibleButton.png", 90f);
             return buttonInvisibleSprite;
         }
-        
+
         public static void resetStranded() {
             invisibleTimer = 0f;
             isInvisible = false;
@@ -1350,13 +1349,13 @@ namespace LasMonjas
                 Helpers.alphaPlayer(false, stranded.PlayerId);
             }
         }
-        
+
         public static void clearAndReload() {
             susBoxPositions.Clear();
-            groundItems.Clear();            
+            groundItems.Clear();
             stranded = null;
             currentTarget = null;
-            killCooldown = PlayerControl.GameOptions.killCooldown;
+            killCooldown = GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
             foundBox = 0;
             selectedBox = null;
             currentBox = null;
@@ -1367,10 +1366,9 @@ namespace LasMonjas
             canVent = false;
             canTurnInvisible = false;
             isInvisible = false;
-            isHypnotized = false;
             invisibleTimer = 0;
 
-            switch (PlayerControl.GameOptions.MapId) {
+            switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                 case 0:
                     if (spawnBoxOnCustomSkeld) {
                         susBoxPositions.Add(new Vector3(-5.25f, -0.75f, 0.4f));
@@ -1606,12 +1604,12 @@ namespace LasMonjas
 
     public static class Monja
     {
+        public static bool awakened;
+        public static float awakenTimer = 0f;
         public static PlayerControl monja;
         public static Color color = new Color32(79, 125, 0, byte.MaxValue);
 
         public static PlayerControl currentTarget;
-        public static bool awakened;
-        public static float awakenTimer;
         public static bool canAwake;
         public static bool isDeliveringItem;
         public static float killTimer;
@@ -1671,7 +1669,7 @@ namespace LasMonjas
             item04 = null;
             item05 = null;
             monjaSprite = null;
-            switch (PlayerControl.GameOptions.MapId) {
+            switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                 case 0:
                     if (spawnBoxOnCustomSkeld) {
                         itemListPositions.Add(new Vector3(-5.25f, -0.75f, 0.4f));
@@ -2276,7 +2274,7 @@ namespace LasMonjas
             seekerPlayerPointsCount.text = $"{currentPlayers} / 3";
             seekerPerformMinigamePlayerPointsCount.text = $"{currentPoints} / {neededPoints}";
             if (checkJailer && Jailer.prisonPlayer != null) {
-                switch (PlayerControl.GameOptions.MapId) {
+                switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                     // Skeld
                     case 0:
                         if (LasMonjas.activatedSensei) {
@@ -2392,11 +2390,11 @@ namespace LasMonjas
         public static void clearAndReload() {
             sheriff = null;
             currentTarget = null;
-            cooldown = PlayerControl.GameOptions.killCooldown;
+            cooldown = GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
             canKillNeutrals = CustomOptionHolder.sheriffCanKillNeutrals.getBool();
         }
     }
-   
+
     public static class Detective
     {
         public static PlayerControl detective;
@@ -2951,8 +2949,7 @@ namespace LasMonjas
             camSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.VigilantViewCameraButton.png", 90f);
             return camSprite;
         }
-        
-        
+
         private static Sprite placeCameraButtonSprite;
         public static Sprite getPlaceCameraButtonSprite() {
             if (placeCameraButtonSprite) return placeCameraButtonSprite;
@@ -2966,7 +2963,7 @@ namespace LasMonjas
             cooldown = CustomOptionHolder.vigilantCooldown.getFloat();
             totalCameras = 4;
             remainingCameras = totalCameras;
-            if (PlayerControl.GameOptions.MapId == 5) {
+            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                 placedCameras = 4;
             }
             else {
@@ -3129,7 +3126,7 @@ namespace LasMonjas
             duration = CustomOptionHolder.necromancerReviveTimer.getFloat();
             roomDistance = CustomOptionHolder.necromancerMaxReviveRoomDistance.getFloat();
             reviveArrow = null;
-            switch (PlayerControl.GameOptions.MapId) {
+            switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                 case 0:
                     targetRoom = SystemTypes.MedBay;
                     break;
@@ -3986,7 +3983,7 @@ namespace LasMonjas
             triggerThiefWin = false;
             triggerPoliceWin = false;
             currentThiefsCaptured = 0;
-            thiefpointCounter = Language.introTexts[3] + "<color=#00F7FFFF>" + currentJewelsStoled + " / " + requiredJewels + "</color> | " + Language.introTexts[4] + " < color=#928B55FF>" + currentThiefsCaptured + " / " + thiefTeam.Count + "</color>";
+            thiefpointCounter = Language.introTexts[3] + "<color=#00F7FFFF>" + currentJewelsStoled + " / " + requiredJewels + "</color> | " + Language.introTexts[4] + " <color=#928B55FF>" + currentThiefsCaptured + " / " + thiefTeam.Count + "</color>";
         }
         public static PlayerControl GetTasedPlayer(float shotSize, float effectiveRange, bool policeTwo) {
             PlayerControl result = null;
@@ -4359,6 +4356,7 @@ namespace LasMonjas
 
     public static class ZombieLaboratory
     {
+        public static int currentKeyItems = 0;
         public static List<PlayerControl> survivorTeam = new List<PlayerControl>();
         public static List<PlayerControl> zombieTeam = new List<PlayerControl>();
         public static List<GameObject> groundItems = new List<GameObject>();
@@ -4608,7 +4606,6 @@ namespace LasMonjas
         public static float survivorsVision = 1f;
         public static float searchBoxTimer = 5f;
 
-        public static int currentKeyItems = 0;
         public static bool triggerZombieWin = false;
         public static bool triggerSurvivorWin = false;
 
@@ -4970,7 +4967,7 @@ namespace LasMonjas
 
             zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + infectedTeam.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + zombieTeam.Count + "</color>";
 
-            switch (PlayerControl.GameOptions.MapId) {
+            switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                 case 0:
                     if (zombieSenseiMapLaboratoryMode) {
                         // sus[0-5] = key items
@@ -5804,7 +5801,7 @@ namespace LasMonjas
                     break;
             }
 
-            switch (PlayerControl.GameOptions.MapId) {
+            switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                 case 0:
                     if (battleRoyaleSenseiMapMode) {
                         soloPlayersSpawnPositions.Add(new Vector3(-6.8f, 11f, 0f)); // secutiry

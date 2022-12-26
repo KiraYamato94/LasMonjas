@@ -530,7 +530,7 @@ namespace LasMonjas
             hotPotatoMatchDuration = CustomOption.Create(71, cs(Shy.color, "Hot Potato") + ": Match Duration", "gamemode", 300f, 300f, 450f, 30f, hotPotatoMode);
             hotPotatoTransferLimit = CustomOption.Create(72, cs(Shy.color, "Hot Potato") + ": Hot Potato Time Limit for Transfer", "gamemode", 20f, 10f, 30f, 1f, hotPotatoMode);
             hotPotatoCooldown = CustomOption.Create(73, cs(Shy.color, "Hot Potato") + ": Hot Potato Transfer Cooldown", "gamemode", 5f, 5f, 10f, 1f, hotPotatoMode);
-            hotPotatoNotPotatovision = CustomOption.Create(74, cs(Shy.color, "Hot Potato") + ": Cold Potatoes vision range", "gamemode", 0.8f, 0.7f, 1f, 0.1f, hotPotatoMode);
+            hotPotatoNotPotatovision = CustomOption.Create(74, cs(Shy.color, "Hot Potato") + ": Cold Potatoes vision range", "gamemode", 0.8f, 0.6f, 1f, 0.2f, hotPotatoMode);
             hotPotatoResetTimeForTransfer = CustomOption.Create(75, cs(Shy.color, "Hot Potato") + ": Reset Hot Potato timer after Transfer", "gamemode", true, hotPotatoMode);
             hotPotatoIncreaseTimeIfNoReset = CustomOption.Create(76, cs(Shy.color, "Hot Potato") + ": Extra Time when timer doesn't reset", "gamemode", 5f, 5f, 10f, 1f, hotPotatoMode);
 
@@ -541,7 +541,7 @@ namespace LasMonjas
             zombieLaboratoryInfectTime = CustomOption.Create(83, cs(Hunter.color, "Zombie Laboratory") + ": Time to Infect", "gamemode", 3f, 3f, 5f, 1f, zombieLaboratoryMode);
             zombieLaboratoryInfectCooldown = CustomOption.Create(84, cs(Hunter.color, "Zombie Laboratory") + ": Infect Cooldown", "gamemode", 10f, 10f, 20f, 1f, zombieLaboratoryMode);
             zombieLaboratorySearchBoxTimer = CustomOption.Create(85, cs(Hunter.color, "Zombie Laboratory") + ": Search Box Timer", "gamemode", 5f, 3f, 5f, 1f, zombieLaboratoryMode);
-            zombieLaboratorySurvivorsVision = CustomOption.Create(86, cs(Hunter.color, "Zombie Laboratory") + ": Survivors vision range", "gamemode", 0.8f, 0.8f, 1f, 0.1f, zombieLaboratoryMode);
+            zombieLaboratorySurvivorsVision = CustomOption.Create(86, cs(Hunter.color, "Zombie Laboratory") + ": Survivors vision range", "gamemode", 0.8f, 0.8f, 1f, 0.2f, zombieLaboratoryMode);
             zombieLaboratoryMaxTimeForHeal = CustomOption.Create(87, cs(Hunter.color, "Zombie Laboratory") + ": Time to use Medkit", "gamemode", 45f, 30f, 90f, 5f, zombieLaboratoryMode);
             zombieLaboratoryKillCooldown = CustomOption.Create(88, cs(Hunter.color, "Zombie Laboratory") + ": Kill Cooldown", "gamemode", 10f, 10f, 20f, 1f, zombieLaboratoryMode);
             zombieLaboratoryReviveTime = CustomOption.Create(89, cs(Hunter.color, "Zombie Laboratory") + ": Revive Wait Time", "gamemode", 8f, 8f, 13f, 1f, zombieLaboratoryMode);
@@ -848,8 +848,8 @@ namespace LasMonjas
             engineerCooldown = CustomOption.Create(711, cs(Engineer.color, "Engineer") + ": Cooldown", "crewmate", 10f, 10f, 20f, 1f, engineerSpawnRate);
             engineerNumberOfTraps = CustomOption.Create(712, cs(Engineer.color, "Engineer") + ": Trap Number", "crewmate", 5f, 3f, 5f, 1f, engineerSpawnRate);
             engineerTrapsDuration = CustomOption.Create(713, cs(Engineer.color, "Engineer") + ": Trap Duration", "crewmate", 60f, 30f, 120f, 5f, engineerSpawnRate);
-            engineerAccelTrapIncrease = CustomOption.Create(714, cs(Engineer.color, "Engineer") + ": Speed Increase", "crewmate", 1.4f, 1.2f, 1.5f, 0.1f, engineerSpawnRate);
-            engineerDecelTrapDecrease = CustomOption.Create(715, cs(Engineer.color, "Engineer") + ": Speed Decrease", "crewmate", 0.5f, 0.5f, 0.8f, 0.1f, engineerSpawnRate);
+            engineerAccelTrapIncrease = CustomOption.Create(714, cs(Engineer.color, "Engineer") + ": Speed Increase", "crewmate", 1.1f, 1.1f, 1.3f, 0.2f, engineerSpawnRate);
+            engineerDecelTrapDecrease = CustomOption.Create(715, cs(Engineer.color, "Engineer") + ": Speed Decrease", "crewmate", 0.4f, 0.4f, 0.8f, 0.2f, engineerSpawnRate);
 
             // Shy options
             shySpawnRate = CustomOption.Create(720, cs(Shy.color, "Shy"), "crewmate", rates, null, true);
