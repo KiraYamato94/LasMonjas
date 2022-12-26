@@ -48,7 +48,7 @@ namespace LasMonjas.Objects
 
             engineerTrap = new GameObject("EngineerTrap" + engineerTraps.Count.ToString());
             engineerTrap.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-            if (PlayerControl.GameOptions.MapId == 5) {
+            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                 position = new Vector3(player.x, player.y, -0.5f);
             }
             else {

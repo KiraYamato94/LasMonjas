@@ -32,7 +32,7 @@ namespace LasMonjas.Objects
 
             treasure = new GameObject("Treasure");
             treasure.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-            switch (PlayerControl.GameOptions.MapId) {
+            switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                 case 0:
                     if (activatedSensei) {
                         switch (TreasureHunter.randomSpawn) {
