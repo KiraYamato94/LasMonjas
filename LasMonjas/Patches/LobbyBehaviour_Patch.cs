@@ -9,6 +9,8 @@ using System.Linq;
 using System.Collections;
 using Reactor;
 using Il2CppSystem.Security.Cryptography;
+using AmongUs.GameOptions;
+using static LasMonjas.LasMonjas;
 
 namespace LasMonjas.Patches
 {
@@ -113,6 +115,7 @@ namespace LasMonjas.Patches
         [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.Start))]
         class GameStartPatch
         {
+            static private int NumImpostors = GameOptionsManager.Instance.CurrentGameOptions.NumImpostors;
             // Deactivate custom lobby items on game start
             public static void Prefix(ShipStatus __instance) {
                 if (!DestroyableSingleton<TutorialManager>.InstanceExists) {
@@ -126,10 +129,23 @@ namespace LasMonjas.Patches
                     myWardrobe.SetActive(false);
                     List<PlayerControl> howManyPlayers = PlayerControl.AllPlayerControls.ToArray().ToList();
                     if (howManyPlayers.Count < 7) {
-                        PlayerControl.GameOptions.NumImpostors = 1;
+                        NumImpostors = 1;
                     }
+                    if (GameOptionsManager.Instance.currentGameMode == GameModes.HideNSeek) {
+                        SoundManager.Instance.StopSound(CustomMain.customAssets.lobbyMusic);
+                        if (AmongUsClient.Instance.AmHost) {
+                            customSkeldHS = rnd.Next(1, 101);
+                        }
+                    }
+                    else {
+                        customSkeldHS = 0;
+                    }
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.RandomizeCustomSkeldOnHS, Hazel.SendOption.Reliable, -1);
+                    writer.Write(customSkeldHS);
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    RPCProcedure.randomizeCustomSkeldOnHS(customSkeldHS);
                 }
             }
-        }       
+        }
     }
 }

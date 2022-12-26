@@ -4,6 +4,7 @@ using HarmonyLib;
 using Il2CppInterop.Runtime;
 using static LasMonjas.LasMonjas;
 using UnityEngine;
+using AmongUs.GameOptions;
 
 namespace LasMonjas.Patches
 {
@@ -25,7 +26,7 @@ namespace LasMonjas.Patches
                     foreach (PlayerControl gamemodePlayer in PlayerControl.AllPlayerControls) {
                         if (gamemodePlayer != null && gamemodePlayer.PlayerId == player.PlayerId) {
                             float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
-                            __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius, unlerped) * PlayerControl.GameOptions.CrewLightMod;
+                            __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius, unlerped) * GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.CrewLightMod);
                         }
                     }
                 }
@@ -97,7 +98,7 @@ namespace LasMonjas.Patches
                 }
                 else {
                     float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
-                    __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius, unlerped) * PlayerControl.GameOptions.CrewLightMod;
+                    __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius, unlerped) * GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.CrewLightMod);
                 }
                 return false;
             }
@@ -106,7 +107,7 @@ namespace LasMonjas.Patches
                     __result = __instance.MaxLightRadius;
                 else if (HotPotato.hotPotatoPlayer != null && HotPotato.hotPotatoPlayer.PlayerId == player.PlayerId) {
                     float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
-                    __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius, unlerped) * PlayerControl.GameOptions.CrewLightMod;
+                    __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius, unlerped) * GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.CrewLightMod);
                 }
                 else {
                     foreach (PlayerControl notPotato in HotPotato.notPotatoTeam) {
@@ -137,7 +138,7 @@ namespace LasMonjas.Patches
                     foreach (PlayerControl zombie in ZombieLaboratory.zombieTeam) {
                         if (zombie != null && zombie.PlayerId == player.PlayerId) {
                             float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
-                            __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius, unlerped) * PlayerControl.GameOptions.CrewLightMod;
+                            __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius, unlerped) * GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.CrewLightMod);
                         }
                     }
                 }
@@ -154,7 +155,7 @@ namespace LasMonjas.Patches
 
                 if (Modifiers.blind != null && Modifiers.blind.PlayerId == player.PlayerId && Illusionist.lightsOutTimer <= 0f) {// if player is Blind
                     float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
-                    __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius, unlerped) * PlayerControl.GameOptions.CrewLightMod * 0.75f;
+                    __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius, unlerped) * GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.CrewLightMod) * 0.75f;
                     return false;
                 }
 
@@ -173,7 +174,7 @@ namespace LasMonjas.Patches
                         lerpValue = Mathf.Clamp01(Illusionist.lightsOutTimer * 2);
                     }
 
-                    __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius, 1 - lerpValue) * PlayerControl.GameOptions.CrewLightMod;
+                    __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius, 1 - lerpValue) * GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.CrewLightMod);
                     return false;
                 }
 
@@ -188,17 +189,17 @@ namespace LasMonjas.Patches
                 return SubmergedCompatibility.GetSubmergedNeutralLightRadius(isImpostor);
             }
 
-            if (isImpostor) return shipStatus.MaxLightRadius * PlayerControl.GameOptions.ImpostorLightMod;
+            if (isImpostor) return shipStatus.MaxLightRadius * GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.ImpostorLightMod);
 
             SwitchSystem switchSystem = shipStatus.Systems[SystemTypes.Electrical].TryCast<SwitchSystem>();
             float lerpValue = switchSystem.Value / 255f;
 
-            return Mathf.Lerp(shipStatus.MinLightRadius, shipStatus.MaxLightRadius, lerpValue) * PlayerControl.GameOptions.CrewLightMod;
+            return Mathf.Lerp(shipStatus.MinLightRadius, shipStatus.MaxLightRadius, lerpValue) * GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.CrewLightMod);
         }
 
         [HarmonyPostfix]
-        [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.IsGameOverDueToDeath))]
-        public static void Postfix2(ShipStatus __instance, ref bool __result) {
+        [HarmonyPatch(typeof(LogicGameFlowNormal), nameof(LogicGameFlowNormal.IsGameOverDueToDeath))]
+        public static void Postfix2(LogicGameFlowNormal __instance, ref bool __result) {
             __result = false;
         }
 

@@ -11,6 +11,7 @@ using System.Text;
 using UnityEngine;
 using System.Reflection;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using AmongUs.GameOptions;
 
 namespace LasMonjas.Patches {
     [HarmonyPatch]
@@ -98,7 +99,7 @@ namespace LasMonjas.Patches {
             public static bool Prefix(MeetingHud __instance, [HarmonyArgument(0)]GameData.PlayerInfo voterPlayer, [HarmonyArgument(1)]int index, [HarmonyArgument(2)]Transform parent) {
                 SpriteRenderer spriteRenderer = UnityEngine.Object.Instantiate<SpriteRenderer>(__instance.PlayerVotePrefab);
                 int cId = voterPlayer.DefaultOutfit.ColorId; 
-                if (PlayerControl.GameOptions.AnonymousVotes)
+                if (GameOptionsManager.Instance.CurrentGameOptions.GetBool(BoolOptionNames.AnonymousVotes))
                     voterPlayer.Object.SetColor(6);
                 voterPlayer.Object.SetPlayerMaterialColors(spriteRenderer);
                 spriteRenderer.transform.SetParent(parent);
@@ -269,7 +270,7 @@ namespace LasMonjas.Patches {
             foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
                 foreach (RoleInfo roleInfo in RoleInfo.allRoleInfos) {
                     // Not gambled roles
-                    if (/* Special roles */ roleInfo.roleId == RoleId.Lover || roleInfo.roleId == RoleId.Kid || (roleInfo == RoleInfo.vigilantMira && PlayerControl.GameOptions.MapId != 1) || (roleInfo == RoleInfo.vigilant && PlayerControl.GameOptions.MapId == 1)
+                    if (/* Special roles */ roleInfo.roleId == RoleId.Lover || roleInfo.roleId == RoleId.Kid || (roleInfo == RoleInfo.vigilantMira && GameOptionsManager.Instance.currentGameOptions.MapId != 1) || (roleInfo == RoleInfo.vigilant && GameOptionsManager.Instance.currentGameOptions.MapId == 1)
                         /* Impostor roles*/ || roleInfo.roleId == RoleId.Mimic || roleInfo.roleId == RoleId.Painter || roleInfo.roleId == RoleId.Demon || roleInfo.roleId == RoleId.Janitor || roleInfo.roleId == RoleId.Illusionist || roleInfo.roleId == RoleId.Manipulator || roleInfo.roleId == RoleId.Bomberman || roleInfo.roleId == RoleId.Chameleon || roleInfo.roleId == RoleId.Gambler || roleInfo.roleId == RoleId.Sorcerer || roleInfo.roleId == RoleId.Medusa || roleInfo.roleId == RoleId.Hypnotist || roleInfo.roleId == RoleId.Archer || roleInfo.roleId == RoleId.Plumber || roleInfo.roleId == RoleId.Librarian || roleInfo.roleId == RoleId.Impostor
                         /* Modifiers*/ || roleInfo.roleId == RoleId.BigChungus)
                         continue;
@@ -517,7 +518,7 @@ namespace LasMonjas.Patches {
 
                 // Add 20 seconds for Berserker
                 if (Berserker.killedFirstTime) {
-                    if (PlayerControl.GameOptions.MapId == 5) {
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                         Berserker.timeToKill += 35;
                     }
                     else {
@@ -548,6 +549,17 @@ namespace LasMonjas.Patches {
                 // Reset Seeker
                 if (Seeker.seeker != null) {
                     Seeker.ResetValues(false);
+                }
+
+                // Hypnotist reset camera rotation
+                if (Hypnotist.hypnotizedPlayers.Count != 0) {
+                    foreach (PlayerControl hypnoPlayer in Hypnotist.hypnotizedPlayers) {
+                        if (hypnoPlayer == PlayerControl.LocalPlayer) {
+                            GameObject camera = GameObject.Find("Main Camera");
+                            camera.transform.rotation = Quaternion.Euler(0, 0, 0);
+                        }
+                    }
+                    Hypnotist.hypnotizedPlayers.Clear();
                 }
 
                 // Reset zoomed out ghosts

@@ -9,6 +9,8 @@ using static LasMonjas.MapOptions;
 using System.Collections.Generic;
 using PowerTools;
 using LasMonjas.Core;
+using AmongUs.GameOptions;
+using static UnityEngine.GraphicsBuffer;
 
 namespace LasMonjas.Patches
 {
@@ -17,6 +19,11 @@ namespace LasMonjas.Patches
     public static class VentCanUsePatch
     {
         public static bool Prefix(bool __runOriginal, Vent __instance, ref float __result, [HarmonyArgument(0)] GameData.PlayerInfo pc, [HarmonyArgument(1)] ref bool canUse, [HarmonyArgument(2)] ref bool couldUse) {
+            if (GameOptionsManager.Instance.currentGameMode == GameModes.HideNSeek) { 
+                __runOriginal = true;
+                return __runOriginal;
+            }
+            
             if (!__runOriginal) {
                 return false;
             }
@@ -47,7 +54,7 @@ namespace LasMonjas.Patches
             }
 
             // Submerged check
-            else if (PlayerControl.GameOptions.MapId == 5) {
+            else if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                 if (!PlayerControl.LocalPlayer.Data.Role.IsImpostor && (__instance.name.StartsWith("LowerCentralVent") || __instance.name.StartsWith("UpperCentralVent"))) {
                     canUse = couldUse = false;
                     __result = num;
@@ -119,11 +126,13 @@ namespace LasMonjas.Patches
         static void Postfix(PlayerControl __instance) {
             if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) return;
 
-            if (__instance.AmOwner && __instance.roleCanUseVents() && howmanygamemodesareon == 1) {
-                HudManager.Instance.ImpostorVentButton.Show();
-            }
-            else if (__instance.AmOwner && __instance.roleCanUseVents() && HudManager.Instance.ReportButton.isActiveAndEnabled || __instance.AmOwner && __instance.roleCanUseVents() && HudManager.Instance.ReportButton.isActiveAndEnabled && howmanygamemodesareon != 1) {
-                HudManager.Instance.ImpostorVentButton.Show();
+            if (GameOptionsManager.Instance.currentGameMode == GameModes.Normal) {
+                if (__instance.AmOwner && __instance.roleCanUseVents() && howmanygamemodesareon == 1) {
+                    HudManager.Instance.ImpostorVentButton.Show();
+                }
+                else if (__instance.AmOwner && __instance.roleCanUseVents() && HudManager.Instance.ReportButton.isActiveAndEnabled || __instance.AmOwner && __instance.roleCanUseVents() && HudManager.Instance.ReportButton.isActiveAndEnabled && howmanygamemodesareon != 1) {
+                    HudManager.Instance.ImpostorVentButton.Show();
+                }
             }
         }
     }
@@ -164,7 +173,7 @@ namespace LasMonjas.Patches
 
                 Vector2 vector = pc.GetTruePosition() - truePosition;
                 var magnitude = vector.magnitude;
-                if (pc.AmOwner || hideVentAnim && magnitude < PlayerControl.LocalPlayer.myLight.LightRadius &&
+                if (pc != null && !hideVentAnim || hideVentAnim && magnitude < PlayerControl.LocalPlayer.lightSource.viewDistance &&
                     !PhysicsHelpers.AnyNonTriggersBetween(truePosition, vector.normalized, magnitude,
                         ShipAndObjectsMask)) {
                     __instance.GetComponent<SpriteAnim>().Play(__instance.EnterVentAnim, 1f);
@@ -194,7 +203,7 @@ namespace LasMonjas.Patches
 
                 Vector2 vector = pc.GetTruePosition() - truePosition;
                 var magnitude = vector.magnitude;
-                if (pc.AmOwner || hideVentAnim && magnitude < PlayerControl.LocalPlayer.myLight.LightRadius &&
+                if (pc != null && !hideVentAnim || hideVentAnim && magnitude < PlayerControl.LocalPlayer.lightSource.viewDistance &&
                     !PhysicsHelpers.AnyNonTriggersBetween(truePosition, vector.normalized, magnitude,
                         ShipAndObjectsMask)) {
                     __instance.GetComponent<SpriteAnim>().Play(__instance.ExitVentAnim, 1f);
@@ -222,7 +231,7 @@ namespace LasMonjas.Patches
                 // Handle Jinx kill
                 if (res == MurderAttemptResult.JinxKill) {
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.jinxQuack, false, 5f);
-                    PlayerControl.LocalPlayer.killTimer = PlayerControl.GameOptions.KillCooldown;
+                    PlayerControl.LocalPlayer.killTimer = GameOptionsManager.Instance.currentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
                     if (PlayerControl.LocalPlayer == Janitor.janitor)
                         Janitor.janitor.killTimer = HudManagerStartPatch.janitorCleanButton.Timer = HudManagerStartPatch.janitorCleanButton.MaxTimer;
                     else if (PlayerControl.LocalPlayer == Manipulator.manipulator)
@@ -233,6 +242,25 @@ namespace LasMonjas.Patches
                 __instance.SetTarget(null);
             }
             return false;
+        }
+    }
+
+    [HarmonyPatch(typeof(MapBehaviour), nameof(MapBehaviour.Close))]
+    class MapBehaviourCloseHauntButton
+    {
+        static void Postfix() {
+            if (GameOptionsManager.Instance.currentGameMode == GameModes.Normal && howmanygamemodesareon != 1) {
+                foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                    if (player == PlayerControl.LocalPlayer) {
+                        HudManager.Instance.AbilityButton.Hide();
+                        var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == player.PlayerId);
+                        DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == player.PlayerId).FirstOrDefault();
+                        if (body == null && deadPlayerEntry != null && player.Data.IsDead) {
+                            HudManager.Instance.AbilityButton.Show();
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -380,6 +408,29 @@ namespace LasMonjas.Patches
         }
     }
 
+    [HarmonyPatch(typeof(AbilityButton), nameof(AbilityButton.DoClick))]
+    class AbilityButtonDoClickPatch
+    {
+        static bool Prefix(AbilityButton __instance) {
+
+            bool blockAbility = howmanygamemodesareon == 1 && !HotPotato.hotPotato;
+            if (blockAbility) return false;
+
+            return true;
+        }
+    }
+
+    [HarmonyPatch(typeof(AbilityButton), nameof(AbilityButton.Update))]
+    class AbilityButtonUpdatePatch
+    {
+        static void Postfix() {
+
+            if (howmanygamemodesareon == 1 && !HotPotato.hotPotato) {
+                HudManager.Instance.AbilityButton.Hide();
+            }           
+        }
+    }
+    
     [HarmonyPatch]
     class VitalsMinigamePatch
     {
@@ -455,7 +506,7 @@ namespace LasMonjas.Patches
         {
             static bool Prefix(MapCountOverlay __instance) {
                 // Update new positions for sensei Map
-                if (activatedSensei && PlayerControl.GameOptions.MapId == 0 && !updatedSenseiAdminmap) {
+                if (activatedSensei && GameOptionsManager.Instance.currentGameOptions.MapId == 0 && !updatedSenseiAdminmap) {
                     GameObject myAdminIcons = GameObject.Find("Main Camera/Hud/ShipMap(Clone)/CountOverlay");
                     myAdminIcons.transform.GetChild(0).transform.position = myAdminIcons.transform.GetChild(0).transform.position + new Vector3(0, -0.2f, 0); // upper engine
                     myAdminIcons.transform.GetChild(1).transform.position = myAdminIcons.transform.GetChild(1).transform.position + new Vector3(0, 0.3f, 0); // lower engine
@@ -645,7 +696,7 @@ namespace LasMonjas.Patches
             public static bool Prefix(SurveillanceMinigame __instance) {
 
                 // Change camera position on SenseiMap
-                if (PlayerControl.GameOptions.MapId == 0 && activatedSensei) {
+                if (GameOptionsManager.Instance.currentGameOptions.MapId == 0 && activatedSensei) {
                     GameObject myCameras = GameObject.Find("Main Camera/SurvMinigame(Clone)");
                     myCameras.transform.GetChild(3).transform.position = new Vector3(9.45f, -1.48f, myCameras.transform.GetChild(3).transform.position.z);
                     myCameras.transform.GetChild(4).transform.position = new Vector3(-8.5f, 2.29f, myCameras.transform.GetChild(4).transform.position.z);

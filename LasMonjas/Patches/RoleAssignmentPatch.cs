@@ -6,6 +6,7 @@ using Il2CppInterop;
 using UnityEngine;
 using System;
 using static LasMonjas.LasMonjas;
+using AmongUs.GameOptions;
 
 namespace LasMonjas.Patches
 {
@@ -28,7 +29,7 @@ namespace LasMonjas.Patches
             AmongUsClient.Instance.FinishRpcImmediately(writer);
             RPCProcedure.resetVariables();
 
-            if (CustomOptionHolder.activateRoles.getBool()) // Don't assign Roles if deactivated
+            if (CustomOptionHolder.activateRoles.getBool() && GameOptionsManager.Instance.currentGameMode == GameModes.Normal) // Don't assign Roles if deactivated
                 getRoleAssignmentData();
         }
 
@@ -128,7 +129,7 @@ namespace LasMonjas.Patches
                     crewSettings.Add((byte)RoleId.Kid, CustomOptionHolder.kidSpawnRate.getSelection());
                     crewSettings.Add((byte)RoleId.Welder, CustomOptionHolder.welderSpawnRate.getSelection());
                     crewSettings.Add((byte)RoleId.Spiritualist, CustomOptionHolder.spiritualistSpawnRate.getSelection());
-                    if (PlayerControl.GameOptions.MapId != 1) {
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId != 1) {
                         crewSettings.Add((byte)RoleId.Vigilant, CustomOptionHolder.vigilantSpawnRate.getSelection());
                     }
                     else {

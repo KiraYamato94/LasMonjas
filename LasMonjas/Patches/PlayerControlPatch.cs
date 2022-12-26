@@ -10,6 +10,7 @@ using static LasMonjas.GameHistory;
 using LasMonjas.Objects;
 using UnityEngine;
 using LasMonjas.Core;
+using AmongUs.GameOptions;
 
 namespace LasMonjas.Patches {
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.FixedUpdate))]
@@ -17,7 +18,7 @@ namespace LasMonjas.Patches {
 
         static PlayerControl setTarget(bool onlyCrewmates = false, bool targetPlayersInVents = false, List<PlayerControl> untargetablePlayers = null, PlayerControl targetingPlayer = null) {
             PlayerControl result = null;
-            float num = GameOptionsData.KillDistances[Mathf.Clamp(PlayerControl.GameOptions.KillDistance, 0, 2)];
+            float num = GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)];
             if (!ShipStatus.Instance) return result;
             if (targetingPlayer == null) targetingPlayer = PlayerControl.LocalPlayer;
             if (targetingPlayer.Data.IsDead) return result;
@@ -134,7 +135,7 @@ namespace LasMonjas.Patches {
             }
 
             PlayerControl target = null;
-            target = setTarget(true, true);
+            target = setTarget(true, false);
 
             HudManager.Instance.KillButton.SetTarget(target);
         }
@@ -378,7 +379,7 @@ namespace LasMonjas.Patches {
                     }
 
                     // Set position
-                    if (PlayerControl.GameOptions.MapId == 5) {
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                         localPlayerPositions.RemoveAt(0);
 
                         if (localPlayerPositions.Count > 1) localPlayerPositions.RemoveAt(0); // Skip every second position to rewind twice as fast, but never skip the last position
@@ -1950,6 +1951,19 @@ namespace LasMonjas.Patches {
             if (resetToCrewmate) __instance.Data.Role.TeamType = RoleTeamTypes.Crewmate;
             if (resetToDead) __instance.Data.IsDead = true;
 
+            if (PlayerControl.LocalPlayer == target && GameOptionsManager.Instance.currentGameMode == GameModes.Normal) {
+                HudManager.Instance.StartCoroutine(Effects.Lerp(0.2f, new Action<float>((p) => { // Delayed action
+                    if (p == 1f) {
+                        if (HauntMenuMinigame.Instance) {
+                            HauntMenuMinigame.Instance.ForceClose();
+                            HauntMenuMinigame.Instance.amClosing = HauntMenuMinigame.CloseState.Closing;
+                        }
+                        HudManager.Instance.AbilityButton.Hide();
+                        target.NetTransform.Halt();
+                    }
+                })));
+            }
+            
             // Remove fake tasks when player dies
             if (target.hasFakeTasks()) {
                 if (Puppeteer.puppeteer != null && target == Puppeteer.puppeteer) {
@@ -1960,8 +1974,8 @@ namespace LasMonjas.Patches {
                 else {
                     target.clearAllTasks();
                 }
-            }
-
+            }            
+            
             // Teleport body if killed while Monja Awakened
             if (Monja.awakened) {
                 var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
@@ -1986,7 +2000,7 @@ namespace LasMonjas.Patches {
             // Kid trigger win on murder
             if (Kid.kid != null && target == Kid.kid) {
                 Kid.triggerKidLose = true;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.KidLose, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.KidLose, false);
             }
             
             // Janitor Button Sync
@@ -2101,11 +2115,18 @@ namespace LasMonjas.Patches {
 
             // Puppeteer trigger counter or win if its was morphed
             if (Puppeteer.puppeteer != null && target == Puppeteer.puppeteer && Puppeteer.morphed) {
-                HudManager.Instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) => { // Delayed action
+                // remove puppeteer corpse and dead entry
+                DeadBody[] array = UnityEngine.Object.FindObjectsOfType<DeadBody>();
+                for (int i = 0; i < array.Length; i++) {
+                    if (GameData.Instance.GetPlayerById(array[i].ParentId).PlayerId == target.PlayerId) {
+                        array[i].gameObject.active = false;
+                    }
+                }
+                HudManager.Instance.StartCoroutine(Effects.Lerp(0.25f, new Action<float>((p) => { // Delayed action
                     if (p == 1f) {
                         // revive puppeteer
                         target.Revive();
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             if (Puppeteer.puppeteer.transform.position.y > 0) {
                                 Puppeteer.puppeteer.transform.position = new Vector3(5.5f, 31.5f, -5);
                             }
@@ -2116,15 +2137,16 @@ namespace LasMonjas.Patches {
                         else {
                             Puppeteer.puppeteer.transform.position = Puppeteer.positionPreMorphed;
                         }
+                        for (int i = 0; i < array.Length; i++) {
+                            if (GameData.Instance.GetPlayerById(array[i].ParentId).PlayerId == target.PlayerId) {
+                                UnityEngine.Object.Destroy(array[i].gameObject);
+                            }
+                        }
                     }
                 })));
-                // remove puppeteer corpse
-                DeadBody[] array = UnityEngine.Object.FindObjectsOfType<DeadBody>();
-                for (int i = 0; i < array.Length; i++) {
-                    if (GameData.Instance.GetPlayerById(array[i].ParentId).PlayerId == target.PlayerId) {
-                        array[i].gameObject.active = false;
-                    }
-                }
+                
+                DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
+                if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
                 HudManagerStartPatch.puppeteerTransformButton.Timer = HudManagerStartPatch.puppeteerTransformButton.MaxTimer;
                 HudManagerStartPatch.puppeteerSampleButton.Timer = HudManagerStartPatch.puppeteerSampleButton.MaxTimer;
                 Puppeteer.morphed = false;
@@ -2186,6 +2208,9 @@ namespace LasMonjas.Patches {
             // Fink reset camera on dead
             if (Fink.fink != null && target == Fink.fink) {
                 Fink.resetCamera();
+                if (Fink.localArrows != null) {
+                    foreach (Arrow arrow in Fink.localArrows) arrow.arrow.SetActive(false);
+                }
             }
 
             // Vigilant delete doorlog item when killed
@@ -2261,7 +2286,7 @@ namespace LasMonjas.Patches {
                         CaptureTheFlag.blueteamAlerted = false;
                         CaptureTheFlag.redPlayerWhoHasBlueFlag = null;
                         CaptureTheFlag.blueflag.transform.parent = CaptureTheFlag.blueflagbase.transform.parent;
-                        switch (PlayerControl.GameOptions.MapId) {
+                        switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                             // Skeld
                             case 0:
                                 if (activatedSensei) {
@@ -2299,7 +2324,7 @@ namespace LasMonjas.Patches {
                         CaptureTheFlag.redteamAlerted = false;
                         CaptureTheFlag.bluePlayerWhoHasRedFlag = null;
                         CaptureTheFlag.redflag.transform.parent = CaptureTheFlag.redflagbase.transform.parent;
-                        switch (PlayerControl.GameOptions.MapId) {
+                        switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                             // Skeld
                             case 0:
                                 if (activatedSensei) {
@@ -2347,7 +2372,7 @@ namespace LasMonjas.Patches {
                         HudManager.Instance.StartCoroutine(Effects.Lerp(CaptureTheFlag.reviveTime - CaptureTheFlag.invincibilityTimeAfterRevive, new Action<float>((p) => {
                             if (p == 1f && CaptureTheFlag.stealerPlayer != null) {
                                 CaptureTheFlag.stealerPlayer.Revive();
-                                switch (PlayerControl.GameOptions.MapId) {
+                                switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                                     // Skeld
                                     case 0:
                                         if (activatedSensei) {
@@ -2448,7 +2473,7 @@ namespace LasMonjas.Patches {
                             HudManager.Instance.StartCoroutine(Effects.Lerp(CaptureTheFlag.reviveTime - CaptureTheFlag.invincibilityTimeAfterRevive, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     player.Revive();
-                                    switch (PlayerControl.GameOptions.MapId) {
+                                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                                         // Skeld
                                         case 0:
                                             if (activatedSensei) {
@@ -2549,7 +2574,7 @@ namespace LasMonjas.Patches {
                             HudManager.Instance.StartCoroutine(Effects.Lerp(CaptureTheFlag.reviveTime - CaptureTheFlag.invincibilityTimeAfterRevive, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     player.Revive();
-                                    switch (PlayerControl.GameOptions.MapId) {
+                                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                                         // Skeld
                                         case 0:
                                             if (activatedSensei) {
@@ -2648,7 +2673,7 @@ namespace LasMonjas.Patches {
                             HudManager.Instance.StartCoroutine(Effects.Lerp(PoliceAndThief.policeReviveTime - PoliceAndThief.invincibilityTimeAfterRevive, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     player.Revive();
-                                    switch (PlayerControl.GameOptions.MapId) {
+                                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                                         // Skeld
                                         case 0:
                                             if (activatedSensei) {
@@ -2788,7 +2813,7 @@ namespace LasMonjas.Patches {
                             HudManager.Instance.StartCoroutine(Effects.Lerp(PoliceAndThief.thiefReviveTime - PoliceAndThief.invincibilityTimeAfterRevive, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     player.Revive();
-                                    switch (PlayerControl.GameOptions.MapId) {
+                                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                                         // Skeld
                                         case 0:
                                             if (activatedSensei) {
@@ -2852,7 +2877,7 @@ namespace LasMonjas.Patches {
                         HudManager.Instance.StartCoroutine(Effects.Lerp(KingOfTheHill.reviveTime - KingOfTheHill.kingInvincibilityTimeAfterRevive, new Action<float>((p) => {
                             if (p == 1f && KingOfTheHill.usurperPlayer != null) {
                                 KingOfTheHill.usurperPlayer.Revive();
-                                switch (PlayerControl.GameOptions.MapId) {
+                                switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                                     // Skeld
                                     case 0:
                                         if (activatedSensei) {
@@ -2995,7 +3020,7 @@ namespace LasMonjas.Patches {
                             HudManager.Instance.StartCoroutine(Effects.Lerp(KingOfTheHill.reviveTime - KingOfTheHill.kingInvincibilityTimeAfterRevive, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     player.Revive();
-                                    switch (PlayerControl.GameOptions.MapId) {
+                                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                                         // Skeld
                                         case 0:
                                             if (activatedSensei) {
@@ -3139,7 +3164,7 @@ namespace LasMonjas.Patches {
                             HudManager.Instance.StartCoroutine(Effects.Lerp(KingOfTheHill.reviveTime - KingOfTheHill.kingInvincibilityTimeAfterRevive, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     player.Revive();
-                                    switch (PlayerControl.GameOptions.MapId) {
+                                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                                         // Skeld
                                         case 0:
                                             if (activatedSensei) {
@@ -3266,7 +3291,7 @@ namespace LasMonjas.Patches {
 
                                 if (notPotatosAlives < 1) {
                                     HotPotato.triggerHotPotatoEnd = true;
-                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.HotPotatoEnd, false);
+                                    GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.HotPotatoEnd, false);
                                     return;
                                 }
 
@@ -3549,7 +3574,7 @@ namespace LasMonjas.Patches {
                             HudManager.Instance.StartCoroutine(Effects.Lerp(ZombieLaboratory.reviveTime - ZombieLaboratory.invincibilityTimeAfterRevive, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     player.Revive();
-                                    switch (PlayerControl.GameOptions.MapId) {
+                                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                                         // Skeld
                                         case 0:
                                             if (activatedSensei) {
@@ -3731,7 +3756,7 @@ namespace LasMonjas.Patches {
                             HudManager.Instance.StartCoroutine(Effects.Lerp(ZombieLaboratory.reviveTime - ZombieLaboratory.invincibilityTimeAfterRevive, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     player.Revive();
-                                    switch (PlayerControl.GameOptions.MapId) {
+                                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                                         // Skeld
                                         case 0:
                                             if (activatedSensei) {
@@ -3798,7 +3823,7 @@ namespace LasMonjas.Patches {
                             HudManager.Instance.StartCoroutine(Effects.Lerp(BattleRoyale.reviveTime - BattleRoyale.invincibilityTimeAfterRevive, new Action<float>((p) => {
                                 if (p == 1f && BattleRoyale.serialKiller != null) {
                                     BattleRoyale.serialKiller.Revive();
-                                    switch (PlayerControl.GameOptions.MapId) {
+                                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                                         // Skeld
                                         case 0:
                                             if (activatedSensei) {
@@ -3904,7 +3929,7 @@ namespace LasMonjas.Patches {
                                 HudManager.Instance.StartCoroutine(Effects.Lerp(BattleRoyale.reviveTime - BattleRoyale.invincibilityTimeAfterRevive, new Action<float>((p) => {
                                     if (p == 1f && player != null) {
                                         player.Revive();
-                                        switch (PlayerControl.GameOptions.MapId) {
+                                        switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                                             // Skeld
                                             case 0:
                                                 if (activatedSensei) {
@@ -4011,7 +4036,7 @@ namespace LasMonjas.Patches {
                                 HudManager.Instance.StartCoroutine(Effects.Lerp(BattleRoyale.reviveTime - BattleRoyale.invincibilityTimeAfterRevive, new Action<float>((p) => {
                                     if (p == 1f && player != null) {
                                         player.Revive();
-                                        switch (PlayerControl.GameOptions.MapId) {
+                                        switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                                             // Skeld
                                             case 0:
                                                 if (activatedSensei) {
@@ -4065,7 +4090,7 @@ namespace LasMonjas.Patches {
                     if (!player.Data.IsDead) {
                         alivePlayers += 1;
                     }
-                }
+                }               
             }          
         }
     }
@@ -4135,7 +4160,7 @@ namespace LasMonjas.Patches {
             // Kid exile lose condition
             if (Kid.kid != null && Kid.kid == __instance) {
                 Kid.triggerKidLose = true;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.KidLose, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.KidLose, false);
             }
             // Joker win condition
             else if (Joker.joker != null && Joker.joker == __instance) {

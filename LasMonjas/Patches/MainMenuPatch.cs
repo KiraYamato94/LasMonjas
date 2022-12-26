@@ -47,13 +47,13 @@ namespace LasMonjas.Patches
         }
     }
 
-    [HarmonyPatch(typeof(Constants), nameof(Constants.ShouldHorseAround))]
+    /*[HarmonyPatch(typeof(Constants), nameof(Constants.ShouldHorseAround))]
     public static class ConstPatch
     {
         public static void Postfix(ref bool __result) {
             __result = LasMonjasPlugin.HorseMode.Value;
         }
-    }
+    }*/
 
     [HarmonyPatch(typeof(AnnouncementPopUp), nameof(AnnouncementPopUp.UpdateAnnounceText))]
     public static class Announcement

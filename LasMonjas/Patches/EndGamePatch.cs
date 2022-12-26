@@ -9,6 +9,7 @@ using Hazel;
 using Il2CppInterop;
 using System;
 using System.Text;
+using AmongUs.GameOptions;
 
 namespace LasMonjas.Patches {
     enum CustomGameOverReason {
@@ -194,7 +195,7 @@ namespace LasMonjas.Patches {
             bool puppeteerWin = Puppeteer.puppeteer != null && gameOverReason == (GameOverReason)CustomGameOverReason.PuppeteerWin;
             bool exilerWin = Exiler.exiler != null && gameOverReason == (GameOverReason)CustomGameOverReason.ExilerWin;
             bool seekerWin = Seeker.seeker != null && gameOverReason == (GameOverReason)CustomGameOverReason.SeekerWin;
-            bool loversWin = Modifiers.existingAndAlive() && (gameOverReason == (GameOverReason)CustomGameOverReason.LoversWin || (TempData.DidHumansWin(gameOverReason) && !Modifiers.existingWithKiller()));
+            bool loversWin = Modifiers.existingAndAlive() && (gameOverReason == (GameOverReason)CustomGameOverReason.LoversWin || (GameManager.Instance.DidHumansWin(gameOverReason) && !Modifiers.existingWithKiller()));
             bool taskMasterCrewWin = TaskMaster.taskMaster != null && gameOverReason == (GameOverReason)CustomGameOverReason.TaskMasterCrewWin;
             bool drawTeamWin = CaptureTheFlag.captureTheFlagMode && gameOverReason == (GameOverReason)CustomGameOverReason.DrawTeamWin;
             bool redTeamFlagWin = CaptureTheFlag.captureTheFlagMode && gameOverReason == (GameOverReason)CustomGameOverReason.RedTeamFlagWin;
@@ -868,13 +869,13 @@ namespace LasMonjas.Patches {
         }
     }
 
-    [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.CheckEndCriteria))] 
+    [HarmonyPatch(typeof(LogicGameFlowNormal), nameof(LogicGameFlowNormal.CheckEndCriteria))]
     class CheckEndCriteriaPatch {
-        public static bool Prefix(ShipStatus __instance) {
+        public static bool Prefix(LogicGameFlowNormal __instance) {
             if (!GameData.Instance) return false;
             if (DestroyableSingleton<TutorialManager>.InstanceExists) 
                 return true;
-            var statistics = new PlayerStatistics(__instance);
+            var statistics = new PlayerStatistics(ShipStatus.Instance);
             if (CheckAndEndGameForBombExploded(__instance)) return false;
             if (CheckAndEndGameForLoverWin(__instance, statistics)) return false;
             if (CheckAndEndGameForTaskMasterWin(__instance)) return false;
@@ -921,197 +922,173 @@ namespace LasMonjas.Patches {
             return false;
         }
 
-        private static bool CheckAndEndGameForBombExploded(ShipStatus __instance) {
+        private static bool CheckAndEndGameForBombExploded(LogicGameFlowNormal __instance) {
             if (Bomberman.triggerBombExploded) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BombExploded, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BombExploded, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForLoverWin(ShipStatus __instance, PlayerStatistics statistics) {
+        private static bool CheckAndEndGameForLoverWin(LogicGameFlowNormal __instance, PlayerStatistics statistics) {
             if (statistics.TeamLoversAlive == 2 && statistics.TotalAlive <= 3) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.LoversWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.LoversWin, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForTaskMasterWin(ShipStatus __instance) {
+        private static bool CheckAndEndGameForTaskMasterWin(LogicGameFlowNormal __instance) {
             if (TaskMaster.triggerTaskMasterCrewWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.TaskMasterCrewWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.TaskMasterCrewWin, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForJokerWin(ShipStatus __instance) {
+        private static bool CheckAndEndGameForJokerWin(LogicGameFlowNormal __instance) {
             if (Joker.triggerJokerWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.JokerWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.JokerWin, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForPyromaniacWin(ShipStatus __instance) {
+        private static bool CheckAndEndGameForPyromaniacWin(LogicGameFlowNormal __instance) {
             if (Pyromaniac.triggerPyromaniacWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.PyromaniacWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.PyromaniacWin, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForTreasureHunterWin(ShipStatus __instance) {
+        private static bool CheckAndEndGameForTreasureHunterWin(LogicGameFlowNormal __instance) {
             if (TreasureHunter.triggertreasureHunterWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.TreasureHunterWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.TreasureHunterWin, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForDevourerWin(ShipStatus __instance) {
+        private static bool CheckAndEndGameForDevourerWin(LogicGameFlowNormal __instance) {
             if (Devourer.triggerdevourerWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.DevourerWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.DevourerWin, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForPoisonerWin(ShipStatus __instance) {
+        private static bool CheckAndEndGameForPoisonerWin(LogicGameFlowNormal __instance) {
             if (Poisoner.triggerPoisonerWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.PoisonerWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.PoisonerWin, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForPuppeteerWin(ShipStatus __instance) {
+        private static bool CheckAndEndGameForPuppeteerWin(LogicGameFlowNormal __instance) {
             if (Puppeteer.triggerPuppeteerWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.PuppeteerWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.PuppeteerWin, false);
                 return true;
             }
             return false;
         }
        
-        private static bool CheckAndEndGameForExilerWin(ShipStatus __instance) {
+        private static bool CheckAndEndGameForExilerWin(LogicGameFlowNormal __instance) {
             if (Exiler.triggerExilerWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.ExilerWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.ExilerWin, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForSeekerWin(ShipStatus __instance) {
+        private static bool CheckAndEndGameForSeekerWin(LogicGameFlowNormal __instance) {
             if (Seeker.triggerSeekerWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.SeekerWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.SeekerWin, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForKidLose(ShipStatus __instance) {
+        private static bool CheckAndEndGameForKidLose(LogicGameFlowNormal __instance) {
             if (Kid.triggerKidLose) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.KidLose, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.KidLose, false);
                 return true;
             }
             return false;
         }           
-        private static bool CheckAndEndGameForRenegadeWin(ShipStatus __instance, PlayerStatistics statistics) {
+        private static bool CheckAndEndGameForRenegadeWin(LogicGameFlowNormal __instance, PlayerStatistics statistics) {
             if (statistics.TeamRenegadeAlive >= statistics.TotalAlive - statistics.TeamRenegadeAlive + statistics.TeamCaptainAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive != statistics.TeamRenegadeAlive && !(statistics.TeamRenegadeHasAliveLover && statistics.TeamLoversAlive == 2)) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.TeamRenegadeWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.TeamRenegadeWin, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForBountyHunterWin(ShipStatus __instance) {
+        private static bool CheckAndEndGameForBountyHunterWin(LogicGameFlowNormal __instance) {
             if (BountyHunter.triggerBountyHunterWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BountyHunterWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BountyHunterWin, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForTrapperWin(ShipStatus __instance, PlayerStatistics statistics) {
+        private static bool CheckAndEndGameForTrapperWin(LogicGameFlowNormal __instance, PlayerStatistics statistics) {
             if (statistics.TeamTrapperAlive >= statistics.TotalAlive - statistics.TeamTrapperAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.TrapperWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.TrapperWin, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForYinyangerWin(ShipStatus __instance, PlayerStatistics statistics) {
+        private static bool CheckAndEndGameForYinyangerWin(LogicGameFlowNormal __instance, PlayerStatistics statistics) {
             if (statistics.TeamYinyangerAlive >= statistics.TotalAlive - statistics.TeamYinyangerAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.YinyangerWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.YinyangerWin, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForChallengerWin(ShipStatus __instance, PlayerStatistics statistics) {
+        private static bool CheckAndEndGameForChallengerWin(LogicGameFlowNormal __instance, PlayerStatistics statistics) {
             if (Challenger.triggerChallengerWin || (statistics.TeamChallengerAlive >= statistics.TotalAlive - statistics.TeamChallengerAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2))) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.ChallengerWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.ChallengerWin, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForNinjaWin(ShipStatus __instance, PlayerStatistics statistics) {
+        private static bool CheckAndEndGameForNinjaWin(LogicGameFlowNormal __instance, PlayerStatistics statistics) {
             if (statistics.TeamNinjaAlive >= statistics.TotalAlive - statistics.TeamNinjaAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.NinjaWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.NinjaWin, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForBerserkerWin(ShipStatus __instance, PlayerStatistics statistics) {
+        private static bool CheckAndEndGameForBerserkerWin(LogicGameFlowNormal __instance, PlayerStatistics statistics) {
             if (statistics.TeamBerserkerAlive >= statistics.TotalAlive - statistics.TeamBerserkerAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BerserkerWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BerserkerWin, false);
                 return true;
             }
             return false;
         }        
-        private static bool CheckAndEndGameForYandereWin(ShipStatus __instance, PlayerStatistics statistics) {
+        private static bool CheckAndEndGameForYandereWin(LogicGameFlowNormal __instance, PlayerStatistics statistics) {
             if (Yandere.triggerYandereWin && !Yandere.rampageMode) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.YandereWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.YandereWin, false);
                 return true;
             }
             
             if (Yandere.rampageMode && statistics.TeamYandereAlive >= statistics.TotalAlive - statistics.TeamYandereAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.YandereWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.YandereWin, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForStrandedWin(ShipStatus __instance, PlayerStatistics statistics) {
+        private static bool CheckAndEndGameForStrandedWin(LogicGameFlowNormal __instance, PlayerStatistics statistics) {
             if (Stranded.triggerStrandedWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.StrandedWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.StrandedWin, false);
                 return true;
             }
             if (statistics.TeamStrandedAlive >= statistics.TotalAlive - statistics.TeamStrandedAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.StrandedWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.StrandedWin, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForMonjaWin(ShipStatus __instance, PlayerStatistics statistics) {
+        private static bool CheckAndEndGameForMonjaWin(LogicGameFlowNormal __instance, PlayerStatistics statistics) {
             if (statistics.TeamMonjaAlive >= statistics.TotalAlive - statistics.TeamMonjaAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.MonjaWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.MonjaWin, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForSabotageWin(ShipStatus __instance) {
-            if (__instance.Systems == null) return false;
-            ISystemType systemType = __instance.Systems.ContainsKey(SystemTypes.LifeSupp) ? __instance.Systems[SystemTypes.LifeSupp] : null;
+        private static bool CheckAndEndGameForSabotageWin(LogicGameFlowNormal __instance) {
+            if (ShipStatus.Instance.Systems == null) return false;
+            ISystemType systemType = ShipStatus.Instance.Systems.ContainsKey(SystemTypes.LifeSupp) ? ShipStatus.Instance.Systems[SystemTypes.LifeSupp] : null;
             if (systemType != null) {
                 LifeSuppSystemType lifeSuppSystemType = systemType.TryCast<LifeSuppSystemType>();
                 if (lifeSuppSystemType != null && lifeSuppSystemType.Countdown < 0f) {
@@ -1120,9 +1097,9 @@ namespace LasMonjas.Patches {
                     return true;
                 }
             }
-            ISystemType systemType2 = __instance.Systems.ContainsKey(SystemTypes.Reactor) ? __instance.Systems[SystemTypes.Reactor] : null;
+            ISystemType systemType2 = ShipStatus.Instance.Systems.ContainsKey(SystemTypes.Reactor) ? ShipStatus.Instance.Systems[SystemTypes.Reactor] : null;
             if (systemType2 == null) {
-                systemType2 = __instance.Systems.ContainsKey(SystemTypes.Laboratory) ? __instance.Systems[SystemTypes.Laboratory] : null;
+                systemType2 = ShipStatus.Instance.Systems.ContainsKey(SystemTypes.Laboratory) ? ShipStatus.Instance.Systems[SystemTypes.Laboratory] : null;
             }
             if (systemType2 != null) {
                 ICriticalSabotage criticalSystem = systemType2.TryCast<ICriticalSabotage>();
@@ -1134,17 +1111,15 @@ namespace LasMonjas.Patches {
             }
             return false;
         }
-        private static bool CheckAndEndGameForTaskWin(ShipStatus __instance) {
+        private static bool CheckAndEndGameForTaskWin(LogicGameFlowNormal __instance) {
             if (GameData.Instance.TotalTasks <= GameData.Instance.CompletedTasks && howmanygamemodesareon != 1) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame(GameOverReason.HumansByTask, false);
+                GameManager.Instance.RpcEndGame(GameOverReason.HumansByTask, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForImpostorWin(ShipStatus __instance, PlayerStatistics statistics) {
+        private static bool CheckAndEndGameForImpostorWin(LogicGameFlowNormal __instance, PlayerStatistics statistics) {
             if (howmanygamemodesareon != 1 && statistics.TeamImpostorsAlive >= statistics.TotalAlive - statistics.TeamImpostorsAlive + statistics.TeamCaptainAlive && statistics.TeamRenegadeAlive == 0 && statistics.TeamBountyHunterAlive == 0 && statistics.TeamTrapperAlive == 0 && statistics.TeamYinyangerAlive == 0 && statistics.TeamChallengerAlive == 0 && statistics.TeamNinjaAlive == 0 && statistics.TeamBerserkerAlive == 0 && statistics.TeamYandereAlive == 0 && statistics.TeamStrandedAlive == 0 && statistics.TeamMonjaAlive == 0 && statistics.TeamCaptainAlive != statistics.TeamImpostorsAlive && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
-                __instance.enabled = false;
                 GameOverReason endReason;
                 switch (TempData.LastDeathReason) {
                     case DeathReason.Exile:
@@ -1157,156 +1132,137 @@ namespace LasMonjas.Patches {
                         endReason = GameOverReason.ImpostorByVote;
                         break;
                 }
-                ShipStatus.RpcEndGame(endReason, false);
+                GameManager.Instance.RpcEndGame(endReason, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForCrewmateWin(ShipStatus __instance, PlayerStatistics statistics) {
+        private static bool CheckAndEndGameForCrewmateWin(LogicGameFlowNormal __instance, PlayerStatistics statistics) {
             if (howmanygamemodesareon != 1 && statistics.TeamImpostorsAlive == 0 && statistics.TeamRenegadeAlive == 0 && statistics.TeamBountyHunterAlive == 0 && statistics.TeamTrapperAlive == 0 && statistics.TeamYinyangerAlive == 0 && statistics.TeamChallengerAlive == 0 && statistics.TeamNinjaAlive == 0 && statistics.TeamBerserkerAlive == 0 && statistics.TeamYandereAlive == 0 && statistics.TeamStrandedAlive == 0 && statistics.TeamMonjaAlive == 0) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame(GameOverReason.HumansByVote, false);
+                GameManager.Instance.RpcEndGame(GameOverReason.HumansByVote, false);
                 return true;
             }
             return false;
         }
-        private static void EndGameForSabotage(ShipStatus __instance) {
-            __instance.enabled = false;
-            ShipStatus.RpcEndGame(GameOverReason.ImpostorBySabotage, false);
+        private static void EndGameForSabotage(LogicGameFlowNormal __instance) {
+            GameManager.Instance.RpcEndGame(GameOverReason.ImpostorBySabotage, false);
             return;
         }
-        private static bool CheckAndEndGameForDrawFlagWin(ShipStatus __instance) {
+        private static bool CheckAndEndGameForDrawFlagWin(LogicGameFlowNormal __instance) {
             if (CaptureTheFlag.triggerDrawWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.DrawTeamWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.DrawTeamWin, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForRedTeamFlagWin(ShipStatus __instance) {
+        private static bool CheckAndEndGameForRedTeamFlagWin(LogicGameFlowNormal __instance) {
             if (CaptureTheFlag.triggerRedTeamWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.RedTeamFlagWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.RedTeamFlagWin, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForBlueTeamFlagWin(ShipStatus __instance) {
+        private static bool CheckAndEndGameForBlueTeamFlagWin(LogicGameFlowNormal __instance) {
             if (CaptureTheFlag.triggerBlueTeamWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BlueTeamFlagWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BlueTeamFlagWin, false);
                 return true;
             }
             return false;
         }        
-        private static bool CheckAndEndGameForThiefModeThiefWin(ShipStatus __instance) {
+        private static bool CheckAndEndGameForThiefModeThiefWin(LogicGameFlowNormal __instance) {
             if (PoliceAndThief.triggerThiefWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.ThiefModeThiefWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.ThiefModeThiefWin, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForThiefModePoliceWin(ShipStatus __instance) {
+        private static bool CheckAndEndGameForThiefModePoliceWin(LogicGameFlowNormal __instance) {
             if (PoliceAndThief.triggerPoliceWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.ThiefModePoliceWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.ThiefModePoliceWin, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForDrawHillWin(ShipStatus __instance) {
+        private static bool CheckAndEndGameForDrawHillWin(LogicGameFlowNormal __instance) {
             if (KingOfTheHill.triggerDrawWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.TeamHillDraw, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.TeamHillDraw, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForGreenTeamHillWin(ShipStatus __instance) {
+        private static bool CheckAndEndGameForGreenTeamHillWin(LogicGameFlowNormal __instance) {
             if (KingOfTheHill.triggerGreenTeamWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.GreenTeamHillWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.GreenTeamHillWin, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForYellowTeamHillWin(ShipStatus __instance) {
+        private static bool CheckAndEndGameForYellowTeamHillWin(LogicGameFlowNormal __instance) {
             if (KingOfTheHill.triggerYellowTeamWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.YellowTeamHillWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.YellowTeamHillWin, false);
                 return true;
             }
             return false;
         }        
-        private static bool CheckAndEndGameForHotPotatoEnd(ShipStatus __instance) {
+        private static bool CheckAndEndGameForHotPotatoEnd(LogicGameFlowNormal __instance) {
             if (HotPotato.triggerHotPotatoEnd) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.HotPotatoEnd, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.HotPotatoEnd, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForZombieWin(ShipStatus __instance) {
+        private static bool CheckAndEndGameForZombieWin(LogicGameFlowNormal __instance) {
             if (ZombieLaboratory.triggerZombieWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.ZombieWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.ZombieWin, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForSurvivorWin(ShipStatus __instance) {
+        private static bool CheckAndEndGameForSurvivorWin(LogicGameFlowNormal __instance) {
             if (ZombieLaboratory.triggerSurvivorWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.SurvivorWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.SurvivorWin, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForBattleRoyaleSoloWin(ShipStatus __instance) {
+        private static bool CheckAndEndGameForBattleRoyaleSoloWin(LogicGameFlowNormal __instance) {
             if (BattleRoyale.triggerSoloWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSoloWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSoloWin, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForBattleRoyaleTimeWin(ShipStatus __instance) {
+        private static bool CheckAndEndGameForBattleRoyaleTimeWin(LogicGameFlowNormal __instance) {
             if (BattleRoyale.triggerTimeWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleTimeWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleTimeWin, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForBattleRoyaleDraw(ShipStatus __instance) {
+        private static bool CheckAndEndGameForBattleRoyaleDraw(LogicGameFlowNormal __instance) {
             if (BattleRoyale.triggerDrawWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleDraw, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleDraw, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForBattleRoyaleLimeTeamWin(ShipStatus __instance) {
+        private static bool CheckAndEndGameForBattleRoyaleLimeTeamWin(LogicGameFlowNormal __instance) {
             if (BattleRoyale.triggerLimeTeamWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForBattleRoyalePinkTeamWin(ShipStatus __instance) {
+        private static bool CheckAndEndGameForBattleRoyalePinkTeamWin(LogicGameFlowNormal __instance) {
             if (BattleRoyale.triggerPinkTeamWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
                 return true;
             }
             return false;
         }
-        private static bool CheckAndEndGameForBattleRoyaleSerialKillerWin(ShipStatus __instance) {
+        private static bool CheckAndEndGameForBattleRoyaleSerialKillerWin(LogicGameFlowNormal __instance) {
             if (BattleRoyale.triggerSerialKillerWin) {
-                __instance.enabled = false;
-                ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSerialKillerWin, false);
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSerialKillerWin, false);
                 return true;
             }
             return false;

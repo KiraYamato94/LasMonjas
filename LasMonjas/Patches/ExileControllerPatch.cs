@@ -13,6 +13,7 @@ using UnityEngine;
 using System.Reflection;
 using LasMonjas.Core;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using static LasMonjas.GameHistory;
 
 namespace LasMonjas.Patches {
     [HarmonyPatch(typeof(ExileController), nameof(ExileController.Begin))]
@@ -62,7 +63,7 @@ namespace LasMonjas.Patches {
                     vent.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
                     allVents.Add(vent);
                     ventId += 1;
-                    if (PlayerControl.GameOptions.MapId == 5) {
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                         vent.gameObject.GetComponent<CircleCollider2D>().enabled = true;
                     }
                 }
@@ -100,7 +101,7 @@ namespace LasMonjas.Patches {
 
             // Reset Puppeteer morph
             if (Puppeteer.puppeteer != null) {
-                Puppeteer.Reset();
+                Puppeteer.Reset();                
             }
         }
     }
@@ -123,13 +124,13 @@ namespace LasMonjas.Patches {
         }
 
         // Rune the postfix function on exiling Submerged cutscene
-        [HarmonyPatch(typeof(UnityEngine.Object), nameof(UnityEngine.Object.Destroy), new Type[] { typeof(GameObject) })]
+        /*[HarmonyPatch(typeof(UnityEngine.Object), nameof(UnityEngine.Object.Destroy), new Type[] { typeof(GameObject) })]
         public static void Prefix(GameObject obj) {
-            if (PlayerControl.GameOptions.MapId != 5) return;
+            if (GameOptionsManager.Instance.currentGameOptions.MapId != 5) return;
             if (obj.name.Contains("ExileCutscene")) {
                 WrapUpPostfix(ExileControllerBeginPatch.lastExiled);
             }            
-        }
+        }*/
 
         static void WrapUpPostfix(GameData.PlayerInfo exiled) {
             // Kid win condition if exiled
@@ -151,7 +152,7 @@ namespace LasMonjas.Patches {
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
                 RPCProcedure.resetSilenced();
             }
-            
+
             // BountyHunter exile if the exiled player was the bounty hunter target
             if (BountyHunter.bountyhunter != null && !BountyHunter.bountyhunter.Data.IsDead && BountyHunter.hasToKill.Data.IsDead) {
                 BountyHunter.bountyhunter.Exiled();
@@ -164,7 +165,7 @@ namespace LasMonjas.Patches {
                 Yinyanger.yinyedplayer = null;
                 Yinyanger.yangyedplayer = null;
                 Yinyanger.colision = false;
-            }           
+            }
 
             // Yandere rampage mode
             if (exiled != null && Yandere.yandere != null && Yandere.target != null && Yandere.target.PlayerId == exiled.PlayerId) {
@@ -174,7 +175,7 @@ namespace LasMonjas.Patches {
             // Pyromaniac deactivate dead players icons
             if (Pyromaniac.pyromaniac != null && Pyromaniac.pyromaniac == PlayerControl.LocalPlayer) {
                 int visibleCounter = 0;
-                Vector3 bottomLeft = new Vector3(-HudManager.Instance.UseButton.transform.localPosition.x, HudManager.Instance.UseButton.transform.localPosition.y, HudManager.Instance.UseButton.transform.localPosition.z);
+                Vector3 bottomLeft = new Vector3(-HudManager.Instance.UseButton.transform.parent.localPosition.x, HudManager.Instance.UseButton.transform.parent.localPosition.y, HudManager.Instance.UseButton.transform.parent.localPosition.z);
                 bottomLeft += new Vector3(-0.25f, -0.25f, 0);
                 foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
                     if (!MapOptions.playerIcons.ContainsKey(p.PlayerId)) continue;
@@ -191,7 +192,7 @@ namespace LasMonjas.Patches {
             // Poisoner deactivate dead poolable players
             if (Poisoner.poisoner != null && Poisoner.poisoner == PlayerControl.LocalPlayer) {
                 int visibleCounter = 0;
-                Vector3 bottomLeft = new Vector3(-HudManager.Instance.UseButton.transform.localPosition.x, HudManager.Instance.UseButton.transform.localPosition.y, HudManager.Instance.UseButton.transform.localPosition.z);
+                Vector3 bottomLeft = new Vector3(-HudManager.Instance.UseButton.transform.parent.localPosition.x, HudManager.Instance.UseButton.transform.parent.localPosition.y, HudManager.Instance.UseButton.transform.parent.localPosition.z);
                 bottomLeft += new Vector3(-0.25f, -0.25f, 0);
                 foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
                     if (!MapOptions.playerIcons.ContainsKey(p.PlayerId)) continue;
@@ -213,7 +214,7 @@ namespace LasMonjas.Patches {
             // Captain reset specialTarget
             if (Captain.captain != null && !Captain.captain.Data.IsDead && Captain.usedSpecialVote) {
                 if (Captain.specialVoteTarget != null && Captain.specialVoteTarget.Data.IsDead && !Captain.specialVoteTarget.Data.Role.IsImpostor && Captain.specialVoteTarget != Renegade.renegade && Captain.specialVoteTarget != Minion.minion && Captain.specialVoteTarget != BountyHunter.bountyhunter && Captain.specialVoteTarget != Trapper.trapper && Captain.specialVoteTarget != Yinyanger.yinyanger && Captain.specialVoteTarget != Challenger.challenger && Captain.specialVoteTarget != Ninja.ninja && Captain.specialVoteTarget != Berserker.berserker && Captain.specialVoteTarget != Yandere.yandere && Captain.specialVoteTarget != Stranded.stranded && Captain.specialVoteTarget != Monja.monja && Captain.specialVoteTarget != Joker.joker && Captain.specialVoteTarget != RoleThief.rolethief && Captain.specialVoteTarget != Pyromaniac.pyromaniac && Captain.specialVoteTarget != TreasureHunter.treasureHunter && Captain.specialVoteTarget != Devourer.devourer && Captain.specialVoteTarget != Poisoner.poisoner && Captain.specialVoteTarget != Puppeteer.puppeteer && Captain.specialVoteTarget != Exiler.exiler && Captain.specialVoteTarget != Amnesiac.amnesiac && Captain.specialVoteTarget != Seeker.seeker) {
-                    Captain.captain.Exiled();                                        
+                    Captain.captain.Exiled();
                 }
                 Captain.specialVoteTargetPlayerId = byte.MaxValue;
                 Captain.specialVoteTarget = null;
@@ -240,7 +241,7 @@ namespace LasMonjas.Patches {
                     Forensic.featureDeadBodies = new List<Tuple<DeadPlayer, Vector3>>();
                 }
             }
-            
+
             // Squire reset shielded if exiled
             if (Squire.resetShieldAfterMeeting || exiled != null && Squire.squire != null && Squire.shielded != null && Squire.squire.PlayerId == exiled.PlayerId) {
                 Squire.shielded = null;
@@ -257,10 +258,10 @@ namespace LasMonjas.Patches {
                 Cheater.cheatedP1 = null;
                 Cheater.cheatedP2 = null;
                 Cheater.usedCheat = false;
-            }      
+            }
 
             // Sleuth reset deadBodyPositions after meeting
-            Sleuth.deadBodyPositions = new List<Vector3>();           
+            Sleuth.deadBodyPositions = new List<Vector3>();
 
             //Change Music based on alive player number if not on submerged
             MessageWriter musicwriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
@@ -290,6 +291,16 @@ namespace LasMonjas.Patches {
 
                         playerInfo.text = playerInfoText;
                         playerInfo.gameObject.SetActive(p.Visible);
+                    }
+                }
+            }
+
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                if (player == PlayerControl.LocalPlayer) {
+                    HudManager.Instance.AbilityButton.Hide();
+                    DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == player.PlayerId).FirstOrDefault();
+                    if (deadPlayerEntry != null && player.Data.IsDead) {
+                        HudManager.Instance.AbilityButton.Show();
                     }
                 }
             }

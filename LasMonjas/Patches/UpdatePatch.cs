@@ -13,6 +13,7 @@ using Reactor;
 using static LasMonjas.MapOptions;
 using LasMonjas.Core;
 using static LasMonjas.HudManagerStartPatch;
+using AmongUs.GameOptions;
 
 namespace LasMonjas.Patches {
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
@@ -604,7 +605,7 @@ namespace LasMonjas.Patches {
         static void UpdateMiniMap() {
 
             if (MapBehaviour.Instance != null && MapBehaviour.Instance.IsOpen && howmanygamemodesareon == 1) {
-                switch (PlayerControl.GameOptions.MapId) {
+                switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                     case 0:
                         GameObject minimapSabotageSkeld = GameObject.Find("Main Camera/Hud/ShipMap(Clone)/InfectedOverlay");
                         minimapSabotageSkeld.SetActive(false);
@@ -671,7 +672,7 @@ namespace LasMonjas.Patches {
                         break;
                 }
             }
-            else if (MapBehaviour.Instance != null && MapBehaviour.Instance.IsOpen && PlayerControl.GameOptions.MapId == 0 && activatedSensei && !updatedSenseiMinimap && howmanygamemodesareon != 1) {
+            else if (MapBehaviour.Instance != null && MapBehaviour.Instance.IsOpen && GameOptionsManager.Instance.currentGameOptions.MapId == 0 && activatedSensei && !updatedSenseiMinimap && howmanygamemodesareon != 1) {
                 GameObject mymap = GameObject.Find("Main Camera/Hud/ShipMap(Clone)/Background");
                 mymap.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.customMinimap.GetComponent<SpriteRenderer>().sprite;
                 GameObject hereindicator = GameObject.Find("Main Camera/Hud/ShipMap(Clone)/HereIndicatorParent");
@@ -713,7 +714,7 @@ namespace LasMonjas.Patches {
             }
 
             // If bomb, lights actives or special 1vs1 condition, prevent sabotage open map
-            if (howmanygamemodesareon != 1 && PlayerControl.LocalPlayer.Data.Role.IsImpostor && MapBehaviour.Instance != null && MapBehaviour.Instance.IsOpen && (alivePlayers <= 2 || Bomberman.activeBomb || Challenger.isDueling || Seeker.isMinigaming || Illusionist.lightsOutTimer > 0 || Monja.awakened)) {
+            if (GameOptionsManager.Instance.currentGameMode == GameModes.Normal && howmanygamemodesareon != 1 && PlayerControl.LocalPlayer.Data.Role.IsImpostor && MapBehaviour.Instance != null && MapBehaviour.Instance.IsOpen && (alivePlayers <= 2 || Bomberman.activeBomb || Challenger.isDueling || Seeker.isMinigaming || Illusionist.lightsOutTimer > 0 || Monja.awakened)) {
                 MapBehaviour.Instance.Close();
             }
         }
@@ -851,17 +852,17 @@ namespace LasMonjas.Patches {
                         // both teams with same points = Draw
                         if (CaptureTheFlag.currentRedTeamPoints == CaptureTheFlag.currentBlueTeamPoints) {
                             CaptureTheFlag.triggerDrawWin = true;
-                            ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.DrawTeamWin, false);
+                            GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.DrawTeamWin, false);
                         }
                         // Red team more points than blue team = red team win
                         else if (CaptureTheFlag.currentRedTeamPoints > CaptureTheFlag.currentBlueTeamPoints) {
                             CaptureTheFlag.triggerRedTeamWin = true;
-                            ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.RedTeamFlagWin, false);
+                            GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.RedTeamFlagWin, false);
                         }
                         // otherwise blue team win
                         else {
                             CaptureTheFlag.triggerBlueTeamWin = true;
-                            ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BlueTeamFlagWin, false);
+                            GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BlueTeamFlagWin, false);
                         }
                     }
                 }
@@ -878,7 +879,7 @@ namespace LasMonjas.Patches {
                     PoliceAndThief.matchDuration -= deltaTime;
                     if (PoliceAndThief.matchDuration < 0) {
                         PoliceAndThief.triggerPoliceWin = true;
-                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.ThiefModePoliceWin, false);
+                        GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.ThiefModePoliceWin, false);
                     }
                 }
 
@@ -889,17 +890,17 @@ namespace LasMonjas.Patches {
                         // both teams with same points = draw
                         if (KingOfTheHill.currentGreenTeamPoints == KingOfTheHill.currentYellowTeamPoints) {
                             KingOfTheHill.triggerDrawWin = true;
-                            ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.TeamHillDraw, false);
+                            GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.TeamHillDraw, false);
                         }
                         // green team more points than yellow team = green team win
                         else if (KingOfTheHill.currentGreenTeamPoints > KingOfTheHill.currentYellowTeamPoints) {
                             KingOfTheHill.triggerGreenTeamWin = true;
-                            ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.GreenTeamHillWin, false);
+                            GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.GreenTeamHillWin, false);
                         }
                         // otherwise yellow team win
                         else {
                             KingOfTheHill.triggerYellowTeamWin = true;
-                            ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.YellowTeamHillWin, false);
+                            GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.YellowTeamHillWin, false);
                         }
                     }
 
@@ -907,14 +908,14 @@ namespace LasMonjas.Patches {
                         KingOfTheHill.currentGreenTeamPoints += KingOfTheHill.totalGreenKingzonescaptured * deltaTime; ;
                         if (KingOfTheHill.currentGreenTeamPoints >= KingOfTheHill.requiredPoints) {
                             KingOfTheHill.triggerGreenTeamWin = true;
-                            ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.GreenTeamHillWin, false);
+                            GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.GreenTeamHillWin, false);
                         }
                     }
                     if (KingOfTheHill.totalYellowKingzonescaptured != 0) {
                         KingOfTheHill.currentYellowTeamPoints += KingOfTheHill.totalYellowKingzonescaptured * deltaTime; ;
                         if (KingOfTheHill.currentYellowTeamPoints >= KingOfTheHill.requiredPoints) {
                             KingOfTheHill.triggerYellowTeamWin = true;
-                            ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.YellowTeamHillWin, false);
+                            GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.YellowTeamHillWin, false);
                         }
                     }
 
@@ -935,7 +936,7 @@ namespace LasMonjas.Patches {
 
                         if (HotPotato.matchDuration < 0) {
                             HotPotato.triggerHotPotatoEnd = true;
-                            ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.HotPotatoEnd, false);
+                            GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.HotPotatoEnd, false);
                         }
                     }
                 }
@@ -946,7 +947,7 @@ namespace LasMonjas.Patches {
 
                     if (ZombieLaboratory.matchDuration < 0) {
                         ZombieLaboratory.triggerZombieWin = true;
-                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.ZombieWin, false);
+                        GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.ZombieWin, false);
                     }
                 }
 
@@ -959,50 +960,50 @@ namespace LasMonjas.Patches {
                                 // all teams with same points = Draw
                                 if (BattleRoyale.limePoints == BattleRoyale.pinkPoints && BattleRoyale.pinkPoints == BattleRoyale.serialKillerPoints) {
                                     BattleRoyale.triggerDrawWin = true;
-                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleDraw, false);
+                                    GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleDraw, false);
                                 }
                                 // Lime team more points than pink team and serial killer = lime team win
                                 else if (BattleRoyale.limePoints > BattleRoyale.pinkPoints && BattleRoyale.limePoints > BattleRoyale.serialKillerPoints) {
                                     BattleRoyale.triggerLimeTeamWin = true;
-                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
+                                    GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
                                 }
                                 // otherwise pink team win
                                 else if (BattleRoyale.pinkPoints > BattleRoyale.limePoints && BattleRoyale.pinkPoints > BattleRoyale.serialKillerPoints) {
                                     BattleRoyale.triggerPinkTeamWin = true;
-                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
+                                    GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
                                 }
                                 // otherwise serial killer win
                                 else if (BattleRoyale.serialKillerPoints > BattleRoyale.limePoints && BattleRoyale.serialKillerPoints > BattleRoyale.pinkPoints) {
                                     BattleRoyale.triggerSerialKillerWin = true;
-                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSerialKillerWin, false);
+                                    GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSerialKillerWin, false);
                                 }
                                 // draw between some of the teams
                                 else {
                                     BattleRoyale.triggerDrawWin = true;
-                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleDraw, false);
+                                    GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleDraw, false);
                                 }
                             }
                             else {
                                 // both teams with same points = Draw
                                 if (BattleRoyale.limePoints == BattleRoyale.pinkPoints) {
                                     BattleRoyale.triggerDrawWin = true;
-                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleDraw, false);
+                                    GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleDraw, false);
                                 }
                                 // Lime team more points than pink team = lime team win
                                 else if (BattleRoyale.limePoints > BattleRoyale.pinkPoints) {
                                     BattleRoyale.triggerLimeTeamWin = true;
-                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
+                                    GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
                                 }
                                 // otherwise pink team win
                                 else {
                                     BattleRoyale.triggerPinkTeamWin = true;
-                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
+                                    GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
                                 }
                             }
                         }
                         else {
                             BattleRoyale.triggerTimeWin = true;
-                            ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleTimeWin, false);
+                            GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleTimeWin, false);
                         }
                     }
                 }
@@ -1027,7 +1028,7 @@ namespace LasMonjas.Patches {
                             Constants.ShipAndObjectsMask,
                             false
                         )) {
-                            if (PlayerControl.GameOptions.MapId == 5) {
+                            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                                 array[i].transform.position = newPos;
                                 array[i].transform.position += new Vector3(0, 0, -0.5f);
                             }
@@ -1356,7 +1357,7 @@ namespace LasMonjas.Patches {
             
             GameObject emerButton = null;
 
-            switch (PlayerControl.GameOptions.MapId) {
+            switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                 case 0:
                     emerButton = GameObject.Find("EmergencyConsole");
                     break;
@@ -1377,7 +1378,7 @@ namespace LasMonjas.Patches {
                     break;
             }
             
-            if (PlayerControl.GameOptions.MapId == 5) {
+            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                 if (body.transform.position.y > 0) {
                     body.transform.position = new Vector3(5f, 19.5f, -5);
                 }
@@ -1482,7 +1483,7 @@ namespace LasMonjas.Patches {
                                 break;
                         }
 
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             switch (Seeker.seekerSelectedHiding) {
                                 case 1:
                                     Seeker.lowerminigameArenaHideOnePointOne.transform.parent.gameObject.SetActive(false);
@@ -1530,7 +1531,7 @@ namespace LasMonjas.Patches {
                                     break;
                             }
 
-                            if (PlayerControl.GameOptions.MapId == 5) {
+                            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                                 switch (Seeker.seekerSelectedHiding) {
                                     case 1:
                                         Seeker.lowerminigameArenaHideOnePointOne.transform.parent.gameObject.SetActive(false);
@@ -1617,7 +1618,7 @@ namespace LasMonjas.Patches {
                             break;
                     }
 
-                    if (PlayerControl.GameOptions.MapId == 5) {
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                         switch (Seeker.seekerSelectedHiding) {
                             case 1:
                                 Seeker.lowerminigameArenaHideOnePointOne.transform.parent.gameObject.SetActive(true);
@@ -1724,7 +1725,7 @@ namespace LasMonjas.Patches {
         }      
         static void vigilantMiraUpdate() {
 
-            if (Vigilant.vigilantMira == null || Vigilant.vigilantMira.Data.IsDead || Vigilant.vigilantMira != PlayerControl.LocalPlayer || PlayerControl.GameOptions.MapId != 1) {
+            if (Vigilant.vigilantMira == null || Vigilant.vigilantMira.Data.IsDead || Vigilant.vigilantMira != PlayerControl.LocalPlayer || GameOptionsManager.Instance.currentGameOptions.MapId != 1) {
                 return;
             }
 
@@ -1777,7 +1778,7 @@ namespace LasMonjas.Patches {
                             Constants.ShipAndObjectsMask,
                             false
                         )) {
-                            if (PlayerControl.GameOptions.MapId == 5) {
+                            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                                 array[i].transform.position = newPos;
                                 array[i].transform.position += new Vector3(0, 0, -0.5f);
                             }
@@ -1796,7 +1797,7 @@ namespace LasMonjas.Patches {
 
             if (CaptureTheFlag.redPlayerWhoHasBlueFlag != null && CaptureTheFlag.redPlayerWhoHasBlueFlag.Data.Disconnected) {
                 CaptureTheFlag.blueflag.transform.parent = CaptureTheFlag.blueflagbase.transform.parent;
-                switch (PlayerControl.GameOptions.MapId) {
+                switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                     // Skeld
                     case 0:
                         if (activatedSensei) {
@@ -1833,7 +1834,7 @@ namespace LasMonjas.Patches {
 
             if (CaptureTheFlag.bluePlayerWhoHasRedFlag != null && CaptureTheFlag.bluePlayerWhoHasRedFlag.Data.Disconnected) {
                 CaptureTheFlag.redflag.transform.parent = CaptureTheFlag.redflagbase.transform.parent;
-                switch (PlayerControl.GameOptions.MapId) {
+                switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                     // Skeld
                     case 0:
                         if (activatedSensei) {
@@ -1917,7 +1918,7 @@ namespace LasMonjas.Patches {
                     PoliceAndThief.thiefpointCounter = Language.introTexts[3] + "<color=#00F7FFFF>" + PoliceAndThief.currentJewelsStoled + " / " + PoliceAndThief.requiredJewels + "</color> | " + Language.introTexts[4] + "<color=#928B55FF>" + PoliceAndThief.currentThiefsCaptured + " / " + PoliceAndThief.thiefTeam.Count + "</color>";
                     if (PoliceAndThief.currentThiefsCaptured == PoliceAndThief.thiefTeam.Count) {
                         PoliceAndThief.triggerPoliceWin = true;
-                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.ThiefModePoliceWin, false);
+                        GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.ThiefModePoliceWin, false);
                     }
                     break;
                 }
@@ -1946,7 +1947,7 @@ namespace LasMonjas.Patches {
 
                     if (PoliceAndThief.policeTeam.Count <= 0) {
                         PoliceAndThief.triggerThiefWin = true;
-                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.ThiefModeThiefWin, false);
+                        GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.ThiefModeThiefWin, false);
                     }
                     break;
                 }
@@ -1962,7 +1963,7 @@ namespace LasMonjas.Patches {
                 KingOfTheHill.greenTeam.Remove(KingOfTheHill.greenKingplayer);
                 KingOfTheHill.greenKingplayer = null;
                 KingOfTheHill.greenKingplayer = KingOfTheHill.greenTeam[0];
-                if (PlayerControl.GameOptions.MapId == 5) {
+                if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                     KingOfTheHill.greenkingaura.transform.position = new Vector3(KingOfTheHill.greenKingplayer.transform.position.x, KingOfTheHill.greenKingplayer.transform.position.y, -0.5f);
                 }
                 else {
@@ -2004,7 +2005,7 @@ namespace LasMonjas.Patches {
                 KingOfTheHill.yellowTeam.Remove(KingOfTheHill.yellowKingplayer);
                 KingOfTheHill.yellowKingplayer = null;
                 KingOfTheHill.yellowKingplayer = KingOfTheHill.yellowTeam[0];
-                if (PlayerControl.GameOptions.MapId == 5) {
+                if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                     KingOfTheHill.yellowkingaura.transform.position = new Vector3(KingOfTheHill.yellowKingplayer.transform.position.x, KingOfTheHill.yellowKingplayer.transform.position.y, -0.5f);
                 }
                 else {
@@ -2081,7 +2082,7 @@ namespace LasMonjas.Patches {
 
                 if (notPotatosAlives < 1) {
                     HotPotato.triggerHotPotatoEnd = true;
-                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.HotPotatoEnd, false);
+                    GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.HotPotatoEnd, false);
                 }
 
                 HotPotato.hotPotatoPlayer = HotPotato.notPotatoTeam[0];
@@ -2155,7 +2156,7 @@ namespace LasMonjas.Patches {
 
                     if (notPotatosAlives < 1) {
                         HotPotato.triggerHotPotatoEnd = true;
-                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.HotPotatoEnd, false);
+                        GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.HotPotatoEnd, false);
                     }
                     
                     if (HotPotato.notPotato01 != null && notPotato.PlayerId == HotPotato.notPotato01.PlayerId) {
@@ -2229,7 +2230,7 @@ namespace LasMonjas.Patches {
                     ZombieLaboratory.survivorPlayer01IsInfected = false;
                     if (ZombieLaboratory.survivorPlayer01 == PlayerControl.LocalPlayer && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
                         }
                     }
@@ -2250,7 +2251,7 @@ namespace LasMonjas.Patches {
                     ZombieLaboratory.survivorPlayer02IsInfected = false;
                     if (ZombieLaboratory.survivorPlayer02 == PlayerControl.LocalPlayer && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
                         }
                     }
@@ -2271,7 +2272,7 @@ namespace LasMonjas.Patches {
                     ZombieLaboratory.survivorPlayer03IsInfected = false;
                     if (ZombieLaboratory.survivorPlayer03 == PlayerControl.LocalPlayer && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
                         }
                     }
@@ -2292,7 +2293,7 @@ namespace LasMonjas.Patches {
                     ZombieLaboratory.survivorPlayer04IsInfected = false;
                     if (ZombieLaboratory.survivorPlayer04 == PlayerControl.LocalPlayer && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
                         }
                     }
@@ -2313,7 +2314,7 @@ namespace LasMonjas.Patches {
                     ZombieLaboratory.survivorPlayer05IsInfected = false;
                     if (ZombieLaboratory.survivorPlayer05 == PlayerControl.LocalPlayer && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
                         }
                     }
@@ -2334,7 +2335,7 @@ namespace LasMonjas.Patches {
                     ZombieLaboratory.survivorPlayer06IsInfected = false;
                     if (ZombieLaboratory.survivorPlayer06 == PlayerControl.LocalPlayer && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
                         }
                     }
@@ -2355,7 +2356,7 @@ namespace LasMonjas.Patches {
                     ZombieLaboratory.survivorPlayer07IsInfected = false;
                     if (ZombieLaboratory.survivorPlayer07 == PlayerControl.LocalPlayer && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
                         }
                     }
@@ -2376,7 +2377,7 @@ namespace LasMonjas.Patches {
                     ZombieLaboratory.survivorPlayer08IsInfected = false;
                     if (ZombieLaboratory.survivorPlayer08 == PlayerControl.LocalPlayer && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
                         }
                     }
@@ -2397,7 +2398,7 @@ namespace LasMonjas.Patches {
                     ZombieLaboratory.survivorPlayer09IsInfected = false;
                     if (ZombieLaboratory.survivorPlayer09 == PlayerControl.LocalPlayer && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
                         }
                     }
@@ -2418,7 +2419,7 @@ namespace LasMonjas.Patches {
                     ZombieLaboratory.survivorPlayer10IsInfected = false;
                     if (ZombieLaboratory.survivorPlayer10 == PlayerControl.LocalPlayer && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
                         }
                     }
@@ -2439,7 +2440,7 @@ namespace LasMonjas.Patches {
                     ZombieLaboratory.survivorPlayer11IsInfected = false;
                     if (ZombieLaboratory.survivorPlayer11 == PlayerControl.LocalPlayer && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
                         }
                     }
@@ -2460,7 +2461,7 @@ namespace LasMonjas.Patches {
                     ZombieLaboratory.survivorPlayer12IsInfected = false;
                     if (ZombieLaboratory.survivorPlayer12 == PlayerControl.LocalPlayer && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
                         }
                     }
@@ -2481,7 +2482,7 @@ namespace LasMonjas.Patches {
                     ZombieLaboratory.survivorPlayer13IsInfected = false;
                     if (ZombieLaboratory.survivorPlayer13 == PlayerControl.LocalPlayer && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                        if (PlayerControl.GameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
                         }
                     }
@@ -2496,7 +2497,7 @@ namespace LasMonjas.Patches {
                         ZombieLaboratory.survivorTeam.Remove(ZombieLaboratory.nursePlayer);
                         ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
                         ZombieLaboratory.triggerZombieWin = true;
-                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.ZombieWin, false);
+                        GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.ZombieWin, false);
                     }
                     else if (ZombieLaboratory.survivorPlayer01 != null && survivor.PlayerId == ZombieLaboratory.survivorPlayer01.PlayerId) {
                         if (ZombieLaboratory.survivorPlayer01IsInfected) {
@@ -2607,7 +2608,7 @@ namespace LasMonjas.Patches {
                     ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
                     if (ZombieLaboratory.survivorTeam.Count == 1) {
                         ZombieLaboratory.triggerZombieWin = true;
-                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.ZombieWin, false);
+                        GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.ZombieWin, false);
                     }
                     break;
                 }
@@ -2661,7 +2662,7 @@ namespace LasMonjas.Patches {
                     ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
                     if (ZombieLaboratory.zombieTeam.Count <= 0) {
                         ZombieLaboratory.triggerSurvivorWin = true;
-                        ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.SurvivorWin, false);
+                        GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.SurvivorWin, false);
                     }
                     break;
                 }
@@ -2737,7 +2738,7 @@ namespace LasMonjas.Patches {
 
                         if (soloPlayersAlives <= 1) {
                             BattleRoyale.triggerSoloWin = true;
-                            ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSoloWin, false);
+                            GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSoloWin, false);
                         }
                         break;
                     }
@@ -2803,31 +2804,31 @@ namespace LasMonjas.Patches {
                             }
 
                             if (BattleRoyale.matchType == 1) {
-                                BattleRoyale.battleRoyalepointCounter = Language.introTexts[12] + "<color=#39FF14FF>" + limePlayersAlive + "</color> | " + Language.introTexts[13] + " < color=#F2BEFFFF>" + pinkPlayersAlive + "</color> | " + Language.introTexts[14] + "<color=#808080FF>" + serialKillerAlive + "</color>";
+                                BattleRoyale.battleRoyalepointCounter = Language.introTexts[12] + "<color=#39FF14FF>" + limePlayersAlive + "</color> | " + Language.introTexts[13] + " <color=#F2BEFFFF>" + pinkPlayersAlive + "</color> | " + Language.introTexts[14] + "<color=#808080FF>" + serialKillerAlive + "</color>";
                                 if (limePlayersAlive <= 0 && pinkPlayersAlive <= 0 && !BattleRoyale.serialKiller.Data.IsDead) {
                                     BattleRoyale.triggerSerialKillerWin = true;
-                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSerialKillerWin, false);
+                                    GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSerialKillerWin, false);
                                 }
                                 else if (pinkPlayersAlive <= 0 && BattleRoyale.serialKiller.Data.IsDead) {
                                     BattleRoyale.triggerLimeTeamWin = true;
-                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
+                                    GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
                                 }
                                 else if (limePlayersAlive <= 0 && BattleRoyale.serialKiller.Data.IsDead) {
                                     BattleRoyale.triggerPinkTeamWin = true;
-                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
+                                    GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
                                 }
                             }
                         }
                         else {
                             if (BattleRoyale.matchType == 1) {
-                                BattleRoyale.battleRoyalepointCounter = Language.introTexts[12] + "<color=#39FF14FF>" + limePlayersAlive + "</color> | " + Language.introTexts[13] + " < color=#F2BEFFFF>" + pinkPlayersAlive + "</color>";
+                                BattleRoyale.battleRoyalepointCounter = Language.introTexts[12] + "<color=#39FF14FF>" + limePlayersAlive + "</color> | " + Language.introTexts[13] + " <color=#F2BEFFFF>" + pinkPlayersAlive + "</color>";
                                 if (pinkPlayersAlive <= 0) {
                                     BattleRoyale.triggerLimeTeamWin = true;
-                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
+                                    GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
                                 }
                                 else if (limePlayersAlive <= 0) {
                                     BattleRoyale.triggerPinkTeamWin = true;
-                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
+                                    GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
                                 }
                             }
                         }
@@ -2896,15 +2897,15 @@ namespace LasMonjas.Patches {
                                 BattleRoyale.battleRoyalepointCounter = Language.introTexts[12] + "<color=#39FF14FF>" + limePlayersAlive + "</color> | " + Language.introTexts[13] + "<color=#F2BEFFFF>" + pinkPlayersAlive + "</color> | " + Language.introTexts[14] + "<color=#808080FF>" + serialKillerAlive + "</color>";
                                 if (limePlayersAlive <= 0 && pinkPlayersAlive <= 0 && !BattleRoyale.serialKiller.Data.IsDead) {
                                     BattleRoyale.triggerSerialKillerWin = true;
-                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSerialKillerWin, false);
+                                    GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSerialKillerWin, false);
                                 }
                                 else if (pinkPlayersAlive <= 0 && BattleRoyale.serialKiller.Data.IsDead) {
                                     BattleRoyale.triggerLimeTeamWin = true;
-                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
+                                    GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
                                 }
                                 else if (limePlayersAlive <= 0 && BattleRoyale.serialKiller.Data.IsDead) {
                                     BattleRoyale.triggerPinkTeamWin = true;
-                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
+                                    GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
                                 }
                             }
                         }
@@ -2913,11 +2914,11 @@ namespace LasMonjas.Patches {
                                 BattleRoyale.battleRoyalepointCounter = Language.introTexts[12] + "<color=#39FF14FF>" + limePlayersAlive + "</color> | " + Language.introTexts[13] + "<color=#F2BEFFFF>" + pinkPlayersAlive + "</color>";
                                 if (pinkPlayersAlive <= 0) {
                                     BattleRoyale.triggerLimeTeamWin = true;
-                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
+                                    GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
                                 }
                                 else if (limePlayersAlive <= 0) {
                                     BattleRoyale.triggerPinkTeamWin = true;
-                                    ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
+                                    GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
                                 }
                             }
                         }
@@ -2955,11 +2956,11 @@ namespace LasMonjas.Patches {
                         BattleRoyale.battleRoyalepointCounter = Language.introTexts[12] + "<color=#39FF14FF>" + limePlayersAlive + "</color> | " + Language.introTexts[13] + "<color=#F2BEFFFF>" + pinkPlayersAlive + "</color> | " + Language.introTexts[14] + " <color=#808080FF>" + serialKillerAlive + "</color>";
                         if (pinkPlayersAlive <= 0) {
                             BattleRoyale.triggerLimeTeamWin = true;
-                            ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
+                            GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
                         }
                         else if (limePlayersAlive <= 0) {
                             BattleRoyale.triggerPinkTeamWin = true;
-                            ShipStatus.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
+                            GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
                         }
                     }
 
@@ -2968,6 +2969,7 @@ namespace LasMonjas.Patches {
         }
         static void Postfix(HudManager __instance) {
             if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) return;
+
 
             CustomButton.HudUpdate();
             resetNameTagsAndColors();
@@ -2996,7 +2998,7 @@ namespace LasMonjas.Patches {
             chameleonUpdate();
 
             //BountyHunter update
-            bountyHunterSuicideIfDisconnect();            
+            bountyHunterSuicideIfDisconnect();
 
             // Yinyanger update
             yinyangerUpdate();
@@ -3006,13 +3008,13 @@ namespace LasMonjas.Patches {
 
             // Stranded update
             strandedUpdate();
-            
+
             // Exiler update
             exilerWinIfDisconnect();
 
             // Seeker update
             seekerUpdate();
-            
+
             // FortuneTeller update
             fortuneTellerUpdate();
 
@@ -3021,7 +3023,7 @@ namespace LasMonjas.Patches {
 
             // Spiritualist update
             spiritualistUpdate();
-    
+
             // VigilantMira update
             vigilantMiraUpdate();
 
@@ -3048,6 +3050,7 @@ namespace LasMonjas.Patches {
 
             // Battle Royale disconnect update
             battleRoyaleUpdate();
+
         }
     }
 }
