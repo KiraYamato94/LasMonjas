@@ -36,6 +36,19 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
   
+**Version 3.0.4 BETA (26th December 2022)**
+
+- Compatibility patch for Among Us 2022.12.14
+- Adjusted custom button's position
+- Added /myrole for crewmate and impostor
+- Haunt button can be used on roles games for players that are completely dead (player who can't revive until next game)
+- Added Haunt button on Hot Potato gamemode (open the minimap and close if you're dead)
+- When playing Hide and Seek, custom skeld has a 50% chance of being loaded if Skeld is selected as the game map
+- Hypnotist's traps now turn the player's camera upside down
+- Horse mode removed for now
+
+Known issue: Custom hats and visor don't have the sprite on the wardrobe but work anyway
+
 **Version 3.0.3 (18th November 2022)**
 
 - Painter no longer resets Puppeter's transformation
@@ -590,8 +603,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 **Additional Ability Notes:**
 - Traps became active after a meeting and don't affect Hypnotist or other impostors.
 - Stepping on a trap triggers a sound and a custom message will tell the player that he's hypnotized.
-- While Hypnotized, player's movement controls will be inverted and stepping into other traps won't make any effect.
-- Hypnotized effect disables medscan, vents, Airship's platform and ladders
+- While Hypnotized, player's camera turns upside down.
 
 -----------------------
 
