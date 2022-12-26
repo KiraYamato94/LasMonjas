@@ -28,7 +28,6 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "Sensei", VisorName = "Over 9 Sus", altShader = true},
             new AuthorData {AuthorName = "Sensei", VisorName = "PC Error"},
             new AuthorData {AuthorName = "Sensei", VisorName = "The Eye"},
-            new AuthorData {AuthorName = "Sensei", VisorName = "TV Error"},
             new AuthorData {AuthorName = "Sensei", VisorName = "Visor Cleaner"},
             new AuthorData {AuthorName = "Muaresito", VisorName = "Muaresito Joy"},
             new AuthorData {AuthorName = "Muaresito", VisorName = "Olmaito"},

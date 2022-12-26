@@ -388,7 +388,7 @@ namespace LasMonjas.Core
                         "Create your own vent\nnetwork and turn off the lights", //30
                         "Manipulate a player to kill his adjacent",
                         "Sabotage by putting bombs",
-                        "Make yourself invisible",
+                        "Make yourself invisible\nbut you can't vent",
                         "Shoot a player choosing their role during the meeting",
                         "Shoot a player choosing\ntheir role during the meeting",//35
                         "Casts spells on players",
@@ -453,8 +453,8 @@ namespace LasMonjas.Core
                         "Place speed and position traps",//95
                         "Place speed and position traps\nSwitch trap type with Q key",
                         "Check close players",
-                        "Complete all the tasks and make the extra tasks to win",
-                        "Complete all the tasks\nand make the extra tasks to win",
+                        "Complete all your tasks and all your extra tasks to win",
+                        "Complete all your tasks\nand all your extra tasks to win",
                         "Send killers to prison",//100
                         "Sabotage and kill everyone",
                         "Find and exile the <color=#FF0000FF>Impostors</color>",
@@ -527,7 +527,7 @@ namespace LasMonjas.Core
                         "Ghost of (",
                         "I was the ",
                         "My killer has a ",
-                        "Time since death ",
+                        "Seconds since death: ",
                         "My killer was the "
                     }; 
                     helpersTexts = new string[] {
@@ -928,7 +928,7 @@ namespace LasMonjas.Core
                         "Crea tu propia red de\nrejillas y apaga las luces", //30
                         "Manipula a un jugador para matar a su adyacente",
                         "Sabotea poniendo bombas",
-                        "Hazte invisible",
+                        "Hazte invisible pero\nno puedes usar rejillas",
                         "Dispara a un jugador durante una reunion adivinando su rol",
                         "Dispara a un jugador durante\nuna reunion adivinando su rol",//35
                         "Hechiza jugadores",
@@ -1067,7 +1067,7 @@ namespace LasMonjas.Core
                         "Fantasma de (",
                         "Mi rol era ",
                         "Mi asesino tiene un ",
-                        "Tiempo muerto ",
+                        "Segundos desde muerte: ",
                         "Me asesino fue el "
                     };
                     helpersTexts = new string[] {

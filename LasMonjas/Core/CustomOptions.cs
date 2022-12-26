@@ -8,6 +8,7 @@ using Hazel;
 using System.Reflection;
 using System.Text;
 using static LasMonjas.LasMonjas;
+using AmongUs.GameOptions;
 
 namespace LasMonjas.Core
 {
@@ -406,6 +407,15 @@ namespace LasMonjas.Core
         }
     }
 
+    [HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.CoSpawnPlayer))]
+    public class AmongUsClientOnPlayerJoinedPatch
+    {
+        public static void Postfix() {
+            if (PlayerControl.LocalPlayer != null) {
+                CustomOption.ShareOptionSelections();
+            }
+        }
+    }
 
     [HarmonyPatch(typeof(GameOptionsMenu), nameof(GameOptionsMenu.Update))]
     class GameOptionsMenuUpdatePatch
@@ -457,12 +467,12 @@ namespace LasMonjas.Core
     {
         public static bool Prefix(ref bool __result) {
             if (PlayerControl.GameOptions == null) return true;
-            __result = PlayerControl.GameOptions.MapId == 3;
+            __result = GameOptionsManager.Instance.currentGameOptions.MapId == 3;
             return false;
         }
     }*/
 
-    [HarmonyPatch]
+    [HarmonyPatch(typeof(IGameOptionsExtensions), nameof(IGameOptionsExtensions.ToHudString))]
     class GameOptionsDataPatch
     {
         private static IEnumerable<MethodBase> TargetMethods() {

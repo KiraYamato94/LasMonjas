@@ -174,6 +174,9 @@ namespace LasMonjas.Core
                                             infoText = "Librarian: impostor who can prevent a player from talking on a meeting." +
                                                 "\nEveryone knows who is silenced during the meeting.";
                                             break;
+                                        case "impostor":
+                                            infoText = "Impostor: sabotage and kill everyone.";
+                                            break;
 
 
                                         // Rebel roles
@@ -378,6 +381,9 @@ namespace LasMonjas.Core
                                             infoText = "Jailer: crewmate who can mark a player to be his assistant." +
                                                 "\nTrying to kill the assistant denies the kill and teleports the killer to the jail for a few seconds, this only works one time and the Jailer needs to mark another player after this.";
                                             break;
+                                        case "crewmate":
+                                            infoText = "Crewmate: find and exile the impostors.";
+                                            break;
 
                                         // Modifiers:
                                         case "lovers":
@@ -456,7 +462,7 @@ namespace LasMonjas.Core
                                             infoText = "Battle Royale: gamemode where everyone has a ranged kill button with the Archer's mechanic (usable with right mouse click) and a very low cooldown." +
                                                 "\nNobody can vent and players have lives and when they reach 0 lives they die for the rest of the match, the last one alive wins." +
                                                 "\nAlso there are 3 ways of playing this gamemode, All VS All, Team Battle or Score Battle." +
-                                                "\nOn odd player number games for Team and Score Battle there will be a powerful neutral role called Serial Killer that can also win killing everyone or reaching the needed score. This role has 3x lives and half kill cooldown.";
+                                                "\nOn odd player number games for Team and Score Battle there will be a powerful neutral role called Serial Killer that can also win killing everyone or reaching the needed score. This role has 2x lives (x3 on games with 11 players or more) and half kill cooldown.";
                                             break;
                                     }
                                     break;
@@ -525,6 +531,9 @@ namespace LasMonjas.Core
                                         case "librarian":
                                             infoText = "Librarian: impostor que puede silenciar a un jugador para evitar que hable durante la reunion." +
                                                 "\nTodos saben quien esta silenciado durante la reunion.";
+                                            break;
+                                        case "impostor":
+                                            infoText = "Impostor: sabotea y mata a todos.";
                                             break;
 
 
@@ -730,6 +739,9 @@ namespace LasMonjas.Core
                                             infoText = "Jailer: tripulante que puede marcar a un jugador para que sea su asistente." +
                                                 "\nSi intentas matar al asistente, seras teletransportado a la prision durante un tiempo, esto solo funciona una vez y el Jailer debera seleccionar a otro jugador.";
                                             break;
+                                        case "crewmate":
+                                            infoText = "Crewmate: encuentra y expulsa a los impostores.";
+                                            break;
 
                                         // Modifiers:
                                         case "lovers":
@@ -807,7 +819,7 @@ namespace LasMonjas.Core
                                             infoText = "Battle Royale: modo de juego en el que todos pueden matar a distancia con la mecanica del rol Archer (apuntar con el raton y clic derecho para disparar)." +
                                                 "\nNo se pueden usar rejillas en este modo, los jugadores tendran vidas al lado de su nombre y cuando llega a 0 vidas mueren para el resto de la partida." +
                                                 "\nHay 3 formas de jugar, Todos Contra Todos, Por Equipos y Por Puntuacion." +
-                                                "\nEn partidas cuyo numero de jugadores es impar, aparecera el rol Serial Killer, un rol muy poderoso que tiene 3 veces mas vidas que los demas jugadores y dispara mas rapido.";
+                                                "\nEn partidas cuyo numero de jugadores es impar, aparecera el rol Serial Killer, un rol muy poderoso que tiene 2 veces mas vidas que los demas jugadores (3 veces mas en partidas de 11 o mas jugadores) y dispara mas rapido.";
                                             break;
                                     }
                                     break;
@@ -876,6 +888,9 @@ namespace LasMonjas.Core
                                         case "librarian":
                                             infoText = "Librarian: プレイヤーが会議で話すのを妨げることができるインポスター。" +
                                                 "\n誰もが会議中に誰が妨げられているかを知ることができます。";
+                                            break;
+                                        case "impostor":
+                                            infoText = "Impostor: 妨害して全員を殺す。";
                                             break;
 
 
@@ -1080,6 +1095,9 @@ namespace LasMonjas.Core
                                             infoText = "Jailer: プレーヤーをアシスタントにマークできるクルーメイト。" +
                                                 "\nアシスタントを殺そうとすると、殺害を否定し、殺人者を数秒間刑務所にテレポートしますが、これは1回だけ機能し、看守はこの後に別のプレーヤーをマークする必要があります。";
                                             break;
+                                        case "crewmate":
+                                            infoText = "Crewmate: 詐欺師を見つけて亡命します。";
+                                            break;
 
                                         // Modifiers:
                                         case "lovers":
@@ -1158,7 +1176,7 @@ namespace LasMonjas.Core
                                             infoText = "Battle Royale: 誰もがアーチャーのメカニック（右マウスのクリックで使用可能）と非常に低いクールダウンで遠隔キルボタンを持っているゲームモード。" +
                                                 "\n誰もベントできず、プレイヤーは生命を持つことができず、彼らが0人の生命に達すると、彼らは試合の残りの部分で死ぬ、最後の生きたものが勝ちます。" +
                                                 "\nまた、このゲームモードをプレイする方法は3つあります。すべてのVS、チームバトルまたはスコアバトルがあります。" +
-                                                "\nチームとスコアバトルの奇妙なプレイヤー番号ゲームでは、シリアルキラーと呼ばれる強力なニュートラルな役割があり、これもすべての人を殺したり、必要なスコアに達したりすることができます。この役割にはX3寿命があり、半分のクールダウンがあります";
+                                                "\nチームとスコアバトルの奇妙なプレイヤー番号ゲームでは、シリアルキラーと呼ばれる強力なニュートラルな役割があり、これもすべての人を殺したり、必要なスコアに達したりすることができます。この役割にはX2寿命があり、半分のクールダウンがあります";
                                             break;
                                     }
                                     break;
@@ -1226,6 +1244,9 @@ namespace LasMonjas.Core
                                         case "librarian":
                                             infoText = "Librarian: 内鬼阵营：可以阻止玩家在会议上发言。" +
                                                 "\n所有人都可以知道谁在会议上被禁言。";
+                                            break;
+                                        case "impostor":
+                                            infoText = "Impostor: 破壞並殺死所有人。";
                                             break;
 
 
@@ -1429,6 +1450,9 @@ namespace LasMonjas.Core
                                             infoText = "Jailer: 船员阵营：可以标记一位玩家进行保护。" +
                                                 "\n如果有玩家试图击杀被庇护的玩家将被送进监狱一段时间成为狱卒，狱卒需标记另一位玩家。";
                                             break;
+                                        case "crewmate":
+                                            infoText = "Crewmate: 找出并驱逐内鬼。";
+                                            break;
 
                                         // Modifiers:
                                         case "lovers":
@@ -1507,7 +1531,7 @@ namespace LasMonjas.Core
                                             infoText = "Battle Royale: 游戏模式：每位玩家有一个带有弓箭手机制的远程杀戮按钮（可通过鼠标右键使用），冷却时间非常短。" +
                                                 "\n不可以使用通风管道，所有玩家都有生命值，当他们的生命值归零时，他们将死亡，活到最后的玩家获得胜利。" +
                                                 "\n此外，这个游戏模式有3种玩法，所单人模式，团队战或分数战。" +
-                                                "\n在团队战和分数战总玩家数量为单数时，游戏内会有一个强大的中立角色，称为 \"连环杀手\"，它也可以赢得杀死所有人或达到所需的分数。这个角色有3点生命值和一半的击杀冷却时间。";
+                                                "\n在团队战和分数战总玩家数量为单数时，游戏内会有一个强大的中立角色，称为 \"连环杀手\"，它也可以赢得杀死所有人或达到所需的分数。这个角色有2点生命值和一半的击杀冷却时间。";
                                             break;
                                     }
                                     break;
@@ -1592,6 +1616,9 @@ namespace LasMonjas.Core
                                             case "librarian":
                                                 infoText = "Librarian: impostor who can prevent a player from talking on a meeting." +
                                                     "\nEveryone knows who is silenced during the meeting.";
+                                                break;
+                                            case "impostor":
+                                                infoText = "Impostor: sabotage and kill everyone.";
                                                 break;
 
 
@@ -1796,6 +1823,9 @@ namespace LasMonjas.Core
                                                 infoText = "Jailer: crewmate who can mark a player to be his assistant." +
                                                     "\nTrying to kill the assistant denies the kill and teleports the killer to the jail for a few seconds, this only works one time and the Jailer needs to mark another player after this.";
                                                 break;
+                                            case "crewmate":
+                                                infoText = "Crewmate: find and exile the impostors.";
+                                                break;
                                         }
                                     }
                                     break;
@@ -1868,6 +1898,9 @@ namespace LasMonjas.Core
                                             case "librarian":
                                                 infoText = "Librarian: impostor que puede silenciar a un jugador para evitar que hable durante la reunion." +
                                                     "\nTodos saben quien esta silenciado durante la reunion.";
+                                                break;
+                                            case "impostor":
+                                                infoText = "Impostor: sabotea y mata a todos.";
                                                 break;
 
 
@@ -2073,6 +2106,9 @@ namespace LasMonjas.Core
                                                 infoText = "Jailer: tripulante que puede marcar a un jugador para que sea su asistente." +
                                                     "\nSi intentas matar al asistente, seras teletransportado a la prision durante un tiempo, esto solo funciona una vez y el Jailer debera seleccionar a otro jugador.";
                                                 break;
+                                            case "crewmate":
+                                                infoText = "Crewmate: encuentra y expulsa a los impostores.";
+                                                break;
                                         }
                                     }
                                     break;
@@ -2145,6 +2181,9 @@ namespace LasMonjas.Core
                                             case "librarian":
                                                 infoText = "Librarian: プレイヤーが会議で話すのを妨げることができるインポスター。" +
                                                     "\n誰もが会議中に誰が妨げられているかを知ることができます。";
+                                                break;
+                                            case "impostor":
+                                                infoText = "Impostor: 妨害して全員を殺す。";
                                                 break;
 
 
@@ -2349,6 +2388,9 @@ namespace LasMonjas.Core
                                                 infoText = "Jailer: プレーヤーをアシスタントにマークできるクルーメイト。" +
                                                     "\nアシスタントを殺そうとすると、殺害を否定し、殺人者を数秒間刑務所にテレポートしますが、これは1回だけ機能し、看守はこの後に別のプレーヤーをマークする必要があります。";
                                                 break;
+                                            case "crewmate":
+                                                infoText = "Crewmate: 詐欺師を見つけて亡命します。";
+                                                break;
                                         }
                                     }
                                     break;
@@ -2420,6 +2462,9 @@ namespace LasMonjas.Core
                                             case "librarian":
                                                 infoText = "Librarian: 内鬼阵营：可以阻止玩家在会议上发言。" +
                                                     "\n所有人都可以知道谁在会议上被禁言。";
+                                                break;
+                                            case "impostor":
+                                                infoText = "Impostor: 破壞並殺死所有人。";
                                                 break;
 
 
@@ -2622,6 +2667,9 @@ namespace LasMonjas.Core
                                             case "jailer":
                                                 infoText = "Jailer: 船员阵营：可以标记一位玩家进行保护。" +
                                                     "\n如果有玩家试图击杀被庇护的玩家将被送进监狱一段时间成为狱卒，狱卒需标记另一位玩家。";
+                                                break;
+                                            case "crewmate":
+                                                infoText = "Crewmate: 找出并驱逐内鬼。";
                                                 break;
                                         }
                                     }
