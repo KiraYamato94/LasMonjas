@@ -2945,30 +2945,6 @@ namespace LasMonjas.Patches
                                 airshipadmin.GetComponent<BoxCollider2D>().enabled = false;
                                 GameObject airshipvitals = GameObject.Find("panel_vitals");
                                 airshipvitals.GetComponent<CircleCollider2D>().enabled = false;
-                                GameObject LeftDoorTop = GameObject.Find("LeftDoorTop");
-                                LeftDoorTop.SetActive(false);
-                                GameObject TopLeftVert = GameObject.Find("TopLeftVert");
-                                TopLeftVert.SetActive(false);
-                                GameObject TopLeftHort = GameObject.Find("TopLeftHort");
-                                TopLeftHort.SetActive(false);
-                                GameObject BottomHort = GameObject.Find("BottomHort");
-                                BottomHort.SetActive(false);
-                                GameObject TopCenterHort = GameObject.Find("TopCenterHort");
-                                TopCenterHort.SetActive(false);
-                                GameObject LeftVert = GameObject.Find("LeftVert");
-                                LeftVert.SetActive(false);
-                                GameObject RightVert = GameObject.Find("RightVert");
-                                RightVert.SetActive(false);
-                                GameObject TopRightVert = GameObject.Find("TopRightVert");
-                                TopRightVert.SetActive(false);
-                                GameObject TopRightHort = GameObject.Find("TopRightHort");
-                                TopRightHort.SetActive(false);
-                                GameObject BottomRightHort = GameObject.Find("BottomRightHort");
-                                BottomRightHort.SetActive(false);
-                                GameObject BottomRightVert = GameObject.Find("BottomRightVert");
-                                BottomRightVert.SetActive(false);
-                                GameObject LeftDoorBottom = GameObject.Find("LeftDoorBottom");
-                                LeftDoorBottom.SetActive(false);
                                 GameObject laddermeeting = GameObject.Find("ladder_meeting");
                                 laddermeeting.SetActive(false);
                                 GameObject platform = GameObject.Find("Platform");
@@ -2979,6 +2955,20 @@ namespace LasMonjas.Patches
                                 platformright.SetActive(false);
                                 GameObject recordsadmin = GameObject.Find("records_admin_map");
                                 recordsadmin.GetComponent<BoxCollider2D>().enabled = false;
+
+                                Helpers.GetStaticDoor("TopLeftVert").SetOpen(true);
+                                Helpers.GetStaticDoor("TopLeftHort").SetOpen(true);
+                                Helpers.GetStaticDoor("BottomHort").SetOpen(true);
+                                Helpers.GetStaticDoor("TopCenterHort").SetOpen(true);
+                                Helpers.GetStaticDoor("LeftVert").SetOpen(true);
+                                Helpers.GetStaticDoor("RightVert").SetOpen(true);
+                                Helpers.GetStaticDoor("TopRightVert").SetOpen(true);
+                                Helpers.GetStaticDoor("TopRightHort").SetOpen(true);
+                                Helpers.GetStaticDoor("BottomRightHort").SetOpen(true);
+                                Helpers.GetStaticDoor("BottomRightVert").SetOpen(true);
+                                Helpers.GetStaticDoor("LeftDoorTop").SetOpen(true);
+                                Helpers.GetStaticDoor("LeftDoorBottom").SetOpen(true);
+
                                 break;
                             // Submerged
                             case 5:

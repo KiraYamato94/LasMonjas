@@ -1222,5 +1222,16 @@ namespace LasMonjas
                 }
             }
         }
+
+        public static StaticDoor GetStaticDoor(string name)
+        {
+            foreach (var doors in Object.FindObjectsOfType(Il2CppType.Of<StaticDoor>()))
+            {
+                if (doors.name != name) continue;
+
+                return doors.CastFast<StaticDoor>();
+            }
+            return null;
+        }
     }
 }
