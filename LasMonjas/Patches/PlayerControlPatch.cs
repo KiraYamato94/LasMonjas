@@ -1639,8 +1639,213 @@ namespace LasMonjas.Patches {
 
         }
 
+        static void monjaFestivalSetTarget() {
+
+            if (!MonjaFestival.monjaFestivalMode || MonjaFestival.monjaFestivalMode && howmanygamemodesareon != 1)
+                return;
+
+            var untargetableAllPlayers = new List<PlayerControl>();
+
+            var untargetableGreenPlayers = new List<PlayerControl>();
+            foreach (PlayerControl player in MonjaFestival.greenTeam) {
+                untargetableGreenPlayers.Add(player);
+            }
+
+            var untargetableCyanPlayers = new List<PlayerControl>();
+            foreach (PlayerControl player in MonjaFestival.cyanTeam) {
+                untargetableCyanPlayers.Add(player);
+            }
+
+            // Prevent killing reviving players
+            if (MonjaFestival.cyanPlayer01IsReviving) {
+                untargetableGreenPlayers.Add(MonjaFestival.cyanPlayer01);
+                untargetableAllPlayers.Add(MonjaFestival.cyanPlayer01);
+            }
+            else {
+                untargetableGreenPlayers.Remove(MonjaFestival.cyanPlayer01);
+                untargetableAllPlayers.Remove(MonjaFestival.cyanPlayer01);
+            }
+            if (MonjaFestival.cyanPlayer02IsReviving) {
+                untargetableGreenPlayers.Add(MonjaFestival.cyanPlayer02);
+                untargetableAllPlayers.Add(MonjaFestival.cyanPlayer02);
+            }
+            else {
+                untargetableGreenPlayers.Remove(MonjaFestival.cyanPlayer02);
+                untargetableAllPlayers.Remove(MonjaFestival.cyanPlayer02);
+            }
+            if (MonjaFestival.cyanPlayer03IsReviving) {
+                untargetableGreenPlayers.Add(MonjaFestival.cyanPlayer03);
+                untargetableAllPlayers.Add(MonjaFestival.cyanPlayer03);
+            }
+            else {
+                untargetableGreenPlayers.Remove(MonjaFestival.cyanPlayer03);
+                untargetableAllPlayers.Remove(MonjaFestival.cyanPlayer03);
+            }
+            if (MonjaFestival.cyanPlayer04IsReviving) {
+                untargetableGreenPlayers.Add(MonjaFestival.cyanPlayer04);
+                untargetableAllPlayers.Add(MonjaFestival.cyanPlayer04);
+            }
+            else {
+                untargetableGreenPlayers.Remove(MonjaFestival.cyanPlayer04);
+                untargetableAllPlayers.Remove(MonjaFestival.cyanPlayer04);
+            }
+            if (MonjaFestival.cyanPlayer05IsReviving) {
+                untargetableGreenPlayers.Add(MonjaFestival.cyanPlayer05);
+                untargetableAllPlayers.Add(MonjaFestival.cyanPlayer05);
+            }
+            else {
+                untargetableGreenPlayers.Remove(MonjaFestival.cyanPlayer05);
+                untargetableAllPlayers.Remove(MonjaFestival.cyanPlayer05);
+            }
+            if (MonjaFestival.cyanPlayer06IsReviving) {
+                untargetableGreenPlayers.Add(MonjaFestival.cyanPlayer06);
+                untargetableAllPlayers.Add(MonjaFestival.cyanPlayer06);
+            }
+            else {
+                untargetableGreenPlayers.Remove(MonjaFestival.cyanPlayer06);
+                untargetableAllPlayers.Remove(MonjaFestival.cyanPlayer06);
+            }
+            if (MonjaFestival.cyanPlayer07IsReviving) {
+                untargetableGreenPlayers.Add(MonjaFestival.cyanPlayer07);
+                untargetableAllPlayers.Add(MonjaFestival.cyanPlayer07);
+            }
+            else {
+                untargetableGreenPlayers.Remove(MonjaFestival.cyanPlayer07);
+                untargetableAllPlayers.Remove(MonjaFestival.cyanPlayer07);
+            }
+            if (MonjaFestival.bigMonjaIsReviving) {
+                untargetableGreenPlayers.Add(MonjaFestival.bigMonjaPlayer);
+                untargetableCyanPlayers.Add(MonjaFestival.bigMonjaPlayer);
+            }
+            else {
+                untargetableGreenPlayers.Remove(MonjaFestival.bigMonjaPlayer);
+                untargetableCyanPlayers.Remove(MonjaFestival.bigMonjaPlayer);
+            }
+
+            if (MonjaFestival.greenPlayer01 != null && MonjaFestival.greenPlayer01 == PlayerControl.LocalPlayer) {
+                MonjaFestival.greenPlayer01currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
+                setPlayerOutline(MonjaFestival.greenPlayer01currentTarget, Color.green);
+            }
+            if (MonjaFestival.greenPlayer02 != null && MonjaFestival.greenPlayer02 == PlayerControl.LocalPlayer) {
+                MonjaFestival.greenPlayer02currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
+                setPlayerOutline(MonjaFestival.greenPlayer02currentTarget, Color.green);
+            }
+            if (MonjaFestival.greenPlayer03 != null && MonjaFestival.greenPlayer03 == PlayerControl.LocalPlayer) {
+                MonjaFestival.greenPlayer03currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
+                setPlayerOutline(MonjaFestival.greenPlayer03currentTarget, Color.green);
+            }
+            if (MonjaFestival.greenPlayer04 != null && MonjaFestival.greenPlayer04 == PlayerControl.LocalPlayer) {
+                MonjaFestival.greenPlayer04currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
+                setPlayerOutline(MonjaFestival.greenPlayer04currentTarget, Color.green);
+            }
+            if (MonjaFestival.greenPlayer05 != null && MonjaFestival.greenPlayer05 == PlayerControl.LocalPlayer) {
+                MonjaFestival.greenPlayer05currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
+                setPlayerOutline(MonjaFestival.greenPlayer05currentTarget, Color.green);
+            }
+            if (MonjaFestival.greenPlayer06 != null && MonjaFestival.greenPlayer06 == PlayerControl.LocalPlayer) {
+                MonjaFestival.greenPlayer06currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
+                setPlayerOutline(MonjaFestival.greenPlayer06currentTarget, Color.green);
+            }
+            if (MonjaFestival.greenPlayer07 != null && MonjaFestival.greenPlayer07 == PlayerControl.LocalPlayer) {
+                MonjaFestival.greenPlayer07currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
+                setPlayerOutline(MonjaFestival.greenPlayer07currentTarget, Color.green);
+            }
+
+            // Prevent killing reviving players
+            if (MonjaFestival.greenPlayer01IsReviving) {
+                untargetableCyanPlayers.Add(MonjaFestival.greenPlayer01);
+                untargetableAllPlayers.Add(MonjaFestival.greenPlayer01);
+            }
+            else {
+                untargetableCyanPlayers.Remove(MonjaFestival.greenPlayer01);
+                untargetableAllPlayers.Remove(MonjaFestival.greenPlayer01);
+            }
+            if (MonjaFestival.greenPlayer02IsReviving) {
+                untargetableCyanPlayers.Add(MonjaFestival.greenPlayer02);
+                untargetableAllPlayers.Add(MonjaFestival.greenPlayer02);
+            }
+            else {
+                untargetableCyanPlayers.Remove(MonjaFestival.greenPlayer02);
+                untargetableAllPlayers.Remove(MonjaFestival.greenPlayer02);
+            }
+            if (MonjaFestival.greenPlayer03IsReviving) {
+                untargetableCyanPlayers.Add(MonjaFestival.greenPlayer03);
+                untargetableAllPlayers.Add(MonjaFestival.greenPlayer03);
+            }
+            else {
+                untargetableCyanPlayers.Remove(MonjaFestival.greenPlayer03);
+                untargetableAllPlayers.Remove(MonjaFestival.greenPlayer03);
+            }
+            if (MonjaFestival.greenPlayer04IsReviving) {
+                untargetableCyanPlayers.Add(MonjaFestival.greenPlayer04);
+                untargetableAllPlayers.Add(MonjaFestival.greenPlayer04);
+            }
+            else {
+                untargetableCyanPlayers.Remove(MonjaFestival.greenPlayer04);
+                untargetableAllPlayers.Remove(MonjaFestival.greenPlayer04);
+            }
+            if (MonjaFestival.greenPlayer05IsReviving) {
+                untargetableCyanPlayers.Add(MonjaFestival.greenPlayer05);
+                untargetableAllPlayers.Add(MonjaFestival.greenPlayer05);
+            }
+            else {
+                untargetableCyanPlayers.Remove(MonjaFestival.greenPlayer05);
+                untargetableAllPlayers.Remove(MonjaFestival.greenPlayer05);
+            }
+            if (MonjaFestival.greenPlayer06IsReviving) {
+                untargetableCyanPlayers.Add(MonjaFestival.greenPlayer06);
+                untargetableAllPlayers.Add(MonjaFestival.greenPlayer06);
+            }
+            else {
+                untargetableCyanPlayers.Remove(MonjaFestival.greenPlayer06);
+                untargetableAllPlayers.Remove(MonjaFestival.greenPlayer06);
+            }
+            if (MonjaFestival.greenPlayer07IsReviving) {
+                untargetableCyanPlayers.Add(MonjaFestival.greenPlayer07);
+                untargetableAllPlayers.Add(MonjaFestival.greenPlayer07);
+            }
+            else {
+                untargetableCyanPlayers.Remove(MonjaFestival.greenPlayer07);
+                untargetableAllPlayers.Remove(MonjaFestival.greenPlayer07);
+            }
+
+            if (MonjaFestival.cyanPlayer01 != null && MonjaFestival.cyanPlayer01 == PlayerControl.LocalPlayer) {
+                MonjaFestival.cyanPlayer01currentTarget = setTarget(untargetablePlayers: untargetableCyanPlayers);
+                setPlayerOutline(MonjaFestival.cyanPlayer01currentTarget, Color.cyan);
+            }
+            if (MonjaFestival.cyanPlayer02 != null && MonjaFestival.cyanPlayer02 == PlayerControl.LocalPlayer) {
+                MonjaFestival.cyanPlayer02currentTarget = setTarget(untargetablePlayers: untargetableCyanPlayers);
+                setPlayerOutline(MonjaFestival.cyanPlayer02currentTarget, Color.cyan);
+            }
+            if (MonjaFestival.cyanPlayer03 != null && MonjaFestival.cyanPlayer03 == PlayerControl.LocalPlayer) {
+                MonjaFestival.cyanPlayer03currentTarget = setTarget(untargetablePlayers: untargetableCyanPlayers);
+                setPlayerOutline(MonjaFestival.cyanPlayer03currentTarget, Color.cyan);
+            }
+            if (MonjaFestival.cyanPlayer04 != null && MonjaFestival.cyanPlayer04 == PlayerControl.LocalPlayer) {
+                MonjaFestival.cyanPlayer04currentTarget = setTarget(untargetablePlayers: untargetableCyanPlayers);
+                setPlayerOutline(MonjaFestival.cyanPlayer04currentTarget, Color.cyan);
+            }
+            if (MonjaFestival.cyanPlayer05 != null && MonjaFestival.cyanPlayer05 == PlayerControl.LocalPlayer) {
+                MonjaFestival.cyanPlayer05currentTarget = setTarget(untargetablePlayers: untargetableCyanPlayers);
+                setPlayerOutline(MonjaFestival.cyanPlayer05currentTarget, Color.cyan);
+            }
+            if (MonjaFestival.cyanPlayer06 != null && MonjaFestival.cyanPlayer06 == PlayerControl.LocalPlayer) {
+                MonjaFestival.cyanPlayer06currentTarget = setTarget(untargetablePlayers: untargetableCyanPlayers);
+                setPlayerOutline(MonjaFestival.cyanPlayer06currentTarget, Color.cyan);
+            }
+            if (MonjaFestival.cyanPlayer07 != null && MonjaFestival.cyanPlayer07 == PlayerControl.LocalPlayer) {
+                MonjaFestival.cyanPlayer07currentTarget = setTarget(untargetablePlayers: untargetableCyanPlayers);
+                setPlayerOutline(MonjaFestival.cyanPlayer07currentTarget, Color.cyan);
+            }
+
+            if (MonjaFestival.bigMonjaPlayer != null && MonjaFestival.bigMonjaPlayer == PlayerControl.LocalPlayer) {
+                MonjaFestival.bigMonjaPlayercurrentTarget = setTarget(untargetablePlayers: untargetableAllPlayers);
+                setPlayerOutline(MonjaFestival.bigMonjaPlayercurrentTarget, Color.grey);
+            }
+        }
+
         public static void Postfix(PlayerControl __instance) {
-            if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) return;
+            if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started || GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return;
 
             if (PlayerControl.LocalPlayer == __instance) {
                 // Update player outlines
@@ -1798,6 +2003,9 @@ namespace LasMonjas.Patches {
 
                 // ZombieLaboratory
                 zombieLaboratorySetTarget();
+
+                // Monja Festival
+                monjaFestivalSetTarget();
             }
         }
     }
@@ -2276,7 +2484,7 @@ namespace LasMonjas.Patches {
                 }
                 new Tased(Modifiers.electricianDuration, __instance);
             }
-            
+
             if (howmanygamemodesareon == 1) {
                 // Capture the flag revive player
                 if (CaptureTheFlag.captureTheFlagMode) {
@@ -2442,7 +2650,7 @@ namespace LasMonjas.Patches {
                             else if (CaptureTheFlag.redplayer07 != null && target.PlayerId == CaptureTheFlag.redplayer07.PlayerId) {
                                 CaptureTheFlag.redplayer07IsReviving = true;
                             }
-                            Helpers.alphaPlayer(true, player.PlayerId);                            
+                            Helpers.alphaPlayer(true, player.PlayerId);
                             HudManager.Instance.StartCoroutine(Effects.Lerp(CaptureTheFlag.reviveTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     if (CaptureTheFlag.redplayer01 != null && target.PlayerId == CaptureTheFlag.redplayer01.PlayerId) {
@@ -2466,7 +2674,7 @@ namespace LasMonjas.Patches {
                                     else if (CaptureTheFlag.redplayer07 != null && target.PlayerId == CaptureTheFlag.redplayer07.PlayerId) {
                                         CaptureTheFlag.redplayer07IsReviving = false;
                                     }
-                                    Helpers.alphaPlayer(false, player.PlayerId);                                   
+                                    Helpers.alphaPlayer(false, player.PlayerId);
                                 }
                             })));
 
@@ -2543,7 +2751,7 @@ namespace LasMonjas.Patches {
                             else if (CaptureTheFlag.blueplayer07 != null && target.PlayerId == CaptureTheFlag.blueplayer07.PlayerId) {
                                 CaptureTheFlag.blueplayer07IsReviving = true;
                             }
-                            Helpers.alphaPlayer(true, player.PlayerId);                           
+                            Helpers.alphaPlayer(true, player.PlayerId);
                             HudManager.Instance.StartCoroutine(Effects.Lerp(CaptureTheFlag.reviveTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     if (CaptureTheFlag.blueplayer01 != null && target.PlayerId == CaptureTheFlag.blueplayer01.PlayerId) {
@@ -2567,7 +2775,7 @@ namespace LasMonjas.Patches {
                                     else if (CaptureTheFlag.blueplayer07 != null && target.PlayerId == CaptureTheFlag.blueplayer07.PlayerId) {
                                         CaptureTheFlag.blueplayer07IsReviving = false;
                                     }
-                                    Helpers.alphaPlayer(false, player.PlayerId);                                    
+                                    Helpers.alphaPlayer(false, player.PlayerId);
                                 }
                             })));
 
@@ -2645,7 +2853,7 @@ namespace LasMonjas.Patches {
                             else if (PoliceAndThief.policeplayer06 != null && target.PlayerId == PoliceAndThief.policeplayer06.PlayerId) {
                                 PoliceAndThief.policeplayer06IsReviving = true;
                             }
-                            Helpers.alphaPlayer(true, player.PlayerId);                            
+                            Helpers.alphaPlayer(true, player.PlayerId);
                             HudManager.Instance.StartCoroutine(Effects.Lerp(PoliceAndThief.policeReviveTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     if (PoliceAndThief.policeplayer01 != null && target.PlayerId == PoliceAndThief.policeplayer01.PlayerId) {
@@ -2666,7 +2874,7 @@ namespace LasMonjas.Patches {
                                     else if (PoliceAndThief.policeplayer06 != null && target.PlayerId == PoliceAndThief.policeplayer06.PlayerId) {
                                         PoliceAndThief.policeplayer06IsReviving = false;
                                     }
-                                    Helpers.alphaPlayer(false, player.PlayerId);                                    
+                                    Helpers.alphaPlayer(false, player.PlayerId);
                                 }
                             })));
 
@@ -4083,14 +4291,459 @@ namespace LasMonjas.Patches {
                         }
                     }
                 }
-            } else {
+
+                // Monja Festival
+                if (MonjaFestival.monjaFestivalMode) {
+                    var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
+                    body.transform.position = new Vector3(50, 50, 1);
+
+                    float AngleStep = 360.0f;
+                    float Offset = 0.15f;
+                    if (MonjaFestival.bigMonjaPlayer != null && MonjaFestival.bigMonjaPlayer.PlayerId == target.PlayerId) {
+                        MonjaFestival.resetBigMonja();
+                        MonjaFestival.bigMonjaIsReviving = true;
+                        AngleStep = AngleStep / MonjaFestival.bigMonjaPlayerItems;
+                        for (int i = 0; i < MonjaFestival.bigMonjaPlayerItems; i++) {
+                            GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreyMonja, PlayerControl.LocalPlayer.transform.parent);
+                            littleMonja.transform.position = new Vector3(MonjaFestival.bigMonjaPlayer.transform.position.x + Offset, MonjaFestival.bigMonjaPlayer.transform.position.y + Offset, 0.5f);
+                            littleMonja.transform.RotateAround(MonjaFestival.bigMonjaPlayer.transform.position, Vector3.forward, AngleStep * i);
+                            littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
+                            MonjaFestival.littleMonjasDroppedCount += 1;
+                            MonjaFestival.bigMonjaSpawns.Add(littleMonja);
+                        }                        
+                        MonjaFestival.bigMonjaPlayerItems = 0;
+                        MonjaFestival.bigMonjaPlayerDeliverCount.text = $"{MonjaFestival.bigMonjaPlayerItems} / 10"; 
+                        Helpers.alphaPlayer(true, MonjaFestival.bigMonjaPlayer.PlayerId);
+                        HudManager.Instance.StartCoroutine(Effects.Lerp(MonjaFestival.reviveTime, new Action<float>((p) => {
+                            if (p == 1f && MonjaFestival.bigMonjaPlayer != null) {
+                                MonjaFestival.bigMonjaIsReviving = false;
+                                Helpers.alphaPlayer(false, MonjaFestival.bigMonjaPlayer.PlayerId);
+                            }
+                        })));
+                        HudManager.Instance.StartCoroutine(Effects.Lerp(MonjaFestival.reviveTime - MonjaFestival.invincibilityTimeAfterRevive, new Action<float>((p) => {
+                            if (p == 1f && MonjaFestival.bigMonjaPlayer != null) {
+                                MonjaFestival.bigMonjaPlayer.Revive();
+                                switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
+                                    // Skeld
+                                    case 0:
+                                        if (activatedSensei) {
+                                            MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-12f, 7f, PlayerControl.LocalPlayer.transform.position.z);
+                                        }
+                                        else {
+                                            MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(4.5f, -7.25f, PlayerControl.LocalPlayer.transform.position.z);
+                                        }
+                                        break;
+                                    // MiraHQ
+                                    case 1:
+                                        MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-4.45f, 2f, PlayerControl.LocalPlayer.transform.position.z);
+                                        break;
+                                    // Polus
+                                    case 2:
+                                        MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(21.75f, -25.15f, PlayerControl.LocalPlayer.transform.position.z);
+                                        break;
+                                    // Dleks
+                                    case 3:
+                                        MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-4.5f, -7.25f, PlayerControl.LocalPlayer.transform.position.z);
+                                        break;
+                                    // Airship
+                                    case 4:
+                                        MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(6.35f, 2.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                        break;
+                                    // Submerged
+                                    case 5:
+                                        if (MonjaFestival.bigMonjaPlayer.transform.position.y > 0) {
+                                            MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(5.75f, 31.25f, MonjaFestival.bigMonjaPlayer.transform.position.z);
+                                        }
+                                        else {
+                                            MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-4.25f, -33.5f, MonjaFestival.bigMonjaPlayer.transform.position.z);
+                                        }
+                                        break;
+                                }
+                                DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
+                                if (body != null) UnityEngine.Object.Destroy(body.gameObject);
+                                if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
+                            }
+
+                        })));
+
+                    }
+
+                    foreach (PlayerControl player in MonjaFestival.greenTeam) {
+                        if (player.PlayerId == target.PlayerId) {
+                            if (MonjaFestival.greenPlayer01 != null && target.PlayerId == MonjaFestival.greenPlayer01.PlayerId) {
+                                MonjaFestival.greenPlayer01IsReviving = true;
+                                AngleStep = AngleStep / MonjaFestival.greenPlayer01Items;
+                                for (int i = 0; i < MonjaFestival.greenPlayer01Items; i++) {
+                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreenMonja, PlayerControl.LocalPlayer.transform.parent);
+                                    littleMonja.transform.position = new Vector3(MonjaFestival.greenPlayer01.transform.position.x + Offset, MonjaFestival.greenPlayer01.transform.position.y + Offset, 0.5f);
+                                    littleMonja.transform.RotateAround(MonjaFestival.greenPlayer01.transform.position, Vector3.forward, AngleStep * i);
+                                    littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
+                                    MonjaFestival.littleMonjasDroppedCount += 1;
+                                    MonjaFestival.bigMonjaSpawns.Add(littleMonja);
+                                }
+                                MonjaFestival.greenPlayer01Items = 0;
+                                MonjaFestival.greenmonja01DeliverCount.text = $"{MonjaFestival.greenPlayer01Items} / 3";
+                                MonjaFestival.handsGreen01.GetComponent<SpriteRenderer>().sprite = null;
+                            }
+                            else if (MonjaFestival.greenPlayer02 != null && target.PlayerId == MonjaFestival.greenPlayer02.PlayerId) {
+                                MonjaFestival.greenPlayer02IsReviving = true;
+                                AngleStep = AngleStep / MonjaFestival.greenPlayer02Items;
+                                for (int i = 0; i < MonjaFestival.greenPlayer02Items; i++) {
+                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreenMonja, PlayerControl.LocalPlayer.transform.parent);
+                                    littleMonja.transform.position = new Vector3(MonjaFestival.greenPlayer02.transform.position.x + Offset, MonjaFestival.greenPlayer02.transform.position.y + Offset, 0.5f);
+                                    littleMonja.transform.RotateAround(MonjaFestival.greenPlayer02.transform.position, Vector3.forward, AngleStep * i);
+                                    littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
+                                    MonjaFestival.littleMonjasDroppedCount += 1;
+                                    MonjaFestival.bigMonjaSpawns.Add(littleMonja);
+                                }
+                                MonjaFestival.greenPlayer02Items = 0;
+                                MonjaFestival.greenmonja02DeliverCount.text = $"{MonjaFestival.greenPlayer02Items} / 3";
+                                MonjaFestival.handsGreen02.GetComponent<SpriteRenderer>().sprite = null;
+                            }
+                            else if (MonjaFestival.greenPlayer03 != null && target.PlayerId == MonjaFestival.greenPlayer03.PlayerId) {
+                                MonjaFestival.greenPlayer03IsReviving = true;
+                                AngleStep = AngleStep / MonjaFestival.greenPlayer03Items;
+                                for (int i = 0; i < MonjaFestival.greenPlayer03Items; i++) {
+                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreenMonja, PlayerControl.LocalPlayer.transform.parent);
+                                    littleMonja.transform.position = new Vector3(MonjaFestival.greenPlayer03.transform.position.x + Offset, MonjaFestival.greenPlayer03.transform.position.y + Offset, 0.5f);
+                                    littleMonja.transform.RotateAround(MonjaFestival.greenPlayer03.transform.position, Vector3.forward, AngleStep * i);
+                                    littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
+                                    MonjaFestival.littleMonjasDroppedCount += 1;
+                                    MonjaFestival.bigMonjaSpawns.Add(littleMonja);
+                                }                                
+                                MonjaFestival.greenPlayer03Items = 0;
+                                MonjaFestival.greenmonja03DeliverCount.text = $"{MonjaFestival.greenPlayer03Items} / 3";
+                                MonjaFestival.handsGreen03.GetComponent<SpriteRenderer>().sprite = null;
+                            }
+                            else if (MonjaFestival.greenPlayer04 != null && target.PlayerId == MonjaFestival.greenPlayer04.PlayerId) {
+                                MonjaFestival.greenPlayer04IsReviving = true;
+                                AngleStep = AngleStep / MonjaFestival.greenPlayer04Items;
+                                for (int i = 0; i < MonjaFestival.greenPlayer04Items; i++) {
+                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreenMonja, PlayerControl.LocalPlayer.transform.parent);
+                                    littleMonja.transform.position = new Vector3(MonjaFestival.greenPlayer04.transform.position.x + Offset, MonjaFestival.greenPlayer04.transform.position.y + Offset, 0.5f);
+                                    littleMonja.transform.RotateAround(MonjaFestival.greenPlayer04.transform.position, Vector3.forward, AngleStep * i);
+                                    littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
+                                    MonjaFestival.littleMonjasDroppedCount += 1;
+                                    MonjaFestival.bigMonjaSpawns.Add(littleMonja);
+                                }                                
+                                MonjaFestival.greenPlayer04Items = 0;
+                                MonjaFestival.greenmonja04DeliverCount.text = $"{MonjaFestival.greenPlayer04Items} / 3";
+                                MonjaFestival.handsGreen04.GetComponent<SpriteRenderer>().sprite = null;
+                            }
+                            else if (MonjaFestival.greenPlayer05 != null && target.PlayerId == MonjaFestival.greenPlayer05.PlayerId) {
+                                MonjaFestival.greenPlayer05IsReviving = true;
+                                AngleStep = AngleStep / MonjaFestival.greenPlayer05Items;
+                                for (int i = 0; i < MonjaFestival.greenPlayer05Items; i++) {
+                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreenMonja, PlayerControl.LocalPlayer.transform.parent);
+                                    littleMonja.transform.position = new Vector3(MonjaFestival.greenPlayer05.transform.position.x + Offset, MonjaFestival.greenPlayer05.transform.position.y + Offset, 0.5f);
+                                    littleMonja.transform.RotateAround(MonjaFestival.greenPlayer05.transform.position, Vector3.forward, AngleStep * i);
+                                    littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
+                                    MonjaFestival.littleMonjasDroppedCount += 1;
+                                    MonjaFestival.bigMonjaSpawns.Add(littleMonja);
+                                }                                                         
+                                MonjaFestival.greenPlayer05Items = 0;
+                                MonjaFestival.greenmonja05DeliverCount.text = $"{MonjaFestival.greenPlayer05Items} / 3";
+                                MonjaFestival.handsGreen05.GetComponent<SpriteRenderer>().sprite = null;
+                            }
+                            else if (MonjaFestival.greenPlayer06 != null && target.PlayerId == MonjaFestival.greenPlayer06.PlayerId) {
+                                MonjaFestival.greenPlayer06IsReviving = true;
+                                AngleStep = AngleStep / MonjaFestival.greenPlayer06Items;
+                                for (int i = 0; i < MonjaFestival.greenPlayer06Items; i++) {
+                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreenMonja, PlayerControl.LocalPlayer.transform.parent);
+                                    littleMonja.transform.position = new Vector3(MonjaFestival.greenPlayer06.transform.position.x + Offset, MonjaFestival.greenPlayer06.transform.position.y + Offset, 0.5f);
+                                    littleMonja.transform.RotateAround(MonjaFestival.greenPlayer06.transform.position, Vector3.forward, AngleStep * i);
+                                    littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
+                                    MonjaFestival.littleMonjasDroppedCount += 1;
+                                    MonjaFestival.bigMonjaSpawns.Add(littleMonja);
+                                }                                                            
+                                MonjaFestival.greenPlayer06Items = 0;
+                                MonjaFestival.greenmonja06DeliverCount.text = $"{MonjaFestival.greenPlayer06Items} / 3";
+                                MonjaFestival.handsGreen06.GetComponent<SpriteRenderer>().sprite = null;
+                            }
+                            else if (MonjaFestival.greenPlayer07 != null && target.PlayerId == MonjaFestival.greenPlayer07.PlayerId) {
+                                MonjaFestival.greenPlayer07IsReviving = true;
+                                AngleStep = AngleStep / MonjaFestival.greenPlayer07Items;
+                                for (int i = 0; i < MonjaFestival.greenPlayer07Items; i++) {
+                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreenMonja, PlayerControl.LocalPlayer.transform.parent);
+                                    littleMonja.transform.position = new Vector3(MonjaFestival.greenPlayer07.transform.position.x + Offset, MonjaFestival.greenPlayer07.transform.position.y + Offset, 0.5f);
+                                    littleMonja.transform.RotateAround(MonjaFestival.greenPlayer07.transform.position, Vector3.forward, AngleStep * i);
+                                    littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
+                                    MonjaFestival.littleMonjasDroppedCount += 1;
+                                    MonjaFestival.bigMonjaSpawns.Add(littleMonja);
+                                }                                                             
+                                MonjaFestival.greenPlayer07Items = 0;
+                                MonjaFestival.greenmonja07DeliverCount.text = $"{MonjaFestival.greenPlayer07Items} / 3";
+                                MonjaFestival.handsGreen07.GetComponent<SpriteRenderer>().sprite = null;
+                            }
+                            Helpers.alphaPlayer(true, player.PlayerId);
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(MonjaFestival.reviveTime, new Action<float>((p) => {
+                                if (p == 1f && player != null) {
+                                    if (MonjaFestival.greenPlayer01 != null && target.PlayerId == MonjaFestival.greenPlayer01.PlayerId) {
+                                        MonjaFestival.greenPlayer01IsReviving = false;
+                                    }
+                                    else if (MonjaFestival.greenPlayer02 != null && target.PlayerId == MonjaFestival.greenPlayer02.PlayerId) {
+                                        MonjaFestival.greenPlayer02IsReviving = false;
+                                    }
+                                    else if (MonjaFestival.greenPlayer03 != null && target.PlayerId == MonjaFestival.greenPlayer03.PlayerId) {
+                                        MonjaFestival.greenPlayer03IsReviving = false;
+                                    }
+                                    else if (MonjaFestival.greenPlayer04 != null && target.PlayerId == MonjaFestival.greenPlayer04.PlayerId) {
+                                        MonjaFestival.greenPlayer04IsReviving = false;
+                                    }
+                                    else if (MonjaFestival.greenPlayer05 != null && target.PlayerId == MonjaFestival.greenPlayer05.PlayerId) {
+                                        MonjaFestival.greenPlayer05IsReviving = false;
+                                    }
+                                    else if (MonjaFestival.greenPlayer06 != null && target.PlayerId == MonjaFestival.greenPlayer06.PlayerId) {
+                                        MonjaFestival.greenPlayer06IsReviving = false;
+                                    }
+                                    else if (MonjaFestival.greenPlayer07 != null && target.PlayerId == MonjaFestival.greenPlayer07.PlayerId) {
+                                        MonjaFestival.greenPlayer07IsReviving = false;
+                                    }
+                                    Helpers.alphaPlayer(false, player.PlayerId);
+                                }
+                            })));
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(MonjaFestival.reviveTime - MonjaFestival.invincibilityTimeAfterRevive, new Action<float>((p) => {
+                                if (p == 1f && player != null) {
+                                    player.Revive();
+                                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
+                                        // Skeld
+                                        case 0:
+                                            if (activatedSensei) {
+                                                player.transform.position = new Vector3(-10.5f, -10, player.transform.position.z);
+                                            }
+                                            else {
+                                                player.transform.position = new Vector3(-9f, -2.5f, player.transform.position.z);
+                                            }
+                                            break;
+                                        // MiraHQ
+                                        case 1:
+                                            player.transform.position = new Vector3(23f, 4.75f, player.transform.position.z);
+                                            break;
+                                        // Polus
+                                        case 2:
+                                            player.transform.position = new Vector3(31.5f, -7.75f, player.transform.position.z);
+                                            break;
+                                        // Dleks
+                                        case 3:
+                                            player.transform.position = new Vector3(9f, -2.5f, player.transform.position.z);
+                                            break;
+                                        // Airship
+                                        case 4:
+                                            player.transform.position = new Vector3(-10.15f, -6.75f, player.transform.position.z);
+                                            break;
+                                        // Submerged
+                                        case 5:
+                                            if (player.transform.position.y > 0) {
+                                                player.transform.position = new Vector3(-12.25f, 18.5f, player.transform.position.z);
+                                            }
+                                            else {
+                                                player.transform.position = new Vector3(-14.5f, -34.35f, player.transform.position.z);
+                                            }
+                                            break;
+                                    }
+                                    DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
+                                    if (body != null) UnityEngine.Object.Destroy(body.gameObject);
+                                    if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
+                                }
+
+                            })));
+
+                        }
+                    }
+                    foreach (PlayerControl player in MonjaFestival.cyanTeam) { 
+                        if (player.PlayerId == target.PlayerId) {
+
+                            if (MonjaFestival.cyanPlayer01 != null && target.PlayerId == MonjaFestival.cyanPlayer01.PlayerId) {
+                                MonjaFestival.cyanPlayer01IsReviving = true;
+                                AngleStep = AngleStep / MonjaFestival.cyanPlayer01Items;
+                                for (int i = 0; i < MonjaFestival.cyanPlayer01Items; i++) {
+                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorCyanMonja, PlayerControl.LocalPlayer.transform.parent);
+                                    littleMonja.transform.position = new Vector3(MonjaFestival.cyanPlayer01.transform.position.x + Offset, MonjaFestival.cyanPlayer01.transform.position.y + Offset, 0.5f);
+                                    littleMonja.transform.RotateAround(MonjaFestival.cyanPlayer01.transform.position, Vector3.forward, AngleStep * i);
+                                    littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
+                                    MonjaFestival.littleMonjasDroppedCount += 1;
+                                    MonjaFestival.bigMonjaSpawns.Add(littleMonja);
+                                }
+                                MonjaFestival.cyanPlayer01Items = 0;
+                                MonjaFestival.cyanPlayer01DeliverCount.text = $"{MonjaFestival.cyanPlayer01Items} / 3";
+                                MonjaFestival.handsCyan01.GetComponent<SpriteRenderer>().sprite = null;
+                            }
+                            else if (MonjaFestival.cyanPlayer02 != null && target.PlayerId == MonjaFestival.cyanPlayer02.PlayerId) {
+                                MonjaFestival.cyanPlayer02IsReviving = true;
+                                AngleStep = AngleStep / MonjaFestival.cyanPlayer02Items;
+                                for (int i = 0; i < MonjaFestival.cyanPlayer02Items; i++) {
+                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorCyanMonja, PlayerControl.LocalPlayer.transform.parent);
+                                    littleMonja.transform.position = new Vector3(MonjaFestival.cyanPlayer02.transform.position.x + Offset, MonjaFestival.cyanPlayer02.transform.position.y + Offset, 0.5f);
+                                    littleMonja.transform.RotateAround(MonjaFestival.cyanPlayer02.transform.position, Vector3.forward, AngleStep * i);
+                                    littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
+                                    MonjaFestival.littleMonjasDroppedCount += 1;
+                                    MonjaFestival.bigMonjaSpawns.Add(littleMonja);
+                                }
+                                MonjaFestival.cyanPlayer02Items = 0;
+                                MonjaFestival.cyanPlayer02DeliverCount.text = $"{MonjaFestival.cyanPlayer02Items} / 3";
+                                MonjaFestival.handsCyan02.GetComponent<SpriteRenderer>().sprite = null;
+                            }
+                            else if (MonjaFestival.cyanPlayer03 != null && target.PlayerId == MonjaFestival.cyanPlayer03.PlayerId) {
+                                MonjaFestival.cyanPlayer03IsReviving = true;
+                                AngleStep = AngleStep / MonjaFestival.cyanPlayer03Items;
+                                for (int i = 0; i < MonjaFestival.cyanPlayer03Items; i++) {
+                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorCyanMonja, PlayerControl.LocalPlayer.transform.parent);
+                                    littleMonja.transform.position = new Vector3(MonjaFestival.cyanPlayer03.transform.position.x + Offset, MonjaFestival.cyanPlayer03.transform.position.y + Offset, 0.5f);
+                                    littleMonja.transform.RotateAround(MonjaFestival.cyanPlayer03.transform.position, Vector3.forward, AngleStep * i);
+                                    littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
+                                    MonjaFestival.littleMonjasDroppedCount += 1;
+                                    MonjaFestival.bigMonjaSpawns.Add(littleMonja);
+                                }                                
+                                MonjaFestival.cyanPlayer03Items = 0;
+                                MonjaFestival.cyanPlayer03DeliverCount.text = $"{MonjaFestival.cyanPlayer03Items} / 3";
+                                MonjaFestival.handsCyan03.GetComponent<SpriteRenderer>().sprite = null;
+                            }
+                            else if (MonjaFestival.cyanPlayer04 != null && target.PlayerId == MonjaFestival.cyanPlayer04.PlayerId) {
+                                MonjaFestival.cyanPlayer04IsReviving = true;
+                                AngleStep = AngleStep / MonjaFestival.cyanPlayer04Items;
+                                for (int i = 0; i < MonjaFestival.cyanPlayer04Items; i++) {
+                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorCyanMonja, PlayerControl.LocalPlayer.transform.parent);
+                                    littleMonja.transform.position = new Vector3(MonjaFestival.cyanPlayer04.transform.position.x + Offset, MonjaFestival.cyanPlayer04.transform.position.y + Offset, 0.5f);
+                                    littleMonja.transform.RotateAround(MonjaFestival.cyanPlayer04.transform.position, Vector3.forward, AngleStep * i);
+                                    littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
+                                    MonjaFestival.littleMonjasDroppedCount += 1;
+                                    MonjaFestival.bigMonjaSpawns.Add(littleMonja);
+                                }                                
+                                MonjaFestival.cyanPlayer04Items = 0;
+                                MonjaFestival.cyanPlayer04DeliverCount.text = $"{MonjaFestival.cyanPlayer04Items} / 3";
+                                MonjaFestival.handsCyan04.GetComponent<SpriteRenderer>().sprite = null;
+                            }
+                            else if (MonjaFestival.cyanPlayer05 != null && target.PlayerId == MonjaFestival.cyanPlayer05.PlayerId) {
+                                MonjaFestival.cyanPlayer05IsReviving = true;
+                                AngleStep = AngleStep / MonjaFestival.cyanPlayer05Items;
+                                for (int i = 0; i < MonjaFestival.cyanPlayer05Items; i++) {
+                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorCyanMonja, PlayerControl.LocalPlayer.transform.parent);
+                                    littleMonja.transform.position = new Vector3(MonjaFestival.cyanPlayer05.transform.position.x + Offset, MonjaFestival.cyanPlayer05.transform.position.y + Offset, 0.5f);
+                                    littleMonja.transform.RotateAround(MonjaFestival.cyanPlayer05.transform.position, Vector3.forward, AngleStep * i);
+                                    littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
+                                    MonjaFestival.littleMonjasDroppedCount += 1;
+                                    MonjaFestival.bigMonjaSpawns.Add(littleMonja);
+                                }                                
+                                MonjaFestival.cyanPlayer05Items = 0;
+                                MonjaFestival.cyanPlayer05DeliverCount.text = $"{MonjaFestival.cyanPlayer05Items} / 3";
+                                MonjaFestival.handsCyan05.GetComponent<SpriteRenderer>().sprite = null;
+                            }
+                            else if (MonjaFestival.cyanPlayer06 != null && target.PlayerId == MonjaFestival.cyanPlayer06.PlayerId) {
+                                MonjaFestival.cyanPlayer06IsReviving = true;
+                                AngleStep = AngleStep / MonjaFestival.cyanPlayer06Items;
+                                for (int i = 0; i < MonjaFestival.cyanPlayer06Items; i++) {
+                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorCyanMonja, PlayerControl.LocalPlayer.transform.parent);
+                                    littleMonja.transform.position = new Vector3(MonjaFestival.cyanPlayer06.transform.position.x + Offset, MonjaFestival.cyanPlayer06.transform.position.y + Offset, 0.5f);
+                                    littleMonja.transform.RotateAround(MonjaFestival.cyanPlayer06.transform.position, Vector3.forward, AngleStep * i);
+                                    littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
+                                    MonjaFestival.littleMonjasDroppedCount += 1;
+                                    MonjaFestival.bigMonjaSpawns.Add(littleMonja);
+                                }                                
+                                MonjaFestival.cyanPlayer06Items = 0;
+                                MonjaFestival.cyanPlayer06DeliverCount.text = $"{MonjaFestival.cyanPlayer06Items} / 3";
+                                MonjaFestival.handsCyan06.GetComponent<SpriteRenderer>().sprite = null;
+                            }
+                            else if (MonjaFestival.cyanPlayer07 != null && target.PlayerId == MonjaFestival.cyanPlayer07.PlayerId) {
+                                MonjaFestival.cyanPlayer07IsReviving = true;
+                                AngleStep = AngleStep / MonjaFestival.cyanPlayer07Items;
+                                for (int i = 0; i < MonjaFestival.cyanPlayer07Items; i++) {
+                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorCyanMonja, PlayerControl.LocalPlayer.transform.parent);
+                                    littleMonja.transform.position = new Vector3(MonjaFestival.cyanPlayer07.transform.position.x + Offset, MonjaFestival.cyanPlayer07.transform.position.y + Offset, 0.5f);
+                                    littleMonja.transform.RotateAround(MonjaFestival.cyanPlayer07.transform.position, Vector3.forward, AngleStep * i);
+                                    littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
+                                    MonjaFestival.littleMonjasDroppedCount += 1;
+                                    MonjaFestival.bigMonjaSpawns.Add(littleMonja);
+                                }                                
+                                MonjaFestival.cyanPlayer07Items = 0;
+                                MonjaFestival.cyanPlayer07DeliverCount.text = $"{MonjaFestival.cyanPlayer07Items} / 3";
+                                MonjaFestival.handsCyan07.GetComponent<SpriteRenderer>().sprite = null;
+                            }
+                            Helpers.alphaPlayer(true, player.PlayerId);
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(MonjaFestival.reviveTime, new Action<float>((p) => {
+                                if (p == 1f && player != null) {
+                                    if (MonjaFestival.cyanPlayer01 != null && target.PlayerId == MonjaFestival.cyanPlayer01.PlayerId) {
+                                        MonjaFestival.cyanPlayer01IsReviving = false;
+                                    }
+                                    else if (MonjaFestival.cyanPlayer02 != null && target.PlayerId == MonjaFestival.cyanPlayer02.PlayerId) {
+                                        MonjaFestival.cyanPlayer02IsReviving = false;
+                                    }
+                                    else if (MonjaFestival.cyanPlayer03 != null && target.PlayerId == MonjaFestival.cyanPlayer03.PlayerId) {
+                                        MonjaFestival.cyanPlayer03IsReviving = false;
+                                    }
+                                    else if (MonjaFestival.cyanPlayer04 != null && target.PlayerId == MonjaFestival.cyanPlayer04.PlayerId) {
+                                        MonjaFestival.cyanPlayer04IsReviving = false;
+                                    }
+                                    else if (MonjaFestival.cyanPlayer05 != null && target.PlayerId == MonjaFestival.cyanPlayer05.PlayerId) {
+                                        MonjaFestival.cyanPlayer05IsReviving = false;
+                                    }
+                                    else if (MonjaFestival.cyanPlayer06 != null && target.PlayerId == MonjaFestival.cyanPlayer06.PlayerId) {
+                                        MonjaFestival.cyanPlayer06IsReviving = false;
+                                    }
+                                    else if (MonjaFestival.cyanPlayer07 != null && target.PlayerId == MonjaFestival.cyanPlayer07.PlayerId) {
+                                        MonjaFestival.cyanPlayer07IsReviving = false;
+                                    }
+                                    Helpers.alphaPlayer(false, player.PlayerId);
+                                }
+                            })));
+
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(MonjaFestival.reviveTime - MonjaFestival.invincibilityTimeAfterRevive, new Action<float>((p) => {
+                                if (p == 1f && player != null) {
+                                    player.Revive();
+                                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
+                                        // Skeld
+                                        case 0:
+                                            if (activatedSensei) {
+                                                player.transform.position = new Vector3(7.4f, -5f, player.transform.position.z);
+                                            }
+                                            else {
+                                                player.transform.position = new Vector3(5f, -15.5f, player.transform.position.z);
+                                            }
+                                            break;
+                                        // MiraHQ
+                                        case 1:
+                                            player.transform.position = new Vector3(8.5f, 13f, player.transform.position.z);
+                                            break;
+                                        // Polus
+                                        case 2:
+                                            player.transform.position = new Vector3(2.35f, -23.75f, player.transform.position.z);
+                                            break;
+                                        // Dleks
+                                        case 3:
+                                            player.transform.position = new Vector3(-5f, -15.5f, player.transform.position.z);
+                                            break;
+                                        // Airship
+                                        case 4:
+                                            player.transform.position = new Vector3(38.25f, 0f, player.transform.position.z);
+                                            break;
+                                        // Submerged
+                                        case 5:
+                                            if (player.transform.position.y > 0) {
+                                                player.transform.position = new Vector3(0f, 33.5f, player.transform.position.z);
+                                            }
+                                            else {
+                                                player.transform.position = new Vector3(-8.5f, -39.5f, player.transform.position.z);
+                                            }
+                                            break;
+                                    }
+                                    DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
+                                    if (body != null) UnityEngine.Object.Destroy(body.gameObject);
+                                    if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
+                                }
+
+                            })));
+
+                        }
+                    }
+                }
+            }
+            else {
                 // Check alive players for disable sabotage button if game result in 1vs1 special condition (impostor + rebel / impostor + captain / rebel + captain)
                 alivePlayers = 0;
                 foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
                     if (!player.Data.IsDead) {
                         alivePlayers += 1;
                     }
-                }               
+                }
             }          
         }
     }

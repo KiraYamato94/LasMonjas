@@ -59,6 +59,9 @@ namespace LasMonjas.Patches
             if (BattleRoyale.battleRoyaleMode) {
                 howmanygamemodesareon += 1;
             }
+            if (MonjaFestival.monjaFestivalMode) {
+                howmanygamemodesareon += 1;
+            }
 
             // Assign roles only if the game won't be a custom gamemode
             if (howmanygamemodesareon != 1) {
@@ -815,6 +818,71 @@ namespace LasMonjas.Patches
                             myGamemodeList.Add(myBattlePink);
                             myBattlePink += 1;
                         }
+                    }
+                }
+                else if (MonjaFestival.monjaFestivalMode) {
+                    // Monja Festival   
+                    myGamemodeList.Clear();
+                    bool oddNumber = false;
+                    if (Mathf.Ceil(PlayerControl.AllPlayerControls.Count) % 2 != 0) {
+                        oddNumber = true;
+                        setRoleToRandomPlayer((byte)RoleId.BigMonja, modifiers);
+                    }
+                    int myMonjaGreen = 1;
+                    while (myGamemodeList.Count < (Mathf.Round(PlayerControl.AllPlayerControls.Count / 2))) {
+                        switch (myMonjaGreen) {
+                            case 1:
+                                setRoleToRandomPlayer((byte)RoleId.GreenMonjaPlayer01, modifiers);
+                                break;
+                            case 2:
+                                setRoleToRandomPlayer((byte)RoleId.GreenMonjaPlayer02, modifiers);
+                                break;
+                            case 3:
+                                setRoleToRandomPlayer((byte)RoleId.GreenMonjaPlayer03, modifiers);
+                                break;
+                            case 4:
+                                setRoleToRandomPlayer((byte)RoleId.GreenMonjaPlayer04, modifiers);
+                                break;
+                            case 5:
+                                setRoleToRandomPlayer((byte)RoleId.GreenMonjaPlayer05, modifiers);
+                                break;
+                            case 6:
+                                setRoleToRandomPlayer((byte)RoleId.GreenMonjaPlayer06, modifiers);
+                                break;
+                            case 7:
+                                setRoleToRandomPlayer((byte)RoleId.GreenMonjaPlayer07, modifiers);
+                                break;
+                        }
+                        myGamemodeList.Add(myMonjaGreen);
+                        myMonjaGreen += 1;
+                    }
+                    int myMonjaPink = 9;
+                    while (!oddNumber && myGamemodeList.Count < PlayerControl.AllPlayerControls.Count || oddNumber && myGamemodeList.Count < PlayerControl.AllPlayerControls.Count - 1) {
+                        switch (myMonjaPink) {
+                            case 9:
+                                setRoleToRandomPlayer((byte)RoleId.CyanPlayer01, modifiers);
+                                break;
+                            case 10:
+                                setRoleToRandomPlayer((byte)RoleId.CyanPlayer02, modifiers);
+                                break;
+                            case 11:
+                                setRoleToRandomPlayer((byte)RoleId.CyanPlayer03, modifiers);
+                                break;
+                            case 12:
+                                setRoleToRandomPlayer((byte)RoleId.CyanPlayer04, modifiers);
+                                break;
+                            case 13:
+                                setRoleToRandomPlayer((byte)RoleId.CyanPlayer05, modifiers);
+                                break;
+                            case 14:
+                                setRoleToRandomPlayer((byte)RoleId.CyanPlayer06, modifiers);
+                                break;
+                            case 15:
+                                setRoleToRandomPlayer((byte)RoleId.CyanPlayer07, modifiers);
+                                break;
+                        }
+                        myGamemodeList.Add(myMonjaPink);
+                        myMonjaPink += 1;
                     }
                 }
             }

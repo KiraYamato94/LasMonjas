@@ -14,6 +14,7 @@ using static LasMonjas.MapOptions;
 using LasMonjas.Core;
 using static LasMonjas.HudManagerStartPatch;
 using AmongUs.GameOptions;
+using System.Collections;
 
 namespace LasMonjas.Patches {
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
@@ -187,6 +188,25 @@ namespace LasMonjas.Patches {
                             }
                         }
                     }
+                }
+                else if (MonjaFestival.monjaFestivalMode) {
+
+                    if (MonjaFestival.bigMonjaPlayer != null) {
+                        setPlayerNameColor(MonjaFestival.bigMonjaPlayer, Palette.PlayerColors[15]);
+                    }
+
+                    foreach (PlayerControl greenplayer in MonjaFestival.greenTeam) {
+                        if (greenplayer != null) {
+                            setPlayerNameColor(greenplayer, Palette.PlayerColors[2]);
+                        }
+                    }
+
+                    foreach (PlayerControl cyanplayer in MonjaFestival.cyanTeam) {
+                        if (cyanplayer != null) {
+                            setPlayerNameColor(cyanplayer, Palette.PlayerColors[10]);
+                        }
+                    }
+
                 }
             }
             else {
@@ -1005,6 +1025,63 @@ namespace LasMonjas.Patches {
                             BattleRoyale.triggerTimeWin = true;
                             GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleTimeWin, false);
                         }
+                    }
+                }
+                
+                // Monja Festival timer
+                if (MonjaFestival.monjaFestivalMode) {
+                    MonjaFestival.matchDuration -= deltaTime;
+                    if (MonjaFestival.matchDuration < 0) {
+                        Reactor.Utilities.Coroutines.Stop(monjaBigOneReload());
+                        Reactor.Utilities.Coroutines.Stop(monjaBigTwoReload());
+                        Reactor.Utilities.Coroutines.Stop(monjaLittleOneReload());
+                        Reactor.Utilities.Coroutines.Stop(monjaLittleTwoReload());
+                        Reactor.Utilities.Coroutines.Stop(monjaLittleThreeReload());
+                        Reactor.Utilities.Coroutines.Stop(monjaLittleFourReload()); 
+                        if (MonjaFestival.bigMonjaPlayer != null) {
+                            // all teams with same points = Draw
+                            if (MonjaFestival.greenPoints == MonjaFestival.cyanPoints && MonjaFestival.cyanPoints == MonjaFestival.bigMonjaPoints) {
+                                MonjaFestival.triggerDrawWin = true;
+                                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.MonjaFestivalDraw, false);
+                            }
+                            // Green team more points than cyan team and big monja = green team win
+                            else if (MonjaFestival.greenPoints > MonjaFestival.cyanPoints && MonjaFestival.greenPoints > MonjaFestival.bigMonjaPoints) {
+                                MonjaFestival.triggerGreenTeamWin = true;
+                                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.MonjaFestivalGreenWin, false);
+                            }
+                            // otherwise cyan team win
+                            else if (MonjaFestival.cyanPoints > MonjaFestival.greenPoints && MonjaFestival.cyanPoints > MonjaFestival.bigMonjaPoints) {
+                                MonjaFestival.triggerCyanTeamWin = true;
+                                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.MonjaFestivalCyanWin, false);
+                            }
+                            // otherwise big monja win
+                            else if (MonjaFestival.bigMonjaPoints > MonjaFestival.greenPoints && MonjaFestival.bigMonjaPoints > MonjaFestival.cyanPoints) {
+                                MonjaFestival.triggerBigMonjaWin = true;
+                                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.MonjaFestivalBigMonjaWin, false);
+                            }
+                            // draw between some of the teams
+                            else {
+                                MonjaFestival.triggerDrawWin = true;
+                                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.MonjaFestivalDraw, false);
+                            }
+                        }
+                        else {
+                            // both teams with same points = Draw
+                            if (MonjaFestival.greenPoints == MonjaFestival.cyanPoints) {
+                                MonjaFestival.triggerDrawWin = true;
+                                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.MonjaFestivalDraw, false);
+                            }
+                            // Green team more points than cyan team = green team win
+                            else if (MonjaFestival.greenPoints > MonjaFestival.cyanPoints) {
+                                MonjaFestival.triggerGreenTeamWin = true;
+                                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.MonjaFestivalGreenWin, false);
+                            }
+                            // otherwise cyan team win
+                            else {
+                                MonjaFestival.triggerCyanTeamWin = true;
+                                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.MonjaFestivalCyanWin, false);
+                            }
+                        }                        
                     }
                 }
             }
@@ -2967,6 +3044,313 @@ namespace LasMonjas.Patches {
                 }
             }
         }
+
+        static void monjaFestivalUpdate() {
+
+            if (!MonjaFestival.monjaFestivalMode && howmanygamemodesareon != 1)
+                return;
+
+            // Big Monja invisible
+            if (MonjaFestival.bigMonjaPlayer != null && MonjaFestival.bigMonjaPlayerInvisibleTimer > 0) {
+                MonjaFestival.bigMonjaPlayerInvisibleTimer -= Time.deltaTime;
+
+                if (MonjaFestival.bigMonjaPlayerInvisibleTimer > 0f) {
+                    if (MonjaFestival.bigMonjaPlayer == PlayerControl.LocalPlayer) {
+                        Helpers.alphaPlayer(true, MonjaFestival.bigMonjaPlayer.PlayerId);
+                    }
+                    else {
+                        Helpers.invisiblePlayer(MonjaFestival.bigMonjaPlayer.PlayerId);
+                    }
+                }
+
+                // Big Monja reset
+                if (MonjaFestival.bigMonjaPlayerInvisibleTimer <= 0f) {
+                    MonjaFestival.resetBigMonja();
+                }
+            }          
+
+            // Green Team disconnects
+            foreach (PlayerControl greenPlayer in MonjaFestival.greenTeam) {
+                if (greenPlayer.Data.Disconnected) {
+
+                    if (MonjaFestival.greenPlayer01 != null && greenPlayer.PlayerId == MonjaFestival.greenPlayer01.PlayerId) {
+                        MonjaFestival.greenTeam.Remove(MonjaFestival.greenPlayer01);
+                    }
+                    else if (MonjaFestival.greenPlayer02 != null && greenPlayer.PlayerId == MonjaFestival.greenPlayer02.PlayerId) {
+                        MonjaFestival.greenTeam.Remove(MonjaFestival.greenPlayer02);
+                    }
+                    else if (MonjaFestival.greenPlayer03 != null && greenPlayer.PlayerId == MonjaFestival.greenPlayer03.PlayerId) {
+                        MonjaFestival.greenTeam.Remove(MonjaFestival.greenPlayer03);
+                    }
+                    else if (MonjaFestival.greenPlayer04 != null && greenPlayer.PlayerId == MonjaFestival.greenPlayer04.PlayerId) {
+                        MonjaFestival.greenTeam.Remove(MonjaFestival.greenPlayer04);
+                    }
+                    else if (MonjaFestival.greenPlayer05 != null && greenPlayer.PlayerId == MonjaFestival.greenPlayer05.PlayerId) {
+                        MonjaFestival.greenTeam.Remove(MonjaFestival.greenPlayer05);
+                    }
+                    else if (MonjaFestival.greenPlayer06 != null && greenPlayer.PlayerId == MonjaFestival.greenPlayer06.PlayerId) {
+                        MonjaFestival.greenTeam.Remove(MonjaFestival.greenPlayer06);
+                    }
+                    else if (MonjaFestival.greenPlayer07 != null && greenPlayer.PlayerId == MonjaFestival.greenPlayer07.PlayerId) {
+                        MonjaFestival.greenTeam.Remove(MonjaFestival.greenPlayer07);
+                    }
+
+                    int greenPlayersAlive = 0;
+
+                    foreach (PlayerControl remainingGreenPlayer in MonjaFestival.greenTeam) {
+
+                        if (!remainingGreenPlayer.Data.IsDead) {
+                            greenPlayersAlive += 1;
+                        }
+
+                    }
+
+                    int cyanPlayersAlive = 0;
+
+                    foreach (PlayerControl remainingCyanPlayer in MonjaFestival.cyanTeam) {
+
+                        if (!remainingCyanPlayer.Data.IsDead) {
+                            cyanPlayersAlive += 1;
+                        }
+
+                    }
+
+                    if (MonjaFestival.bigMonjaPlayer != null) {
+
+                        int bigMonjaAlive = 0;
+
+                        foreach (PlayerControl bigMonja in MonjaFestival.bigMonjaTeam) {
+
+                            if (!bigMonja.Data.IsDead) {
+                                bigMonjaAlive += 1;
+                            }
+
+                        }
+
+                        MonjaFestival.monjaFestivalCounter = "<color=#00FF00FF>" + Language.introTexts[17] + MonjaFestival.greenPoints + "</color> | " + "<color=#00F7FFFF>" + Language.introTexts[18] + MonjaFestival.cyanPoints + "</color> | " + "<color=#808080FF>" + Language.introTexts[19] + MonjaFestival.bigMonjaPoints + "</color>";
+                        if (greenPlayersAlive <= 0 && cyanPlayersAlive <= 0) {
+                            MonjaFestival.triggerBigMonjaWin = true;
+                            GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.MonjaFestivalBigMonjaWin, false);
+                        }
+                    }
+                    else {
+                        MonjaFestival.monjaFestivalCounter = "<color=#00FF00FF>" + Language.introTexts[17] + MonjaFestival.greenPoints + "</color> | " + "<color=#00F7FFFF>" + Language.introTexts[18] + MonjaFestival.cyanPoints + "</color>";
+                        if (cyanPlayersAlive <= 0) {
+                            MonjaFestival.triggerGreenTeamWin = true;
+                            GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.MonjaFestivalGreenWin, false);
+                        }
+                        else if (greenPlayersAlive <= 0) {
+                            MonjaFestival.triggerCyanTeamWin = true;
+                            GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.MonjaFestivalCyanWin, false);
+                        }
+                    }
+                    break;
+                }
+            }
+
+            // Cyan Team disconnects
+            foreach (PlayerControl cyanPlayer in MonjaFestival.cyanTeam) {
+                if (cyanPlayer.Data.Disconnected) {
+
+                    if (MonjaFestival.cyanPlayer01 != null && cyanPlayer.PlayerId == MonjaFestival.cyanPlayer01.PlayerId) {
+                        MonjaFestival.cyanTeam.Remove(MonjaFestival.cyanPlayer01);
+                    }
+                    else if (MonjaFestival.cyanPlayer02 != null && cyanPlayer.PlayerId == MonjaFestival.cyanPlayer02.PlayerId) {
+                        MonjaFestival.cyanTeam.Remove(MonjaFestival.cyanPlayer02);
+                    }
+                    else if (MonjaFestival.cyanPlayer03 != null && cyanPlayer.PlayerId == MonjaFestival.cyanPlayer03.PlayerId) {
+                        MonjaFestival.cyanTeam.Remove(MonjaFestival.cyanPlayer03);
+                    }
+                    else if (MonjaFestival.cyanPlayer04 != null && cyanPlayer.PlayerId == MonjaFestival.cyanPlayer04.PlayerId) {
+                        MonjaFestival.cyanTeam.Remove(MonjaFestival.cyanPlayer04);
+                    }
+                    else if (MonjaFestival.cyanPlayer05 != null && cyanPlayer.PlayerId == MonjaFestival.cyanPlayer05.PlayerId) {
+                        MonjaFestival.cyanTeam.Remove(MonjaFestival.cyanPlayer05);
+                    }
+                    else if (MonjaFestival.cyanPlayer06 != null && cyanPlayer.PlayerId == MonjaFestival.cyanPlayer06.PlayerId) {
+                        MonjaFestival.cyanTeam.Remove(MonjaFestival.cyanPlayer06);
+                    }
+                    else if (MonjaFestival.cyanPlayer07 != null && cyanPlayer.PlayerId == MonjaFestival.cyanPlayer07.PlayerId) {
+                        MonjaFestival.cyanTeam.Remove(MonjaFestival.cyanPlayer07);
+                    }
+
+                    int greenPlayersAlive = 0;
+
+                    foreach (PlayerControl remainingGreenPlayer in MonjaFestival.greenTeam) {
+
+                        if (!remainingGreenPlayer.Data.IsDead) {
+                            greenPlayersAlive += 1;
+                        }
+
+                    }
+
+                    int cyanPlayersAlive = 0;
+
+                    foreach (PlayerControl remainingCyanPlayer in MonjaFestival.cyanTeam) {
+
+                        if (!remainingCyanPlayer.Data.IsDead) {
+                            cyanPlayersAlive += 1;
+                        }
+
+                    }
+
+                    if (MonjaFestival.bigMonjaPlayer != null) {
+
+                        int bigMonjaAlive = 0;
+
+                        foreach (PlayerControl bigMonja in MonjaFestival.bigMonjaTeam) {
+
+                            if (!bigMonja.Data.IsDead) {
+                                bigMonjaAlive += 1;
+                            }
+
+                        }
+
+                        MonjaFestival.monjaFestivalCounter = "<color=#00FF00FF>" + Language.introTexts[17] + MonjaFestival.greenPoints + "</color> | " + "<color=#00F7FFFF>" + Language.introTexts[18] + MonjaFestival.cyanPoints + "</color> | " + "<color=#808080FF>" + Language.introTexts[19] + MonjaFestival.bigMonjaPoints + "</color>";
+                        if (greenPlayersAlive <= 0 && cyanPlayersAlive <= 0) {
+                            MonjaFestival.triggerBigMonjaWin = true;
+                            GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.MonjaFestivalBigMonjaWin, false);
+                        }
+                    }
+                    else {
+                        MonjaFestival.monjaFestivalCounter = "<color=#00FF00FF>" + Language.introTexts[17] + MonjaFestival.greenPoints + "</color> | " + "<color=#00F7FFFF>" + Language.introTexts[18] + MonjaFestival.cyanPoints + "</color>";
+                        if (cyanPlayersAlive <= 0) {
+                            MonjaFestival.triggerGreenTeamWin = true;
+                            GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.MonjaFestivalGreenWin, false);
+                        }
+                        else if (greenPlayersAlive <= 0) {
+                            MonjaFestival.triggerCyanTeamWin = true;
+                            GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.MonjaFestivalCyanWin, false);
+                        }
+                    }
+                    break;
+                }
+            }
+
+            // Big Monja disconnects
+            if (MonjaFestival.bigMonjaPlayer != null && MonjaFestival.bigMonjaPlayer.Data.Disconnected) {
+
+                MonjaFestival.bigMonjaTeam.Remove(MonjaFestival.bigMonjaPlayer);
+
+                int greenPlayersAlive = 0;
+
+                foreach (PlayerControl greenPlayer in MonjaFestival.greenTeam) {
+
+                    if (!greenPlayer.Data.IsDead) {
+                        greenPlayersAlive += 1;
+                    }
+
+                }
+
+                int cyanPlayersAlive = 0;
+
+                foreach (PlayerControl cyanPlayer in MonjaFestival.cyanTeam) {
+
+                    if (!cyanPlayer.Data.IsDead) {
+                        cyanPlayersAlive += 1;
+                    }
+
+                }
+
+                MonjaFestival.bigMonjaPoints = 0;
+
+                MonjaFestival.monjaFestivalCounter = "<color=#00FF00FF>" + Language.introTexts[17] + MonjaFestival.greenPoints + "</color> | " + "<color=#00F7FFFF>" + Language.introTexts[18] + MonjaFestival.cyanPoints + "</color>";
+                if (cyanPlayersAlive <= 0) {
+                    MonjaFestival.triggerGreenTeamWin = true;
+                    GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.MonjaFestivalGreenWin, false);
+                }
+                else if (greenPlayersAlive <= 0) {
+                    MonjaFestival.triggerCyanTeamWin = true;
+                    GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.MonjaFestivalCyanWin, false);
+                }
+            }
+        }
+
+        public static IEnumerator monjaBigOneReload() {
+            MonjaFestival.bigSpawnOneReloading = true;
+            while (MonjaFestival.bigSpawnOnePoints < 30) {
+                yield return new WaitForSeconds(10);
+                MonjaFestival.bigSpawnOnePoints += 1;
+                MonjaFestival.bigSpawnOne.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.bigSpawnOneFull.GetComponent<SpriteRenderer>().sprite;
+                MonjaFestival.bigSpawnOneCount.text = $"{MonjaFestival.bigSpawnOnePoints} / 30";
+                if (MonjaFestival.bigSpawnOnePoints == 30) {
+                    MonjaFestival.bigSpawnOneReloading = false;
+                }
+            }
+        }
+
+        public static IEnumerator monjaBigTwoReload() {
+            MonjaFestival.bigSpawnTwoReloading = true;
+            while (MonjaFestival.bigSpawnTwoPoints < 30) {
+                yield return new WaitForSeconds(10);
+                MonjaFestival.bigSpawnTwoPoints += 1;
+                MonjaFestival.bigSpawnTwo.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.bigSpawnOneFull.GetComponent<SpriteRenderer>().sprite;
+                MonjaFestival.bigSpawnTwoCount.text = $"{MonjaFestival.bigSpawnTwoPoints} / 30";
+                if (MonjaFestival.bigSpawnTwoPoints == 30) {
+                    MonjaFestival.bigSpawnTwoReloading = false;
+                }
+            }
+        }
+
+        public static IEnumerator monjaLittleOneReload() {
+            MonjaFestival.littleSpawnOneReloading = true;
+            while (MonjaFestival.littleSpawnOnePoints < 10) {
+                yield return new WaitForSeconds(20);
+                MonjaFestival.littleSpawnOnePoints += 1;
+                MonjaFestival.littleSpawnOne.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.littleSpawnOneFull.GetComponent<SpriteRenderer>().sprite;
+                MonjaFestival.littleSpawnOneCount.text = $"{MonjaFestival.littleSpawnOnePoints} / 10";
+                if (MonjaFestival.littleSpawnOnePoints == 10) {
+                    MonjaFestival.littleSpawnOneReloading = false;
+                }
+            }
+        }
+
+        public static IEnumerator monjaLittleTwoReload() {
+            MonjaFestival.littleSpawnTwoReloading = true;
+            while (MonjaFestival.littleSpawnTwoPoints < 10) {
+                yield return new WaitForSeconds(20);
+                MonjaFestival.littleSpawnTwoPoints += 1;
+                MonjaFestival.littleSpawnTwo.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.littleSpawnOneFull.GetComponent<SpriteRenderer>().sprite;
+                MonjaFestival.littleSpawnTwoCount.text = $"{MonjaFestival.littleSpawnTwoPoints} / 10";
+                if (MonjaFestival.littleSpawnTwoPoints == 10) {
+                    MonjaFestival.littleSpawnTwoReloading = false;
+                }
+            }
+        }
+
+        public static IEnumerator monjaLittleThreeReload() {
+            MonjaFestival.littleSpawnThreeReloading = true;
+            while (MonjaFestival.littleSpawnThreePoints < 10) {
+                yield return new WaitForSeconds(20);
+                MonjaFestival.littleSpawnThreePoints += 1;
+                MonjaFestival.littleSpawnThree.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.littleSpawnOneFull.GetComponent<SpriteRenderer>().sprite;
+                MonjaFestival.littleSpawnThreeCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
+                if (MonjaFestival.littleSpawnThreePoints == 10) {
+                    MonjaFestival.littleSpawnThreeReloading = false;
+                }
+            }
+        }
+
+        public static IEnumerator monjaLittleFourReload() {
+            MonjaFestival.littleSpawnFourReloading = true;
+            while (MonjaFestival.littleSpawnFourPoints < 10) {
+                yield return new WaitForSeconds(20);
+                MonjaFestival.littleSpawnFourPoints += 1;
+                MonjaFestival.littleSpawnFour.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.littleSpawnOneFull.GetComponent<SpriteRenderer>().sprite;
+                MonjaFestival.littleSpawnFourCount.text = $"{MonjaFestival.littleSpawnFourPoints} / 10";
+                if (MonjaFestival.littleSpawnFourPoints == 10) {
+                    MonjaFestival.littleSpawnFourReloading = false;
+                }
+            }
+        }
+        public static IEnumerator allulMonjaReload() {
+            MonjaFestival.allulMonja.SetActive(false);
+            int randomPosition = rnd.Next(0, 5);
+            MonjaFestival.allulMonja.transform.position = MonjaFestival.allulMonjaPositions[randomPosition];
+            yield return new WaitForSeconds(45);
+            MonjaFestival.allulMonja.SetActive(true);
+        }
+
         static void Postfix(HudManager __instance) {
             if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) return;
 
@@ -3051,6 +3435,8 @@ namespace LasMonjas.Patches {
             // Battle Royale disconnect update
             battleRoyaleUpdate();
 
+            // Monja Festival disconnect update
+            monjaFestivalUpdate();
         }
     }
 }

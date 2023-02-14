@@ -117,6 +117,10 @@ namespace LasMonjas.Patches
                 whichgamemodeHUD = 6;
                 howmanyBattleRoyaleplayers = 0;
             }
+            if (MonjaFestival.monjaFestivalMode) {
+                howmanygamemodesareon += 1;
+                whichgamemodeHUD = 7;
+            }
 
             if (GameOptionsManager.Instance.currentGameMode == GameModes.Normal) {
                 if (howmanygamemodesareon == 1) {
@@ -251,6 +255,27 @@ namespace LasMonjas.Patches
                             }
                         }
                     }
+                    else if (MonjaFestival.monjaFestivalMode) {
+                        SoundManager.Instance.PlaySound(CustomMain.customAssets.monjaFestivalMusic, true, 25f);
+                        var greenTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
+                        if (PlayerControl.LocalPlayer == MonjaFestival.greenPlayer01 || PlayerControl.LocalPlayer == MonjaFestival.greenPlayer02 || PlayerControl.LocalPlayer == MonjaFestival.greenPlayer03 || PlayerControl.LocalPlayer == MonjaFestival.greenPlayer04 || PlayerControl.LocalPlayer == MonjaFestival.greenPlayer05 || PlayerControl.LocalPlayer == MonjaFestival.greenPlayer06 || PlayerControl.LocalPlayer == MonjaFestival.greenPlayer07) {
+                            greenTeam.Add(PlayerControl.LocalPlayer);
+                            yourTeam = greenTeam;
+                            PlayerControl.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
+                        }
+                        var cyanTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
+                        if (PlayerControl.LocalPlayer == MonjaFestival.cyanPlayer01 || PlayerControl.LocalPlayer == MonjaFestival.cyanPlayer02 || PlayerControl.LocalPlayer == MonjaFestival.cyanPlayer03 || PlayerControl.LocalPlayer == MonjaFestival.cyanPlayer04 || PlayerControl.LocalPlayer == MonjaFestival.cyanPlayer05 || PlayerControl.LocalPlayer == MonjaFestival.cyanPlayer06 || PlayerControl.LocalPlayer == MonjaFestival.cyanPlayer07) {
+                            cyanTeam.Add(PlayerControl.LocalPlayer);
+                            yourTeam = cyanTeam;
+                            PlayerControl.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
+                        }
+                        if (PlayerControl.LocalPlayer == MonjaFestival.bigMonjaPlayer) {
+                            var greyTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
+                            greyTeam.Add(PlayerControl.LocalPlayer);
+                            yourTeam = greyTeam;
+                            PlayerControl.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Shapeshifter);
+                        }
+                    }
                 }
                 else {
                     // Intro solo teams (rebels and neutrals)
@@ -278,6 +303,7 @@ namespace LasMonjas.Patches
                     HotPotato.hotPotatoMode = false;
                     ZombieLaboratory.zombieLaboratoryMode = false;
                     BattleRoyale.battleRoyaleMode = false;
+                    MonjaFestival.monjaFestivalMode = false;
                 }
             }
         }
@@ -318,6 +344,11 @@ namespace LasMonjas.Patches
                         __instance.BackgroundBar.material.color = Sleuth.color;
                         __instance.TeamTitle.text = "Battle \nRoyale";
                         __instance.TeamTitle.color = Sleuth.color;
+                    }
+                    else if (MonjaFestival.monjaFestivalMode) {
+                        __instance.BackgroundBar.material.color = Monja.color;
+                        __instance.TeamTitle.text = "Monja \nFestival";
+                        __instance.TeamTitle.color = Monja.color;
                     }
                 }
                 else {
@@ -1448,6 +1479,235 @@ namespace LasMonjas.Patches
                                         }
                                     }
                                 }
+                                // Monja Festival
+                                else if (MonjaFestival.monjaFestivalMode) {
+                                    if (activatedSensei) {
+                                        if (PlayerControl.LocalPlayer == MonjaFestival.bigMonjaPlayer) {
+                                            MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-12f, 7f, PlayerControl.LocalPlayer.transform.position.z);
+                                            Helpers.clearAllTasks(MonjaFestival.bigMonjaPlayer);
+                                        }
+
+                                        foreach (PlayerControl player in MonjaFestival.greenTeam) {
+                                            if (player == PlayerControl.LocalPlayer)
+                                                player.transform.position = new Vector3(-10.5f, -10, PlayerControl.LocalPlayer.transform.position.z);
+                                            Helpers.clearAllTasks(player);
+                                        }
+                                        foreach (PlayerControl player in MonjaFestival.cyanTeam) {
+                                            if (player == PlayerControl.LocalPlayer)
+                                                player.transform.position = new Vector3(7.4f, -5f, PlayerControl.LocalPlayer.transform.position.z);
+                                            Helpers.clearAllTasks(player);
+                                        }
+                                        if (PlayerControl.LocalPlayer != null && !createdmonjafestival) {
+                                            GameObject bigSpawnOne = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                            bigSpawnOne.name = "bigSpawnOne";
+                                            bigSpawnOne.transform.position = new Vector3(-6.2f, -1.4f, 1f);
+                                            MonjaFestival.bigSpawnOne = bigSpawnOne;
+                                            MonjaFestival.bigSpawnOneCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.bigSpawnOne.transform);
+                                            MonjaFestival.bigSpawnOneCount.text = $"{MonjaFestival.bigSpawnOnePoints} / 30";
+                                            MonjaFestival.bigSpawnOneCount.enableWordWrapping = false;
+                                            MonjaFestival.bigSpawnOneCount.transform.localScale = Vector3.one * 0.5f;
+                                            MonjaFestival.bigSpawnOneCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                            GameObject bigSpawnTwo = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                            bigSpawnTwo.name = "bigSpawnTwo";
+                                            bigSpawnTwo.transform.position = new Vector3(-0.5f, 3f, 1f);
+                                            MonjaFestival.bigSpawnTwo = bigSpawnTwo;
+                                            MonjaFestival.bigSpawnTwoCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.bigSpawnTwo.transform);
+                                            MonjaFestival.bigSpawnTwoCount.text = $"{MonjaFestival.bigSpawnTwoPoints} / 30";
+                                            MonjaFestival.bigSpawnTwoCount.enableWordWrapping = false;
+                                            MonjaFestival.bigSpawnTwoCount.transform.localScale = Vector3.one * 0.5f;
+                                            MonjaFestival.bigSpawnTwoCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                            GameObject littleSpawnOne = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                            littleSpawnOne.name = "littleSpawnOne";
+                                            littleSpawnOne.transform.position = new Vector3(-6.75f, 10.5f, 0.5f);
+                                            MonjaFestival.littleSpawnOne = littleSpawnOne;
+                                            MonjaFestival.littleSpawnOneCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnOne.transform);
+                                            MonjaFestival.littleSpawnOneCount.text = $"{MonjaFestival.littleSpawnOnePoints} / 10";
+                                            MonjaFestival.littleSpawnOneCount.enableWordWrapping = false;
+                                            MonjaFestival.littleSpawnOneCount.transform.localScale = Vector3.one * 0.5f;
+                                            MonjaFestival.littleSpawnOneCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                            GameObject littleSpawnTwo = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                            littleSpawnTwo.name = "littleSpawnTwo";
+                                            littleSpawnTwo.transform.position = new Vector3(-17.5f, -1.5f, 0.5f);
+                                            MonjaFestival.littleSpawnTwo = littleSpawnTwo;
+                                            MonjaFestival.littleSpawnTwoCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnTwo.transform);
+                                            MonjaFestival.littleSpawnTwoCount.text = $"{MonjaFestival.littleSpawnTwoPoints} / 10";
+                                            MonjaFestival.littleSpawnTwoCount.enableWordWrapping = false;
+                                            MonjaFestival.littleSpawnTwoCount.transform.localScale = Vector3.one * 0.5f;
+                                            MonjaFestival.littleSpawnTwoCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                            GameObject littleSpawnThree = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                            littleSpawnThree.name = "littleSpawnThree";
+                                            littleSpawnThree.transform.position = new Vector3(4.5f, -14f, 0.5f);
+                                            MonjaFestival.littleSpawnThree = littleSpawnThree;
+                                            MonjaFestival.littleSpawnThreeCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnThree.transform);
+                                            MonjaFestival.littleSpawnThreeCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
+                                            MonjaFestival.littleSpawnThreeCount.enableWordWrapping = false;
+                                            MonjaFestival.littleSpawnThreeCount.transform.localScale = Vector3.one * 0.5f;
+                                            MonjaFestival.littleSpawnThreeCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                            GameObject littleSpawnFour = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                            littleSpawnFour.name = "littleSpawnFour";
+                                            littleSpawnFour.transform.position = new Vector3(-11.5f, -4f, 0.5f);
+                                            MonjaFestival.littleSpawnFour = littleSpawnFour;
+                                            MonjaFestival.littleSpawnFourCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnFour.transform);
+                                            MonjaFestival.littleSpawnFourCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
+                                            MonjaFestival.littleSpawnFourCount.enableWordWrapping = false;
+                                            MonjaFestival.littleSpawnFourCount.transform.localScale = Vector3.one * 0.5f;
+                                            MonjaFestival.littleSpawnFourCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                            GameObject greenBase = GameObject.Instantiate(CustomMain.customAssets.greenBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
+                                            greenBase.name = "greenBase";
+                                            greenBase.transform.position = new Vector3(-10.5f, -10, 0.5f);
+                                            MonjaFestival.greenTeamBase = greenBase;
+                                            GameObject cyanBase = GameObject.Instantiate(CustomMain.customAssets.cyanBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
+                                            cyanBase.name = "cyanBase";
+                                            cyanBase.transform.position = new Vector3(7.4f, -5f, 0.5f);
+                                            MonjaFestival.cyanTeamBase = cyanBase;
+
+                                            GameObject allulMonja = GameObject.Instantiate(CustomMain.customAssets.floorAllulMonja, PlayerControl.LocalPlayer.transform.parent);
+                                            allulMonja.transform.position = new Vector3(-3.65f, 5f, 0.5f);
+                                            allulMonja.name = "allulMonja";
+                                            MonjaFestival.allulMonja = allulMonja;
+                                            Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.allulMonjaReload());
+
+                                            if (MonjaFestival.bigMonjaPlayer != null) {
+                                                GameObject greyBase = GameObject.Instantiate(CustomMain.customAssets.greyBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
+                                                greyBase.name = "greyBase";
+                                                greyBase.transform.position = new Vector3(-12f, 7f, 0.5f);
+                                                MonjaFestival.bigMonjaBase = greyBase;
+                                                MonjaFestival.bigMonjaSpawns.Add(greyBase);
+                                            }
+                                            MonjaFestival.bigMonjaSpawns.Add(bigSpawnOne);
+                                            MonjaFestival.bigMonjaSpawns.Add(bigSpawnTwo);
+                                            MonjaFestival.bigMonjaSpawns.Add(littleSpawnOne);
+                                            MonjaFestival.bigMonjaSpawns.Add(littleSpawnTwo);
+                                            MonjaFestival.bigMonjaSpawns.Add(littleSpawnThree);
+                                            MonjaFestival.bigMonjaSpawns.Add(littleSpawnFour);
+                                            MonjaFestival.bigMonjaSpawns.Add(greenBase);
+                                            MonjaFestival.bigMonjaSpawns.Add(cyanBase);
+                                            MonjaFestival.bigMonjaSpawns.Add(allulMonja);
+                                            createdmonjafestival = true;
+                                        }
+                                    }
+                                    else {
+                                        if (PlayerControl.LocalPlayer == MonjaFestival.bigMonjaPlayer) {
+                                            MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(4.5f, -7.25f, PlayerControl.LocalPlayer.transform.position.z);
+                                            Helpers.clearAllTasks(MonjaFestival.bigMonjaPlayer);
+                                        }
+
+                                        foreach (PlayerControl player in MonjaFestival.greenTeam) {
+                                            if (player == PlayerControl.LocalPlayer)
+                                                player.transform.position = new Vector3(-9f, -2.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                            Helpers.clearAllTasks(player);
+                                        }
+                                        foreach (PlayerControl player in MonjaFestival.cyanTeam) {
+                                            if (player == PlayerControl.LocalPlayer)
+                                                player.transform.position = new Vector3(5f, -15.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                            Helpers.clearAllTasks(player);
+                                        }
+                                        
+                                        if (PlayerControl.LocalPlayer != null && !createdmonjafestival) {
+                                            GameObject bigSpawnOne = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                            bigSpawnOne.name = "bigSpawnOne";
+                                            bigSpawnOne.transform.position = new Vector3(9.5f, 0.9f, 1f);
+                                            MonjaFestival.bigSpawnOne = bigSpawnOne;
+                                            MonjaFestival.bigSpawnOneCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.bigSpawnOne.transform);
+                                            MonjaFestival.bigSpawnOneCount.text = $"{MonjaFestival.bigSpawnOnePoints} / 30";
+                                            MonjaFestival.bigSpawnOneCount.enableWordWrapping = false;
+                                            MonjaFestival.bigSpawnOneCount.transform.localScale = Vector3.one * 0.5f;
+                                            MonjaFestival.bigSpawnOneCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                            GameObject bigSpawnTwo = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                            bigSpawnTwo.name = "bigSpawnTwo";
+                                            bigSpawnTwo.transform.position = new Vector3(-17.15f, -13.25f, 1f);
+                                            MonjaFestival.bigSpawnTwo = bigSpawnTwo;
+                                            MonjaFestival.bigSpawnTwoCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.bigSpawnTwo.transform);
+                                            MonjaFestival.bigSpawnTwoCount.text = $"{MonjaFestival.bigSpawnTwoPoints} / 30";
+                                            MonjaFestival.bigSpawnTwoCount.enableWordWrapping = false;
+                                            MonjaFestival.bigSpawnTwoCount.transform.localScale = Vector3.one * 0.5f;
+                                            MonjaFestival.bigSpawnTwoCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                            GameObject littleSpawnOne = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                            littleSpawnOne.name = "littleSpawnOne";
+                                            littleSpawnOne.transform.position = new Vector3(-20.5f, -5.5f, 0.5f);
+                                            MonjaFestival.littleSpawnOne = littleSpawnOne;
+                                            MonjaFestival.littleSpawnOneCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnOne.transform);
+                                            MonjaFestival.littleSpawnOneCount.text = $"{MonjaFestival.littleSpawnOnePoints} / 10";
+                                            MonjaFestival.littleSpawnOneCount.enableWordWrapping = false;
+                                            MonjaFestival.littleSpawnOneCount.transform.localScale = Vector3.one * 0.5f;
+                                            MonjaFestival.littleSpawnOneCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                            GameObject littleSpawnTwo = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                            littleSpawnTwo.name = "littleSpawnTwo";
+                                            littleSpawnTwo.transform.position = new Vector3(-0.75f, 5.25f, 0.5f);
+                                            MonjaFestival.littleSpawnTwo = littleSpawnTwo;
+                                            MonjaFestival.littleSpawnTwoCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnTwo.transform);
+                                            MonjaFestival.littleSpawnTwoCount.text = $"{MonjaFestival.littleSpawnTwoPoints} / 10";
+                                            MonjaFestival.littleSpawnTwoCount.enableWordWrapping = false;
+                                            MonjaFestival.littleSpawnTwoCount.transform.localScale = Vector3.one * 0.5f;
+                                            MonjaFestival.littleSpawnTwoCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                            GameObject littleSpawnThree = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                            littleSpawnThree.name = "littleSpawnThree";
+                                            littleSpawnThree.transform.position = new Vector3(-2.15f, -9.75f, 0.5f);
+                                            MonjaFestival.littleSpawnThree = littleSpawnThree;
+                                            MonjaFestival.littleSpawnThreeCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnThree.transform);
+                                            MonjaFestival.littleSpawnThreeCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
+                                            MonjaFestival.littleSpawnThreeCount.enableWordWrapping = false;
+                                            MonjaFestival.littleSpawnThreeCount.transform.localScale = Vector3.one * 0.5f;
+                                            MonjaFestival.littleSpawnThreeCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                            GameObject littleSpawnFour = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                            littleSpawnFour.name = "littleSpawnFour";
+                                            littleSpawnFour.transform.position = new Vector3(16.5f, -4.7f, 0.5f);
+                                            MonjaFestival.littleSpawnFour = littleSpawnFour;
+                                            MonjaFestival.littleSpawnFourCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnFour.transform);
+                                            MonjaFestival.littleSpawnFourCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
+                                            MonjaFestival.littleSpawnFourCount.enableWordWrapping = false;
+                                            MonjaFestival.littleSpawnFourCount.transform.localScale = Vector3.one * 0.5f;
+                                            MonjaFestival.littleSpawnFourCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                            GameObject greenBase = GameObject.Instantiate(CustomMain.customAssets.greenBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
+                                            greenBase.name = "greenBase";
+                                            greenBase.transform.position = new Vector3(-9f, -2.5f, 0.5f);
+                                            MonjaFestival.greenTeamBase = greenBase;
+                                            GameObject cyanBase = GameObject.Instantiate(CustomMain.customAssets.cyanBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
+                                            cyanBase.name = "cyanBase";
+                                            cyanBase.transform.position = new Vector3(5f, -15.5f, 0.5f);
+                                            MonjaFestival.cyanTeamBase = cyanBase;
+
+                                            GameObject allulMonja = GameObject.Instantiate(CustomMain.customAssets.floorAllulMonja, PlayerControl.LocalPlayer.transform.parent);
+                                            allulMonja.transform.position = new Vector3(-9.8f, -8.9f, 0.5f);
+                                            allulMonja.name = "allulMonja";
+                                            MonjaFestival.allulMonja = allulMonja;
+                                            Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.allulMonjaReload()); 
+                                            
+                                            if (MonjaFestival.bigMonjaPlayer != null) {
+                                                GameObject greyBase = GameObject.Instantiate(CustomMain.customAssets.greyBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
+                                                greyBase.name = "greyBase";
+                                                greyBase.transform.position = new Vector3(4.5f, -7.25f, 0.5f);
+                                                MonjaFestival.bigMonjaBase = greyBase;
+                                                MonjaFestival.bigMonjaSpawns.Add(greyBase);
+                                            }
+                                            MonjaFestival.bigMonjaSpawns.Add(bigSpawnOne);
+                                            MonjaFestival.bigMonjaSpawns.Add(bigSpawnTwo);
+                                            MonjaFestival.bigMonjaSpawns.Add(littleSpawnOne);
+                                            MonjaFestival.bigMonjaSpawns.Add(littleSpawnTwo);
+                                            MonjaFestival.bigMonjaSpawns.Add(littleSpawnThree);
+                                            MonjaFestival.bigMonjaSpawns.Add(littleSpawnFour);
+                                            MonjaFestival.bigMonjaSpawns.Add(greenBase);
+                                            MonjaFestival.bigMonjaSpawns.Add(cyanBase);
+                                            MonjaFestival.bigMonjaSpawns.Add(allulMonja);
+
+                                            GameObject skeldBigYVent = GameObject.Find("AdminVent");
+                                            skeldBigYVent.transform.position = new Vector3(2.25f, -15.25f, skeldBigYVent.transform.position.z);
+                                            createdmonjafestival = true;
+                                        }
+                                    }
+                                }
                                 // Remove camera use and admin table on Skeld / Custom Skeld
                                 GameObject cameraStand = GameObject.Find("SurvConsole");
                                 cameraStand.GetComponent<PolygonCollider2D>().enabled = false;
@@ -1811,6 +2071,118 @@ namespace LasMonjas.Patches
                                             BattleRoyale.serialKillerSpawns.Add(pinkteamfloor);
                                         }
                                         createdbattleroyale = true;
+                                    }
+                                }
+                                // Monja Festival
+                                else if (MonjaFestival.monjaFestivalMode) {
+                                    if (PlayerControl.LocalPlayer == MonjaFestival.bigMonjaPlayer) {
+                                        MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-4.45f, 2f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(MonjaFestival.bigMonjaPlayer);
+                                    }
+
+                                    foreach (PlayerControl player in MonjaFestival.greenTeam) {
+                                        if (player == PlayerControl.LocalPlayer)
+                                            player.transform.position = new Vector3(23f, 4.75f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(player);
+                                    }
+                                    foreach (PlayerControl player in MonjaFestival.cyanTeam) {
+                                        if (player == PlayerControl.LocalPlayer)
+                                            player.transform.position = new Vector3(8.5f, 13f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(player);
+                                    }
+                                    if (PlayerControl.LocalPlayer != null && !createdmonjafestival) {
+                                        GameObject bigSpawnOne = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                        bigSpawnOne.name = "bigSpawnOne";
+                                        bigSpawnOne.transform.position = new Vector3(15.25f, 4f, 1f);
+                                        MonjaFestival.bigSpawnOne = bigSpawnOne;
+                                        MonjaFestival.bigSpawnOneCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.bigSpawnOne.transform);
+                                        MonjaFestival.bigSpawnOneCount.text = $"{MonjaFestival.bigSpawnOnePoints} / 30";
+                                        MonjaFestival.bigSpawnOneCount.enableWordWrapping = false;
+                                        MonjaFestival.bigSpawnOneCount.transform.localScale = Vector3.one * 0.5f;
+                                        MonjaFestival.bigSpawnOneCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                        GameObject bigSpawnTwo = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                        bigSpawnTwo.name = "bigSpawnTwo";
+                                        bigSpawnTwo.transform.position = new Vector3(17.85f, 23.25f, 1f);
+                                        MonjaFestival.bigSpawnTwo = bigSpawnTwo;
+                                        MonjaFestival.bigSpawnTwoCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.bigSpawnTwo.transform);
+                                        MonjaFestival.bigSpawnTwoCount.text = $"{MonjaFestival.bigSpawnTwoPoints} / 30";
+                                        MonjaFestival.bigSpawnTwoCount.enableWordWrapping = false;
+                                        MonjaFestival.bigSpawnTwoCount.transform.localScale = Vector3.one * 0.5f;
+                                        MonjaFestival.bigSpawnTwoCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                        GameObject littleSpawnOne = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                        littleSpawnOne.name = "littleSpawnOne";
+                                        littleSpawnOne.transform.position = new Vector3(19.5f, 4.55f, 0.5f);
+                                        MonjaFestival.littleSpawnOne = littleSpawnOne;
+                                        MonjaFestival.littleSpawnOneCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnOne.transform);
+                                        MonjaFestival.littleSpawnOneCount.text = $"{MonjaFestival.littleSpawnOnePoints} / 10";
+                                        MonjaFestival.littleSpawnOneCount.enableWordWrapping = false;
+                                        MonjaFestival.littleSpawnOneCount.transform.localScale = Vector3.one * 0.5f;
+                                        MonjaFestival.littleSpawnOneCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                        GameObject littleSpawnTwo = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                        littleSpawnTwo.name = "littleSpawnTwo";
+                                        littleSpawnTwo.transform.position = new Vector3(15f, 19.25f, 0.5f);
+                                        MonjaFestival.littleSpawnTwo = littleSpawnTwo;
+                                        MonjaFestival.littleSpawnTwoCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnTwo.transform);
+                                        MonjaFestival.littleSpawnTwoCount.text = $"{MonjaFestival.littleSpawnTwoPoints} / 10";
+                                        MonjaFestival.littleSpawnTwoCount.enableWordWrapping = false;
+                                        MonjaFestival.littleSpawnTwoCount.transform.localScale = Vector3.one * 0.5f;
+                                        MonjaFestival.littleSpawnTwoCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                        GameObject littleSpawnThree = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                        littleSpawnThree.name = "littleSpawnThree";
+                                        littleSpawnThree.transform.position = new Vector3(14.5f, 0.25f, 0.5f);
+                                        MonjaFestival.littleSpawnThree = littleSpawnThree;
+                                        MonjaFestival.littleSpawnThreeCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnThree.transform);
+                                        MonjaFestival.littleSpawnThreeCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
+                                        MonjaFestival.littleSpawnThreeCount.enableWordWrapping = false;
+                                        MonjaFestival.littleSpawnThreeCount.transform.localScale = Vector3.one * 0.5f;
+                                        MonjaFestival.littleSpawnThreeCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                        GameObject littleSpawnFour = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                        littleSpawnFour.name = "littleSpawnFour";
+                                        littleSpawnFour.transform.position = new Vector3(2.35f, 11.15f, 0.5f);
+                                        MonjaFestival.littleSpawnFour = littleSpawnFour;
+                                        MonjaFestival.littleSpawnFourCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnFour.transform);
+                                        MonjaFestival.littleSpawnFourCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
+                                        MonjaFestival.littleSpawnFourCount.enableWordWrapping = false;
+                                        MonjaFestival.littleSpawnFourCount.transform.localScale = Vector3.one * 0.5f;
+                                        MonjaFestival.littleSpawnFourCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                        GameObject greenBase = GameObject.Instantiate(CustomMain.customAssets.greenBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
+                                        greenBase.name = "greenBase";
+                                        greenBase.transform.position = new Vector3(23f, 4.75f, 0.5f);
+                                        MonjaFestival.greenTeamBase = greenBase;
+                                        GameObject cyanBase = GameObject.Instantiate(CustomMain.customAssets.cyanBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
+                                        cyanBase.name = "cyanBase";
+                                        cyanBase.transform.position = new Vector3(8.5f, 13f, 0.5f);
+                                        MonjaFestival.cyanTeamBase = cyanBase;
+
+                                        GameObject allulMonja = GameObject.Instantiate(CustomMain.customAssets.floorAllulMonja, PlayerControl.LocalPlayer.transform.parent);
+                                        allulMonja.transform.position = new Vector3(9.2f, 5f, 0.5f);
+                                        allulMonja.name = "allulMonja";
+                                        MonjaFestival.allulMonja = allulMonja;
+                                        Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.allulMonjaReload()); 
+                                        
+                                        if (MonjaFestival.bigMonjaPlayer != null) {
+                                            GameObject greyBase = GameObject.Instantiate(CustomMain.customAssets.greyBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
+                                            greyBase.name = "greyBase";
+                                            greyBase.transform.position = new Vector3(-4.45f, 2f, 0.5f);
+                                            MonjaFestival.bigMonjaBase = greyBase;
+                                            MonjaFestival.bigMonjaSpawns.Add(greyBase);
+                                        }
+                                        MonjaFestival.bigMonjaSpawns.Add(bigSpawnOne);
+                                        MonjaFestival.bigMonjaSpawns.Add(bigSpawnTwo);
+                                        MonjaFestival.bigMonjaSpawns.Add(littleSpawnOne);
+                                        MonjaFestival.bigMonjaSpawns.Add(littleSpawnTwo);
+                                        MonjaFestival.bigMonjaSpawns.Add(littleSpawnThree);
+                                        MonjaFestival.bigMonjaSpawns.Add(littleSpawnFour);
+                                        MonjaFestival.bigMonjaSpawns.Add(greenBase);
+                                        MonjaFestival.bigMonjaSpawns.Add(cyanBase);
+                                        MonjaFestival.bigMonjaSpawns.Add(allulMonja);
+                                        createdmonjafestival = true;
                                     }
                                 }
                                 // Remove Doorlog use, Decontamination doors and admin table on MiraHQ
@@ -2188,6 +2560,117 @@ namespace LasMonjas.Patches
                                             BattleRoyale.serialKillerSpawns.Add(pinkteamfloor);
                                         }
                                         createdbattleroyale = true;
+                                    }
+                                }// Monja Festival
+                                else if (MonjaFestival.monjaFestivalMode) {
+                                    if (PlayerControl.LocalPlayer == MonjaFestival.bigMonjaPlayer) {
+                                        MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(21.75f, -25.15f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(MonjaFestival.bigMonjaPlayer);
+                                    }
+
+                                    foreach (PlayerControl player in MonjaFestival.greenTeam) {
+                                        if (player == PlayerControl.LocalPlayer)
+                                            player.transform.position = new Vector3(31.5f, -7.75f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(player);
+                                    }
+                                    foreach (PlayerControl player in MonjaFestival.cyanTeam) {
+                                        if (player == PlayerControl.LocalPlayer)
+                                            player.transform.position = new Vector3(2.35f, -23.75f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(player);
+                                    }
+                                    if (PlayerControl.LocalPlayer != null && !createdmonjafestival) {
+                                        GameObject bigSpawnOne = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                        bigSpawnOne.name = "bigSpawnOne";
+                                        bigSpawnOne.transform.position = new Vector3(26.2f, -17f, 1f);
+                                        MonjaFestival.bigSpawnOne = bigSpawnOne;
+                                        MonjaFestival.bigSpawnOneCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.bigSpawnOne.transform);
+                                        MonjaFestival.bigSpawnOneCount.text = $"{MonjaFestival.bigSpawnOnePoints} / 30";
+                                        MonjaFestival.bigSpawnOneCount.enableWordWrapping = false;
+                                        MonjaFestival.bigSpawnOneCount.transform.localScale = Vector3.one * 0.5f;
+                                        MonjaFestival.bigSpawnOneCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                        GameObject bigSpawnTwo = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                        bigSpawnTwo.name = "bigSpawnTwo";
+                                        bigSpawnTwo.transform.position = new Vector3(7.45f, -9.5f, 1f);
+                                        MonjaFestival.bigSpawnTwo = bigSpawnTwo;
+                                        MonjaFestival.bigSpawnTwoCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.bigSpawnTwo.transform);
+                                        MonjaFestival.bigSpawnTwoCount.text = $"{MonjaFestival.bigSpawnTwoPoints} / 30";
+                                        MonjaFestival.bigSpawnTwoCount.enableWordWrapping = false;
+                                        MonjaFestival.bigSpawnTwoCount.transform.localScale = Vector3.one * 0.5f;
+                                        MonjaFestival.bigSpawnTwoCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                        GameObject littleSpawnOne = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                        littleSpawnOne.name = "littleSpawnOne";
+                                        littleSpawnOne.transform.position = new Vector3(36.5f, -21.5f, 0.5f);
+                                        MonjaFestival.littleSpawnOne = littleSpawnOne;
+                                        MonjaFestival.littleSpawnOneCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnOne.transform);
+                                        MonjaFestival.littleSpawnOneCount.text = $"{MonjaFestival.littleSpawnOnePoints} / 10";
+                                        MonjaFestival.littleSpawnOneCount.enableWordWrapping = false;
+                                        MonjaFestival.littleSpawnOneCount.transform.localScale = Vector3.one * 0.5f;
+                                        MonjaFestival.littleSpawnOneCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                        GameObject littleSpawnTwo = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                        littleSpawnTwo.name = "littleSpawnTwo";
+                                        littleSpawnTwo.transform.position = new Vector3(1.35f, -17f, 0.5f);
+                                        MonjaFestival.littleSpawnTwo = littleSpawnTwo;
+                                        MonjaFestival.littleSpawnTwoCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnTwo.transform);
+                                        MonjaFestival.littleSpawnTwoCount.text = $"{MonjaFestival.littleSpawnTwoPoints} / 10";
+                                        MonjaFestival.littleSpawnTwoCount.enableWordWrapping = false;
+                                        MonjaFestival.littleSpawnTwoCount.transform.localScale = Vector3.one * 0.5f;
+                                        MonjaFestival.littleSpawnTwoCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                        GameObject littleSpawnThree = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                        littleSpawnThree.name = "littleSpawnThree";
+                                        littleSpawnThree.transform.position = new Vector3(19.75f, -11.5f, 0.5f);
+                                        MonjaFestival.littleSpawnThree = littleSpawnThree;
+                                        MonjaFestival.littleSpawnThreeCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnThree.transform);
+                                        MonjaFestival.littleSpawnThreeCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
+                                        MonjaFestival.littleSpawnThreeCount.enableWordWrapping = false;
+                                        MonjaFestival.littleSpawnThreeCount.transform.localScale = Vector3.one * 0.5f;
+                                        MonjaFestival.littleSpawnThreeCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                        GameObject littleSpawnFour = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                        littleSpawnFour.name = "littleSpawnFour";
+                                        littleSpawnFour.transform.position = new Vector3(20.75f, -21.35f, 0.5f);
+                                        MonjaFestival.littleSpawnFour = littleSpawnFour;
+                                        MonjaFestival.littleSpawnFourCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnFour.transform);
+                                        MonjaFestival.littleSpawnFourCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
+                                        MonjaFestival.littleSpawnFourCount.enableWordWrapping = false;
+                                        MonjaFestival.littleSpawnFourCount.transform.localScale = Vector3.one * 0.5f;
+                                        MonjaFestival.littleSpawnFourCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                        GameObject greenBase = GameObject.Instantiate(CustomMain.customAssets.greenBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
+                                        greenBase.name = "greenBase";
+                                        greenBase.transform.position = new Vector3(31.5f, -7.75f, 0.5f);
+                                        MonjaFestival.greenTeamBase = greenBase;
+                                        GameObject cyanBase = GameObject.Instantiate(CustomMain.customAssets.cyanBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
+                                        cyanBase.name = "cyanBase";
+                                        cyanBase.transform.position = new Vector3(2.35f, -23.75f, 0.5f);
+                                        MonjaFestival.cyanTeamBase = cyanBase;
+
+                                        GameObject allulMonja = GameObject.Instantiate(CustomMain.customAssets.floorAllulMonja, PlayerControl.LocalPlayer.transform.parent);
+                                        allulMonja.transform.position = new Vector3(4.65f, -4.5f, 0.5f);
+                                        allulMonja.name = "allulMonja";
+                                        MonjaFestival.allulMonja = allulMonja;
+                                        Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.allulMonjaReload()); 
+                                        
+                                        if (MonjaFestival.bigMonjaPlayer != null) {
+                                            GameObject greyBase = GameObject.Instantiate(CustomMain.customAssets.greyBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
+                                            greyBase.name = "greyBase";
+                                            greyBase.transform.position = new Vector3(21.75f, -25.15f, 0.5f);
+                                            MonjaFestival.bigMonjaBase = greyBase;
+                                            MonjaFestival.bigMonjaSpawns.Add(greyBase);
+                                        }
+                                        MonjaFestival.bigMonjaSpawns.Add(bigSpawnOne);
+                                        MonjaFestival.bigMonjaSpawns.Add(bigSpawnTwo);
+                                        MonjaFestival.bigMonjaSpawns.Add(littleSpawnOne);
+                                        MonjaFestival.bigMonjaSpawns.Add(littleSpawnTwo);
+                                        MonjaFestival.bigMonjaSpawns.Add(littleSpawnThree);
+                                        MonjaFestival.bigMonjaSpawns.Add(littleSpawnFour);
+                                        MonjaFestival.bigMonjaSpawns.Add(greenBase);
+                                        MonjaFestival.bigMonjaSpawns.Add(cyanBase);
+                                        MonjaFestival.bigMonjaSpawns.Add(allulMonja);
+                                        createdmonjafestival = true;
                                     }
                                 }
                                 // Remove Decon doors, camera use, vitals, admin tables on Polus
@@ -2570,6 +3053,121 @@ namespace LasMonjas.Patches
                                         createdbattleroyale = true;
                                     }
                                 }
+                                // Monja Festival
+                                else if (MonjaFestival.monjaFestivalMode) {
+                                    if (PlayerControl.LocalPlayer == MonjaFestival.bigMonjaPlayer) {
+                                        MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-4.5f, -7.25f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(MonjaFestival.bigMonjaPlayer);
+                                    }
+
+                                    foreach (PlayerControl player in MonjaFestival.greenTeam) {
+                                        if (player == PlayerControl.LocalPlayer)
+                                            player.transform.position = new Vector3(9f, -2.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(player);
+                                    }
+                                    foreach (PlayerControl player in MonjaFestival.cyanTeam) {
+                                        if (player == PlayerControl.LocalPlayer)
+                                            player.transform.position = new Vector3(-5f, -15.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(player);
+                                    }
+                                    if (PlayerControl.LocalPlayer != null && !createdmonjafestival) {
+                                        GameObject bigSpawnOne = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                        bigSpawnOne.name = "bigSpawnOne";
+                                        bigSpawnOne.transform.position = new Vector3(-9.5f, 0.9f, 1f);
+                                        MonjaFestival.bigSpawnOne = bigSpawnOne;
+                                        MonjaFestival.bigSpawnOneCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.bigSpawnOne.transform);
+                                        MonjaFestival.bigSpawnOneCount.text = $"{MonjaFestival.bigSpawnOnePoints} / 30";
+                                        MonjaFestival.bigSpawnOneCount.enableWordWrapping = false;
+                                        MonjaFestival.bigSpawnOneCount.transform.localScale = Vector3.one * 0.5f;
+                                        MonjaFestival.bigSpawnOneCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                        GameObject bigSpawnTwo = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                        bigSpawnTwo.name = "bigSpawnTwo";
+                                        bigSpawnTwo.transform.position = new Vector3(17.15f, -13.25f, 1f);
+                                        MonjaFestival.bigSpawnTwo = bigSpawnTwo;
+                                        MonjaFestival.bigSpawnTwoCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.bigSpawnTwo.transform);
+                                        MonjaFestival.bigSpawnTwoCount.text = $"{MonjaFestival.bigSpawnTwoPoints} / 30";
+                                        MonjaFestival.bigSpawnTwoCount.enableWordWrapping = false;
+                                        MonjaFestival.bigSpawnTwoCount.transform.localScale = Vector3.one * 0.5f;
+                                        MonjaFestival.bigSpawnTwoCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                        GameObject littleSpawnOne = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                        littleSpawnOne.name = "littleSpawnOne";
+                                        littleSpawnOne.transform.position = new Vector3(20.5f, -5.5f, 0.5f);
+                                        MonjaFestival.littleSpawnOne = littleSpawnOne;
+                                        MonjaFestival.littleSpawnOneCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnOne.transform);
+                                        MonjaFestival.littleSpawnOneCount.text = $"{MonjaFestival.littleSpawnOnePoints} / 10";
+                                        MonjaFestival.littleSpawnOneCount.enableWordWrapping = false;
+                                        MonjaFestival.littleSpawnOneCount.transform.localScale = Vector3.one * 0.5f;
+                                        MonjaFestival.littleSpawnOneCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                        GameObject littleSpawnTwo = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                        littleSpawnTwo.name = "littleSpawnTwo";
+                                        littleSpawnTwo.transform.position = new Vector3(0.75f, 5.25f, 0.5f);
+                                        MonjaFestival.littleSpawnTwo = littleSpawnTwo;
+                                        MonjaFestival.littleSpawnTwoCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnTwo.transform);
+                                        MonjaFestival.littleSpawnTwoCount.text = $"{MonjaFestival.littleSpawnTwoPoints} / 10";
+                                        MonjaFestival.littleSpawnTwoCount.enableWordWrapping = false;
+                                        MonjaFestival.littleSpawnTwoCount.transform.localScale = Vector3.one * 0.5f;
+                                        MonjaFestival.littleSpawnTwoCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                        GameObject littleSpawnThree = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                        littleSpawnThree.name = "littleSpawnThree";
+                                        littleSpawnThree.transform.position = new Vector3(2.15f, -9.75f, 0.5f);
+                                        MonjaFestival.littleSpawnThree = littleSpawnThree;
+                                        MonjaFestival.littleSpawnThreeCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnThree.transform);
+                                        MonjaFestival.littleSpawnThreeCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
+                                        MonjaFestival.littleSpawnThreeCount.enableWordWrapping = false;
+                                        MonjaFestival.littleSpawnThreeCount.transform.localScale = Vector3.one * 0.5f;
+                                        MonjaFestival.littleSpawnThreeCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                        GameObject littleSpawnFour = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                        littleSpawnFour.name = "littleSpawnFour";
+                                        littleSpawnFour.transform.position = new Vector3(-16.5f, -4.7f, 0.5f);
+                                        MonjaFestival.littleSpawnFour = littleSpawnFour;
+                                        MonjaFestival.littleSpawnFourCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnFour.transform);
+                                        MonjaFestival.littleSpawnFourCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
+                                        MonjaFestival.littleSpawnFourCount.enableWordWrapping = false;
+                                        MonjaFestival.littleSpawnFourCount.transform.localScale = Vector3.one * 0.5f;
+                                        MonjaFestival.littleSpawnFourCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                        GameObject greenBase = GameObject.Instantiate(CustomMain.customAssets.greenBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
+                                        greenBase.name = "greenBase";
+                                        greenBase.transform.position = new Vector3(9f, -2.5f, 0.5f);
+                                        MonjaFestival.greenTeamBase = greenBase;
+                                        GameObject cyanBase = GameObject.Instantiate(CustomMain.customAssets.cyanBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
+                                        cyanBase.name = "cyanBase";
+                                        cyanBase.transform.position = new Vector3(-5f, -15.5f, 0.5f);
+                                        MonjaFestival.cyanTeamBase = cyanBase;
+
+                                        GameObject allulMonja = GameObject.Instantiate(CustomMain.customAssets.floorAllulMonja, PlayerControl.LocalPlayer.transform.parent);
+                                        allulMonja.transform.position = new Vector3(9.8f, -8.9f, 0.5f);
+                                        allulMonja.name = "allulMonja";
+                                        MonjaFestival.allulMonja = allulMonja;
+                                        Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.allulMonjaReload()); 
+                                        
+                                        if (MonjaFestival.bigMonjaPlayer != null) {
+                                            GameObject greyBase = GameObject.Instantiate(CustomMain.customAssets.greyBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
+                                            greyBase.name = "greyBase";
+                                            greyBase.transform.position = new Vector3(-4.5f, -7.25f, 0.5f);
+                                            MonjaFestival.bigMonjaBase = greyBase;
+                                            MonjaFestival.bigMonjaSpawns.Add(greyBase);
+                                        }
+                                        MonjaFestival.bigMonjaSpawns.Add(bigSpawnOne);
+                                        MonjaFestival.bigMonjaSpawns.Add(bigSpawnTwo);
+                                        MonjaFestival.bigMonjaSpawns.Add(littleSpawnOne);
+                                        MonjaFestival.bigMonjaSpawns.Add(littleSpawnTwo);
+                                        MonjaFestival.bigMonjaSpawns.Add(littleSpawnThree);
+                                        MonjaFestival.bigMonjaSpawns.Add(littleSpawnFour);
+                                        MonjaFestival.bigMonjaSpawns.Add(greenBase);
+                                        MonjaFestival.bigMonjaSpawns.Add(cyanBase);
+                                        MonjaFestival.bigMonjaSpawns.Add(allulMonja);
+
+                                        GameObject skeldBigYVent = GameObject.Find("AdminVent");
+                                        skeldBigYVent.transform.position = new Vector3(-2.25f, -15.25f, skeldBigYVent.transform.position.z);
+                                        createdmonjafestival = true;
+                                    }
+                                }
                                 // Remove camera use and admin table on Dleks
                                 GameObject dlekscameraStand = GameObject.Find("SurvConsole");
                                 dlekscameraStand.GetComponent<PolygonCollider2D>().enabled = false;
@@ -2937,7 +3535,119 @@ namespace LasMonjas.Patches
                                         createdbattleroyale = true;
                                     }
                                 }
+                                // Monja Festival
+                                else if (MonjaFestival.monjaFestivalMode) {
+                                    if (PlayerControl.LocalPlayer == MonjaFestival.bigMonjaPlayer) {
+                                        MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(6.35f, 2.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(MonjaFestival.bigMonjaPlayer);
+                                    }
 
+                                    foreach (PlayerControl player in MonjaFestival.greenTeam) {
+                                        if (player == PlayerControl.LocalPlayer)
+                                            player.transform.position = new Vector3(-10.15f, -6.75f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(player);
+                                    }
+                                    foreach (PlayerControl player in MonjaFestival.cyanTeam) {
+                                        if (player == PlayerControl.LocalPlayer)
+                                            player.transform.position = new Vector3(38.25f, 0f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(player);
+                                    }
+                                    if (PlayerControl.LocalPlayer != null && !createdmonjafestival) {
+                                        GameObject bigSpawnOne = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                        bigSpawnOne.name = "bigSpawnOne";
+                                        bigSpawnOne.transform.position = new Vector3(-8.75f, 12.35f, 1f);
+                                        MonjaFestival.bigSpawnOne = bigSpawnOne;
+                                        MonjaFestival.bigSpawnOneCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.bigSpawnOne.transform);
+                                        MonjaFestival.bigSpawnOneCount.text = $"{MonjaFestival.bigSpawnOnePoints} / 30";
+                                        MonjaFestival.bigSpawnOneCount.enableWordWrapping = false;
+                                        MonjaFestival.bigSpawnOneCount.transform.localScale = Vector3.one * 0.5f;
+                                        MonjaFestival.bigSpawnOneCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                        GameObject bigSpawnTwo = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                        bigSpawnTwo.name = "bigSpawnTwo";
+                                        bigSpawnTwo.transform.position = new Vector3(16.25f, -8.85f, 1f);
+                                        MonjaFestival.bigSpawnTwo = bigSpawnTwo;
+                                        MonjaFestival.bigSpawnTwoCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.bigSpawnTwo.transform);
+                                        MonjaFestival.bigSpawnTwoCount.text = $"{MonjaFestival.bigSpawnTwoPoints} / 30";
+                                        MonjaFestival.bigSpawnTwoCount.enableWordWrapping = false;
+                                        MonjaFestival.bigSpawnTwoCount.transform.localScale = Vector3.one * 0.5f;
+                                        MonjaFestival.bigSpawnTwoCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                        GameObject littleSpawnOne = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                        littleSpawnOne.name = "littleSpawnOne";
+                                        littleSpawnOne.transform.position = new Vector3(-23.5f, -1.35f, 0.5f);
+                                        MonjaFestival.littleSpawnOne = littleSpawnOne;
+                                        MonjaFestival.littleSpawnOneCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnOne.transform);
+                                        MonjaFestival.littleSpawnOneCount.text = $"{MonjaFestival.littleSpawnOnePoints} / 10";
+                                        MonjaFestival.littleSpawnOneCount.enableWordWrapping = false;
+                                        MonjaFestival.littleSpawnOneCount.transform.localScale = Vector3.one * 0.5f;
+                                        MonjaFestival.littleSpawnOneCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                        GameObject littleSpawnTwo = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                        littleSpawnTwo.name = "littleSpawnTwo";
+                                        littleSpawnTwo.transform.position = new Vector3(7f, -12.5f, 0.5f);
+                                        MonjaFestival.littleSpawnTwo = littleSpawnTwo;
+                                        MonjaFestival.littleSpawnTwoCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnTwo.transform);
+                                        MonjaFestival.littleSpawnTwoCount.text = $"{MonjaFestival.littleSpawnTwoPoints} / 10";
+                                        MonjaFestival.littleSpawnTwoCount.enableWordWrapping = false;
+                                        MonjaFestival.littleSpawnTwoCount.transform.localScale = Vector3.one * 0.5f;
+                                        MonjaFestival.littleSpawnTwoCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                        GameObject littleSpawnThree = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                        littleSpawnThree.name = "littleSpawnThree";
+                                        littleSpawnThree.transform.position = new Vector3(20f, 7.75f, 0.5f);
+                                        MonjaFestival.littleSpawnThree = littleSpawnThree;
+                                        MonjaFestival.littleSpawnThreeCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnThree.transform);
+                                        MonjaFestival.littleSpawnThreeCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
+                                        MonjaFestival.littleSpawnThreeCount.enableWordWrapping = false;
+                                        MonjaFestival.littleSpawnThreeCount.transform.localScale = Vector3.one * 0.5f;
+                                        MonjaFestival.littleSpawnThreeCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                        GameObject littleSpawnFour = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
+                                        littleSpawnFour.name = "littleSpawnFour";
+                                        littleSpawnFour.transform.position = new Vector3(15.45f, 0f, 0.5f);
+                                        MonjaFestival.littleSpawnFour = littleSpawnFour;
+                                        MonjaFestival.littleSpawnFourCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnFour.transform);
+                                        MonjaFestival.littleSpawnFourCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
+                                        MonjaFestival.littleSpawnFourCount.enableWordWrapping = false;
+                                        MonjaFestival.littleSpawnFourCount.transform.localScale = Vector3.one * 0.5f;
+                                        MonjaFestival.littleSpawnFourCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
+
+                                        GameObject greenBase = GameObject.Instantiate(CustomMain.customAssets.greenBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
+                                        greenBase.name = "greenBase";
+                                        greenBase.transform.position = new Vector3(-10.15f, -6.75f, 0.5f);
+                                        MonjaFestival.greenTeamBase = greenBase;
+                                        GameObject cyanBase = GameObject.Instantiate(CustomMain.customAssets.cyanBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
+                                        cyanBase.name = "cyanBase";
+                                        cyanBase.transform.position = new Vector3(38.25f, 0f, 0.5f);
+                                        MonjaFestival.cyanTeamBase = cyanBase;
+
+                                        GameObject allulMonja = GameObject.Instantiate(CustomMain.customAssets.floorAllulMonja, PlayerControl.LocalPlayer.transform.parent);
+                                        allulMonja.transform.position = new Vector3(20.75f, 2.5f, 0.5f);
+                                        allulMonja.name = "allulMonja";
+                                        MonjaFestival.allulMonja = allulMonja;
+                                        Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.allulMonjaReload()); 
+                                        
+                                        if (MonjaFestival.bigMonjaPlayer != null) {
+                                            GameObject greyBase = GameObject.Instantiate(CustomMain.customAssets.greyBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
+                                            greyBase.name = "greyBase";
+                                            greyBase.transform.position = new Vector3(6.35f, 2.5f, 0.5f);
+                                            MonjaFestival.bigMonjaBase = greyBase;
+                                            MonjaFestival.bigMonjaSpawns.Add(greyBase);
+                                        }
+                                        MonjaFestival.bigMonjaSpawns.Add(bigSpawnOne);
+                                        MonjaFestival.bigMonjaSpawns.Add(bigSpawnTwo);
+                                        MonjaFestival.bigMonjaSpawns.Add(littleSpawnOne);
+                                        MonjaFestival.bigMonjaSpawns.Add(littleSpawnTwo);
+                                        MonjaFestival.bigMonjaSpawns.Add(littleSpawnThree);
+                                        MonjaFestival.bigMonjaSpawns.Add(littleSpawnFour);
+                                        MonjaFestival.bigMonjaSpawns.Add(greenBase);
+                                        MonjaFestival.bigMonjaSpawns.Add(cyanBase);
+                                        MonjaFestival.bigMonjaSpawns.Add(allulMonja);
+
+                                        createdmonjafestival = true;
+                                    }
+                                }
                                 // Remove camera use, admin table, vitals, electrical doors on Airship
                                 GameObject cameras = GameObject.Find("task_cams");
                                 cameras.GetComponent<BoxCollider2D>().enabled = false;
@@ -2945,30 +3655,20 @@ namespace LasMonjas.Patches
                                 airshipadmin.GetComponent<BoxCollider2D>().enabled = false;
                                 GameObject airshipvitals = GameObject.Find("panel_vitals");
                                 airshipvitals.GetComponent<CircleCollider2D>().enabled = false;
-                                GameObject LeftDoorTop = GameObject.Find("LeftDoorTop");
-                                LeftDoorTop.SetActive(false);
-                                GameObject TopLeftVert = GameObject.Find("TopLeftVert");
-                                TopLeftVert.SetActive(false);
-                                GameObject TopLeftHort = GameObject.Find("TopLeftHort");
-                                TopLeftHort.SetActive(false);
-                                GameObject BottomHort = GameObject.Find("BottomHort");
-                                BottomHort.SetActive(false);
-                                GameObject TopCenterHort = GameObject.Find("TopCenterHort");
-                                TopCenterHort.SetActive(false);
-                                GameObject LeftVert = GameObject.Find("LeftVert");
-                                LeftVert.SetActive(false);
-                                GameObject RightVert = GameObject.Find("RightVert");
-                                RightVert.SetActive(false);
-                                GameObject TopRightVert = GameObject.Find("TopRightVert");
-                                TopRightVert.SetActive(false);
-                                GameObject TopRightHort = GameObject.Find("TopRightHort");
-                                TopRightHort.SetActive(false);
-                                GameObject BottomRightHort = GameObject.Find("BottomRightHort");
-                                BottomRightHort.SetActive(false);
-                                GameObject BottomRightVert = GameObject.Find("BottomRightVert");
-                                BottomRightVert.SetActive(false);
-                                GameObject LeftDoorBottom = GameObject.Find("LeftDoorBottom");
-                                LeftDoorBottom.SetActive(false);
+
+                                Helpers.GetStaticDoor("TopLeftVert").SetOpen(true);
+                                Helpers.GetStaticDoor("TopLeftHort").SetOpen(true);
+                                Helpers.GetStaticDoor("BottomHort").SetOpen(true);
+                                Helpers.GetStaticDoor("TopCenterHort").SetOpen(true);
+                                Helpers.GetStaticDoor("LeftVert").SetOpen(true);
+                                Helpers.GetStaticDoor("RightVert").SetOpen(true);
+                                Helpers.GetStaticDoor("TopRightVert").SetOpen(true);
+                                Helpers.GetStaticDoor("TopRightHort").SetOpen(true);
+                                Helpers.GetStaticDoor("BottomRightHort").SetOpen(true);
+                                Helpers.GetStaticDoor("BottomRightVert").SetOpen(true);
+                                Helpers.GetStaticDoor("LeftDoorTop").SetOpen(true);
+                                Helpers.GetStaticDoor("LeftDoorBottom").SetOpen(true);                                                           
+                                
                                 GameObject laddermeeting = GameObject.Find("ladder_meeting");
                                 laddermeeting.SetActive(false);
                                 GameObject platform = GameObject.Find("Platform");
@@ -3593,14 +4293,97 @@ namespace LasMonjas.Patches
                                         break;
                                     case 2:
                                         if (BattleRoyale.serialKiller != null) {
-                                            BattleRoyale.battleRoyalepointCounter = Language.introTexts[15] + BattleRoyale.requiredScore + " | <color=#39FF14FF>" + Language.introTexts[12] + BattleRoyale.limePoints + "</color> | " + "<color=#F2BEFFFF>" + Language.introTexts[13] + BattleRoyale.pinkPoints + " </color> | " + "<color=#808080FF>" + Language.introTexts[16] + BattleRoyale.serialKillerPoints + " </color>";
+                                            BattleRoyale.battleRoyalepointCounter = Language.introTexts[15] + BattleRoyale.requiredScore + " | <color=#39FF14FF>" + Language.introTexts[12] + BattleRoyale.limePoints + "</color> | " + "<color=#F2BEFFFF>" + Language.introTexts[13] + BattleRoyale.pinkPoints + "</color> | " + "<color=#808080FF>" + Language.introTexts[16] + BattleRoyale.serialKillerPoints + "</color>";
                                         }
                                         else {
-                                            BattleRoyale.battleRoyalepointCounter = Language.introTexts[15] + BattleRoyale.requiredScore + " | <color=#39FF14FF>" + Language.introTexts[12] + BattleRoyale.limePoints + "</color> | " + "<color=#F2BEFFFF>" + Language.introTexts[13] + BattleRoyale.pinkPoints + " </color>";
+                                            BattleRoyale.battleRoyalepointCounter = Language.introTexts[15] + BattleRoyale.requiredScore + " | <color=#39FF14FF>" + Language.introTexts[12] + BattleRoyale.limePoints + "</color> | " + "<color=#F2BEFFFF>" + Language.introTexts[13] + BattleRoyale.pinkPoints + "</color>";
                                         }
                                         break;
                                 }
                                 new CustomMessage(BattleRoyale.battleRoyalepointCounter, BattleRoyale.matchDuration, -1, 1.9f, 25);
+                                break;
+                            // Monja Festival
+                            case 7:
+                                new CustomMessage(Language.introTexts[1], MonjaFestival.matchDuration, -1, -1.3f, 30);
+                                if (MonjaFestival.bigMonjaPlayer != null) {
+                                    MonjaFestival.monjaFestivalCounter = "<color=#00FF00FF>" + Language.introTexts[17] + MonjaFestival.greenPoints + "</color> | " + "<color=#00F7FFFF>" + Language.introTexts[18] + MonjaFestival.cyanPoints + "</color> | " + "<color=#808080FF>" + Language.introTexts[19] + MonjaFestival.bigMonjaPoints + "</color>";
+                                }
+                                else {
+                                    MonjaFestival.monjaFestivalCounter = "<color=#00FF00FF>" + Language.introTexts[17] + MonjaFestival.greenPoints + "</color> | " + "<color=#00F7FFFF>" + Language.introTexts[18] + MonjaFestival.cyanPoints + "</color>";
+                                }
+                                new CustomMessage(MonjaFestival.monjaFestivalCounter, MonjaFestival.matchDuration, -1, 1.9f, 32);
+                                if (MonjaFestival.localArrows.Count == 0) {
+                                    MonjaFestival.localArrows.Add(new Arrow(Color.green));
+                                    MonjaFestival.localArrows.Add(new Arrow(Color.cyan));
+                                    MonjaFestival.localArrows.Add(new Arrow(Color.grey));
+                                    MonjaFestival.localArrows[0].arrow.SetActive(false);
+                                    MonjaFestival.localArrows[1].arrow.SetActive(false);
+                                    MonjaFestival.localArrows[2].arrow.SetActive(false);
+
+                                    if (PlayerControl.LocalPlayer == MonjaFestival.bigMonjaPlayer) {
+                                        MonjaFestival.localArrows[2].arrow.SetActive(true);
+                                    }
+
+                                    foreach (PlayerControl player in MonjaFestival.greenTeam) {
+                                        if (player == PlayerControl.LocalPlayer)
+                                            MonjaFestival.localArrows[0].arrow.SetActive(true);
+                                    }
+                                    foreach (PlayerControl player in MonjaFestival.cyanTeam) {
+                                        if (player == PlayerControl.LocalPlayer)
+                                            MonjaFestival.localArrows[1].arrow.SetActive(true);
+                                    }
+                                }
+                                foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                                    if (player != null) {
+                                        GameObject hands = GameObject.Instantiate(CustomMain.customAssets.pickOneGreenMonja, PlayerControl.LocalPlayer.transform.parent);
+                                        hands.GetComponent<SpriteRenderer>().sprite = null;
+                                        hands.transform.position = new Vector3(player.transform.position.x, player.transform.position.y - 0.1f, -0.5f);
+                                        hands.transform.parent = player.transform;
+                                        hands.name = "hands" + player.name;
+                                    }
+                                }
+                                if (MonjaFestival.greenPlayer01 != null) {
+                                    MonjaFestival.handsGreen01 = GameObject.Find("hands" + MonjaFestival.greenPlayer01.name);
+                                }
+                                if (MonjaFestival.greenPlayer02 != null) {
+                                    MonjaFestival.handsGreen02 = GameObject.Find("hands" + MonjaFestival.greenPlayer02.name);
+                                }
+                                if (MonjaFestival.greenPlayer03 != null) {
+                                    MonjaFestival.handsGreen03 = GameObject.Find("hands" + MonjaFestival.greenPlayer03.name);
+                                }
+                                if (MonjaFestival.greenPlayer04 != null) {
+                                    MonjaFestival.handsGreen04 = GameObject.Find("hands" + MonjaFestival.greenPlayer04.name);
+                                }
+                                if (MonjaFestival.greenPlayer05 != null) {
+                                    MonjaFestival.handsGreen05 = GameObject.Find("hands" + MonjaFestival.greenPlayer05.name);
+                                }
+                                if (MonjaFestival.greenPlayer06 != null) {
+                                    MonjaFestival.handsGreen06 = GameObject.Find("hands" + MonjaFestival.greenPlayer06.name);
+                                }
+                                if (MonjaFestival.greenPlayer07 != null) {
+                                    MonjaFestival.handsGreen07 = GameObject.Find("hands" + MonjaFestival.greenPlayer07.name);
+                                }
+                                if (MonjaFestival.cyanPlayer01 != null) {
+                                    MonjaFestival.handsCyan01 = GameObject.Find("hands" + MonjaFestival.cyanPlayer01.name);
+                                }
+                                if (MonjaFestival.cyanPlayer02 != null) {
+                                    MonjaFestival.handsCyan02 = GameObject.Find("hands" + MonjaFestival.cyanPlayer02.name);
+                                }
+                                if (MonjaFestival.cyanPlayer03 != null) {
+                                    MonjaFestival.handsCyan03 = GameObject.Find("hands" + MonjaFestival.cyanPlayer03.name);
+                                }
+                                if (MonjaFestival.cyanPlayer04 != null) {
+                                    MonjaFestival.handsCyan04 = GameObject.Find("hands" + MonjaFestival.cyanPlayer04.name);
+                                }
+                                if (MonjaFestival.cyanPlayer05 != null) {
+                                    MonjaFestival.handsCyan05 = GameObject.Find("hands" + MonjaFestival.cyanPlayer05.name);
+                                }
+                                if (MonjaFestival.cyanPlayer06 != null) {
+                                    MonjaFestival.handsCyan06 = GameObject.Find("hands" + MonjaFestival.cyanPlayer06.name);
+                                }
+                                if (MonjaFestival.cyanPlayer07 != null) {
+                                    MonjaFestival.handsCyan07 = GameObject.Find("hands" + MonjaFestival.cyanPlayer07.name);
+                                }
                                 break;
                         }
                     }
@@ -3656,7 +4439,7 @@ namespace LasMonjas.Patches
 
             bool removeAirshipDoors = CustomOptionHolder.removeAirshipDoors.getBool();
 
-            if (removeAirshipDoors && removedAirshipDoors == false && GameOptionsManager.Instance.currentGameOptions.MapId == 4) {
+            if (removeAirshipDoors && removedAirshipDoors == false && GameOptionsManager.Instance.currentGameOptions.MapId == 4) {             
                 List<GameObject> doors = new List<GameObject>();
                 
                 GameObject celldoor01 = GameObject.Find("doorsideOpen (2)");

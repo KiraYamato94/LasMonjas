@@ -51,7 +51,11 @@ namespace LasMonjas.Patches {
         BattleRoyaleDraw = 45,
         BattleRoyaleLimeTeamWin = 46,
         BattleRoyalePinkTeamWin = 47,
-        BattleRoyaleSerialKillerWin = 48
+        BattleRoyaleSerialKillerWin = 48,
+        MonjaFestivalGreenWin = 49,
+        MonjaFestivalCyanWin = 50,
+        MonjaFestivalBigMonjaWin = 51,
+        MonjaFestivalDraw = 52
     }
 
     enum WinCondition {
@@ -95,7 +99,11 @@ namespace LasMonjas.Patches {
         BattleRoyaleDraw,
         BattleRoyaleLimeTeamWin,
         BattleRoyalePinkTeamWin,
-        BattleRoyaleSerialKillerWin
+        BattleRoyaleSerialKillerWin,
+        MonjaFestivalGreenWin,
+        MonjaFestivalCyanWin,
+        MonjaFestivalBigMonjaWin,
+        MonjaFestivalDraw
     }
 
     static class AdditionalTempData {
@@ -214,6 +222,10 @@ namespace LasMonjas.Patches {
             bool battleRoyaleLimeTeamWin = BattleRoyale.battleRoyaleMode && gameOverReason == (GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin;
             bool battleRoyalePinkTeamWin = BattleRoyale.battleRoyaleMode && gameOverReason == (GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin;
             bool battleRoyaleSerialKillerWin = BattleRoyale.battleRoyaleMode && gameOverReason == (GameOverReason)CustomGameOverReason.BattleRoyaleSerialKillerWin;
+            bool monjaFestivalGreenWin = MonjaFestival.monjaFestivalMode && gameOverReason == (GameOverReason)CustomGameOverReason.MonjaFestivalGreenWin;
+            bool monjaFestivalCyanWin = MonjaFestival.monjaFestivalMode && gameOverReason == (GameOverReason)CustomGameOverReason.MonjaFestivalCyanWin;
+            bool monjaFestivalBigMonjaWin = MonjaFestival.monjaFestivalMode && gameOverReason == (GameOverReason)CustomGameOverReason.MonjaFestivalBigMonjaWin;
+            bool monjaFestivalDraw = MonjaFestival.monjaFestivalMode && gameOverReason == (GameOverReason)CustomGameOverReason.MonjaFestivalDraw;
 
             // Kid lose
             if (kidLose) {
@@ -605,6 +617,41 @@ namespace LasMonjas.Patches {
                 AdditionalTempData.winCondition = WinCondition.BattleRoyaleDraw; 
             }
 
+            // MonjaFestival Green Team Win
+            else if (monjaFestivalGreenWin) {
+                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                foreach (PlayerControl player in MonjaFestival.greenTeam) {
+                    WinningPlayerData wpd = new WinningPlayerData(player.Data);
+                    TempData.winners.Add(wpd);
+                }
+                AdditionalTempData.winCondition = WinCondition.MonjaFestivalGreenWin;
+            }
+            // MonjaFestival Pink Team Win
+            else if (monjaFestivalCyanWin) {
+                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                foreach (PlayerControl player in MonjaFestival.cyanTeam) {
+                    WinningPlayerData wpd = new WinningPlayerData(player.Data);
+                    TempData.winners.Add(wpd);
+                }
+                AdditionalTempData.winCondition = WinCondition.MonjaFestivalCyanWin;
+            }
+            // MonjaFestival Big Monja Win
+            else if (monjaFestivalBigMonjaWin) {
+                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                WinningPlayerData wpd = new WinningPlayerData(MonjaFestival.bigMonjaPlayer.Data);
+                TempData.winners.Add(wpd);
+                AdditionalTempData.winCondition = WinCondition.MonjaFestivalBigMonjaWin;
+            }
+            // MonjaFestival Draw
+            else if (monjaFestivalDraw) {
+                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                    WinningPlayerData wpd = new WinningPlayerData(player.Data);
+                    TempData.winners.Add(wpd);
+                }
+                AdditionalTempData.winCondition = WinCondition.MonjaFestivalDraw;
+            }
+
             // Reset Settings
             RPCProcedure.resetVariables();
         }
@@ -762,6 +809,7 @@ namespace LasMonjas.Patches {
                 case WinCondition.DrawTeamWin:
                 case WinCondition.TeamHillDraw:
                 case WinCondition.BattleRoyaleDraw:
+                case WinCondition.MonjaFestivalDraw:
                     textRenderer.text = "Draw";
                     textRenderer.color = new Color32(255, 128, 0, byte.MaxValue);
                     __instance.BackgroundBar.material.SetColor("_Color", Joker.color);
@@ -833,6 +881,21 @@ namespace LasMonjas.Patches {
                     break;
                 case WinCondition.BattleRoyaleSerialKillerWin:
                     textRenderer.text = "Serial Killer Wins";
+                    textRenderer.color = Joker.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Joker.color);
+                    break;
+                case WinCondition.MonjaFestivalGreenWin:
+                    textRenderer.text = "Green Team Wins";
+                    textRenderer.color = Color.green;
+                    __instance.BackgroundBar.material.SetColor("_Color", Color.green);
+                    break;
+                case WinCondition.MonjaFestivalCyanWin:
+                    textRenderer.text = "Cyan Team Wins";
+                    textRenderer.color = Color.cyan;
+                    __instance.BackgroundBar.material.SetColor("_Color", Color.cyan);
+                    break;
+                case WinCondition.MonjaFestivalBigMonjaWin:
+                    textRenderer.text = "Big Monja Wins";
                     textRenderer.color = Joker.color;
                     __instance.BackgroundBar.material.SetColor("_Color", Joker.color);
                     break;
@@ -918,7 +981,11 @@ namespace LasMonjas.Patches {
             if (CheckAndEndGameForBattleRoyaleDraw(__instance)) return false;
             if (CheckAndEndGameForBattleRoyaleLimeTeamWin(__instance)) return false;
             if (CheckAndEndGameForBattleRoyalePinkTeamWin(__instance)) return false;
-            if (CheckAndEndGameForBattleRoyaleSerialKillerWin(__instance)) return false; 
+            if (CheckAndEndGameForBattleRoyaleSerialKillerWin(__instance)) return false;
+            if (CheckAndEndGameForMonjaFestivalDraw(__instance)) return false;
+            if (CheckAndEndGameForMonjaFestivalGreenTeamWin(__instance)) return false;
+            if (CheckAndEndGameForMonjaFestivalCyanTeamWin(__instance)) return false;
+            if (CheckAndEndGameForMonjaFestivalBigMonjaWin(__instance)) return false; 
             return false;
         }
 
@@ -1266,7 +1333,35 @@ namespace LasMonjas.Patches {
                 return true;
             }
             return false;
-        }       
+        }
+        private static bool CheckAndEndGameForMonjaFestivalDraw(LogicGameFlowNormal __instance) {
+            if (MonjaFestival.triggerDrawWin) {
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.MonjaFestivalDraw, false);
+                return true;
+            }
+            return false;
+        }
+        private static bool CheckAndEndGameForMonjaFestivalGreenTeamWin(LogicGameFlowNormal __instance) {
+            if (MonjaFestival.triggerGreenTeamWin) {
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.MonjaFestivalGreenWin, false);
+                return true;
+            }
+            return false;
+        }
+        private static bool CheckAndEndGameForMonjaFestivalCyanTeamWin(LogicGameFlowNormal __instance) {
+            if (MonjaFestival.triggerCyanTeamWin) {
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.MonjaFestivalCyanWin, false);
+                return true;
+            }
+            return false;
+        }
+        private static bool CheckAndEndGameForMonjaFestivalBigMonjaWin(LogicGameFlowNormal __instance) {
+            if (MonjaFestival.triggerBigMonjaWin) {
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.MonjaFestivalBigMonjaWin, false);
+                return true;
+            }
+            return false;
+        }
     }
 
     internal class PlayerStatistics

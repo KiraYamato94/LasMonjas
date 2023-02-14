@@ -73,6 +73,7 @@ namespace LasMonjas.Patches
                 HotPotato.hotPotatoMode = false;
                 ZombieLaboratory.zombieLaboratoryMode = false;
                 BattleRoyale.battleRoyaleMode = false;
+                MonjaFestival.monjaFestivalMode = false;
 
                 if (prefab == null) {
                     LoadPrefab();

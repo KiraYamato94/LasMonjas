@@ -16,10 +16,10 @@ namespace LasMonjas.Patches
         [HarmonyPrefix]
         [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.CalculateLightRadius))]
         public static bool Prefix(ref float __result, ShipStatus __instance, [HarmonyArgument(0)] GameData.PlayerInfo player) {
-            if (!__instance.Systems.ContainsKey(SystemTypes.Electrical)) return true;
+            if (!__instance.Systems.ContainsKey(SystemTypes.Electrical) || GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return true;
 
             // Same crewmate vision for everyone on gamemodes with no vision change
-            if (CaptureTheFlag.captureTheFlagMode || KingOfTheHill.kingOfTheHillMode || BattleRoyale.battleRoyaleMode) {
+            if (CaptureTheFlag.captureTheFlagMode || KingOfTheHill.kingOfTheHillMode || BattleRoyale.battleRoyaleMode || MonjaFestival.monjaFestivalMode) {
                 if (player == null || player.IsDead) // IsDead
                     __result = __instance.MaxLightRadius;
                 else {
