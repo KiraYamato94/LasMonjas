@@ -6,13 +6,13 @@ Las Monjas is a Spanish mod (available on English, Spanish, Chinese and Japanese
   1. [60 roles](#roles)
   2. [10 modifiers and 8 game mechanics](#modifiers)
   3. [1 custom map](https://youtu.be/9tDh9eYqAgk)
-  4. [6 custom gamemodes](#gamemodes)
+  4. [7 custom gamemodes](#gamemodes)
   5. [5 new colors](#settings)
   6. [Custom Music](#settings)
   7. [Custom Lobby](#settings)
   8. [Custom Hats, Visors and Nameplates](#customcosmetics)
   9. [Submerged Compatibility](#submerged)
-  10. [Multiple Language](#language)
+  10. [Multiple Languages](#language)
 
 -----------------------
 
@@ -36,6 +36,13 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
   
+**Version 3.1.0 (14th February 2023)**
+- New Gamemode: Monja Festival
+- 12 new hats and 6 new nameplates to celebrate Las Monjas 1st Anniversary and Valentine's Day
+- Hided custom role options from the Hide and Seek lobby
+- Fixed statics doors on Airship while playing gamemodes (thanks to Dekokiyo)
+- Removed Custom server region (you may still see it from playing more mods)
+  
 **Version 3.0.4 BETA (26th December 2022)**
 
 - Compatibility patch for Among Us 2022.12.14
@@ -46,8 +53,6 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 - When playing Hide and Seek, custom skeld has a 50% chance of being loaded if Skeld is selected as the game map
 - Hypnotist's traps now turn the player's camera upside down
 - Horse mode removed for now
-
-Known issue: Custom hats and visor don't have the sprite on the wardrobe but work anyway
 
 **Version 3.0.3 (18th November 2022)**
 
@@ -368,7 +373,7 @@ Known 1.3.3 BETA issues:
 -----------------------
 
 # Custom Servers
-I recommend to play this mod only on custom servers (for example [Impostor](https://github.com/Impostor/Impostor), note that modded handshake is required to play the mod [Example Modded Handshake by js6pak](https://github.com/NuclearPowered/Reactor.Impostor)), if you own an Impostor server, make sure AntiCheat and BanIpFromGame are set to false in the config.json file. This mod adds three custom server regions to play with, Modded NA (MNA), Modded EU (MEU) and Modded Asia (MAS), and also has [Unify by Daemon](https://github.com/MoltenMods/Unify) implemented, which you can use to select the custom region to join a custom server by entering the IP or domain name and the port of the server.
+I recommend to play this mod only on custom servers (for example [Impostor](https://github.com/Impostor/Impostor), note that modded handshake is required to play the mod [Example Modded Handshake by js6pak](https://github.com/NuclearPowered/Reactor.Impostor)), if you own an Impostor server, make sure AntiCheat and BanIpFromGame are set to false in the config.json file. This mod adds three custom server regions to play with, Modded NA (MNA), Modded EU (MEU) and Modded Asia (MAS).
 
 -----------------------
 
@@ -377,7 +382,7 @@ This mod adds a custom lobby which I won't spoil to you, it also adds five color
 - **Game Summary:** Activating this option will create a list containing which role and task progress the players had after the game ends.
 - **Activate Music:** Music pack containing 7 songs from Kevin MacLeod (1 for Lobby, 3 for Tasks and 3 for Meeting depending of how many players are alive)
 - **Ghost Can See Roles:** Only after being reported, ghosts will be able to see which role the players have.
-- **Horse Mode:** Activate 2022 1st April Fools, remember to take of your skin if you activate Horse Mode.
+- ~~**Horse Mode:** Activate 2022 1st April Fools, remember to take of your skin if you activate Horse Mode. (Disabled since 3.0.4 update)~~
 - **Monja Cursor:** Enable a bigger Nun cursor for the game.
 
 -----------------------
@@ -1414,7 +1419,7 @@ This mod also features some game mechanic modifiers, one of them being a [custom
 
 # GameModes
 
-This mods adds six gamemodes, which can be played on everymap including the custom one and Submerged. Mod roles won't spawn and map abilities (admin, sabotage, reports, emergency button...) can't be used on custom gamemodes.
+This mods adds seven gamemodes, which can be played on everymap including the custom one and Submerged. Mod roles won't spawn and map abilities (admin, sabotage, reports, emergency button...) can't be used on custom gamemodes.
 
 ## CaptureTheFlag
 
@@ -1605,6 +1610,29 @@ On this gamemode everyone has a ranged kill button with the Archer's mechanic (u
 
 -----------------------
 
+## MonjaFestival
+
+Match between green and cyan teams where each team has to look for Monjas around the map and deliver them to their base. When the time reaches 0, the team with more Monjas wins. On odd player number games a special role called Big Monja will appear.
+
+| Option  | Description |
+|----------|-------------|
+| Match Duration | From 3 to 5 minutes |
+| Kill Cooldown | Kill Button Cooldown |
+| Revive Time | Everyone revives on his team base after a setted amount of time |
+| Invincibility Time After Revive | Players can't use their abilities, vent or get killed during this time |
+
+**Additional Gamemode Notes:**
+- There are 6 Monjas spawns on the map where players can pick up Monjas, two of them have more Monjas to pick than the other four.
+- The amount of Monjas that can be picked from the spawns reloads within time.
+- Each player name color will be the same as the team color.
+- Each player can only carry 3 Monjas at the same time, delivering to the base gives 1 point for each Monja, but the player drops them on the floor if he gets killed.
+- Everyone can kill (while not carrying Monjas), nobody can vent or steal Monjas from the other team's base.
+- A random Allul's Monja might spawn randomly somewhere on the map, picking it up gives 10 points to the team who found it.
+- Big Monja is a neutral role that plays on its own, she can pick up to 10 Monjas at the same time faster than anyone, has less kill cooldown, can vent, became invisible for a short time and steal Monjas from other's team base, without any kind of punishment from carrying Monjas. On the other hand she can be killed while invisible.
+- There are custom messages for match duration, who found Allul's Monja and if the neutral role is stealing from your team's base.
+
+-----------------------
+
 # CustomCosmetics
 
 A custom hats system (adapted from [xxomega77](https://github.com/xxomega77xx/HatPack)) has been added, also thanks to that I could add a method to add custom visors and nameplates too. It can have some color or position bugs, we'll try to fix them in the future while also adding new cosmetics.
@@ -1677,4 +1705,4 @@ If you use something from Las Monjas on your mod, please credit me on your mod's
 -----------------------
 
 # Known Bugs
-- Players can see their head off the map on Horse mode on some walls (this is a vanilla game bug)
+- Custom hats and visor don't have the sprite on the wardrobe but work anyway
