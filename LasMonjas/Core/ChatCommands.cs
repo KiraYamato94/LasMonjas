@@ -146,7 +146,7 @@ namespace LasMonjas.Core
                                                 "\nHe can't use vents. While invisible, he can be killed by roles who have a kill button.";
                                             break;
                                         case "gambler":
-                                            infoText = "Gambler: impostor who can shoot a player choosing their role during the meeting." +
+                                            infoText = "Gambler: impostor who can shoot a player choosing its role during the meeting." +
                                                 "\nHe has to guess the player's role to kill him, only the current ingame roles appear on his screen. Choosing the wrong one kills himself.";
                                             break;
                                         case "sorcerer":
@@ -463,6 +463,12 @@ namespace LasMonjas.Core
                                                 "\nNobody can vent and players have lives and when they reach 0 lives they die for the rest of the match, the last one alive wins." +
                                                 "\nAlso there are 3 ways of playing this gamemode, All VS All, Team Battle or Score Battle." +
                                                 "\nOn odd player number games for Team and Score Battle there will be a powerful neutral role called Serial Killer that can also win killing everyone or reaching the needed score. This role has 2x lives (x3 on games with 11 players or more) and half kill cooldown.";
+                                            break;
+                                        case "monjafestival":
+                                        case "mf":
+                                            infoText = "Monja Festival: gamemode between green and cyan teams where each team has to pick little monjas found inside boxes on the map and deliver them to their base. Once delivered it can't be stolen by the enemy team." +
+                                                "\nEveryone can kill but you can't while carrying little monjas, also nobody can vent and you drop the little monjas you're carrying if you get killed." +
+                                                "\nOn odd player number games a special role called Big Monja will appear, she can do everything while carrying little monjas, vent, kill, become invisible and steal little monjas from other team's base.";
                                             break;
                                     }
                                     break;
@@ -821,6 +827,12 @@ namespace LasMonjas.Core
                                                 "\nHay 3 formas de jugar, Todos Contra Todos, Por Equipos y Por Puntuacion." +
                                                 "\nEn partidas cuyo numero de jugadores es impar, aparecera el rol Serial Killer, un rol muy poderoso que tiene 2 veces mas vidas que los demas jugadores (3 veces mas en partidas de 11 o mas jugadores) y dispara mas rapido.";
                                             break;
+                                        case "monjafestival":
+                                        case "mf":
+                                            infoText = "Monja Festival: modo de juego que enfrenta al equipo Verde contra Cian, en el que cada equipo debe obtener monjitas de las cestas que hay en el mapa y llevarlas a su base. Una vez entregadas no las puede robar el equipo rival." +
+                                                "\nTodos pueden matar pero no puedes mientras llevas monjitas encima, nadie puede usar rejillas y las monjitas te caeran al suelo si te matan." +
+                                                "\nEn partidas cuyo numero de jugadores es impar, aparecera el rol Big Monja, un rol que puede usar rejillas, matar, robar monjitas de las bases enemigas y volverse invisibile, todo esto incluso mientras lleva monjitas encima.";
+                                            break;
                                     }
                                     break;
                                 // Japanese
@@ -1178,6 +1190,12 @@ namespace LasMonjas.Core
                                                 "\nまた、このゲームモードをプレイする方法は3つあります。すべてのVS、チームバトルまたはスコアバトルがあります。" +
                                                 "\nチームとスコアバトルの奇妙なプレイヤー番号ゲームでは、シリアルキラーと呼ばれる強力なニュートラルな役割があり、これもすべての人を殺したり、必要なスコアに達したりすることができます。この役割にはX2寿命があり、半分のクールダウンがあります";
                                             break;
+                                        case "monjafestival":
+                                        case "mf":
+                                            infoText = "Monja Festival: 緑と水色のチームの間のゲームモードで、各チームはマップ上の箱の中にある小さなモンジャを選び、基地に届けなければなりません。 配達されたら、敵チームに盗まれることはありません。 " +
+                                                "\n誰もが殺すことができますが、小さなもんじゃを運んでいる間はできません。" +
+                                                "\n奇数プレイヤー数のゲームでは、ビッグもんじゃと呼ばれる特別な役割が登場します。彼女は、小さなもんじゃを運びながら、ベント、キル、透明化、他のチームの基地から小さなもんじゃを盗むことができます。";
+                                            break;
                                     }
                                     break;
                                 // Chinese
@@ -1533,6 +1551,12 @@ namespace LasMonjas.Core
                                                 "\n此外，这个游戏模式有3种玩法，所单人模式，团队战或分数战。" +
                                                 "\n在团队战和分数战总玩家数量为单数时，游戏内会有一个强大的中立角色，称为 \"连环杀手\"，它也可以赢得杀死所有人或达到所需的分数。这个角色有2点生命值和一半的击杀冷却时间。";
                                             break;
+                                        case "monjafestival":
+                                        case "mf":
+                                            infoText = "Monja Festival: 绿色和青色团队之间的游戏模式，每个团队必须挑选在地图上的盒子内发现的小文字并将它们运送到他们的基地。 一旦交付，它就不能被敌方团队偷走。" +
+                                                "\n每个人都可以杀人，但你不能带着小文字，也没有人可以发泄，如果你被杀，你会掉下你携带的小文字。" +
+                                                "\n奇数局会出现特殊角色大魔女，背着小魔女无所不能，发泄、杀人、隐身、盗取对方基地的小魔女。";
+                                            break;
                                     }
                                     break;
                             }
@@ -1589,7 +1613,7 @@ namespace LasMonjas.Core
                                                     "\nHe can't use vents. While invisible, he can be killed by roles who has a kill button.";
                                                 break;
                                             case "gambler":
-                                                infoText = "Gambler: impostor who can shoot a player choosing their role during the meeting." +
+                                                infoText = "Gambler: impostor who can shoot a player choosing its role during the meeting." +
                                                     "\nHe has to guess the player's role to kill him, only the current ingame roles appears on his screen. Choosing the wrong one kills himself.";
                                                 break;
                                             case "sorcerer":

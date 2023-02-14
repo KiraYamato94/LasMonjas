@@ -480,6 +480,7 @@ namespace LasMonjas.Core
         }
 
         private static void Postfix(ref string __result) {
+            if (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return; 
             StringBuilder sb = new StringBuilder(__result);
             foreach (CustomOption option in CustomOption.options) {
                 if (option.parent == null) {
@@ -499,11 +500,11 @@ namespace LasMonjas.Core
             var hudString = sb.ToString();
 
             int defaultSettingsLines = 23;
-            int roleSettingsLines = defaultSettingsLines + 35;
+            int roleSettingsLines = defaultSettingsLines + 36;
             int detailedSettingsP1 = roleSettingsLines + 35;
             int detailedSettingsP2 = detailedSettingsP1 + 27;
             int detailedSettingsP3 = detailedSettingsP2 + 29;
-            int detailedSettingsP4 = detailedSettingsP3 + 26;
+            int detailedSettingsP4 = detailedSettingsP3 + 31;   
             int detailedSettingsP5 = detailedSettingsP4 + 47;
             int detailedSettingsP6 = detailedSettingsP5 + 41;
             int detailedSettingsP7 = detailedSettingsP6 + 32;
@@ -531,10 +532,10 @@ namespace LasMonjas.Core
                     gap = 5;
                     index = hudString.TakeWhile(c => (gap -= (c == '\n' ? 1 : 0)) > 0).Count();
                     hudString = hudString.Insert(index, "\n");
-                    gap = 12;
+                    gap = 13;
                     index = hudString.TakeWhile(c => (gap -= (c == '\n' ? 1 : 0)) > 0).Count();
                     hudString = hudString.Insert(index, "\n");
-                    gap = 28;
+                    gap = 29;
                     index = hudString.TakeWhile(c => (gap -= (c == '\n' ? 1 : 0)) > 0).Count();
                     hudString = hudString.Insert(index + 1, "\n"); break;
                 case 2:

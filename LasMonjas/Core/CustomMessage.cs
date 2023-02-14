@@ -318,6 +318,36 @@ namespace LasMonjas.Core {
                                 text.text = "";
                             }
                             break;
+                        case 30:
+                            // Monja Festival timer
+                            if (MonjaFestival.monjaFestivalMode && MonjaFestival.matchDuration >= 0) {
+                                string prefix = ("<color=#FF8000FF>");
+                                text.text = prefix + message + MonjaFestival.matchDuration.ToString("F0") + "</color>";
+                            }
+                            else {
+                                text.text = "";
+                            }
+                            break;
+                        case 31:
+                            // Monja Festival steal
+                            if (MonjaFestival.monjaFestivalMode && MonjaFestival.matchDuration >= 0) {
+                                string prefix = ("<color=#FF8000FF>");
+                                text.text = prefix + message + "</color>";
+                            }
+                            else {
+                                text.text = "";
+                            }
+                            break;
+                        case 32:
+                            // Monja Festival point counter
+                            if (MonjaFestival.monjaFestivalMode && MonjaFestival.matchDuration >= 0) {
+                                string prefix = ("<color=#FF8000FF>");
+                                text.text = prefix + MonjaFestival.monjaFestivalCounter + "</color>";
+                            }
+                            else {
+                                text.text = "";
+                            }
+                            break;
                     }
                     if (text != null) text.color = even ? Color.yellow : Color.red;
                     if (p == 1f && text != null && text.gameObject != null) {
