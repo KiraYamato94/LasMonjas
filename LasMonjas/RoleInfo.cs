@@ -175,6 +175,23 @@ namespace LasMonjas
         public static RoleInfo pinkPlayer07 = new RoleInfo("Pink Team", Shy.color, Language.roleInfoNames[23], Language.roleInfoNames[23], RoleId.PinkPlayer07);
         public static RoleInfo serialKiller = new RoleInfo("Serial Killer", Joker.color, Language.helpersTexts[1], Language.helpersTexts[1], RoleId.SerialKiller);
 
+        // Monja Festival
+        public static RoleInfo greenMonjaPlayer01 = new RoleInfo("Little Monja", Color.green, Language.roleInfoNames[117], Language.roleInfoNames[117], RoleId.GreenMonjaPlayer01);
+        public static RoleInfo greenMonjaPlayer02 = new RoleInfo("Little Monja", Color.green, Language.roleInfoNames[117], Language.roleInfoNames[117], RoleId.GreenMonjaPlayer02);
+        public static RoleInfo greenMonjaPlayer03 = new RoleInfo("Little Monja", Color.green, Language.roleInfoNames[117], Language.roleInfoNames[117], RoleId.GreenMonjaPlayer03);
+        public static RoleInfo greenMonjaPlayer04 = new RoleInfo("Little Monja", Color.green, Language.roleInfoNames[117], Language.roleInfoNames[117], RoleId.GreenMonjaPlayer04);
+        public static RoleInfo greenMonjaPlayer05 = new RoleInfo("Little Monja", Color.green, Language.roleInfoNames[117], Language.roleInfoNames[117], RoleId.GreenMonjaPlayer05);
+        public static RoleInfo greenMonjaPlayer06 = new RoleInfo("Little Monja", Color.green, Language.roleInfoNames[117], Language.roleInfoNames[117], RoleId.GreenMonjaPlayer06);
+        public static RoleInfo greenMonjaPlayer07 = new RoleInfo("Little Monja", Color.green, Language.roleInfoNames[117], Language.roleInfoNames[117], RoleId.GreenMonjaPlayer07);
+        public static RoleInfo cyanPlayer01 = new RoleInfo("Little Monja", Color.cyan, Language.roleInfoNames[117], Language.roleInfoNames[117], RoleId.CyanPlayer01);
+        public static RoleInfo cyanPlayer02 = new RoleInfo("Little Monja", Color.cyan, Language.roleInfoNames[117], Language.roleInfoNames[117], RoleId.CyanPlayer02);
+        public static RoleInfo cyanPlayer03 = new RoleInfo("Little Monja", Color.cyan, Language.roleInfoNames[117], Language.roleInfoNames[117], RoleId.CyanPlayer03);
+        public static RoleInfo cyanPlayer04 = new RoleInfo("Little Monja", Color.cyan, Language.roleInfoNames[117], Language.roleInfoNames[117], RoleId.CyanPlayer04);
+        public static RoleInfo cyanPlayer05 = new RoleInfo("Little Monja", Color.cyan, Language.roleInfoNames[117], Language.roleInfoNames[117], RoleId.CyanPlayer05);
+        public static RoleInfo cyanPlayer06 = new RoleInfo("Little Monja", Color.cyan, Language.roleInfoNames[117], Language.roleInfoNames[117], RoleId.CyanPlayer06);
+        public static RoleInfo cyanPlayer07 = new RoleInfo("Little Monja", Color.cyan, Language.roleInfoNames[117], Language.roleInfoNames[117], RoleId.CyanPlayer07);
+        public static RoleInfo bigMonja = new RoleInfo("Big Monja", Joker.color, Language.roleInfoNames[117], Language.roleInfoNames[117], RoleId.BigMonja);
+
 
         // Impostor roles
         public static RoleInfo mimic = new RoleInfo("Mimic", Mimic.color, Language.roleInfoNames[24], Language.roleInfoNames[24], RoleId.Mimic);
@@ -468,7 +485,22 @@ namespace LasMonjas
             pinkPlayer05,
             pinkPlayer06,
             pinkPlayer07,
-            serialKiller
+            serialKiller,
+            greenMonjaPlayer01,
+            greenMonjaPlayer02,
+            greenMonjaPlayer03,
+            greenMonjaPlayer04,
+            greenMonjaPlayer05,
+            greenMonjaPlayer06,
+            greenMonjaPlayer07,
+            cyanPlayer01,
+            cyanPlayer02,
+            cyanPlayer03,
+            cyanPlayer04,
+            cyanPlayer05,
+            cyanPlayer06,
+            cyanPlayer07,
+            bigMonja
         };
 
         public static List<RoleInfo> getRoleInfoForPlayer(PlayerControl p) {
@@ -621,6 +653,23 @@ namespace LasMonjas
             if (p == BattleRoyale.pinkPlayer06) infos.Add(pinkPlayer06);
             if (p == BattleRoyale.pinkPlayer07) infos.Add(pinkPlayer07);
             if (p == BattleRoyale.serialKiller) infos.Add(serialKiller);
+
+            // Monja Festival
+            if (p == MonjaFestival.greenPlayer01) infos.Add(greenMonjaPlayer01);
+            if (p == MonjaFestival.greenPlayer02) infos.Add(greenMonjaPlayer02);
+            if (p == MonjaFestival.greenPlayer03) infos.Add(greenMonjaPlayer03);
+            if (p == MonjaFestival.greenPlayer04) infos.Add(greenMonjaPlayer04);
+            if (p == MonjaFestival.greenPlayer05) infos.Add(greenMonjaPlayer05);
+            if (p == MonjaFestival.greenPlayer06) infos.Add(greenMonjaPlayer06);
+            if (p == MonjaFestival.greenPlayer07) infos.Add(greenMonjaPlayer07);
+            if (p == MonjaFestival.cyanPlayer01) infos.Add(cyanPlayer01);
+            if (p == MonjaFestival.cyanPlayer02) infos.Add(cyanPlayer02);
+            if (p == MonjaFestival.cyanPlayer03) infos.Add(cyanPlayer03);
+            if (p == MonjaFestival.cyanPlayer04) infos.Add(cyanPlayer04);
+            if (p == MonjaFestival.cyanPlayer05) infos.Add(cyanPlayer05);
+            if (p == MonjaFestival.cyanPlayer06) infos.Add(cyanPlayer06);
+            if (p == MonjaFestival.cyanPlayer07) infos.Add(cyanPlayer07);
+            if (p == MonjaFestival.bigMonjaPlayer) infos.Add(bigMonja);
 
 
             // Impostor roles

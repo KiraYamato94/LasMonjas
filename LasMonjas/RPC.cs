@@ -238,7 +238,24 @@ namespace LasMonjas
         PinkPlayer05,
         PinkPlayer06,
         PinkPlayer07,
-        SerialKiller
+        SerialKiller,
+
+        // Monja Festival
+        GreenMonjaPlayer01,
+        GreenMonjaPlayer02,
+        GreenMonjaPlayer03,
+        GreenMonjaPlayer04,
+        GreenMonjaPlayer05,
+        GreenMonjaPlayer06,
+        GreenMonjaPlayer07,
+        CyanPlayer01,
+        CyanPlayer02,
+        CyanPlayer03,
+        CyanPlayer04,
+        CyanPlayer05,
+        CyanPlayer06,
+        CyanPlayer07,
+        BigMonja
     }
 
     enum CustomRPC
@@ -258,7 +275,7 @@ namespace LasMonjas
 
         // Role functionality
 
-        MimicTransform = 75,
+        MimicTransform = 70,
         PainterPaint,
         DemonSetBitten,
         PlaceNun,
@@ -393,7 +410,15 @@ namespace LasMonjas
         ZombieLaboratoryTurnZombie,
 
         // Battle Royale
-        BattleRoyaleKills
+        BattleRoyaleKills,
+
+        // Monja Festival
+        MonjaFestivalKills,
+        MonjaFestivalBigMonjaInvisible,
+        MonjaFestivalFindSpawns,
+        MonjaFestivalCheckItems,
+        MonjaFestivalDeliver,
+        MonjaFestivalDestroyLittleMonja
     }
 
     public static class RPCProcedure
@@ -1155,6 +1180,68 @@ namespace LasMonjas
                         case RoleId.SerialKiller:
                             BattleRoyale.serialKiller = player;
                             BattleRoyale.serialKillerTeam.Add(player);
+                            break;
+
+                        // Monja Festival                       
+                        case RoleId.GreenMonjaPlayer01:
+                            MonjaFestival.greenPlayer01 = player;
+                            MonjaFestival.greenTeam.Add(player);
+                            break;
+                        case RoleId.GreenMonjaPlayer02:
+                            MonjaFestival.greenPlayer02 = player;
+                            MonjaFestival.greenTeam.Add(player);
+                            break;
+                        case RoleId.GreenMonjaPlayer03:
+                            MonjaFestival.greenPlayer03 = player;
+                            MonjaFestival.greenTeam.Add(player);
+                            break;
+                        case RoleId.GreenMonjaPlayer04:
+                            MonjaFestival.greenPlayer04 = player;
+                            MonjaFestival.greenTeam.Add(player);
+                            break;
+                        case RoleId.GreenMonjaPlayer05:
+                            MonjaFestival.greenPlayer05 = player;
+                            MonjaFestival.greenTeam.Add(player);
+                            break;
+                        case RoleId.GreenMonjaPlayer06:
+                            MonjaFestival.greenPlayer06 = player;
+                            MonjaFestival.greenTeam.Add(player);
+                            break;
+                        case RoleId.GreenMonjaPlayer07:
+                            MonjaFestival.greenPlayer07 = player;
+                            MonjaFestival.greenTeam.Add(player);
+                            break;
+                        case RoleId.CyanPlayer01:
+                            MonjaFestival.cyanPlayer01 = player;
+                            MonjaFestival.cyanTeam.Add(player);
+                            break;
+                        case RoleId.CyanPlayer02:
+                            MonjaFestival.cyanPlayer02 = player;
+                            MonjaFestival.cyanTeam.Add(player);
+                            break;
+                        case RoleId.CyanPlayer03:
+                            MonjaFestival.cyanPlayer03 = player;
+                            MonjaFestival.cyanTeam.Add(player);
+                            break;
+                        case RoleId.CyanPlayer04:
+                            MonjaFestival.cyanPlayer04 = player;
+                            MonjaFestival.cyanTeam.Add(player);
+                            break;
+                        case RoleId.CyanPlayer05:
+                            MonjaFestival.cyanPlayer05 = player;
+                            MonjaFestival.cyanTeam.Add(player);
+                            break;
+                        case RoleId.CyanPlayer06:
+                            MonjaFestival.cyanPlayer06 = player;
+                            MonjaFestival.cyanTeam.Add(player);
+                            break;
+                        case RoleId.CyanPlayer07:
+                            MonjaFestival.cyanPlayer07 = player;
+                            MonjaFestival.cyanTeam.Add(player);
+                            break;
+                        case RoleId.BigMonja:
+                            MonjaFestival.bigMonjaPlayer = player;
+                            MonjaFestival.bigMonjaTeam.Add(player);
                             break;
                     }
                 }
@@ -2486,7 +2573,7 @@ namespace LasMonjas
 
         public static void roleThiefSteal(byte targetId) {
             foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                if (player.PlayerId == targetId && RoleThief.rolethief != null) {
+                if (RoleThief.rolethief != null && player.PlayerId == targetId) {
                     // Suicide when impostor or rebel variants
                     if (player.Data.Role.IsImpostor || player == Renegade.renegade || player == Minion.minion || player == BountyHunter.bountyhunter || player == Trapper.trapper || player == Yinyanger.yinyanger || player == Challenger.challenger || player == Ninja.ninja || player == Berserker.berserker || player == Yandere.yandere || player == Stranded.stranded || player == Monja.monja) {
                         RoleThief.rolethief.MurderPlayer(RoleThief.rolethief);
@@ -4819,7 +4906,7 @@ namespace LasMonjas
                     CaptureTheFlag.blueflag.transform.parent = player.transform;
                     CaptureTheFlag.blueflag.transform.localPosition = new Vector3(0f, 0f, -0.1f);
                     foreach (PlayerControl redplayer in CaptureTheFlag.redteamFlag) {
-                        if (redplayer == PlayerControl.LocalPlayer && redplayer != null) {
+                        if (redplayer != null && redplayer == PlayerControl.LocalPlayer) {
                             new CustomMessage(Language.statusCaptureTheFlagTexts[2] + CaptureTheFlag.redPlayerWhoHasBlueFlag.name + "</color>!", 5, -1, 1.6f, 4);
                         }
                     }
@@ -4832,7 +4919,7 @@ namespace LasMonjas
                 if (CaptureTheFlag.redflagtaken && !CaptureTheFlag.redteamAlerted) {
                     CaptureTheFlag.redteamAlerted = true;
                     foreach (PlayerControl redplayer in CaptureTheFlag.redteamFlag) {
-                        if (redplayer == PlayerControl.LocalPlayer && redplayer != null) {
+                        if (redplayer != null && redplayer == PlayerControl.LocalPlayer) {
                             new CustomMessage(Language.statusCaptureTheFlagTexts[3], 5, -1, 1f, 4);
                         }
                     }
@@ -4846,7 +4933,7 @@ namespace LasMonjas
                     CaptureTheFlag.redflag.transform.parent = player.transform;
                     CaptureTheFlag.redflag.transform.localPosition = new Vector3(0f, 0f, -0.1f);
                     foreach (PlayerControl blueplayer in CaptureTheFlag.blueteamFlag) {
-                        if (blueplayer == PlayerControl.LocalPlayer && blueplayer != null) {
+                        if (blueplayer != null && blueplayer == PlayerControl.LocalPlayer) {
                             new CustomMessage(Language.statusCaptureTheFlagTexts[4] + CaptureTheFlag.bluePlayerWhoHasRedFlag.name + "</color>!", 5, -1, 1.6f, 4);
                         }
                     }
@@ -4859,7 +4946,7 @@ namespace LasMonjas
                 if (CaptureTheFlag.blueflagtaken && !CaptureTheFlag.blueteamAlerted) {
                     CaptureTheFlag.blueteamAlerted = true;
                     foreach (PlayerControl blueplayer in CaptureTheFlag.blueteamFlag) {
-                        if (blueplayer == PlayerControl.LocalPlayer && blueplayer != null) {
+                        if (blueplayer != null && blueplayer == PlayerControl.LocalPlayer) {
                             new CustomMessage(Language.statusCaptureTheFlagTexts[3], 5, -1, 1f, 4);
                         }
                     }
@@ -6380,7 +6467,7 @@ namespace LasMonjas
                 if (!KingOfTheHill.yellowteamAlerted) {
                     KingOfTheHill.yellowteamAlerted = true;
                     foreach (PlayerControl yellowplayer in KingOfTheHill.yellowTeam) {
-                        if (yellowplayer == PlayerControl.LocalPlayer && yellowplayer != null) {
+                        if (yellowplayer != null && yellowplayer == PlayerControl.LocalPlayer) {
                             new CustomMessage(Language.statusKingOfTheHillTexts[2], 5, -1, 1.3f, 11);
                         }
                     }
@@ -6432,7 +6519,7 @@ namespace LasMonjas
                 if (!KingOfTheHill.greenteamAlerted) {
                     KingOfTheHill.greenteamAlerted = true;
                     foreach (PlayerControl greenplayer in KingOfTheHill.greenTeam) {
-                        if (greenplayer == PlayerControl.LocalPlayer && greenplayer != null) {
+                        if (greenplayer != null && greenplayer == PlayerControl.LocalPlayer) {
                             new CustomMessage(Language.statusKingOfTheHillTexts[3], 5, -1, 1.3f, 11);
                         }
                     }
@@ -6444,7 +6531,7 @@ namespace LasMonjas
 
         public static void hotPotatoTransfer(byte targetId) {
             foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                if (player.PlayerId == targetId && HotPotato.hotPotatoPlayer != null) {
+                if (HotPotato.hotPotatoPlayer != null && player.PlayerId == targetId) {
 
                     if (!HotPotato.firstPotatoTransfered) {
                         HotPotato.firstPotatoTransfered = true;
@@ -8277,10 +8364,10 @@ namespace LasMonjas
             }
             
             if (BattleRoyale.serialKiller != null) {
-                BattleRoyale.battleRoyalepointCounter = Language.introTexts[15] + BattleRoyale.requiredScore + " | <color=#39FF14FF>" + Language.introTexts[12] + BattleRoyale.limePoints + " </color> | " + "<color=#F2BEFFFF>" + Language.introTexts[13] + BattleRoyale.pinkPoints + "</color> | " + "<color=#808080FF>" + Language.introTexts[16] + BattleRoyale.serialKillerPoints + " </color>";
+                BattleRoyale.battleRoyalepointCounter = Language.introTexts[15] + BattleRoyale.requiredScore + " | <color=#39FF14FF>" + Language.introTexts[12] + BattleRoyale.limePoints + "</color> | " + "<color=#F2BEFFFF>" + Language.introTexts[13] + BattleRoyale.pinkPoints + "</color> | " + "<color=#808080FF>" + Language.introTexts[16] + BattleRoyale.serialKillerPoints + "</color>";
             }
             else {
-                BattleRoyale.battleRoyalepointCounter = Language.introTexts[15] + BattleRoyale.requiredScore + " | <color=#39FF14FF>" + Language.introTexts[12] + BattleRoyale.limePoints + " </color> | " + "<color=#F2BEFFFF>" + Language.introTexts[13] + BattleRoyale.pinkPoints + "</color>";
+                BattleRoyale.battleRoyalepointCounter = Language.introTexts[15] + BattleRoyale.requiredScore + " | <color=#39FF14FF>" + Language.introTexts[12] + BattleRoyale.limePoints + "</color> | " + "<color=#F2BEFFFF>" + Language.introTexts[13] + BattleRoyale.pinkPoints + "</color>";
             }
 
             if (BattleRoyale.limePoints >= BattleRoyale.requiredScore) {
@@ -8296,9 +8383,742 @@ namespace LasMonjas
                 GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSerialKillerWin, false);
             }
         }
+
+        public static void monjaFestivalKills(byte targetId, int whichplayer) {
+            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                if (player.PlayerId == targetId) {
+                    switch (whichplayer) {
+                        case 1:
+                            MonjaFestival.greenPlayer01.MurderPlayer(player);
+                            break;
+                        case 2:
+                            MonjaFestival.greenPlayer02.MurderPlayer(player);
+                            break;
+                        case 3:
+                            MonjaFestival.greenPlayer03.MurderPlayer(player);
+                            break;
+                        case 4:
+                            MonjaFestival.greenPlayer04.MurderPlayer(player);
+                            break;
+                        case 5:
+                            MonjaFestival.greenPlayer05.MurderPlayer(player);
+                            break;
+                        case 6:
+                            MonjaFestival.greenPlayer06.MurderPlayer(player);
+                            break;
+                        case 7:
+                            MonjaFestival.greenPlayer07.MurderPlayer(player);
+                            break;
+                        case 9:
+                            MonjaFestival.cyanPlayer01.MurderPlayer(player);
+                            break;
+                        case 10:
+                            MonjaFestival.cyanPlayer02.MurderPlayer(player);
+                            break;
+                        case 11:
+                            MonjaFestival.cyanPlayer03.MurderPlayer(player);
+                            break;
+                        case 12:
+                            MonjaFestival.cyanPlayer04.MurderPlayer(player);
+                            break;
+                        case 13:
+                            MonjaFestival.cyanPlayer05.MurderPlayer(player);
+                            break;
+                        case 14:
+                            MonjaFestival.cyanPlayer06.MurderPlayer(player);
+                            break;
+                        case 15:
+                            MonjaFestival.cyanPlayer07.MurderPlayer(player);
+                            break;
+                        case 16:
+                            MonjaFestival.bigMonjaPlayer.MurderPlayer(player);
+                            break;
+                    }
+                    return;
+                }
+            }
+        }
+
+        public static void monjaFestivalBigMonjaInvisible() {
+            if (MonjaFestival.bigMonjaPlayer == null) return;
+
+            MonjaFestival.bigMonjaPlayerInvisibleTimer = 20f;
+        }
+
+        public static void monjaFestivalFindSpawns(byte monjaSpawn) {
+
+            switch (monjaSpawn) {
+                // Big Spawn One
+                case 1:
+                    MonjaFestival.bigSpawnOnePoints -= 1;
+                    if (MonjaFestival.bigSpawnOnePoints <= 0) {
+                        MonjaFestival.bigSpawnOne.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.bigSpawnOneEmpty.GetComponent<SpriteRenderer>().sprite;
+                        MonjaFestival.bigSpawnOnePoints = 0;
+                    }
+                    MonjaFestival.bigSpawnOneCount.text = $"{MonjaFestival.bigSpawnOnePoints} / 30";
+                    if (!MonjaFestival.bigSpawnOneReloading) {
+                        Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.monjaBigOneReload());
+                    }                    
+                    break;
+                // Big Spawn Two
+                case 2:
+                    MonjaFestival.bigSpawnTwoPoints -= 1;
+                    if (MonjaFestival.bigSpawnTwoPoints <= 0) {
+                        MonjaFestival.bigSpawnTwo.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.bigSpawnOneEmpty.GetComponent<SpriteRenderer>().sprite;
+                        MonjaFestival.bigSpawnTwoPoints = 0;
+                    }
+                    MonjaFestival.bigSpawnTwoCount.text = $"{MonjaFestival.bigSpawnTwoPoints} / 30";
+                    if (!MonjaFestival.bigSpawnTwoReloading) {
+                        Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.monjaBigTwoReload());
+                    }                    
+                    break;
+                // Little Spawn One
+                case 3:
+                    MonjaFestival.littleSpawnOnePoints -= 1;
+                    if (MonjaFestival.littleSpawnOnePoints <= 0) {
+                        MonjaFestival.littleSpawnOne.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.littleSpawnOneEmpty.GetComponent<SpriteRenderer>().sprite;
+                        MonjaFestival.littleSpawnOnePoints = 0;
+                    }
+                    MonjaFestival.littleSpawnOneCount.text = $"{MonjaFestival.littleSpawnOnePoints} / 10";
+                    if (!MonjaFestival.littleSpawnOneReloading) {
+                        Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.monjaLittleOneReload());
+                    }                    
+                    break;
+                // Little Spawn Two
+                case 4:
+                    MonjaFestival.littleSpawnTwoPoints -= 1;
+                    if (MonjaFestival.littleSpawnTwoPoints <= 0) {
+                        MonjaFestival.littleSpawnTwo.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.littleSpawnOneEmpty.GetComponent<SpriteRenderer>().sprite;
+                        MonjaFestival.littleSpawnTwoPoints = 0;
+                    }
+                    MonjaFestival.littleSpawnTwoCount.text = $"{MonjaFestival.littleSpawnTwoPoints} / 10";
+                    if (!MonjaFestival.littleSpawnTwoReloading) {
+                        Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.monjaLittleTwoReload());
+                    }                    
+                    break;
+                // Little Spawn Three
+                case 5:
+                    MonjaFestival.littleSpawnThreePoints -= 1;
+                    if (MonjaFestival.littleSpawnThreePoints <= 0) {
+                        MonjaFestival.littleSpawnThree.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.littleSpawnOneEmpty.GetComponent<SpriteRenderer>().sprite;
+                        MonjaFestival.littleSpawnThreePoints = 0;
+                    }
+                    MonjaFestival.littleSpawnThreeCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
+                    if (!MonjaFestival.littleSpawnThreeReloading) {
+                        Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.monjaLittleThreeReload());
+                    }                    
+                    break;
+                // Little Spawn Four
+                case 6:
+                    MonjaFestival.littleSpawnFourPoints -= 1;
+                    if (MonjaFestival.littleSpawnFourPoints <= 0) {
+                        MonjaFestival.littleSpawnFour.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.littleSpawnOneEmpty.GetComponent<SpriteRenderer>().sprite;
+                        MonjaFestival.littleSpawnFourPoints = 0;
+                    }
+                    MonjaFestival.littleSpawnFourCount.text = $"{MonjaFestival.littleSpawnFourPoints} / 10";
+                    if (!MonjaFestival.littleSpawnFourReloading) {
+                        Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.monjaLittleFourReload());
+                    }                    
+                    break;
+                // Grey role steal from green
+                case 7:
+                    foreach (PlayerControl greenPlayer in MonjaFestival.greenTeam) {
+                        if (greenPlayer != null && greenPlayer == PlayerControl.LocalPlayer) {
+                            new CustomMessage(Language.statusMonjaFestivalTexts[0], 5, -1, 1.6f, 31);
+                        }
+                    }
+                    MonjaFestival.greenPoints -= 1;
+                    monjaFestivalUpdateText();
+                    if (MonjaFestival.greenPoints <= 0) {
+                        MonjaFestival.greenTeamBase.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.greenBaseEmpty.GetComponent<SpriteRenderer>().sprite;
+                        MonjaFestival.greenPoints = 0;
+                    }
+                    break;
+                // Grey role steal from cyan
+                case 8:
+                    foreach (PlayerControl cyanPlayer in MonjaFestival.cyanTeam) {
+                        if (cyanPlayer != null && cyanPlayer == PlayerControl.LocalPlayer) {
+                            new CustomMessage(Language.statusMonjaFestivalTexts[0], 5, -1, 1.6f, 31);
+                        }
+                    }
+                    MonjaFestival.cyanPoints -= 1;
+                    monjaFestivalUpdateText();
+                    if (MonjaFestival.cyanPoints <= 0) {
+                        MonjaFestival.cyanTeamBase.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.cyanBaseEmpty.GetComponent<SpriteRenderer>().sprite;
+                        MonjaFestival.cyanPoints = 0;
+                    }
+                    break;
+            }
+        }
+        public static void monjaFestivalCheckItems(byte monjaplayerId) {
+
+            switch (monjaplayerId) {
+                // Green Monja 01
+                case 1:
+                    MonjaFestival.greenPlayer01Items += 1;
+                    MonjaFestival.greenmonja01DeliverCount.text = $"{MonjaFestival.greenPlayer01Items} / 3";
+                    switch (MonjaFestival.greenPlayer01Items) {
+                        case 1:
+                            MonjaFestival.handsGreen01.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 2:
+                            MonjaFestival.handsGreen01.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 3:
+                            MonjaFestival.handsGreen01.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                    }
+                    break;
+                // Green Monja 02
+                case 2:
+                    MonjaFestival.greenPlayer02Items += 1;
+                    MonjaFestival.greenmonja02DeliverCount.text = $"{MonjaFestival.greenPlayer02Items} / 3";
+                    switch (MonjaFestival.greenPlayer02Items) {
+                        case 1:
+                            MonjaFestival.handsGreen02.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 2:
+                            MonjaFestival.handsGreen02.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 3:
+                            MonjaFestival.handsGreen02.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                    }
+                    break;
+                // Green Monja 03
+                case 3:
+                    MonjaFestival.greenPlayer03Items += 1;
+                    MonjaFestival.greenmonja03DeliverCount.text = $"{MonjaFestival.greenPlayer03Items} / 3";
+                    switch (MonjaFestival.greenPlayer03Items) {
+                        case 1:
+                            MonjaFestival.handsGreen03.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 2:
+                            MonjaFestival.handsGreen03.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 3:
+                            MonjaFestival.handsGreen03.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                    }
+                    break;
+                // Green Monja 04
+                case 4:
+                    MonjaFestival.greenPlayer04Items += 1;
+                    MonjaFestival.greenmonja04DeliverCount.text = $"{MonjaFestival.greenPlayer04Items} / 3";
+                    switch (MonjaFestival.greenPlayer04Items) {
+                        case 1:
+                            MonjaFestival.handsGreen04.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 2:
+                            MonjaFestival.handsGreen04.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 3:
+                            MonjaFestival.handsGreen04.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                    }
+                    break;
+                // Green Monja 05
+                case 5:
+                    MonjaFestival.greenPlayer05Items += 1;
+                    MonjaFestival.greenmonja05DeliverCount.text = $"{MonjaFestival.greenPlayer05Items} / 3";
+                    switch (MonjaFestival.greenPlayer05Items) {
+                        case 1:
+                            MonjaFestival.handsGreen05.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 2:
+                            MonjaFestival.handsGreen05.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 3:
+                            MonjaFestival.handsGreen05.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                    }
+                    break;
+                // Green Monja 06
+                case 6:
+                    MonjaFestival.greenPlayer06Items += 1;
+                    MonjaFestival.greenmonja06DeliverCount.text = $"{MonjaFestival.greenPlayer06Items} / 3";
+                    switch (MonjaFestival.greenPlayer06Items) {
+                        case 1:
+                            MonjaFestival.handsGreen06.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 2:
+                            MonjaFestival.handsGreen06.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 3:
+                            MonjaFestival.handsGreen06.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                    }
+                    break;
+                // Green Monja 07
+                case 7:
+                    MonjaFestival.greenPlayer07Items += 1;
+                    MonjaFestival.greenmonja07DeliverCount.text = $"{MonjaFestival.greenPlayer07Items} / 3";
+                    switch (MonjaFestival.greenPlayer07Items) {
+                        case 1:
+                            MonjaFestival.handsGreen07.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 2:
+                            MonjaFestival.handsGreen07.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 3:
+                            MonjaFestival.handsGreen07.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                    }
+                    break;
+                // Cyan Monja 01
+                case 8:
+                    MonjaFestival.cyanPlayer01Items += 1;
+                    MonjaFestival.cyanPlayer01DeliverCount.text = $"{MonjaFestival.cyanPlayer01Items} / 3";
+                    switch (MonjaFestival.cyanPlayer01Items) {
+                        case 1:
+                            MonjaFestival.handsCyan01.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 2:
+                            MonjaFestival.handsCyan01.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 3:
+                            MonjaFestival.handsCyan01.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                    }
+                    break;
+                // Cyan Monja 02
+                case 9:
+                    MonjaFestival.cyanPlayer02Items += 1;
+                    MonjaFestival.cyanPlayer02DeliverCount.text = $"{MonjaFestival.cyanPlayer02Items} / 3";
+                    switch (MonjaFestival.cyanPlayer02Items) {
+                        case 1:
+                            MonjaFestival.handsCyan02.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 2:
+                            MonjaFestival.handsCyan02.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 3:
+                            MonjaFestival.handsCyan02.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                    }
+                    break;
+                // Cyan Monja 03
+                case 10:
+                    MonjaFestival.cyanPlayer03Items += 1;
+                    MonjaFestival.cyanPlayer03DeliverCount.text = $"{MonjaFestival.cyanPlayer03Items} / 3";
+                    switch (MonjaFestival.cyanPlayer03Items) {
+                        case 1:
+                            MonjaFestival.handsCyan03.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 2:
+                            MonjaFestival.handsCyan03.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 3:
+                            MonjaFestival.handsCyan03.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                    }
+                    break;
+                // Cyan Monja 04
+                case 11:
+                    MonjaFestival.cyanPlayer04Items += 1;
+                    MonjaFestival.cyanPlayer04DeliverCount.text = $"{MonjaFestival.cyanPlayer04Items} / 3";
+                    switch (MonjaFestival.cyanPlayer04Items) {
+                        case 1:
+                            MonjaFestival.handsCyan04.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 2:
+                            MonjaFestival.handsCyan04.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 3:
+                            MonjaFestival.handsCyan04.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                    }
+                    break;
+                // Cyan Monja 05
+                case 12:
+                    MonjaFestival.cyanPlayer05Items += 1;
+                    MonjaFestival.cyanPlayer05DeliverCount.text = $"{MonjaFestival.cyanPlayer05Items} / 3";
+                    switch (MonjaFestival.cyanPlayer05Items) {
+                        case 1:
+                            MonjaFestival.handsCyan05.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 2:
+                            MonjaFestival.handsCyan05.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 3:
+                            MonjaFestival.handsCyan05.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                    }
+                    break;
+                // Cyan Monja 06
+                case 13:
+                    MonjaFestival.cyanPlayer06Items += 1;
+                    MonjaFestival.cyanPlayer06DeliverCount.text = $"{MonjaFestival.cyanPlayer06Items} / 3";
+                    switch (MonjaFestival.cyanPlayer06Items) {
+                        case 1:
+                            MonjaFestival.handsCyan06.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 2:
+                            MonjaFestival.handsCyan06.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 3:
+                            MonjaFestival.handsCyan06.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                    }
+                    break;
+                // Cyan Monja 07
+                case 14:
+                    MonjaFestival.cyanPlayer07Items += 1;
+                    MonjaFestival.cyanPlayer07DeliverCount.text = $"{MonjaFestival.cyanPlayer07Items} / 3";
+                    switch (MonjaFestival.cyanPlayer07Items) {
+                        case 1:
+                            MonjaFestival.handsCyan07.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 2:
+                            MonjaFestival.handsCyan07.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 3:
+                            MonjaFestival.handsCyan07.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                    }
+                    break;
+                // Big Monja
+                case 15:
+                    MonjaFestival.bigMonjaPlayerItems += 1;
+                    MonjaFestival.bigMonjaPlayerDeliverCount.text = $"{MonjaFestival.bigMonjaPlayerItems} / 10";
+                    break;
+
+                // Green Monja 01 deliver
+                case 21:
+                    MonjaFestival.greenPlayer01Items -= 1;
+                    MonjaFestival.greenmonja01DeliverCount.text = $"{MonjaFestival.greenPlayer01Items} / 3";
+                    switch (MonjaFestival.greenPlayer01Items) {
+                        case 0:
+                            MonjaFestival.handsGreen01.GetComponent<SpriteRenderer>().sprite = null;
+                            break;
+                        case 1:
+                            MonjaFestival.handsGreen01.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 2:
+                            MonjaFestival.handsGreen01.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 3:
+                            MonjaFestival.handsGreen01.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                    }
+                    break;
+                // Green Monja 02 deliver
+                case 22:
+                    MonjaFestival.greenPlayer02Items -= 1;
+                    MonjaFestival.greenmonja02DeliverCount.text = $"{MonjaFestival.greenPlayer02Items} / 3";
+                    switch (MonjaFestival.greenPlayer02Items) {
+                        case 0:
+                            MonjaFestival.handsGreen02.GetComponent<SpriteRenderer>().sprite = null;
+                            break;
+                        case 1:
+                            MonjaFestival.handsGreen02.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 2:
+                            MonjaFestival.handsGreen02.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 3:
+                            MonjaFestival.handsGreen02.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                    }
+                    break;
+                // Green Monja 03 deliver
+                case 23:
+                    MonjaFestival.greenPlayer03Items -= 1;
+                    MonjaFestival.greenmonja03DeliverCount.text = $"{MonjaFestival.greenPlayer03Items} / 3";
+                    switch (MonjaFestival.greenPlayer03Items) {
+                        case 0:
+                            MonjaFestival.handsGreen03.GetComponent<SpriteRenderer>().sprite = null;
+                            break;
+                        case 1:
+                            MonjaFestival.handsGreen03.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 2:
+                            MonjaFestival.handsGreen03.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 3:
+                            MonjaFestival.handsGreen03.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                    }
+                    break;
+                // Green Monja 04 deliver
+                case 24:
+                    MonjaFestival.greenPlayer04Items -= 1;
+                    MonjaFestival.greenmonja04DeliverCount.text = $"{MonjaFestival.greenPlayer04Items} / 3";
+                    switch (MonjaFestival.greenPlayer04Items) {
+                        case 0:
+                            MonjaFestival.handsGreen04.GetComponent<SpriteRenderer>().sprite = null;
+                            break;
+                        case 1:
+                            MonjaFestival.handsGreen04.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 2:
+                            MonjaFestival.handsGreen04.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 3:
+                            MonjaFestival.handsGreen04.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                    }
+                    break;
+                // Green Monja 05 deliver
+                case 25:
+                    MonjaFestival.greenPlayer05Items -= 1;
+                    MonjaFestival.greenmonja05DeliverCount.text = $"{MonjaFestival.greenPlayer05Items} / 3";
+                    switch (MonjaFestival.greenPlayer05Items) {
+                        case 0:
+                            MonjaFestival.handsGreen05.GetComponent<SpriteRenderer>().sprite = null;
+                            break;
+                        case 1:
+                            MonjaFestival.handsGreen05.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 2:
+                            MonjaFestival.handsGreen05.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 3:
+                            MonjaFestival.handsGreen05.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                    }
+                    break;
+                // Green Monja 06 deliver
+                case 26:
+                    MonjaFestival.greenPlayer06Items -= 1;
+                    MonjaFestival.greenmonja06DeliverCount.text = $"{MonjaFestival.greenPlayer06Items} / 3";
+                    switch (MonjaFestival.greenPlayer06Items) {
+                        case 0:
+                            MonjaFestival.handsGreen06.GetComponent<SpriteRenderer>().sprite = null;
+                            break;
+                        case 1:
+                            MonjaFestival.handsGreen06.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 2:
+                            MonjaFestival.handsGreen06.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 3:
+                            MonjaFestival.handsGreen06.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                    }
+                    break;
+                // Green Monja 07 deliver
+                case 27:
+                    MonjaFestival.greenPlayer07Items -= 1;
+                    MonjaFestival.greenmonja07DeliverCount.text = $"{MonjaFestival.greenPlayer07Items} / 3";
+                    switch (MonjaFestival.greenPlayer07Items) {
+                        case 0:
+                            MonjaFestival.handsGreen07.GetComponent<SpriteRenderer>().sprite = null;
+                            break;
+                        case 1:
+                            MonjaFestival.handsGreen07.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 2:
+                            MonjaFestival.handsGreen07.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 3:
+                            MonjaFestival.handsGreen07.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                    }
+                    break;
+                // Cyan Monja 01 deliver
+                case 28:
+                    MonjaFestival.cyanPlayer01Items -= 1;
+                    MonjaFestival.cyanPlayer01DeliverCount.text = $"{MonjaFestival.cyanPlayer01Items} / 3";
+                    switch (MonjaFestival.cyanPlayer01Items) {
+                        case 0:
+                            MonjaFestival.handsCyan01.GetComponent<SpriteRenderer>().sprite = null;
+                            break;
+                        case 1:
+                            MonjaFestival.handsCyan01.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 2:
+                            MonjaFestival.handsCyan01.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 3:
+                            MonjaFestival.handsCyan01.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                    }
+                    break;
+                // Cyan Monja 02 deliver
+                case 29:
+                    MonjaFestival.cyanPlayer02Items -= 1;
+                    MonjaFestival.cyanPlayer02DeliverCount.text = $"{MonjaFestival.cyanPlayer02Items} / 3";
+                    switch (MonjaFestival.cyanPlayer02Items) {
+                        case 0:
+                            MonjaFestival.handsCyan02.GetComponent<SpriteRenderer>().sprite = null;
+                            break;
+                        case 1:
+                            MonjaFestival.handsCyan02.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 2:
+                            MonjaFestival.handsCyan02.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 3:
+                            MonjaFestival.handsCyan02.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                    }
+                    break;
+                // Cyan Monja 03 deliver
+                case 30:
+                    MonjaFestival.cyanPlayer03Items -= 1;
+                    MonjaFestival.cyanPlayer03DeliverCount.text = $"{MonjaFestival.cyanPlayer03Items} / 3";
+                    switch (MonjaFestival.cyanPlayer03Items) {
+                        case 0:
+                            MonjaFestival.handsCyan03.GetComponent<SpriteRenderer>().sprite = null;
+                            break;
+                        case 1:
+                            MonjaFestival.handsCyan03.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 2:
+                            MonjaFestival.handsCyan03.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 3:
+                            MonjaFestival.handsCyan03.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                    }
+                    break;
+                // Cyan Monja 04 deliver
+                case 31:
+                    MonjaFestival.cyanPlayer04Items -= 1;
+                    MonjaFestival.cyanPlayer04DeliverCount.text = $"{MonjaFestival.cyanPlayer04Items} / 3";
+                    switch (MonjaFestival.cyanPlayer04Items) {
+                        case 0:
+                            MonjaFestival.handsCyan04.GetComponent<SpriteRenderer>().sprite = null;
+                            break;
+                        case 1:
+                            MonjaFestival.handsCyan04.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 2:
+                            MonjaFestival.handsCyan04.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 3:
+                            MonjaFestival.handsCyan04.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                    }
+                    break;
+                // Cyan Monja 05 deliver
+                case 32:
+                    MonjaFestival.cyanPlayer05Items -= 1;
+                    MonjaFestival.cyanPlayer05DeliverCount.text = $"{MonjaFestival.cyanPlayer05Items} / 3";
+                    switch (MonjaFestival.cyanPlayer05Items) {
+                        case 0:
+                            MonjaFestival.handsCyan05.GetComponent<SpriteRenderer>().sprite = null;
+                            break;
+                        case 1:
+                            MonjaFestival.handsCyan05.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 2:
+                            MonjaFestival.handsCyan05.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 3:
+                            MonjaFestival.handsCyan05.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                    }
+                    break;
+                // Cyan Monja 06 deliver
+                case 33:
+                    MonjaFestival.cyanPlayer06Items -= 1;
+                    MonjaFestival.cyanPlayer06DeliverCount.text = $"{MonjaFestival.cyanPlayer06Items} / 3";
+                    switch (MonjaFestival.cyanPlayer06Items) {
+                        case 0:
+                            MonjaFestival.handsCyan06.GetComponent<SpriteRenderer>().sprite = null;
+                            break;
+                        case 1:
+                            MonjaFestival.handsCyan06.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 2:
+                            MonjaFestival.handsCyan06.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 3:
+                            MonjaFestival.handsCyan06.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                    }
+                    break;
+                // Cyan Monja 07 deliver
+                case 34:
+                    MonjaFestival.cyanPlayer07Items -= 1;
+                    MonjaFestival.cyanPlayer07DeliverCount.text = $"{MonjaFestival.cyanPlayer07Items} / 3";
+                    switch (MonjaFestival.cyanPlayer07Items) {
+                        case 0:
+                            MonjaFestival.handsCyan07.GetComponent<SpriteRenderer>().sprite = null;
+                            break;
+                        case 1:
+                            MonjaFestival.handsCyan07.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 2:
+                            MonjaFestival.handsCyan07.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                        case 3:
+                            MonjaFestival.handsCyan07.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                            break;
+                    }
+                    break;
+                // Big Monja
+                case 35:
+                    MonjaFestival.bigMonjaPlayerItems -= 1;
+                    MonjaFestival.bigMonjaPlayerDeliverCount.text = $"{MonjaFestival.bigMonjaPlayerItems} / 10";
+                    break;
+            }           
+        }
+
+        public static void monjaFestivalDeliver (int deliverId) {
+            switch (deliverId) {
+                // Green base
+                case 1:
+                    MonjaFestival.greenPoints += 1;
+                    if (MonjaFestival.greenPoints > 0) {
+                        MonjaFestival.greenTeamBase.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.greenBaseFull.GetComponent<SpriteRenderer>().sprite;
+                    }
+                    break;
+                // Cyan base
+                case 2:
+                    MonjaFestival.cyanPoints += 1;
+                    if (MonjaFestival.cyanPoints > 0) {
+                        MonjaFestival.cyanTeamBase.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.cyanBaseFull.GetComponent<SpriteRenderer>().sprite;
+                    }
+                    break;
+                // Grey base
+                case 3:
+                    MonjaFestival.bigMonjaPoints += 1;
+                    if (MonjaFestival.bigMonjaPoints > 0) {
+                        MonjaFestival.bigMonjaBase.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.greyBaseFull.GetComponent<SpriteRenderer>().sprite;
+                    }
+                    break;
+                // Allul Monja for Green
+                case 4:
+                    MonjaFestival.greenPoints += 10;
+                    new CustomMessage(Language.statusMonjaFestivalTexts[1], 5, -1, 1.3f, 31);
+                    Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.allulMonjaReload());
+                    break;
+                // Allul Monja for Cyan
+                case 5:
+                    MonjaFestival.cyanPoints += 10;
+                    new CustomMessage(Language.statusMonjaFestivalTexts[2], 5, -1, 1.3f, 31);
+                    Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.allulMonjaReload());
+                    break;
+                // Allul Monja for Big Monja
+                case 6:
+                    MonjaFestival.bigMonjaPoints += 10;
+                    new CustomMessage(Language.statusMonjaFestivalTexts[3], 5, -1, 1.3f, 31);
+                    Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.allulMonjaReload());
+                    break;
+            }
+            monjaFestivalUpdateText();
+        }
+
+        public static void monjaFestivalUpdateText() {
+            if (MonjaFestival.bigMonjaPlayer != null) {
+                MonjaFestival.monjaFestivalCounter = "<color=#00FF00FF>" + Language.introTexts[17] + MonjaFestival.greenPoints + "</color> | " + "<color=#00F7FFFF>" + Language.introTexts[18] + MonjaFestival.cyanPoints + "</color> | " + "<color=#808080FF>" + Language.introTexts[19] + MonjaFestival.bigMonjaPoints + "</color>";
+            }
+            else {
+                MonjaFestival.monjaFestivalCounter = "<color=#00FF00FF>" + Language.introTexts[17] + MonjaFestival.greenPoints + "</color> | " + "<color=#00F7FFFF>" + Language.introTexts[18] + MonjaFestival.cyanPoints + "</color>";
+            }
+        }
+
+        public static void monjaFestivalDestroyLittleMonja(string name) {
+            if (name.StartsWith("littleMonja")) {
+                UnityEngine.Object.Destroy(GameObject.Find(name));
+            }
+        }
     }
 
-        [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.HandleRpc))]
+    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.HandleRpc))]
     class RPCHandlerPatch
     {
         static void Postfix([HarmonyArgument(0)] byte callId, [HarmonyArgument(1)] MessageReader reader) {
@@ -8806,6 +9626,32 @@ namespace LasMonjas
                     byte battlekillId = reader.ReadByte();
                     byte battlewhichplayer = reader.ReadByte();
                     RPCProcedure.battleRoyaleKills(battlekillId, battlewhichplayer);
+                    break;
+
+                // Monja Festival
+                case (byte)CustomRPC.MonjaFestivalKills:
+                    byte monjakillId = reader.ReadByte();
+                    byte whichmonjaplayer = reader.ReadByte();
+                    RPCProcedure.monjaFestivalKills(monjakillId, whichmonjaplayer);
+                    break;
+                case (byte)CustomRPC.MonjaFestivalBigMonjaInvisible:
+                    RPCProcedure.monjaFestivalBigMonjaInvisible();
+                    break;
+                case (byte)CustomRPC.MonjaFestivalFindSpawns:
+                    byte monjaSpawns = reader.ReadByte();
+                    RPCProcedure.monjaFestivalFindSpawns(monjaSpawns);
+                    break;
+                case (byte)CustomRPC.MonjaFestivalCheckItems:
+                    byte monjacheckid = reader.ReadByte();
+                    RPCProcedure.monjaFestivalCheckItems(monjacheckid);
+                    break;
+                case (byte)CustomRPC.MonjaFestivalDeliver:
+                    byte monjadeliverid = reader.ReadByte();
+                    RPCProcedure.monjaFestivalDeliver(monjadeliverid);
+                    break;
+                case (byte)CustomRPC.MonjaFestivalDestroyLittleMonja:
+                    string littlemonjacheck = reader.ReadString();
+                    RPCProcedure.monjaFestivalDestroyLittleMonja(littlemonjacheck);
                     break;
             }
         }

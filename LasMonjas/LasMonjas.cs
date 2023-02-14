@@ -53,6 +53,8 @@ namespace LasMonjas
         public static bool createdzombielaboratory = false;
 
         public static bool createdbattleroyale = false;
+
+        public static bool createdmonjafestival = false;
         
         public static bool activatedReportButtonAfterCustomMode = false;
 
@@ -171,6 +173,8 @@ namespace LasMonjas
 
             BattleRoyale.clearAndReload();
 
+            MonjaFestival.clearAndReload();
+
             removedSwipe = false;
             removedAirshipDoors = false;
             activatedSensei = false;
@@ -187,6 +191,7 @@ namespace LasMonjas
             createdhotpotato = false;
             createdzombielaboratory = false;
             createdbattleroyale = false;
+            createdmonjafestival = false;
             activatedReportButtonAfterCustomMode = false;
             quackNumber = 0;
             alivePlayers = 15;
@@ -5793,10 +5798,10 @@ namespace LasMonjas
                     break;
                 case 2:
                     if (serialKiller != null) {
-                        battleRoyalepointCounter = Language.introTexts[15] + requiredScore + " | <color=#39FF14FF>" + Language.introTexts[12] + limePoints + "</color> | " + "<color=#F2BEFFFF>" + Language.introTexts[13] + pinkPoints + " </color> | " + "<color=#808080FF>" + Language.introTexts[16] + serialKillerPoints + " </color>";
+                        battleRoyalepointCounter = Language.introTexts[15] + requiredScore + " | <color=#39FF14FF>" + Language.introTexts[12] + limePoints + "</color> | " + "<color=#F2BEFFFF>" + Language.introTexts[13] + pinkPoints + "</color> | " + "<color=#808080FF>" + Language.introTexts[16] + serialKillerPoints + "</color>";
                     }
                     else {
-                        battleRoyalepointCounter = Language.introTexts[15] + requiredScore + " | <color=#39FF14FF>" + Language.introTexts[12] + limePoints + "</color> | " + "<color=#F2BEFFFF>" + Language.introTexts[13] + pinkPoints + " </color>";
+                        battleRoyalepointCounter = Language.introTexts[15] + requiredScore + " | <color=#39FF14FF>" + Language.introTexts[12] + limePoints + "</color> | " + "<color=#F2BEFFFF>" + Language.introTexts[13] + pinkPoints + "</color>";
                     }
                     break;
             }
@@ -6182,6 +6187,532 @@ namespace LasMonjas
         }
     }
 
+    public static class MonjaFestival
+    {
+        public static List<PlayerControl> greenTeam = new List<PlayerControl>();
+        public static GameObject greenTeamBase = null;
+        public static PlayerControl greenPlayer01 = null;
+        public static bool greenPlayer01IsReviving = false;
+        public static int greenPlayer01Items = 0;
+        public static PlayerControl greenPlayer01currentTarget = null;
+        public static GameObject greenmonja01selectedSpawn = null;
+        public static GameObject greenmonja01currentSpawn = null;
+        public static byte greenmonja01foundspawn = 0;
+        public static TMPro.TMP_Text greenmonja01DeliverCount;
+        public static PlayerControl greenPlayer02 = null;
+        public static bool greenPlayer02IsReviving = false;
+        public static int greenPlayer02Items = 0;
+        public static PlayerControl greenPlayer02currentTarget = null;
+        public static GameObject greenmonja02selectedSpawn = null;
+        public static GameObject greenmonja02currentSpawn = null;
+        public static byte greenmonja02foundspawn = 0;
+        public static TMPro.TMP_Text greenmonja02DeliverCount; 
+        public static PlayerControl greenPlayer03 = null;
+        public static bool greenPlayer03IsReviving = false;
+        public static int greenPlayer03Items = 0;
+        public static PlayerControl greenPlayer03currentTarget = null;
+        public static GameObject greenmonja03selectedSpawn = null;
+        public static GameObject greenmonja03currentSpawn = null;
+        public static byte greenmonja03foundspawn = 0;
+        public static TMPro.TMP_Text greenmonja03DeliverCount;
+        public static PlayerControl greenPlayer04 = null;
+        public static bool greenPlayer04IsReviving = false;
+        public static int greenPlayer04Items = 0;
+        public static PlayerControl greenPlayer04currentTarget = null;
+        public static GameObject greenmonja04selectedSpawn = null;
+        public static GameObject greenmonja04currentSpawn = null;
+        public static byte greenmonja04foundspawn = 0;
+        public static TMPro.TMP_Text greenmonja04DeliverCount;
+        public static PlayerControl greenPlayer05 = null;
+        public static bool greenPlayer05IsReviving = false;
+        public static int greenPlayer05Items = 0;
+        public static PlayerControl greenPlayer05currentTarget = null;
+        public static GameObject greenmonja05selectedSpawn = null;
+        public static GameObject greenmonja05currentSpawn = null;
+        public static byte greenmonja05foundspawn = 0;
+        public static TMPro.TMP_Text greenmonja05DeliverCount;
+        public static PlayerControl greenPlayer06 = null;
+        public static bool greenPlayer06IsReviving = false;
+        public static int greenPlayer06Items = 0;
+        public static PlayerControl greenPlayer06currentTarget = null;
+        public static GameObject greenmonja06selectedSpawn = null;
+        public static GameObject greenmonja06currentSpawn = null;
+        public static byte greenmonja06foundspawn = 0;
+        public static TMPro.TMP_Text greenmonja06DeliverCount;
+        public static PlayerControl greenPlayer07 = null;
+        public static bool greenPlayer07IsReviving = false;
+        public static int greenPlayer07Items = 0;
+        public static PlayerControl greenPlayer07currentTarget = null;
+        public static GameObject greenmonja07selectedSpawn = null;
+        public static GameObject greenmonja07currentSpawn = null;
+        public static byte greenmonja07foundspawn = 0;
+        public static TMPro.TMP_Text greenmonja07DeliverCount;
+
+        public static List<PlayerControl> cyanTeam = new List<PlayerControl>();
+        public static GameObject cyanTeamBase = null;
+        public static PlayerControl cyanPlayer01 = null;
+        public static bool cyanPlayer01IsReviving = false;
+        public static int cyanPlayer01Items = 0;
+        public static PlayerControl cyanPlayer01currentTarget = null;
+        public static GameObject cyanPlayer01selectedSpawn = null;
+        public static GameObject cyanPlayer01currentSpawn = null;
+        public static byte cyanPlayer01foundspawn = 0;
+        public static TMPro.TMP_Text cyanPlayer01DeliverCount; 
+        public static PlayerControl cyanPlayer02 = null;
+        public static bool cyanPlayer02IsReviving = false;
+        public static int cyanPlayer02Items = 0;
+        public static PlayerControl cyanPlayer02currentTarget = null;
+        public static GameObject cyanPlayer02selectedSpawn = null;
+        public static GameObject cyanPlayer02currentSpawn = null;
+        public static byte cyanPlayer02foundspawn = 0;
+        public static TMPro.TMP_Text cyanPlayer02DeliverCount; 
+        public static PlayerControl cyanPlayer03 = null;
+        public static bool cyanPlayer03IsReviving = false;
+        public static int cyanPlayer03Items = 0;
+        public static PlayerControl cyanPlayer03currentTarget = null;
+        public static GameObject cyanPlayer03selectedSpawn = null;
+        public static GameObject cyanPlayer03currentSpawn = null;
+        public static byte cyanPlayer03foundspawn = 0;
+        public static TMPro.TMP_Text cyanPlayer03DeliverCount;
+        public static PlayerControl cyanPlayer04 = null;
+        public static bool cyanPlayer04IsReviving = false;
+        public static int cyanPlayer04Items = 0;
+        public static PlayerControl cyanPlayer04currentTarget = null;
+        public static GameObject cyanPlayer04selectedSpawn = null;
+        public static GameObject cyanPlayer04currentSpawn = null;
+        public static byte cyanPlayer04foundspawn = 0;
+        public static TMPro.TMP_Text cyanPlayer04DeliverCount;
+        public static PlayerControl cyanPlayer05 = null;
+        public static bool cyanPlayer05IsReviving = false;
+        public static int cyanPlayer05Items = 0;
+        public static PlayerControl cyanPlayer05currentTarget = null;
+        public static GameObject cyanPlayer05selectedSpawn = null;
+        public static GameObject cyanPlayer05currentSpawn = null;
+        public static byte cyanPlayer05foundspawn = 0;
+        public static TMPro.TMP_Text cyanPlayer05DeliverCount;
+        public static PlayerControl cyanPlayer06 = null;
+        public static bool cyanPlayer06IsReviving = false;
+        public static int cyanPlayer06Items = 0;
+        public static PlayerControl cyanPlayer06currentTarget = null;
+        public static GameObject cyanPlayer06selectedSpawn = null;
+        public static GameObject cyanPlayer06currentSpawn = null;
+        public static byte cyanPlayer06foundspawn = 0;
+        public static TMPro.TMP_Text cyanPlayer06DeliverCount;
+        public static PlayerControl cyanPlayer07 = null;
+        public static bool cyanPlayer07IsReviving = false;
+        public static int cyanPlayer07Items = 0;
+        public static PlayerControl cyanPlayer07currentTarget = null;
+        public static GameObject cyanPlayer07selectedSpawn = null;
+        public static GameObject cyanPlayer07currentSpawn = null;
+        public static byte cyanPlayer07foundspawn = 0;
+        public static TMPro.TMP_Text cyanPlayer07DeliverCount;
+
+        public static List<PlayerControl> bigMonjaTeam = new List<PlayerControl>();
+        public static GameObject bigMonjaBase = null;
+        public static PlayerControl bigMonjaPlayer = null;        
+        public static bool bigMonjaIsReviving = false;
+        public static int bigMonjaPlayerItems = 0;
+        public static GameObject bigMonjaPlayerselectedSpawn = null;
+        public static GameObject bigMonjaPlayercurrentSpawn = null;
+        public static byte bigMonjaPlayerfoundspawn = 0;
+        public static TMPro.TMP_Text bigMonjaPlayerDeliverCount; 
+        public static float bigMonjaPlayerInvisibleTimer = 0;
+        public static float bigMonjaPlayerKillCooldown = 10;
+        public static float bigMonjaPlayerFindDeliverCooldown = 1;
+        public static PlayerControl bigMonjaPlayercurrentTarget = null;
+        public static List<GameObject> bigMonjaSpawns = new List<GameObject>();
+
+        public static bool monjaFestivalSenseiMapMode = false;
+
+        public static bool monjaFestivalMode = false;
+        public static float killCooldown = 15f;
+        public static float matchDuration = 300f;
+        public static float grabDeliverTime = 1f;
+        public static float reviveTime = 5f;
+        public static float invincibilityTimeAfterRevive = 3f;
+
+        public static GameObject bigSpawnOne = null;
+        public static int bigSpawnOnePoints = 30;
+        public static bool bigSpawnOneReloading = false;
+        public static TMPro.TMP_Text bigSpawnOneCount;
+        public static GameObject bigSpawnTwo = null;
+        public static int bigSpawnTwoPoints = 30;
+        public static bool bigSpawnTwoReloading = false;
+        public static TMPro.TMP_Text bigSpawnTwoCount;
+        public static GameObject littleSpawnOne = null;
+        public static int littleSpawnOnePoints = 10;
+        public static bool littleSpawnOneReloading = false;
+        public static TMPro.TMP_Text littleSpawnOneCount;
+        public static GameObject littleSpawnTwo = null;
+        public static int littleSpawnTwoPoints = 10;
+        public static bool littleSpawnTwoReloading = false;
+        public static TMPro.TMP_Text littleSpawnTwoCount;
+        public static GameObject littleSpawnThree = null;
+        public static int littleSpawnThreePoints = 10;
+        public static bool littleSpawnThreeReloading = false;
+        public static TMPro.TMP_Text littleSpawnThreeCount;
+        public static GameObject littleSpawnFour = null;
+        public static int littleSpawnFourPoints = 10;
+        public static bool littleSpawnFourReloading = false;
+        public static TMPro.TMP_Text littleSpawnFourCount;
+        public static int greenPoints = 0;
+        public static int cyanPoints = 0;
+        public static int bigMonjaPoints = 0;
+
+        public static List<Arrow> localArrows = new List<Arrow>();
+        public static List<Vector3> allulMonjaPositions = new List<Vector3>();
+
+        public static GameObject allulMonja = null;
+
+        public static int littleMonjasDroppedCount = 0;
+
+        public static GameObject handsGreen01 = null;
+        public static GameObject handsGreen02 = null;
+        public static GameObject handsGreen03 = null;
+        public static GameObject handsGreen04 = null;
+        public static GameObject handsGreen05 = null;
+        public static GameObject handsGreen06 = null;
+        public static GameObject handsGreen07 = null;
+        public static GameObject handsCyan01 = null;
+        public static GameObject handsCyan02 = null;
+        public static GameObject handsCyan03 = null;
+        public static GameObject handsCyan04 = null;
+        public static GameObject handsCyan05 = null;
+        public static GameObject handsCyan06 = null;
+        public static GameObject handsCyan07 = null;
+        
+        public static bool triggerGreenTeamWin = false;
+        public static bool triggerCyanTeamWin = false;
+        public static bool triggerBigMonjaWin = false;
+        public static bool triggerDrawWin = false;
+
+        public static string monjaFestivalCounter = "";
+
+        public static void resetBigMonja() {
+            bigMonjaPlayerInvisibleTimer = 0f;
+            HudManagerStartPatch.bigmonjaInvisibleButton.Timer = HudManagerStartPatch.bigmonjaInvisibleButton.MaxTimer;
+            HudManagerStartPatch.bigmonjaInvisibleButton.isEffectActive = false;
+            HudManagerStartPatch.bigmonjaInvisibleButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
+            if (bigMonjaPlayer != null) {
+                Helpers.alphaPlayer(false, bigMonjaPlayer.PlayerId);
+            }
+        }
+
+        private static Sprite greenPickButton;
+        public static Sprite getgreenPickButtonSprite() {
+            if (greenPickButton) return greenPickButton;
+            greenPickButton = Helpers.loadSpriteFromResources("LasMonjas.Images.MonjaFestival_GreenPick.png", 90f);
+            return greenPickButton;
+        }
+
+        private static Sprite greenPickDeliverButton;
+        public static Sprite getgreenPickDeliverButtonSprite() {
+            if (greenPickDeliverButton) return greenPickDeliverButton;
+            greenPickDeliverButton = Helpers.loadSpriteFromResources("LasMonjas.Images.MonjaFestival_GreenPickDeliver.png", 90f);
+            return greenPickDeliverButton;
+        }
+
+        private static Sprite greenDeliverButton;
+        public static Sprite getgreenDeliverButtonSprite() {
+            if (greenDeliverButton) return greenDeliverButton;
+            greenDeliverButton = Helpers.loadSpriteFromResources("LasMonjas.Images.MonjaFestival_GreenDeliver.png", 90f);
+            return greenDeliverButton;
+        }
+
+        private static Sprite cyanPickButton;
+        public static Sprite getcyanPickButtonSprite() {
+            if (cyanPickButton) return cyanPickButton;
+            cyanPickButton = Helpers.loadSpriteFromResources("LasMonjas.Images.MonjaFestival_CyanPick.png", 90f);
+            return cyanPickButton;
+        }
+
+        private static Sprite cyanPickDeliverButton;
+        public static Sprite getcyanPickDeliverButtonSprite() {
+            if (cyanPickDeliverButton) return cyanPickDeliverButton;
+            cyanPickDeliverButton = Helpers.loadSpriteFromResources("LasMonjas.Images.MonjaFestival_CyanPickDeliver.png", 90f);
+            return cyanPickDeliverButton;
+        }
+
+        private static Sprite cyanDeliverButton;
+        public static Sprite getcyanDeliverButtonSprite() {
+            if (cyanDeliverButton) return cyanDeliverButton;
+            cyanDeliverButton = Helpers.loadSpriteFromResources("LasMonjas.Images.MonjaFestival_CyanDeliver.png", 90f);
+            return cyanDeliverButton;
+        }
+
+        private static Sprite greyPickButton;
+        public static Sprite getgreyPickButtonSprite() {
+            if (greyPickButton) return greyPickButton;
+            greyPickButton = Helpers.loadSpriteFromResources("LasMonjas.Images.MonjaFestival_GreyPick.png", 90f);
+            return greyPickButton;
+        }
+
+        private static Sprite greyPickDeliverButton;
+        public static Sprite getgreyPickDeliverButtonSprite() {
+            if (greyPickDeliverButton) return greyPickDeliverButton;
+            greyPickDeliverButton = Helpers.loadSpriteFromResources("LasMonjas.Images.MonjaFestival_GreyPickDeliver.png", 90f);
+            return greyPickDeliverButton;
+        }
+
+        private static Sprite greyDeliverButton;
+        public static Sprite getgreyDeliverButtonSprite() {
+            if (greyDeliverButton) return greyDeliverButton;
+            greyDeliverButton = Helpers.loadSpriteFromResources("LasMonjas.Images.MonjaFestival_GreyDeliver.png", 90f);
+            return greyDeliverButton;
+        }
+
+        private static Sprite greyInvisibleButton;
+        public static Sprite getgreyInvisibleBButtonSprite() {
+            if (greyInvisibleButton) return greyInvisibleButton;
+            greyInvisibleButton = Helpers.loadSpriteFromResources("LasMonjas.Images.MonjaFestival_GreyInvisible.png", 90f);
+            return greyInvisibleButton;
+        }
+
+        public static void clearAndReload() { 
+
+            greenTeam.Clear();
+            cyanTeam.Clear();
+            bigMonjaTeam.Clear();
+            allulMonjaPositions.Clear();
+
+            greenTeamBase = null;
+            greenPlayer01 = null;
+            greenPlayer01IsReviving = false;
+            greenPlayer01Items = 0;
+            greenPlayer01currentTarget = null;
+            greenmonja01selectedSpawn = null;
+            greenmonja01currentSpawn = null;
+            greenmonja01foundspawn = 0; 
+            greenPlayer02IsReviving = false;
+            greenPlayer02Items = 0;
+            greenPlayer02currentTarget = null;
+            greenmonja02selectedSpawn = null;
+            greenmonja02currentSpawn = null;
+            greenmonja02foundspawn = 0; 
+            greenPlayer03 = null;
+            greenPlayer03IsReviving = false;
+            greenPlayer03Items = 0;
+            greenPlayer03currentTarget = null;
+            greenmonja03selectedSpawn = null;
+            greenmonja03currentSpawn = null;
+            greenmonja03foundspawn = 0;
+            greenPlayer04 = null;
+            greenPlayer04IsReviving = false;
+            greenPlayer04Items = 0;
+            greenPlayer04currentTarget = null;
+            greenmonja04selectedSpawn = null;
+            greenmonja04currentSpawn = null;
+            greenmonja04foundspawn = 0;
+            greenPlayer05 = null;
+            greenPlayer05IsReviving = false;
+            greenPlayer05Items = 0;
+            greenPlayer05currentTarget = null;
+            greenmonja05selectedSpawn = null;
+            greenmonja05currentSpawn = null;
+            greenmonja05foundspawn = 0;
+            greenPlayer06 = null;
+            greenPlayer06IsReviving = false;
+            greenPlayer06Items = 0;
+            greenPlayer06currentTarget = null;
+            greenmonja06selectedSpawn = null;
+            greenmonja06currentSpawn = null;
+            greenmonja06foundspawn = 0;
+            greenPlayer07 = null;
+            greenPlayer07IsReviving = false;
+            greenPlayer07Items = 0;
+            greenPlayer07currentTarget = null;
+            greenmonja07selectedSpawn = null;
+            greenmonja07currentSpawn = null;
+            greenmonja07foundspawn = 0;
+            cyanTeamBase = null;
+            cyanPlayer01 = null;
+            cyanPlayer01IsReviving = false;
+            cyanPlayer01Items = 0;
+            cyanPlayer01currentTarget = null;
+            cyanPlayer01selectedSpawn = null;
+            cyanPlayer01currentSpawn = null;
+            cyanPlayer01foundspawn = 0; 
+            cyanPlayer02 = null;
+            cyanPlayer02IsReviving = false;
+            cyanPlayer02Items = 0;
+            cyanPlayer02currentTarget = null;
+            cyanPlayer02selectedSpawn = null;
+            cyanPlayer02currentSpawn = null;
+            cyanPlayer02foundspawn = 0; 
+            cyanPlayer03 = null;
+            cyanPlayer03IsReviving = false;
+            cyanPlayer03Items = 0;
+            cyanPlayer03currentTarget = null;
+            cyanPlayer03selectedSpawn = null;
+            cyanPlayer03currentSpawn = null;
+            cyanPlayer03foundspawn = 0;
+            cyanPlayer04 = null;
+            cyanPlayer04IsReviving = false;
+            cyanPlayer04Items = 0;
+            cyanPlayer04currentTarget = null;
+            cyanPlayer04selectedSpawn = null;
+            cyanPlayer04currentSpawn = null;
+            cyanPlayer04foundspawn = 0;
+            cyanPlayer05 = null;
+            cyanPlayer05IsReviving = false;
+            cyanPlayer05Items = 0;
+            cyanPlayer05currentTarget = null;
+            cyanPlayer05selectedSpawn = null;
+            cyanPlayer05currentSpawn = null;
+            cyanPlayer05foundspawn = 0;
+            cyanPlayer06 = null;
+            cyanPlayer06IsReviving = false;
+            cyanPlayer06Items = 0;
+            cyanPlayer06currentTarget = null;
+            cyanPlayer06selectedSpawn = null;
+            cyanPlayer06currentSpawn = null;
+            cyanPlayer06foundspawn = 0;
+            cyanPlayer07 = null;
+            cyanPlayer07IsReviving = false;
+            cyanPlayer07Items = 0;
+            cyanPlayer07currentTarget = null;
+            cyanPlayer07selectedSpawn = null;
+            cyanPlayer07currentSpawn = null;
+            cyanPlayer07foundspawn = 0;
+            bigMonjaBase = null;
+            bigMonjaPlayer = null;
+            bigMonjaIsReviving = false;
+            bigMonjaPlayerItems = 0;
+            bigMonjaPlayercurrentTarget = null;
+            bigMonjaPlayerselectedSpawn = null;
+            bigMonjaPlayercurrentSpawn = null;
+            bigMonjaPlayerfoundspawn = 0;
+            bigMonjaPlayerInvisibleTimer = 0f;
+            bigMonjaSpawns.Clear();
+            if (CustomOptionHolder.monjaFestivalMode.getBool() == true) {
+                monjaFestivalMode = true;
+            }
+            else {
+                monjaFestivalMode = false;
+            }
+            grabDeliverTime = 1f;
+            killCooldown = CustomOptionHolder.monjaFestivalKillCooldown.getFloat();
+            matchDuration = CustomOptionHolder.monjaFestivalMatchDuration.getFloat();
+            monjaFestivalSenseiMapMode = CustomOptionHolder.activateSenseiMap.getBool();            
+            reviveTime = CustomOptionHolder.monjaFestivalReviveTime.getFloat();
+            invincibilityTimeAfterRevive = CustomOptionHolder.monjaFestivalInvincibilityTimeAfterRevive.getFloat();
+            if (PlayerControl.AllPlayerControls.Count >= 11) {
+                bigMonjaPlayerKillCooldown = killCooldown / 3;
+                bigMonjaPlayerFindDeliverCooldown = grabDeliverTime / 3;
+            }
+            else {
+                bigMonjaPlayerKillCooldown = killCooldown / 2;
+                bigMonjaPlayerFindDeliverCooldown = grabDeliverTime / 2;
+            }
+            greenPoints = 0;
+            cyanPoints = 0;
+            bigMonjaPoints = 0;
+
+            bigSpawnOne = null;
+            bigSpawnTwo = null;
+            littleSpawnOne = null;
+            littleSpawnTwo = null;
+            littleSpawnThree = null;
+            littleSpawnFour = null; 
+            bigSpawnOnePoints = 30;
+            bigSpawnOneReloading = false;
+            bigSpawnTwoPoints = 30;
+            bigSpawnTwoReloading = false;
+            littleSpawnOnePoints = 10;
+            littleSpawnOneReloading = false;
+            littleSpawnTwoPoints = 10;
+            littleSpawnTwoReloading = false;
+            littleSpawnThreePoints = 10;
+            littleSpawnThreeReloading = false;
+            littleSpawnFourPoints = 10;
+            littleSpawnFourReloading = false;
+            triggerGreenTeamWin = false;
+            triggerCyanTeamWin = false;
+            triggerBigMonjaWin = false;
+            triggerDrawWin = false;
+
+            localArrows = new List<Arrow>();
+            allulMonja = null;
+            littleMonjasDroppedCount = 0;
+            handsGreen01 = null;
+            handsGreen02 = null;
+            handsGreen03 = null;
+            handsGreen04 = null;
+            handsGreen05 = null;
+            handsGreen06 = null;
+            handsGreen07 = null;
+            handsCyan01 = null;
+            handsCyan02 = null;
+            handsCyan03 = null;
+            handsCyan04 = null;
+            handsCyan05 = null;
+            handsCyan06 = null;
+            handsCyan07 = null;
+
+            if (bigMonjaPlayer != null) {
+                monjaFestivalCounter = Language.introTexts[2] + " | <color=#00FF00FF>" + Language.introTexts[17] + greenPoints + "</color> | " + "<color=#00F7FFFF>" + Language.introTexts[18] + cyanPoints + "</color> | " + "<color=#808080FF>" + Language.introTexts[19] + bigMonjaPoints + "</color>";
+            }
+            else {
+                monjaFestivalCounter = Language.introTexts[2] + " | <color=#00FF00FF>" + Language.introTexts[17] + greenPoints + "</color> | " + "<color=#00F7FFFF>" + Language.introTexts[18] + cyanPoints + "</color>";
+            }
+
+            switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
+                case 0:
+                    if (monjaFestivalSenseiMapMode) {
+                        allulMonjaPositions.Add(new Vector3(-3.65f, 5f, 0.4f));
+                        allulMonjaPositions.Add(new Vector3(-8.1f, -0.4f, 0.4f));
+                        allulMonjaPositions.Add(new Vector3(13.8f, -0.3f, 0.4f));
+                        allulMonjaPositions.Add(new Vector3(-19.8f, 5.4f, 0.4f));
+                        allulMonjaPositions.Add(new Vector3(-8.4f, -13.8f, 0.4f));                        
+                    }
+                    else {
+                        allulMonjaPositions.Add(new Vector3(-9.8f, -8.9f, 0.4f));
+                        allulMonjaPositions.Add(new Vector3(5.25f, -4.65f, 0.4f));
+                        allulMonjaPositions.Add(new Vector3(7.75f, -14.25f, 0.4f));
+                        allulMonjaPositions.Add(new Vector3(-12.5f, -3.75f, 0.4f));
+                        allulMonjaPositions.Add(new Vector3(4.5f, -9.5f, 0.4f));
+                    }
+                    break;
+                case 1:
+                    allulMonjaPositions.Add(new Vector3(-5.25f, -0.75f, 0.4f));
+                    allulMonjaPositions.Add(new Vector3(28f, -1.75f, 0.4f));
+                    allulMonjaPositions.Add(new Vector3(22.5f, 19f, 0.4f));
+                    allulMonjaPositions.Add(new Vector3(2.45f, 13.5f, 0.4f));
+                    allulMonjaPositions.Add(new Vector3(18.25f, -3.15f, 0.4f));
+                    break;
+                case 2:
+                    allulMonjaPositions.Add(new Vector3(4.65f, -4.5f, 0.4f));
+                    allulMonjaPositions.Add(new Vector3(3.75f, -11.75f, 0.4f));
+                    allulMonjaPositions.Add(new Vector3(28f, -7.45f, 0.4f));
+                    allulMonjaPositions.Add(new Vector3(25, -21.5f, 0.4f));
+                    allulMonjaPositions.Add(new Vector3(24.15f, -3.25f, 0.4f));
+                    break;
+                case 3:
+                    allulMonjaPositions.Add(new Vector3(9.8f, -8.9f, 0.4f));
+                    allulMonjaPositions.Add(new Vector3(-5.25f, -4.65f, 0.4f));
+                    allulMonjaPositions.Add(new Vector3(-7.75f, -14.25f, 0.4f));
+                    allulMonjaPositions.Add(new Vector3(12.5f, -3.75f, 0.4f));
+                    allulMonjaPositions.Add(new Vector3(-4.5f, -9.5f, 0.4f));
+                    break;
+                case 4:
+                    allulMonjaPositions.Add(new Vector3(9.8f, -8.9f, 0.4f));
+                    allulMonjaPositions.Add(new Vector3(13.65f, 6f, 0.4f));
+                    allulMonjaPositions.Add(new Vector3(29.25f, 7f, 0.4f));
+                    allulMonjaPositions.Add(new Vector3(18, -4f, 0.4f));
+                    allulMonjaPositions.Add(new Vector3(-4f, 1.5f, 0.4f));
+                    break;
+                case 5:
+                    allulMonjaPositions.Add(new Vector3(-5.25f, -0.75f, 0.4f));
+                    allulMonjaPositions.Add(new Vector3(-4.5f, 1.25f, 0.4f));
+                    allulMonjaPositions.Add(new Vector3(-3.85f, 5.25f, 0.4f));
+                    allulMonjaPositions.Add(new Vector3(-20, -1.5f, 0.4f));
+                    allulMonjaPositions.Add(new Vector3(-16f, -1.5f, 0.4f));
+                    break;
+            }
+            allulMonjaPositions.Shuffle();
+        }
+    }
+
     public static class CustomMain
     {
         public static CustomAssets customAssets = new CustomAssets();
@@ -6335,7 +6866,30 @@ namespace LasMonjas
         public AudioClip royaleGetHit;
         public AudioClip royaleHitPlayer;
         public GameObject royaleShoot;
-        
+
+        // Custom Bundle Monja Festival Assets
+        public AudioClip monjaFestivalMusic;
+        public GameObject greenBaseEmpty;
+        public GameObject greenBaseFull;
+        public GameObject cyanBaseEmpty;
+        public GameObject cyanBaseFull;
+        public GameObject greyBaseEmpty;
+        public GameObject greyBaseFull;
+        public GameObject bigSpawnOneEmpty;
+        public GameObject bigSpawnOneFull;
+        public GameObject littleSpawnOneEmpty;
+        public GameObject littleSpawnOneFull;
+        public GameObject pickOneGreenMonja;
+        public GameObject pickTwoGreenMonja;
+        public GameObject pickThreeGreenMonja;
+        public GameObject pickOneCyanMonja;
+        public GameObject pickTwoCyanMonja;
+        public GameObject pickThreeCyanMonja;
+        public GameObject floorGreenMonja;
+        public GameObject floorCyanMonja;
+        public GameObject floorGreyMonja;
+        public GameObject floorAllulMonja;
+
         // Custom Map
         public GameObject customMap;
         public GameObject customMinimap;

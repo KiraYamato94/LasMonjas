@@ -15,6 +15,7 @@ using LasMonjas.Patches;
 using Il2CppInterop.Runtime.InteropTypes;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using AmongUs.GameOptions;
+using Il2CppInterop.Runtime;
 
 namespace LasMonjas
 {
@@ -356,6 +357,14 @@ namespace LasMonjas
                         }
                         else if (BattleRoyale.battleRoyaleMode) {
                             roleCouldUse = false;
+                        }
+                        else if (MonjaFestival.monjaFestivalMode) {
+                            if (PlayerControl.LocalPlayer == MonjaFestival.bigMonjaPlayer) {
+                                roleCouldUse = true;
+                            }
+                            else {
+                                roleCouldUse = false;
+                            }
                         }
                     }
                 }
@@ -1221,6 +1230,17 @@ namespace LasMonjas
                     activatedSensei = true;
                 }
             }
+        }
+
+        public static StaticDoor GetStaticDoor(string name)
+        {
+            foreach (var doors in UnityEngine.Object.FindObjectsOfType(Il2CppType.Of<StaticDoor>()))
+            {
+                if (doors.name != name) continue;
+
+                return doors.Cast<StaticDoor>();
+            }
+            return null;
         }
     }
 }

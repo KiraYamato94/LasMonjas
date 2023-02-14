@@ -14,7 +14,7 @@ namespace LasMonjas
 {
     public class CustomOptionHolder {
         public static string[] rates = new string[]{"0%", "100%"}; 
-        public static string[] presets = new string[]{"Roles", "Capture the Flag", "Police and Thieves", "King of the Hill", "Hot Potato", "Zombie Laboratory", "Battle Royale", "Preset 8", "Preset 9", "Preset 10" };
+        public static string[] presets = new string[]{"Roles", "Capture the Flag", "Police and Thieves", "King of the Hill", "Hot Potato", "Zombie Laboratory", "Battle Royale", "Monja Festival", "Preset 9", "Preset 10" };
 
         // Game Options 
         public static CustomOption presetSelection;
@@ -118,6 +118,13 @@ namespace LasMonjas
         public static CustomOption battleRoyaleScoreNeeded;
         public static CustomOption battleRoyaleReviveTime;
         public static CustomOption battleRoyaleInvincibilityTimeAfterRevive;
+
+        // MonjaFestival
+        public static CustomOption monjaFestivalMode;
+        public static CustomOption monjaFestivalMatchDuration;
+        public static CustomOption monjaFestivalKillCooldown;
+        public static CustomOption monjaFestivalReviveTime;
+        public static CustomOption monjaFestivalInvincibilityTimeAfterRevive;
 
         // Impostors configurable options
 
@@ -557,6 +564,13 @@ namespace LasMonjas
             battleRoyaleReviveTime = CustomOption.Create(106, cs(Sleuth.color, "Battle Royale") + ": Revive Wait Time", "gamemode", 5f, 3f, 5f, 1f, battleRoyaleMode);
             battleRoyaleInvincibilityTimeAfterRevive = CustomOption.Create(107, cs(Sleuth.color, "Battle Royale") + ": Invincibility Time After Revive", "gamemode", 3f, 2f, 5f, 1f, battleRoyaleMode);
 
+            // Monja Festival
+            monjaFestivalMode = CustomOption.Create(750, cs(Monja.color, "Monja Festival"), "gamemode", false, null, true);
+            monjaFestivalMatchDuration = CustomOption.Create(751, cs(Monja.color, "Monja Festival") + ": Match Duration", "gamemode", 180f, 180f, 300f, 30f, monjaFestivalMode);
+            monjaFestivalKillCooldown = CustomOption.Create(752, cs(Monja.color, "Monja Festival") + ": Kill Cooldown", "gamemode", 10f, 10f, 20f, 1f, monjaFestivalMode);
+            monjaFestivalReviveTime = CustomOption.Create(753, cs(Monja.color, "Monja Festival") + ": Revive Wait Time", "gamemode", 10f, 10f, 15f, 1f, monjaFestivalMode);
+            monjaFestivalInvincibilityTimeAfterRevive = CustomOption.Create(754, cs(Monja.color, "Monja Festival") + ": Invincibility Time After Revive", "gamemode", 3f, 2f, 5f, 1f, monjaFestivalMode);
+            
             // Mimic options
             mimicSpawnRate = CustomOption.Create(150, cs(Mimic.color, "Mimic"), "impostor", rates, null, true);
             mimicDuration = CustomOption.Create(151, cs(Mimic.color, "Mimic") + ": Duration", "impostor", 10f, 10f, 15f, 1f, mimicSpawnRate);

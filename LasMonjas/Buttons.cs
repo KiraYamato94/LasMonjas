@@ -329,6 +329,39 @@ namespace LasMonjas
         private static CustomButton pinkPlayer07KillButton;
         private static CustomButton serialKillerKillButton;
 
+        // Monja Festival buttons
+        private static CustomButton greenmonja01KillButton;
+        public static CustomButton greenmonja01PickDeliverButton;
+        private static CustomButton greenmonja02KillButton;
+        private static CustomButton greenmonja02PickDeliverButton;
+        private static CustomButton greenmonja03KillButton;
+        private static CustomButton greenmonja03PickDeliverButton;
+        private static CustomButton greenmonja04KillButton;
+        private static CustomButton greenmonja04PickDeliverButton;
+        private static CustomButton greenmonja05KillButton;
+        private static CustomButton greenmonja05PickDeliverButton;
+        private static CustomButton greenmonja06KillButton;
+        private static CustomButton greenmonja06PickDeliverButton;
+        private static CustomButton greenmonja07KillButton;
+        private static CustomButton greenmonja07PickDeliverButton;
+        private static CustomButton cyanmonja01KillButton;
+        private static CustomButton cyanmonja01PickDeliverButton;
+        private static CustomButton cyanmonja02KillButton;
+        private static CustomButton cyanmonja02PickDeliverButton;
+        private static CustomButton cyanmonja03KillButton;
+        private static CustomButton cyanmonja03PickDeliverButton;
+        private static CustomButton cyanmonja04KillButton;
+        private static CustomButton cyanmonja04PickDeliverButton;
+        private static CustomButton cyanmonja05KillButton;
+        private static CustomButton cyanmonja05PickDeliverButton;
+        private static CustomButton cyanmonja06KillButton;
+        private static CustomButton cyanmonja06PickDeliverButton;
+        private static CustomButton cyanmonja07KillButton;
+        private static CustomButton cyanmonja07PickDeliverButton;
+        private static CustomButton bigmonjaKillButton;
+        private static CustomButton bigmonjaPickDeliverButton;
+        public static CustomButton bigmonjaInvisibleButton;
+
         public static void setCustomButtonCooldowns() {
             // Impostor buttons
             mimicTransformButton.MaxTimer = Mimic.cooldown;
@@ -746,6 +779,70 @@ namespace LasMonjas
             pinkPlayer06KillButton.MaxTimer = BattleRoyale.killCooldown;
             pinkPlayer07KillButton.MaxTimer = BattleRoyale.killCooldown;
             serialKillerKillButton.MaxTimer = BattleRoyale.serialKillerCooldown;
+
+            // Monja Festival buttons
+            greenmonja01KillButton.MaxTimer = MonjaFestival.killCooldown;
+            greenmonja01PickDeliverButton.MaxTimer = 1f;
+            greenmonja01PickDeliverButton.EffectDuration = 1f;
+            MonjaFestival.greenmonja01DeliverCount.text = $"{MonjaFestival.greenPlayer01Items} / 3";
+            greenmonja02KillButton.MaxTimer = MonjaFestival.killCooldown;
+            greenmonja02PickDeliverButton.MaxTimer = 1f;
+            greenmonja02PickDeliverButton.EffectDuration = 1f;
+            MonjaFestival.greenmonja02DeliverCount.text = $"{MonjaFestival.greenPlayer02Items} / 3"; 
+            greenmonja03KillButton.MaxTimer = MonjaFestival.killCooldown;
+            greenmonja03PickDeliverButton.MaxTimer = 1f;
+            greenmonja03PickDeliverButton.EffectDuration = 1f;
+            MonjaFestival.greenmonja03DeliverCount.text = $"{MonjaFestival.greenPlayer03Items} / 3"; 
+            greenmonja04KillButton.MaxTimer = MonjaFestival.killCooldown;
+            greenmonja04PickDeliverButton.MaxTimer = 1f;
+            greenmonja04PickDeliverButton.EffectDuration = 1f;
+            MonjaFestival.greenmonja04DeliverCount.text = $"{MonjaFestival.greenPlayer04Items} / 3"; 
+            greenmonja05KillButton.MaxTimer = MonjaFestival.killCooldown;
+            greenmonja05PickDeliverButton.MaxTimer = 1f;
+            greenmonja05PickDeliverButton.EffectDuration = 1f;
+            MonjaFestival.greenmonja05DeliverCount.text = $"{MonjaFestival.greenPlayer05Items} / 3"; 
+            greenmonja06KillButton.MaxTimer = MonjaFestival.killCooldown;
+            greenmonja06PickDeliverButton.MaxTimer = 1f;
+            greenmonja06PickDeliverButton.EffectDuration = 1f;
+            MonjaFestival.greenmonja06DeliverCount.text = $"{MonjaFestival.greenPlayer06Items} / 3"; 
+            greenmonja07KillButton.MaxTimer = MonjaFestival.killCooldown;
+            greenmonja07PickDeliverButton.MaxTimer = 1f;
+            greenmonja07PickDeliverButton.EffectDuration = 1f;
+            MonjaFestival.greenmonja07DeliverCount.text = $"{MonjaFestival.greenPlayer07Items} / 3"; 
+            cyanmonja01KillButton.MaxTimer = MonjaFestival.killCooldown;
+            cyanmonja01PickDeliverButton.MaxTimer = 1f;
+            cyanmonja01PickDeliverButton.EffectDuration = 1f;
+            MonjaFestival.cyanPlayer01DeliverCount.text = $"{MonjaFestival.cyanPlayer01Items} / 3"; 
+            cyanmonja02KillButton.MaxTimer = MonjaFestival.killCooldown;
+            cyanmonja02PickDeliverButton.MaxTimer = 1f;
+            cyanmonja02PickDeliverButton.EffectDuration = 1f;
+            MonjaFestival.cyanPlayer02DeliverCount.text = $"{MonjaFestival.cyanPlayer02Items} / 3"; 
+            cyanmonja03KillButton.MaxTimer = MonjaFestival.killCooldown;
+            cyanmonja03PickDeliverButton.MaxTimer = 1f;
+            cyanmonja03PickDeliverButton.EffectDuration = 1f;
+            MonjaFestival.cyanPlayer03DeliverCount.text = $"{MonjaFestival.cyanPlayer03Items} / 3";
+            cyanmonja04KillButton.MaxTimer = MonjaFestival.killCooldown;
+            cyanmonja04PickDeliverButton.MaxTimer = 1f;
+            cyanmonja04PickDeliverButton.EffectDuration = 1f;
+            MonjaFestival.cyanPlayer04DeliverCount.text = $"{MonjaFestival.cyanPlayer04Items} / 3";
+            cyanmonja05KillButton.MaxTimer = MonjaFestival.killCooldown;
+            cyanmonja05PickDeliverButton.MaxTimer = 1f;
+            cyanmonja05PickDeliverButton.EffectDuration = 1f;
+            MonjaFestival.cyanPlayer05DeliverCount.text = $"{MonjaFestival.cyanPlayer05Items} / 3";
+            cyanmonja06KillButton.MaxTimer = MonjaFestival.killCooldown;
+            cyanmonja06PickDeliverButton.MaxTimer = 1f;
+            cyanmonja06PickDeliverButton.EffectDuration = 1f;
+            MonjaFestival.cyanPlayer06DeliverCount.text = $"{MonjaFestival.cyanPlayer06Items} / 3";
+            cyanmonja07KillButton.MaxTimer = MonjaFestival.killCooldown;
+            cyanmonja07PickDeliverButton.MaxTimer = 1f;
+            cyanmonja07PickDeliverButton.EffectDuration = 1f;
+            MonjaFestival.cyanPlayer07DeliverCount.text = $"{MonjaFestival.cyanPlayer07Items} / 3";
+            bigmonjaKillButton.MaxTimer = MonjaFestival.bigMonjaPlayerKillCooldown;
+            bigmonjaPickDeliverButton.MaxTimer = MonjaFestival.bigMonjaPlayerFindDeliverCooldown;
+            bigmonjaPickDeliverButton.EffectDuration = MonjaFestival.bigMonjaPlayerFindDeliverCooldown;
+            MonjaFestival.bigMonjaPlayerDeliverCount.text = $"{MonjaFestival.bigMonjaPlayerItems} / 10"; 
+            bigmonjaInvisibleButton.MaxTimer = 10f;
+            bigmonjaInvisibleButton.EffectDuration = 20f;
         }
 
         public static void resetBomberBombButton() {
@@ -5896,7 +5993,7 @@ namespace LasMonjas
                 },
                 () => { whoAmIButton.Timer = whoAmIButton.MaxTimer; },
                 Helpers.loadSpriteFromResources("LasMonjas.Images.WhoAmIRememberButton.png", 90f),
-                new Vector3(-1.9f, -0.06f, 0),
+                new Vector3(-3f, -0.06f, 0),
                 __instance,
                 KeyCode.F
             );
@@ -16365,7 +16462,3111 @@ namespace LasMonjas
                  new Vector3(0f, 1f, 0),
                 __instance,
                 KeyCode.Mouse1
-            ); 
+            );
+
+            // Monja Festival buttons
+            // GreenMonja01 Kill
+            greenmonja01KillButton = new CustomButton(
+                () => {
+                    byte targetId = MonjaFestival.greenPlayer01currentTarget.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    killWriter.Write(targetId);
+                    killWriter.Write(1);
+                    AmongUsClient.Instance.FinishRpcImmediately(killWriter);
+                    RPCProcedure.monjaFestivalKills(targetId, 1);
+                    greenmonja01KillButton.Timer = greenmonja01KillButton.MaxTimer;
+                    MonjaFestival.greenPlayer01currentTarget = null;
+                },
+                () => { return MonjaFestival.greenPlayer01 != null && MonjaFestival.greenPlayer01 == PlayerControl.LocalPlayer; },
+                () => { return MonjaFestival.greenPlayer01currentTarget && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.greenPlayer01IsReviving && MonjaFestival.greenPlayer01Items == 0; },
+                () => { greenmonja01KillButton.Timer = greenmonja01KillButton.MaxTimer; },
+                __instance.KillButton.graphic.sprite,
+                new Vector3(0, 1f, 0),
+                __instance,
+                KeyCode.Q
+            );
+
+            // GreenMonja02 Kill
+            greenmonja02KillButton = new CustomButton(
+                () => {
+                    byte targetId = MonjaFestival.greenPlayer02currentTarget.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    killWriter.Write(targetId);
+                    killWriter.Write(2);
+                    AmongUsClient.Instance.FinishRpcImmediately(killWriter);
+                    RPCProcedure.monjaFestivalKills(targetId, 2);
+                    greenmonja02KillButton.Timer = greenmonja02KillButton.MaxTimer;
+                    MonjaFestival.greenPlayer02currentTarget = null;
+                },
+                () => { return MonjaFestival.greenPlayer02 != null && MonjaFestival.greenPlayer02 == PlayerControl.LocalPlayer; },
+                () => { return MonjaFestival.greenPlayer02currentTarget && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.greenPlayer02IsReviving && MonjaFestival.greenPlayer02Items == 0; },
+                () => { greenmonja02KillButton.Timer = greenmonja02KillButton.MaxTimer; },
+                __instance.KillButton.graphic.sprite,
+                new Vector3(0, 1f, 0),
+                __instance,
+                KeyCode.Q
+            );
+
+            // GreenMonja03 Kill
+            greenmonja03KillButton = new CustomButton(
+                () => {
+                    byte targetId = MonjaFestival.greenPlayer03currentTarget.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    killWriter.Write(targetId);
+                    killWriter.Write(3);
+                    AmongUsClient.Instance.FinishRpcImmediately(killWriter);
+                    RPCProcedure.monjaFestivalKills(targetId, 3);
+                    greenmonja03KillButton.Timer = greenmonja03KillButton.MaxTimer;
+                    MonjaFestival.greenPlayer03currentTarget = null;
+                },
+                () => { return MonjaFestival.greenPlayer03 != null && MonjaFestival.greenPlayer03 == PlayerControl.LocalPlayer; },
+                () => { return MonjaFestival.greenPlayer03currentTarget && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.greenPlayer03IsReviving && MonjaFestival.greenPlayer03Items == 0; },
+                () => { greenmonja03KillButton.Timer = greenmonja03KillButton.MaxTimer; },
+                __instance.KillButton.graphic.sprite,
+                new Vector3(0, 1f, 0),
+                __instance,
+                KeyCode.Q
+            );
+
+            // GreenMonja04 Kill
+            greenmonja04KillButton = new CustomButton(
+                () => {
+                    byte targetId = MonjaFestival.greenPlayer04currentTarget.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    killWriter.Write(targetId);
+                    killWriter.Write(4);
+                    AmongUsClient.Instance.FinishRpcImmediately(killWriter);
+                    RPCProcedure.monjaFestivalKills(targetId, 4);
+                    greenmonja04KillButton.Timer = greenmonja04KillButton.MaxTimer;
+                    MonjaFestival.greenPlayer04currentTarget = null;
+                },
+                () => { return MonjaFestival.greenPlayer04 != null && MonjaFestival.greenPlayer04 == PlayerControl.LocalPlayer; },
+                () => { return MonjaFestival.greenPlayer04currentTarget && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.greenPlayer04IsReviving && MonjaFestival.greenPlayer04Items == 0; },
+                () => { greenmonja04KillButton.Timer = greenmonja04KillButton.MaxTimer; },
+                __instance.KillButton.graphic.sprite,
+                new Vector3(0, 1f, 0),
+                __instance,
+                KeyCode.Q
+            );
+
+            // GreenMonja05 Kill
+            greenmonja05KillButton = new CustomButton(
+                () => {
+                    byte targetId = MonjaFestival.greenPlayer05currentTarget.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    killWriter.Write(targetId);
+                    killWriter.Write(5);
+                    AmongUsClient.Instance.FinishRpcImmediately(killWriter);
+                    RPCProcedure.monjaFestivalKills(targetId, 5);
+                    greenmonja05KillButton.Timer = greenmonja05KillButton.MaxTimer;
+                    MonjaFestival.greenPlayer05currentTarget = null;
+                },
+                () => { return MonjaFestival.greenPlayer05 != null && MonjaFestival.greenPlayer05 == PlayerControl.LocalPlayer; },
+                () => { return MonjaFestival.greenPlayer05currentTarget && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.greenPlayer05IsReviving && MonjaFestival.greenPlayer05Items == 0; },
+                () => { greenmonja05KillButton.Timer = greenmonja05KillButton.MaxTimer; },
+                __instance.KillButton.graphic.sprite,
+                new Vector3(0, 1f, 0),
+                __instance,
+                KeyCode.Q
+            );
+
+            // GreenMonja06 Kill
+            greenmonja06KillButton = new CustomButton(
+                () => {
+                    byte targetId = MonjaFestival.greenPlayer06currentTarget.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    killWriter.Write(targetId);
+                    killWriter.Write(6);
+                    AmongUsClient.Instance.FinishRpcImmediately(killWriter);
+                    RPCProcedure.monjaFestivalKills(targetId, 6);
+                    greenmonja06KillButton.Timer = greenmonja06KillButton.MaxTimer;
+                    MonjaFestival.greenPlayer06currentTarget = null;
+                },
+                () => { return MonjaFestival.greenPlayer06 != null && MonjaFestival.greenPlayer06 == PlayerControl.LocalPlayer; },
+                () => { return MonjaFestival.greenPlayer06currentTarget && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.greenPlayer06IsReviving && MonjaFestival.greenPlayer06Items == 0; },
+                () => { greenmonja06KillButton.Timer = greenmonja06KillButton.MaxTimer; },
+                __instance.KillButton.graphic.sprite,
+                new Vector3(0, 1f, 0),
+                __instance,
+                KeyCode.Q
+            );
+
+            // GreenMonja07 Kill
+            greenmonja07KillButton = new CustomButton(
+                () => {
+                    byte targetId = MonjaFestival.greenPlayer07currentTarget.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    killWriter.Write(targetId);
+                    killWriter.Write(7);
+                    AmongUsClient.Instance.FinishRpcImmediately(killWriter);
+                    RPCProcedure.monjaFestivalKills(targetId, 7);
+                    greenmonja07KillButton.Timer = greenmonja07KillButton.MaxTimer;
+                    MonjaFestival.greenPlayer07currentTarget = null;
+                },
+                () => { return MonjaFestival.greenPlayer07 != null && MonjaFestival.greenPlayer07 == PlayerControl.LocalPlayer; },
+                () => { return MonjaFestival.greenPlayer07currentTarget && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.greenPlayer07IsReviving && MonjaFestival.greenPlayer07Items == 0; },
+                () => { greenmonja07KillButton.Timer = greenmonja07KillButton.MaxTimer; },
+                __instance.KillButton.graphic.sprite,
+                new Vector3(0, 1f, 0),
+                __instance,
+                KeyCode.Q
+            );
+
+            // CyanMonja01 Kill
+            cyanmonja01KillButton = new CustomButton(
+                () => {
+                    byte targetId = MonjaFestival.cyanPlayer01currentTarget.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    killWriter.Write(targetId);
+                    killWriter.Write(9);
+                    AmongUsClient.Instance.FinishRpcImmediately(killWriter);
+                    RPCProcedure.monjaFestivalKills(targetId, 9);
+                    cyanmonja01KillButton.Timer = cyanmonja01KillButton.MaxTimer;
+                    MonjaFestival.cyanPlayer01currentTarget = null;
+                },
+                () => { return MonjaFestival.cyanPlayer01 != null && MonjaFestival.cyanPlayer01 == PlayerControl.LocalPlayer; },
+                () => { return MonjaFestival.cyanPlayer01currentTarget && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.cyanPlayer01IsReviving && MonjaFestival.cyanPlayer01Items == 0; },
+                () => { cyanmonja01KillButton.Timer = cyanmonja01KillButton.MaxTimer; },
+                __instance.KillButton.graphic.sprite,
+                new Vector3(0, 1f, 0),
+                __instance,
+                KeyCode.Q
+            );
+
+            // CyanMonja02 Kill
+            cyanmonja02KillButton = new CustomButton(
+                () => {
+                    byte targetId = MonjaFestival.cyanPlayer02currentTarget.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    killWriter.Write(targetId);
+                    killWriter.Write(10);
+                    AmongUsClient.Instance.FinishRpcImmediately(killWriter);
+                    RPCProcedure.monjaFestivalKills(targetId, 10);
+                    cyanmonja02KillButton.Timer = cyanmonja02KillButton.MaxTimer;
+                    MonjaFestival.cyanPlayer02currentTarget = null;
+                },
+                () => { return MonjaFestival.cyanPlayer02 != null && MonjaFestival.cyanPlayer02 == PlayerControl.LocalPlayer; },
+                () => { return MonjaFestival.cyanPlayer02currentTarget && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.cyanPlayer02IsReviving && MonjaFestival.cyanPlayer02Items == 0; },
+                () => { cyanmonja02KillButton.Timer = cyanmonja02KillButton.MaxTimer; },
+                __instance.KillButton.graphic.sprite,
+                new Vector3(0, 1f, 0),
+                __instance,
+                KeyCode.Q
+            );
+
+            // CyanMonja03 Kill
+            cyanmonja03KillButton = new CustomButton(
+                () => {
+                    byte targetId = MonjaFestival.cyanPlayer03currentTarget.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    killWriter.Write(targetId);
+                    killWriter.Write(11);
+                    AmongUsClient.Instance.FinishRpcImmediately(killWriter);
+                    RPCProcedure.monjaFestivalKills(targetId, 11);
+                    cyanmonja03KillButton.Timer = cyanmonja03KillButton.MaxTimer;
+                    MonjaFestival.cyanPlayer03currentTarget = null;
+                },
+                () => { return MonjaFestival.cyanPlayer03 != null && MonjaFestival.cyanPlayer03 == PlayerControl.LocalPlayer; },
+                () => { return MonjaFestival.cyanPlayer03currentTarget && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.cyanPlayer03IsReviving && MonjaFestival.cyanPlayer03Items == 0; },
+                () => { cyanmonja03KillButton.Timer = cyanmonja03KillButton.MaxTimer; },
+                __instance.KillButton.graphic.sprite,
+                new Vector3(0, 1f, 0),
+                __instance,
+                KeyCode.Q
+            );
+
+            // CyanMonja04 Kill
+            cyanmonja04KillButton = new CustomButton(
+                () => {
+                    byte targetId = MonjaFestival.cyanPlayer04currentTarget.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    killWriter.Write(targetId);
+                    killWriter.Write(12);
+                    AmongUsClient.Instance.FinishRpcImmediately(killWriter);
+                    RPCProcedure.monjaFestivalKills(targetId, 12);
+                    cyanmonja04KillButton.Timer = cyanmonja04KillButton.MaxTimer;
+                    MonjaFestival.cyanPlayer04currentTarget = null;
+                },
+                () => { return MonjaFestival.cyanPlayer04 != null && MonjaFestival.cyanPlayer04 == PlayerControl.LocalPlayer; },
+                () => { return MonjaFestival.cyanPlayer04currentTarget && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.cyanPlayer04IsReviving && MonjaFestival.cyanPlayer04Items == 0; },
+                () => { cyanmonja04KillButton.Timer = cyanmonja04KillButton.MaxTimer; },
+                __instance.KillButton.graphic.sprite,
+                new Vector3(0, 1f, 0),
+                __instance,
+                KeyCode.Q
+            );
+
+            // CyanMonja05 Kill
+            cyanmonja05KillButton = new CustomButton(
+                () => {
+                    byte targetId = MonjaFestival.cyanPlayer05currentTarget.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    killWriter.Write(targetId);
+                    killWriter.Write(13);
+                    AmongUsClient.Instance.FinishRpcImmediately(killWriter);
+                    RPCProcedure.monjaFestivalKills(targetId, 13);
+                    cyanmonja05KillButton.Timer = cyanmonja05KillButton.MaxTimer;
+                    MonjaFestival.cyanPlayer05currentTarget = null;
+                },
+                () => { return MonjaFestival.cyanPlayer05 != null && MonjaFestival.cyanPlayer05 == PlayerControl.LocalPlayer; },
+                () => { return MonjaFestival.cyanPlayer05currentTarget && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.cyanPlayer05IsReviving && MonjaFestival.cyanPlayer05Items == 0; },
+                () => { cyanmonja05KillButton.Timer = cyanmonja05KillButton.MaxTimer; },
+                __instance.KillButton.graphic.sprite,
+                new Vector3(0, 1f, 0),
+                __instance,
+                KeyCode.Q
+            );
+
+            // CyanMonja06 Kill
+            cyanmonja06KillButton = new CustomButton(
+                () => {
+                    byte targetId = MonjaFestival.cyanPlayer06currentTarget.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    killWriter.Write(targetId);
+                    killWriter.Write(14);
+                    AmongUsClient.Instance.FinishRpcImmediately(killWriter);
+                    RPCProcedure.monjaFestivalKills(targetId, 14);
+                    cyanmonja06KillButton.Timer = cyanmonja06KillButton.MaxTimer;
+                    MonjaFestival.cyanPlayer06currentTarget = null;
+                },
+                () => { return MonjaFestival.cyanPlayer06 != null && MonjaFestival.cyanPlayer06 == PlayerControl.LocalPlayer; },
+                () => { return MonjaFestival.cyanPlayer06currentTarget && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.cyanPlayer06IsReviving && MonjaFestival.cyanPlayer06Items == 0; },
+                () => { cyanmonja06KillButton.Timer = cyanmonja06KillButton.MaxTimer; },
+                __instance.KillButton.graphic.sprite,
+                new Vector3(0, 1f, 0),
+                __instance,
+                KeyCode.Q
+            );
+
+            // CyanMonja07 Kill
+            cyanmonja07KillButton = new CustomButton(
+                () => {
+                    byte targetId = MonjaFestival.cyanPlayer07currentTarget.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    killWriter.Write(targetId);
+                    killWriter.Write(15);
+                    AmongUsClient.Instance.FinishRpcImmediately(killWriter);
+                    RPCProcedure.monjaFestivalKills(targetId, 15);
+                    cyanmonja07KillButton.Timer = cyanmonja07KillButton.MaxTimer;
+                    MonjaFestival.cyanPlayer07currentTarget = null;
+                },
+                () => { return MonjaFestival.cyanPlayer07 != null && MonjaFestival.cyanPlayer07 == PlayerControl.LocalPlayer; },
+                () => { return MonjaFestival.cyanPlayer07currentTarget && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.cyanPlayer07IsReviving && MonjaFestival.cyanPlayer07Items == 0; },
+                () => { cyanmonja07KillButton.Timer = cyanmonja07KillButton.MaxTimer; },
+                __instance.KillButton.graphic.sprite,
+                new Vector3(0, 1f, 0),
+                __instance,
+                KeyCode.Q
+            );
+
+            // Big Monja Kill
+            bigmonjaKillButton = new CustomButton(
+                () => {
+                    byte targetId = MonjaFestival.bigMonjaPlayercurrentTarget.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    killWriter.Write(targetId);
+                    killWriter.Write(16);
+                    AmongUsClient.Instance.FinishRpcImmediately(killWriter);
+                    RPCProcedure.monjaFestivalKills(targetId, 16);
+                    bigmonjaKillButton.Timer = bigmonjaKillButton.MaxTimer;
+                    MonjaFestival.bigMonjaPlayercurrentTarget = null;
+                },
+                () => { return MonjaFestival.bigMonjaPlayer != null && MonjaFestival.bigMonjaPlayer == PlayerControl.LocalPlayer; },
+                () => { return MonjaFestival.bigMonjaPlayercurrentTarget && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.bigMonjaIsReviving; },
+                () => { bigmonjaKillButton.Timer = bigmonjaKillButton.MaxTimer; },
+                __instance.KillButton.graphic.sprite,
+                new Vector3(0, 1f, 0),
+                __instance,
+                KeyCode.Q
+            );
+
+            // Big Monja invisible
+            bigmonjaInvisibleButton = new CustomButton(
+                () => {
+
+                    SoundManager.Instance.PlaySound(CustomMain.customAssets.chameleonInvisible, false, 100f);
+
+                    bigmonjaInvisibleButton.EffectDuration = 20f;
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalBigMonjaInvisible, Hazel.SendOption.Reliable, -1);
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    RPCProcedure.monjaFestivalBigMonjaInvisible();
+                },
+                () => { return MonjaFestival.bigMonjaPlayer != null && MonjaFestival.bigMonjaPlayer == PlayerControl.LocalPlayer; },
+                () => { return PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead; },
+                () => {},
+                Stranded.getInvisibleButtonSprite(),
+                new Vector3(-1f, 1f, 0),
+                __instance,
+                KeyCode.T,
+                true,
+                0f,
+                () => {
+                    bigmonjaInvisibleButton.Timer = bigmonjaInvisibleButton.MaxTimer;
+                }
+            );          
+            
+            // Green Monja 01 find deliver button
+            greenmonja01PickDeliverButton = new CustomButton(
+                () => {
+                    
+                    greenmonja01PickDeliverButton.HasEffect = true;
+                    MonjaFestival.greenmonja01selectedSpawn = MonjaFestival.greenmonja01currentSpawn;
+
+                },
+                () => { return MonjaFestival.greenPlayer01 != null && MonjaFestival.greenPlayer01 == PlayerControl.LocalPlayer; },
+                () => {
+                    if (MonjaFestival.localArrows.Count != 0) {
+                        MonjaFestival.localArrows[0].Update(MonjaFestival.greenTeamBase.transform.position);
+                    }
+                    
+                    if (MonjaFestival.greenPlayer01Items == 3) {
+                        greenmonja01PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getgreenDeliverButtonSprite();
+                    }
+                    else if (MonjaFestival.greenPlayer01Items > 0 && MonjaFestival.greenPlayer01Items < 3) {
+                        greenmonja01PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getgreenPickDeliverButtonSprite();
+                    }
+                    else {
+                        greenmonja01PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getgreenPickButtonSprite();
+                    }
+
+                    if (greenmonja01PickDeliverButton.isEffectActive && MonjaFestival.greenmonja01selectedSpawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, MonjaFestival.greenmonja01selectedSpawn.transform.position) > 0.75f) {
+                        MonjaFestival.greenmonja01selectedSpawn = null;
+                        greenmonja01PickDeliverButton.Timer = 0f;
+                        greenmonja01PickDeliverButton.isEffectActive = false;
+                    }
+
+                    bool CanUse = false;
+                    if (MonjaFestival.bigMonjaSpawns.Count != 0) {
+                        foreach (GameObject spawn in MonjaFestival.bigMonjaSpawns) {
+                            if (spawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, spawn.transform.position) < 0.75f) {
+                                MonjaFestival.greenmonja01currentSpawn = spawn;
+                                CanUse = true;
+                                if (spawn.name.StartsWith("littleMonja")) {
+                                    CanUse = MonjaFestival.greenPlayer01Items < 3;
+                                    MonjaFestival.greenmonja01foundspawn = 8;
+                                } else {
+                                    switch (spawn.name) {
+                                        case "bigSpawnOne":
+                                            CanUse = MonjaFestival.bigSpawnOnePoints > 0 && MonjaFestival.greenPlayer01Items < 3;
+                                            MonjaFestival.greenmonja01foundspawn = 1;
+                                            break;
+                                        case "bigSpawnTwo":
+                                            CanUse = MonjaFestival.bigSpawnTwoPoints > 0 && MonjaFestival.greenPlayer01Items < 3;
+                                            MonjaFestival.greenmonja01foundspawn = 2;
+                                            break;
+                                        case "littleSpawnOne":
+                                            CanUse = MonjaFestival.littleSpawnOnePoints > 0 && MonjaFestival.greenPlayer01Items < 3;
+                                            MonjaFestival.greenmonja01foundspawn = 3;
+                                            break;
+                                        case "littleSpawnTwo":
+                                            CanUse = MonjaFestival.littleSpawnTwoPoints > 0 && MonjaFestival.greenPlayer01Items < 3;
+                                            MonjaFestival.greenmonja01foundspawn = 4;
+                                            break;
+                                        case "littleSpawnThree":
+                                            CanUse = MonjaFestival.littleSpawnThreePoints > 0 && MonjaFestival.greenPlayer01Items < 3;
+                                            MonjaFestival.greenmonja01foundspawn = 5;
+                                            break;
+                                        case "littleSpawnFour":
+                                            CanUse = MonjaFestival.littleSpawnFourPoints > 0 && MonjaFestival.greenPlayer01Items < 3;
+                                            MonjaFestival.greenmonja01foundspawn = 6;
+                                            break;
+                                        case "greenBase":
+                                            CanUse = MonjaFestival.greenPlayer01Items > 0;
+                                            MonjaFestival.greenmonja01foundspawn = 7;
+                                            break;
+                                        case "cyanBase":
+                                            CanUse = false;
+                                            break;
+                                        case "greyBase":
+                                            CanUse = false;
+                                            break;
+                                        case "allulMonja":
+                                            CanUse = MonjaFestival.allulMonja.activeSelf;
+                                            MonjaFestival.greenmonja01foundspawn = 9;
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return CanUse && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.greenPlayer01IsReviving;
+                },
+                () => { greenmonja01PickDeliverButton.Timer = greenmonja01PickDeliverButton.MaxTimer; },
+                MonjaFestival.getgreenPickButtonSprite(),
+                new Vector3(-2.1f, 0f, 0),
+                __instance,
+                KeyCode.F,
+                false,
+                3f,
+                () => {
+                    if (!MonjaFestival.greenPlayer01.Data.IsDead) {
+                        MessageWriter findSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalFindSpawns, Hazel.SendOption.Reliable, -1);
+                        MessageWriter checkSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalCheckItems, Hazel.SendOption.Reliable, -1);
+                        switch (MonjaFestival.greenmonja01foundspawn) {
+                            case 1: // Big Spawn one
+                                findSpawn.Write(1);
+                                checkSpawn.Write(1);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(1);
+                                RPCProcedure.monjaFestivalCheckItems(1);
+                                break;
+                            case 2: // Big Spawn two
+                                findSpawn.Write(2);
+                                checkSpawn.Write(1);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(2);
+                                RPCProcedure.monjaFestivalCheckItems(1);
+                                break;
+                            case 3: // Little spawn one
+                                findSpawn.Write(3);
+                                checkSpawn.Write(1);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(3);
+                                RPCProcedure.monjaFestivalCheckItems(1);
+                                break;
+                            case 4: // Little spawn two
+                                findSpawn.Write(4);
+                                checkSpawn.Write(1);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(4);
+                                RPCProcedure.monjaFestivalCheckItems(1);
+                                break;
+                            case 5: // Little spawn three
+                                findSpawn.Write(5);
+                                checkSpawn.Write(1);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(5);
+                                RPCProcedure.monjaFestivalCheckItems(1);
+                                break;
+                            case 6: // Little spawn four
+                                findSpawn.Write(6);
+                                checkSpawn.Write(1);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(6);
+                                RPCProcedure.monjaFestivalCheckItems(1);
+                                break;
+                            case 7: // Green base
+                                checkSpawn.Write(21);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(21);
+                                MessageWriter delivertoSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                delivertoSpawn.Write(1);
+                                AmongUsClient.Instance.FinishRpcImmediately(delivertoSpawn);
+                                RPCProcedure.monjaFestivalDeliver(1);
+                                break;
+                            case 8: // Little Monja
+                                checkSpawn.Write(1);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(1);
+                                MessageWriter destroyLittleMonja = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDestroyLittleMonja, Hazel.SendOption.Reliable, -1);
+                                destroyLittleMonja.Write(MonjaFestival.greenmonja01currentSpawn.name);
+                                AmongUsClient.Instance.FinishRpcImmediately(destroyLittleMonja);
+                                RPCProcedure.monjaFestivalDestroyLittleMonja(MonjaFestival.greenmonja01currentSpawn.name); 
+                                break;
+                            case 9: // Allul Monja
+                                MessageWriter deliverAllul = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                deliverAllul.Write(4);
+                                AmongUsClient.Instance.FinishRpcImmediately(deliverAllul);
+                                RPCProcedure.monjaFestivalDeliver(4);
+                                break;
+                        }
+                    }
+                    greenmonja01PickDeliverButton.Timer = greenmonja01PickDeliverButton.MaxTimer;
+                }
+            );
+
+            // Green Monja 01 button counter
+            MonjaFestival.greenmonja01DeliverCount = GameObject.Instantiate(greenmonja01PickDeliverButton.actionButton.cooldownTimerText, greenmonja01PickDeliverButton.actionButton.cooldownTimerText.transform.parent);
+            MonjaFestival.greenmonja01DeliverCount.enableWordWrapping = false;
+            MonjaFestival.greenmonja01DeliverCount.transform.localScale = Vector3.one * 0.5f;
+            MonjaFestival.greenmonja01DeliverCount.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
+
+            // Green Monja 02 find deliver button
+            greenmonja02PickDeliverButton = new CustomButton(
+                () => {
+
+                    greenmonja02PickDeliverButton.HasEffect = true;
+                    MonjaFestival.greenmonja02selectedSpawn = MonjaFestival.greenmonja02currentSpawn;
+
+                },
+                () => { return MonjaFestival.greenPlayer02 != null && MonjaFestival.greenPlayer02 == PlayerControl.LocalPlayer; },
+                () => {
+                    if (MonjaFestival.localArrows.Count != 0) {
+                        MonjaFestival.localArrows[0].Update(MonjaFestival.greenTeamBase.transform.position);
+                    }
+
+                    if (MonjaFestival.greenPlayer02Items == 3) {
+                        greenmonja02PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getgreenDeliverButtonSprite();
+                    }
+                    else if (MonjaFestival.greenPlayer02Items > 0 && MonjaFestival.greenPlayer02Items < 3) {
+                        greenmonja02PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getgreenPickDeliverButtonSprite();
+                    }
+                    else {
+                        greenmonja02PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getgreenPickButtonSprite();
+                    }
+
+                    if (greenmonja02PickDeliverButton.isEffectActive && MonjaFestival.greenmonja02selectedSpawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, MonjaFestival.greenmonja02selectedSpawn.transform.position) > 0.75f) {
+                        MonjaFestival.greenmonja02selectedSpawn = null;
+                        greenmonja02PickDeliverButton.Timer = 0f;
+                        greenmonja02PickDeliverButton.isEffectActive = false;
+                    }
+
+                    bool CanUse = false;
+                    if (MonjaFestival.bigMonjaSpawns.Count != 0) {
+                        foreach (GameObject spawn in MonjaFestival.bigMonjaSpawns) {
+                            if (spawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, spawn.transform.position) < 0.75f) {
+                                MonjaFestival.greenmonja02currentSpawn = spawn;
+                                CanUse = true;
+                                if (spawn.name.StartsWith("littleMonja")) {
+                                    CanUse = MonjaFestival.greenPlayer02Items < 3;
+                                    MonjaFestival.greenmonja02foundspawn = 8;
+                                }
+                                else {
+                                    switch (spawn.name) {
+                                        case "bigSpawnOne":
+                                            CanUse = MonjaFestival.bigSpawnOnePoints > 0 && MonjaFestival.greenPlayer02Items < 3;
+                                            MonjaFestival.greenmonja02foundspawn = 1;
+                                            break;
+                                        case "bigSpawnTwo":
+                                            CanUse = MonjaFestival.bigSpawnTwoPoints > 0 && MonjaFestival.greenPlayer02Items < 3;
+                                            MonjaFestival.greenmonja02foundspawn = 2;
+                                            break;
+                                        case "littleSpawnOne":
+                                            CanUse = MonjaFestival.littleSpawnOnePoints > 0 && MonjaFestival.greenPlayer02Items < 3;
+                                            MonjaFestival.greenmonja02foundspawn = 3;
+                                            break;
+                                        case "littleSpawnTwo":
+                                            CanUse = MonjaFestival.littleSpawnTwoPoints > 0 && MonjaFestival.greenPlayer02Items < 3;
+                                            MonjaFestival.greenmonja02foundspawn = 4;
+                                            break;
+                                        case "littleSpawnThree":
+                                            CanUse = MonjaFestival.littleSpawnThreePoints > 0 && MonjaFestival.greenPlayer02Items < 3;
+                                            MonjaFestival.greenmonja02foundspawn = 5;
+                                            break;
+                                        case "littleSpawnFour":
+                                            CanUse = MonjaFestival.littleSpawnFourPoints > 0 && MonjaFestival.greenPlayer02Items < 3;
+                                            MonjaFestival.greenmonja02foundspawn = 6;
+                                            break;
+                                        case "greenBase":
+                                            CanUse = MonjaFestival.greenPlayer02Items > 0;
+                                            MonjaFestival.greenmonja02foundspawn = 7;
+                                            break;
+                                        case "cyanBase":
+                                            CanUse = false;
+                                            break;
+                                        case "greyBase":
+                                            CanUse = false;
+                                            break;
+                                        case "allulMonja":
+                                            CanUse = MonjaFestival.allulMonja.activeSelf;
+                                            MonjaFestival.greenmonja02foundspawn = 9;
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return CanUse && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.greenPlayer02IsReviving;
+                },
+                () => { greenmonja02PickDeliverButton.Timer = greenmonja02PickDeliverButton.MaxTimer; },
+                MonjaFestival.getgreenPickButtonSprite(),
+                new Vector3(-2.1f, 0f, 0),
+                __instance,
+                KeyCode.F,
+                false,
+                3f,
+                () => {
+                    if (!MonjaFestival.greenPlayer02.Data.IsDead) {
+                        MessageWriter findSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalFindSpawns, Hazel.SendOption.Reliable, -1);
+                        MessageWriter checkSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalCheckItems, Hazel.SendOption.Reliable, -1);
+                        switch (MonjaFestival.greenmonja02foundspawn) {
+                            case 1: // Big Spawn one
+                                findSpawn.Write(1);
+                                checkSpawn.Write(2);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(1);
+                                RPCProcedure.monjaFestivalCheckItems(2);
+                                break;
+                            case 2: // Big Spawn two
+                                findSpawn.Write(2);
+                                checkSpawn.Write(2);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(2);
+                                RPCProcedure.monjaFestivalCheckItems(2);
+                                break;
+                            case 3: // Little spawn one
+                                findSpawn.Write(3);
+                                checkSpawn.Write(2);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(3);
+                                RPCProcedure.monjaFestivalCheckItems(2);
+                                break;
+                            case 4: // Little spawn two
+                                findSpawn.Write(4);
+                                checkSpawn.Write(2);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(4);
+                                RPCProcedure.monjaFestivalCheckItems(2);
+                                break;
+                            case 5: // Little spawn three
+                                findSpawn.Write(5);
+                                checkSpawn.Write(2);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(5);
+                                RPCProcedure.monjaFestivalCheckItems(2);
+                                break;
+                            case 6: // Little spawn four
+                                findSpawn.Write(6);
+                                checkSpawn.Write(2);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(6);
+                                RPCProcedure.monjaFestivalCheckItems(2);
+                                break;
+                            case 7: // Green base
+                                checkSpawn.Write(22);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(22); 
+                                MessageWriter delivertoSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                delivertoSpawn.Write(1);
+                                AmongUsClient.Instance.FinishRpcImmediately(delivertoSpawn);
+                                RPCProcedure.monjaFestivalDeliver(1);
+                                break;
+                            case 8: // Little Monja
+                                checkSpawn.Write(2);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(2);
+                                MessageWriter destroyLittleMonja = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDestroyLittleMonja, Hazel.SendOption.Reliable, -1);
+                                destroyLittleMonja.Write(MonjaFestival.greenmonja02currentSpawn.name);
+                                AmongUsClient.Instance.FinishRpcImmediately(destroyLittleMonja);
+                                RPCProcedure.monjaFestivalDestroyLittleMonja(MonjaFestival.greenmonja02currentSpawn.name);
+                                break;
+                            case 9: // Allul Monja
+                                MessageWriter deliverAllul = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                deliverAllul.Write(4);
+                                AmongUsClient.Instance.FinishRpcImmediately(deliverAllul);
+                                RPCProcedure.monjaFestivalDeliver(4);
+                                break;
+                        }
+                    }
+                    greenmonja02PickDeliverButton.Timer = greenmonja02PickDeliverButton.MaxTimer;
+                }
+            );
+
+            // Green Monja 02 button counter
+            MonjaFestival.greenmonja02DeliverCount = GameObject.Instantiate(greenmonja02PickDeliverButton.actionButton.cooldownTimerText, greenmonja02PickDeliverButton.actionButton.cooldownTimerText.transform.parent);
+            MonjaFestival.greenmonja02DeliverCount.enableWordWrapping = false;
+            MonjaFestival.greenmonja02DeliverCount.transform.localScale = Vector3.one * 0.5f;
+            MonjaFestival.greenmonja02DeliverCount.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
+
+            // Green Monja 03 find deliver button
+            greenmonja03PickDeliverButton = new CustomButton(
+                () => {
+
+                    greenmonja03PickDeliverButton.HasEffect = true;
+                    MonjaFestival.greenmonja03selectedSpawn = MonjaFestival.greenmonja03currentSpawn;
+
+                },
+                () => { return MonjaFestival.greenPlayer03 != null && MonjaFestival.greenPlayer03 == PlayerControl.LocalPlayer; },
+                () => {
+                    if (MonjaFestival.localArrows.Count != 0) {
+                        MonjaFestival.localArrows[0].Update(MonjaFestival.greenTeamBase.transform.position);
+                    }
+
+                    if (MonjaFestival.greenPlayer03Items == 3) {
+                        greenmonja03PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getgreenDeliverButtonSprite();
+                    }
+                    else if (MonjaFestival.greenPlayer03Items > 0 && MonjaFestival.greenPlayer03Items < 3) {
+                        greenmonja03PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getgreenPickDeliverButtonSprite();
+                    }
+                    else {
+                        greenmonja03PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getgreenPickButtonSprite();
+                    }
+
+                    if (greenmonja03PickDeliverButton.isEffectActive && MonjaFestival.greenmonja03selectedSpawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, MonjaFestival.greenmonja03selectedSpawn.transform.position) > 0.75f) {
+                        MonjaFestival.greenmonja03selectedSpawn = null;
+                        greenmonja03PickDeliverButton.Timer = 0f;
+                        greenmonja03PickDeliverButton.isEffectActive = false;
+                    }
+
+                    bool CanUse = false;
+                    if (MonjaFestival.bigMonjaSpawns.Count != 0) {
+                        foreach (GameObject spawn in MonjaFestival.bigMonjaSpawns) {
+                            if (spawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, spawn.transform.position) < 0.75f) {
+                                MonjaFestival.greenmonja03currentSpawn = spawn;
+                                CanUse = true;
+                                if (spawn.name.StartsWith("littleMonja")) {
+                                    CanUse = MonjaFestival.greenPlayer03Items < 3;
+                                    MonjaFestival.greenmonja03foundspawn = 8;
+                                }
+                                else {
+                                    switch (spawn.name) {
+                                        case "bigSpawnOne":
+                                            CanUse = MonjaFestival.bigSpawnOnePoints > 0 && MonjaFestival.greenPlayer03Items < 3;
+                                            MonjaFestival.greenmonja03foundspawn = 1;
+                                            break;
+                                        case "bigSpawnTwo":
+                                            CanUse = MonjaFestival.bigSpawnTwoPoints > 0 && MonjaFestival.greenPlayer03Items < 3;
+                                            MonjaFestival.greenmonja03foundspawn = 2;
+                                            break;
+                                        case "littleSpawnOne":
+                                            CanUse = MonjaFestival.littleSpawnOnePoints > 0 && MonjaFestival.greenPlayer03Items < 3;
+                                            MonjaFestival.greenmonja03foundspawn = 3;
+                                            break;
+                                        case "littleSpawnTwo":
+                                            CanUse = MonjaFestival.littleSpawnTwoPoints > 0 && MonjaFestival.greenPlayer03Items < 3;
+                                            MonjaFestival.greenmonja03foundspawn = 4;
+                                            break;
+                                        case "littleSpawnThree":
+                                            CanUse = MonjaFestival.littleSpawnThreePoints > 0 && MonjaFestival.greenPlayer03Items < 3;
+                                            MonjaFestival.greenmonja03foundspawn = 5;
+                                            break;
+                                        case "littleSpawnFour":
+                                            CanUse = MonjaFestival.littleSpawnFourPoints > 0 && MonjaFestival.greenPlayer03Items < 3;
+                                            MonjaFestival.greenmonja03foundspawn = 6;
+                                            break;
+                                        case "greenBase":
+                                            CanUse = MonjaFestival.greenPlayer03Items > 0;
+                                            MonjaFestival.greenmonja03foundspawn = 7;
+                                            break;
+                                        case "cyanBase":
+                                            CanUse = false;
+                                            break;
+                                        case "greyBase":
+                                            CanUse = false;
+                                            break;
+                                        case "allulMonja":
+                                            CanUse = MonjaFestival.allulMonja.activeSelf;
+                                            MonjaFestival.greenmonja03foundspawn = 9;
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return CanUse && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.greenPlayer03IsReviving;
+                },
+                () => { greenmonja03PickDeliverButton.Timer = greenmonja03PickDeliverButton.MaxTimer; },
+                MonjaFestival.getgreenPickButtonSprite(),
+                new Vector3(-2.1f, 0f, 0),
+                __instance,
+                KeyCode.F,
+                false,
+                3f,
+                () => {
+                    if (!MonjaFestival.greenPlayer03.Data.IsDead) {
+                        MessageWriter findSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalFindSpawns, Hazel.SendOption.Reliable, -1);
+                        MessageWriter checkSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalCheckItems, Hazel.SendOption.Reliable, -1);
+                        switch (MonjaFestival.greenmonja03foundspawn) {
+                            case 1: // Big Spawn one
+                                findSpawn.Write(1);
+                                checkSpawn.Write(3);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(1);
+                                RPCProcedure.monjaFestivalCheckItems(3);
+                                break;
+                            case 2: // Big Spawn two
+                                findSpawn.Write(2);
+                                checkSpawn.Write(3);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(2);
+                                RPCProcedure.monjaFestivalCheckItems(3);
+                                break;
+                            case 3: // Little spawn one
+                                findSpawn.Write(3);
+                                checkSpawn.Write(3);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(3);
+                                RPCProcedure.monjaFestivalCheckItems(3);
+                                break;
+                            case 4: // Little spawn two
+                                findSpawn.Write(4);
+                                checkSpawn.Write(3);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(4);
+                                RPCProcedure.monjaFestivalCheckItems(3);
+                                break;
+                            case 5: // Little spawn three
+                                findSpawn.Write(5);
+                                checkSpawn.Write(3);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(5);
+                                RPCProcedure.monjaFestivalCheckItems(3);
+                                break;
+                            case 6: // Little spawn four
+                                findSpawn.Write(6);
+                                checkSpawn.Write(3);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(6);
+                                RPCProcedure.monjaFestivalCheckItems(3);
+                                break;
+                            case 7: // Green base
+                                checkSpawn.Write(23);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(23); 
+                                MessageWriter delivertoSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                delivertoSpawn.Write(1);
+                                AmongUsClient.Instance.FinishRpcImmediately(delivertoSpawn);
+                                RPCProcedure.monjaFestivalDeliver(1);
+                                break;
+                            case 8: // Little Monja
+                                checkSpawn.Write(3);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(3);
+                                MessageWriter destroyLittleMonja = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDestroyLittleMonja, Hazel.SendOption.Reliable, -1);
+                                destroyLittleMonja.Write(MonjaFestival.greenmonja03currentSpawn.name);
+                                AmongUsClient.Instance.FinishRpcImmediately(destroyLittleMonja);
+                                RPCProcedure.monjaFestivalDestroyLittleMonja(MonjaFestival.greenmonja03currentSpawn.name); 
+                                break;
+                            case 9: // Allul Monja
+                                MessageWriter deliverAllul = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                deliverAllul.Write(4);
+                                AmongUsClient.Instance.FinishRpcImmediately(deliverAllul);
+                                RPCProcedure.monjaFestivalDeliver(4);
+                                break;
+                        }
+                    }
+                    greenmonja03PickDeliverButton.Timer = greenmonja03PickDeliverButton.MaxTimer;
+                }
+            );
+
+            // Green Monja 03 button counter
+            MonjaFestival.greenmonja03DeliverCount = GameObject.Instantiate(greenmonja03PickDeliverButton.actionButton.cooldownTimerText, greenmonja03PickDeliverButton.actionButton.cooldownTimerText.transform.parent);
+            MonjaFestival.greenmonja03DeliverCount.enableWordWrapping = false;
+            MonjaFestival.greenmonja03DeliverCount.transform.localScale = Vector3.one * 0.5f;
+            MonjaFestival.greenmonja03DeliverCount.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
+
+            // Green Monja 04 find deliver button
+            greenmonja04PickDeliverButton = new CustomButton(
+                () => {
+
+                    greenmonja04PickDeliverButton.HasEffect = true;
+                    MonjaFestival.greenmonja04selectedSpawn = MonjaFestival.greenmonja04currentSpawn;
+
+                },
+                () => { return MonjaFestival.greenPlayer04 != null && MonjaFestival.greenPlayer04 == PlayerControl.LocalPlayer; },
+                () => {
+                    if (MonjaFestival.localArrows.Count != 0) {
+                        MonjaFestival.localArrows[0].Update(MonjaFestival.greenTeamBase.transform.position);
+                    }
+
+                    if (MonjaFestival.greenPlayer04Items == 3) {
+                        greenmonja04PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getgreenDeliverButtonSprite();
+                    }
+                    else if (MonjaFestival.greenPlayer04Items > 0 && MonjaFestival.greenPlayer04Items < 3) {
+                        greenmonja04PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getgreenPickDeliverButtonSprite();
+                    }
+                    else {
+                        greenmonja04PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getgreenPickButtonSprite();
+                    }
+
+                    if (greenmonja04PickDeliverButton.isEffectActive && MonjaFestival.greenmonja04selectedSpawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, MonjaFestival.greenmonja04selectedSpawn.transform.position) > 0.75f) {
+                        MonjaFestival.greenmonja04selectedSpawn = null;
+                        greenmonja04PickDeliverButton.Timer = 0f;
+                        greenmonja04PickDeliverButton.isEffectActive = false;
+                    }
+
+                    bool CanUse = false;
+                    if (MonjaFestival.bigMonjaSpawns.Count != 0) {
+                        foreach (GameObject spawn in MonjaFestival.bigMonjaSpawns) {
+                            if (spawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, spawn.transform.position) < 0.75f) {
+                                MonjaFestival.greenmonja04currentSpawn = spawn;
+                                CanUse = true;
+                                if (spawn.name.StartsWith("littleMonja")) {
+                                    CanUse = MonjaFestival.greenPlayer04Items < 3;
+                                    MonjaFestival.greenmonja04foundspawn = 8;
+                                }
+                                else {
+                                    switch (spawn.name) {
+                                        case "bigSpawnOne":
+                                            CanUse = MonjaFestival.bigSpawnOnePoints > 0 && MonjaFestival.greenPlayer04Items < 3;
+                                            MonjaFestival.greenmonja04foundspawn = 1;
+                                            break;
+                                        case "bigSpawnTwo":
+                                            CanUse = MonjaFestival.bigSpawnTwoPoints > 0 && MonjaFestival.greenPlayer04Items < 3;
+                                            MonjaFestival.greenmonja04foundspawn = 2;
+                                            break;
+                                        case "littleSpawnOne":
+                                            CanUse = MonjaFestival.littleSpawnOnePoints > 0 && MonjaFestival.greenPlayer04Items < 3;
+                                            MonjaFestival.greenmonja04foundspawn = 3;
+                                            break;
+                                        case "littleSpawnTwo":
+                                            CanUse = MonjaFestival.littleSpawnTwoPoints > 0 && MonjaFestival.greenPlayer04Items < 3;
+                                            MonjaFestival.greenmonja04foundspawn = 4;
+                                            break;
+                                        case "littleSpawnThree":
+                                            CanUse = MonjaFestival.littleSpawnThreePoints > 0 && MonjaFestival.greenPlayer04Items < 3;
+                                            MonjaFestival.greenmonja04foundspawn = 5;
+                                            break;
+                                        case "littleSpawnFour":
+                                            CanUse = MonjaFestival.littleSpawnFourPoints > 0 && MonjaFestival.greenPlayer04Items < 3;
+                                            MonjaFestival.greenmonja04foundspawn = 6;
+                                            break;
+                                        case "greenBase":
+                                            CanUse = MonjaFestival.greenPlayer04Items > 0;
+                                            MonjaFestival.greenmonja04foundspawn = 7;
+                                            break;
+                                        case "cyanBase":
+                                            CanUse = false;
+                                            break;
+                                        case "greyBase":
+                                            CanUse = false;
+                                            break;
+                                        case "allulMonja":
+                                            CanUse = MonjaFestival.allulMonja.activeSelf;
+                                            MonjaFestival.greenmonja04foundspawn = 9;
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return CanUse && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.greenPlayer04IsReviving;
+                },
+                () => { greenmonja04PickDeliverButton.Timer = greenmonja04PickDeliverButton.MaxTimer; },
+                MonjaFestival.getgreenPickButtonSprite(),
+                new Vector3(-2.1f, 0f, 0),
+                __instance,
+                KeyCode.F,
+                false,
+                3f,
+                () => {
+                    if (!MonjaFestival.greenPlayer04.Data.IsDead) {
+                        MessageWriter findSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalFindSpawns, Hazel.SendOption.Reliable, -1);
+                        MessageWriter checkSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalCheckItems, Hazel.SendOption.Reliable, -1);
+                        switch (MonjaFestival.greenmonja04foundspawn) {
+                            case 1: // Big Spawn one
+                                findSpawn.Write(1);
+                                checkSpawn.Write(4);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(1);
+                                RPCProcedure.monjaFestivalCheckItems(4);
+                                break;
+                            case 2: // Big Spawn two
+                                findSpawn.Write(2);
+                                checkSpawn.Write(4);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(2);
+                                RPCProcedure.monjaFestivalCheckItems(4);
+                                break;
+                            case 3: // Little spawn one
+                                findSpawn.Write(3);
+                                checkSpawn.Write(4);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(3);
+                                RPCProcedure.monjaFestivalCheckItems(4);
+                                break;
+                            case 4: // Little spawn two
+                                findSpawn.Write(4);
+                                checkSpawn.Write(4);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(4);
+                                RPCProcedure.monjaFestivalCheckItems(4);
+                                break;
+                            case 5: // Little spawn three
+                                findSpawn.Write(5);
+                                checkSpawn.Write(4);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(5);
+                                RPCProcedure.monjaFestivalCheckItems(4);
+                                break;
+                            case 6: // Little spawn four
+                                findSpawn.Write(6);
+                                checkSpawn.Write(4);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(6);
+                                RPCProcedure.monjaFestivalCheckItems(4);
+                                break;
+                            case 7: // Green base
+                                checkSpawn.Write(24);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(24); 
+                                MessageWriter delivertoSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                delivertoSpawn.Write(1);
+                                AmongUsClient.Instance.FinishRpcImmediately(delivertoSpawn);
+                                RPCProcedure.monjaFestivalDeliver(1);
+                                break;
+                            case 8: // Little Monja
+                                checkSpawn.Write(4);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(4);
+                                MessageWriter destroyLittleMonja = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDestroyLittleMonja, Hazel.SendOption.Reliable, -1);
+                                destroyLittleMonja.Write(MonjaFestival.greenmonja04currentSpawn.name);
+                                AmongUsClient.Instance.FinishRpcImmediately(destroyLittleMonja);
+                                RPCProcedure.monjaFestivalDestroyLittleMonja(MonjaFestival.greenmonja04currentSpawn.name);
+                                break;
+                            case 9: // Allul Monja
+                                MessageWriter deliverAllul = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                deliverAllul.Write(4);
+                                AmongUsClient.Instance.FinishRpcImmediately(deliverAllul);
+                                RPCProcedure.monjaFestivalDeliver(4);
+                                break;
+                        }
+                    }
+                    greenmonja04PickDeliverButton.Timer = greenmonja04PickDeliverButton.MaxTimer;
+                }
+            );
+
+            // Green Monja 04 button counter
+            MonjaFestival.greenmonja04DeliverCount = GameObject.Instantiate(greenmonja04PickDeliverButton.actionButton.cooldownTimerText, greenmonja04PickDeliverButton.actionButton.cooldownTimerText.transform.parent);
+            MonjaFestival.greenmonja04DeliverCount.enableWordWrapping = false;
+            MonjaFestival.greenmonja04DeliverCount.transform.localScale = Vector3.one * 0.5f;
+            MonjaFestival.greenmonja04DeliverCount.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
+
+            // Green Monja 05 find deliver button
+            greenmonja05PickDeliverButton = new CustomButton(
+                () => {
+
+                    greenmonja05PickDeliverButton.HasEffect = true;
+                    MonjaFestival.greenmonja05selectedSpawn = MonjaFestival.greenmonja05currentSpawn;
+
+                },
+                () => { return MonjaFestival.greenPlayer05 != null && MonjaFestival.greenPlayer05 == PlayerControl.LocalPlayer; },
+                () => {
+                    if (MonjaFestival.localArrows.Count != 0) {
+                        MonjaFestival.localArrows[0].Update(MonjaFestival.greenTeamBase.transform.position);
+                    }
+
+                    if (MonjaFestival.greenPlayer05Items == 3) {
+                        greenmonja05PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getgreenDeliverButtonSprite();
+                    }
+                    else if (MonjaFestival.greenPlayer05Items > 0 && MonjaFestival.greenPlayer05Items < 3) {
+                        greenmonja05PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getgreenPickDeliverButtonSprite();
+                    }
+                    else {
+                        greenmonja05PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getgreenPickButtonSprite();
+                    }
+
+                    if (greenmonja05PickDeliverButton.isEffectActive && MonjaFestival.greenmonja05selectedSpawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, MonjaFestival.greenmonja05selectedSpawn.transform.position) > 0.75f) {
+                        MonjaFestival.greenmonja05selectedSpawn = null;
+                        greenmonja05PickDeliverButton.Timer = 0f;
+                        greenmonja05PickDeliverButton.isEffectActive = false;
+                    }
+
+                    bool CanUse = false;
+                    if (MonjaFestival.bigMonjaSpawns.Count != 0) {
+                        foreach (GameObject spawn in MonjaFestival.bigMonjaSpawns) {
+                            if (spawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, spawn.transform.position) < 0.75f) {
+                                MonjaFestival.greenmonja05currentSpawn = spawn;
+                                CanUse = true;
+                                if (spawn.name.StartsWith("littleMonja")) {
+                                    CanUse = MonjaFestival.greenPlayer05Items < 3;
+                                    MonjaFestival.greenmonja05foundspawn = 8;
+                                }
+                                else {
+                                    switch (spawn.name) {
+                                        case "bigSpawnOne":
+                                            CanUse = MonjaFestival.bigSpawnOnePoints > 0 && MonjaFestival.greenPlayer05Items < 3;
+                                            MonjaFestival.greenmonja05foundspawn = 1;
+                                            break;
+                                        case "bigSpawnTwo":
+                                            CanUse = MonjaFestival.bigSpawnTwoPoints > 0 && MonjaFestival.greenPlayer05Items < 3;
+                                            MonjaFestival.greenmonja05foundspawn = 2;
+                                            break;
+                                        case "littleSpawnOne":
+                                            CanUse = MonjaFestival.littleSpawnOnePoints > 0 && MonjaFestival.greenPlayer05Items < 3;
+                                            MonjaFestival.greenmonja05foundspawn = 3;
+                                            break;
+                                        case "littleSpawnTwo":
+                                            CanUse = MonjaFestival.littleSpawnTwoPoints > 0 && MonjaFestival.greenPlayer05Items < 3;
+                                            MonjaFestival.greenmonja05foundspawn = 4;
+                                            break;
+                                        case "littleSpawnThree":
+                                            CanUse = MonjaFestival.littleSpawnThreePoints > 0 && MonjaFestival.greenPlayer05Items < 3;
+                                            MonjaFestival.greenmonja05foundspawn = 5;
+                                            break;
+                                        case "littleSpawnFour":
+                                            CanUse = MonjaFestival.littleSpawnFourPoints > 0 && MonjaFestival.greenPlayer05Items < 3;
+                                            MonjaFestival.greenmonja05foundspawn = 6;
+                                            break;
+                                        case "greenBase":
+                                            CanUse = MonjaFestival.greenPlayer05Items > 0;
+                                            MonjaFestival.greenmonja05foundspawn = 7;
+                                            break;
+                                        case "cyanBase":
+                                            CanUse = false;
+                                            break;
+                                        case "greyBase":
+                                            CanUse = false;
+                                            break;
+                                        case "allulMonja":
+                                            CanUse = MonjaFestival.allulMonja.activeSelf;
+                                            MonjaFestival.greenmonja05foundspawn = 9;
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return CanUse && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.greenPlayer05IsReviving;
+                },
+                () => { greenmonja05PickDeliverButton.Timer = greenmonja05PickDeliverButton.MaxTimer; },
+                MonjaFestival.getgreenPickButtonSprite(),
+                new Vector3(-2.1f, 0f, 0),
+                __instance,
+                KeyCode.F,
+                false,
+                3f,
+                () => {
+                    if (!MonjaFestival.greenPlayer05.Data.IsDead) {
+                        MessageWriter findSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalFindSpawns, Hazel.SendOption.Reliable, -1);
+                        MessageWriter checkSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalCheckItems, Hazel.SendOption.Reliable, -1);
+                        switch (MonjaFestival.greenmonja05foundspawn) {
+                            case 1: // Big Spawn one
+                                findSpawn.Write(1);
+                                checkSpawn.Write(5);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(1);
+                                RPCProcedure.monjaFestivalCheckItems(5);
+                                break;
+                            case 2: // Big Spawn two
+                                findSpawn.Write(2);
+                                checkSpawn.Write(2);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(2);
+                                RPCProcedure.monjaFestivalCheckItems(2);
+                                break;
+                            case 3: // Little spawn one
+                                findSpawn.Write(3);
+                                checkSpawn.Write(5);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(3);
+                                RPCProcedure.monjaFestivalCheckItems(5);
+                                break;
+                            case 4: // Little spawn two
+                                findSpawn.Write(4);
+                                checkSpawn.Write(5);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(4);
+                                RPCProcedure.monjaFestivalCheckItems(5);
+                                break;
+                            case 5: // Little spawn three
+                                findSpawn.Write(5);
+                                checkSpawn.Write(5);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(5);
+                                RPCProcedure.monjaFestivalCheckItems(5);
+                                break;
+                            case 6: // Little spawn four
+                                findSpawn.Write(6);
+                                checkSpawn.Write(5);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(6);
+                                RPCProcedure.monjaFestivalCheckItems(5);
+                                break;
+                            case 7: // Green base
+                                checkSpawn.Write(25);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(25); 
+                                MessageWriter delivertoSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                delivertoSpawn.Write(1);
+                                AmongUsClient.Instance.FinishRpcImmediately(delivertoSpawn);
+                                RPCProcedure.monjaFestivalDeliver(1);
+                                break;
+                            case 8: // Little Monja
+                                checkSpawn.Write(5);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(5);
+                                MessageWriter destroyLittleMonja = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDestroyLittleMonja, Hazel.SendOption.Reliable, -1);
+                                destroyLittleMonja.Write(MonjaFestival.greenmonja05currentSpawn.name);
+                                AmongUsClient.Instance.FinishRpcImmediately(destroyLittleMonja);
+                                RPCProcedure.monjaFestivalDestroyLittleMonja(MonjaFestival.greenmonja05currentSpawn.name);
+                                break;
+                            case 9: // Allul Monja
+                                MessageWriter deliverAllul = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                deliverAllul.Write(4);
+                                AmongUsClient.Instance.FinishRpcImmediately(deliverAllul);
+                                RPCProcedure.monjaFestivalDeliver(4);
+                                break;
+                        }
+                    }
+                    greenmonja05PickDeliverButton.Timer = greenmonja05PickDeliverButton.MaxTimer;
+                }
+            );
+
+            // Green Monja 05 button counter
+            MonjaFestival.greenmonja05DeliverCount = GameObject.Instantiate(greenmonja05PickDeliverButton.actionButton.cooldownTimerText, greenmonja05PickDeliverButton.actionButton.cooldownTimerText.transform.parent);
+            MonjaFestival.greenmonja05DeliverCount.enableWordWrapping = false;
+            MonjaFestival.greenmonja05DeliverCount.transform.localScale = Vector3.one * 0.5f;
+            MonjaFestival.greenmonja05DeliverCount.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
+
+            // Green Monja 06 find deliver button
+            greenmonja06PickDeliverButton = new CustomButton(
+                () => {
+
+                    greenmonja06PickDeliverButton.HasEffect = true;
+                    MonjaFestival.greenmonja06selectedSpawn = MonjaFestival.greenmonja06currentSpawn;
+
+                },
+                () => { return MonjaFestival.greenPlayer06 != null && MonjaFestival.greenPlayer06 == PlayerControl.LocalPlayer; },
+                () => {
+                    if (MonjaFestival.localArrows.Count != 0) {
+                        MonjaFestival.localArrows[0].Update(MonjaFestival.greenTeamBase.transform.position);
+                    }
+
+                    if (MonjaFestival.greenPlayer06Items == 3) {
+                        greenmonja06PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getgreenDeliverButtonSprite();
+                    }
+                    else if (MonjaFestival.greenPlayer06Items > 0 && MonjaFestival.greenPlayer06Items < 3) {
+                        greenmonja06PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getgreenPickDeliverButtonSprite();
+                    }
+                    else {
+                        greenmonja06PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getgreenPickButtonSprite();
+                    }
+
+                    if (greenmonja06PickDeliverButton.isEffectActive && MonjaFestival.greenmonja06selectedSpawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, MonjaFestival.greenmonja06selectedSpawn.transform.position) > 0.75f) {
+                        MonjaFestival.greenmonja06selectedSpawn = null;
+                        greenmonja06PickDeliverButton.Timer = 0f;
+                        greenmonja06PickDeliverButton.isEffectActive = false;
+                    }
+
+                    bool CanUse = false;
+                    if (MonjaFestival.bigMonjaSpawns.Count != 0) {
+                        foreach (GameObject spawn in MonjaFestival.bigMonjaSpawns) {
+                            if (spawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, spawn.transform.position) < 0.75f) {
+                                MonjaFestival.greenmonja06currentSpawn = spawn;
+                                CanUse = true;
+                                if (spawn.name.StartsWith("littleMonja")) {
+                                    CanUse = MonjaFestival.greenPlayer06Items < 3;
+                                    MonjaFestival.greenmonja06foundspawn = 8;
+                                }
+                                else {
+                                    switch (spawn.name) {
+                                        case "bigSpawnOne":
+                                            CanUse = MonjaFestival.bigSpawnOnePoints > 0 && MonjaFestival.greenPlayer06Items < 3;
+                                            MonjaFestival.greenmonja06foundspawn = 1;
+                                            break;
+                                        case "bigSpawnTwo":
+                                            CanUse = MonjaFestival.bigSpawnTwoPoints > 0 && MonjaFestival.greenPlayer06Items < 3;
+                                            MonjaFestival.greenmonja06foundspawn = 2;
+                                            break;
+                                        case "littleSpawnOne":
+                                            CanUse = MonjaFestival.littleSpawnOnePoints > 0 && MonjaFestival.greenPlayer06Items < 3;
+                                            MonjaFestival.greenmonja06foundspawn = 3;
+                                            break;
+                                        case "littleSpawnTwo":
+                                            CanUse = MonjaFestival.littleSpawnTwoPoints > 0 && MonjaFestival.greenPlayer06Items < 3;
+                                            MonjaFestival.greenmonja06foundspawn = 4;
+                                            break;
+                                        case "littleSpawnThree":
+                                            CanUse = MonjaFestival.littleSpawnThreePoints > 0 && MonjaFestival.greenPlayer06Items < 3;
+                                            MonjaFestival.greenmonja06foundspawn = 5;
+                                            break;
+                                        case "littleSpawnFour":
+                                            CanUse = MonjaFestival.littleSpawnFourPoints > 0 && MonjaFestival.greenPlayer06Items < 3;
+                                            MonjaFestival.greenmonja06foundspawn = 6;
+                                            break;
+                                        case "greenBase":
+                                            CanUse = MonjaFestival.greenPlayer06Items > 0;
+                                            MonjaFestival.greenmonja06foundspawn = 7;
+                                            break;
+                                        case "cyanBase":
+                                            CanUse = false;
+                                            break;
+                                        case "greyBase":
+                                            CanUse = false;
+                                            break;
+                                        case "allulMonja":
+                                            CanUse = MonjaFestival.allulMonja.activeSelf;
+                                            MonjaFestival.greenmonja06foundspawn = 9;
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return CanUse && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.greenPlayer06IsReviving;
+                },
+                () => { greenmonja06PickDeliverButton.Timer = greenmonja06PickDeliverButton.MaxTimer; },
+                MonjaFestival.getgreenPickButtonSprite(),
+                new Vector3(-2.1f, 0f, 0),
+                __instance,
+                KeyCode.F,
+                false,
+                3f,
+                () => {
+                    if (!MonjaFestival.greenPlayer06.Data.IsDead) {
+                        MessageWriter findSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalFindSpawns, Hazel.SendOption.Reliable, -1);
+                        MessageWriter checkSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalCheckItems, Hazel.SendOption.Reliable, -1);
+                        switch (MonjaFestival.greenmonja06foundspawn) {
+                            case 1: // Big Spawn one
+                                findSpawn.Write(1);
+                                checkSpawn.Write(6);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(1);
+                                RPCProcedure.monjaFestivalCheckItems(6);
+                                break;
+                            case 2: // Big Spawn two
+                                findSpawn.Write(2);
+                                checkSpawn.Write(6);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(2);
+                                RPCProcedure.monjaFestivalCheckItems(6);
+                                break;
+                            case 3: // Little spawn one
+                                findSpawn.Write(3);
+                                checkSpawn.Write(6);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(3);
+                                RPCProcedure.monjaFestivalCheckItems(6);
+                                break;
+                            case 4: // Little spawn two
+                                findSpawn.Write(4);
+                                checkSpawn.Write(6);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(4);
+                                RPCProcedure.monjaFestivalCheckItems(6);
+                                break;
+                            case 5: // Little spawn three
+                                findSpawn.Write(5);
+                                checkSpawn.Write(6);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(5);
+                                RPCProcedure.monjaFestivalCheckItems(6);
+                                break;
+                            case 6: // Little spawn four
+                                findSpawn.Write(6);
+                                checkSpawn.Write(6);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(6);
+                                RPCProcedure.monjaFestivalCheckItems(6);
+                                break;
+                            case 7: // Green base
+                                checkSpawn.Write(26);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(26); 
+                                MessageWriter delivertoSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                delivertoSpawn.Write(1);
+                                AmongUsClient.Instance.FinishRpcImmediately(delivertoSpawn);
+                                RPCProcedure.monjaFestivalDeliver(1);
+                                break;
+                            case 8: // Little Monja
+                                checkSpawn.Write(6);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(6);
+                                MessageWriter destroyLittleMonja = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDestroyLittleMonja, Hazel.SendOption.Reliable, -1);
+                                destroyLittleMonja.Write(MonjaFestival.greenmonja06currentSpawn.name);
+                                AmongUsClient.Instance.FinishRpcImmediately(destroyLittleMonja);
+                                RPCProcedure.monjaFestivalDestroyLittleMonja(MonjaFestival.greenmonja06currentSpawn.name);
+                                break;
+                            case 9: // Allul Monja
+                                MessageWriter deliverAllul = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                deliverAllul.Write(4);
+                                AmongUsClient.Instance.FinishRpcImmediately(deliverAllul);
+                                RPCProcedure.monjaFestivalDeliver(4);
+                                break;
+                        }
+                    }
+                    greenmonja06PickDeliverButton.Timer = greenmonja06PickDeliverButton.MaxTimer;
+                }
+            );
+
+            // Green Monja 06 button counter
+            MonjaFestival.greenmonja06DeliverCount = GameObject.Instantiate(greenmonja06PickDeliverButton.actionButton.cooldownTimerText, greenmonja06PickDeliverButton.actionButton.cooldownTimerText.transform.parent);
+            MonjaFestival.greenmonja06DeliverCount.enableWordWrapping = false;
+            MonjaFestival.greenmonja06DeliverCount.transform.localScale = Vector3.one * 0.5f;
+            MonjaFestival.greenmonja06DeliverCount.transform.localPosition += new Vector3(-0.06f, 0.7f, 0);
+
+            // Green Monja 07 find deliver button
+            greenmonja07PickDeliverButton = new CustomButton(
+                () => {
+
+                    greenmonja07PickDeliverButton.HasEffect = true;
+                    MonjaFestival.greenmonja07selectedSpawn = MonjaFestival.greenmonja07currentSpawn;
+
+                },
+                () => { return MonjaFestival.greenPlayer07 != null && MonjaFestival.greenPlayer07 == PlayerControl.LocalPlayer; },
+                () => {
+                    if (MonjaFestival.localArrows.Count != 0) {
+                        MonjaFestival.localArrows[0].Update(MonjaFestival.greenTeamBase.transform.position);
+                    }
+
+                    if (MonjaFestival.greenPlayer07Items == 3) {
+                        greenmonja07PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getgreenDeliverButtonSprite();
+                    }
+                    else if (MonjaFestival.greenPlayer07Items > 0 && MonjaFestival.greenPlayer07Items < 3) {
+                        greenmonja07PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getgreenPickDeliverButtonSprite();
+                    }
+                    else {
+                        greenmonja07PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getgreenPickButtonSprite();
+                    }
+
+                    if (greenmonja07PickDeliverButton.isEffectActive && MonjaFestival.greenmonja07selectedSpawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, MonjaFestival.greenmonja07selectedSpawn.transform.position) > 0.75f) {
+                        MonjaFestival.greenmonja07selectedSpawn = null;
+                        greenmonja07PickDeliverButton.Timer = 0f;
+                        greenmonja07PickDeliverButton.isEffectActive = false;
+                    }
+
+                    bool CanUse = false;
+                    if (MonjaFestival.bigMonjaSpawns.Count != 0) {
+                        foreach (GameObject spawn in MonjaFestival.bigMonjaSpawns) {
+                            if (spawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, spawn.transform.position) < 0.75f) {
+                                MonjaFestival.greenmonja07currentSpawn = spawn;
+                                CanUse = true;
+                                if (spawn.name.StartsWith("littleMonja")) {
+                                    CanUse = MonjaFestival.greenPlayer07Items < 3;
+                                    MonjaFestival.greenmonja07foundspawn = 8;
+                                }
+                                else {
+                                    switch (spawn.name) {
+                                        case "bigSpawnOne":
+                                            CanUse = MonjaFestival.bigSpawnOnePoints > 0 && MonjaFestival.greenPlayer07Items < 3;
+                                            MonjaFestival.greenmonja07foundspawn = 1;
+                                            break;
+                                        case "bigSpawnTwo":
+                                            CanUse = MonjaFestival.bigSpawnTwoPoints > 0 && MonjaFestival.greenPlayer07Items < 3;
+                                            MonjaFestival.greenmonja07foundspawn = 2;
+                                            break;
+                                        case "littleSpawnOne":
+                                            CanUse = MonjaFestival.littleSpawnOnePoints > 0 && MonjaFestival.greenPlayer07Items < 3;
+                                            MonjaFestival.greenmonja07foundspawn = 3;
+                                            break;
+                                        case "littleSpawnTwo":
+                                            CanUse = MonjaFestival.littleSpawnTwoPoints > 0 && MonjaFestival.greenPlayer07Items < 3;
+                                            MonjaFestival.greenmonja07foundspawn = 4;
+                                            break;
+                                        case "littleSpawnThree":
+                                            CanUse = MonjaFestival.littleSpawnThreePoints > 0 && MonjaFestival.greenPlayer07Items < 3;
+                                            MonjaFestival.greenmonja07foundspawn = 5;
+                                            break;
+                                        case "littleSpawnFour":
+                                            CanUse = MonjaFestival.littleSpawnFourPoints > 0 && MonjaFestival.greenPlayer07Items < 3;
+                                            MonjaFestival.greenmonja07foundspawn = 6;
+                                            break;
+                                        case "greenBase":
+                                            CanUse = MonjaFestival.greenPlayer07Items > 0;
+                                            MonjaFestival.greenmonja07foundspawn = 7;
+                                            break;
+                                        case "cyanBase":
+                                            CanUse = false;
+                                            break;
+                                        case "greyBase":
+                                            CanUse = false;
+                                            break;
+                                        case "allulMonja":
+                                            CanUse = MonjaFestival.allulMonja.activeSelf;
+                                            MonjaFestival.greenmonja07foundspawn = 9;
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return CanUse && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.greenPlayer07IsReviving;
+                },
+                () => { greenmonja07PickDeliverButton.Timer = greenmonja07PickDeliverButton.MaxTimer; },
+                MonjaFestival.getgreenPickButtonSprite(),
+                new Vector3(-2.1f, 0f, 0),
+                __instance,
+                KeyCode.F,
+                false,
+                3f,
+                () => {
+                    if (!MonjaFestival.greenPlayer07.Data.IsDead) {
+                        MessageWriter findSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalFindSpawns, Hazel.SendOption.Reliable, -1);
+                        MessageWriter checkSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalCheckItems, Hazel.SendOption.Reliable, -1);
+                        switch (MonjaFestival.greenmonja07foundspawn) {
+                            case 1: // Big Spawn one
+                                findSpawn.Write(1);
+                                checkSpawn.Write(7);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(1);
+                                RPCProcedure.monjaFestivalCheckItems(7);
+                                break;
+                            case 2: // Big Spawn two
+                                findSpawn.Write(2);
+                                checkSpawn.Write(7);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(2);
+                                RPCProcedure.monjaFestivalCheckItems(7);
+                                break;
+                            case 3: // Little spawn one
+                                findSpawn.Write(3);
+                                checkSpawn.Write(7);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(3);
+                                RPCProcedure.monjaFestivalCheckItems(7);
+                                break;
+                            case 4: // Little spawn two
+                                findSpawn.Write(4);
+                                checkSpawn.Write(7);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(4);
+                                RPCProcedure.monjaFestivalCheckItems(7);
+                                break;
+                            case 5: // Little spawn three
+                                findSpawn.Write(5);
+                                checkSpawn.Write(7);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(5);
+                                RPCProcedure.monjaFestivalCheckItems(7);
+                                break;
+                            case 6: // Little spawn four
+                                findSpawn.Write(6);
+                                checkSpawn.Write(7);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(6);
+                                RPCProcedure.monjaFestivalCheckItems(7);
+                                break;
+                            case 7: // Green base
+                                checkSpawn.Write(27);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(27); 
+                                MessageWriter delivertoSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                delivertoSpawn.Write(1);
+                                AmongUsClient.Instance.FinishRpcImmediately(delivertoSpawn);
+                                RPCProcedure.monjaFestivalDeliver(1);
+                                break;
+                            case 8: // Little Monja
+                                checkSpawn.Write(7);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(7);
+                                MessageWriter destroyLittleMonja = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDestroyLittleMonja, Hazel.SendOption.Reliable, -1);
+                                destroyLittleMonja.Write(MonjaFestival.greenmonja07currentSpawn.name);
+                                AmongUsClient.Instance.FinishRpcImmediately(destroyLittleMonja);
+                                RPCProcedure.monjaFestivalDestroyLittleMonja(MonjaFestival.greenmonja07currentSpawn.name);
+                                break;
+                            case 9: // Allul Monja
+                                MessageWriter deliverAllul = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                deliverAllul.Write(4);
+                                AmongUsClient.Instance.FinishRpcImmediately(deliverAllul);
+                                RPCProcedure.monjaFestivalDeliver(4);
+                                break;
+                        }
+                    }
+                    greenmonja07PickDeliverButton.Timer = greenmonja07PickDeliverButton.MaxTimer;
+                }
+            );
+
+            // Green Monja 07 button counter
+            MonjaFestival.greenmonja07DeliverCount = GameObject.Instantiate(greenmonja07PickDeliverButton.actionButton.cooldownTimerText, greenmonja07PickDeliverButton.actionButton.cooldownTimerText.transform.parent);
+            MonjaFestival.greenmonja07DeliverCount.enableWordWrapping = false;
+            MonjaFestival.greenmonja07DeliverCount.transform.localScale = Vector3.one * 0.5f;
+            MonjaFestival.greenmonja07DeliverCount.transform.localPosition += new Vector3(-0.07f, 0.7f, 0);
+            
+            // Cyan Monja 01 find deliver button
+            cyanmonja01PickDeliverButton = new CustomButton(
+                () => {
+
+                    cyanmonja01PickDeliverButton.HasEffect = true;
+                    MonjaFestival.cyanPlayer01selectedSpawn = MonjaFestival.cyanPlayer01currentSpawn;
+
+                },
+                () => { return MonjaFestival.cyanPlayer01 != null && MonjaFestival.cyanPlayer01 == PlayerControl.LocalPlayer; },
+                () => {
+                    if (MonjaFestival.localArrows.Count != 0) {
+                        MonjaFestival.localArrows[1].Update(MonjaFestival.cyanTeamBase.transform.position);
+                    }
+
+                    if (MonjaFestival.cyanPlayer01Items == 3) {
+                        cyanmonja01PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getcyanDeliverButtonSprite();
+                    }
+                    else if (MonjaFestival.cyanPlayer01Items > 0 && MonjaFestival.cyanPlayer01Items < 3) {
+                        cyanmonja01PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getcyanPickDeliverButtonSprite();
+                    }
+                    else {
+                        cyanmonja01PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getcyanPickButtonSprite();
+                    }
+
+                    if (cyanmonja01PickDeliverButton.isEffectActive && MonjaFestival.cyanPlayer01selectedSpawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, MonjaFestival.cyanPlayer01selectedSpawn.transform.position) > 0.75f) {
+                        MonjaFestival.cyanPlayer01selectedSpawn = null;
+                        cyanmonja01PickDeliverButton.Timer = 0f;
+                        cyanmonja01PickDeliverButton.isEffectActive = false;
+                    }
+
+                    bool CanUse = false;
+                    if (MonjaFestival.bigMonjaSpawns.Count != 0) {
+                        foreach (GameObject spawn in MonjaFestival.bigMonjaSpawns) {
+                            if (spawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, spawn.transform.position) < 0.75f) {
+                                MonjaFestival.cyanPlayer01currentSpawn = spawn;
+                                CanUse = true;
+                                if (spawn.name.StartsWith("littleMonja")) {
+                                    CanUse = MonjaFestival.cyanPlayer01Items < 3;
+                                    MonjaFestival.cyanPlayer01foundspawn = 8;
+                                }
+                                else {
+                                    switch (spawn.name) {
+                                        case "bigSpawnOne":
+                                            CanUse = MonjaFestival.bigSpawnOnePoints > 0 && MonjaFestival.cyanPlayer01Items < 3;
+                                            MonjaFestival.cyanPlayer01foundspawn = 1;
+                                            break;
+                                        case "bigSpawnTwo":
+                                            CanUse = MonjaFestival.bigSpawnTwoPoints > 0 && MonjaFestival.cyanPlayer01Items < 3;
+                                            MonjaFestival.cyanPlayer01foundspawn = 2;
+                                            break;
+                                        case "littleSpawnOne":
+                                            CanUse = MonjaFestival.littleSpawnOnePoints > 0 && MonjaFestival.cyanPlayer01Items < 3;
+                                            MonjaFestival.cyanPlayer01foundspawn = 3;
+                                            break;
+                                        case "littleSpawnTwo":
+                                            CanUse = MonjaFestival.littleSpawnTwoPoints > 0 && MonjaFestival.cyanPlayer01Items < 3;
+                                            MonjaFestival.cyanPlayer01foundspawn = 4;
+                                            break;
+                                        case "littleSpawnThree":
+                                            CanUse = MonjaFestival.littleSpawnThreePoints > 0 && MonjaFestival.cyanPlayer01Items < 3;
+                                            MonjaFestival.cyanPlayer01foundspawn = 5;
+                                            break;
+                                        case "littleSpawnFour":
+                                            CanUse = MonjaFestival.littleSpawnFourPoints > 0 && MonjaFestival.cyanPlayer01Items < 3;
+                                            MonjaFestival.cyanPlayer01foundspawn = 6;
+                                            break;
+                                        case "greenBase":
+                                            CanUse = false;
+                                            break;
+                                        case "cyanBase":
+                                            CanUse = MonjaFestival.cyanPlayer01Items > 0;
+                                            MonjaFestival.cyanPlayer01foundspawn = 7;
+                                            break;
+                                        case "greyBase":
+                                            CanUse = false;
+                                            break;
+                                        case "allulMonja":
+                                            CanUse = MonjaFestival.allulMonja.activeSelf;
+                                            MonjaFestival.cyanPlayer01foundspawn = 9;
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return CanUse && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.cyanPlayer01IsReviving;
+                },
+                () => { cyanmonja01PickDeliverButton.Timer = cyanmonja01PickDeliverButton.MaxTimer; },
+                MonjaFestival.getcyanPickButtonSprite(),
+                new Vector3(-2.1f, 0f, 0),
+                __instance,
+                KeyCode.F,
+                false,
+                3f,
+                () => {
+                    if (!MonjaFestival.cyanPlayer01.Data.IsDead) {
+                        MessageWriter findSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalFindSpawns, Hazel.SendOption.Reliable, -1);
+                        MessageWriter checkSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalCheckItems, Hazel.SendOption.Reliable, -1);
+                        switch (MonjaFestival.cyanPlayer01foundspawn) {
+                            case 1: // Big Spawn one
+                                findSpawn.Write(1);
+                                checkSpawn.Write(8);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(1);
+                                RPCProcedure.monjaFestivalCheckItems(8);
+                                break;
+                            case 2: // Big Spawn two
+                                findSpawn.Write(2);
+                                checkSpawn.Write(8);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(2);
+                                RPCProcedure.monjaFestivalCheckItems(8);
+                                break;
+                            case 3: // Little spawn one
+                                findSpawn.Write(3);
+                                checkSpawn.Write(8);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(3);
+                                RPCProcedure.monjaFestivalCheckItems(8);
+                                break;
+                            case 4: // Little spawn two
+                                findSpawn.Write(4);
+                                checkSpawn.Write(8);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(4);
+                                RPCProcedure.monjaFestivalCheckItems(8);
+                                break;
+                            case 5: // Little spawn three
+                                findSpawn.Write(5);
+                                checkSpawn.Write(8);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(5);
+                                RPCProcedure.monjaFestivalCheckItems(8);
+                                break;
+                            case 6: // Little spawn four
+                                findSpawn.Write(6);
+                                checkSpawn.Write(8);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(6);
+                                RPCProcedure.monjaFestivalCheckItems(8);
+                                break;
+                            case 7: // Cyan base
+                                checkSpawn.Write(28);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(28);
+                                MessageWriter delivertoSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                delivertoSpawn.Write(2);
+                                AmongUsClient.Instance.FinishRpcImmediately(delivertoSpawn);
+                                RPCProcedure.monjaFestivalDeliver(2);
+                                break;
+                            case 8: // Little Monja
+                                checkSpawn.Write(8);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(8);
+                                MessageWriter destroyLittleMonja = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDestroyLittleMonja, Hazel.SendOption.Reliable, -1);
+                                destroyLittleMonja.Write(MonjaFestival.cyanPlayer01currentSpawn.name);
+                                AmongUsClient.Instance.FinishRpcImmediately(destroyLittleMonja);
+                                RPCProcedure.monjaFestivalDestroyLittleMonja(MonjaFestival.cyanPlayer01currentSpawn.name);
+                                break;
+                            case 9: // Allul Monja
+                                MessageWriter deliverAllul = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                deliverAllul.Write(5);
+                                AmongUsClient.Instance.FinishRpcImmediately(deliverAllul);
+                                RPCProcedure.monjaFestivalDeliver(5);
+                                break;
+                        }
+                    }
+                    cyanmonja01PickDeliverButton.Timer = cyanmonja01PickDeliverButton.MaxTimer;
+                }
+            );
+
+            // Cyan Monja 01 button counter
+            MonjaFestival.cyanPlayer01DeliverCount = GameObject.Instantiate(cyanmonja01PickDeliverButton.actionButton.cooldownTimerText, cyanmonja01PickDeliverButton.actionButton.cooldownTimerText.transform.parent);
+            MonjaFestival.cyanPlayer01DeliverCount.enableWordWrapping = false;
+            MonjaFestival.cyanPlayer01DeliverCount.transform.localScale = Vector3.one * 0.5f;
+            MonjaFestival.cyanPlayer01DeliverCount.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
+            
+            // Cyan Monja 02 find deliver button
+            cyanmonja02PickDeliverButton = new CustomButton(
+                () => {
+
+                    cyanmonja02PickDeliverButton.HasEffect = true;
+                    MonjaFestival.cyanPlayer02selectedSpawn = MonjaFestival.cyanPlayer02currentSpawn;
+
+                },
+                () => { return MonjaFestival.cyanPlayer02 != null && MonjaFestival.cyanPlayer02 == PlayerControl.LocalPlayer; },
+                () => {
+                    if (MonjaFestival.localArrows.Count != 0) {
+                        MonjaFestival.localArrows[1].Update(MonjaFestival.cyanTeamBase.transform.position);
+                    }
+
+                    if (MonjaFestival.cyanPlayer02Items == 3) {
+                        cyanmonja02PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getcyanDeliverButtonSprite();
+                    }
+                    else if (MonjaFestival.cyanPlayer02Items > 0 && MonjaFestival.cyanPlayer02Items < 3) {
+                        cyanmonja02PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getcyanPickDeliverButtonSprite();
+                    }
+                    else {
+                        cyanmonja02PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getcyanPickButtonSprite();
+                    }
+
+                    if (cyanmonja02PickDeliverButton.isEffectActive && MonjaFestival.cyanPlayer02selectedSpawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, MonjaFestival.cyanPlayer02selectedSpawn.transform.position) > 0.75f) {
+                        MonjaFestival.cyanPlayer02selectedSpawn = null;
+                        cyanmonja02PickDeliverButton.Timer = 0f;
+                        cyanmonja02PickDeliverButton.isEffectActive = false;
+                    }
+
+                    bool CanUse = false;
+                    if (MonjaFestival.bigMonjaSpawns.Count != 0) {
+                        foreach (GameObject spawn in MonjaFestival.bigMonjaSpawns) {
+                            if (spawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, spawn.transform.position) < 0.75f) {
+                                MonjaFestival.cyanPlayer02currentSpawn = spawn;
+                                CanUse = true;
+                                if (spawn.name.StartsWith("littleMonja")) {
+                                    CanUse = MonjaFestival.cyanPlayer02Items < 3;
+                                    MonjaFestival.cyanPlayer02foundspawn = 8;
+                                }
+                                else {
+                                    switch (spawn.name) {
+                                        case "bigSpawnOne":
+                                            CanUse = MonjaFestival.bigSpawnOnePoints > 0 && MonjaFestival.cyanPlayer02Items < 3;
+                                            MonjaFestival.cyanPlayer02foundspawn = 1;
+                                            break;
+                                        case "bigSpawnTwo":
+                                            CanUse = MonjaFestival.bigSpawnTwoPoints > 0 && MonjaFestival.cyanPlayer02Items < 3;
+                                            MonjaFestival.cyanPlayer02foundspawn = 2;
+                                            break;
+                                        case "littleSpawnOne":
+                                            CanUse = MonjaFestival.littleSpawnOnePoints > 0 && MonjaFestival.cyanPlayer02Items < 3;
+                                            MonjaFestival.cyanPlayer02foundspawn = 3;
+                                            break;
+                                        case "littleSpawnTwo":
+                                            CanUse = MonjaFestival.littleSpawnTwoPoints > 0 && MonjaFestival.cyanPlayer02Items < 3;
+                                            MonjaFestival.cyanPlayer02foundspawn = 4;
+                                            break;
+                                        case "littleSpawnThree":
+                                            CanUse = MonjaFestival.littleSpawnThreePoints > 0 && MonjaFestival.cyanPlayer02Items < 3;
+                                            MonjaFestival.cyanPlayer02foundspawn = 5;
+                                            break;
+                                        case "littleSpawnFour":
+                                            CanUse = MonjaFestival.littleSpawnFourPoints > 0 && MonjaFestival.cyanPlayer02Items < 3;
+                                            MonjaFestival.cyanPlayer02foundspawn = 6;
+                                            break;
+                                        case "greenBase":
+                                            CanUse = false;
+                                            break;
+                                        case "cyanBase":
+                                            CanUse = MonjaFestival.cyanPlayer02Items > 0;
+                                            MonjaFestival.cyanPlayer02foundspawn = 7;
+                                            break;
+                                        case "greyBase":
+                                            CanUse = false;
+                                            break;
+                                        case "allulMonja":
+                                            CanUse = MonjaFestival.allulMonja.activeSelf;
+                                            MonjaFestival.cyanPlayer02foundspawn = 9;
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return CanUse && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.cyanPlayer02IsReviving;
+                },
+                () => { cyanmonja02PickDeliverButton.Timer = cyanmonja02PickDeliverButton.MaxTimer; },
+                MonjaFestival.getcyanPickButtonSprite(),
+                new Vector3(-2.1f, 0f, 0),
+                __instance,
+                KeyCode.F,
+                false,
+                3f,
+                () => {
+                    if (!MonjaFestival.cyanPlayer02.Data.IsDead) {
+                        MessageWriter findSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalFindSpawns, Hazel.SendOption.Reliable, -1);
+                        MessageWriter checkSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalCheckItems, Hazel.SendOption.Reliable, -1);
+                        switch (MonjaFestival.cyanPlayer02foundspawn) {
+                            case 1: // Big Spawn one
+                                findSpawn.Write(1);
+                                checkSpawn.Write(9);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(1);
+                                RPCProcedure.monjaFestivalCheckItems(9);
+                                break;
+                            case 2: // Big Spawn two
+                                findSpawn.Write(2);
+                                checkSpawn.Write(9);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(2);
+                                RPCProcedure.monjaFestivalCheckItems(9);
+                                break;
+                            case 3: // Little spawn one
+                                findSpawn.Write(3);
+                                checkSpawn.Write(9);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(3);
+                                RPCProcedure.monjaFestivalCheckItems(9);
+                                break;
+                            case 4: // Little spawn two
+                                findSpawn.Write(4);
+                                checkSpawn.Write(9);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(4);
+                                RPCProcedure.monjaFestivalCheckItems(9);
+                                break;
+                            case 5: // Little spawn three
+                                findSpawn.Write(5);
+                                checkSpawn.Write(9);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(5);
+                                RPCProcedure.monjaFestivalCheckItems(9);
+                                break;
+                            case 6: // Little spawn four
+                                findSpawn.Write(6);
+                                checkSpawn.Write(9);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(6);
+                                RPCProcedure.monjaFestivalCheckItems(9);
+                                break;
+                            case 7: // Cyan base
+                                checkSpawn.Write(29);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(29);
+                                MessageWriter delivertoSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                delivertoSpawn.Write(2);
+                                AmongUsClient.Instance.FinishRpcImmediately(delivertoSpawn);
+                                RPCProcedure.monjaFestivalDeliver(2);
+                                break;
+                            case 8: // Little Monja
+                                checkSpawn.Write(9);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(9);
+                                MessageWriter destroyLittleMonja = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDestroyLittleMonja, Hazel.SendOption.Reliable, -1);
+                                destroyLittleMonja.Write(MonjaFestival.cyanPlayer02currentSpawn.name);
+                                AmongUsClient.Instance.FinishRpcImmediately(destroyLittleMonja);
+                                RPCProcedure.monjaFestivalDestroyLittleMonja(MonjaFestival.cyanPlayer02currentSpawn.name);
+                                break;
+                            case 9: // Allul Monja
+                                MessageWriter deliverAllul = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                deliverAllul.Write(5);
+                                AmongUsClient.Instance.FinishRpcImmediately(deliverAllul);
+                                RPCProcedure.monjaFestivalDeliver(5);
+                                break;
+                        }
+                    }
+                    cyanmonja02PickDeliverButton.Timer = cyanmonja02PickDeliverButton.MaxTimer;
+                }
+            );
+
+            // Cyan Monja 02 button counter
+            MonjaFestival.cyanPlayer02DeliverCount = GameObject.Instantiate(cyanmonja02PickDeliverButton.actionButton.cooldownTimerText, cyanmonja02PickDeliverButton.actionButton.cooldownTimerText.transform.parent);
+            MonjaFestival.cyanPlayer02DeliverCount.enableWordWrapping = false;
+            MonjaFestival.cyanPlayer02DeliverCount.transform.localScale = Vector3.one * 0.5f;
+            MonjaFestival.cyanPlayer02DeliverCount.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
+
+            // Cyan Monja 03 find deliver button
+            cyanmonja03PickDeliverButton = new CustomButton(
+                () => {
+
+                    cyanmonja03PickDeliverButton.HasEffect = true;
+                    MonjaFestival.cyanPlayer03selectedSpawn = MonjaFestival.cyanPlayer03currentSpawn;
+
+                },
+                () => { return MonjaFestival.cyanPlayer03 != null && MonjaFestival.cyanPlayer03 == PlayerControl.LocalPlayer; },
+                () => {
+                    if (MonjaFestival.localArrows.Count != 0) {
+                        MonjaFestival.localArrows[1].Update(MonjaFestival.cyanTeamBase.transform.position);
+                    }
+
+                    if (MonjaFestival.cyanPlayer03Items == 3) {
+                        cyanmonja03PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getcyanDeliverButtonSprite();
+                    }
+                    else if (MonjaFestival.cyanPlayer03Items > 0 && MonjaFestival.cyanPlayer03Items < 3) {
+                        cyanmonja03PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getcyanPickDeliverButtonSprite();
+                    }
+                    else {
+                        cyanmonja03PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getcyanPickButtonSprite();
+                    }
+
+                    if (cyanmonja03PickDeliverButton.isEffectActive && MonjaFestival.cyanPlayer03selectedSpawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, MonjaFestival.cyanPlayer03selectedSpawn.transform.position) > 0.75f) {
+                        MonjaFestival.cyanPlayer03selectedSpawn = null;
+                        cyanmonja03PickDeliverButton.Timer = 0f;
+                        cyanmonja03PickDeliverButton.isEffectActive = false;
+                    }
+
+                    bool CanUse = false;
+                    if (MonjaFestival.bigMonjaSpawns.Count != 0) {
+                        foreach (GameObject spawn in MonjaFestival.bigMonjaSpawns) {
+                            if (spawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, spawn.transform.position) < 0.75f) {
+                                MonjaFestival.cyanPlayer03currentSpawn = spawn;
+                                CanUse = true;
+                                if (spawn.name.StartsWith("littleMonja")) {
+                                    CanUse = MonjaFestival.cyanPlayer03Items < 3;
+                                    MonjaFestival.cyanPlayer03foundspawn = 8;
+                                }
+                                else {
+                                    switch (spawn.name) {
+                                        case "bigSpawnOne":
+                                            CanUse = MonjaFestival.bigSpawnOnePoints > 0 && MonjaFestival.cyanPlayer03Items < 3;
+                                            MonjaFestival.cyanPlayer03foundspawn = 1;
+                                            break;
+                                        case "bigSpawnTwo":
+                                            CanUse = MonjaFestival.bigSpawnTwoPoints > 0 && MonjaFestival.cyanPlayer03Items < 3;
+                                            MonjaFestival.cyanPlayer03foundspawn = 2;
+                                            break;
+                                        case "littleSpawnOne":
+                                            CanUse = MonjaFestival.littleSpawnOnePoints > 0 && MonjaFestival.cyanPlayer03Items < 3;
+                                            MonjaFestival.cyanPlayer03foundspawn = 3;
+                                            break;
+                                        case "littleSpawnTwo":
+                                            CanUse = MonjaFestival.littleSpawnTwoPoints > 0 && MonjaFestival.cyanPlayer03Items < 3;
+                                            MonjaFestival.cyanPlayer03foundspawn = 4;
+                                            break;
+                                        case "littleSpawnThree":
+                                            CanUse = MonjaFestival.littleSpawnThreePoints > 0 && MonjaFestival.cyanPlayer03Items < 3;
+                                            MonjaFestival.cyanPlayer03foundspawn = 5;
+                                            break;
+                                        case "littleSpawnFour":
+                                            CanUse = MonjaFestival.littleSpawnFourPoints > 0 && MonjaFestival.cyanPlayer03Items < 3;
+                                            MonjaFestival.cyanPlayer03foundspawn = 6;
+                                            break;
+                                        case "greenBase":
+                                            CanUse = false;
+                                            break;
+                                        case "cyanBase":
+                                            CanUse = MonjaFestival.cyanPlayer03Items > 0;
+                                            MonjaFestival.cyanPlayer03foundspawn = 7;
+                                            break;
+                                        case "greyBase":
+                                            CanUse = false;
+                                            break;
+                                        case "allulMonja":
+                                            CanUse = MonjaFestival.allulMonja.activeSelf;
+                                            MonjaFestival.cyanPlayer03foundspawn = 9;
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return CanUse && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.cyanPlayer03IsReviving;
+                },
+                () => { cyanmonja03PickDeliverButton.Timer = cyanmonja03PickDeliverButton.MaxTimer; },
+                MonjaFestival.getcyanPickButtonSprite(),
+                new Vector3(-2.1f, 0f, 0),
+                __instance,
+                KeyCode.F,
+                false,
+                3f,
+                () => {
+                    if (!MonjaFestival.cyanPlayer03.Data.IsDead) {
+                        MessageWriter findSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalFindSpawns, Hazel.SendOption.Reliable, -1);
+                        MessageWriter checkSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalCheckItems, Hazel.SendOption.Reliable, -1);
+                        switch (MonjaFestival.cyanPlayer03foundspawn) {
+                            case 1: // Big Spawn one
+                                findSpawn.Write(1);
+                                checkSpawn.Write(10);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(1);
+                                RPCProcedure.monjaFestivalCheckItems(10);
+                                break;
+                            case 2: // Big Spawn two
+                                findSpawn.Write(2);
+                                checkSpawn.Write(10);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(2);
+                                RPCProcedure.monjaFestivalCheckItems(10);
+                                break;
+                            case 3: // Little spawn one
+                                findSpawn.Write(3);
+                                checkSpawn.Write(10);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(3);
+                                RPCProcedure.monjaFestivalCheckItems(10);
+                                break;
+                            case 4: // Little spawn two
+                                findSpawn.Write(4);
+                                checkSpawn.Write(10);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(4);
+                                RPCProcedure.monjaFestivalCheckItems(10);
+                                break;
+                            case 5: // Little spawn three
+                                findSpawn.Write(5);
+                                checkSpawn.Write(10);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(5);
+                                RPCProcedure.monjaFestivalCheckItems(10);
+                                break;
+                            case 6: // Little spawn four
+                                findSpawn.Write(6);
+                                checkSpawn.Write(10);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(6);
+                                RPCProcedure.monjaFestivalCheckItems(10);
+                                break;
+                            case 7: // Cyan base
+                                checkSpawn.Write(30);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(30);
+                                MessageWriter delivertoSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                delivertoSpawn.Write(2);
+                                AmongUsClient.Instance.FinishRpcImmediately(delivertoSpawn);
+                                RPCProcedure.monjaFestivalDeliver(2);
+                                break;
+                            case 8: // Little Monja
+                                checkSpawn.Write(10);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(10);
+                                MessageWriter destroyLittleMonja = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDestroyLittleMonja, Hazel.SendOption.Reliable, -1);
+                                destroyLittleMonja.Write(MonjaFestival.cyanPlayer03currentSpawn.name);
+                                AmongUsClient.Instance.FinishRpcImmediately(destroyLittleMonja);
+                                RPCProcedure.monjaFestivalDestroyLittleMonja(MonjaFestival.cyanPlayer03currentSpawn.name);
+                                break;
+                            case 9: // Allul Monja
+                                MessageWriter deliverAllul = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                deliverAllul.Write(5);
+                                AmongUsClient.Instance.FinishRpcImmediately(deliverAllul);
+                                RPCProcedure.monjaFestivalDeliver(5);
+                                break;
+                        }
+                    }
+                    cyanmonja03PickDeliverButton.Timer = cyanmonja03PickDeliverButton.MaxTimer;
+                }
+            );
+
+            // Cyan Monja 03 button counter
+            MonjaFestival.cyanPlayer03DeliverCount = GameObject.Instantiate(cyanmonja03PickDeliverButton.actionButton.cooldownTimerText, cyanmonja03PickDeliverButton.actionButton.cooldownTimerText.transform.parent);
+            MonjaFestival.cyanPlayer03DeliverCount.enableWordWrapping = false;
+            MonjaFestival.cyanPlayer03DeliverCount.transform.localScale = Vector3.one * 0.5f;
+            MonjaFestival.cyanPlayer03DeliverCount.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
+
+            // Cyan Monja 04 find deliver button
+            cyanmonja04PickDeliverButton = new CustomButton(
+                () => {
+
+                    cyanmonja04PickDeliverButton.HasEffect = true;
+                    MonjaFestival.cyanPlayer04selectedSpawn = MonjaFestival.cyanPlayer04currentSpawn;
+
+                },
+                () => { return MonjaFestival.cyanPlayer04 != null && MonjaFestival.cyanPlayer04 == PlayerControl.LocalPlayer; },
+                () => {
+                    if (MonjaFestival.localArrows.Count != 0) {
+                        MonjaFestival.localArrows[1].Update(MonjaFestival.cyanTeamBase.transform.position);
+                    }
+
+                    if (MonjaFestival.cyanPlayer04Items == 3) {
+                        cyanmonja04PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getcyanDeliverButtonSprite();
+                    }
+                    else if (MonjaFestival.cyanPlayer04Items > 0 && MonjaFestival.cyanPlayer04Items < 3) {
+                        cyanmonja04PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getcyanPickDeliverButtonSprite();
+                    }
+                    else {
+                        cyanmonja04PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getcyanPickButtonSprite();
+                    }
+
+                    if (cyanmonja04PickDeliverButton.isEffectActive && MonjaFestival.cyanPlayer04selectedSpawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, MonjaFestival.cyanPlayer04selectedSpawn.transform.position) > 0.75f) {
+                        MonjaFestival.cyanPlayer04selectedSpawn = null;
+                        cyanmonja04PickDeliverButton.Timer = 0f;
+                        cyanmonja04PickDeliverButton.isEffectActive = false;
+                    }
+
+                    bool CanUse = false;
+                    if (MonjaFestival.bigMonjaSpawns.Count != 0) {
+                        foreach (GameObject spawn in MonjaFestival.bigMonjaSpawns) {
+                            if (spawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, spawn.transform.position) < 0.75f) {
+                                MonjaFestival.cyanPlayer04currentSpawn = spawn;
+                                CanUse = true;
+                                if (spawn.name.StartsWith("littleMonja")) {
+                                    CanUse = MonjaFestival.cyanPlayer04Items < 3;
+                                    MonjaFestival.cyanPlayer04foundspawn = 8;
+                                }
+                                else {
+                                    switch (spawn.name) {
+                                        case "bigSpawnOne":
+                                            CanUse = MonjaFestival.bigSpawnOnePoints > 0 && MonjaFestival.cyanPlayer04Items < 3;
+                                            MonjaFestival.cyanPlayer04foundspawn = 1;
+                                            break;
+                                        case "bigSpawnTwo":
+                                            CanUse = MonjaFestival.bigSpawnTwoPoints > 0 && MonjaFestival.cyanPlayer04Items < 3;
+                                            MonjaFestival.cyanPlayer04foundspawn = 2;
+                                            break;
+                                        case "littleSpawnOne":
+                                            CanUse = MonjaFestival.littleSpawnOnePoints > 0 && MonjaFestival.cyanPlayer04Items < 3;
+                                            MonjaFestival.cyanPlayer04foundspawn = 3;
+                                            break;
+                                        case "littleSpawnTwo":
+                                            CanUse = MonjaFestival.littleSpawnTwoPoints > 0 && MonjaFestival.cyanPlayer04Items < 3;
+                                            MonjaFestival.cyanPlayer04foundspawn = 4;
+                                            break;
+                                        case "littleSpawnThree":
+                                            CanUse = MonjaFestival.littleSpawnThreePoints > 0 && MonjaFestival.cyanPlayer04Items < 3;
+                                            MonjaFestival.cyanPlayer04foundspawn = 5;
+                                            break;
+                                        case "littleSpawnFour":
+                                            CanUse = MonjaFestival.littleSpawnFourPoints > 0 && MonjaFestival.cyanPlayer04Items < 3;
+                                            MonjaFestival.cyanPlayer04foundspawn = 6;
+                                            break;
+                                        case "greenBase":
+                                            CanUse = false;
+                                            break;
+                                        case "cyanBase":
+                                            CanUse = MonjaFestival.cyanPlayer04Items > 0;
+                                            MonjaFestival.cyanPlayer04foundspawn = 7;
+                                            break;
+                                        case "greyBase":
+                                            CanUse = false;
+                                            break;
+                                        case "allulMonja":
+                                            CanUse = MonjaFestival.allulMonja.activeSelf;
+                                            MonjaFestival.cyanPlayer04foundspawn = 9;
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return CanUse && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.cyanPlayer04IsReviving;
+                },
+                () => { cyanmonja04PickDeliverButton.Timer = cyanmonja04PickDeliverButton.MaxTimer; },
+                MonjaFestival.getcyanPickButtonSprite(),
+                new Vector3(-2.1f, 0f, 0),
+                __instance,
+                KeyCode.F,
+                false,
+                3f,
+                () => {
+                    if (!MonjaFestival.cyanPlayer04.Data.IsDead) {
+                        MessageWriter findSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalFindSpawns, Hazel.SendOption.Reliable, -1);
+                        MessageWriter checkSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalCheckItems, Hazel.SendOption.Reliable, -1);
+                        switch (MonjaFestival.cyanPlayer04foundspawn) {
+                            case 1: // Big Spawn one
+                                findSpawn.Write(1);
+                                checkSpawn.Write(11);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(1);
+                                RPCProcedure.monjaFestivalCheckItems(11);
+                                break;
+                            case 2: // Big Spawn two
+                                findSpawn.Write(2);
+                                checkSpawn.Write(11);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(2);
+                                RPCProcedure.monjaFestivalCheckItems(11);
+                                break;
+                            case 3: // Little spawn one
+                                findSpawn.Write(3);
+                                checkSpawn.Write(11);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(3);
+                                RPCProcedure.monjaFestivalCheckItems(11);
+                                break;
+                            case 4: // Little spawn two
+                                findSpawn.Write(4);
+                                checkSpawn.Write(11);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(4);
+                                RPCProcedure.monjaFestivalCheckItems(11);
+                                break;
+                            case 5: // Little spawn three
+                                findSpawn.Write(5);
+                                checkSpawn.Write(11);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(5);
+                                RPCProcedure.monjaFestivalCheckItems(11);
+                                break;
+                            case 6: // Little spawn four
+                                findSpawn.Write(6);
+                                checkSpawn.Write(11);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(6);
+                                RPCProcedure.monjaFestivalCheckItems(11);
+                                break;
+                            case 7: // Cyan base
+                                checkSpawn.Write(31);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(31);
+                                MessageWriter delivertoSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                delivertoSpawn.Write(2);
+                                AmongUsClient.Instance.FinishRpcImmediately(delivertoSpawn);
+                                RPCProcedure.monjaFestivalDeliver(2);
+                                break;
+                            case 8: // Little Monja
+                                checkSpawn.Write(11);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(11);
+                                MessageWriter destroyLittleMonja = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDestroyLittleMonja, Hazel.SendOption.Reliable, -1);
+                                destroyLittleMonja.Write(MonjaFestival.cyanPlayer04currentSpawn.name);
+                                AmongUsClient.Instance.FinishRpcImmediately(destroyLittleMonja);
+                                RPCProcedure.monjaFestivalDestroyLittleMonja(MonjaFestival.cyanPlayer04currentSpawn.name);
+                                
+                                break;
+                            case 9: // Allul Monja
+                                MessageWriter deliverAllul = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                deliverAllul.Write(5);
+                                AmongUsClient.Instance.FinishRpcImmediately(deliverAllul);
+                                RPCProcedure.monjaFestivalDeliver(5);
+                                break;
+                        }
+                    }
+                    cyanmonja04PickDeliverButton.Timer = cyanmonja04PickDeliverButton.MaxTimer;
+                }
+            );
+
+            // Cyan Monja 04 button counter
+            MonjaFestival.cyanPlayer04DeliverCount = GameObject.Instantiate(cyanmonja04PickDeliverButton.actionButton.cooldownTimerText, cyanmonja04PickDeliverButton.actionButton.cooldownTimerText.transform.parent);
+            MonjaFestival.cyanPlayer04DeliverCount.enableWordWrapping = false;
+            MonjaFestival.cyanPlayer04DeliverCount.transform.localScale = Vector3.one * 0.5f;
+            MonjaFestival.cyanPlayer04DeliverCount.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
+
+            // Cyan Monja 05 find deliver button
+            cyanmonja05PickDeliverButton = new CustomButton(
+                () => {
+
+                    cyanmonja05PickDeliverButton.HasEffect = true;
+                    MonjaFestival.cyanPlayer05selectedSpawn = MonjaFestival.cyanPlayer05currentSpawn;
+
+                },
+                () => { return MonjaFestival.cyanPlayer05 != null && MonjaFestival.cyanPlayer05 == PlayerControl.LocalPlayer; },
+                () => {
+                    if (MonjaFestival.localArrows.Count != 0) {
+                        MonjaFestival.localArrows[1].Update(MonjaFestival.cyanTeamBase.transform.position);
+                    }
+
+                    if (MonjaFestival.cyanPlayer05Items == 3) {
+                        cyanmonja05PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getcyanDeliverButtonSprite();
+                    }
+                    else if (MonjaFestival.cyanPlayer05Items > 0 && MonjaFestival.cyanPlayer05Items < 3) {
+                        cyanmonja05PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getcyanPickDeliverButtonSprite();
+                    }
+                    else {
+                        cyanmonja05PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getcyanPickButtonSprite();
+                    }
+
+                    if (cyanmonja05PickDeliverButton.isEffectActive && MonjaFestival.cyanPlayer05selectedSpawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, MonjaFestival.cyanPlayer05selectedSpawn.transform.position) > 0.75f) {
+                        MonjaFestival.cyanPlayer05selectedSpawn = null;
+                        cyanmonja05PickDeliverButton.Timer = 0f;
+                        cyanmonja05PickDeliverButton.isEffectActive = false;
+                    }
+
+                    bool CanUse = false;
+                    if (MonjaFestival.bigMonjaSpawns.Count != 0) {
+                        foreach (GameObject spawn in MonjaFestival.bigMonjaSpawns) {
+                            if (spawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, spawn.transform.position) < 0.75f) {
+                                MonjaFestival.cyanPlayer05currentSpawn = spawn;
+                                CanUse = true;
+                                if (spawn.name.StartsWith("littleMonja")) {
+                                    CanUse = MonjaFestival.cyanPlayer05Items < 3;
+                                    MonjaFestival.cyanPlayer05foundspawn = 8;
+                                }
+                                else {
+                                    switch (spawn.name) {
+                                        case "bigSpawnOne":
+                                            CanUse = MonjaFestival.bigSpawnOnePoints > 0 && MonjaFestival.cyanPlayer05Items < 3;
+                                            MonjaFestival.cyanPlayer05foundspawn = 1;
+                                            break;
+                                        case "bigSpawnTwo":
+                                            CanUse = MonjaFestival.bigSpawnTwoPoints > 0 && MonjaFestival.cyanPlayer05Items < 3;
+                                            MonjaFestival.cyanPlayer05foundspawn = 2;
+                                            break;
+                                        case "littleSpawnOne":
+                                            CanUse = MonjaFestival.littleSpawnOnePoints > 0 && MonjaFestival.cyanPlayer05Items < 3;
+                                            MonjaFestival.cyanPlayer05foundspawn = 3;
+                                            break;
+                                        case "littleSpawnTwo":
+                                            CanUse = MonjaFestival.littleSpawnTwoPoints > 0 && MonjaFestival.cyanPlayer05Items < 3;
+                                            MonjaFestival.cyanPlayer05foundspawn = 4;
+                                            break;
+                                        case "littleSpawnThree":
+                                            CanUse = MonjaFestival.littleSpawnThreePoints > 0 && MonjaFestival.cyanPlayer05Items < 3;
+                                            MonjaFestival.cyanPlayer05foundspawn = 5;
+                                            break;
+                                        case "littleSpawnFour":
+                                            CanUse = MonjaFestival.littleSpawnFourPoints > 0 && MonjaFestival.cyanPlayer05Items < 3;
+                                            MonjaFestival.cyanPlayer05foundspawn = 6;
+                                            break;
+                                        case "greenBase":
+                                            CanUse = false;
+                                            break;
+                                        case "cyanBase":
+                                            CanUse = MonjaFestival.cyanPlayer05Items > 0;
+                                            MonjaFestival.cyanPlayer05foundspawn = 7;
+                                            break;
+                                        case "greyBase":
+                                            CanUse = false;
+                                            break;
+                                        case "allulMonja":
+                                            CanUse = MonjaFestival.allulMonja.activeSelf;
+                                            MonjaFestival.cyanPlayer05foundspawn = 9;
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return CanUse && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.cyanPlayer05IsReviving;
+                },
+                () => { cyanmonja05PickDeliverButton.Timer = cyanmonja05PickDeliverButton.MaxTimer; },
+                MonjaFestival.getcyanPickButtonSprite(),
+                new Vector3(-2.1f, 0f, 0),
+                __instance,
+                KeyCode.F,
+                false,
+                3f,
+                () => {
+                    if (!MonjaFestival.cyanPlayer05.Data.IsDead) {
+                        MessageWriter findSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalFindSpawns, Hazel.SendOption.Reliable, -1);
+                        MessageWriter checkSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalCheckItems, Hazel.SendOption.Reliable, -1);
+                        switch (MonjaFestival.cyanPlayer05foundspawn) {
+                            case 1: // Big Spawn one
+                                findSpawn.Write(1);
+                                checkSpawn.Write(12);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(1);
+                                RPCProcedure.monjaFestivalCheckItems(12);
+                                break;
+                            case 2: // Big Spawn two
+                                findSpawn.Write(2);
+                                checkSpawn.Write(12);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(2);
+                                RPCProcedure.monjaFestivalCheckItems(12);
+                                break;
+                            case 3: // Little spawn one
+                                findSpawn.Write(3);
+                                checkSpawn.Write(12);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(3);
+                                RPCProcedure.monjaFestivalCheckItems(12);
+                                break;
+                            case 4: // Little spawn two
+                                findSpawn.Write(4);
+                                checkSpawn.Write(12);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(4);
+                                RPCProcedure.monjaFestivalCheckItems(12);
+                                break;
+                            case 5: // Little spawn three
+                                findSpawn.Write(5);
+                                checkSpawn.Write(12);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(5);
+                                RPCProcedure.monjaFestivalCheckItems(12);
+                                break;
+                            case 6: // Little spawn four
+                                findSpawn.Write(6);
+                                checkSpawn.Write(12);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(6);
+                                RPCProcedure.monjaFestivalCheckItems(12);
+                                break;
+                            case 7: // Cyan base
+                                checkSpawn.Write(32);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(32);
+                                MessageWriter delivertoSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                delivertoSpawn.Write(2);
+                                AmongUsClient.Instance.FinishRpcImmediately(delivertoSpawn);
+                                RPCProcedure.monjaFestivalDeliver(2);
+                                break;
+                            case 8: // Little Monja
+                                checkSpawn.Write(12);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(12);
+                                MessageWriter destroyLittleMonja = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDestroyLittleMonja, Hazel.SendOption.Reliable, -1);
+                                destroyLittleMonja.Write(MonjaFestival.cyanPlayer05currentSpawn.name);
+                                AmongUsClient.Instance.FinishRpcImmediately(destroyLittleMonja);
+                                RPCProcedure.monjaFestivalDestroyLittleMonja(MonjaFestival.cyanPlayer05currentSpawn.name);
+                                break;
+                            case 9: // Allul Monja
+                                MessageWriter deliverAllul = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                deliverAllul.Write(5);
+                                AmongUsClient.Instance.FinishRpcImmediately(deliverAllul);
+                                RPCProcedure.monjaFestivalDeliver(5);
+                                break;
+                        }
+                    }
+                    cyanmonja05PickDeliverButton.Timer = cyanmonja05PickDeliverButton.MaxTimer;
+                }
+            );
+
+            // Cyan Monja 05 button counter
+            MonjaFestival.cyanPlayer05DeliverCount = GameObject.Instantiate(cyanmonja05PickDeliverButton.actionButton.cooldownTimerText, cyanmonja05PickDeliverButton.actionButton.cooldownTimerText.transform.parent);
+            MonjaFestival.cyanPlayer05DeliverCount.enableWordWrapping = false;
+            MonjaFestival.cyanPlayer05DeliverCount.transform.localScale = Vector3.one * 0.5f;
+            MonjaFestival.cyanPlayer05DeliverCount.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
+
+            // Cyan Monja 06 find deliver button
+            cyanmonja06PickDeliverButton = new CustomButton(
+                () => {
+
+                    cyanmonja06PickDeliverButton.HasEffect = true;
+                    MonjaFestival.cyanPlayer06selectedSpawn = MonjaFestival.cyanPlayer06currentSpawn;
+
+                },
+                () => { return MonjaFestival.cyanPlayer06 != null && MonjaFestival.cyanPlayer06 == PlayerControl.LocalPlayer; },
+                () => {
+                    if (MonjaFestival.localArrows.Count != 0) {
+                        MonjaFestival.localArrows[1].Update(MonjaFestival.cyanTeamBase.transform.position);
+                    }
+
+                    if (MonjaFestival.cyanPlayer06Items == 3) {
+                        cyanmonja06PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getcyanDeliverButtonSprite();
+                    }
+                    else if (MonjaFestival.cyanPlayer06Items > 0 && MonjaFestival.cyanPlayer06Items < 3) {
+                        cyanmonja06PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getcyanPickDeliverButtonSprite();
+                    }
+                    else {
+                        cyanmonja06PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getcyanPickButtonSprite();
+                    }
+
+                    if (cyanmonja06PickDeliverButton.isEffectActive && MonjaFestival.cyanPlayer06selectedSpawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, MonjaFestival.cyanPlayer06selectedSpawn.transform.position) > 0.75f) {
+                        MonjaFestival.cyanPlayer06selectedSpawn = null;
+                        cyanmonja06PickDeliverButton.Timer = 0f;
+                        cyanmonja06PickDeliverButton.isEffectActive = false;
+                    }
+
+                    bool CanUse = false;
+                    if (MonjaFestival.bigMonjaSpawns.Count != 0) {
+                        foreach (GameObject spawn in MonjaFestival.bigMonjaSpawns) {
+                            if (spawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, spawn.transform.position) < 0.75f) {
+                                MonjaFestival.cyanPlayer06currentSpawn = spawn;
+                                CanUse = true;
+                                if (spawn.name.StartsWith("littleMonja")) {
+                                    CanUse = MonjaFestival.cyanPlayer06Items < 3;
+                                    MonjaFestival.cyanPlayer06foundspawn = 8;
+                                }
+                                else {
+                                    switch (spawn.name) {
+                                        case "bigSpawnOne":
+                                            CanUse = MonjaFestival.bigSpawnOnePoints > 0 && MonjaFestival.cyanPlayer06Items < 3;
+                                            MonjaFestival.cyanPlayer06foundspawn = 1;
+                                            break;
+                                        case "bigSpawnTwo":
+                                            CanUse = MonjaFestival.bigSpawnTwoPoints > 0 && MonjaFestival.cyanPlayer06Items < 3;
+                                            MonjaFestival.cyanPlayer06foundspawn = 2;
+                                            break;
+                                        case "littleSpawnOne":
+                                            CanUse = MonjaFestival.littleSpawnOnePoints > 0 && MonjaFestival.cyanPlayer06Items < 3;
+                                            MonjaFestival.cyanPlayer06foundspawn = 3;
+                                            break;
+                                        case "littleSpawnTwo":
+                                            CanUse = MonjaFestival.littleSpawnTwoPoints > 0 && MonjaFestival.cyanPlayer06Items < 3;
+                                            MonjaFestival.cyanPlayer06foundspawn = 4;
+                                            break;
+                                        case "littleSpawnThree":
+                                            CanUse = MonjaFestival.littleSpawnThreePoints > 0 && MonjaFestival.cyanPlayer06Items < 3;
+                                            MonjaFestival.cyanPlayer06foundspawn = 5;
+                                            break;
+                                        case "littleSpawnFour":
+                                            CanUse = MonjaFestival.littleSpawnFourPoints > 0 && MonjaFestival.cyanPlayer06Items < 3;
+                                            MonjaFestival.cyanPlayer06foundspawn = 6;
+                                            break;
+                                        case "greenBase":
+                                            CanUse = false;
+                                            break;
+                                        case "cyanBase":
+                                            CanUse = MonjaFestival.cyanPlayer06Items > 0;
+                                            MonjaFestival.cyanPlayer06foundspawn = 7;
+                                            break;
+                                        case "greyBase":
+                                            CanUse = false;
+                                            break;
+                                        case "allulMonja":
+                                            CanUse = MonjaFestival.allulMonja.activeSelf;
+                                            MonjaFestival.cyanPlayer06foundspawn = 9;
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return CanUse && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.cyanPlayer06IsReviving;
+                },
+                () => { cyanmonja06PickDeliverButton.Timer = cyanmonja06PickDeliverButton.MaxTimer; },
+                MonjaFestival.getcyanPickButtonSprite(),
+                new Vector3(-2.1f, 0f, 0),
+                __instance,
+                KeyCode.F,
+                false,
+                3f,
+                () => {
+                    if (!MonjaFestival.cyanPlayer06.Data.IsDead) {
+                        MessageWriter findSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalFindSpawns, Hazel.SendOption.Reliable, -1);
+                        MessageWriter checkSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalCheckItems, Hazel.SendOption.Reliable, -1);
+                        switch (MonjaFestival.cyanPlayer06foundspawn) {
+                            case 1: // Big Spawn one
+                                findSpawn.Write(1);
+                                checkSpawn.Write(13);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(1);
+                                RPCProcedure.monjaFestivalCheckItems(13);
+                                break;
+                            case 2: // Big Spawn two
+                                findSpawn.Write(2);
+                                checkSpawn.Write(13);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(2);
+                                RPCProcedure.monjaFestivalCheckItems(13);
+                                break;
+                            case 3: // Little spawn one
+                                findSpawn.Write(3);
+                                checkSpawn.Write(13);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(3);
+                                RPCProcedure.monjaFestivalCheckItems(13);
+                                break;
+                            case 4: // Little spawn two
+                                findSpawn.Write(4);
+                                checkSpawn.Write(13);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(4);
+                                RPCProcedure.monjaFestivalCheckItems(13);
+                                break;
+                            case 5: // Little spawn three
+                                findSpawn.Write(5);
+                                checkSpawn.Write(13);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(5);
+                                RPCProcedure.monjaFestivalCheckItems(13);
+                                break;
+                            case 6: // Little spawn four
+                                findSpawn.Write(6);
+                                checkSpawn.Write(13);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(6);
+                                RPCProcedure.monjaFestivalCheckItems(13);
+                                break;
+                            case 7: // Cyan base
+                                checkSpawn.Write(33);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(33);
+                                MessageWriter delivertoSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                delivertoSpawn.Write(2);
+                                AmongUsClient.Instance.FinishRpcImmediately(delivertoSpawn);
+                                RPCProcedure.monjaFestivalDeliver(2);
+                                break;
+                            case 8: // Little Monja
+                                checkSpawn.Write(13);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(13);
+                                MessageWriter destroyLittleMonja = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDestroyLittleMonja, Hazel.SendOption.Reliable, -1);
+                                destroyLittleMonja.Write(MonjaFestival.cyanPlayer06currentSpawn.name);
+                                AmongUsClient.Instance.FinishRpcImmediately(destroyLittleMonja);
+                                RPCProcedure.monjaFestivalDestroyLittleMonja(MonjaFestival.cyanPlayer06currentSpawn.name);
+                                break;
+                            case 9: // Allul Monja
+                                MessageWriter deliverAllul = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                deliverAllul.Write(5);
+                                AmongUsClient.Instance.FinishRpcImmediately(deliverAllul);
+                                RPCProcedure.monjaFestivalDeliver(5);
+                                break;
+                        }
+                    }
+                    cyanmonja06PickDeliverButton.Timer = cyanmonja06PickDeliverButton.MaxTimer;
+                }
+            );
+
+            // Cyan Monja 06 button counter
+            MonjaFestival.cyanPlayer06DeliverCount = GameObject.Instantiate(cyanmonja06PickDeliverButton.actionButton.cooldownTimerText, cyanmonja06PickDeliverButton.actionButton.cooldownTimerText.transform.parent);
+            MonjaFestival.cyanPlayer06DeliverCount.enableWordWrapping = false;
+            MonjaFestival.cyanPlayer06DeliverCount.transform.localScale = Vector3.one * 0.5f;
+            MonjaFestival.cyanPlayer06DeliverCount.transform.localPosition += new Vector3(-0.06f, 0.7f, 0);
+
+            // Cyan Monja 07 find deliver button
+            cyanmonja07PickDeliverButton = new CustomButton(
+                () => {
+
+                    cyanmonja07PickDeliverButton.HasEffect = true;
+                    MonjaFestival.cyanPlayer07selectedSpawn = MonjaFestival.cyanPlayer07currentSpawn;
+
+                },
+                () => { return MonjaFestival.cyanPlayer07 != null && MonjaFestival.cyanPlayer07 == PlayerControl.LocalPlayer; },
+                () => {
+                    if (MonjaFestival.localArrows.Count != 0) {
+                        MonjaFestival.localArrows[1].Update(MonjaFestival.cyanTeamBase.transform.position);
+                    }
+
+                    if (MonjaFestival.cyanPlayer07Items == 3) {
+                        cyanmonja07PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getcyanDeliverButtonSprite();
+                    }
+                    else if (MonjaFestival.cyanPlayer07Items > 0 && MonjaFestival.cyanPlayer07Items < 3) {
+                        cyanmonja07PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getcyanPickDeliverButtonSprite();
+                    }
+                    else {
+                        cyanmonja07PickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getcyanPickButtonSprite();
+                    }
+
+                    if (cyanmonja07PickDeliverButton.isEffectActive && MonjaFestival.cyanPlayer07selectedSpawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, MonjaFestival.cyanPlayer07selectedSpawn.transform.position) > 0.75f) {
+                        MonjaFestival.cyanPlayer07selectedSpawn = null;
+                        cyanmonja07PickDeliverButton.Timer = 0f;
+                        cyanmonja07PickDeliverButton.isEffectActive = false;
+                    }
+
+                    bool CanUse = false;
+                    if (MonjaFestival.bigMonjaSpawns.Count != 0) {
+                        foreach (GameObject spawn in MonjaFestival.bigMonjaSpawns) {
+                            if (spawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, spawn.transform.position) < 0.75f) {
+                                MonjaFestival.cyanPlayer07currentSpawn = spawn;
+                                CanUse = true;
+                                if (spawn.name.StartsWith("littleMonja")) {
+                                    CanUse = MonjaFestival.cyanPlayer07Items < 3;
+                                    MonjaFestival.cyanPlayer07foundspawn = 8;
+                                }
+                                else {
+                                    switch (spawn.name) {
+                                        case "bigSpawnOne":
+                                            CanUse = MonjaFestival.bigSpawnOnePoints > 0 && MonjaFestival.cyanPlayer07Items < 3;
+                                            MonjaFestival.cyanPlayer07foundspawn = 1;
+                                            break;
+                                        case "bigSpawnTwo":
+                                            CanUse = MonjaFestival.bigSpawnTwoPoints > 0 && MonjaFestival.cyanPlayer07Items < 3;
+                                            MonjaFestival.cyanPlayer07foundspawn = 2;
+                                            break;
+                                        case "littleSpawnOne":
+                                            CanUse = MonjaFestival.littleSpawnOnePoints > 0 && MonjaFestival.cyanPlayer07Items < 3;
+                                            MonjaFestival.cyanPlayer07foundspawn = 3;
+                                            break;
+                                        case "littleSpawnTwo":
+                                            CanUse = MonjaFestival.littleSpawnTwoPoints > 0 && MonjaFestival.cyanPlayer07Items < 3;
+                                            MonjaFestival.cyanPlayer07foundspawn = 4;
+                                            break;
+                                        case "littleSpawnThree":
+                                            CanUse = MonjaFestival.littleSpawnThreePoints > 0 && MonjaFestival.cyanPlayer07Items < 3;
+                                            MonjaFestival.cyanPlayer07foundspawn = 5;
+                                            break;
+                                        case "littleSpawnFour":
+                                            CanUse = MonjaFestival.littleSpawnFourPoints > 0 && MonjaFestival.cyanPlayer07Items < 3;
+                                            MonjaFestival.cyanPlayer07foundspawn = 6;
+                                            break;
+                                        case "greenBase":
+                                            CanUse = false;
+                                            break;
+                                        case "cyanBase":
+                                            CanUse = MonjaFestival.cyanPlayer07Items > 0;
+                                            MonjaFestival.cyanPlayer07foundspawn = 7;
+                                            break;
+                                        case "greyBase":
+                                            CanUse = false;
+                                            break;
+                                        case "allulMonja":
+                                            CanUse = MonjaFestival.allulMonja.activeSelf;
+                                            MonjaFestival.cyanPlayer07foundspawn = 9;
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return CanUse && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.cyanPlayer07IsReviving;
+                },
+                () => { cyanmonja07PickDeliverButton.Timer = cyanmonja07PickDeliverButton.MaxTimer; },
+                MonjaFestival.getcyanPickButtonSprite(),
+                new Vector3(-2.1f, 0f, 0),
+                __instance,
+                KeyCode.F,
+                false,
+                3f,
+                () => {
+                    if (!MonjaFestival.cyanPlayer07.Data.IsDead) {
+                        MessageWriter findSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalFindSpawns, Hazel.SendOption.Reliable, -1);
+                        MessageWriter checkSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalCheckItems, Hazel.SendOption.Reliable, -1);
+                        switch (MonjaFestival.cyanPlayer07foundspawn) {
+                            case 1: // Big Spawn one
+                                findSpawn.Write(1);
+                                checkSpawn.Write(14);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(1);
+                                RPCProcedure.monjaFestivalCheckItems(14);
+                                break;
+                            case 2: // Big Spawn two
+                                findSpawn.Write(2);
+                                checkSpawn.Write(14);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(2);
+                                RPCProcedure.monjaFestivalCheckItems(14);
+                                break;
+                            case 3: // Little spawn one
+                                findSpawn.Write(3);
+                                checkSpawn.Write(14);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(3);
+                                RPCProcedure.monjaFestivalCheckItems(14);
+                                break;
+                            case 4: // Little spawn two
+                                findSpawn.Write(4);
+                                checkSpawn.Write(14);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(4);
+                                RPCProcedure.monjaFestivalCheckItems(14);
+                                break;
+                            case 5: // Little spawn three
+                                findSpawn.Write(5);
+                                checkSpawn.Write(14);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(5);
+                                RPCProcedure.monjaFestivalCheckItems(14);
+                                break;
+                            case 6: // Little spawn four
+                                findSpawn.Write(6);
+                                checkSpawn.Write(14);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(6);
+                                RPCProcedure.monjaFestivalCheckItems(14);
+                                break;
+                            case 7: // Cyan base
+                                checkSpawn.Write(34);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(34);
+                                MessageWriter delivertoSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                delivertoSpawn.Write(2);
+                                AmongUsClient.Instance.FinishRpcImmediately(delivertoSpawn);
+                                RPCProcedure.monjaFestivalDeliver(2);
+                                break;
+                            case 8: // Little Monja
+                                checkSpawn.Write(14);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(14);
+                                MessageWriter destroyLittleMonja = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDestroyLittleMonja, Hazel.SendOption.Reliable, -1);
+                                destroyLittleMonja.Write(MonjaFestival.cyanPlayer07currentSpawn.name);
+                                AmongUsClient.Instance.FinishRpcImmediately(destroyLittleMonja);
+                                RPCProcedure.monjaFestivalDestroyLittleMonja(MonjaFestival.cyanPlayer07currentSpawn.name);
+                                break;
+                            case 9: // Allul Monja
+                                MessageWriter deliverAllul = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                deliverAllul.Write(5);
+                                AmongUsClient.Instance.FinishRpcImmediately(deliverAllul);
+                                RPCProcedure.monjaFestivalDeliver(5);
+                                break;
+                        }
+                    }
+                    cyanmonja07PickDeliverButton.Timer = cyanmonja07PickDeliverButton.MaxTimer;
+                }
+            );
+
+            // Cyan Monja 07 button counter
+            MonjaFestival.cyanPlayer07DeliverCount = GameObject.Instantiate(cyanmonja07PickDeliverButton.actionButton.cooldownTimerText, cyanmonja07PickDeliverButton.actionButton.cooldownTimerText.transform.parent);
+            MonjaFestival.cyanPlayer07DeliverCount.enableWordWrapping = false;
+            MonjaFestival.cyanPlayer07DeliverCount.transform.localScale = Vector3.one * 0.5f;
+            MonjaFestival.cyanPlayer07DeliverCount.transform.localPosition += new Vector3(-0.07f, 0.7f, 0);
+            
+            // Big Monja find deliver button
+            bigmonjaPickDeliverButton = new CustomButton(
+                () => {
+
+                    bigmonjaPickDeliverButton.HasEffect = true;
+                    MonjaFestival.bigMonjaPlayerselectedSpawn = MonjaFestival.bigMonjaPlayercurrentSpawn;
+
+                },
+                () => { return MonjaFestival.bigMonjaPlayer != null && MonjaFestival.bigMonjaPlayer == PlayerControl.LocalPlayer; },
+                () => {
+                    if (MonjaFestival.localArrows.Count != 0) {
+                        MonjaFestival.localArrows[2].Update(MonjaFestival.bigMonjaBase.transform.position);
+                    }
+
+                    if (MonjaFestival.bigMonjaPlayerItems == 10) {
+                        bigmonjaPickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getgreyDeliverButtonSprite();
+                    }
+                    else if (MonjaFestival.bigMonjaPlayerItems > 0 && MonjaFestival.bigMonjaPlayerItems < 10) {
+                        bigmonjaPickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getgreyPickDeliverButtonSprite();
+                    }
+                    else {
+                        bigmonjaPickDeliverButton.actionButton.graphic.sprite = MonjaFestival.getgreyPickButtonSprite();
+                    }
+
+                    if (bigmonjaPickDeliverButton.isEffectActive && MonjaFestival.bigMonjaPlayerselectedSpawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, MonjaFestival.bigMonjaPlayerselectedSpawn.transform.position) > 0.75f) {
+                        MonjaFestival.bigMonjaPlayerselectedSpawn = null;
+                        bigmonjaPickDeliverButton.Timer = 0f;
+                        bigmonjaPickDeliverButton.isEffectActive = false;
+                    }
+
+                    bool CanUse = false;
+                    if (MonjaFestival.bigMonjaSpawns.Count != 0) {
+                        foreach (GameObject spawn in MonjaFestival.bigMonjaSpawns) {
+                            if (spawn != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, spawn.transform.position) < 0.75f) {
+                                MonjaFestival.bigMonjaPlayercurrentSpawn = spawn;
+                                CanUse = true;
+                                if (spawn.name.StartsWith("littleMonja")) {
+                                    CanUse = MonjaFestival.bigMonjaPlayerItems < 3;
+                                    MonjaFestival.bigMonjaPlayerfoundspawn = 8;
+                                }
+                                else {
+                                    switch (spawn.name) {
+                                        case "bigSpawnOne":
+                                            CanUse = MonjaFestival.bigSpawnOnePoints > 0 && MonjaFestival.bigMonjaPlayerItems < 10;
+                                            MonjaFestival.bigMonjaPlayerfoundspawn = 1;
+                                            break;
+                                        case "bigSpawnTwo":
+                                            CanUse = MonjaFestival.bigSpawnTwoPoints > 0 && MonjaFestival.bigMonjaPlayerItems < 10;
+                                            MonjaFestival.bigMonjaPlayerfoundspawn = 2;
+                                            break;
+                                        case "littleSpawnOne":
+                                            CanUse = MonjaFestival.littleSpawnOnePoints > 0 && MonjaFestival.bigMonjaPlayerItems < 10;
+                                            MonjaFestival.bigMonjaPlayerfoundspawn = 3;
+                                            break;
+                                        case "littleSpawnTwo":
+                                            CanUse = MonjaFestival.littleSpawnTwoPoints > 0 && MonjaFestival.bigMonjaPlayerItems < 10;
+                                            MonjaFestival.bigMonjaPlayerfoundspawn = 4;
+                                            break;
+                                        case "littleSpawnThree":
+                                            CanUse = MonjaFestival.littleSpawnThreePoints > 0 && MonjaFestival.bigMonjaPlayerItems < 10;
+                                            MonjaFestival.bigMonjaPlayerfoundspawn = 5;
+                                            break;
+                                        case "littleSpawnFour":
+                                            CanUse = MonjaFestival.littleSpawnFourPoints > 0 && MonjaFestival.bigMonjaPlayerItems < 10;
+                                            MonjaFestival.bigMonjaPlayerfoundspawn = 6;
+                                            break;
+                                        case "greenBase":
+                                            CanUse = MonjaFestival.greenPoints > 0 && MonjaFestival.bigMonjaPlayerItems < 10;
+                                            MonjaFestival.bigMonjaPlayerfoundspawn = 9;
+                                            break;
+                                        case "cyanBase":
+                                            CanUse = MonjaFestival.cyanPoints > 0 && MonjaFestival.bigMonjaPlayerItems < 10;
+                                            MonjaFestival.bigMonjaPlayerfoundspawn = 10;
+                                            break;
+                                        case "greyBase":
+                                            CanUse = MonjaFestival.bigMonjaPlayerItems > 0;
+                                            MonjaFestival.bigMonjaPlayerfoundspawn = 7;
+                                            break;
+                                        case "allulMonja":
+                                            CanUse = MonjaFestival.allulMonja.activeSelf;
+                                            MonjaFestival.bigMonjaPlayerfoundspawn = 11;
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return CanUse && PlayerControl.LocalPlayer.CanMove && !PlayerControl.LocalPlayer.Data.IsDead && !MonjaFestival.bigMonjaIsReviving;
+                },
+                () => { bigmonjaPickDeliverButton.Timer = bigmonjaPickDeliverButton.MaxTimer; },
+                MonjaFestival.getgreyPickButtonSprite(),
+                new Vector3(-2.1f, 0f, 0),
+                __instance,
+                KeyCode.F,
+                false,
+                3f,
+                () => {
+                    if (!MonjaFestival.bigMonjaPlayer.Data.IsDead) {
+                        MessageWriter findSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalFindSpawns, Hazel.SendOption.Reliable, -1);
+                        MessageWriter checkSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalCheckItems, Hazel.SendOption.Reliable, -1);
+                        switch (MonjaFestival.bigMonjaPlayerfoundspawn) {
+                            case 1: // Big Spawn one
+                                findSpawn.Write(1);
+                                checkSpawn.Write(15);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(1);
+                                RPCProcedure.monjaFestivalCheckItems(15);
+                                break;
+                            case 2: // Big Spawn two
+                                findSpawn.Write(2);
+                                checkSpawn.Write(15);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(2);
+                                RPCProcedure.monjaFestivalCheckItems(15);
+                                break;
+                            case 3: // Little spawn one
+                                findSpawn.Write(3);
+                                checkSpawn.Write(15);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(3);
+                                RPCProcedure.monjaFestivalCheckItems(15);
+                                break;
+                            case 4: // Little spawn two
+                                findSpawn.Write(4);
+                                checkSpawn.Write(15);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(4);
+                                RPCProcedure.monjaFestivalCheckItems(15);
+                                break;
+                            case 5: // Little spawn three
+                                findSpawn.Write(5);
+                                checkSpawn.Write(15);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(5);
+                                RPCProcedure.monjaFestivalCheckItems(15);
+                                break;
+                            case 6: // Little spawn four
+                                findSpawn.Write(6);
+                                checkSpawn.Write(15);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(6);
+                                RPCProcedure.monjaFestivalCheckItems(15);
+                                break;
+                            case 7: // Grey base
+                                checkSpawn.Write(35);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(35);
+                                MessageWriter delivertoSpawn = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                delivertoSpawn.Write(3);
+                                AmongUsClient.Instance.FinishRpcImmediately(delivertoSpawn);
+                                RPCProcedure.monjaFestivalDeliver(3);
+                                break;
+                            case 8: // Little Monja
+                                checkSpawn.Write(15);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalCheckItems(15);
+                                MessageWriter destroyLittleMonja = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDestroyLittleMonja, Hazel.SendOption.Reliable, -1);
+                                destroyLittleMonja.Write(MonjaFestival.bigMonjaPlayerselectedSpawn.name);
+                                AmongUsClient.Instance.FinishRpcImmediately(destroyLittleMonja);
+                                RPCProcedure.monjaFestivalDestroyLittleMonja(MonjaFestival.bigMonjaPlayerselectedSpawn.name);
+                                break;
+                            case 9: // Steal from green
+                                findSpawn.Write(7);
+                                checkSpawn.Write(15);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(7);
+                                RPCProcedure.monjaFestivalCheckItems(15);
+                                break;
+                            case 10: // Steal from cyan
+                                findSpawn.Write(8);
+                                checkSpawn.Write(15);
+                                AmongUsClient.Instance.FinishRpcImmediately(findSpawn);
+                                AmongUsClient.Instance.FinishRpcImmediately(checkSpawn);
+                                RPCProcedure.monjaFestivalFindSpawns(8);
+                                RPCProcedure.monjaFestivalCheckItems(15);
+                                break;
+                            case 11: // Allul Monja
+                                MessageWriter deliverAllul = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalDeliver, Hazel.SendOption.Reliable, -1);
+                                deliverAllul.Write(6);
+                                AmongUsClient.Instance.FinishRpcImmediately(deliverAllul);
+                                RPCProcedure.monjaFestivalDeliver(6);
+                                break;
+                        }
+                    }
+                    bigmonjaPickDeliverButton.Timer = bigmonjaPickDeliverButton.MaxTimer;
+                }
+            );
+
+            // Green Monja button counter
+            MonjaFestival.bigMonjaPlayerDeliverCount = GameObject.Instantiate(bigmonjaPickDeliverButton.actionButton.cooldownTimerText, bigmonjaPickDeliverButton.actionButton.cooldownTimerText.transform.parent);
+            MonjaFestival.bigMonjaPlayerDeliverCount.enableWordWrapping = false;
+            MonjaFestival.bigMonjaPlayerDeliverCount.transform.localScale = Vector3.one * 0.5f;
+            MonjaFestival.bigMonjaPlayerDeliverCount.transform.localPosition += new Vector3(-0.05f, 0.7f, 0); 
             
             setCustomButtonCooldowns();
         }
