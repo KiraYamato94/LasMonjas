@@ -99,19 +99,36 @@ namespace LasMonjas.Core
             return (float)selections[selection];
         }
 
-        public void updateSelection(int newSelection) {
+        public void updateSelection(int newSelection) { 
             selection = Mathf.Clamp((newSelection + selections.Length) % selections.Length, 0, selections.Length - 1);
             if (optionBehaviour != null && optionBehaviour is StringOption stringOption) {
                 stringOption.oldValue = stringOption.Value = selection;
                 stringOption.ValueText.text = selections[selection].ToString();
 
                 if (AmongUsClient.Instance?.AmHost == true && PlayerControl.LocalPlayer) {
-                    if (id == 0) switchPreset(selection); 
-                    else if (entry != null) entry.Value = selection;
-
-                    ShareOptionSelections();
+                    if (id == 0 && selection != preset) {
+                        switchPreset(selection); // Switch presets
+                        ShareOptionSelections();
+                    }
+                    else if (entry != null) {
+                        entry.Value = selection; // Save selection to config
+                        ShareOptionChange((uint)id);// Share single selection
+                    }
                 }
             }
+            else if (id == 0 && AmongUsClient.Instance?.AmHost == true && PlayerControl.LocalPlayer) {  // Share the preset
+                switchPreset(selection);
+                ShareOptionSelections();// Share all selections
+            }
+        }
+        public static void ShareOptionChange(uint optionId) {
+            var option = options.FirstOrDefault(x => x.id == optionId);
+            if (option == null) return;
+            var writer = AmongUsClient.Instance!.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ShareOptions, SendOption.Reliable, -1);
+            writer.Write((byte)1);
+            writer.WritePacked((uint)option.id);
+            writer.WritePacked(Convert.ToUInt32(option.selection));
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
         }
     }
 
