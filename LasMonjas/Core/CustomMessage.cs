@@ -29,86 +29,6 @@ namespace LasMonjas.Core {
                     bool even = ((int)(p * duration / 0.25f)) % 2 == 0;
                     switch (whichmessage) {
                         case 1:
-                            // Bomberman bomb warning
-                            if (Bomberman.activeBomb && localBombNumber == Bomberman.currentBombNumber) {
-                                string prefix = (even ? "<color=#FCBA03FF>" : "<color=#FF0000FF>");
-                                text.text = prefix + message + Bomberman.bombTimer.ToString("F0") + "</color>";
-                            }
-                            else {
-                                text.text = "";
-                            }
-                            break;
-                        case 2:
-                            // Challenger duel timer
-                            if (Challenger.isDueling && Challenger.duelDuration >= 0 && Challenger.onlyOneFinishDuel) {
-                                string prefix = (even ? "<color=#FCBA03FF>" : "<color=#4F7D00FF>");
-                                text.text = prefix + message + Challenger.duelDuration.ToString("F0") + "</color>";
-                            }
-                            else {
-                                text.text = "";
-                            }
-                            break;
-                        case 3:
-                            // Capture the flag timer
-                            if (CaptureTheFlag.captureTheFlagMode && CaptureTheFlag.matchDuration >= 0) {
-                                string prefix = ("<color=#FF8000FF>");
-                                text.text = prefix + message + CaptureTheFlag.matchDuration.ToString("F0") + "</color>";
-                            }
-                            else {
-                                text.text = "";
-                            }
-                            break;
-                        case 4:
-                            // Capture the flag which team scores
-                            if (CaptureTheFlag.captureTheFlagMode && CaptureTheFlag.matchDuration >= 0) {
-                                string prefix = ("<color=#FF8000FF>");
-                                text.text = prefix + message + "</color>";
-                            }
-                            else {
-                                text.text = "";
-                            }
-                            break;
-                        case 5:
-                            // Capture the flag point counter
-                            if (CaptureTheFlag.captureTheFlagMode && CaptureTheFlag.matchDuration >= 0) {
-                                string prefix = ("<color=#FF8000FF>");
-                                text.text = prefix + CaptureTheFlag.flagpointCounter + "</color>";
-                            }
-                            else {
-                                text.text = "";
-                            }
-                            break;
-                        case 6:
-                            // Polic and thiefs timer
-                            if (PoliceAndThief.policeAndThiefMode && PoliceAndThief.matchDuration >= 0) {
-                                string prefix = ("<color=#FF8000FF>");
-                                text.text = prefix + message + PoliceAndThief.matchDuration.ToString("F0") + "</color>";
-                            }
-                            else {
-                                text.text = "";
-                            }
-                            break;
-                        case 7:
-                            // Police and thiefs warnings
-                            if (PoliceAndThief.policeAndThiefMode && PoliceAndThief.matchDuration >= 0) {
-                                string prefix = ("<color=#FF8000FF>");
-                                text.text = prefix + message + "</color>";
-                            }
-                            else {
-                                text.text = "";
-                            }
-                            break;
-                        case 8:
-                            // Police and thiefs point counter
-                            if (PoliceAndThief.policeAndThiefMode && PoliceAndThief.matchDuration >= 0) {
-                                string prefix = ("<color=#FF8000FF>");
-                                text.text = prefix + PoliceAndThief.thiefpointCounter + "</color>";
-                            }
-                            else {
-                                text.text = "";
-                            }
-                            break;
-                        case 9:
                             // Illusionist light out ability timer for other impostors
                             if (Illusionist.lightsOutTimer > 0) {
                                 string prefix = (even ? "<color=#FCBA03FF>" : "<color=#FF0000FF>");
@@ -118,47 +38,17 @@ namespace LasMonjas.Core {
                                 text.text = "";
                             }
                             break;
-                        case 10:
-                            // King of the hill timer
-                            if (KingOfTheHill.kingOfTheHillMode && KingOfTheHill.matchDuration >= 0) {
-                                string prefix = ("<color=#FF8000FF>");
-                                text.text = prefix + message + KingOfTheHill.matchDuration.ToString("F0") + "</color>";
+                        case 2:
+                            // Bomberman bomb warning
+                            if (Bomberman.activeBomb && localBombNumber == Bomberman.currentBombNumber) {
+                                string prefix = (even ? "<color=#FCBA03FF>" : "<color=#FF0000FF>");
+                                text.text = prefix + message + Bomberman.bombTimer.ToString("F0") + "</color>";
                             }
                             else {
                                 text.text = "";
                             }
                             break;
-                        case 11:
-                            // King of the hill which team captures
-                            if (KingOfTheHill.kingOfTheHillMode && KingOfTheHill.matchDuration >= 0) {
-                                string prefix = ("<color=#FF8000FF>");
-                                text.text = prefix + message + "</color>";
-                            }
-                            else {
-                                text.text = "";
-                            }
-                            break;
-                        case 12:
-                            // King of the hill point counter
-                            if (KingOfTheHill.kingOfTheHillMode && KingOfTheHill.matchDuration >= 0) {
-                                string prefix = ("<color=#FF8000FF>");
-                                text.text = prefix + KingOfTheHill.kingpointCounter + "</color>";
-                            }
-                            else {
-                                text.text = "";
-                            }
-                            break;
-                        case 13:
-                            // Fink camera use for other impostors
-                            if (Fink.finkTimer > 0) {
-                                string prefix = (even ? "<color=#FCBA03FF>" : "<color=#B80032FF>");
-                                text.text = prefix + message + "</color>";
-                            }
-                            else {
-                                text.text = "";
-                            }
-                            break;
-                        case 14:
+                        case 3:
                             // Petrify text
                             if (Medusa.messageTimer > 0) {
                                 string prefix = (even ? "<color=#FCBA03FF>" : "<color=#FF0000FF>");
@@ -168,77 +58,7 @@ namespace LasMonjas.Core {
                                 text.text = "";
                             }
                             break;
-                        case 15:
-                            // Hot potato game timer
-                            if (HotPotato.hotPotatoMode && HotPotato.matchDuration >= 0) {
-                                string prefix = ("<color=#FF8000FF>");
-                                text.text = prefix + message + HotPotato.matchDuration.ToString("F0") + "</color>";
-                            }
-                            else {
-                                text.text = "";
-                            }
-                            break;
-                        case 16:
-                            // Hot potato potato changed
-                            if (HotPotato.hotPotatoMode && HotPotato.matchDuration >= 0) {
-                                string prefix = ("<color=#FF8000FF>");
-                                text.text = prefix + message + "</color>";
-                            }
-                            else {
-                                text.text = "";
-                            }
-                            break;
-                        case 17:
-                            // Hot potato counter
-                            if (HotPotato.hotPotatoMode && HotPotato.matchDuration >= 0) {
-                                string prefix = ("<color=#FF8000FF>");
-                                text.text = prefix + HotPotato.hotpotatopointCounter + "</color>";
-                            }
-                            else {
-                                text.text = "";
-                            }
-                            break;
-                        case 18:
-                            // Hot potato timer
-                            if (HotPotato.hotPotatoMode && HotPotato.matchDuration >= 0) {
-                                string prefix = ("<color=#FF8000FF>");
-                                text.text = prefix + message + HotPotato.timeforTransfer.ToString("F0") + "</color>";
-                            }
-                            else {
-                                text.text = "";
-                            }
-                            break;
-                        case 19:
-                            // ZombieLaboratory timer
-                            if (ZombieLaboratory.zombieLaboratoryMode && ZombieLaboratory.matchDuration >= 0) {
-                                string prefix = ("<color=#FF8000FF>");
-                                text.text = prefix + message + ZombieLaboratory.matchDuration.ToString("F0") + "</color>";
-                            }
-                            else {
-                                text.text = "";
-                            }
-                            break;
-                        case 20:
-                            // ZombieLaboratory point counter
-                            if (ZombieLaboratory.zombieLaboratoryMode && ZombieLaboratory.matchDuration >= 0) {
-                                string prefix = ("<color=#FF8000FF>");
-                                text.text = prefix + ZombieLaboratory.zombieLaboratoryCounter + "</color>";
-                            }
-                            else {
-                                text.text = "";
-                            }
-                            break;
-                        case 21:
-                            // ZombieLaboratory warnings
-                            if (ZombieLaboratory.zombieLaboratoryMode && ZombieLaboratory.matchDuration >= 0) {
-                                string prefix = ("<color=#FF8000FF>");
-                                text.text = prefix + message + "</color>";
-                            }
-                            else {
-                                text.text = "";
-                            }
-                            break;
-                        case 22:
+                        case 4:
                             // Hypnotized text
                             if (Hypnotist.messageTimer > 0) {
                                 string prefix = (even ? "<color=#FCBA03FF>" : "<color=#FF0000FF>");
@@ -248,47 +68,17 @@ namespace LasMonjas.Core {
                                 text.text = "";
                             }
                             break;
-                        case 23:
-                            // Speed text
-                            if (Engineer.messageTimer > 0) {
-                                string prefix = (even ? "<color=#FCBA03FF>" : "<color=#7F4C32FF>");
-                                text.text = prefix + message + "</color>";
+                        case 5:
+                            // Challenger duel timer
+                            if (Challenger.isDueling && Challenger.duelDuration >= 0 && Challenger.onlyOneFinishDuel) {
+                                string prefix = (even ? "<color=#FCBA03FF>" : "<color=#4F7D00FF>");
+                                text.text = prefix + message + Challenger.duelDuration.ToString("F0") + "</color>";
                             }
                             else {
                                 text.text = "";
                             }
                             break;
-                        case 24:
-                            // Battle Royale timer
-                            if (BattleRoyale.battleRoyaleMode && BattleRoyale.matchDuration >= 0) {
-                                string prefix = ("<color=#FF8000FF>");
-                                text.text = prefix + message + BattleRoyale.matchDuration.ToString("F0") + "</color>";
-                            }
-                            else {
-                                text.text = "";
-                            }
-                            break;
-                        case 25:
-                            // Battle Royale point counter
-                            if (BattleRoyale.battleRoyaleMode && BattleRoyale.matchDuration >= 0) {
-                                string prefix = ("<color=#FF8000FF>");
-                                text.text = prefix + BattleRoyale.battleRoyalepointCounter + "</color>";
-                            }
-                            else {
-                                text.text = "";
-                            }
-                            break;
-                        case 26:
-                            // Battle Royale warnings
-                            if (BattleRoyale.battleRoyaleMode && BattleRoyale.matchDuration >= 0) {
-                                string prefix = ("<color=#FF8000FF>");
-                                text.text = prefix + message + "</color>";
-                            }
-                            else {
-                                text.text = "";
-                            }
-                            break;
-                        case 27:
+                        case 6:
                             // Monja text
                             if (Monja.awakened && Monja.awakenTimer > 0) {
                                 string prefix = (even ? "<color=#FCBA03FF>" : "<color=#FF0000FF>");
@@ -298,7 +88,7 @@ namespace LasMonjas.Core {
                                 text.text = "";
                             }
                             break;
-                        case 28:
+                        case 7:
                             // Seeker minigame timer
                             if (Seeker.isMinigaming && Seeker.minigameDuration >= 0 && Seeker.onlyOneFinishMinigame) {
                                 string prefix = (even ? "<color=#FCBA03FF>" : "<color=#808080FF>");
@@ -308,7 +98,7 @@ namespace LasMonjas.Core {
                                 text.text = "";
                             }
                             break;
-                        case 29:
+                        case 8:
                             // Seeker points warning text
                             if (Seeker.isMinigaming) {
                                 string prefix = (even ? "<color=#FCBA03FF>" : "<color=#808080FF>");
@@ -318,19 +108,39 @@ namespace LasMonjas.Core {
                                 text.text = "";
                             }
                             break;
-                        case 30:
-                            // Monja Festival timer
-                            if (MonjaFestival.monjaFestivalMode && MonjaFestival.matchDuration >= 0) {
-                                string prefix = ("<color=#FF8000FF>");
-                                text.text = prefix + message + MonjaFestival.matchDuration.ToString("F0") + "</color>";
+                        case 9:
+                            // Fink camera use for other impostors
+                            if (Fink.finkTimer > 0) {
+                                string prefix = (even ? "<color=#FCBA03FF>" : "<color=#B80032FF>");
+                                text.text = prefix + message + "</color>";
                             }
                             else {
                                 text.text = "";
                             }
                             break;
-                        case 31:
-                            // Monja Festival steal
-                            if (MonjaFestival.monjaFestivalMode && MonjaFestival.matchDuration >= 0) {
+                        case 10:
+                            // Speed text
+                            if (Engineer.messageTimer > 0) {
+                                string prefix = (even ? "<color=#FCBA03FF>" : "<color=#7F4C32FF>");
+                                text.text = prefix + message + "</color>";
+                            }
+                            else {
+                                text.text = "";
+                            }
+                            break;
+                        case 15:
+                            // Gamemode match duration
+                            if (LasMonjas.gameType >= 2 && LasMonjas.gamemodeMatchDuration >= 0) {
+                                string prefix = ("<color=#FF8000FF>");
+                                text.text = prefix + message + LasMonjas.gamemodeMatchDuration.ToString("F0") + "</color>";
+                            }
+                            else {
+                                text.text = "";
+                            }
+                            break;
+                        case 16:
+                            // Gamemode warnings
+                            if (LasMonjas.gameType >= 2 && LasMonjas.gamemodeMatchDuration >= 0) {
                                 string prefix = ("<color=#FF8000FF>");
                                 text.text = prefix + message + "</color>";
                             }
@@ -338,11 +148,43 @@ namespace LasMonjas.Core {
                                 text.text = "";
                             }
                             break;
-                        case 32:
-                            // Monja Festival point counter
-                            if (MonjaFestival.monjaFestivalMode && MonjaFestival.matchDuration >= 0) {
+                        case 17:
+                            // Gamemode progress counter
+                            if (LasMonjas.gameType >= 2 && LasMonjas.gamemodeMatchDuration >= 0) {
                                 string prefix = ("<color=#FF8000FF>");
-                                text.text = prefix + MonjaFestival.monjaFestivalCounter + "</color>";
+                                switch (LasMonjas.gameType) {
+                                    case 2:
+                                        text.text = prefix + CaptureTheFlag.flagpointCounter + "</color>";
+                                        break;
+                                    case 3:
+                                        text.text = prefix + PoliceAndThief.thiefpointCounter + "</color>";
+                                        break;
+                                    case 4:
+                                        text.text = prefix + KingOfTheHill.kingpointCounter + "</color>";
+                                        break;
+                                    case 5:
+                                        text.text = prefix + HotPotato.hotpotatopointCounter + "</color>";
+                                        break;
+                                    case 6:
+                                        text.text = prefix + ZombieLaboratory.zombieLaboratoryCounter + "</color>";
+                                        break;
+                                    case 7:
+                                        text.text = prefix + BattleRoyale.battleRoyalepointCounter + "</color>";
+                                        break;
+                                    case 8:
+                                        text.text = prefix + MonjaFestival.monjaFestivalCounter + "</color>";
+                                        break;
+                                }
+                            }
+                            else {
+                                text.text = "";
+                            }
+                            break; 
+                        case 18:
+                            // Hot potato timer
+                            if (LasMonjas.gameType == 5 && LasMonjas.gamemodeMatchDuration >= 0) {
+                                string prefix = ("<color=#FF8000FF>");
+                                text.text = prefix + message + HotPotato.timeforTransfer.ToString("F0") + "</color>";
                             }
                             else {
                                 text.text = "";

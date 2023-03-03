@@ -1,8 +1,6 @@
 ﻿using Reactor.Utilities.Extensions;
-using System.IO;
 using System.Reflection;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace LasMonjas.Core
 {
@@ -18,7 +16,7 @@ namespace LasMonjas.Core
         private static AssetBundle AssetBundleNamePlates;
         private static AssetBundle AssetBundleVisors;
 
-        public static void LoadAssets() { 
+        public static void LoadAssets() {
 
             // Custom Bundle Assets
             var resourceStreamBundle = allulCustomBundle.GetManifestResourceStream("LasMonjas.Images.MyAssets.allulcustombundle");
@@ -32,7 +30,7 @@ namespace LasMonjas.Core
             CustomMain.customAssets.janitorDragBody = assetBundleBundle.LoadAsset<AudioClip>("janitorDragBody_Equip2.ogg").DontUnload();
             CustomMain.customAssets.janitorDropBody_Fall = assetBundleBundle.LoadAsset<AudioClip>("janitorDropBody_Fall.ogg").DontUnload();
             CustomMain.customAssets.illusionistHat = assetBundleBundle.LoadAsset<AudioClip>("illusionistHat_Equip3.ogg").DontUnload();
-            CustomMain.customAssets.illusionistLightsOut = assetBundleBundle.LoadAsset<AudioClip>("illusionistLightsOut_Thunder9.ogg").DontUnload(); 
+            CustomMain.customAssets.illusionistLightsOut = assetBundleBundle.LoadAsset<AudioClip>("illusionistLightsOut_Thunder9.ogg").DontUnload();
             CustomMain.customAssets.bombermanBomb = assetBundleBundle.LoadAsset<GameObject>("Bomb.prefab").DontUnload();
             CustomMain.customAssets.bombermanPlaceBombClip = assetBundleBundle.LoadAsset<AudioClip>("bombermanPlaceBombClip_Switch2.ogg").DontUnload();
             CustomMain.customAssets.bombermanBombClip = assetBundleBundle.LoadAsset<AudioClip>("bombermanBombClip_Explosion2.ogg").DontUnload();
@@ -42,7 +40,7 @@ namespace LasMonjas.Core
             CustomMain.customAssets.hypnotistReverse = assetBundleBundle.LoadAsset<GameObject>("hypnotistReverse.prefab").DontUnload();
             CustomMain.customAssets.archerBowClip = assetBundleBundle.LoadAsset<AudioClip>("archer_Bow3.ogg").DontUnload();
             CustomMain.customAssets.archerPickBow = assetBundleBundle.LoadAsset<AudioClip>("archerPickBow_Bow4.ogg").DontUnload();
-            
+
             CustomMain.customAssets.renegadeRecruitMinionClip = assetBundleBundle.LoadAsset<AudioClip>("renegadeRecruitMinionClip_Sword4.ogg").DontUnload();
             CustomMain.customAssets.bountyExilerTarget = assetBundleBundle.LoadAsset<AudioClip>("bountyExilerTarget_Stare.ogg").DontUnload();
             CustomMain.customAssets.trapperMine = assetBundleBundle.LoadAsset<GameObject>("mine.prefab").DontUnload();
@@ -104,7 +102,7 @@ namespace LasMonjas.Core
             CustomMain.customAssets.shyThere = assetBundleBundle.LoadAsset<AudioClip>("shyThere_Ice7.ogg").DontUnload();
             CustomMain.customAssets.jailerJail = assetBundleBundle.LoadAsset<AudioClip>("jailerJail_Close3.ogg").DontUnload();
 
-            CustomMain.customAssets.performerDio = assetBundleBundle.LoadAsset<GameObject>("dio.prefab").DontUnload();            
+            CustomMain.customAssets.performerDio = assetBundleBundle.LoadAsset<GameObject>("dio.prefab").DontUnload();
             CustomMain.customAssets.paintballDeath = assetBundleBundle.LoadAsset<AudioClip>("paintballDeath_Absorb1.ogg").DontUnload();
             CustomMain.customAssets.susBoxThreeColor = assetBundleBundle.LoadAsset<GameObject>("susBoxThreeColor.prefab").DontUnload();
             CustomMain.customAssets.susBoxRed = assetBundleBundle.LoadAsset<GameObject>("susBoxRed.prefab").DontUnload();
@@ -165,15 +163,15 @@ namespace LasMonjas.Core
 
             // Monja Festival
             CustomMain.customAssets.greenBaseEmpty = assetBundleBundle.LoadAsset<GameObject>("MonjaFestival_GreenBox_Empty.prefab").DontUnload();
-            CustomMain.customAssets.greenBaseFull = assetBundleBundle.LoadAsset<GameObject>("MonjaFestival_GreenBox_Full.prefab").DontUnload(); 
+            CustomMain.customAssets.greenBaseFull = assetBundleBundle.LoadAsset<GameObject>("MonjaFestival_GreenBox_Full.prefab").DontUnload();
             CustomMain.customAssets.cyanBaseEmpty = assetBundleBundle.LoadAsset<GameObject>("MonjaFestival_CyanBox_Empty.prefab").DontUnload();
-            CustomMain.customAssets.cyanBaseFull = assetBundleBundle.LoadAsset<GameObject>("MonjaFestival_CyanBox_Full.prefab").DontUnload();           
+            CustomMain.customAssets.cyanBaseFull = assetBundleBundle.LoadAsset<GameObject>("MonjaFestival_CyanBox_Full.prefab").DontUnload();
             CustomMain.customAssets.greyBaseEmpty = assetBundleBundle.LoadAsset<GameObject>("MonjaFestival_GreyBox_Empty.prefab").DontUnload();
             CustomMain.customAssets.greyBaseFull = assetBundleBundle.LoadAsset<GameObject>("MonjaFestival_GreyBox_Full.prefab").DontUnload();
             CustomMain.customAssets.bigSpawnOneEmpty = assetBundleBundle.LoadAsset<GameObject>("MonjaFestival_BigSpawn_Empty.prefab").DontUnload();
-            CustomMain.customAssets.bigSpawnOneFull = assetBundleBundle.LoadAsset<GameObject>("MonjaFestival_BigSpawn_Full.prefab").DontUnload();           
+            CustomMain.customAssets.bigSpawnOneFull = assetBundleBundle.LoadAsset<GameObject>("MonjaFestival_BigSpawn_Full.prefab").DontUnload();
             CustomMain.customAssets.littleSpawnOneEmpty = assetBundleBundle.LoadAsset<GameObject>("MonjaFestival_LittleSpawn_Empty.prefab").DontUnload();
-            CustomMain.customAssets.littleSpawnOneFull = assetBundleBundle.LoadAsset<GameObject>("MonjaFestival_LittleSpawn_Full.prefab").DontUnload();            
+            CustomMain.customAssets.littleSpawnOneFull = assetBundleBundle.LoadAsset<GameObject>("MonjaFestival_LittleSpawn_Full.prefab").DontUnload();
             CustomMain.customAssets.pickOneGreenMonja = assetBundleBundle.LoadAsset<GameObject>("MonjaFestival_OneGreenPick.prefab").DontUnload();
             CustomMain.customAssets.pickTwoGreenMonja = assetBundleBundle.LoadAsset<GameObject>("MonjaFestival_TwoGreenPick.prefab").DontUnload();
             CustomMain.customAssets.pickThreeGreenMonja = assetBundleBundle.LoadAsset<GameObject>("MonjaFestival_ThreeGreenPick.prefab").DontUnload();
@@ -215,12 +213,12 @@ namespace LasMonjas.Core
             CustomMain.customAssets.winCrewmatesMusic = assetBundleMusic.LoadAsset<AudioClip>("WinCremates_Take a Chance.mp3").DontUnload();
             CustomMain.customAssets.winImpostorsMusic = assetBundleMusic.LoadAsset<AudioClip>("WinImpostors_Who Likes to Party.mp3").DontUnload();
             CustomMain.customAssets.winNeutralsMusic = assetBundleMusic.LoadAsset<AudioClip>("WinNeutrals_Mistake the Getaway.mp3").DontUnload();
-            CustomMain.customAssets.winRebelsMusic = assetBundleMusic.LoadAsset<AudioClip>("WinRebels_Danse Macabre - Low Strings Finale.mp3").DontUnload(); 
+            CustomMain.customAssets.winRebelsMusic = assetBundleMusic.LoadAsset<AudioClip>("WinRebels_Danse Macabre - Low Strings Finale.mp3").DontUnload();
             CustomMain.customAssets.bombermanBombMusic = assetBundleMusic.LoadAsset<AudioClip>("BombermanTheme_Run Amok.mp3").DontUnload();
             CustomMain.customAssets.challengerDuelMusic = assetBundleMusic.LoadAsset<AudioClip>("ChallengerTheme_FutureGladiator.mp3").DontUnload();
             CustomMain.customAssets.monjaAwakeMusic = assetBundleMusic.LoadAsset<AudioClip>("MonjaAwakened_TheArmyofMinotaur.mp3").DontUnload();
             CustomMain.customAssets.seekerMinigameMusic = assetBundleMusic.LoadAsset<AudioClip>("SeekerMinigame_Jaunty Gumption.mp3").DontUnload();
-            CustomMain.customAssets.performerMusic = assetBundleMusic.LoadAsset<AudioClip>("PerformerTheme_Spazzmatica Polka.mp3").DontUnload();                       
+            CustomMain.customAssets.performerMusic = assetBundleMusic.LoadAsset<AudioClip>("PerformerTheme_Spazzmatica Polka.mp3").DontUnload();
 
             // Custom Gamemode Music Assets
             var resourceGamemodeMusicStream = allulCustomGamemodeMusic.GetManifestResourceStream("LasMonjas.Images.MyAssets.allulcustomgamemodemusic");

@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using BepInEx;
-using BepInEx.IL2CPP;
+﻿using System.Collections.Generic;
 using HarmonyLib;
-using BepInEx.Logging;
 using UnityEngine;
 using System.Linq;
 
@@ -61,7 +56,7 @@ namespace LasMonjas.Core
             public static void Postfix(HatManager __instance) {
 
                 if (!_customVisorLoaded) {
-                    var allVisors = __instance.allVisors.ToList(); ;
+                    var allVisors = __instance.allVisors.ToList();
 
                     foreach (var data in authorDatas) {
                         VisorID++;

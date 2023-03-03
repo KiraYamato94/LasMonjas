@@ -7,7 +7,6 @@ using HarmonyLib;
 using Hazel;
 using System.Reflection;
 using System.Text;
-using static LasMonjas.LasMonjas;
 using AmongUs.GameOptions;
 
 namespace LasMonjas.Core
@@ -136,7 +135,7 @@ namespace LasMonjas.Core
     class GameOptionsMenuStartPatch
     {
         public static void Postfix(GameOptionsMenu __instance) {
-            if (GameObject.Find("LasMonjasSettings") != null) { 
+            if (GameObject.Find("LasMonjasSettings") != null) {
                 GameObject.Find("LasMonjasSettings").transform.FindChild("GameGroup").FindChild("Text").GetComponent<TMPro.TextMeshPro>().SetText("Las Monjas - Settings");
                 return;
             }
@@ -160,9 +159,14 @@ namespace LasMonjas.Core
                 GameObject.Find("LasMonjasNeutrals").transform.FindChild("GameGroup").FindChild("Text").GetComponent<TMPro.TextMeshPro>().SetText("Las Monjas - Neutrals");
                 return;
             }
-            
+
             if (GameObject.Find("LasMonjasCrewmates") != null) {
                 GameObject.Find("LasMonjasCrewmates").transform.FindChild("GameGroup").FindChild("Text").GetComponent<TMPro.TextMeshPro>().SetText("Las Monjas - Crewmates");
+                return;
+            }
+
+            if (GameObject.Find("LasMonjasModifiers") != null) {
+                GameObject.Find("LasMonjasModifiers").transform.FindChild("GameGroup").FindChild("Text").GetComponent<TMPro.TextMeshPro>().SetText("Las Monjas - Modifiers");
                 return;
             }
 
@@ -177,8 +181,8 @@ namespace LasMonjas.Core
 
             var lasMonjasGamemodes = UnityEngine.Object.Instantiate(gameSettings, gameSettings.transform.parent);
             var lasMonjasGamemodesMenu = lasMonjasGamemodes.transform.FindChild("GameGroup").FindChild("SliderInner").GetComponent<GameOptionsMenu>();
-            lasMonjasGamemodes.name = "LasMonjasGamemodes"; 
-            
+            lasMonjasGamemodes.name = "LasMonjasGamemodes";
+
             var lasMonjasImpostors = UnityEngine.Object.Instantiate(gameSettings, gameSettings.transform.parent);
             var lasMonjasImpostorsMenu = lasMonjasImpostors.transform.FindChild("GameGroup").FindChild("SliderInner").GetComponent<GameOptionsMenu>();
             lasMonjasImpostors.name = "LasMonjasImpostors";
@@ -186,15 +190,19 @@ namespace LasMonjas.Core
             var lasMonjasRebels = UnityEngine.Object.Instantiate(gameSettings, gameSettings.transform.parent);
             var lasMonjasRebelsMenu = lasMonjasRebels.transform.FindChild("GameGroup").FindChild("SliderInner").GetComponent<GameOptionsMenu>();
             lasMonjasRebels.name = "LasMonjasRebels";
-            
+
             var lasMonjasNeutrals = UnityEngine.Object.Instantiate(gameSettings, gameSettings.transform.parent);
             var lasMonjasNeutralsMenu = lasMonjasNeutrals.transform.FindChild("GameGroup").FindChild("SliderInner").GetComponent<GameOptionsMenu>();
             lasMonjasNeutrals.name = "LasMonjasNeutrals";
 
             var lasMonjasCrewmates = UnityEngine.Object.Instantiate(gameSettings, gameSettings.transform.parent);
             var lasMonjasCrewmatesMenu = lasMonjasCrewmates.transform.FindChild("GameGroup").FindChild("SliderInner").GetComponent<GameOptionsMenu>();
-            lasMonjasCrewmates.name = "LasMonjasCrewmates"; 
-            
+            lasMonjasCrewmates.name = "LasMonjasCrewmates";
+
+            var lasMonjasModifiers = UnityEngine.Object.Instantiate(gameSettings, gameSettings.transform.parent);
+            var lasMonjasModifiersMenu = lasMonjasModifiers.transform.FindChild("GameGroup").FindChild("SliderInner").GetComponent<GameOptionsMenu>();
+            lasMonjasModifiers.name = "LasMonjasModifiers"; 
+
             var roleTab = GameObject.Find("RoleTab");
             var gameTab = GameObject.Find("GameTab");
 
@@ -207,7 +215,7 @@ namespace LasMonjas.Core
             var lasMonjasGamemodeTabHighlight = lasMonjasGamemodeTab.transform.FindChild("Hat Button").FindChild("Tab Background").GetComponent<SpriteRenderer>();
             lasMonjasGamemodeTab.transform.FindChild("Hat Button").FindChild("Icon").GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("LasMonjas.Images.TabIconGamemodes.png", 100f);
             lasMonjasGamemodeTab.name = "LasMonjasGamemodesTab"; 
-            
+
             var lasMonjasImpostorTab = UnityEngine.Object.Instantiate(roleTab, roleTab.transform.parent);
             var lasMonjasImpostorTabHighlight = lasMonjasImpostorTab.transform.FindChild("Hat Button").FindChild("Tab Background").GetComponent<SpriteRenderer>();
             lasMonjasImpostorTab.transform.FindChild("Hat Button").FindChild("Icon").GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("LasMonjas.Images.TabIconImpostors.png", 100f);
@@ -216,8 +224,8 @@ namespace LasMonjas.Core
             var lasMonjasRebelTab = UnityEngine.Object.Instantiate(roleTab, roleTab.transform.parent);
             var lasMonjasRebelTabHighlight = lasMonjasRebelTab.transform.FindChild("Hat Button").FindChild("Tab Background").GetComponent<SpriteRenderer>();
             lasMonjasRebelTab.transform.FindChild("Hat Button").FindChild("Icon").GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("LasMonjas.Images.TabIconRebels.png", 100f);
-            lasMonjasRebelTab.name = "LasMonjasRebelsTab"; 
-            
+            lasMonjasRebelTab.name = "LasMonjasRebelsTab";
+
             var lasMonjasNeutralTab = UnityEngine.Object.Instantiate(roleTab, roleTab.transform.parent);
             var lasMonjasNeutralTabHighlight = lasMonjasNeutralTab.transform.FindChild("Hat Button").FindChild("Tab Background").GetComponent<SpriteRenderer>();
             lasMonjasNeutralTab.transform.FindChild("Hat Button").FindChild("Icon").GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("LasMonjas.Images.TabIconNeutrals.png", 100f);
@@ -228,17 +236,23 @@ namespace LasMonjas.Core
             lasMonjasCrewmateTab.transform.FindChild("Hat Button").FindChild("Icon").GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("LasMonjas.Images.TabIconCrewmates.png", 100f);
             lasMonjasCrewmateTab.name = "LasMonjasCrewmatesTab";
 
+            var lasMonjasModifiersTab = UnityEngine.Object.Instantiate(roleTab, roleTab.transform.parent);
+            var lasMonjasModifiersTabHighlight = lasMonjasModifiersTab.transform.FindChild("Hat Button").FindChild("Tab Background").GetComponent<SpriteRenderer>();
+            lasMonjasModifiersTab.transform.FindChild("Hat Button").FindChild("Icon").GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("LasMonjas.Images.TabIconModifiers.png", 100f);
+            lasMonjasModifiersTab.name = "LasMonjasModifiersTab";
+
             // Position of Tab Icons
             gameTab.transform.position += Vector3.left * 3.5f;
             roleTab.transform.position += Vector3.left * 3.5f;
             lasMonjasTab.transform.position += Vector3.left * 2.5f;
-            lasMonjasGamemodeTab.transform.position += Vector3.left * 1.5f;
-            lasMonjasImpostorTab.transform.position += Vector3.left * 0.5f;
-            lasMonjasRebelTab.transform.position += Vector3.right * 0.5f;
-            lasMonjasNeutralTab.transform.position += Vector3.right * 1.5f;
-            lasMonjasCrewmateTab.transform.position += Vector3.right * 2.5f;
+            lasMonjasGamemodeTab.transform.position += Vector3.left * 1.75f;
+            lasMonjasImpostorTab.transform.position += Vector3.left * 1f;
+            lasMonjasRebelTab.transform.position += Vector3.left * 0.25f;
+            lasMonjasNeutralTab.transform.position += Vector3.right * 0.5f;
+            lasMonjasCrewmateTab.transform.position += Vector3.right * 1.25f;
+            lasMonjasModifiersTab.transform.position += Vector3.right * 2f;
 
-            var tabs = new GameObject[] { gameTab, roleTab, lasMonjasTab, lasMonjasGamemodeTab, lasMonjasImpostorTab, lasMonjasRebelTab, lasMonjasNeutralTab, lasMonjasCrewmateTab };
+            var tabs = new GameObject[] { gameTab, roleTab, lasMonjasTab, lasMonjasGamemodeTab, lasMonjasImpostorTab, lasMonjasRebelTab, lasMonjasNeutralTab, lasMonjasCrewmateTab, lasMonjasModifiersTab };
             for (int i = 0; i < tabs.Length; i++) {
                 var button = tabs[i].GetComponentInChildren<PassiveButton>();
                 if (button == null) continue;
@@ -252,7 +266,8 @@ namespace LasMonjas.Core
                     lasMonjasImpostors.gameObject.SetActive(false);
                     lasMonjasRebels.gameObject.SetActive(false);
                     lasMonjasNeutrals.gameObject.SetActive(false);
-                    lasMonjasCrewmates.gameObject.SetActive(false); 
+                    lasMonjasCrewmates.gameObject.SetActive(false);
+                    lasMonjasModifiers.gameObject.SetActive(false);
                     gameSettingMenu.GameSettingsHightlight.enabled = false;
                     gameSettingMenu.RolesSettingsHightlight.enabled = false;
                     lasMonjasTabHighlight.enabled = false;
@@ -260,38 +275,45 @@ namespace LasMonjas.Core
                     lasMonjasImpostorTabHighlight.enabled = false;
                     lasMonjasRebelTabHighlight.enabled = false;
                     lasMonjasNeutralTabHighlight.enabled = false;
-                    lasMonjasCrewmateTabHighlight.enabled = false; 
-                    if (copiedIndex == 0) {
-                        gameSettingMenu.RegularGameSettings.SetActive(true);
-                        gameSettingMenu.GameSettingsHightlight.enabled = true;
-                    }
-                    else if (copiedIndex == 1) {
-                        gameSettingMenu.RolesSettings.gameObject.SetActive(true);
-                        gameSettingMenu.RolesSettingsHightlight.enabled = true;
-                    }
-                    else if (copiedIndex == 2) {
-                        lasMonjasSettings.gameObject.SetActive(true);
-                        lasMonjasTabHighlight.enabled = true;
-                    }
-                    else if (copiedIndex == 3) {
-                        lasMonjasGamemodes.gameObject.SetActive(true);
-                        lasMonjasGamemodeTabHighlight.enabled = true;
-                    }
-                    else if (copiedIndex == 4) {
-                        lasMonjasImpostors.gameObject.SetActive(true);
-                        lasMonjasImpostorTabHighlight.enabled = true;
-                    }
-                    else if (copiedIndex == 5) {
-                        lasMonjasRebels.gameObject.SetActive(true);
-                        lasMonjasRebelTabHighlight.enabled = true;
-                    }
-                    else if (copiedIndex == 6) {
-                        lasMonjasNeutrals.gameObject.SetActive(true);
-                        lasMonjasNeutralTabHighlight.enabled = true;
-                    }
-                    else if (copiedIndex == 7) {
-                        lasMonjasCrewmates.gameObject.SetActive(true);
-                        lasMonjasCrewmateTabHighlight.enabled = true;
+                    lasMonjasCrewmateTabHighlight.enabled = false;
+                    lasMonjasModifiersTabHighlight.enabled = false;
+                    switch (copiedIndex) {
+                        case 0:
+                            gameSettingMenu.RegularGameSettings.SetActive(true);
+                            gameSettingMenu.GameSettingsHightlight.enabled = true;
+                            break;
+                        case 1:
+                            gameSettingMenu.RolesSettings.gameObject.SetActive(true);
+                            gameSettingMenu.RolesSettingsHightlight.enabled = true;
+                            break;
+                        case 2:
+                            lasMonjasSettings.gameObject.SetActive(true);
+                            lasMonjasTabHighlight.enabled = true;
+                            break;
+                        case 3:
+                            lasMonjasGamemodes.gameObject.SetActive(true);
+                            lasMonjasGamemodeTabHighlight.enabled = true;
+                            break;
+                        case 4:
+                            lasMonjasImpostors.gameObject.SetActive(true);
+                            lasMonjasImpostorTabHighlight.enabled = true;
+                            break;
+                        case 5:
+                            lasMonjasRebels.gameObject.SetActive(true);
+                            lasMonjasRebelTabHighlight.enabled = true;
+                            break;
+                        case 6:
+                            lasMonjasNeutrals.gameObject.SetActive(true);
+                            lasMonjasNeutralTabHighlight.enabled = true;
+                            break;
+                        case 7:
+                            lasMonjasCrewmates.gameObject.SetActive(true);
+                            lasMonjasCrewmateTabHighlight.enabled = true;
+                            break;
+                        case 8:
+                            lasMonjasModifiers.gameObject.SetActive(true);
+                            lasMonjasModifiersTabHighlight.enabled = true;
+                            break;
                     }
                 }));
             }
@@ -302,51 +324,61 @@ namespace LasMonjas.Core
 
             foreach (OptionBehaviour option in lasMonjasGamemodesMenu.GetComponentsInChildren<OptionBehaviour>())
                 UnityEngine.Object.Destroy(option.gameObject);
-            List<OptionBehaviour> lasMonjasGamemodesOptions = new List<OptionBehaviour>(); 
-            
+            List<OptionBehaviour> lasMonjasGamemodesOptions = new List<OptionBehaviour>();
+
             foreach (OptionBehaviour option in lasMonjasImpostorsMenu.GetComponentsInChildren<OptionBehaviour>())
                 UnityEngine.Object.Destroy(option.gameObject);
             List<OptionBehaviour> lasMonjasImpostorOptions = new List<OptionBehaviour>();
 
             foreach (OptionBehaviour option in lasMonjasRebelsMenu.GetComponentsInChildren<OptionBehaviour>())
                 UnityEngine.Object.Destroy(option.gameObject);
-            List<OptionBehaviour> lasMonjasRebelOptions = new List<OptionBehaviour>(); 
-            
+            List<OptionBehaviour> lasMonjasRebelOptions = new List<OptionBehaviour>();
+
             foreach (OptionBehaviour option in lasMonjasNeutralsMenu.GetComponentsInChildren<OptionBehaviour>())
                 UnityEngine.Object.Destroy(option.gameObject);
             List<OptionBehaviour> lasMonjasNeutralOptions = new List<OptionBehaviour>();
 
             foreach (OptionBehaviour option in lasMonjasCrewmatesMenu.GetComponentsInChildren<OptionBehaviour>())
                 UnityEngine.Object.Destroy(option.gameObject);
-            List<OptionBehaviour> lasMonjasCrewmateOptions = new List<OptionBehaviour>(); 
-            
+            List<OptionBehaviour> lasMonjasCrewmateOptions = new List<OptionBehaviour>();
+
+            foreach (OptionBehaviour option in lasMonjasModifiersMenu.GetComponentsInChildren<OptionBehaviour>())
+                UnityEngine.Object.Destroy(option.gameObject);
+            List<OptionBehaviour> lasMonjasModifiersOptions = new List<OptionBehaviour>();
+
             for (int i = 0; i < CustomOption.options.Count; i++) {
                 CustomOption option = CustomOption.options[i];
                 if (option.optionBehaviour == null) {
                     StringOption stringOption;
-                    if (option.type == "gamemode") {
-                        stringOption = UnityEngine.Object.Instantiate(template, lasMonjasGamemodesMenu.transform);
-                        lasMonjasGamemodesOptions.Add(stringOption);
-                    }
-                    else if (option.type == "impostor") {
-                        stringOption = UnityEngine.Object.Instantiate(template, lasMonjasImpostorsMenu.transform);
-                        lasMonjasImpostorOptions.Add(stringOption);
-                    }
-                    else if (option.type == "rebel") {
-                        stringOption = UnityEngine.Object.Instantiate(template, lasMonjasRebelsMenu.transform);
-                        lasMonjasRebelOptions.Add(stringOption);
-                    }
-                    else if (option.type == "neutral") {
-                        stringOption = UnityEngine.Object.Instantiate(template, lasMonjasNeutralsMenu.transform);
-                        lasMonjasNeutralOptions.Add(stringOption);
-                    }
-                    else if (option.type == "crewmate") {
-                        stringOption = UnityEngine.Object.Instantiate(template, lasMonjasCrewmatesMenu.transform);
-                        lasMonjasCrewmateOptions.Add(stringOption);
-                    }
-                    else {
-                        stringOption = UnityEngine.Object.Instantiate(template, lasMonjasMenu.transform);
-                        lasMonjasOptions.Add(stringOption);
+                    switch (option.type) {
+                        case "gamemode":
+                            stringOption = UnityEngine.Object.Instantiate(template, lasMonjasGamemodesMenu.transform);
+                            lasMonjasGamemodesOptions.Add(stringOption);
+                            break;
+                        case "impostor":
+                            stringOption = UnityEngine.Object.Instantiate(template, lasMonjasImpostorsMenu.transform);
+                            lasMonjasImpostorOptions.Add(stringOption);
+                            break;
+                        case "rebel":
+                            stringOption = UnityEngine.Object.Instantiate(template, lasMonjasRebelsMenu.transform);
+                            lasMonjasRebelOptions.Add(stringOption);
+                            break;
+                        case "neutral":
+                            stringOption = UnityEngine.Object.Instantiate(template, lasMonjasNeutralsMenu.transform);
+                            lasMonjasNeutralOptions.Add(stringOption);
+                            break;
+                        case "crewmate":
+                            stringOption = UnityEngine.Object.Instantiate(template, lasMonjasCrewmatesMenu.transform);
+                            lasMonjasCrewmateOptions.Add(stringOption);
+                            break;
+                        case "modifier":
+                            stringOption = UnityEngine.Object.Instantiate(template, lasMonjasModifiersMenu.transform);
+                            lasMonjasModifiersOptions.Add(stringOption);
+                            break;
+                        default:
+                            stringOption = UnityEngine.Object.Instantiate(template, lasMonjasMenu.transform);
+                            lasMonjasOptions.Add(stringOption);
+                            break;
                     }
                     stringOption.OnValueChanged = new Action<OptionBehaviour>((o) => { });
                     stringOption.TitleText.text = option.name;
@@ -362,19 +394,22 @@ namespace LasMonjas.Core
             lasMonjasSettings.gameObject.SetActive(false);
 
             lasMonjasGamemodesMenu.Children = lasMonjasGamemodesOptions.ToArray();
-            lasMonjasGamemodes.gameObject.SetActive(false); 
-            
+            lasMonjasGamemodes.gameObject.SetActive(false);
+
             lasMonjasImpostorsMenu.Children = lasMonjasImpostorOptions.ToArray();
             lasMonjasImpostors.gameObject.SetActive(false);
 
             lasMonjasRebelsMenu.Children = lasMonjasRebelOptions.ToArray();
-            lasMonjasRebels.gameObject.SetActive(false); 
-            
+            lasMonjasRebels.gameObject.SetActive(false);
+
             lasMonjasNeutralsMenu.Children = lasMonjasNeutralOptions.ToArray();
             lasMonjasNeutrals.gameObject.SetActive(false);
 
             lasMonjasCrewmatesMenu.Children = lasMonjasCrewmateOptions.ToArray();
             lasMonjasCrewmates.gameObject.SetActive(false);
+
+            lasMonjasModifiersMenu.Children = lasMonjasModifiersOptions.ToArray();
+            lasMonjasModifiers.gameObject.SetActive(false);
         }
     }
 
@@ -461,7 +496,9 @@ namespace LasMonjas.Core
                 if (GameObject.Find("LasMonjasNeutrals") && option.type != "neutral")
                     continue;
                 if (GameObject.Find("LasMonjasCrewmates") && option.type != "crewmate")
-                    continue; 
+                    continue;
+                if (GameObject.Find("LasMonjasModifiers") && option.type != "modifier")
+                    continue;
                 if (option?.optionBehaviour != null && option.optionBehaviour.gameObject != null) {
                     bool enabled = true;
                     var parent = option.parent;
@@ -497,7 +534,7 @@ namespace LasMonjas.Core
         }
 
         private static void Postfix(ref string __result) {
-            if (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return; 
+            if (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return;
             StringBuilder sb = new StringBuilder(__result);
             foreach (CustomOption option in CustomOption.options) {
                 if (option.parent == null) {
@@ -517,15 +554,15 @@ namespace LasMonjas.Core
             var hudString = sb.ToString();
 
             int defaultSettingsLines = 23;
-            int roleSettingsLines = defaultSettingsLines + 36;
-            int detailedSettingsP1 = roleSettingsLines + 35;
-            int detailedSettingsP2 = detailedSettingsP1 + 27;
-            int detailedSettingsP3 = detailedSettingsP2 + 29;
-            int detailedSettingsP4 = detailedSettingsP3 + 31;   
-            int detailedSettingsP5 = detailedSettingsP4 + 47;
-            int detailedSettingsP6 = detailedSettingsP5 + 41;
-            int detailedSettingsP7 = detailedSettingsP6 + 32;
-            int detailedSettingsP8 = detailedSettingsP7 + 31;
+            int roleSettingsLines = defaultSettingsLines + 41;
+            int detailedSettingsP1 = roleSettingsLines + 25;
+            int detailedSettingsP2 = detailedSettingsP1 + 26;
+            int detailedSettingsP3 = detailedSettingsP2 + 28;
+            int detailedSettingsP4 = detailedSettingsP3 + 47;
+            int detailedSettingsP5 = detailedSettingsP4 + 41;
+            int detailedSettingsP6 = detailedSettingsP5 + 29;
+            int detailedSettingsP7 = detailedSettingsP6 + 34;
+            int detailedSettingsP8 = detailedSettingsP7 + 26;
             int end1 = hudString.TakeWhile(c => (defaultSettingsLines -= (c == '\n' ? 1 : 0)) > 0).Count();
             int end2 = hudString.TakeWhile(c => (roleSettingsLines -= (c == '\n' ? 1 : 0)) > 0).Count();
             int end3 = hudString.TakeWhile(c => (detailedSettingsP1 -= (c == '\n' ? 1 : 0)) > 0).Count();
@@ -546,28 +583,45 @@ namespace LasMonjas.Core
                     int gap = 1;
                     int index = hudString.TakeWhile(c => (gap -= (c == '\n' ? 1 : 0)) > 0).Count();
                     hudString = hudString.Insert(index, "\n");
-                    gap = 5;
+                    gap = 7;
                     index = hudString.TakeWhile(c => (gap -= (c == '\n' ? 1 : 0)) > 0).Count();
                     hudString = hudString.Insert(index, "\n");
-                    gap = 13;
+                    gap = 23;
                     index = hudString.TakeWhile(c => (gap -= (c == '\n' ? 1 : 0)) > 0).Count();
                     hudString = hudString.Insert(index, "\n");
-                    gap = 29;
+                    gap = 34;
                     index = hudString.TakeWhile(c => (gap -= (c == '\n' ? 1 : 0)) > 0).Count();
-                    hudString = hudString.Insert(index + 1, "\n"); break;
+                    hudString = hudString.Insert(index + 1, "\n"); 
+                    break;
                 case 2:
                     hudString = hudString.Substring(end2 + 1, end3 - end2);
                     int gaptwo = 0;
                     int indextwo = hudString.TakeWhile(c => (gaptwo -= (c == '\n' ? 1 : 0)) > 0).Count();
                     hudString = hudString.Insert(indextwo, "\n");
-                    gaptwo = 11;
-                    indextwo = hudString.TakeWhile(c => (gaptwo -= (c == '\n' ? 1 : 0)) > 0).Count();
-                    hudString = hudString.Insert(indextwo, "\n"); break;
+                    break;
                 case 3:
                     hudString = hudString.Substring(end3 + 1, end4 - end3);
+                    int gapthree = 0;
+                    int indexthree = hudString.TakeWhile(c => (gapthree -= (c == '\n' ? 1 : 0)) > 0).Count();
+                    hudString = hudString.Insert(indexthree, "\n"); 
                     break;
                 case 4:
                     hudString = hudString.Substring(end4 + 1, end5 - end4);
+                    int gapfour = 2;
+                    int indexfour = hudString.TakeWhile(c => (gapfour -= (c == '\n' ? 1 : 0)) > 0).Count();
+                    hudString = hudString.Insert(indexfour, "\n");
+                    gapfour = 11;
+                    indexfour = hudString.TakeWhile(c => (gapfour -= (c == '\n' ? 1 : 0)) > 0).Count();
+                    hudString = hudString.Insert(indexfour, "\n");
+                    gapfour = 15;
+                    indexfour = hudString.TakeWhile(c => (gapfour -= (c == '\n' ? 1 : 0)) > 0).Count();
+                    hudString = hudString.Insert(indexfour, "\n");
+                    gapfour = 21;
+                    indexfour = hudString.TakeWhile(c => (gapfour -= (c == '\n' ? 1 : 0)) > 0).Count();
+                    hudString = hudString.Insert(indexfour, "\n");
+                    gapfour = 28;
+                    indexfour = hudString.TakeWhile(c => (gapfour -= (c == '\n' ? 1 : 0)) > 0).Count();
+                    hudString = hudString.Insert(indexfour, "\n");
                     break;
                 case 5:
                     hudString = hudString.Substring(end5 + 1, end6 - end5);
@@ -610,6 +664,83 @@ namespace LasMonjas.Core
     {
         public static void Prefix(HudManager __instance) {
             if (__instance.GameSettings != null) __instance.GameSettings.fontSize = 1.2f;
+        }
+    }
+
+    // This class is taken from Town of Us Reactivated, https://github.com/eDonnes124/Town-Of-Us-R/blob/master/source/Patches/CustomOption/Patches.cs, Licensed under GPLv3
+    [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
+    public class HudManagerUpdate
+    {
+        public static float
+            MinX,/*-5.3F*/
+            OriginalY = 2.9F,
+            MinY = 2.9F;
+
+
+        public static Scroller Scroller;
+        private static Vector3 LastPosition;
+        private static float lastAspect;
+        private static bool setLastPosition = false;
+
+        public static void Prefix(HudManager __instance) {
+            if (__instance.GameSettings?.transform == null) return;
+
+            // Sets the MinX position to the left edge of the screen + 0.1 units
+            Rect safeArea = Screen.safeArea;
+            float aspect = Mathf.Min((Camera.main).aspect, safeArea.width / safeArea.height);
+            float safeOrthographicSize = CameraSafeArea.GetSafeOrthographicSize(Camera.main);
+            MinX = 0.1f - safeOrthographicSize * aspect;
+
+            if (!setLastPosition || aspect != lastAspect) {
+                LastPosition = new Vector3(MinX, MinY);
+                lastAspect = aspect;
+                setLastPosition = true;
+                if (Scroller != null) Scroller.ContentXBounds = new FloatRange(MinX, MinX);
+            }
+
+            CreateScroller(__instance);
+
+            Scroller.gameObject.SetActive(__instance.GameSettings.gameObject.activeSelf);
+
+            if (!Scroller.gameObject.active) return;
+
+            var rows = __instance.GameSettings.text.Count(c => c == '\n');
+            float LobbyTextRowHeight = 0.06F;
+            var maxY = Mathf.Max(MinY, rows * LobbyTextRowHeight + (rows - 38) * LobbyTextRowHeight);
+
+            Scroller.ContentYBounds = new FloatRange(MinY, maxY);
+
+            // Prevent scrolling when the player is interacting with a menu
+            if (PlayerControl.LocalPlayer?.CanMove != true) {
+                __instance.GameSettings.transform.localPosition = LastPosition;
+
+                return;
+            }
+
+            if (__instance.GameSettings.transform.localPosition.x != MinX ||
+                __instance.GameSettings.transform.localPosition.y < MinY) return;
+
+            LastPosition = __instance.GameSettings.transform.localPosition;
+        }
+
+        private static void CreateScroller(HudManager __instance) {
+            if (Scroller != null) return;
+
+            Scroller = new GameObject("SettingsScroller").AddComponent<Scroller>();
+            Scroller.transform.SetParent(__instance.GameSettings.transform.parent);
+            Scroller.gameObject.layer = 5;
+
+            Scroller.transform.localScale = Vector3.one;
+            Scroller.allowX = false;
+            Scroller.allowY = true;
+            Scroller.active = true;
+            Scroller.velocity = new Vector2(0, 0);
+            Scroller.ScrollbarYBounds = new FloatRange(0, 0);
+            Scroller.ContentXBounds = new FloatRange(MinX, MinX);
+            Scroller.enabled = true;
+
+            Scroller.Inner = __instance.GameSettings.transform;
+            __instance.GameSettings.transform.SetParent(Scroller.transform);
         }
     }
 }

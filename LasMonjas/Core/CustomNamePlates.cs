@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using BepInEx;
-using BepInEx.IL2CPP;
+﻿using System.Collections.Generic;
 using HarmonyLib;
-using BepInEx.Logging;
 using UnityEngine;
 using System.Linq;
 
@@ -33,7 +28,7 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "Muaresito", NamePlateName = "Challenger"},
             new AuthorData {AuthorName = "Muaresito", NamePlateName = "Ninja"},
             new AuthorData {AuthorName = "Muaresito", NamePlateName = "Objsustion"},
-            new AuthorData {AuthorName = "Muaresito", NamePlateName = "Deal with Pi"},            
+            new AuthorData {AuthorName = "Muaresito", NamePlateName = "Deal with Pi"},
             new AuthorData {AuthorName = "Muaresito", NamePlateName = "El Mauro"},
             new AuthorData {AuthorName = "Muaresito", NamePlateName = "The Monja"},
             new AuthorData {AuthorName = "Muaresito", NamePlateName = "Lags the Game"},

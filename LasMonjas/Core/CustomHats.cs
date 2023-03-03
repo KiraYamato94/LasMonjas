@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using BepInEx;
-using BepInEx.IL2CPP;
+﻿using System.Collections.Generic;
 using HarmonyLib;
-using BepInEx.Logging;
 using UnityEngine;
 using System.Linq;
 
@@ -101,6 +96,7 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "Muaresito", HatName = "Carmina Vacaloura", NoBounce = true, altShader = true},
             new AuthorData {AuthorName = "Muaresito", HatName = "Bunny Hood", NoBounce = true, altShader = true},
             new AuthorData {AuthorName = "Muaresito", HatName = "Sussykill", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "Muaresito", HatName = "Stuffwell", NoBounce = true, altShader = true},
             new AuthorData {AuthorName = "Xago", HatName = "World Destroyer", NoBounce = true},
             new AuthorData {AuthorName = "Xago", HatName = "Amazing Robot", NoBounce = true},
             new AuthorData {AuthorName = "Xago", HatName = "Fourze", NoBounce = true},

@@ -20,12 +20,13 @@ using Version = SemanticVersioning.Version;
 using LasMonjas.Patches;
 using Il2CppInterop.Runtime.Attributes;
 using AmongUs.Data;
+using static Il2CppSystem.Globalization.CultureInfo;
 
 namespace LasMonjas.Core
 {
     public class ModUpdateBehaviour : MonoBehaviour
     {
-        // Borrowed from The Other Roles to make people able to update the mod and Submerged easier
+        // Borrowed from The Other Roles to make people able to update the mod and Submerged easier https://github.com/TheOtherRolesAU/TheOtherRoles/blob/main/TheOtherRoles/Modules/ModUpdater.cs
 
         public static readonly bool CheckForSubmergedUpdates = true;
         public static bool showPopUp = true;
@@ -134,23 +135,32 @@ namespace LasMonjas.Core
             popup.TextAreaTMP.text = download.Result ? $"{updateName}\nupdated successfully\nPlease restart the game." : "Update wasn't successful\nPlease use Las Monjas Downloader\nto update manually.";
         }
 
+        private static int announcementNumber = 501;
         [HideFromIl2Cpp]
         public IEnumerator CoShowAnnouncement(string announcement) {
             var popUp = Instantiate(FindObjectOfType<AnnouncementPopUp>(true));
             popUp.gameObject.SetActive(true);
-            yield return popUp.Init();
-            var last = DataManager.Announcements.LastViewedAnnouncement;
-            last.Id = 1;
-            last.Text = announcement;
-            SelectableHyperLinkHelper.DestroyGOs(popUp.selectableHyperLinks, name);
-            popUp.AnnounceTextMeshPro.text = announcement;
+            yield return popUp.Init(true);
+
+            var announcementS = new Assets.InnerNet.Announcement();
+            announcementS.Title = "Las Monjas Announcement";
+            announcementS.Text = announcement;
+            announcementS.ShortTitle = "Las Monjas Update";
+            announcementS.Id = "lmjUpdateAnnouncement_" + announcementNumber.ToString();
+            announcementS.Language = 0;
+            announcementS.Number = announcementNumber++;
+            announcementS.SubTitle = "";
+            announcementS.PinState = true;
+
+            DataManager.Player.Announcements.allAnnouncements.Insert(0, announcementS);
+            popUp.CreateAnnouncementList();
         }
 
         [HideFromIl2Cpp]
         public static IEnumerator CoCheckUpdates() {
             var lmjUpdateCheck = Task.Run(() => Instance.GetGithubUpdate("KiraYamato94", "LasMonjas"));
             while (!lmjUpdateCheck.IsCompleted) yield return null;
-            Announcement.updateData = lmjUpdateCheck.Result;
+
             if (lmjUpdateCheck.Result != null && lmjUpdateCheck.Result.IsNewer(Version.Parse(LasMonjasPlugin.VersionString))) {
                 Instance.LMJUpdate = lmjUpdateCheck.Result;
             }
