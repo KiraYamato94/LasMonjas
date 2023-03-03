@@ -8,13 +8,10 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using System;
-using Reactor;
 using LasMonjas.Objects;
 using LasMonjas.Patches;
 using static LasMonjas.RoleInfo;
 using LasMonjas.Core;
-using MS.Internal.Xml.XPath;
-using static UnityEngine.GraphicsBuffer;
 using AmongUs.GameOptions;
 
 namespace LasMonjas
@@ -43,20 +40,20 @@ namespace LasMonjas
         Yinyanger,
         Challenger,
         Ninja,
-        Berserker, 
-        Yandere, 
-        Stranded, 
-        Monja, 
+        Berserker,
+        Yandere,
+        Stranded,
+        Monja,
         Joker,
         RoleThief,
         Pyromaniac,
         TreasureHunter,
         Devourer,
         Poisoner,
-        Puppeteer, 
-        Exiler, 
-        Amnesiac, 
-        Seeker, 
+        Puppeteer,
+        Exiler,
+        Amnesiac,
+        Seeker,
         Captain,
         Mechanic,
         Sheriff,
@@ -80,7 +77,7 @@ namespace LasMonjas
         Bat,
         Necromancer,
         Engineer,
-        Shy, 
+        Shy,
         TaskMaster,
         Jailer,
         Lover,
@@ -264,7 +261,6 @@ namespace LasMonjas
 
         ResetVaribles = 60,
         ShareOptions,
-        ForceEnd,
         SetRole,
         SetModifier, 
         UseUncheckedVent,
@@ -376,13 +372,15 @@ namespace LasMonjas
         ChangeMusic,
         WhoWasI,
 
+        // Gamemodes
+        GamemodeKills,
+        
         // Capture the flag
-        CapturetheFlagKills,
+        CapturetheFlagStealerKill,
         CaptureTheFlagWhoTookTheFlag,
         CaptureTheFlagWhichTeamScored,
 
         // Police and Thief
-        PoliceandThiefKills,
         PoliceandThiefJail,
         PoliceandThiefFreeThief,
         PoliceandThiefTakeJewel,
@@ -391,7 +389,7 @@ namespace LasMonjas
         PoliceandThiefsTased,
 
         // King of the hill
-        KingoftheHillKills,
+        KingoftheHillUsurperKill,
         KingoftheHillCapture,
 
         // Hot Potato
@@ -399,8 +397,6 @@ namespace LasMonjas
 
         // ZombieLaboratory
         ZombieInfect,
-        ZombieKills,
-        ZombieAmmoRecover,
         ZombieNurseHeal,
         ZombieSurvivorsWin,
         ZombieTakeKeyItem,
@@ -413,7 +409,6 @@ namespace LasMonjas
         BattleRoyaleKills,
 
         // Monja Festival
-        MonjaFestivalKills,
         MonjaFestivalBigMonjaInvisible,
         MonjaFestivalFindSpawns,
         MonjaFestivalCheckItems,
@@ -436,7 +431,7 @@ namespace LasMonjas
             EngineerTrap.clearTraps();
             PaintballTrail.resetTrail();
             BattleRoyaleFootprint.clearBattleRoyaleFootprints();
-            BattleRoyaleShoot.clearBattleRoyaleShoots(); 
+            BattleRoyaleShoot.clearBattleRoyaleShoots();
             clearAndReloadMapOptions();
             clearAndReloadRoles();
             clearGameHistory();
@@ -455,16 +450,6 @@ namespace LasMonjas
             }
             catch (Exception e) {
                 LasMonjasPlugin.Logger.LogError("Error while deserializing options: " + e.Message);
-            }
-        }
-
-        public static void forceEnd() {
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                if (!player.Data.Role.IsImpostor) {
-                    //player.RemoveInfected();
-                    player.MurderPlayer(player);
-                    player.Data.IsDead = true;
-                }
             }
         }
 
@@ -1182,7 +1167,7 @@ namespace LasMonjas
                             BattleRoyale.serialKillerTeam.Add(player);
                             break;
 
-                        // Monja Festival                       
+                        // Monja Festival
                         case RoleId.GreenMonjaPlayer01:
                             MonjaFestival.greenPlayer01 = player;
                             MonjaFestival.greenTeam.Add(player);
@@ -1343,7 +1328,7 @@ namespace LasMonjas
             Painter.painterTimer = Painter.duration;
             Detective.footprintcolor = colorId;
             foreach (PlayerControl player in PlayerControl.AllPlayerControls)
-                player.setLook("", colorId, "", "", "", "");           
+                player.setLook("", colorId, "", "", "", "");
         }
 
         public static void demonSetBitten(byte targetId, byte performReset) {
@@ -1466,7 +1451,7 @@ namespace LasMonjas
             // If the local player is impostor indicate lights out
             SoundManager.Instance.PlaySound(CustomMain.customAssets.illusionistLightsOut, false, 100f);
             if (PlayerControl.LocalPlayer.Data.Role.IsImpostor && PlayerControl.LocalPlayer != Illusionist.illusionist) {
-                new CustomMessage(Language.statusRolesTexts[5], Illusionist.lightsOutDuration, -1, -1.3f, 9);
+                new CustomMessage(Language.statusRolesTexts[5], Illusionist.lightsOutDuration, -1, -1.3f, 1);
             }
         }
 
@@ -1522,7 +1507,7 @@ namespace LasMonjas
             SoundManager.Instance.PlaySound(CustomMain.customAssets.bombermanBombMusic, true, 75f);
             SoundManager.Instance.StopSound(CustomMain.customAssets.performerMusic);
             // Indicate bomb text
-            new CustomMessage(Language.statusRolesTexts[6], Bomberman.bombTimer, Bomberman.currentBombNumber, -1.3f, 1);
+            new CustomMessage(Language.statusRolesTexts[6], Bomberman.bombTimer, Bomberman.currentBombNumber, -1.3f, 2);
         }
 
         public static void fixBomb() {
@@ -1600,7 +1585,7 @@ namespace LasMonjas
                         if (MapBehaviour.Instance) {
                             MapBehaviour.Instance.Close();
                         }
-                        new CustomMessage(Language.statusRolesTexts[7], Medusa.duration, -1, 1.6f, 14);
+                        new CustomMessage(Language.statusRolesTexts[7], Medusa.duration, -1, 1.6f, 3);
                     }
                     player.moveable = false;
                     player.NetTransform.Halt(); // Stop current movement
@@ -1612,7 +1597,7 @@ namespace LasMonjas
                     return;
                 }
             }
-        }        
+        }
 
         public static void placeSpiralTrap(byte[] buff) {
             Vector3 position = Vector3.zero;
@@ -1668,7 +1653,7 @@ namespace LasMonjas
                 }
             }
         }
-        
+
         public static void plumberMakeVent(byte[] buff) {
 
             Plumber.currentVents += 1;
@@ -1853,157 +1838,157 @@ namespace LasMonjas
                         }
 
                         if (BountyHunter.hasToKill == Joker.joker) {
-                            BountyHunter.rolName = "<color=#808080FF>Joker</color>";
+                            BountyHunter.rolName = "<color=#808080FF>"+ Language.roleInfoRoleNames[26] +"</color>";
                         }
                         else if (BountyHunter.hasToKill == RoleThief.rolethief) {
-                            BountyHunter.rolName = "<color=#808080FF>Role Thief</color>";
+                            BountyHunter.rolName = "<color=#808080FF>"+ Language.roleInfoRoleNames[27] +"</color>";
                         }
                         else if (BountyHunter.hasToKill == Pyromaniac.pyromaniac) {
-                            BountyHunter.rolName = "<color=#808080FF>Pyromaniac</color>";
+                            BountyHunter.rolName = "<color=#808080FF>"+ Language.roleInfoRoleNames[28] +"</color>";
                         }
                         else if (BountyHunter.hasToKill == TreasureHunter.treasureHunter) {
-                            BountyHunter.rolName = "<color=#808080FF>Treasure Hunter</color>";
+                            BountyHunter.rolName = "<color=#808080FF>" + Language.roleInfoRoleNames[29] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Devourer.devourer) {
-                            BountyHunter.rolName = "<color=#808080FF>Devourer</color>";
+                            BountyHunter.rolName = "<color=#808080FF>" + Language.roleInfoRoleNames[30] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Poisoner.poisoner) {
-                            BountyHunter.rolName = "<color=#808080FF>Poisoner</color>";
+                            BountyHunter.rolName = "<color=#808080FF>" + Language.roleInfoRoleNames[31] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Puppeteer.puppeteer) {
-                            BountyHunter.rolName = "<color=#808080FF>Puppeteer</color>";
+                            BountyHunter.rolName = "<color=#808080FF>" + Language.roleInfoRoleNames[32] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Exiler.exiler) {
-                            BountyHunter.rolName = "<color=#808080FF>Exiler</color>";
+                            BountyHunter.rolName = "<color=#808080FF>" + Language.roleInfoRoleNames[33] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Seeker.seeker) {
-                            BountyHunter.rolName = "<color=#808080FF>Seeker</color>";
+                            BountyHunter.rolName = "<color=#808080FF>" + Language.roleInfoRoleNames[35] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Captain.captain) {
-                            BountyHunter.rolName = "<color=#5E3E7DFF>Captain</color>";
+                            BountyHunter.rolName = "<color=#5E3E7DFF>" + Language.roleInfoRoleNames[36] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Mechanic.mechanic) {
-                            BountyHunter.rolName = "<color=#7F4C00FF>Mechanic</color>"; ;
+                            BountyHunter.rolName = "<color=#7F4C00FF>" + Language.roleInfoRoleNames[37] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Sheriff.sheriff) {
-                            BountyHunter.rolName = "<color=#FFFF00FF>Sheriff</color>";
+                            BountyHunter.rolName = "<color=#FFFF00FF>" + Language.roleInfoRoleNames[38] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Detective.detective) {
-                            BountyHunter.rolName = "<color=#C85ABEFF>Detective</color>";
+                            BountyHunter.rolName = "<color=#C85ABEFF>" + Language.roleInfoRoleNames[39] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Forensic.forensic) {
-                            BountyHunter.rolName = "<color=#4E61FFFF>Forensic</color>";
+                            BountyHunter.rolName = "<color=#4E61FFFF>" + Language.roleInfoRoleNames[40] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == TimeTraveler.timeTraveler) {
-                            BountyHunter.rolName = "<color=#00BDFFFF>Time Traveler</color>";
+                            BountyHunter.rolName = "<color=#00BDFFFF>" + Language.roleInfoRoleNames[41] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Squire.squire) {
-                            BountyHunter.rolName = "<color=#00FF00FF>Squire</color>";
+                            BountyHunter.rolName = "<color=#00FF00FF>" + Language.roleInfoRoleNames[42] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Cheater.cheater) {
-                            BountyHunter.rolName = "<color=#666699FF>Cheater</color>";
+                            BountyHunter.rolName = "<color=#666699FF>" + Language.roleInfoRoleNames[43] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == FortuneTeller.fortuneTeller) {
-                            BountyHunter.rolName = "<color=#00C642FF>Fortune Teller</color>";
+                            BountyHunter.rolName = "<color=#00C642FF>" + Language.roleInfoRoleNames[44] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Hacker.hacker) {
-                            BountyHunter.rolName = "<color=#72FFACFF>Hacker</color>";
+                            BountyHunter.rolName = "<color=#72FFACFF>" + Language.roleInfoRoleNames[45] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Sleuth.sleuth) {
-                            BountyHunter.rolName = "<color=#009F57FF>Sleuth</color>";
+                            BountyHunter.rolName = "<color=#009F57FF>" + Language.roleInfoRoleNames[46] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Fink.fink) {
-                            BountyHunter.rolName = "<color=#FF73F6FF>Fink</color>";
+                            BountyHunter.rolName = "<color=#FF73F6FF>" + Language.roleInfoRoleNames[47] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Welder.welder) {
-                            BountyHunter.rolName = "<color=#6D5B2FFF>Welder</color>";
+                            BountyHunter.rolName = "<color=#6D5B2FFF>" + Language.roleInfoRoleNames[49] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Spiritualist.spiritualist) {
-                            BountyHunter.rolName = "<color=#FFC5E1FF>Spiritualist</color>";
+                            BountyHunter.rolName = "<color=#FFC5E1FF>" + Language.roleInfoRoleNames[50] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Coward.coward) {
-                            BountyHunter.rolName = "<color=#00F7E1FF>Coward</color>";
+                            BountyHunter.rolName = "<color=#00F7E1FF>" + Language.roleInfoRoleNames[51] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Vigilant.vigilant) {
-                            BountyHunter.rolName = "<color=#E3E15AFF>Vigilant</color>";
+                            BountyHunter.rolName = "<color=#E3E15AFF>" + Language.roleInfoRoleNames[52] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Vigilant.vigilantMira) {
-                            BountyHunter.rolName = "<color=#E3E15AFF>Vigilant</color>";
+                            BountyHunter.rolName = "<color=#E3E15AFF>" + Language.roleInfoRoleNames[52] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Hunter.hunter) {
-                            BountyHunter.rolName = "<color=#E1EB90FF>Hunter</color>";
+                            BountyHunter.rolName = "<color=#E1EB90FF>" + Language.roleInfoRoleNames[53] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Jinx.jinx) {
-                            BountyHunter.rolName = "<color=#928B55FF>Jinx</color>";
+                            BountyHunter.rolName = "<color=#928B55FF>" + Language.roleInfoRoleNames[54] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Bat.bat) {
-                            BountyHunter.rolName = "<color=#A600FFFF>Bat</color>";
+                            BountyHunter.rolName = "<color=#A600FFFF>" + Language.roleInfoRoleNames[55] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Necromancer.necromancer) {
-                            BountyHunter.rolName = "<color=#FF73F6FF>Necromancer</color>";
+                            BountyHunter.rolName = "<color=#FF73F6FF>" + Language.roleInfoRoleNames[56] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Engineer.engineer) {
-                            BountyHunter.rolName = "<color=#7F4C00FF>Engineer</color>";
+                            BountyHunter.rolName = "<color=#7F4C00FF>" + Language.roleInfoRoleNames[57] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Shy.shy) {
-                            BountyHunter.rolName = "<color=#F2BEFFFF>Shy</color>";
+                            BountyHunter.rolName = "<color=#F2BEFFFF>" + Language.roleInfoRoleNames[58] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == TaskMaster.taskMaster) {
-                            BountyHunter.rolName = "<color=#999999FF>Task Master</color>";
+                            BountyHunter.rolName = "<color=#999999FF>" + Language.roleInfoRoleNames[59] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Jailer.jailer) {
-                            BountyHunter.rolName = "<color=#CCFF99FF>Jailer</color>";
+                            BountyHunter.rolName = "<color=#CCFF99FF>" + Language.roleInfoRoleNames[60] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Mimic.mimic) {
-                            BountyHunter.rolName = "<color=#FF0000FF>Mimic</color>";
+                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[0] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Painter.painter) {
-                            BountyHunter.rolName = "<color=#FF0000FF>Painter</color>";
+                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[1] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Demon.demon) {
-                            BountyHunter.rolName = "<color=#FF0000FF>Demon</color>";
+                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[2] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Janitor.janitor) {
-                            BountyHunter.rolName = "<color=#FF0000FF>Janitor</color>";
+                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[3] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Illusionist.illusionist) {
-                            BountyHunter.rolName = "<color=#FF0000FF>Illusionist</color>";
+                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[4] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Manipulator.manipulator) {
-                            BountyHunter.rolName = "<color=#FF0000FF>Manipulator</color>";
+                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[5] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Bomberman.bomberman) {
-                            BountyHunter.rolName = "<color=#FF0000FF>Bomberman</color>";
+                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[6] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Chameleon.chameleon) {
-                            BountyHunter.rolName = "<color=#FF0000FF>Chameleon</color>";
+                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[7] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Gambler.gambler) {
-                            BountyHunter.rolName = "<color=#FF0000FF>Gambler</color>";
+                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[8] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Sorcerer.sorcerer) {
-                            BountyHunter.rolName = "<color=#FF0000FF>Sorcerer</color>";
+                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[9] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Medusa.medusa) {
-                            BountyHunter.rolName = "<color=#FF0000FF>Medusa</color>";
+                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[10] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Archer.archer) {
-                            BountyHunter.rolName = "<color=#FF0000FF>Archer</color>";
+                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[12] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Hypnotist.hypnotist) {
-                            BountyHunter.rolName = "<color=#FF0000FF>Hypnotist</color>";
+                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[11] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Plumber.plumber) {
-                            BountyHunter.rolName = "<color=#FF0000FF>Plumber</color>";
+                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[13] + "</color>";
                         }
                         else if (BountyHunter.hasToKill == Librarian.librarian) {
-                            BountyHunter.rolName = "<color=#FF0000FF>Librarian</color>";
+                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[14] + "</color>";
                         }
                         else if (BountyHunter.hasToKill.Data.Role.IsImpostor) {
-                            BountyHunter.rolName = "<color=#FF0000FF>Impostor</color>";
+                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[61] + "</color>";
                         }
                         else {
-                            BountyHunter.rolName = "<color=#8DFFFFFF>Crewmate</color>";
+                            BountyHunter.rolName = "<color=#8DFFFFFF>" + Language.roleInfoRoleNames[62] + "</color>";
                         }
                     }
 
@@ -2044,9 +2029,9 @@ namespace LasMonjas
                         Yandere.usedTarget = true;
                     }
                     break;
-            }          
+            }
         }
-        
+
         public static void bountyHunterKill(byte targetId) {
             foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
                 if (player.PlayerId == targetId && BountyHunter.hasToKill.PlayerId == targetId) {
@@ -2173,7 +2158,7 @@ namespace LasMonjas
             if (Janitor.janitor != null && Janitor.dragginBody) {
                 Janitor.janitorResetValuesAtDead();
             }
-            
+
             // Remove body dragging for necromancer
             if (Necromancer.necromancer != null && Necromancer.dragginBody) {
                 Necromancer.necromancerResetValuesAtDead();
@@ -2210,7 +2195,7 @@ namespace LasMonjas
             if (Minigame.Instance)
                 Minigame.Instance.ForceClose();
 
-            new CustomMessage(Language.introTexts[1], Challenger.duelDuration, -1, -1.3f, 2);
+            new CustomMessage(Language.introTexts[1], Challenger.duelDuration, -1, -1.3f, 5);
 
             // music stop and play duel music
             changeMusic(8);
@@ -2305,7 +2290,7 @@ namespace LasMonjas
             switch (strandedFindBoxes) {
                 case 1:
                     Stranded.storedAmmo += 1;
-                    Stranded.strandedSearchButtonText.text = $"{Stranded.storedAmmo} / 3"; 
+                    Stranded.strandedSearchButtonText.text = $"{Stranded.storedAmmo} / 3";
                     break;
                 case 2:
                     Stranded.canVent = true;
@@ -2315,15 +2300,15 @@ namespace LasMonjas
                     break;
             }
         }
-        
+
         public static void strandedKill(byte targetId) {
             foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
                 if (player.PlayerId == targetId) {
                     Stranded.stranded.MurderPlayer(player);
                     Stranded.howManyKills += 1;
                     Stranded.storedAmmo -= 1;
-                    Stranded.strandedSearchButtonText.text = $"{Stranded.storedAmmo} / 3"; 
-                    Stranded.strandedKillButtonText.text = $"{Stranded.howManyKills} / 3"; 
+                    Stranded.strandedSearchButtonText.text = $"{Stranded.storedAmmo} / 3";
+                    Stranded.strandedKillButtonText.text = $"{Stranded.howManyKills} / 3";
                     if (Stranded.howManyKills >= 3) {
                         Stranded.triggerStrandedWin = true;
                     }
@@ -2375,87 +2360,43 @@ namespace LasMonjas
                 Monja.itemId = 0;
                 switch (monjaItemId) {
                     case 1:
-                        if (PlayerControl.LocalPlayer == Monja.monja) {
-                            Monja.item01.SetActive(true);
-                        }
-                        else {
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(5, new Action<float>((p) => {
-                                if (p == 1f) {
-                                    Monja.item01.SetActive(true);
-                                }
-                            })));
-                        }
-                        Monja.item01.transform.SetParent(null);
-                        Monja.item01.transform.localPosition = Monja.ritualObject.transform.GetChild(0).transform.position + new Vector3(0f, 0f, -0.1f);
-                        Monja.item01.name = "deliveredItem";
+                        monjaReveal(Monja.item01, 0);
                         break;
                     case 2:
-                        if (PlayerControl.LocalPlayer == Monja.monja) {
-                            Monja.item02.SetActive(true);
-                        }
-                        else {
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(5, new Action<float>((p) => {
-                                if (p == 1f) {
-                                    Monja.item02.SetActive(true);
-                                }
-                            })));
-                        }
-                        Monja.item02.transform.SetParent(null);
-                        Monja.item02.transform.localPosition = Monja.ritualObject.transform.GetChild(1).transform.position + new Vector3(0f, 0f, -0.1f);
-                        Monja.item02.name = "deliveredItem"; 
+                        monjaReveal(Monja.item02, 1);
                         break;
                     case 3:
-                        if (PlayerControl.LocalPlayer == Monja.monja) {
-                            Monja.item03.SetActive(true);
-                        }
-                        else {
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(5, new Action<float>((p) => {
-                                if (p == 1f) {
-                                    Monja.item03.SetActive(true);
-                                }
-                            })));
-                        }
-                        Monja.item03.transform.SetParent(null);
-                        Monja.item03.transform.localPosition = Monja.ritualObject.transform.GetChild(2).transform.position + new Vector3(0f, 0f, -0.1f);
-                        Monja.item03.name = "deliveredItem"; 
+                        monjaReveal(Monja.item03, 2);
                         break;
                     case 4:
-                        if (PlayerControl.LocalPlayer == Monja.monja) {
-                            Monja.item04.SetActive(true);
-                        }
-                        else {
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(5, new Action<float>((p) => {
-                                if (p == 1f) {
-                                    Monja.item04.SetActive(true);
-                                }
-                            })));
-                        }
-                        Monja.item04.transform.SetParent(null);
-                        Monja.item04.transform.localPosition = Monja.ritualObject.transform.GetChild(3).transform.position + new Vector3(0f, 0f, -0.1f);
-                        Monja.item04.name = "deliveredItem"; 
+                        monjaReveal(Monja.item04, 3);
                         break;
                     case 5:
-                        if (PlayerControl.LocalPlayer == Monja.monja) {
-                            Monja.item05.SetActive(true);
-                        }
-                        else {
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(5, new Action<float>((p) => {
-                                if (p == 1f) {
-                                    Monja.item05.SetActive(true);
-                                }
-                            })));
-                        }
-                        Monja.item05.transform.SetParent(null);
-                        Monja.item05.transform.localPosition = Monja.ritualObject.transform.GetChild(4).transform.position + new Vector3(0f, 0f, -0.1f);
-                        Monja.item05.name = "deliveredItem"; 
+                        monjaReveal(Monja.item05, 4);
                         break;
                 }
-            }                                                   
+            }
             Monja.deliveredItems += 1;
             Monja.objectCountButtonText.text = $"{Monja.deliveredItems} / 5";
             if (Monja.deliveredItems >= 5) {
                 Monja.canAwake = true;
             }
+        }
+
+        public static void monjaReveal(GameObject item, int parent) {
+            if (PlayerControl.LocalPlayer == Monja.monja) {
+                item.SetActive(true);
+            }
+            else {
+                HudManager.Instance.StartCoroutine(Effects.Lerp(5, new Action<float>((p) => {
+                    if (p == 1f) {
+                        item.SetActive(true);
+                    }
+                })));
+            }
+            item.transform.SetParent(null);
+            item.transform.localPosition = Monja.ritualObject.transform.GetChild(parent).transform.position + new Vector3(0f, 0f, -0.1f);
+            item.name = "deliveredItem";
         }
 
         public static void monjaRevertItemPosition(byte monjaItemId) {
@@ -2499,7 +2440,7 @@ namespace LasMonjas
             if (Necromancer.necromancer != null && Necromancer.dragginBody) {
                 Necromancer.necromancerResetValuesAtDead();
             }
-            
+
             Monja.canAwake = false;
             Monja.awakened = true;
             Monja.awakenTimer = 60;
@@ -2536,7 +2477,7 @@ namespace LasMonjas
             SoundManager.Instance.StopSound(CustomMain.customAssets.bombermanBombMusic);
             SoundManager.Instance.StopSound(CustomMain.customAssets.performerMusic);
             // Indicate monja text
-            new CustomMessage(Language.statusRolesTexts[8], 60, -1, 1.6f, 27);
+            new CustomMessage(Language.statusRolesTexts[8], 60, -1, 1.6f, 6);
 
             HudManager.Instance.FullScreen.color = new Color(0.75f, 0f, 0f, 0.5f);
             HudManager.Instance.FullScreen.enabled = true;
@@ -2551,7 +2492,7 @@ namespace LasMonjas
         public static void monjaKill(byte targetId) {
             foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
                 if (player.PlayerId == targetId) {
-                    Monja.monja.MurderPlayer(player);                    
+                    Monja.monja.MurderPlayer(player);
                     return;
                 }
             }
@@ -2811,11 +2752,11 @@ namespace LasMonjas
             Puppeteer.currentTarget = null;
 
         }
-        
+
         public static void exilerWin() {
             Exiler.triggerExilerWin = true;
         }
-        
+
         public static void amnesiacReportAndTakeRole(byte targetId) {
             PlayerControl target = Helpers.playerById(targetId);
             GameData.PlayerInfo playerInfo = GameData.Instance.GetPlayerById(targetId);
@@ -3296,7 +3237,7 @@ namespace LasMonjas
             if (Minigame.Instance)
                 Minigame.Instance.ForceClose();
 
-            new CustomMessage(Language.introTexts[1], Seeker.minigameDuration, -1, -1.3f, 28);
+            new CustomMessage(Language.introTexts[1], Seeker.minigameDuration, -1, -1.3f, 7);
 
             // music stop and play duel music
             changeMusic(8);
@@ -3446,7 +3387,7 @@ namespace LasMonjas
                     break;
             }
         }
-        
+
         public static void captainSpecialVote(byte playerid, byte targetid) {
             if (!MeetingHud.Instance) return;
             PlayerControl target = Helpers.playerById(targetid);
@@ -3465,7 +3406,7 @@ namespace LasMonjas
             if (target == null) return;
             MeetingHud.Instance.CmdCastVote(PlayerControl.LocalPlayer.PlayerId, target.PlayerId);
         }
-        
+
         public static void mechanicFixLights() {
             SwitchSystem switchSystem = ShipStatus.Instance.Systems[SystemTypes.Electrical].Cast<SwitchSystem>();
             switchSystem.ActualSwitches = switchSystem.ExpectedSwitches;
@@ -3562,8 +3503,8 @@ namespace LasMonjas
             foreach (PlayerControl player in PlayerControl.AllPlayerControls)
                 if (player.PlayerId == shieldedId)
                     Squire.shielded = player;
-        }        
-        
+        }
+
         public static void shieldedMurderAttempt() {
             if (Squire.shielded != null && Squire.shielded == PlayerControl.LocalPlayer && Squire.showAttemptToShielded || Squire.showAttemptToShielded && (PlayerControl.LocalPlayer.Data.Role.IsImpostor || Sheriff.sheriff != null && Sheriff.sheriff == PlayerControl.LocalPlayer || Renegade.renegade != null && Renegade.renegade == PlayerControl.LocalPlayer || Minion.minion != null && Minion.minion == PlayerControl.LocalPlayer || BountyHunter.bountyhunter != null && BountyHunter.bountyhunter == PlayerControl.LocalPlayer || Trapper.trapper != null && Trapper.trapper == PlayerControl.LocalPlayer || Yinyanger.yinyanger != null && Yinyanger.yinyanger == PlayerControl.LocalPlayer || Challenger.challenger != null && Challenger.challenger == PlayerControl.LocalPlayer || Ninja.ninja != null && Ninja.ninja == PlayerControl.LocalPlayer || Berserker.berserker != null && Berserker.berserker == PlayerControl.LocalPlayer || Yandere.yandere != null && Yandere.yandere == PlayerControl.LocalPlayer || Stranded.stranded != null && Stranded.stranded == PlayerControl.LocalPlayer || Monja.monja != null && Monja.monja == PlayerControl.LocalPlayer)) {
                 SoundManager.Instance.PlaySound(CustomMain.customAssets.squireShieldClip, false, 100f);
@@ -3645,7 +3586,7 @@ namespace LasMonjas
                 if (Hacker.toolsNumber > Hacker.chargesAdminTable) Hacker.chargesAdminTable++;
             }
         }
-        
+
         public static void sleuthUsedLocate(byte targetId) {
             Sleuth.usedLocate = true;
             foreach (PlayerControl player in PlayerControl.AllPlayerControls)
@@ -3659,7 +3600,7 @@ namespace LasMonjas
                 if (MapBehaviour.Instance) {
                     MapBehaviour.Instance.Close();
                 }
-                new CustomMessage(Language.statusRolesTexts[10], Fink.duration, -1, -1f, 13);
+                new CustomMessage(Language.statusRolesTexts[10], Fink.duration, -1, -1f, 9);
             }
         }
 
@@ -3672,7 +3613,7 @@ namespace LasMonjas
             Welder.welderButtonText.text = $"{Welder.remainingWelds} / {Welder.totalWelds}";
 
             if (PlayerControl.LocalPlayer == Welder.welder) {
-                // Welder vents seal sprite    
+                // Welder vents seal sprite
                 if (GameOptionsManager.Instance.currentGameOptions.MapId != 2) {
                     PowerTools.SpriteAnim animator = vent.GetComponent<PowerTools.SpriteAnim>();
                     animator?.Stop();
@@ -3706,7 +3647,7 @@ namespace LasMonjas
                     }
                     var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == playerId);
                     teleportSpiritualistNecromancerBodies(player, body);
-                    
+
                     // Check roles that needs reset on revive
                     if (Modifiers.performer != null && player == Modifiers.performer)
                         performerIsReported(1);
@@ -3728,19 +3669,19 @@ namespace LasMonjas
                     if (player == Modifiers.lover1) {
                         PlayerControl lovertwo = Modifiers.lover2;
                         var bodytwo = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == lovertwo.PlayerId);
-                        teleportSpiritualistNecromancerBodies(lovertwo, bodytwo);                        
+                        teleportSpiritualistNecromancerBodies(lovertwo, bodytwo);
                     }
                     else if (player == Modifiers.lover2) {
                         PlayerControl loverone = Modifiers.lover1;
                         var bodyone = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == loverone.PlayerId);
-                        teleportSpiritualistNecromancerBodies(loverone, bodyone);                                               
+                        teleportSpiritualistNecromancerBodies(loverone, bodyone);
                     }
 
                     // Check bountyhunter kill and revive bountyhunter
                     if (player == BountyHunter.hasToKill) {
                         PlayerControl bountyhunter = BountyHunter.bountyhunter;
                         var bodybountyhunter = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == bountyhunter.PlayerId);
-                        teleportSpiritualistNecromancerBodies(bountyhunter, bodybountyhunter);                        
+                        teleportSpiritualistNecromancerBodies(bountyhunter, bodybountyhunter);
                     }
 
                     // Check bountyhunter and try reviving their target
@@ -3748,7 +3689,7 @@ namespace LasMonjas
                         if (BountyHunter.hasToKill != null && BountyHunter.hasToKill.Data.IsDead) {
                             PlayerControl bountytarget = BountyHunter.hasToKill;
                             var bodybountytarget = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == bountytarget.PlayerId);
-                            teleportSpiritualistNecromancerBodies(bountytarget, bodybountytarget);                        
+                            teleportSpiritualistNecromancerBodies(bountytarget, bodybountytarget);
                         }
                     }
 
@@ -3756,15 +3697,15 @@ namespace LasMonjas
                     if (player == Exiler.target) {
                         PlayerControl exilerPlayer = Exiler.exiler;
                         var bodyExilerPlayer = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == exilerPlayer.PlayerId);
-                        teleportSpiritualistNecromancerBodies(exilerPlayer, bodyExilerPlayer);                       
+                        teleportSpiritualistNecromancerBodies(exilerPlayer, bodyExilerPlayer);
                     }
-                    
+
                     // Check exiler and try reviving their target
                     if (player == Exiler.exiler) {
                         if (Exiler.target != null && Exiler.target.Data.IsDead) {
                             PlayerControl exilerTarget = Exiler.target;
                             var bodyexilerTarget = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == exilerTarget.PlayerId);
-                            teleportSpiritualistNecromancerBodies(exilerTarget, bodyexilerTarget);                  
+                            teleportSpiritualistNecromancerBodies(exilerTarget, bodyexilerTarget);
                         }
                     }
                 }
@@ -3848,7 +3789,7 @@ namespace LasMonjas
             if (body != null) UnityEngine.Object.Destroy(body.gameObject);
             spiritualistPinkScreen(player.PlayerId);
         }
-        
+
         public static void cowardUsedCall() {
             if (Coward.timesUsedCalls < Coward.numberOfCalls) {
                 Coward.timesUsedCalls += 1;
@@ -3904,7 +3845,7 @@ namespace LasMonjas
             if (Vigilant.vigilantMira != null && PlayerControl.LocalPlayer == Vigilant.vigilantMira) {
                 Vigilant.doorLog.SetActive(true);
             }
-        }        
+        }
 
         public static void hunterUsedHunted(byte targetId) {
             Hunter.usedHunted = true;
@@ -3925,7 +3866,7 @@ namespace LasMonjas
                 Jinx.jinxs++;
                 Jinx.jinxButtonJinxsText.text = $"{Jinx.jinxNumber - Jinx.jinxs} / {Jinx.jinxNumber}";
             }
-        }             
+        }
 
         public static void batFrequency() {
             if (Bat.bat == null) return;
@@ -3939,7 +3880,7 @@ namespace LasMonjas
                 Necromancer.dragginBody = false;
                 Necromancer.bodyId = 0;
             }
-        }        
+        }
 
         public static void placeEngineerTrap(byte trapType, byte[] buff) {
             Vector3 position = Vector3.zero;
@@ -4143,13 +4084,13 @@ namespace LasMonjas
             }
             SoundManager.Instance.StopSound(CustomMain.customAssets.performerMusic);
         }
-        
+
         public static void changeMusic(byte whichmusic) {
             SoundManager.Instance.StopSound(CustomMain.customAssets.bombermanBombMusic);
             SoundManager.Instance.StopSound(CustomMain.customAssets.challengerDuelMusic);
             SoundManager.Instance.StopSound(CustomMain.customAssets.seekerMinigameMusic);
             SoundManager.Instance.StopSound(CustomMain.customAssets.monjaAwakeMusic);
-            if (MapOptions.activateMusic && howmanygamemodesareon != 1) {
+            if (MapOptions.activateMusic && gameType <= 1) {
                 int alivePlayers = 0;
                 int totalPlayers = 0;
                 foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
@@ -4481,7 +4422,7 @@ namespace LasMonjas
                                         visibleCounter++; 
                                     }
                                 }
-                            }                            
+                            }
                             hideWhoWasIBoxesForEveryone(true);
                             break;
                         case "treasurehunterRole":
@@ -4557,7 +4498,7 @@ namespace LasMonjas
                             }
                             hideWhoWasIBoxesForEveryone(true);
                             break;
-                            
+
                             // Rebels:
                         case "renegadeRole":
                             Renegade.renegade = player;
@@ -4727,228 +4668,190 @@ namespace LasMonjas
             } else {
                 foreach (GameObject item in whoAmIModeRebelsItems) {
                     item.transform.position = new Vector3(100, 100, 0);
-                }               
+                }
             }
         }
 
-        public static void capturetheFlagKills(byte targetId, int whichplayer) {
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                if (player.PlayerId == targetId) {
-                    switch (whichplayer) {
-                        case 1:
-                            CaptureTheFlag.redplayer01.MurderPlayer(player);
-                            break;
-                        case 2:
-                            CaptureTheFlag.redplayer02.MurderPlayer(player);
-                            break;
-                        case 3:
-                            CaptureTheFlag.redplayer03.MurderPlayer(player);
-                            break;
-                        case 4:
-                            CaptureTheFlag.redplayer04.MurderPlayer(player);
-                            break;
-                        case 5:
-                            CaptureTheFlag.redplayer05.MurderPlayer(player);
-                            break;
-                        case 6:
-                            CaptureTheFlag.redplayer06.MurderPlayer(player);
-                            break;
-                        case 7:
-                            CaptureTheFlag.redplayer07.MurderPlayer(player);
-                            break;
-                        case 9:
-                            CaptureTheFlag.blueplayer01.MurderPlayer(player);
-                            break;
-                        case 10:
-                            CaptureTheFlag.blueplayer02.MurderPlayer(player);
-                            break;
-                        case 11:
-                            CaptureTheFlag.blueplayer03.MurderPlayer(player);
-                            break;
-                        case 12:
-                            CaptureTheFlag.blueplayer04.MurderPlayer(player);
-                            break;
-                        case 13:
-                            CaptureTheFlag.blueplayer05.MurderPlayer(player);
-                            break;
-                        case 14:
-                            CaptureTheFlag.blueplayer06.MurderPlayer(player);
-                            break;
-                        case 15:
-                            CaptureTheFlag.blueplayer07.MurderPlayer(player);
-                            break;
-                        case 16:
-                            if (CaptureTheFlag.redPlayerWhoHasBlueFlag != null && player.PlayerId == CaptureTheFlag.redPlayerWhoHasBlueFlag.PlayerId) {
-                                if (PlayerControl.LocalPlayer == CaptureTheFlag.stealerPlayer) {
-                                    new CustomMessage(Language.statusCaptureTheFlagTexts[0], 5, -1, 1f, 4);
-                                }
-                                if (CaptureTheFlag.redplayer01 != null && CaptureTheFlag.redplayer01 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
-                                    CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer01);
-                                    CaptureTheFlag.redplayer01 = CaptureTheFlag.stealerPlayer;
-                                    CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                                    CaptureTheFlag.stealerPlayer = player;
-                                    CaptureTheFlag.redplayer01.MurderPlayer(CaptureTheFlag.stealerPlayer);
-                                }
-                                else if (CaptureTheFlag.redplayer02 != null && CaptureTheFlag.redplayer02 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
-                                    CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer02);
-                                    CaptureTheFlag.redplayer02 = CaptureTheFlag.stealerPlayer;
-                                    CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                                    CaptureTheFlag.stealerPlayer = player;
-                                    CaptureTheFlag.redplayer02.MurderPlayer(CaptureTheFlag.stealerPlayer);
-                                }
-                                else if (CaptureTheFlag.redplayer03 != null && CaptureTheFlag.redplayer03 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
-                                    CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer03);
-                                    CaptureTheFlag.redplayer03 = CaptureTheFlag.stealerPlayer;
-                                    CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                                    CaptureTheFlag.stealerPlayer = player;
-                                    CaptureTheFlag.redplayer03.MurderPlayer(CaptureTheFlag.stealerPlayer);
-                                }
-                                else if (CaptureTheFlag.redplayer04 != null && CaptureTheFlag.redplayer04 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
-                                    CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer04);
-                                    CaptureTheFlag.redplayer04 = CaptureTheFlag.stealerPlayer;
-                                    CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                                    CaptureTheFlag.stealerPlayer = player;
-                                    CaptureTheFlag.redplayer04.MurderPlayer(CaptureTheFlag.stealerPlayer);
-                                }
-                                else if (CaptureTheFlag.redplayer05 != null && CaptureTheFlag.redplayer05 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
-                                    CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer05);
-                                    CaptureTheFlag.redplayer05 = CaptureTheFlag.stealerPlayer;
-                                    CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                                    CaptureTheFlag.stealerPlayer = player;
-                                    CaptureTheFlag.redplayer05.MurderPlayer(CaptureTheFlag.stealerPlayer);
-                                }
-                                else if (CaptureTheFlag.redplayer06 != null && CaptureTheFlag.redplayer06 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
-                                    CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer06);
-                                    CaptureTheFlag.redplayer06 = CaptureTheFlag.stealerPlayer;
-                                    CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                                    CaptureTheFlag.stealerPlayer = player;
-                                    CaptureTheFlag.redplayer06.MurderPlayer(CaptureTheFlag.stealerPlayer);
-                                }
-                                else if (CaptureTheFlag.redplayer07 != null && CaptureTheFlag.redplayer07 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
-                                    CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer07);
-                                    CaptureTheFlag.redplayer07 = CaptureTheFlag.stealerPlayer;
-                                    CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                                    CaptureTheFlag.stealerPlayer = player;
-                                    CaptureTheFlag.redplayer07.MurderPlayer(CaptureTheFlag.stealerPlayer);
-                                }
-                            }
-                            else if (CaptureTheFlag.bluePlayerWhoHasRedFlag != null && player.PlayerId == CaptureTheFlag.bluePlayerWhoHasRedFlag.PlayerId) {
-                                if (PlayerControl.LocalPlayer == CaptureTheFlag.stealerPlayer) {
-                                    new CustomMessage(Language.statusCaptureTheFlagTexts[1], 5, -1, 1f, 4);
-                                }
-                                if (CaptureTheFlag.blueplayer01 != null && CaptureTheFlag.blueplayer01 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
-                                    CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer01);
-                                    CaptureTheFlag.blueplayer01 = CaptureTheFlag.stealerPlayer;
-                                    CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                                    CaptureTheFlag.stealerPlayer = player;
-                                    CaptureTheFlag.blueplayer01.MurderPlayer(CaptureTheFlag.stealerPlayer);
-                                }
-                                else if (CaptureTheFlag.blueplayer02 != null && CaptureTheFlag.blueplayer02 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
-                                    CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer02);
-                                    CaptureTheFlag.blueplayer02 = CaptureTheFlag.stealerPlayer;
-                                    CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                                    CaptureTheFlag.stealerPlayer = player;
-                                    CaptureTheFlag.blueplayer02.MurderPlayer(CaptureTheFlag.stealerPlayer);
-                                }
-                                else if (CaptureTheFlag.blueplayer03 != null && CaptureTheFlag.blueplayer03 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
-                                    CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer03);
-                                    CaptureTheFlag.blueplayer03 = CaptureTheFlag.stealerPlayer;
-                                    CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                                    CaptureTheFlag.stealerPlayer = player;
-                                    CaptureTheFlag.blueplayer03.MurderPlayer(CaptureTheFlag.stealerPlayer);
-                                }
-                                else if (CaptureTheFlag.blueplayer04 != null && CaptureTheFlag.blueplayer04 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
-                                    CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer04);
-                                    CaptureTheFlag.blueplayer04 = CaptureTheFlag.stealerPlayer;
-                                    CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                                    CaptureTheFlag.stealerPlayer = player;
-                                    CaptureTheFlag.blueplayer04.MurderPlayer(CaptureTheFlag.stealerPlayer);
-                                }
-                                else if (CaptureTheFlag.blueplayer05 != null && CaptureTheFlag.blueplayer05 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
-                                    CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer05);
-                                    CaptureTheFlag.blueplayer05 = CaptureTheFlag.stealerPlayer;
-                                    CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                                    CaptureTheFlag.stealerPlayer = player;
-                                    CaptureTheFlag.blueplayer05.MurderPlayer(CaptureTheFlag.stealerPlayer);
-                                }
-                                else if (CaptureTheFlag.blueplayer06 != null && CaptureTheFlag.blueplayer06 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
-                                    CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer06);
-                                    CaptureTheFlag.blueplayer06 = CaptureTheFlag.stealerPlayer;
-                                    CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                                    CaptureTheFlag.stealerPlayer = player;
-                                    CaptureTheFlag.blueplayer06.MurderPlayer(CaptureTheFlag.stealerPlayer);
-                                }
-                                else if (CaptureTheFlag.blueplayer07 != null && CaptureTheFlag.blueplayer07 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
-                                    CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer07);
-                                    CaptureTheFlag.blueplayer07 = CaptureTheFlag.stealerPlayer;
-                                    CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                                    CaptureTheFlag.stealerPlayer = player;
-                                    CaptureTheFlag.blueplayer07.MurderPlayer(CaptureTheFlag.stealerPlayer);
-                                }
-                            }
-                            else {
-                                CaptureTheFlag.stealerPlayer.MurderPlayer(player);
-                            }
-                            break;
+        public static void gamemodeKills(byte targetId, byte sourceId) {
+            PlayerControl killer = Helpers.playerById(sourceId);
+            PlayerControl murdered = Helpers.playerById(targetId);
+            killer.MurderPlayer(murdered);
+        }
+
+        public static void capturetheFlagStealerKill(byte targetId, byte sourceId) {
+            PlayerControl killer = Helpers.playerById(sourceId);
+            PlayerControl murdered = Helpers.playerById(targetId);
+
+            if (CaptureTheFlag.stealerPlayer != null && sourceId == CaptureTheFlag.stealerPlayer.PlayerId) {
+                if (CaptureTheFlag.redPlayerWhoHasBlueFlag != null && murdered.PlayerId == CaptureTheFlag.redPlayerWhoHasBlueFlag.PlayerId) {
+                    if (PlayerControl.LocalPlayer == CaptureTheFlag.stealerPlayer) {
+                        new CustomMessage(Language.statusCaptureTheFlagTexts[0], 5, -1, 1f, 16);
                     }
-                    return;
+                    if (CaptureTheFlag.redplayer01 != null && CaptureTheFlag.redplayer01 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
+                        CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer01);
+                        CaptureTheFlag.redplayer01 = CaptureTheFlag.stealerPlayer;
+                        CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
+                        CaptureTheFlag.stealerPlayer = murdered;
+                        CaptureTheFlag.redplayer01.MurderPlayer(CaptureTheFlag.stealerPlayer);
+                    }
+                    else if (CaptureTheFlag.redplayer02 != null && CaptureTheFlag.redplayer02 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
+                        CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer02);
+                        CaptureTheFlag.redplayer02 = CaptureTheFlag.stealerPlayer;
+                        CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
+                        CaptureTheFlag.stealerPlayer = murdered;
+                        CaptureTheFlag.redplayer02.MurderPlayer(CaptureTheFlag.stealerPlayer);
+                    }
+                    else if (CaptureTheFlag.redplayer03 != null && CaptureTheFlag.redplayer03 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
+                        CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer03);
+                        CaptureTheFlag.redplayer03 = CaptureTheFlag.stealerPlayer;
+                        CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
+                        CaptureTheFlag.stealerPlayer = murdered;
+                        CaptureTheFlag.redplayer03.MurderPlayer(CaptureTheFlag.stealerPlayer);
+                    }
+                    else if (CaptureTheFlag.redplayer04 != null && CaptureTheFlag.redplayer04 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
+                        CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer04);
+                        CaptureTheFlag.redplayer04 = CaptureTheFlag.stealerPlayer;
+                        CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
+                        CaptureTheFlag.stealerPlayer = murdered;
+                        CaptureTheFlag.redplayer04.MurderPlayer(CaptureTheFlag.stealerPlayer);
+                    }
+                    else if (CaptureTheFlag.redplayer05 != null && CaptureTheFlag.redplayer05 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
+                        CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer05);
+                        CaptureTheFlag.redplayer05 = CaptureTheFlag.stealerPlayer;
+                        CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
+                        CaptureTheFlag.stealerPlayer = murdered;
+                        CaptureTheFlag.redplayer05.MurderPlayer(CaptureTheFlag.stealerPlayer);
+                    }
+                    else if (CaptureTheFlag.redplayer06 != null && CaptureTheFlag.redplayer06 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
+                        CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer06);
+                        CaptureTheFlag.redplayer06 = CaptureTheFlag.stealerPlayer;
+                        CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
+                        CaptureTheFlag.stealerPlayer = murdered;
+                        CaptureTheFlag.redplayer06.MurderPlayer(CaptureTheFlag.stealerPlayer);
+                    }
+                    else if (CaptureTheFlag.redplayer07 != null && CaptureTheFlag.redplayer07 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
+                        CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer07);
+                        CaptureTheFlag.redplayer07 = CaptureTheFlag.stealerPlayer;
+                        CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
+                        CaptureTheFlag.stealerPlayer = murdered;
+                        CaptureTheFlag.redplayer07.MurderPlayer(CaptureTheFlag.stealerPlayer);
+                    }
                 }
+                else if (CaptureTheFlag.bluePlayerWhoHasRedFlag != null && murdered.PlayerId == CaptureTheFlag.bluePlayerWhoHasRedFlag.PlayerId) {
+                    if (PlayerControl.LocalPlayer == CaptureTheFlag.stealerPlayer) {
+                        new CustomMessage(Language.statusCaptureTheFlagTexts[1], 5, -1, 1f, 16);
+                    }
+                    if (CaptureTheFlag.blueplayer01 != null && CaptureTheFlag.blueplayer01 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
+                        CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer01);
+                        CaptureTheFlag.blueplayer01 = CaptureTheFlag.stealerPlayer;
+                        CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
+                        CaptureTheFlag.stealerPlayer = murdered;
+                        CaptureTheFlag.blueplayer01.MurderPlayer(CaptureTheFlag.stealerPlayer);
+                    }
+                    else if (CaptureTheFlag.blueplayer02 != null && CaptureTheFlag.blueplayer02 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
+                        CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer02);
+                        CaptureTheFlag.blueplayer02 = CaptureTheFlag.stealerPlayer;
+                        CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
+                        CaptureTheFlag.stealerPlayer = murdered;
+                        CaptureTheFlag.blueplayer02.MurderPlayer(CaptureTheFlag.stealerPlayer);
+                    }
+                    else if (CaptureTheFlag.blueplayer03 != null && CaptureTheFlag.blueplayer03 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
+                        CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer03);
+                        CaptureTheFlag.blueplayer03 = CaptureTheFlag.stealerPlayer;
+                        CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
+                        CaptureTheFlag.stealerPlayer = murdered;
+                        CaptureTheFlag.blueplayer03.MurderPlayer(CaptureTheFlag.stealerPlayer);
+                    }
+                    else if (CaptureTheFlag.blueplayer04 != null && CaptureTheFlag.blueplayer04 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
+                        CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer04);
+                        CaptureTheFlag.blueplayer04 = CaptureTheFlag.stealerPlayer;
+                        CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
+                        CaptureTheFlag.stealerPlayer = murdered;
+                        CaptureTheFlag.blueplayer04.MurderPlayer(CaptureTheFlag.stealerPlayer);
+                    }
+                    else if (CaptureTheFlag.blueplayer05 != null && CaptureTheFlag.blueplayer05 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
+                        CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer05);
+                        CaptureTheFlag.blueplayer05 = CaptureTheFlag.stealerPlayer;
+                        CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
+                        CaptureTheFlag.stealerPlayer = murdered;
+                        CaptureTheFlag.blueplayer05.MurderPlayer(CaptureTheFlag.stealerPlayer);
+                    }
+                    else if (CaptureTheFlag.blueplayer06 != null && CaptureTheFlag.blueplayer06 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
+                        CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer06);
+                        CaptureTheFlag.blueplayer06 = CaptureTheFlag.stealerPlayer;
+                        CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
+                        CaptureTheFlag.stealerPlayer = murdered;
+                        CaptureTheFlag.blueplayer06.MurderPlayer(CaptureTheFlag.stealerPlayer);
+                    }
+                    else if (CaptureTheFlag.blueplayer07 != null && CaptureTheFlag.blueplayer07 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
+                        CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer07);
+                        CaptureTheFlag.blueplayer07 = CaptureTheFlag.stealerPlayer;
+                        CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
+                        CaptureTheFlag.stealerPlayer = murdered;
+                        CaptureTheFlag.blueplayer07.MurderPlayer(CaptureTheFlag.stealerPlayer);
+                    }
+                }
+                else {
+                    killer.MurderPlayer(murdered);
+                }
+            } else {
+                killer.MurderPlayer(murdered);
             }
         }
 
         public static void captureTheFlagWhoTookTheFlag(byte playerWhoStoleTheFlag, int redorblue) {
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                // Red team steal blue flag
-                if (player.PlayerId == playerWhoStoleTheFlag && redorblue == 1) {
-                    CaptureTheFlag.blueflagtaken = true;
-                    CaptureTheFlag.blueteamAlerted = false;
-                    CaptureTheFlag.redPlayerWhoHasBlueFlag = player;
-                    CaptureTheFlag.blueflag.transform.parent = player.transform;
-                    CaptureTheFlag.blueflag.transform.localPosition = new Vector3(0f, 0f, -0.1f);
-                    foreach (PlayerControl redplayer in CaptureTheFlag.redteamFlag) {
-                        if (redplayer != null && redplayer == PlayerControl.LocalPlayer) {
-                            new CustomMessage(Language.statusCaptureTheFlagTexts[2] + CaptureTheFlag.redPlayerWhoHasBlueFlag.name + "</color>!", 5, -1, 1.6f, 4);
-                        }
-                    }
-                    if (CaptureTheFlag.stealerPlayer != null && CaptureTheFlag.stealerPlayer == PlayerControl.LocalPlayer) {
-                        new CustomMessage(Language.statusCaptureTheFlagTexts[2] + CaptureTheFlag.redPlayerWhoHasBlueFlag.name + "</color>!", 5, -1, 1.6f, 4);
+            PlayerControl playerWhoGotTheFlag = Helpers.playerById(playerWhoStoleTheFlag);
+
+            // Red team steal blue flag
+            if (redorblue == 1) {
+                CaptureTheFlag.blueflagtaken = true;
+                CaptureTheFlag.blueteamAlerted = false;
+                CaptureTheFlag.redPlayerWhoHasBlueFlag = playerWhoGotTheFlag;
+                CaptureTheFlag.blueflag.transform.parent = playerWhoGotTheFlag.transform;
+                CaptureTheFlag.blueflag.transform.localPosition = new Vector3(0f, 0f, -0.1f);
+                foreach (PlayerControl redplayer in CaptureTheFlag.redteamFlag) {
+                    if (redplayer != null && redplayer == PlayerControl.LocalPlayer) {
+                        new CustomMessage(Language.statusCaptureTheFlagTexts[2] + CaptureTheFlag.redPlayerWhoHasBlueFlag.name + "</color>!", 5, -1, 1.6f, 16);
                     }
                 }
+                if (CaptureTheFlag.stealerPlayer != null && CaptureTheFlag.stealerPlayer == PlayerControl.LocalPlayer) {
+                    new CustomMessage(Language.statusCaptureTheFlagTexts[2] + CaptureTheFlag.redPlayerWhoHasBlueFlag.name + "</color>!", 5, -1, 1.6f, 16);
+                }
+            }
 
-                // Alert red team players
-                if (CaptureTheFlag.redflagtaken && !CaptureTheFlag.redteamAlerted) {
-                    CaptureTheFlag.redteamAlerted = true;
-                    foreach (PlayerControl redplayer in CaptureTheFlag.redteamFlag) {
-                        if (redplayer != null && redplayer == PlayerControl.LocalPlayer) {
-                            new CustomMessage(Language.statusCaptureTheFlagTexts[3], 5, -1, 1f, 4);
-                        }
+            // Blue team steal red flag
+            if (redorblue == 2) {
+                CaptureTheFlag.redflagtaken = true;
+                CaptureTheFlag.redteamAlerted = false;
+                CaptureTheFlag.bluePlayerWhoHasRedFlag = playerWhoGotTheFlag;
+                CaptureTheFlag.redflag.transform.parent = playerWhoGotTheFlag.transform;
+                CaptureTheFlag.redflag.transform.localPosition = new Vector3(0f, 0f, -0.1f);
+                foreach (PlayerControl blueplayer in CaptureTheFlag.blueteamFlag) {
+                    if (blueplayer != null && blueplayer == PlayerControl.LocalPlayer) {
+                        new CustomMessage(Language.statusCaptureTheFlagTexts[4] + CaptureTheFlag.bluePlayerWhoHasRedFlag.name + "</color>!", 5, -1, 1.6f, 16);
                     }
                 }
+                if (CaptureTheFlag.stealerPlayer != null && CaptureTheFlag.stealerPlayer == PlayerControl.LocalPlayer) {
+                    new CustomMessage(Language.statusCaptureTheFlagTexts[4] + CaptureTheFlag.bluePlayerWhoHasRedFlag.name + "</color>!", 5, -1, 1.3f, 16);
+                }
+            }
 
-                // Blue team steal red flag
-                if (player.PlayerId == playerWhoStoleTheFlag && redorblue == 2) {
-                    CaptureTheFlag.redflagtaken = true;
-                    CaptureTheFlag.redteamAlerted = false;
-                    CaptureTheFlag.bluePlayerWhoHasRedFlag = player;
-                    CaptureTheFlag.redflag.transform.parent = player.transform;
-                    CaptureTheFlag.redflag.transform.localPosition = new Vector3(0f, 0f, -0.1f);
-                    foreach (PlayerControl blueplayer in CaptureTheFlag.blueteamFlag) {
-                        if (blueplayer != null && blueplayer == PlayerControl.LocalPlayer) {
-                            new CustomMessage(Language.statusCaptureTheFlagTexts[4] + CaptureTheFlag.bluePlayerWhoHasRedFlag.name + "</color>!", 5, -1, 1.6f, 4);
-                        }
-                    }
-                    if (CaptureTheFlag.stealerPlayer != null && CaptureTheFlag.stealerPlayer == PlayerControl.LocalPlayer) {
-                        new CustomMessage(Language.statusCaptureTheFlagTexts[4] + CaptureTheFlag.bluePlayerWhoHasRedFlag.name + "</color>!", 5, -1, 1.3f, 4);
+            // Alert red team players
+            if (CaptureTheFlag.redflagtaken && !CaptureTheFlag.redteamAlerted) {
+                CaptureTheFlag.redteamAlerted = true;
+                foreach (PlayerControl redplayer in CaptureTheFlag.redteamFlag) {
+                    if (redplayer != null && redplayer == PlayerControl.LocalPlayer) {
+                        new CustomMessage(Language.statusCaptureTheFlagTexts[3], 5, -1, 1f, 16);
                     }
                 }
+            }
 
-                // Alert blue team players
-                if (CaptureTheFlag.blueflagtaken && !CaptureTheFlag.blueteamAlerted) {
-                    CaptureTheFlag.blueteamAlerted = true;
-                    foreach (PlayerControl blueplayer in CaptureTheFlag.blueteamFlag) {
-                        if (blueplayer != null && blueplayer == PlayerControl.LocalPlayer) {
-                            new CustomMessage(Language.statusCaptureTheFlagTexts[3], 5, -1, 1f, 4);
-                        }
+            // Alert blue team players
+            if (CaptureTheFlag.blueflagtaken && !CaptureTheFlag.blueteamAlerted) {
+                CaptureTheFlag.blueteamAlerted = true;
+                foreach (PlayerControl blueplayer in CaptureTheFlag.blueteamFlag) {
+                    if (blueplayer != null && blueplayer == PlayerControl.LocalPlayer) {
+                        new CustomMessage(Language.statusCaptureTheFlagTexts[3], 5, -1, 1f, 16);
                     }
                 }
             }
@@ -4992,7 +4895,7 @@ namespace LasMonjas
                         break;
                 }
                 CaptureTheFlag.currentRedTeamPoints += 1;
-                new CustomMessage(Language.statusCaptureTheFlagTexts[5], 5, -1, 1.6f, 4);
+                new CustomMessage(Language.statusCaptureTheFlagTexts[5], 5, -1, 1.6f, 16);
                 CaptureTheFlag.flagpointCounter = Language.introTexts[2] + "<color=#FF0000FF>" + CaptureTheFlag.currentRedTeamPoints + "</color> - " + "<color=#0000FFFF>" + CaptureTheFlag.currentBlueTeamPoints + "</color>";
                 if (CaptureTheFlag.currentRedTeamPoints >= CaptureTheFlag.requiredFlags) {
                     CaptureTheFlag.triggerRedTeamWin = true;
@@ -5037,7 +4940,7 @@ namespace LasMonjas
                         break;
                 }
                 CaptureTheFlag.currentBlueTeamPoints += 1;
-                new CustomMessage(Language.statusCaptureTheFlagTexts[6], 5, -1, 1.3f, 4);
+                new CustomMessage(Language.statusCaptureTheFlagTexts[6], 5, -1, 1.3f, 16);
                 CaptureTheFlag.flagpointCounter = Language.introTexts[2] + "<color=#FF0000FF>" + CaptureTheFlag.currentRedTeamPoints + "</color> - " + "<color=#0000FFFF>" + CaptureTheFlag.currentBlueTeamPoints + "</color>";
                 if (CaptureTheFlag.currentBlueTeamPoints >= CaptureTheFlag.requiredFlags) {
                     CaptureTheFlag.triggerBlueTeamWin = true;
@@ -5046,170 +4949,112 @@ namespace LasMonjas
             }
         }
 
-        public static void policeandThiefKills(byte targetId, int whichplayer) {
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                if (player.PlayerId == targetId) {
-                    switch (whichplayer) {
-                        case 1:
-                            PoliceAndThief.policeplayer01.MurderPlayer(player);
-                            break;
-                        case 2:
-                            PoliceAndThief.policeplayer02.MurderPlayer(player);
-                            break;
-                        case 3:
-                            PoliceAndThief.policeplayer03.MurderPlayer(player);
-                            break;
-                        case 4:
-                            PoliceAndThief.policeplayer04.MurderPlayer(player);
-                            break;
-                        case 5:
-                            PoliceAndThief.policeplayer05.MurderPlayer(player);
-                            break;
-                        case 6:
-                            PoliceAndThief.policeplayer06.MurderPlayer(player);
-                            break;
-                        case 7:
-                            PoliceAndThief.thiefplayer01.MurderPlayer(player);
-                            break;
-                        case 8:
-                            PoliceAndThief.thiefplayer02.MurderPlayer(player);
-                            break;
-                        case 9:
-                            PoliceAndThief.thiefplayer03.MurderPlayer(player);
-                            break;
-                        case 10:
-                            PoliceAndThief.thiefplayer04.MurderPlayer(player);
-                            break;
-                        case 11:
-                            PoliceAndThief.thiefplayer05.MurderPlayer(player);
-                            break;
-                        case 12:
-                            PoliceAndThief.thiefplayer06.MurderPlayer(player);
-                            break;
-                        case 13:
-                            PoliceAndThief.thiefplayer07.MurderPlayer(player);
-                            break;
-                        case 14:
-                            PoliceAndThief.thiefplayer08.MurderPlayer(player);
-                            break;
-                        case 15:
-                            PoliceAndThief.thiefplayer09.MurderPlayer(player);
-                            break;
-                    }
-                    return;
-                }
-            }
-        }
-
         public static void policeandThiefJail(byte thiefId) {
-            foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
-                if (player.PlayerId == thiefId) {
-                    if (player.inVent) {
-                        foreach (Vent vent in ShipStatus.Instance.AllVents) {
-                            bool canUse;
-                            bool couldUse;
-                            vent.CanUse(player.Data, out canUse, out couldUse);
-                            if (canUse) {
-                                player.MyPhysics.RpcExitVent(vent.Id);
-                                vent.SetButtons(false);
-                            }
-                        }
-                    }
-                    if (PlayerControl.LocalPlayer == player) {
-                        SoundManager.Instance.PlaySound(CustomMain.customAssets.jailerJail, false, 100f);
-                    }
-                    PoliceAndThief.thiefArrested.Add(player);
-                    if (PoliceAndThief.thiefplayer01 != null && thiefId == PoliceAndThief.thiefplayer01.PlayerId) {
-                        if (PoliceAndThief.thiefplayer01IsStealing) {
-                            policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer01JewelId);
-                        }
-                    }
-                    else if (PoliceAndThief.thiefplayer02 != null && thiefId == PoliceAndThief.thiefplayer02.PlayerId) {
-                        if (PoliceAndThief.thiefplayer02IsStealing) {
-                            policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer02JewelId);
-                        }
-                    }
-                    else if (PoliceAndThief.thiefplayer03 != null && thiefId == PoliceAndThief.thiefplayer03.PlayerId) {
-                        if (PoliceAndThief.thiefplayer03IsStealing) {
-                            policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer03JewelId);
-                        }
-                    }
-                    else if (PoliceAndThief.thiefplayer04 != null && thiefId == PoliceAndThief.thiefplayer04.PlayerId) {
-                        if (PoliceAndThief.thiefplayer04IsStealing) {
-                            policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer04JewelId);
-                        }
-                    }
-                    else if (PoliceAndThief.thiefplayer05 != null && thiefId == PoliceAndThief.thiefplayer05.PlayerId) {
-                        if (PoliceAndThief.thiefplayer05IsStealing) {
-                            policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer05JewelId);
-                        }
-                    }
-                    else if (PoliceAndThief.thiefplayer06 != null && thiefId == PoliceAndThief.thiefplayer06.PlayerId) {
-                        if (PoliceAndThief.thiefplayer06IsStealing) {
-                            policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer06JewelId);
-                        }
-                    }
-                    else if (PoliceAndThief.thiefplayer07 != null && thiefId == PoliceAndThief.thiefplayer07.PlayerId) {
-                        if (PoliceAndThief.thiefplayer07IsStealing) {
-                            policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer07JewelId);
-                        }
-                    }
-                    else if (PoliceAndThief.thiefplayer08 != null && thiefId == PoliceAndThief.thiefplayer08.PlayerId) {
-                        if (PoliceAndThief.thiefplayer08IsStealing) {
-                            policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer08JewelId);
-                        }
-                    }
-                    else if (PoliceAndThief.thiefplayer09 != null && thiefId == PoliceAndThief.thiefplayer09.PlayerId) {
-                        if (PoliceAndThief.thiefplayer09IsStealing) {
-                            policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer09JewelId);
-                        }
-                    }
-                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
-                        // Skeld
-                        case 0:
-                            if (activatedSensei) {
-                                player.transform.position = new Vector3(-12f, 7.15f, player.transform.position.z);
-                            }
-                            else {
-                                player.transform.position = new Vector3(-10.2f, 3.6f, player.transform.position.z);
-                            }
-                            break;
-                        // MiraHQ
-                        case 1:
-                            player.transform.position = new Vector3(1.8f, 1.25f, player.transform.position.z);
-                            break;
-                        // Polus
-                        case 2:
-                            player.transform.position = new Vector3(8.25f, -5f, player.transform.position.z);
-                            break;
-                        // Dleks
-                        case 3:
-                            player.transform.position = new Vector3(10.2f, 3.6f, player.transform.position.z);
-                            break;
-                        // Airship
-                        case 4:
-                            player.transform.position = new Vector3(-18.5f, 3.5f, player.transform.position.z);
-                            break;
-                        // Submerged
-                        case 5:
-                            if (player.transform.position.y > 0) {
-                                player.transform.position = new Vector3(-6f, 32f, player.transform.position.z);
-                            }
-                            else {
-                                player.transform.position = new Vector3(-14.1f, -39f, player.transform.position.z);
-                            }
-                            break;
-                    }
-                    PoliceAndThief.currentThiefsCaptured += 1;
-                    new CustomMessage(Language.statusPoliceAndThiefsTexts[0], 5, -1, 1.3f, 7);
-                    PoliceAndThief.thiefpointCounter = Language.introTexts[3] + "<color=#00F7FFFF>" + PoliceAndThief.currentJewelsStoled + " / " + PoliceAndThief.requiredJewels + "</color> | " + Language.introTexts[4] + "<color=#928B55FF>" + PoliceAndThief.currentThiefsCaptured + " / " + PoliceAndThief.thiefTeam.Count + "</color>";
-                    if (PoliceAndThief.currentThiefsCaptured == PoliceAndThief.thiefTeam.Count) {
-                        PoliceAndThief.triggerPoliceWin = true;
-                        GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.ThiefModePoliceWin, false);
+            PlayerControl capturedThief = Helpers.playerById(thiefId);
+
+            if (capturedThief.inVent) {
+                foreach (Vent vent in ShipStatus.Instance.AllVents) {
+                    bool canUse;
+                    bool couldUse;
+                    vent.CanUse(capturedThief.Data, out canUse, out couldUse);
+                    if (canUse) {
+                        capturedThief.MyPhysics.RpcExitVent(vent.Id);
+                        vent.SetButtons(false);
                     }
                 }
             }
-
+            if (PlayerControl.LocalPlayer == capturedThief) {
+                SoundManager.Instance.PlaySound(CustomMain.customAssets.jailerJail, false, 100f);
+            }
+            PoliceAndThief.thiefArrested.Add(capturedThief);
+            if (PoliceAndThief.thiefplayer01 != null && thiefId == PoliceAndThief.thiefplayer01.PlayerId) {
+                if (PoliceAndThief.thiefplayer01IsStealing) {
+                    policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer01JewelId);
+                }
+            }
+            else if (PoliceAndThief.thiefplayer02 != null && thiefId == PoliceAndThief.thiefplayer02.PlayerId) {
+                if (PoliceAndThief.thiefplayer02IsStealing) {
+                    policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer02JewelId);
+                }
+            }
+            else if (PoliceAndThief.thiefplayer03 != null && thiefId == PoliceAndThief.thiefplayer03.PlayerId) {
+                if (PoliceAndThief.thiefplayer03IsStealing) {
+                    policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer03JewelId);
+                }
+            }
+            else if (PoliceAndThief.thiefplayer04 != null && thiefId == PoliceAndThief.thiefplayer04.PlayerId) {
+                if (PoliceAndThief.thiefplayer04IsStealing) {
+                    policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer04JewelId);
+                }
+            }
+            else if (PoliceAndThief.thiefplayer05 != null && thiefId == PoliceAndThief.thiefplayer05.PlayerId) {
+                if (PoliceAndThief.thiefplayer05IsStealing) {
+                    policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer05JewelId);
+                }
+            }
+            else if (PoliceAndThief.thiefplayer06 != null && thiefId == PoliceAndThief.thiefplayer06.PlayerId) {
+                if (PoliceAndThief.thiefplayer06IsStealing) {
+                    policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer06JewelId);
+                }
+            }
+            else if (PoliceAndThief.thiefplayer07 != null && thiefId == PoliceAndThief.thiefplayer07.PlayerId) {
+                if (PoliceAndThief.thiefplayer07IsStealing) {
+                    policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer07JewelId);
+                }
+            }
+            else if (PoliceAndThief.thiefplayer08 != null && thiefId == PoliceAndThief.thiefplayer08.PlayerId) {
+                if (PoliceAndThief.thiefplayer08IsStealing) {
+                    policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer08JewelId);
+                }
+            }
+            else if (PoliceAndThief.thiefplayer09 != null && thiefId == PoliceAndThief.thiefplayer09.PlayerId) {
+                if (PoliceAndThief.thiefplayer09IsStealing) {
+                    policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer09JewelId);
+                }
+            }
+            switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
+                // Skeld
+                case 0:
+                    if (activatedSensei) {
+                        capturedThief.transform.position = new Vector3(-12f, 7.15f, capturedThief.transform.position.z);
+                    }
+                    else {
+                        capturedThief.transform.position = new Vector3(-10.2f, 3.6f, capturedThief.transform.position.z);
+                    }
+                    break;
+                // MiraHQ
+                case 1:
+                    capturedThief.transform.position = new Vector3(1.8f, 1.25f, capturedThief.transform.position.z);
+                    break;
+                // Polus
+                case 2:
+                    capturedThief.transform.position = new Vector3(8.25f, -5f, capturedThief.transform.position.z);
+                    break;
+                // Dleks
+                case 3:
+                    capturedThief.transform.position = new Vector3(10.2f, 3.6f, capturedThief.transform.position.z);
+                    break;
+                // Airship
+                case 4:
+                    capturedThief.transform.position = new Vector3(-18.5f, 3.5f, capturedThief.transform.position.z);
+                    break;
+                // Submerged
+                case 5:
+                    if (capturedThief.transform.position.y > 0) {
+                        capturedThief.transform.position = new Vector3(-6f, 32f, capturedThief.transform.position.z);
+                    }
+                    else {
+                        capturedThief.transform.position = new Vector3(-14.1f, -39f, capturedThief.transform.position.z);
+                    }
+                    break;
+            }
+            PoliceAndThief.currentThiefsCaptured += 1;
+            new CustomMessage(Language.statusPoliceAndThiefsTexts[0], 5, -1, 1.3f, 16);
+            PoliceAndThief.thiefpointCounter = Language.introTexts[3] + "<color=#00F7FFFF>" + PoliceAndThief.currentJewelsStoled + " / " + PoliceAndThief.requiredJewels + "</color> | " + Language.introTexts[4] + "<color=#928B55FF>" + PoliceAndThief.currentThiefsCaptured + " / " + PoliceAndThief.thiefTeam.Count + "</color>";
+            if (PoliceAndThief.currentThiefsCaptured == PoliceAndThief.thiefTeam.Count) {
+                PoliceAndThief.triggerPoliceWin = true;
+                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.ThiefModePoliceWin, false);
+            }
         }
 
         public static void policeandThiefFreeThief() {
@@ -5251,342 +5096,309 @@ namespace LasMonjas
             }
             PoliceAndThief.thiefArrested.RemoveAt(0);
             PoliceAndThief.currentThiefsCaptured = PoliceAndThief.currentThiefsCaptured - 1;
-            new CustomMessage(Language.statusPoliceAndThiefsTexts[1], 5, -1, 1f, 7);
+            new CustomMessage(Language.statusPoliceAndThiefsTexts[1], 5, -1, 1f, 16);
             PoliceAndThief.thiefpointCounter = Language.introTexts[3] + "<color=#00F7FFFF>" + PoliceAndThief.currentJewelsStoled + " / " + PoliceAndThief.requiredJewels + "</color> | " + Language.introTexts[4] + "<color=#928B55FF>" + PoliceAndThief.currentThiefsCaptured + " / " + PoliceAndThief.thiefTeam.Count + "</color>";
         }
 
         public static void policeandThiefTakeJewel(byte thiefWhoTookATreasure, byte jewelId) {
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                // Thief player steal a jewel
-                if (player.PlayerId == thiefWhoTookATreasure) {
-                    if (PoliceAndThief.thiefplayer01 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer01.PlayerId) {
-                        PoliceAndThief.thiefplayer01IsStealing = true;
-                        PoliceAndThief.thiefplayer01JewelId = jewelId;
-                    }
-                    else if (PoliceAndThief.thiefplayer02 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer02.PlayerId) {
-                        PoliceAndThief.thiefplayer02IsStealing = true;
-                        PoliceAndThief.thiefplayer02JewelId = jewelId;
-                    }
-                    else if (PoliceAndThief.thiefplayer03 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer03.PlayerId) {
-                        PoliceAndThief.thiefplayer03IsStealing = true;
-                        PoliceAndThief.thiefplayer03JewelId = jewelId;
-                    }
-                    else if (PoliceAndThief.thiefplayer04 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer04.PlayerId) {
-                        PoliceAndThief.thiefplayer04IsStealing = true;
-                        PoliceAndThief.thiefplayer04JewelId = jewelId;
-                    }
-                    else if (PoliceAndThief.thiefplayer05 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer05.PlayerId) {
-                        PoliceAndThief.thiefplayer05IsStealing = true;
-                        PoliceAndThief.thiefplayer05JewelId = jewelId;
-                    }
-                    else if (PoliceAndThief.thiefplayer06 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer06.PlayerId) {
-                        PoliceAndThief.thiefplayer06IsStealing = true;
-                        PoliceAndThief.thiefplayer06JewelId = jewelId;
-                    }
-                    else if (PoliceAndThief.thiefplayer07 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer07.PlayerId) {
-                        PoliceAndThief.thiefplayer07IsStealing = true;
-                        PoliceAndThief.thiefplayer07JewelId = jewelId;
-                    }
-                    else if (PoliceAndThief.thiefplayer08 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer08.PlayerId) {
-                        PoliceAndThief.thiefplayer08IsStealing = true;
-                        PoliceAndThief.thiefplayer08JewelId = jewelId;
-                    }
-                    else if (PoliceAndThief.thiefplayer09 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer09.PlayerId) {
-                        PoliceAndThief.thiefplayer09IsStealing = true;
-                        PoliceAndThief.thiefplayer09JewelId = jewelId;
-                    }
-                    switch (jewelId) {
-                        case 1:
-                            PoliceAndThief.jewel01BeingStealed = player;
-                            PoliceAndThief.jewel01.SetActive(true);
-                            PoliceAndThief.jewel01.transform.parent = player.transform;
-                            PoliceAndThief.jewel01.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
-                            break;
-                        case 2:
-                            PoliceAndThief.jewel02BeingStealed = player;
-                            PoliceAndThief.jewel02.SetActive(true);
-                            PoliceAndThief.jewel02.transform.parent = player.transform;
-                            PoliceAndThief.jewel02.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
-                            break;
-                        case 3:
-                            PoliceAndThief.jewel03BeingStealed = player;
-                            PoliceAndThief.jewel03.SetActive(true);
-                            PoliceAndThief.jewel03.transform.parent = player.transform;
-                            PoliceAndThief.jewel03.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
-                            break;
-                        case 4:
-                            PoliceAndThief.jewel04BeingStealed = player;
-                            PoliceAndThief.jewel04.SetActive(true);
-                            PoliceAndThief.jewel04.transform.parent = player.transform;
-                            PoliceAndThief.jewel04.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
-                            break;
-                        case 5:
-                            PoliceAndThief.jewel05BeingStealed = player;
-                            PoliceAndThief.jewel05.SetActive(true);
-                            PoliceAndThief.jewel05.transform.parent = player.transform;
-                            PoliceAndThief.jewel05.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
-                            break;
-                        case 6:
-                            PoliceAndThief.jewel06BeingStealed = player;
-                            PoliceAndThief.jewel06.SetActive(true);
-                            PoliceAndThief.jewel06.transform.parent = player.transform;
-                            PoliceAndThief.jewel06.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
-                            break;
-                        case 7:
-                            PoliceAndThief.jewel07BeingStealed = player;
-                            PoliceAndThief.jewel07.SetActive(true);
-                            PoliceAndThief.jewel07.transform.parent = player.transform;
-                            PoliceAndThief.jewel07.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
-                            break;
-                        case 8:
-                            PoliceAndThief.jewel08BeingStealed = player;
-                            PoliceAndThief.jewel08.SetActive(true);
-                            PoliceAndThief.jewel08.transform.parent = player.transform;
-                            PoliceAndThief.jewel08.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
-                            break;
-                        case 9:
-                            PoliceAndThief.jewel09BeingStealed = player;
-                            PoliceAndThief.jewel09.SetActive(true);
-                            PoliceAndThief.jewel09.transform.parent = player.transform;
-                            PoliceAndThief.jewel09.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
-                            break;
-                        case 10:
-                            PoliceAndThief.jewel10BeingStealed = player;
-                            PoliceAndThief.jewel10.SetActive(true);
-                            PoliceAndThief.jewel10.transform.parent = player.transform;
-                            PoliceAndThief.jewel10.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
-                            break;
-                        case 11:
-                            PoliceAndThief.jewel11BeingStealed = player;
-                            PoliceAndThief.jewel11.SetActive(true);
-                            PoliceAndThief.jewel11.transform.parent = player.transform;
-                            PoliceAndThief.jewel11.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
-                            break;
-                        case 12:
-                            PoliceAndThief.jewel12BeingStealed = player;
-                            PoliceAndThief.jewel12.SetActive(true);
-                            PoliceAndThief.jewel12.transform.parent = player.transform;
-                            PoliceAndThief.jewel12.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
-                            break;
-                        case 13:
-                            PoliceAndThief.jewel13BeingStealed = player;
-                            PoliceAndThief.jewel13.SetActive(true);
-                            PoliceAndThief.jewel13.transform.parent = player.transform;
-                            PoliceAndThief.jewel13.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
-                            break;
-                        case 14:
-                            PoliceAndThief.jewel14BeingStealed = player;
-                            PoliceAndThief.jewel14.SetActive(true);
-                            PoliceAndThief.jewel14.transform.parent = player.transform;
-                            PoliceAndThief.jewel14.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
-                            break;
-                        case 15:
-                            PoliceAndThief.jewel15BeingStealed = player;
-                            PoliceAndThief.jewel15.SetActive(true);
-                            PoliceAndThief.jewel15.transform.parent = player.transform;
-                            PoliceAndThief.jewel15.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
-                            break;
-                    }
-                }
+            PlayerControl thiefTookJewel = Helpers.playerById(thiefWhoTookATreasure);
 
+            if (PoliceAndThief.thiefplayer01 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer01.PlayerId) {
+                PoliceAndThief.thiefplayer01IsStealing = true;
+                PoliceAndThief.thiefplayer01JewelId = jewelId;
+            }
+            else if (PoliceAndThief.thiefplayer02 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer02.PlayerId) {
+                PoliceAndThief.thiefplayer02IsStealing = true;
+                PoliceAndThief.thiefplayer02JewelId = jewelId;
+            }
+            else if (PoliceAndThief.thiefplayer03 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer03.PlayerId) {
+                PoliceAndThief.thiefplayer03IsStealing = true;
+                PoliceAndThief.thiefplayer03JewelId = jewelId;
+            }
+            else if (PoliceAndThief.thiefplayer04 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer04.PlayerId) {
+                PoliceAndThief.thiefplayer04IsStealing = true;
+                PoliceAndThief.thiefplayer04JewelId = jewelId;
+            }
+            else if (PoliceAndThief.thiefplayer05 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer05.PlayerId) {
+                PoliceAndThief.thiefplayer05IsStealing = true;
+                PoliceAndThief.thiefplayer05JewelId = jewelId;
+            }
+            else if (PoliceAndThief.thiefplayer06 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer06.PlayerId) {
+                PoliceAndThief.thiefplayer06IsStealing = true;
+                PoliceAndThief.thiefplayer06JewelId = jewelId;
+            }
+            else if (PoliceAndThief.thiefplayer07 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer07.PlayerId) {
+                PoliceAndThief.thiefplayer07IsStealing = true;
+                PoliceAndThief.thiefplayer07JewelId = jewelId;
+            }
+            else if (PoliceAndThief.thiefplayer08 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer08.PlayerId) {
+                PoliceAndThief.thiefplayer08IsStealing = true;
+                PoliceAndThief.thiefplayer08JewelId = jewelId;
+            }
+            else if (PoliceAndThief.thiefplayer09 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer09.PlayerId) {
+                PoliceAndThief.thiefplayer09IsStealing = true;
+                PoliceAndThief.thiefplayer09JewelId = jewelId;
+            }
+            switch (jewelId) {
+                case 1:
+                    thiefCarryJewel(thiefTookJewel, PoliceAndThief.jewel01);
+                    PoliceAndThief.jewel01BeingStealed = thiefTookJewel;
+                    break;
+                case 2:
+                    thiefCarryJewel(thiefTookJewel, PoliceAndThief.jewel02);
+                    PoliceAndThief.jewel02BeingStealed = thiefTookJewel;
+                    break;
+                case 3:
+                    thiefCarryJewel(thiefTookJewel, PoliceAndThief.jewel03);
+                    PoliceAndThief.jewel03BeingStealed = thiefTookJewel;
+                    break;
+                case 4:
+                    thiefCarryJewel(thiefTookJewel, PoliceAndThief.jewel04);
+                    PoliceAndThief.jewel04BeingStealed = thiefTookJewel;
+                    break;
+                case 5:
+                    thiefCarryJewel(thiefTookJewel, PoliceAndThief.jewel05);
+                    PoliceAndThief.jewel05BeingStealed = thiefTookJewel;
+                    break;
+                case 6:
+                    thiefCarryJewel(thiefTookJewel, PoliceAndThief.jewel06);
+                    PoliceAndThief.jewel06BeingStealed = thiefTookJewel;
+                    break;
+                case 7:
+                    thiefCarryJewel(thiefTookJewel, PoliceAndThief.jewel07);
+                    PoliceAndThief.jewel07BeingStealed = thiefTookJewel;
+                    break;
+                case 8:
+                    thiefCarryJewel(thiefTookJewel, PoliceAndThief.jewel08);
+                    PoliceAndThief.jewel08BeingStealed = thiefTookJewel;
+                    break;
+                case 9:
+                    thiefCarryJewel(thiefTookJewel, PoliceAndThief.jewel09);
+                    PoliceAndThief.jewel09BeingStealed = thiefTookJewel;
+                    break;
+                case 10:
+                    thiefCarryJewel(thiefTookJewel, PoliceAndThief.jewel10);
+                    PoliceAndThief.jewel10BeingStealed = thiefTookJewel;
+                    break;
+                case 11:
+                    thiefCarryJewel(thiefTookJewel, PoliceAndThief.jewel11);
+                    PoliceAndThief.jewel11BeingStealed = thiefTookJewel;
+                    break;
+                case 12:
+                    thiefCarryJewel(thiefTookJewel, PoliceAndThief.jewel12);
+                    PoliceAndThief.jewel12BeingStealed = thiefTookJewel;
+                    break;
+                case 13:
+                    thiefCarryJewel(thiefTookJewel, PoliceAndThief.jewel13);
+                    PoliceAndThief.jewel13BeingStealed = thiefTookJewel;
+                    break;
+                case 14:
+                    thiefCarryJewel(thiefTookJewel, PoliceAndThief.jewel14);
+                    PoliceAndThief.jewel14BeingStealed = thiefTookJewel;
+                    break;
+                case 15:
+                    thiefCarryJewel(thiefTookJewel, PoliceAndThief.jewel15);
+                    PoliceAndThief.jewel15BeingStealed = thiefTookJewel;
+                    break;
             }
         }
 
+        public static void thiefCarryJewel(PlayerControl thief, GameObject jewel) {
+            jewel.SetActive(true);
+            jewel.transform.parent = thief.transform;
+            jewel.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
+        }
+
         public static void policeandThiefDeliverJewel(byte thiefWhoTookATreasure, byte jewelId) {
-            // Thief team
-            foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
-                // Thief player steal a jewel
-                if (player.PlayerId == thiefWhoTookATreasure) {
-                    if (PoliceAndThief.thiefplayer01 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer01.PlayerId) {
-                        PoliceAndThief.thiefplayer01IsStealing = false;
-                        PoliceAndThief.thiefplayer01JewelId = 0;
-                    }
-                    else if (PoliceAndThief.thiefplayer02 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer02.PlayerId) {
-                        PoliceAndThief.thiefplayer02IsStealing = false;
-                        PoliceAndThief.thiefplayer02JewelId = 0;
-                    }
-                    else if (PoliceAndThief.thiefplayer03 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer03.PlayerId) {
-                        PoliceAndThief.thiefplayer03IsStealing = false;
-                        PoliceAndThief.thiefplayer03JewelId = 0;
-                    }
-                    else if (PoliceAndThief.thiefplayer04 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer04.PlayerId) {
-                        PoliceAndThief.thiefplayer04IsStealing = false;
-                        PoliceAndThief.thiefplayer04JewelId = 0;
-                    }
-                    else if (PoliceAndThief.thiefplayer05 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer05.PlayerId) {
-                        PoliceAndThief.thiefplayer05IsStealing = false;
-                        PoliceAndThief.thiefplayer05JewelId = 0;
-                    }
-                    else if (PoliceAndThief.thiefplayer06 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer06.PlayerId) {
-                        PoliceAndThief.thiefplayer06IsStealing = false;
-                        PoliceAndThief.thiefplayer06JewelId = 0;
-                    }
-                    else if (PoliceAndThief.thiefplayer07 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer07.PlayerId) {
-                        PoliceAndThief.thiefplayer07IsStealing = false;
-                        PoliceAndThief.thiefplayer07JewelId = 0;
-                    }
-                    else if (PoliceAndThief.thiefplayer08 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer08.PlayerId) {
-                        PoliceAndThief.thiefplayer08IsStealing = false;
-                        PoliceAndThief.thiefplayer08JewelId = 0;
-                    }
-                    else if (PoliceAndThief.thiefplayer09 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer09.PlayerId) {
-                        PoliceAndThief.thiefplayer09IsStealing = false;
-                        PoliceAndThief.thiefplayer09JewelId = 0;
-                    }
-                    GameObject myJewel = null;
-                    bool isDiamond = true;
-                    switch (jewelId) {
-                        case 1:
-                            myJewel = PoliceAndThief.jewel01;
-                            PoliceAndThief.jewel01BeingStealed = null;
-                            break;
-                        case 2:
-                            myJewel = PoliceAndThief.jewel02;
-                            PoliceAndThief.jewel02BeingStealed = null;
-                            break;
-                        case 3:
-                            myJewel = PoliceAndThief.jewel03;
-                            PoliceAndThief.jewel03BeingStealed = null;
-                            break;
-                        case 4:
-                            myJewel = PoliceAndThief.jewel04;
-                            PoliceAndThief.jewel04BeingStealed = null;
-                            break;
-                        case 5:
-                            myJewel = PoliceAndThief.jewel05;
-                            PoliceAndThief.jewel05BeingStealed = null;
-                            break;
-                        case 6:
-                            myJewel = PoliceAndThief.jewel06;
-                            PoliceAndThief.jewel06BeingStealed = null;
-                            break;
-                        case 7:
-                            myJewel = PoliceAndThief.jewel07;
-                            PoliceAndThief.jewel07BeingStealed = null;
-                            break;
-                        case 8:
-                            myJewel = PoliceAndThief.jewel08;
-                            PoliceAndThief.jewel08BeingStealed = null;
-                            break;
-                        case 9:
-                            myJewel = PoliceAndThief.jewel09;
-                            PoliceAndThief.jewel09BeingStealed = null;
-                            isDiamond = !isDiamond;
-                            break;
-                        case 10:
-                            myJewel = PoliceAndThief.jewel10;
-                            PoliceAndThief.jewel10BeingStealed = null;
-                            isDiamond = !isDiamond;
-                            break;
-                        case 11:
-                            myJewel = PoliceAndThief.jewel11;
-                            PoliceAndThief.jewel11BeingStealed = null;
-                            isDiamond = !isDiamond;
-                            break;
-                        case 12:
-                            myJewel = PoliceAndThief.jewel12;
-                            PoliceAndThief.jewel12BeingStealed = null;
-                            isDiamond = !isDiamond;
-                            break;
-                        case 13:
-                            myJewel = PoliceAndThief.jewel13;
-                            PoliceAndThief.jewel13BeingStealed = null;
-                            isDiamond = !isDiamond;
-                            break;
-                        case 14:
-                            myJewel = PoliceAndThief.jewel14;
-                            PoliceAndThief.jewel14BeingStealed = null;
-                            isDiamond = !isDiamond;
-                            break;
-                        case 15:
-                            myJewel = PoliceAndThief.jewel15;
-                            PoliceAndThief.jewel15BeingStealed = null;
-                            isDiamond = !isDiamond;
-                            break;
-                    }
-                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
-                        // Skeld
-                        case 0:
-                            if (activatedSensei) {
-                                if (isDiamond) {
-                                    myJewel.transform.position = new Vector3(15.25f, -0.33f, player.transform.position.z);
-                                }
-                                else {
-                                    myJewel.transform.position = new Vector3(15.7f, -0.33f, player.transform.position.z);
-                                }
-                            }
-                            else {
-                                if (isDiamond) {
+            PlayerControl thiefDeliverJewel = Helpers.playerById(thiefWhoTookATreasure);
 
-                                    myJewel.transform.position = new Vector3(0f, -19.4f, player.transform.position.z);
-                                }
-                                else {
-                                    myJewel.transform.position = new Vector3(0.4f, -19.4f, player.transform.position.z);
-                                }
-                            }
-                            break;
-                        // MiraHQ
-                        case 1:
-                            if (isDiamond) {
-                                myJewel.transform.position = new Vector3(19.65f, 13.9f, player.transform.position.z);
-                            }
-                            else {
-                                myJewel.transform.position = new Vector3(20.075f, 13.9f, player.transform.position.z);
-                            }
-                            break;
-                        // Polus
-                        case 2:
-                            if (isDiamond) {
-                                myJewel.transform.position = new Vector3(33.6f, 13.9f, player.transform.position.z);
-                            }
-                            else {
-                                myJewel.transform.position = new Vector3(34.05f, -15.9f, player.transform.position.z);
-                            }
-                            break;
-                        // Dleks
-                        case 3:
-                            if (isDiamond) {
-                                myJewel.transform.position = new Vector3(0f, -19.4f, player.transform.position.z);
-                            }
-                            else {
-                                myJewel.transform.position = new Vector3(-0.4f, -19.4f, player.transform.position.z);
-                            }
-                            break;
-                        // Airship
-                        case 4:
-                            if (isDiamond) {
-                                myJewel.transform.position = new Vector3(11.75f, -16.35f, player.transform.position.z);
-                            }
-                            else {
-                                myJewel.transform.position = new Vector3(12.2f, -16.35f, player.transform.position.z);
-                            }
-                            break;
-                        // Submerged
-                        case 5:
-                            if (isDiamond) {
-                                if (myJewel.transform.position.y > 0) {
-                                    myJewel.transform.position = new Vector3(-1.4f, 8.65f, player.transform.position.z);
-                                }
-                                else {
-                                    myJewel.transform.position = new Vector3(12.7f, -35.35f, player.transform.position.z);
-                                }
-                            }
-                            else {
-                                if (myJewel.transform.position.y > 0) {
-                                    myJewel.transform.position = new Vector3(-1f, 8.65f, player.transform.position.z);
-                                }
-                                else {
-                                    myJewel.transform.position = new Vector3(13.1f, -35.35f, player.transform.position.z);
-                                }
-                            }
-                            break;
-                    }
-                    myJewel.transform.SetParent(null);
-                }
-
+            // Thief player steal a jewel
+            if (PoliceAndThief.thiefplayer01 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer01.PlayerId) {
+                PoliceAndThief.thiefplayer01IsStealing = false;
+                PoliceAndThief.thiefplayer01JewelId = 0;
             }
+            else if (PoliceAndThief.thiefplayer02 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer02.PlayerId) {
+                PoliceAndThief.thiefplayer02IsStealing = false;
+                PoliceAndThief.thiefplayer02JewelId = 0;
+            }
+            else if (PoliceAndThief.thiefplayer03 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer03.PlayerId) {
+                PoliceAndThief.thiefplayer03IsStealing = false;
+                PoliceAndThief.thiefplayer03JewelId = 0;
+            }
+            else if (PoliceAndThief.thiefplayer04 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer04.PlayerId) {
+                PoliceAndThief.thiefplayer04IsStealing = false;
+                PoliceAndThief.thiefplayer04JewelId = 0;
+            }
+            else if (PoliceAndThief.thiefplayer05 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer05.PlayerId) {
+                PoliceAndThief.thiefplayer05IsStealing = false;
+                PoliceAndThief.thiefplayer05JewelId = 0;
+            }
+            else if (PoliceAndThief.thiefplayer06 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer06.PlayerId) {
+                PoliceAndThief.thiefplayer06IsStealing = false;
+                PoliceAndThief.thiefplayer06JewelId = 0;
+            }
+            else if (PoliceAndThief.thiefplayer07 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer07.PlayerId) {
+                PoliceAndThief.thiefplayer07IsStealing = false;
+                PoliceAndThief.thiefplayer07JewelId = 0;
+            }
+            else if (PoliceAndThief.thiefplayer08 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer08.PlayerId) {
+                PoliceAndThief.thiefplayer08IsStealing = false;
+                PoliceAndThief.thiefplayer08JewelId = 0;
+            }
+            else if (PoliceAndThief.thiefplayer09 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer09.PlayerId) {
+                PoliceAndThief.thiefplayer09IsStealing = false;
+                PoliceAndThief.thiefplayer09JewelId = 0;
+            }
+            GameObject myJewel = null;
+            bool isDiamond = true;
+            switch (jewelId) {
+                case 1:
+                    myJewel = PoliceAndThief.jewel01;
+                    PoliceAndThief.jewel01BeingStealed = null;
+                    break;
+                case 2:
+                    myJewel = PoliceAndThief.jewel02;
+                    PoliceAndThief.jewel02BeingStealed = null;
+                    break;
+                case 3:
+                    myJewel = PoliceAndThief.jewel03;
+                    PoliceAndThief.jewel03BeingStealed = null;
+                    break;
+                case 4:
+                    myJewel = PoliceAndThief.jewel04;
+                    PoliceAndThief.jewel04BeingStealed = null;
+                    break;
+                case 5:
+                    myJewel = PoliceAndThief.jewel05;
+                    PoliceAndThief.jewel05BeingStealed = null;
+                    break;
+                case 6:
+                    myJewel = PoliceAndThief.jewel06;
+                    PoliceAndThief.jewel06BeingStealed = null;
+                    break;
+                case 7:
+                    myJewel = PoliceAndThief.jewel07;
+                    PoliceAndThief.jewel07BeingStealed = null;
+                    break;
+                case 8:
+                    myJewel = PoliceAndThief.jewel08;
+                    PoliceAndThief.jewel08BeingStealed = null;
+                    break;
+                case 9:
+                    myJewel = PoliceAndThief.jewel09;
+                    PoliceAndThief.jewel09BeingStealed = null;
+                    isDiamond = !isDiamond;
+                    break;
+                case 10:
+                    myJewel = PoliceAndThief.jewel10;
+                    PoliceAndThief.jewel10BeingStealed = null;
+                    isDiamond = !isDiamond;
+                    break;
+                case 11:
+                    myJewel = PoliceAndThief.jewel11;
+                    PoliceAndThief.jewel11BeingStealed = null;
+                    isDiamond = !isDiamond;
+                    break;
+                case 12:
+                    myJewel = PoliceAndThief.jewel12;
+                    PoliceAndThief.jewel12BeingStealed = null;
+                    isDiamond = !isDiamond;
+                    break;
+                case 13:
+                    myJewel = PoliceAndThief.jewel13;
+                    PoliceAndThief.jewel13BeingStealed = null;
+                    isDiamond = !isDiamond;
+                    break;
+                case 14:
+                    myJewel = PoliceAndThief.jewel14;
+                    PoliceAndThief.jewel14BeingStealed = null;
+                    isDiamond = !isDiamond;
+                    break;
+                case 15:
+                    myJewel = PoliceAndThief.jewel15;
+                    PoliceAndThief.jewel15BeingStealed = null;
+                    isDiamond = !isDiamond;
+                    break;
+            }
+            switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
+                // Skeld
+                case 0:
+                    if (activatedSensei) {
+                        if (isDiamond) {
+                            myJewel.transform.position = new Vector3(15.25f, -0.33f, thiefDeliverJewel.transform.position.z);
+                        }
+                        else {
+                            myJewel.transform.position = new Vector3(15.7f, -0.33f, thiefDeliverJewel.transform.position.z);
+                        }
+                    }
+                    else {
+                        if (isDiamond) {
+                            myJewel.transform.position = new Vector3(0f, -19.4f, thiefDeliverJewel.transform.position.z);
+                        }
+                        else {
+                            myJewel.transform.position = new Vector3(0.4f, -19.4f, thiefDeliverJewel.transform.position.z);
+                        }
+                    }
+                    break;
+                // MiraHQ
+                case 1:
+                    if (isDiamond) {
+                        myJewel.transform.position = new Vector3(19.65f, 13.9f, thiefDeliverJewel.transform.position.z);
+                    }
+                    else {
+                        myJewel.transform.position = new Vector3(20.075f, 13.9f, thiefDeliverJewel.transform.position.z);
+                    }
+                    break;
+                // Polus
+                case 2:
+                    if (isDiamond) {
+                        myJewel.transform.position = new Vector3(33.6f, 13.9f, thiefDeliverJewel.transform.position.z);
+                    }
+                    else {
+                        myJewel.transform.position = new Vector3(34.05f, -15.9f, thiefDeliverJewel.transform.position.z);
+                    }
+                    break;
+                // Dleks
+                case 3:
+                    if (isDiamond) {
+                        myJewel.transform.position = new Vector3(0f, -19.4f, thiefDeliverJewel.transform.position.z);
+                    }
+                    else {
+                        myJewel.transform.position = new Vector3(-0.4f, -19.4f, thiefDeliverJewel.transform.position.z);
+                    }
+                    break;
+                // Airship
+                case 4:
+                    if (isDiamond) {
+                        myJewel.transform.position = new Vector3(11.75f, -16.35f, thiefDeliverJewel.transform.position.z);
+                    }
+                    else {
+                        myJewel.transform.position = new Vector3(12.2f, -16.35f, thiefDeliverJewel.transform.position.z);
+                    }
+                    break;
+                // Submerged
+                case 5:
+                    if (isDiamond) {
+                        if (myJewel.transform.position.y > 0) {
+                            myJewel.transform.position = new Vector3(-1.4f, 8.65f, thiefDeliverJewel.transform.position.z);
+                        }
+                        else {
+                            myJewel.transform.position = new Vector3(12.7f, -35.35f, thiefDeliverJewel.transform.position.z);
+                        }
+                    }
+                    else {
+                        if (myJewel.transform.position.y > 0) {
+                            myJewel.transform.position = new Vector3(-1f, 8.65f, thiefDeliverJewel.transform.position.z);
+                        }
+                        else {
+                            myJewel.transform.position = new Vector3(13.1f, -35.35f, thiefDeliverJewel.transform.position.z);
+                        }
+                    }
+                    break;
+            }
+            myJewel.transform.SetParent(null);
             PoliceAndThief.currentJewelsStoled += 1;
-            new CustomMessage(Language.statusPoliceAndThiefsTexts[2], 5, -1, 1.6f, 7);
+            new CustomMessage(Language.statusPoliceAndThiefsTexts[2], 5, -1, 1.6f, 16);
             PoliceAndThief.thiefpointCounter = Language.introTexts[3] + "<color=#00F7FFFF>" + PoliceAndThief.currentJewelsStoled + " / " + PoliceAndThief.requiredJewels + "</color> | " + Language.introTexts[4] + "<color=#928B55FF>" + PoliceAndThief.currentThiefsCaptured + " / " + PoliceAndThief.thiefTeam.Count + "</color>";
             if (PoliceAndThief.currentJewelsStoled >= PoliceAndThief.requiredJewels) {
                 PoliceAndThief.triggerThiefWin = true;
@@ -5595,828 +5407,780 @@ namespace LasMonjas
         }
 
         public static void policeandThiefRevertedJewelPosition(byte thiefWhoLostJewel, byte jewelRevertedId) {
-            foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
-                if (player.PlayerId == thiefWhoLostJewel) {
-                    if (PoliceAndThief.thiefplayer01 != null && thiefWhoLostJewel == PoliceAndThief.thiefplayer01.PlayerId) {
-                        PoliceAndThief.thiefplayer01IsStealing = false;
-                        PoliceAndThief.thiefplayer01JewelId = 0;
-                    }
-                    else if (PoliceAndThief.thiefplayer02 != null && thiefWhoLostJewel == PoliceAndThief.thiefplayer02.PlayerId) {
-                        PoliceAndThief.thiefplayer02IsStealing = false;
-                        PoliceAndThief.thiefplayer02JewelId = 0;
-                    }
-                    else if (PoliceAndThief.thiefplayer03 != null && thiefWhoLostJewel == PoliceAndThief.thiefplayer03.PlayerId) {
-                        PoliceAndThief.thiefplayer03IsStealing = false;
-                        PoliceAndThief.thiefplayer03JewelId = 0;
-                    }
-                    else if (PoliceAndThief.thiefplayer04 != null && thiefWhoLostJewel == PoliceAndThief.thiefplayer04.PlayerId) {
-                        PoliceAndThief.thiefplayer04IsStealing = false;
-                        PoliceAndThief.thiefplayer04JewelId = 0;
-                    }
-                    else if (PoliceAndThief.thiefplayer05 != null && thiefWhoLostJewel == PoliceAndThief.thiefplayer05.PlayerId) {
-                        PoliceAndThief.thiefplayer05IsStealing = false;
-                        PoliceAndThief.thiefplayer05JewelId = 0;
-                    }
-                    else if (PoliceAndThief.thiefplayer06 != null && thiefWhoLostJewel == PoliceAndThief.thiefplayer06.PlayerId) {
-                        PoliceAndThief.thiefplayer06IsStealing = false;
-                        PoliceAndThief.thiefplayer06JewelId = 0;
-                    }
-                    else if (PoliceAndThief.thiefplayer07 != null && thiefWhoLostJewel == PoliceAndThief.thiefplayer07.PlayerId) {
-                        PoliceAndThief.thiefplayer07IsStealing = false;
-                        PoliceAndThief.thiefplayer07JewelId = 0;
-                    }
-                    else if (PoliceAndThief.thiefplayer08 != null && thiefWhoLostJewel == PoliceAndThief.thiefplayer08.PlayerId) {
-                        PoliceAndThief.thiefplayer08IsStealing = false;
-                        PoliceAndThief.thiefplayer08JewelId = 0;
-                    }
-                    else if (PoliceAndThief.thiefplayer09 != null && thiefWhoLostJewel == PoliceAndThief.thiefplayer09.PlayerId) {
-                        PoliceAndThief.thiefplayer09IsStealing = false;
-                        PoliceAndThief.thiefplayer09JewelId = 0;
-                    }
-                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
-                        // Skeld
-                        case 0:
-                            if (activatedSensei) {
-                                switch (jewelRevertedId) {
-                                    case 1:
-                                        PoliceAndThief.jewel01.transform.SetParent(null);
-                                        PoliceAndThief.jewel01.transform.position = new Vector3(6.95f, 4.95f, 1f);
-                                        PoliceAndThief.jewel01BeingStealed = null;
-                                        break;
-                                    case 2:
-                                        PoliceAndThief.jewel02.transform.SetParent(null);
-                                        PoliceAndThief.jewel02.transform.position = new Vector3(-3.75f, 5.35f, 1f);
-                                        PoliceAndThief.jewel02BeingStealed = null;
-                                        break;
-                                    case 3:
-                                        PoliceAndThief.jewel03.transform.SetParent(null);
-                                        PoliceAndThief.jewel03.transform.position = new Vector3(-7.7f, 11.3f, 1f);
-                                        PoliceAndThief.jewel03BeingStealed = null;
-                                        break;
-                                    case 4:
-                                        PoliceAndThief.jewel04.transform.SetParent(null);
-                                        PoliceAndThief.jewel04.transform.position = new Vector3(-19.65f, 5.3f, 1f);
-                                        PoliceAndThief.jewel04BeingStealed = null;
-                                        break;
-                                    case 5:
-                                        PoliceAndThief.jewel05.transform.SetParent(null);
-                                        PoliceAndThief.jewel05.transform.position = new Vector3(-19.65f, -8, 1f);
-                                        PoliceAndThief.jewel05BeingStealed = null;
-                                        break;
-                                    case 6:
-                                        PoliceAndThief.jewel06.transform.SetParent(null);
-                                        PoliceAndThief.jewel06.transform.position = new Vector3(-5.45f, -13f, 1f);
-                                        PoliceAndThief.jewel06BeingStealed = null;
-                                        break;
-                                    case 7:
-                                        PoliceAndThief.jewel07.transform.SetParent(null);
-                                        PoliceAndThief.jewel07.transform.position = new Vector3(-7.65f, -4.2f, 1f);
-                                        PoliceAndThief.jewel07BeingStealed = null;
-                                        break;
-                                    case 8:
-                                        PoliceAndThief.jewel08.transform.SetParent(null);
-                                        PoliceAndThief.jewel08.transform.position = new Vector3(2f, -6.75f, 1f);
-                                        PoliceAndThief.jewel08BeingStealed = null;
-                                        break;
-                                    case 9:
-                                        PoliceAndThief.jewel09.transform.SetParent(null);
-                                        PoliceAndThief.jewel09.transform.position = new Vector3(8.9f, 1.45f, 1f);
-                                        PoliceAndThief.jewel09BeingStealed = null;
-                                        break;
-                                    case 10:
-                                        PoliceAndThief.jewel10.transform.SetParent(null);
-                                        PoliceAndThief.jewel10.transform.position = new Vector3(4.6f, -2.25f, 1f);
-                                        PoliceAndThief.jewel10BeingStealed = null;
-                                        break;
-                                    case 11:
-                                        PoliceAndThief.jewel11.transform.SetParent(null);
-                                        PoliceAndThief.jewel11.transform.position = new Vector3(-5.05f, -0.88f, 1f);
-                                        PoliceAndThief.jewel11BeingStealed = null;
-                                        break;
-                                    case 12:
-                                        PoliceAndThief.jewel12.transform.SetParent(null);
-                                        PoliceAndThief.jewel12.transform.position = new Vector3(-8.25f, -0.45f, 1f);
-                                        PoliceAndThief.jewel12BeingStealed = null;
-                                        break;
-                                    case 13:
-                                        PoliceAndThief.jewel13.transform.SetParent(null);
-                                        PoliceAndThief.jewel13.transform.position = new Vector3(-19.75f, -1.55f, 1f);
-                                        PoliceAndThief.jewel13BeingStealed = null;
-                                        break;
-                                    case 14:
-                                        PoliceAndThief.jewel14.transform.SetParent(null);
-                                        PoliceAndThief.jewel14.transform.position = new Vector3(-12.1f, -13.15f, 1f);
-                                        PoliceAndThief.jewel14BeingStealed = null;
-                                        break;
-                                    case 15:
-                                        PoliceAndThief.jewel15.transform.SetParent(null);
-                                        PoliceAndThief.jewel15.transform.position = new Vector3(7.15f, -14.45f, 1f);
-                                        PoliceAndThief.jewel15BeingStealed = null;
-                                        break;
-                                }
-                            }
-                            else {
-                                switch (jewelRevertedId) {
-                                    case 1:
-                                        PoliceAndThief.jewel01.transform.SetParent(null);
-                                        PoliceAndThief.jewel01.transform.position = new Vector3(-18.65f, -9.9f, 1f);
-                                        PoliceAndThief.jewel01BeingStealed = null;
-                                        break;
-                                    case 2:
-                                        PoliceAndThief.jewel02.transform.SetParent(null);
-                                        PoliceAndThief.jewel02.transform.position = new Vector3(-21.5f, -2, 1f);
-                                        PoliceAndThief.jewel02BeingStealed = null;
-                                        break;
-                                    case 3:
-                                        PoliceAndThief.jewel03.transform.SetParent(null);
-                                        PoliceAndThief.jewel03.transform.position = new Vector3(-5.9f, -8.25f, 1f);
-                                        PoliceAndThief.jewel03BeingStealed = null;
-                                        break;
-                                    case 4:
-                                        PoliceAndThief.jewel04.transform.SetParent(null);
-                                        PoliceAndThief.jewel04.transform.position = new Vector3(4.5f, -7.5f, 1f);
-                                        PoliceAndThief.jewel04BeingStealed = null;
-                                        break;
-                                    case 5:
-                                        PoliceAndThief.jewel05.transform.SetParent(null);
-                                        PoliceAndThief.jewel05.transform.position = new Vector3(7.85f, -14.45f, 1f);
-                                        PoliceAndThief.jewel05BeingStealed = null;
-                                        break;
-                                    case 6:
-                                        PoliceAndThief.jewel06.transform.SetParent(null);
-                                        PoliceAndThief.jewel06.transform.position = new Vector3(6.65f, -4.8f, 1f);
-                                        PoliceAndThief.jewel06BeingStealed = null;
-                                        break;
-                                    case 7:
-                                        PoliceAndThief.jewel07.transform.SetParent(null);
-                                        PoliceAndThief.jewel07.transform.position = new Vector3(10.5f, 2.15f, 1f);
-                                        PoliceAndThief.jewel07BeingStealed = null;
-                                        break;
-                                    case 8:
-                                        PoliceAndThief.jewel08.transform.SetParent(null);
-                                        PoliceAndThief.jewel08.transform.position = new Vector3(-5.5f, 3.5f, 1f);
-                                        PoliceAndThief.jewel08BeingStealed = null;
-                                        break;
-                                    case 9:
-                                        PoliceAndThief.jewel09.transform.SetParent(null);
-                                        PoliceAndThief.jewel09.transform.position = new Vector3(-19, -1.2f, 1f);
-                                        PoliceAndThief.jewel09BeingStealed = null;
-                                        break;
-                                    case 10:
-                                        PoliceAndThief.jewel10.transform.SetParent(null);
-                                        PoliceAndThief.jewel10.transform.position = new Vector3(-21.5f, -8.35f, 1f);
-                                        PoliceAndThief.jewel10BeingStealed = null;
-                                        break;
-                                    case 11:
-                                        PoliceAndThief.jewel11.transform.SetParent(null);
-                                        PoliceAndThief.jewel11.transform.position = new Vector3(-12.5f, -3.75f, 1f);
-                                        PoliceAndThief.jewel11BeingStealed = null;
-                                        break;
-                                    case 12:
-                                        PoliceAndThief.jewel12.transform.SetParent(null);
-                                        PoliceAndThief.jewel12.transform.position = new Vector3(-5.9f, -5.25f, 1f);
-                                        PoliceAndThief.jewel12BeingStealed = null;
-                                        break;
-                                    case 13:
-                                        PoliceAndThief.jewel13.transform.SetParent(null);
-                                        PoliceAndThief.jewel13.transform.position = new Vector3(2.65f, -16.5f, 1f);
-                                        PoliceAndThief.jewel13BeingStealed = null;
-                                        break;
-                                    case 14:
-                                        PoliceAndThief.jewel14.transform.SetParent(null);
-                                        PoliceAndThief.jewel14.transform.position = new Vector3(16.75f, -4.75f, 1f);
-                                        PoliceAndThief.jewel14BeingStealed = null;
-                                        break;
-                                    case 15:
-                                        PoliceAndThief.jewel15.transform.SetParent(null);
-                                        PoliceAndThief.jewel15.transform.position = new Vector3(3.8f, 3.5f, 1f);
-                                        PoliceAndThief.jewel15BeingStealed = null;
-                                        break;
-                                }
-                            }
-                            break;
-                        // MiraHQ
-                        case 1:
-                            switch (jewelRevertedId) {
-                                case 1:
-                                    PoliceAndThief.jewel01.transform.SetParent(null);
-                                    PoliceAndThief.jewel01.transform.position = new Vector3(-4.5f, 2.5f, 1f);
-                                    PoliceAndThief.jewel01BeingStealed = null;
-                                    break;
-                                case 2:
-                                    PoliceAndThief.jewel02.transform.SetParent(null);
-                                    PoliceAndThief.jewel02.transform.position = new Vector3(6.25f, 14f, 1f);
-                                    PoliceAndThief.jewel02BeingStealed = null;
-                                    break;
-                                case 3:
-                                    PoliceAndThief.jewel03.transform.SetParent(null);
-                                    PoliceAndThief.jewel03.transform.position = new Vector3(9.15f, 4.75f, 1f);
-                                    PoliceAndThief.jewel03BeingStealed = null;
-                                    break;
-                                case 4:
-                                    PoliceAndThief.jewel04.transform.SetParent(null);
-                                    PoliceAndThief.jewel04.transform.position = new Vector3(14.75f, 20.5f, 1f);
-                                    PoliceAndThief.jewel04BeingStealed = null;
-                                    break;
-                                case 5:
-                                    PoliceAndThief.jewel05.transform.SetParent(null);
-                                    PoliceAndThief.jewel05.transform.position = new Vector3(19.5f, 17.5f, 1f);
-                                    PoliceAndThief.jewel05BeingStealed = null;
-                                    break;
-                                case 6:
-                                    PoliceAndThief.jewel06.transform.SetParent(null);
-                                    PoliceAndThief.jewel06.transform.position = new Vector3(21, 24.1f, 1f);
-                                    PoliceAndThief.jewel06BeingStealed = null;
-                                    break;
-                                case 7:
-                                    PoliceAndThief.jewel07.transform.SetParent(null);
-                                    PoliceAndThief.jewel07.transform.position = new Vector3(19.5f, 4.75f, 1f);
-                                    PoliceAndThief.jewel07BeingStealed = null;
-                                    break;
-                                case 8:
-                                    PoliceAndThief.jewel08.transform.SetParent(null);
-                                    PoliceAndThief.jewel08.transform.position = new Vector3(28.25f, 0, 1f);
-                                    PoliceAndThief.jewel08BeingStealed = null;
-                                    break;
-                                case 9:
-                                    PoliceAndThief.jewel09.transform.SetParent(null);
-                                    PoliceAndThief.jewel09.transform.position = new Vector3(2.45f, 11.25f, 1f);
-                                    PoliceAndThief.jewel09BeingStealed = null;
-                                    break;
-                                case 10:
-                                    PoliceAndThief.jewel10.transform.SetParent(null);
-                                    PoliceAndThief.jewel10.transform.position = new Vector3(4.4f, 1.75f, 1f);
-                                    PoliceAndThief.jewel10BeingStealed = null;
-                                    break;
-                                case 11:
-                                    PoliceAndThief.jewel11.transform.SetParent(null);
-                                    PoliceAndThief.jewel11.transform.position = new Vector3(9.25f, 13f, 1f);
-                                    PoliceAndThief.jewel11BeingStealed = null;
-                                    break;
-                                case 12:
-                                    PoliceAndThief.jewel12.transform.SetParent(null);
-                                    PoliceAndThief.jewel12.transform.position = new Vector3(13.75f, 23.5f, 1f);
-                                    PoliceAndThief.jewel12BeingStealed = null;
-                                    break;
-                                case 13:
-                                    PoliceAndThief.jewel13.transform.SetParent(null);
-                                    PoliceAndThief.jewel13.transform.position = new Vector3(16, 4, 1f);
-                                    PoliceAndThief.jewel13BeingStealed = null;
-                                    break;
-                                case 14:
-                                    PoliceAndThief.jewel14.transform.SetParent(null);
-                                    PoliceAndThief.jewel14.transform.position = new Vector3(15.35f, -0.9f, 1f);
-                                    PoliceAndThief.jewel14BeingStealed = null;
-                                    break;
-                                case 15:
-                                    PoliceAndThief.jewel15.transform.SetParent(null);
-                                    PoliceAndThief.jewel15.transform.position = new Vector3(19.5f, -1.75f, 1f);
-                                    PoliceAndThief.jewel15BeingStealed = null;
-                                    break;
-                            }
-                            break;
-                        // Polus
-                        case 2:
-                            switch (jewelRevertedId) {
-                                case 1:
-                                    PoliceAndThief.jewel01.transform.SetParent(null);
-                                    PoliceAndThief.jewel01.transform.position = new Vector3(16.7f, -2.65f, 0.75f);
-                                    PoliceAndThief.jewel01BeingStealed = null;
-                                    break;
-                                case 2:
-                                    PoliceAndThief.jewel02.transform.SetParent(null);
-                                    PoliceAndThief.jewel02.transform.position = new Vector3(25.35f, -7.35f, 0.75f);
-                                    PoliceAndThief.jewel02BeingStealed = null;
-                                    break;
-                                case 3:
-                                    PoliceAndThief.jewel03.transform.SetParent(null);
-                                    PoliceAndThief.jewel03.transform.position = new Vector3(34.9f, -9.75f, 0.75f);
-                                    PoliceAndThief.jewel03BeingStealed = null;
-                                    break;
-                                case 4:
-                                    PoliceAndThief.jewel04.transform.SetParent(null);
-                                    PoliceAndThief.jewel04.transform.position = new Vector3(36.5f, -21.75f, 0.75f);
-                                    PoliceAndThief.jewel04BeingStealed = null;
-                                    break;
-                                case 5:
-                                    PoliceAndThief.jewel05.transform.SetParent(null);
-                                    PoliceAndThief.jewel05.transform.position = new Vector3(17.25f, -17.5f, 0.75f);
-                                    PoliceAndThief.jewel05BeingStealed = null;
-                                    break;
-                                case 6:
-                                    PoliceAndThief.jewel06.transform.SetParent(null);
-                                    PoliceAndThief.jewel06.transform.position = new Vector3(10.9f, -20.5f, -0.75f);
-                                    PoliceAndThief.jewel06BeingStealed = null;
-                                    break;
-                                case 7:
-                                    PoliceAndThief.jewel07.transform.SetParent(null);
-                                    PoliceAndThief.jewel07.transform.position = new Vector3(1.5f, -20.25f, 0.75f);
-                                    PoliceAndThief.jewel07BeingStealed = null;
-                                    break;
-                                case 08:
-                                    PoliceAndThief.jewel08.transform.SetParent(null);
-                                    PoliceAndThief.jewel08.transform.position = new Vector3(3f, -12f, 0.75f);
-                                    PoliceAndThief.jewel08BeingStealed = null;
-                                    break;
-                                case 09:
-                                    PoliceAndThief.jewel09.transform.SetParent(null);
-                                    PoliceAndThief.jewel09.transform.position = new Vector3(30f, -7.35f, 0.75f);
-                                    PoliceAndThief.jewel09BeingStealed = null;
-                                    break;
-                                case 10:
-                                    PoliceAndThief.jewel10.transform.SetParent(null);
-                                    PoliceAndThief.jewel10.transform.position = new Vector3(40.25f, -8f, 0.75f);
-                                    PoliceAndThief.jewel10BeingStealed = null;
-                                    break;
-                                case 11:
-                                    PoliceAndThief.jewel11.transform.SetParent(null);
-                                    PoliceAndThief.jewel11.transform.position = new Vector3(26f, -17.15f, 0.75f);
-                                    PoliceAndThief.jewel11BeingStealed = null;
-                                    break;
-                                case 12:
-                                    PoliceAndThief.jewel12.transform.SetParent(null);
-                                    PoliceAndThief.jewel12.transform.position = new Vector3(22f, -25.25f, 0.75f);
-                                    PoliceAndThief.jewel12BeingStealed = null;
-                                    break;
-                                case 13:
-                                    PoliceAndThief.jewel13.transform.SetParent(null);
-                                    PoliceAndThief.jewel13.transform.position = new Vector3(20.65f, -12f, 0.75f);
-                                    PoliceAndThief.jewel13BeingStealed = null;
-                                    break;
-                                case 14:
-                                    PoliceAndThief.jewel14.transform.SetParent(null);
-                                    PoliceAndThief.jewel14.transform.position = new Vector3(9.75f, -12.25f, 0.75f);
-                                    PoliceAndThief.jewel14BeingStealed = null;
-                                    break;
-                                case 15:
-                                    PoliceAndThief.jewel15.transform.SetParent(null);
-                                    PoliceAndThief.jewel15.transform.position = new Vector3(2.25f, -24f, 0.75f);
-                                    PoliceAndThief.jewel15BeingStealed = null;
-                                    break;
-                            }
-                            break;
-                        // Dleks
-                        case 3:
-                            switch (jewelRevertedId) {
-                                case 1:
-                                    PoliceAndThief.jewel01.transform.SetParent(null);
-                                    PoliceAndThief.jewel01.transform.position = new Vector3(18.65f, -9.9f, 1f);
-                                    PoliceAndThief.jewel01BeingStealed = null;
-                                    break;
-                                case 2:
-                                    PoliceAndThief.jewel02.transform.SetParent(null);
-                                    PoliceAndThief.jewel02.transform.position = new Vector3(21.5f, -2, 1f);
-                                    PoliceAndThief.jewel02BeingStealed = null;
-                                    break;
-                                case 3:
-                                    PoliceAndThief.jewel03.transform.SetParent(null);
-                                    PoliceAndThief.jewel03.transform.position = new Vector3(5.9f, -8.25f, 1f);
-                                    PoliceAndThief.jewel03BeingStealed = null;
-                                    break;
-                                case 4:
-                                    PoliceAndThief.jewel04.transform.SetParent(null);
-                                    PoliceAndThief.jewel04.transform.position = new Vector3(-4.5f, -7.5f, 1f);
-                                    PoliceAndThief.jewel04BeingStealed = null;
-                                    break;
-                                case 5:
-                                    PoliceAndThief.jewel05.transform.SetParent(null);
-                                    PoliceAndThief.jewel05.transform.position = new Vector3(-7.85f, -14.45f, 1f);
-                                    PoliceAndThief.jewel05BeingStealed = null;
-                                    break;
-                                case 6:
-                                    PoliceAndThief.jewel06.transform.SetParent(null);
-                                    PoliceAndThief.jewel06.transform.position = new Vector3(-6.65f, -4.8f, 1f);
-                                    PoliceAndThief.jewel06BeingStealed = null;
-                                    break;
-                                case 7:
-                                    PoliceAndThief.jewel07.transform.SetParent(null);
-                                    PoliceAndThief.jewel07.transform.position = new Vector3(-10.5f, 2.15f, 1f);
-                                    PoliceAndThief.jewel07BeingStealed = null;
-                                    break;
-                                case 8:
-                                    PoliceAndThief.jewel08.transform.SetParent(null);
-                                    PoliceAndThief.jewel08.transform.position = new Vector3(5.5f, 3.5f, 1f);
-                                    PoliceAndThief.jewel08BeingStealed = null;
-                                    break;
-                                case 9:
-                                    PoliceAndThief.jewel09.transform.SetParent(null);
-                                    PoliceAndThief.jewel09.transform.position = new Vector3(19, -1.2f, 1f);
-                                    PoliceAndThief.jewel09BeingStealed = null;
-                                    break;
-                                case 10:
-                                    PoliceAndThief.jewel10.transform.SetParent(null);
-                                    PoliceAndThief.jewel10.transform.position = new Vector3(21.5f, -8.35f, 1f);
-                                    PoliceAndThief.jewel10BeingStealed = null;
-                                    break;
-                                case 11:
-                                    PoliceAndThief.jewel11.transform.SetParent(null);
-                                    PoliceAndThief.jewel11.transform.position = new Vector3(12.5f, -3.75f, 1f);
-                                    PoliceAndThief.jewel11BeingStealed = null;
-                                    break;
-                                case 12:
-                                    PoliceAndThief.jewel12.transform.SetParent(null);
-                                    PoliceAndThief.jewel12.transform.position = new Vector3(5.9f, -5.25f, 1f);
-                                    PoliceAndThief.jewel12BeingStealed = null;
-                                    break;
-                                case 13:
-                                    PoliceAndThief.jewel13.transform.SetParent(null);
-                                    PoliceAndThief.jewel13.transform.position = new Vector3(-2.65f, -16.5f, 1f);
-                                    PoliceAndThief.jewel13BeingStealed = null;
-                                    break;
-                                case 14:
-                                    PoliceAndThief.jewel14.transform.SetParent(null);
-                                    PoliceAndThief.jewel14.transform.position = new Vector3(-16.75f, -4.75f, 1f);
-                                    PoliceAndThief.jewel14BeingStealed = null;
-                                    break;
-                                case 15:
-                                    PoliceAndThief.jewel15.transform.SetParent(null);
-                                    PoliceAndThief.jewel15.transform.position = new Vector3(-3.8f, 3.5f, 1f);
-                                    PoliceAndThief.jewel15BeingStealed = null;
-                                    break;
-                            }
-                            break;
-                        // Airship
-                        case 4:
-                            switch (jewelRevertedId) {
-                                case 1:
-                                    PoliceAndThief.jewel01.transform.SetParent(null);
-                                    PoliceAndThief.jewel01.transform.position = new Vector3(-23.5f, -1.5f, 1f);
-                                    PoliceAndThief.jewel01BeingStealed = null;
-                                    break;
-                                case 2:
-                                    PoliceAndThief.jewel02.transform.SetParent(null);
-                                    PoliceAndThief.jewel02.transform.position = new Vector3(-14.15f, -4.85f, 1f);
-                                    PoliceAndThief.jewel02BeingStealed = null;
-                                    break;
-                                case 3:
-                                    PoliceAndThief.jewel03.transform.SetParent(null);
-                                    PoliceAndThief.jewel03.transform.position = new Vector3(-13.9f, -16.25f, 1f);
-                                    PoliceAndThief.jewel03BeingStealed = null;
-                                    break;
-                                case 4:
-                                    PoliceAndThief.jewel04.transform.SetParent(null);
-                                    PoliceAndThief.jewel04.transform.position = new Vector3(-0.85f, -2.5f, 1f);
-                                    PoliceAndThief.jewel04BeingStealed = null;
-                                    break;
-                                case 5:
-                                    PoliceAndThief.jewel05.transform.SetParent(null);
-                                    PoliceAndThief.jewel05.transform.position = new Vector3(-5, 8.5f, 1f);
-                                    PoliceAndThief.jewel05BeingStealed = null;
-                                    break;
-                                case 6:
-                                    PoliceAndThief.jewel06.transform.SetParent(null);
-                                    PoliceAndThief.jewel06.transform.position = new Vector3(19.3f, -4.15f, 1f);
-                                    PoliceAndThief.jewel06BeingStealed = null;
-                                    break;
-                                case 7:
-                                    PoliceAndThief.jewel07.transform.SetParent(null);
-                                    PoliceAndThief.jewel07.transform.position = new Vector3(19.85f, 8, 1f);
-                                    PoliceAndThief.jewel07BeingStealed = null;
-                                    break;
-                                case 8:
-                                    PoliceAndThief.jewel08.transform.SetParent(null);
-                                    PoliceAndThief.jewel08.transform.position = new Vector3(28.85f, -1.75f, 1f);
-                                    PoliceAndThief.jewel08BeingStealed = null;
-                                    break;
-                                case 9:
-                                    PoliceAndThief.jewel09.transform.SetParent(null);
-                                    PoliceAndThief.jewel09.transform.position = new Vector3(-14.5f, -8.5f, 1f);
-                                    PoliceAndThief.jewel09BeingStealed = null;
-                                    break;
-                                case 10:
-                                    PoliceAndThief.jewel10.transform.SetParent(null);
-                                    PoliceAndThief.jewel10.transform.position = new Vector3(6.3f, -2.75f, 1f);
-                                    PoliceAndThief.jewel10BeingStealed = null;
-                                    break;
-                                case 11:
-                                    PoliceAndThief.jewel11.transform.SetParent(null);
-                                    PoliceAndThief.jewel11.transform.position = new Vector3(20.75f, 2.5f, 1f);
-                                    PoliceAndThief.jewel11BeingStealed = null;
-                                    break;
-                                case 12:
-                                    PoliceAndThief.jewel12.transform.SetParent(null);
-                                    PoliceAndThief.jewel12.transform.position = new Vector3(29.25f, 7, 1f);
-                                    PoliceAndThief.jewel12BeingStealed = null;
-                                    break;
-                                case 13:
-                                    PoliceAndThief.jewel13.transform.SetParent(null);
-                                    PoliceAndThief.jewel13.transform.position = new Vector3(37.5f, -3.5f, 1f);
-                                    PoliceAndThief.jewel13BeingStealed = null;
-                                    break;
-                                case 14:
-                                    PoliceAndThief.jewel14.transform.SetParent(null);
-                                    PoliceAndThief.jewel14.transform.position = new Vector3(25.2f, -8.75f, 1f);
-                                    PoliceAndThief.jewel14BeingStealed = null;
-                                    break;
-                                case 15:
-                                    PoliceAndThief.jewel15.transform.SetParent(null);
-                                    PoliceAndThief.jewel15.transform.position = new Vector3(16.3f, -11, 1f);
-                                    PoliceAndThief.jewel15BeingStealed = null;
-                                    break;
-                            }
-                            break;
-                        // Submerged
-                        case 5:
-                            switch (jewelRevertedId) {
-                                case 1:
-                                    PoliceAndThief.jewel01.transform.SetParent(null);
-                                    PoliceAndThief.jewel01.transform.position = new Vector3(-15f, 17.5f, -1f);
-                                    PoliceAndThief.jewel01BeingStealed = null;
-                                    break;
-                                case 2:
-                                    PoliceAndThief.jewel02.transform.SetParent(null);
-                                    PoliceAndThief.jewel02.transform.position = new Vector3(8f, 32f, -1f);
-                                    PoliceAndThief.jewel02BeingStealed = null;
-                                    break;
-                                case 3:
-                                    PoliceAndThief.jewel03.transform.SetParent(null);
-                                    PoliceAndThief.jewel03.transform.position = new Vector3(-6.75f, 10f, -1f);
-                                    PoliceAndThief.jewel03BeingStealed = null;
-                                    break;
-                                case 4:
-                                    PoliceAndThief.jewel04.transform.SetParent(null);
-                                    PoliceAndThief.jewel04.transform.position = new Vector3(5.15f, 8f, -1f);
-                                    PoliceAndThief.jewel04BeingStealed = null;
-                                    break;
-                                case 5:
-                                    PoliceAndThief.jewel05.transform.SetParent(null);
-                                    PoliceAndThief.jewel05.transform.position = new Vector3(5f, -33.5f, -1f);
-                                    PoliceAndThief.jewel05BeingStealed = null;
-                                    break;
-                                case 6:
-                                    PoliceAndThief.jewel06.transform.SetParent(null);
-                                    PoliceAndThief.jewel06.transform.position = new Vector3(-4.15f, -33.5f, -1f);
-                                    PoliceAndThief.jewel06BeingStealed = null;
-                                    break;
-                                case 7:
-                                    PoliceAndThief.jewel07.transform.SetParent(null);
-                                    PoliceAndThief.jewel07.transform.position = new Vector3(-14f, -27.75f, -1f);
-                                    PoliceAndThief.jewel07BeingStealed = null;
-                                    break;
-                                case 8:
-                                    PoliceAndThief.jewel08.transform.SetParent(null);
-                                    PoliceAndThief.jewel08.transform.position = new Vector3(7.8f, -23.75f, -1f);
-                                    PoliceAndThief.jewel08BeingStealed = null;
-                                    break;
-                                case 9:
-                                    PoliceAndThief.jewel09.transform.SetParent(null);
-                                    PoliceAndThief.jewel09.transform.position = new Vector3(-6.75f, -42.75f, -1f);
-                                    PoliceAndThief.jewel09BeingStealed = null;
-                                    break;
-                                case 10:
-                                    PoliceAndThief.jewel10.transform.SetParent(null);
-                                    PoliceAndThief.jewel10.transform.position = new Vector3(13f, -25.25f, -1f);
-                                    PoliceAndThief.jewel10BeingStealed = null;
-                                    break;
-                                case 11:
-                                    PoliceAndThief.jewel11.transform.SetParent(null);
-                                    PoliceAndThief.jewel11.transform.position = new Vector3(-14f, -34.25f, -1f);
-                                    PoliceAndThief.jewel11BeingStealed = null;
-                                    break;
-                                case 12:
-                                    PoliceAndThief.jewel12.transform.SetParent(null);
-                                    PoliceAndThief.jewel12.transform.position = new Vector3(0f, -33.5f, -1f);
-                                    PoliceAndThief.jewel12BeingStealed = null;
-                                    break;
-                                case 13:
-                                    PoliceAndThief.jewel13.transform.SetParent(null);
-                                    PoliceAndThief.jewel13.transform.position = new Vector3(-6.5f, 14f, -1f);
-                                    PoliceAndThief.jewel13BeingStealed = null;
-                                    break;
-                                case 14:
-                                    PoliceAndThief.jewel14.transform.SetParent(null);
-                                    PoliceAndThief.jewel14.transform.position = new Vector3(14.25f, 24.5f, -1f);
-                                    PoliceAndThief.jewel14BeingStealed = null;
-                                    break;
-                                case 15:
-                                    PoliceAndThief.jewel15.transform.SetParent(null);
-                                    PoliceAndThief.jewel15.transform.position = new Vector3(-12.25f, 31f, -1f);
-                                    PoliceAndThief.jewel15BeingStealed = null;
-                                    break;
-                            }
-                            break;
-                    }
 
-                    // if police can't see jewels, hide it after jailing a player
-                    if (PlayerControl.LocalPlayer == PoliceAndThief.policeplayer01 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer02 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer03 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer04 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer05 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer06) {
-                        if (!PoliceAndThief.policeCanSeeJewels) {
-                            switch (jewelRevertedId) {
-                                case 1:
-                                    PoliceAndThief.jewel01.SetActive(false);
-                                    break;
-                                case 2:
-                                    PoliceAndThief.jewel02.SetActive(false);
-                                    break;
-                                case 3:
-                                    PoliceAndThief.jewel03.SetActive(false);
-                                    break;
-                                case 4:
-                                    PoliceAndThief.jewel04.SetActive(false);
-                                    break;
-                                case 5:
-                                    PoliceAndThief.jewel05.SetActive(false);
-                                    break;
-                                case 6:
-                                    PoliceAndThief.jewel06.SetActive(false);
-                                    break;
-                                case 7:
-                                    PoliceAndThief.jewel07.SetActive(false);
-                                    break;
-                                case 8:
-                                    PoliceAndThief.jewel08.SetActive(false);
-                                    break;
-                                case 9:
-                                    PoliceAndThief.jewel09.SetActive(false);
-                                    break;
-                                case 10:
-                                    PoliceAndThief.jewel10.SetActive(false);
-                                    break;
-                                case 11:
-                                    PoliceAndThief.jewel11.SetActive(false);
-                                    break;
-                                case 12:
-                                    PoliceAndThief.jewel12.SetActive(false);
-                                    break;
-                                case 13:
-                                    PoliceAndThief.jewel13.SetActive(false);
-                                    break;
-                                case 14:
-                                    PoliceAndThief.jewel14.SetActive(false);
-                                    break;
-                                case 15:
-                                    PoliceAndThief.jewel15.SetActive(false);
-                                    break;
-                            }
+            if (PoliceAndThief.thiefplayer01 != null && thiefWhoLostJewel == PoliceAndThief.thiefplayer01.PlayerId) {
+                PoliceAndThief.thiefplayer01IsStealing = false;
+                PoliceAndThief.thiefplayer01JewelId = 0;
+            }
+            else if (PoliceAndThief.thiefplayer02 != null && thiefWhoLostJewel == PoliceAndThief.thiefplayer02.PlayerId) {
+                PoliceAndThief.thiefplayer02IsStealing = false;
+                PoliceAndThief.thiefplayer02JewelId = 0;
+            }
+            else if (PoliceAndThief.thiefplayer03 != null && thiefWhoLostJewel == PoliceAndThief.thiefplayer03.PlayerId) {
+                PoliceAndThief.thiefplayer03IsStealing = false;
+                PoliceAndThief.thiefplayer03JewelId = 0;
+            }
+            else if (PoliceAndThief.thiefplayer04 != null && thiefWhoLostJewel == PoliceAndThief.thiefplayer04.PlayerId) {
+                PoliceAndThief.thiefplayer04IsStealing = false;
+                PoliceAndThief.thiefplayer04JewelId = 0;
+            }
+            else if (PoliceAndThief.thiefplayer05 != null && thiefWhoLostJewel == PoliceAndThief.thiefplayer05.PlayerId) {
+                PoliceAndThief.thiefplayer05IsStealing = false;
+                PoliceAndThief.thiefplayer05JewelId = 0;
+            }
+            else if (PoliceAndThief.thiefplayer06 != null && thiefWhoLostJewel == PoliceAndThief.thiefplayer06.PlayerId) {
+                PoliceAndThief.thiefplayer06IsStealing = false;
+                PoliceAndThief.thiefplayer06JewelId = 0;
+            }
+            else if (PoliceAndThief.thiefplayer07 != null && thiefWhoLostJewel == PoliceAndThief.thiefplayer07.PlayerId) {
+                PoliceAndThief.thiefplayer07IsStealing = false;
+                PoliceAndThief.thiefplayer07JewelId = 0;
+            }
+            else if (PoliceAndThief.thiefplayer08 != null && thiefWhoLostJewel == PoliceAndThief.thiefplayer08.PlayerId) {
+                PoliceAndThief.thiefplayer08IsStealing = false;
+                PoliceAndThief.thiefplayer08JewelId = 0;
+            }
+            else if (PoliceAndThief.thiefplayer09 != null && thiefWhoLostJewel == PoliceAndThief.thiefplayer09.PlayerId) {
+                PoliceAndThief.thiefplayer09IsStealing = false;
+                PoliceAndThief.thiefplayer09JewelId = 0;
+            }
+            switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
+                // Skeld
+                case 0:
+                    if (activatedSensei) {
+                        switch (jewelRevertedId) {
+                            case 1:
+                                PoliceAndThief.jewel01.transform.SetParent(null);
+                                PoliceAndThief.jewel01.transform.position = new Vector3(6.95f, 4.95f, 1f);
+                                PoliceAndThief.jewel01BeingStealed = null;
+                                break;
+                            case 2:
+                                PoliceAndThief.jewel02.transform.SetParent(null);
+                                PoliceAndThief.jewel02.transform.position = new Vector3(-3.75f, 5.35f, 1f);
+                                PoliceAndThief.jewel02BeingStealed = null;
+                                break;
+                            case 3:
+                                PoliceAndThief.jewel03.transform.SetParent(null);
+                                PoliceAndThief.jewel03.transform.position = new Vector3(-7.7f, 11.3f, 1f);
+                                PoliceAndThief.jewel03BeingStealed = null;
+                                break;
+                            case 4:
+                                PoliceAndThief.jewel04.transform.SetParent(null);
+                                PoliceAndThief.jewel04.transform.position = new Vector3(-19.65f, 5.3f, 1f);
+                                PoliceAndThief.jewel04BeingStealed = null;
+                                break;
+                            case 5:
+                                PoliceAndThief.jewel05.transform.SetParent(null);
+                                PoliceAndThief.jewel05.transform.position = new Vector3(-19.65f, -8, 1f);
+                                PoliceAndThief.jewel05BeingStealed = null;
+                                break;
+                            case 6:
+                                PoliceAndThief.jewel06.transform.SetParent(null);
+                                PoliceAndThief.jewel06.transform.position = new Vector3(-5.45f, -13f, 1f);
+                                PoliceAndThief.jewel06BeingStealed = null;
+                                break;
+                            case 7:
+                                PoliceAndThief.jewel07.transform.SetParent(null);
+                                PoliceAndThief.jewel07.transform.position = new Vector3(-7.65f, -4.2f, 1f);
+                                PoliceAndThief.jewel07BeingStealed = null;
+                                break;
+                            case 8:
+                                PoliceAndThief.jewel08.transform.SetParent(null);
+                                PoliceAndThief.jewel08.transform.position = new Vector3(2f, -6.75f, 1f);
+                                PoliceAndThief.jewel08BeingStealed = null;
+                                break;
+                            case 9:
+                                PoliceAndThief.jewel09.transform.SetParent(null);
+                                PoliceAndThief.jewel09.transform.position = new Vector3(8.9f, 1.45f, 1f);
+                                PoliceAndThief.jewel09BeingStealed = null;
+                                break;
+                            case 10:
+                                PoliceAndThief.jewel10.transform.SetParent(null);
+                                PoliceAndThief.jewel10.transform.position = new Vector3(4.6f, -2.25f, 1f);
+                                PoliceAndThief.jewel10BeingStealed = null;
+                                break;
+                            case 11:
+                                PoliceAndThief.jewel11.transform.SetParent(null);
+                                PoliceAndThief.jewel11.transform.position = new Vector3(-5.05f, -0.88f, 1f);
+                                PoliceAndThief.jewel11BeingStealed = null;
+                                break;
+                            case 12:
+                                PoliceAndThief.jewel12.transform.SetParent(null);
+                                PoliceAndThief.jewel12.transform.position = new Vector3(-8.25f, -0.45f, 1f);
+                                PoliceAndThief.jewel12BeingStealed = null;
+                                break;
+                            case 13:
+                                PoliceAndThief.jewel13.transform.SetParent(null);
+                                PoliceAndThief.jewel13.transform.position = new Vector3(-19.75f, -1.55f, 1f);
+                                PoliceAndThief.jewel13BeingStealed = null;
+                                break;
+                            case 14:
+                                PoliceAndThief.jewel14.transform.SetParent(null);
+                                PoliceAndThief.jewel14.transform.position = new Vector3(-12.1f, -13.15f, 1f);
+                                PoliceAndThief.jewel14BeingStealed = null;
+                                break;
+                            case 15:
+                                PoliceAndThief.jewel15.transform.SetParent(null);
+                                PoliceAndThief.jewel15.transform.position = new Vector3(7.15f, -14.45f, 1f);
+                                PoliceAndThief.jewel15BeingStealed = null;
+                                break;
                         }
+                    }
+                    else {
+                        switch (jewelRevertedId) {
+                            case 1:
+                                PoliceAndThief.jewel01.transform.SetParent(null);
+                                PoliceAndThief.jewel01.transform.position = new Vector3(-18.65f, -9.9f, 1f);
+                                PoliceAndThief.jewel01BeingStealed = null;
+                                break;
+                            case 2:
+                                PoliceAndThief.jewel02.transform.SetParent(null);
+                                PoliceAndThief.jewel02.transform.position = new Vector3(-21.5f, -2, 1f);
+                                PoliceAndThief.jewel02BeingStealed = null;
+                                break;
+                            case 3:
+                                PoliceAndThief.jewel03.transform.SetParent(null);
+                                PoliceAndThief.jewel03.transform.position = new Vector3(-5.9f, -8.25f, 1f);
+                                PoliceAndThief.jewel03BeingStealed = null;
+                                break;
+                            case 4:
+                                PoliceAndThief.jewel04.transform.SetParent(null);
+                                PoliceAndThief.jewel04.transform.position = new Vector3(4.5f, -7.5f, 1f);
+                                PoliceAndThief.jewel04BeingStealed = null;
+                                break;
+                            case 5:
+                                PoliceAndThief.jewel05.transform.SetParent(null);
+                                PoliceAndThief.jewel05.transform.position = new Vector3(7.85f, -14.45f, 1f);
+                                PoliceAndThief.jewel05BeingStealed = null;
+                                break;
+                            case 6:
+                                PoliceAndThief.jewel06.transform.SetParent(null);
+                                PoliceAndThief.jewel06.transform.position = new Vector3(6.65f, -4.8f, 1f);
+                                PoliceAndThief.jewel06BeingStealed = null;
+                                break;
+                            case 7:
+                                PoliceAndThief.jewel07.transform.SetParent(null);
+                                PoliceAndThief.jewel07.transform.position = new Vector3(10.5f, 2.15f, 1f);
+                                PoliceAndThief.jewel07BeingStealed = null;
+                                break;
+                            case 8:
+                                PoliceAndThief.jewel08.transform.SetParent(null);
+                                PoliceAndThief.jewel08.transform.position = new Vector3(-5.5f, 3.5f, 1f);
+                                PoliceAndThief.jewel08BeingStealed = null;
+                                break;
+                            case 9:
+                                PoliceAndThief.jewel09.transform.SetParent(null);
+                                PoliceAndThief.jewel09.transform.position = new Vector3(-19, -1.2f, 1f);
+                                PoliceAndThief.jewel09BeingStealed = null;
+                                break;
+                            case 10:
+                                PoliceAndThief.jewel10.transform.SetParent(null);
+                                PoliceAndThief.jewel10.transform.position = new Vector3(-21.5f, -8.35f, 1f);
+                                PoliceAndThief.jewel10BeingStealed = null;
+                                break;
+                            case 11:
+                                PoliceAndThief.jewel11.transform.SetParent(null);
+                                PoliceAndThief.jewel11.transform.position = new Vector3(-12.5f, -3.75f, 1f);
+                                PoliceAndThief.jewel11BeingStealed = null;
+                                break;
+                            case 12:
+                                PoliceAndThief.jewel12.transform.SetParent(null);
+                                PoliceAndThief.jewel12.transform.position = new Vector3(-5.9f, -5.25f, 1f);
+                                PoliceAndThief.jewel12BeingStealed = null;
+                                break;
+                            case 13:
+                                PoliceAndThief.jewel13.transform.SetParent(null);
+                                PoliceAndThief.jewel13.transform.position = new Vector3(2.65f, -16.5f, 1f);
+                                PoliceAndThief.jewel13BeingStealed = null;
+                                break;
+                            case 14:
+                                PoliceAndThief.jewel14.transform.SetParent(null);
+                                PoliceAndThief.jewel14.transform.position = new Vector3(16.75f, -4.75f, 1f);
+                                PoliceAndThief.jewel14BeingStealed = null;
+                                break;
+                            case 15:
+                                PoliceAndThief.jewel15.transform.SetParent(null);
+                                PoliceAndThief.jewel15.transform.position = new Vector3(3.8f, 3.5f, 1f);
+                                PoliceAndThief.jewel15BeingStealed = null;
+                                break;
+                        }
+                    }
+                    break;
+                // MiraHQ
+                case 1:
+                    switch (jewelRevertedId) {
+                        case 1:
+                            PoliceAndThief.jewel01.transform.SetParent(null);
+                            PoliceAndThief.jewel01.transform.position = new Vector3(-4.5f, 2.5f, 1f);
+                            PoliceAndThief.jewel01BeingStealed = null;
+                            break;
+                        case 2:
+                            PoliceAndThief.jewel02.transform.SetParent(null);
+                            PoliceAndThief.jewel02.transform.position = new Vector3(6.25f, 14f, 1f);
+                            PoliceAndThief.jewel02BeingStealed = null;
+                            break;
+                        case 3:
+                            PoliceAndThief.jewel03.transform.SetParent(null);
+                            PoliceAndThief.jewel03.transform.position = new Vector3(9.15f, 4.75f, 1f);
+                            PoliceAndThief.jewel03BeingStealed = null;
+                            break;
+                        case 4:
+                            PoliceAndThief.jewel04.transform.SetParent(null);
+                            PoliceAndThief.jewel04.transform.position = new Vector3(14.75f, 20.5f, 1f);
+                            PoliceAndThief.jewel04BeingStealed = null;
+                            break;
+                        case 5:
+                            PoliceAndThief.jewel05.transform.SetParent(null);
+                            PoliceAndThief.jewel05.transform.position = new Vector3(19.5f, 17.5f, 1f);
+                            PoliceAndThief.jewel05BeingStealed = null;
+                            break;
+                        case 6:
+                            PoliceAndThief.jewel06.transform.SetParent(null);
+                            PoliceAndThief.jewel06.transform.position = new Vector3(21, 24.1f, 1f);
+                            PoliceAndThief.jewel06BeingStealed = null;
+                            break;
+                        case 7:
+                            PoliceAndThief.jewel07.transform.SetParent(null);
+                            PoliceAndThief.jewel07.transform.position = new Vector3(19.5f, 4.75f, 1f);
+                            PoliceAndThief.jewel07BeingStealed = null;
+                            break;
+                        case 8:
+                            PoliceAndThief.jewel08.transform.SetParent(null);
+                            PoliceAndThief.jewel08.transform.position = new Vector3(28.25f, 0, 1f);
+                            PoliceAndThief.jewel08BeingStealed = null;
+                            break;
+                        case 9:
+                            PoliceAndThief.jewel09.transform.SetParent(null);
+                            PoliceAndThief.jewel09.transform.position = new Vector3(2.45f, 11.25f, 1f);
+                            PoliceAndThief.jewel09BeingStealed = null;
+                            break;
+                        case 10:
+                            PoliceAndThief.jewel10.transform.SetParent(null);
+                            PoliceAndThief.jewel10.transform.position = new Vector3(4.4f, 1.75f, 1f);
+                            PoliceAndThief.jewel10BeingStealed = null;
+                            break;
+                        case 11:
+                            PoliceAndThief.jewel11.transform.SetParent(null);
+                            PoliceAndThief.jewel11.transform.position = new Vector3(9.25f, 13f, 1f);
+                            PoliceAndThief.jewel11BeingStealed = null;
+                            break;
+                        case 12:
+                            PoliceAndThief.jewel12.transform.SetParent(null);
+                            PoliceAndThief.jewel12.transform.position = new Vector3(13.75f, 23.5f, 1f);
+                            PoliceAndThief.jewel12BeingStealed = null;
+                            break;
+                        case 13:
+                            PoliceAndThief.jewel13.transform.SetParent(null);
+                            PoliceAndThief.jewel13.transform.position = new Vector3(16, 4, 1f);
+                            PoliceAndThief.jewel13BeingStealed = null;
+                            break;
+                        case 14:
+                            PoliceAndThief.jewel14.transform.SetParent(null);
+                            PoliceAndThief.jewel14.transform.position = new Vector3(15.35f, -0.9f, 1f);
+                            PoliceAndThief.jewel14BeingStealed = null;
+                            break;
+                        case 15:
+                            PoliceAndThief.jewel15.transform.SetParent(null);
+                            PoliceAndThief.jewel15.transform.position = new Vector3(19.5f, -1.75f, 1f);
+                            PoliceAndThief.jewel15BeingStealed = null;
+                            break;
+                    }
+                    break;
+                // Polus
+                case 2:
+                    switch (jewelRevertedId) {
+                        case 1:
+                            PoliceAndThief.jewel01.transform.SetParent(null);
+                            PoliceAndThief.jewel01.transform.position = new Vector3(16.7f, -2.65f, 0.75f);
+                            PoliceAndThief.jewel01BeingStealed = null;
+                            break;
+                        case 2:
+                            PoliceAndThief.jewel02.transform.SetParent(null);
+                            PoliceAndThief.jewel02.transform.position = new Vector3(25.35f, -7.35f, 0.75f);
+                            PoliceAndThief.jewel02BeingStealed = null;
+                            break;
+                        case 3:
+                            PoliceAndThief.jewel03.transform.SetParent(null);
+                            PoliceAndThief.jewel03.transform.position = new Vector3(34.9f, -9.75f, 0.75f);
+                            PoliceAndThief.jewel03BeingStealed = null;
+                            break;
+                        case 4:
+                            PoliceAndThief.jewel04.transform.SetParent(null);
+                            PoliceAndThief.jewel04.transform.position = new Vector3(36.5f, -21.75f, 0.75f);
+                            PoliceAndThief.jewel04BeingStealed = null;
+                            break;
+                        case 5:
+                            PoliceAndThief.jewel05.transform.SetParent(null);
+                            PoliceAndThief.jewel05.transform.position = new Vector3(17.25f, -17.5f, 0.75f);
+                            PoliceAndThief.jewel05BeingStealed = null;
+                            break;
+                        case 6:
+                            PoliceAndThief.jewel06.transform.SetParent(null);
+                            PoliceAndThief.jewel06.transform.position = new Vector3(10.9f, -20.5f, -0.75f);
+                            PoliceAndThief.jewel06BeingStealed = null;
+                            break;
+                        case 7:
+                            PoliceAndThief.jewel07.transform.SetParent(null);
+                            PoliceAndThief.jewel07.transform.position = new Vector3(1.5f, -20.25f, 0.75f);
+                            PoliceAndThief.jewel07BeingStealed = null;
+                            break;
+                        case 08:
+                            PoliceAndThief.jewel08.transform.SetParent(null);
+                            PoliceAndThief.jewel08.transform.position = new Vector3(3f, -12f, 0.75f);
+                            PoliceAndThief.jewel08BeingStealed = null;
+                            break;
+                        case 09:
+                            PoliceAndThief.jewel09.transform.SetParent(null);
+                            PoliceAndThief.jewel09.transform.position = new Vector3(30f, -7.35f, 0.75f);
+                            PoliceAndThief.jewel09BeingStealed = null;
+                            break;
+                        case 10:
+                            PoliceAndThief.jewel10.transform.SetParent(null);
+                            PoliceAndThief.jewel10.transform.position = new Vector3(40.25f, -8f, 0.75f);
+                            PoliceAndThief.jewel10BeingStealed = null;
+                            break;
+                        case 11:
+                            PoliceAndThief.jewel11.transform.SetParent(null);
+                            PoliceAndThief.jewel11.transform.position = new Vector3(26f, -17.15f, 0.75f);
+                            PoliceAndThief.jewel11BeingStealed = null;
+                            break;
+                        case 12:
+                            PoliceAndThief.jewel12.transform.SetParent(null);
+                            PoliceAndThief.jewel12.transform.position = new Vector3(22f, -25.25f, 0.75f);
+                            PoliceAndThief.jewel12BeingStealed = null;
+                            break;
+                        case 13:
+                            PoliceAndThief.jewel13.transform.SetParent(null);
+                            PoliceAndThief.jewel13.transform.position = new Vector3(20.65f, -12f, 0.75f);
+                            PoliceAndThief.jewel13BeingStealed = null;
+                            break;
+                        case 14:
+                            PoliceAndThief.jewel14.transform.SetParent(null);
+                            PoliceAndThief.jewel14.transform.position = new Vector3(9.75f, -12.25f, 0.75f);
+                            PoliceAndThief.jewel14BeingStealed = null;
+                            break;
+                        case 15:
+                            PoliceAndThief.jewel15.transform.SetParent(null);
+                            PoliceAndThief.jewel15.transform.position = new Vector3(2.25f, -24f, 0.75f);
+                            PoliceAndThief.jewel15BeingStealed = null;
+                            break;
+                    }
+                    break;
+                // Dleks
+                case 3:
+                    switch (jewelRevertedId) {
+                        case 1:
+                            PoliceAndThief.jewel01.transform.SetParent(null);
+                            PoliceAndThief.jewel01.transform.position = new Vector3(18.65f, -9.9f, 1f);
+                            PoliceAndThief.jewel01BeingStealed = null;
+                            break;
+                        case 2:
+                            PoliceAndThief.jewel02.transform.SetParent(null);
+                            PoliceAndThief.jewel02.transform.position = new Vector3(21.5f, -2, 1f);
+                            PoliceAndThief.jewel02BeingStealed = null;
+                            break;
+                        case 3:
+                            PoliceAndThief.jewel03.transform.SetParent(null);
+                            PoliceAndThief.jewel03.transform.position = new Vector3(5.9f, -8.25f, 1f);
+                            PoliceAndThief.jewel03BeingStealed = null;
+                            break;
+                        case 4:
+                            PoliceAndThief.jewel04.transform.SetParent(null);
+                            PoliceAndThief.jewel04.transform.position = new Vector3(-4.5f, -7.5f, 1f);
+                            PoliceAndThief.jewel04BeingStealed = null;
+                            break;
+                        case 5:
+                            PoliceAndThief.jewel05.transform.SetParent(null);
+                            PoliceAndThief.jewel05.transform.position = new Vector3(-7.85f, -14.45f, 1f);
+                            PoliceAndThief.jewel05BeingStealed = null;
+                            break;
+                        case 6:
+                            PoliceAndThief.jewel06.transform.SetParent(null);
+                            PoliceAndThief.jewel06.transform.position = new Vector3(-6.65f, -4.8f, 1f);
+                            PoliceAndThief.jewel06BeingStealed = null;
+                            break;
+                        case 7:
+                            PoliceAndThief.jewel07.transform.SetParent(null);
+                            PoliceAndThief.jewel07.transform.position = new Vector3(-10.5f, 2.15f, 1f);
+                            PoliceAndThief.jewel07BeingStealed = null;
+                            break;
+                        case 8:
+                            PoliceAndThief.jewel08.transform.SetParent(null);
+                            PoliceAndThief.jewel08.transform.position = new Vector3(5.5f, 3.5f, 1f);
+                            PoliceAndThief.jewel08BeingStealed = null;
+                            break;
+                        case 9:
+                            PoliceAndThief.jewel09.transform.SetParent(null);
+                            PoliceAndThief.jewel09.transform.position = new Vector3(19, -1.2f, 1f);
+                            PoliceAndThief.jewel09BeingStealed = null;
+                            break;
+                        case 10:
+                            PoliceAndThief.jewel10.transform.SetParent(null);
+                            PoliceAndThief.jewel10.transform.position = new Vector3(21.5f, -8.35f, 1f);
+                            PoliceAndThief.jewel10BeingStealed = null;
+                            break;
+                        case 11:
+                            PoliceAndThief.jewel11.transform.SetParent(null);
+                            PoliceAndThief.jewel11.transform.position = new Vector3(12.5f, -3.75f, 1f);
+                            PoliceAndThief.jewel11BeingStealed = null;
+                            break;
+                        case 12:
+                            PoliceAndThief.jewel12.transform.SetParent(null);
+                            PoliceAndThief.jewel12.transform.position = new Vector3(5.9f, -5.25f, 1f);
+                            PoliceAndThief.jewel12BeingStealed = null;
+                            break;
+                        case 13:
+                            PoliceAndThief.jewel13.transform.SetParent(null);
+                            PoliceAndThief.jewel13.transform.position = new Vector3(-2.65f, -16.5f, 1f);
+                            PoliceAndThief.jewel13BeingStealed = null;
+                            break;
+                        case 14:
+                            PoliceAndThief.jewel14.transform.SetParent(null);
+                            PoliceAndThief.jewel14.transform.position = new Vector3(-16.75f, -4.75f, 1f);
+                            PoliceAndThief.jewel14BeingStealed = null;
+                            break;
+                        case 15:
+                            PoliceAndThief.jewel15.transform.SetParent(null);
+                            PoliceAndThief.jewel15.transform.position = new Vector3(-3.8f, 3.5f, 1f);
+                            PoliceAndThief.jewel15BeingStealed = null;
+                            break;
+                    }
+                    break;
+                // Airship
+                case 4:
+                    switch (jewelRevertedId) {
+                        case 1:
+                            PoliceAndThief.jewel01.transform.SetParent(null);
+                            PoliceAndThief.jewel01.transform.position = new Vector3(-23.5f, -1.5f, 1f);
+                            PoliceAndThief.jewel01BeingStealed = null;
+                            break;
+                        case 2:
+                            PoliceAndThief.jewel02.transform.SetParent(null);
+                            PoliceAndThief.jewel02.transform.position = new Vector3(-14.15f, -4.85f, 1f);
+                            PoliceAndThief.jewel02BeingStealed = null;
+                            break;
+                        case 3:
+                            PoliceAndThief.jewel03.transform.SetParent(null);
+                            PoliceAndThief.jewel03.transform.position = new Vector3(-13.9f, -16.25f, 1f);
+                            PoliceAndThief.jewel03BeingStealed = null;
+                            break;
+                        case 4:
+                            PoliceAndThief.jewel04.transform.SetParent(null);
+                            PoliceAndThief.jewel04.transform.position = new Vector3(-0.85f, -2.5f, 1f);
+                            PoliceAndThief.jewel04BeingStealed = null;
+                            break;
+                        case 5:
+                            PoliceAndThief.jewel05.transform.SetParent(null);
+                            PoliceAndThief.jewel05.transform.position = new Vector3(-5, 8.5f, 1f);
+                            PoliceAndThief.jewel05BeingStealed = null;
+                            break;
+                        case 6:
+                            PoliceAndThief.jewel06.transform.SetParent(null);
+                            PoliceAndThief.jewel06.transform.position = new Vector3(19.3f, -4.15f, 1f);
+                            PoliceAndThief.jewel06BeingStealed = null;
+                            break;
+                        case 7:
+                            PoliceAndThief.jewel07.transform.SetParent(null);
+                            PoliceAndThief.jewel07.transform.position = new Vector3(19.85f, 8, 1f);
+                            PoliceAndThief.jewel07BeingStealed = null;
+                            break;
+                        case 8:
+                            PoliceAndThief.jewel08.transform.SetParent(null);
+                            PoliceAndThief.jewel08.transform.position = new Vector3(28.85f, -1.75f, 1f);
+                            PoliceAndThief.jewel08BeingStealed = null;
+                            break;
+                        case 9:
+                            PoliceAndThief.jewel09.transform.SetParent(null);
+                            PoliceAndThief.jewel09.transform.position = new Vector3(-14.5f, -8.5f, 1f);
+                            PoliceAndThief.jewel09BeingStealed = null;
+                            break;
+                        case 10:
+                            PoliceAndThief.jewel10.transform.SetParent(null);
+                            PoliceAndThief.jewel10.transform.position = new Vector3(6.3f, -2.75f, 1f);
+                            PoliceAndThief.jewel10BeingStealed = null;
+                            break;
+                        case 11:
+                            PoliceAndThief.jewel11.transform.SetParent(null);
+                            PoliceAndThief.jewel11.transform.position = new Vector3(20.75f, 2.5f, 1f);
+                            PoliceAndThief.jewel11BeingStealed = null;
+                            break;
+                        case 12:
+                            PoliceAndThief.jewel12.transform.SetParent(null);
+                            PoliceAndThief.jewel12.transform.position = new Vector3(29.25f, 7, 1f);
+                            PoliceAndThief.jewel12BeingStealed = null;
+                            break;
+                        case 13:
+                            PoliceAndThief.jewel13.transform.SetParent(null);
+                            PoliceAndThief.jewel13.transform.position = new Vector3(37.5f, -3.5f, 1f);
+                            PoliceAndThief.jewel13BeingStealed = null;
+                            break;
+                        case 14:
+                            PoliceAndThief.jewel14.transform.SetParent(null);
+                            PoliceAndThief.jewel14.transform.position = new Vector3(25.2f, -8.75f, 1f);
+                            PoliceAndThief.jewel14BeingStealed = null;
+                            break;
+                        case 15:
+                            PoliceAndThief.jewel15.transform.SetParent(null);
+                            PoliceAndThief.jewel15.transform.position = new Vector3(16.3f, -11, 1f);
+                            PoliceAndThief.jewel15BeingStealed = null;
+                            break;
+                    }
+                    break;
+                // Submerged
+                case 5:
+                    switch (jewelRevertedId) {
+                        case 1:
+                            PoliceAndThief.jewel01.transform.SetParent(null);
+                            PoliceAndThief.jewel01.transform.position = new Vector3(-15f, 17.5f, -1f);
+                            PoliceAndThief.jewel01BeingStealed = null;
+                            break;
+                        case 2:
+                            PoliceAndThief.jewel02.transform.SetParent(null);
+                            PoliceAndThief.jewel02.transform.position = new Vector3(8f, 32f, -1f);
+                            PoliceAndThief.jewel02BeingStealed = null;
+                            break;
+                        case 3:
+                            PoliceAndThief.jewel03.transform.SetParent(null);
+                            PoliceAndThief.jewel03.transform.position = new Vector3(-6.75f, 10f, -1f);
+                            PoliceAndThief.jewel03BeingStealed = null;
+                            break;
+                        case 4:
+                            PoliceAndThief.jewel04.transform.SetParent(null);
+                            PoliceAndThief.jewel04.transform.position = new Vector3(5.15f, 8f, -1f);
+                            PoliceAndThief.jewel04BeingStealed = null;
+                            break;
+                        case 5:
+                            PoliceAndThief.jewel05.transform.SetParent(null);
+                            PoliceAndThief.jewel05.transform.position = new Vector3(5f, -33.5f, -1f);
+                            PoliceAndThief.jewel05BeingStealed = null;
+                            break;
+                        case 6:
+                            PoliceAndThief.jewel06.transform.SetParent(null);
+                            PoliceAndThief.jewel06.transform.position = new Vector3(-4.15f, -33.5f, -1f);
+                            PoliceAndThief.jewel06BeingStealed = null;
+                            break;
+                        case 7:
+                            PoliceAndThief.jewel07.transform.SetParent(null);
+                            PoliceAndThief.jewel07.transform.position = new Vector3(-14f, -27.75f, -1f);
+                            PoliceAndThief.jewel07BeingStealed = null;
+                            break;
+                        case 8:
+                            PoliceAndThief.jewel08.transform.SetParent(null);
+                            PoliceAndThief.jewel08.transform.position = new Vector3(7.8f, -23.75f, -1f);
+                            PoliceAndThief.jewel08BeingStealed = null;
+                            break;
+                        case 9:
+                            PoliceAndThief.jewel09.transform.SetParent(null);
+                            PoliceAndThief.jewel09.transform.position = new Vector3(-6.75f, -42.75f, -1f);
+                            PoliceAndThief.jewel09BeingStealed = null;
+                            break;
+                        case 10:
+                            PoliceAndThief.jewel10.transform.SetParent(null);
+                            PoliceAndThief.jewel10.transform.position = new Vector3(13f, -25.25f, -1f);
+                            PoliceAndThief.jewel10BeingStealed = null;
+                            break;
+                        case 11:
+                            PoliceAndThief.jewel11.transform.SetParent(null);
+                            PoliceAndThief.jewel11.transform.position = new Vector3(-14f, -34.25f, -1f);
+                            PoliceAndThief.jewel11BeingStealed = null;
+                            break;
+                        case 12:
+                            PoliceAndThief.jewel12.transform.SetParent(null);
+                            PoliceAndThief.jewel12.transform.position = new Vector3(0f, -33.5f, -1f);
+                            PoliceAndThief.jewel12BeingStealed = null;
+                            break;
+                        case 13:
+                            PoliceAndThief.jewel13.transform.SetParent(null);
+                            PoliceAndThief.jewel13.transform.position = new Vector3(-6.5f, 14f, -1f);
+                            PoliceAndThief.jewel13BeingStealed = null;
+                            break;
+                        case 14:
+                            PoliceAndThief.jewel14.transform.SetParent(null);
+                            PoliceAndThief.jewel14.transform.position = new Vector3(14.25f, 24.5f, -1f);
+                            PoliceAndThief.jewel14BeingStealed = null;
+                            break;
+                        case 15:
+                            PoliceAndThief.jewel15.transform.SetParent(null);
+                            PoliceAndThief.jewel15.transform.position = new Vector3(-12.25f, 31f, -1f);
+                            PoliceAndThief.jewel15BeingStealed = null;
+                            break;
+                    }
+                    break;
+            }
+
+            // if police can't see jewels, hide it after jailing a player
+            if (PlayerControl.LocalPlayer == PoliceAndThief.policeplayer01 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer02 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer03 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer04 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer05 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer06) {
+                if (!PoliceAndThief.policeCanSeeJewels) {
+                    switch (jewelRevertedId) {
+                        case 1:
+                            PoliceAndThief.jewel01.SetActive(false);
+                            break;
+                        case 2:
+                            PoliceAndThief.jewel02.SetActive(false);
+                            break;
+                        case 3:
+                            PoliceAndThief.jewel03.SetActive(false);
+                            break;
+                        case 4:
+                            PoliceAndThief.jewel04.SetActive(false);
+                            break;
+                        case 5:
+                            PoliceAndThief.jewel05.SetActive(false);
+                            break;
+                        case 6:
+                            PoliceAndThief.jewel06.SetActive(false);
+                            break;
+                        case 7:
+                            PoliceAndThief.jewel07.SetActive(false);
+                            break;
+                        case 8:
+                            PoliceAndThief.jewel08.SetActive(false);
+                            break;
+                        case 9:
+                            PoliceAndThief.jewel09.SetActive(false);
+                            break;
+                        case 10:
+                            PoliceAndThief.jewel10.SetActive(false);
+                            break;
+                        case 11:
+                            PoliceAndThief.jewel11.SetActive(false);
+                            break;
+                        case 12:
+                            PoliceAndThief.jewel12.SetActive(false);
+                            break;
+                        case 13:
+                            PoliceAndThief.jewel13.SetActive(false);
+                            break;
+                        case 14:
+                            PoliceAndThief.jewel14.SetActive(false);
+                            break;
+                        case 15:
+                            PoliceAndThief.jewel15.SetActive(false);
+                            break;
                     }
                 }
             }
         }
 
         public static void policeandThiefsTased(byte targetId) {
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                if (player.PlayerId == targetId) {
-                    if (PlayerControl.LocalPlayer == player) {
-                        SoundManager.Instance.PlaySound(CustomMain.customAssets.policeTaser, false, 100f);
-                        if (MapBehaviour.Instance) {
-                            MapBehaviour.Instance.Close();
-                        }
-                    }
-                    new Tased(PoliceAndThief.policeTaseDuration, player);
-                    if (PoliceAndThief.thiefplayer01 != null && targetId == PoliceAndThief.thiefplayer01.PlayerId) {
-                        if (PoliceAndThief.thiefplayer01IsStealing) {
-                            policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer01JewelId);
-                        }
-                    }
-                    else if (PoliceAndThief.thiefplayer02 != null && targetId == PoliceAndThief.thiefplayer02.PlayerId) {
-                        if (PoliceAndThief.thiefplayer02IsStealing) {
-                            policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer02JewelId);
-                        }
-                    }
-                    else if (PoliceAndThief.thiefplayer03 != null && targetId == PoliceAndThief.thiefplayer03.PlayerId) {
-                        if (PoliceAndThief.thiefplayer03IsStealing) {
-                            policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer03JewelId);
-                        }
-                    }
-                    else if (PoliceAndThief.thiefplayer04 != null && targetId == PoliceAndThief.thiefplayer04.PlayerId) {
-                        if (PoliceAndThief.thiefplayer04IsStealing) {
-                            policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer04JewelId);
-                        }
-                    }
-                    else if (PoliceAndThief.thiefplayer05 != null && targetId == PoliceAndThief.thiefplayer05.PlayerId) {
-                        if (PoliceAndThief.thiefplayer05IsStealing) {
-                            policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer05JewelId);
-                        }
-                    }
-                    else if (PoliceAndThief.thiefplayer06 != null && targetId == PoliceAndThief.thiefplayer06.PlayerId) {
-                        if (PoliceAndThief.thiefplayer06IsStealing) {
-                            policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer06JewelId);
-                        }
-                    }
-                    else if (PoliceAndThief.thiefplayer07 != null && targetId == PoliceAndThief.thiefplayer07.PlayerId) {
-                        if (PoliceAndThief.thiefplayer07IsStealing) {
-                            policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer07JewelId);
-                        }
-                    }
-                    else if (PoliceAndThief.thiefplayer08 != null && targetId == PoliceAndThief.thiefplayer08.PlayerId) {
-                        if (PoliceAndThief.thiefplayer08IsStealing) {
-                            policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer08JewelId);
-                        }
-                    }
-                    else if (PoliceAndThief.thiefplayer09 != null && targetId == PoliceAndThief.thiefplayer09.PlayerId) {
-                        if (PoliceAndThief.thiefplayer09IsStealing) {
-                            policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer09JewelId);
-                        }
-                    }
-                    return;
+            PlayerControl tased = Helpers.playerById(targetId);
+
+            if (PlayerControl.LocalPlayer == tased) {
+                SoundManager.Instance.PlaySound(CustomMain.customAssets.policeTaser, false, 100f);
+                if (MapBehaviour.Instance) {
+                    MapBehaviour.Instance.Close();
                 }
             }
+            new Tased(PoliceAndThief.policeTaseDuration, tased);
+            if (PoliceAndThief.thiefplayer01 != null && targetId == PoliceAndThief.thiefplayer01.PlayerId) {
+                if (PoliceAndThief.thiefplayer01IsStealing) {
+                    policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer01JewelId);
+                }
+            }
+            else if (PoliceAndThief.thiefplayer02 != null && targetId == PoliceAndThief.thiefplayer02.PlayerId) {
+                if (PoliceAndThief.thiefplayer02IsStealing) {
+                    policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer02JewelId);
+                }
+            }
+            else if (PoliceAndThief.thiefplayer03 != null && targetId == PoliceAndThief.thiefplayer03.PlayerId) {
+                if (PoliceAndThief.thiefplayer03IsStealing) {
+                    policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer03JewelId);
+                }
+            }
+            else if (PoliceAndThief.thiefplayer04 != null && targetId == PoliceAndThief.thiefplayer04.PlayerId) {
+                if (PoliceAndThief.thiefplayer04IsStealing) {
+                    policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer04JewelId);
+                }
+            }
+            else if (PoliceAndThief.thiefplayer05 != null && targetId == PoliceAndThief.thiefplayer05.PlayerId) {
+                if (PoliceAndThief.thiefplayer05IsStealing) {
+                    policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer05JewelId);
+                }
+            }
+            else if (PoliceAndThief.thiefplayer06 != null && targetId == PoliceAndThief.thiefplayer06.PlayerId) {
+                if (PoliceAndThief.thiefplayer06IsStealing) {
+                    policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer06JewelId);
+                }
+            }
+            else if (PoliceAndThief.thiefplayer07 != null && targetId == PoliceAndThief.thiefplayer07.PlayerId) {
+                if (PoliceAndThief.thiefplayer07IsStealing) {
+                    policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer07JewelId);
+                }
+            }
+            else if (PoliceAndThief.thiefplayer08 != null && targetId == PoliceAndThief.thiefplayer08.PlayerId) {
+                if (PoliceAndThief.thiefplayer08IsStealing) {
+                    policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer08JewelId);
+                }
+            }
+            else if (PoliceAndThief.thiefplayer09 != null && targetId == PoliceAndThief.thiefplayer09.PlayerId) {
+                if (PoliceAndThief.thiefplayer09IsStealing) {
+                    policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer09JewelId);
+                }
+            }
+            return;
         }
 
-        public static void kingOfTheHillKills(byte targetId, int whichplayer) {
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                if (player.PlayerId == targetId) {
-                    switch (whichplayer) {
-                        case 1:
-                            KingOfTheHill.greenplayer01.MurderPlayer(player);
-                            break;
-                        case 2:
-                            KingOfTheHill.greenplayer02.MurderPlayer(player);
-                            break;
-                        case 3:
-                            KingOfTheHill.greenplayer03.MurderPlayer(player);
-                            break;
-                        case 4:
-                            KingOfTheHill.greenplayer04.MurderPlayer(player);
-                            break;
-                        case 5:
-                            KingOfTheHill.greenplayer05.MurderPlayer(player);
-                            break;
-                        case 6:
-                            KingOfTheHill.greenplayer06.MurderPlayer(player);
-                            break;
-                        case 7:
-                            KingOfTheHill.greenKingplayer.MurderPlayer(player);
-                            break;
-                        case 9:
-                            KingOfTheHill.yellowplayer01.MurderPlayer(player);
-                            break;
-                        case 10:
-                            KingOfTheHill.yellowplayer02.MurderPlayer(player);
-                            break;
-                        case 11:
-                            KingOfTheHill.yellowplayer03.MurderPlayer(player);
-                            break;
-                        case 12:
-                            KingOfTheHill.yellowplayer04.MurderPlayer(player);
-                            break;
-                        case 13:
-                            KingOfTheHill.yellowplayer05.MurderPlayer(player);
-                            break;
-                        case 14:
-                            KingOfTheHill.yellowplayer06.MurderPlayer(player);
-                            break;
-                        case 15:
-                            if (player.PlayerId == KingOfTheHill.greenKingplayer.PlayerId) {
-                                KingOfTheHill.greenTeam.Remove(KingOfTheHill.greenKingplayer);
-                                KingOfTheHill.greenKingplayer = KingOfTheHill.usurperPlayer;
-                                KingOfTheHill.greenTeam.Add(KingOfTheHill.usurperPlayer);
-                                KingOfTheHill.usurperPlayer = player;
-                                if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
-                                    KingOfTheHill.greenkingaura.transform.position = new Vector3(KingOfTheHill.greenKingplayer.transform.position.x, KingOfTheHill.greenKingplayer.transform.position.y, -0.5f);
-                                }
-                                else {
-                                    KingOfTheHill.greenkingaura.transform.position = new Vector3(KingOfTheHill.greenKingplayer.transform.position.x, KingOfTheHill.greenKingplayer.transform.position.y, 0.4f);
-                                }
-                                KingOfTheHill.greenkingaura.transform.parent = KingOfTheHill.greenKingplayer.transform;
-                                if (PlayerControl.LocalPlayer == KingOfTheHill.greenKingplayer) {
-                                    new CustomMessage(Language.statusKingOfTheHillTexts[0], 5, -1, 1.6f, 11);
-                                    KingOfTheHill.localArrows[3].arrow.SetActive(false);
-                                    KingOfTheHill.localArrows[4].arrow.SetActive(false);
-                                    KingOfTheHill.localArrows[5].arrow.SetActive(false);
-                                }
-                                KingOfTheHill.greenKingplayer.MurderPlayer(KingOfTheHill.usurperPlayer);
-                                if (PlayerControl.LocalPlayer == KingOfTheHill.usurperPlayer) {
-                                    KingOfTheHill.localArrows[3].arrow.SetActive(false);
-                                    KingOfTheHill.localArrows[4].arrow.SetActive(true);
-                                    KingOfTheHill.localArrows[5].arrow.SetActive(true);
-                                }
-                            }
-                            else if (player.PlayerId == KingOfTheHill.yellowKingplayer.PlayerId) {
-                                KingOfTheHill.yellowTeam.Remove(KingOfTheHill.yellowKingplayer);
-                                KingOfTheHill.yellowKingplayer = KingOfTheHill.usurperPlayer;
-                                KingOfTheHill.yellowTeam.Add(KingOfTheHill.usurperPlayer);
-                                KingOfTheHill.usurperPlayer = player;
-                                if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
-                                    KingOfTheHill.yellowkingaura.transform.position = new Vector3(KingOfTheHill.yellowKingplayer.transform.position.x, KingOfTheHill.yellowKingplayer.transform.position.y, -0.5f);
-                                }
-                                else {
-                                    KingOfTheHill.yellowkingaura.transform.position = new Vector3(KingOfTheHill.yellowKingplayer.transform.position.x, KingOfTheHill.yellowKingplayer.transform.position.y, 0.4f);
-                                }
-                                KingOfTheHill.yellowkingaura.transform.parent = KingOfTheHill.yellowKingplayer.transform;
-                                if (PlayerControl.LocalPlayer == KingOfTheHill.yellowKingplayer) {
-                                    new CustomMessage(Language.statusKingOfTheHillTexts[1], 5, -1, 1.6f, 11);
-                                    KingOfTheHill.localArrows[3].arrow.SetActive(false);
-                                    KingOfTheHill.localArrows[4].arrow.SetActive(false);
-                                    KingOfTheHill.localArrows[5].arrow.SetActive(false);
-                                }
-                                KingOfTheHill.yellowKingplayer.MurderPlayer(KingOfTheHill.usurperPlayer);
-                                if (PlayerControl.LocalPlayer == KingOfTheHill.usurperPlayer) {
-                                    KingOfTheHill.localArrows[3].arrow.SetActive(false);
-                                    KingOfTheHill.localArrows[4].arrow.SetActive(true);
-                                    KingOfTheHill.localArrows[5].arrow.SetActive(true);
-                                }
-                            }
-                            else {
-                                KingOfTheHill.usurperPlayer.MurderPlayer(player);
-                            }
-                            break;
-                        case 16:
-                            KingOfTheHill.yellowKingplayer.MurderPlayer(player);
-                            break;
+        public static void kingoftheHillUsurperKill(byte targetId, byte sourceId) {
+            PlayerControl killer = Helpers.playerById(sourceId);
+            PlayerControl murdered = Helpers.playerById(targetId);
+
+            if (KingOfTheHill.usurperPlayer != null && sourceId == KingOfTheHill.usurperPlayer.PlayerId) {
+                if (murdered.PlayerId == KingOfTheHill.greenKingplayer.PlayerId) {
+                    KingOfTheHill.greenTeam.Remove(KingOfTheHill.greenKingplayer);
+                    KingOfTheHill.greenKingplayer = KingOfTheHill.usurperPlayer;
+                    KingOfTheHill.greenTeam.Add(KingOfTheHill.usurperPlayer);
+                    KingOfTheHill.usurperPlayer = murdered;
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        KingOfTheHill.greenkingaura.transform.position = new Vector3(KingOfTheHill.greenKingplayer.transform.position.x, KingOfTheHill.greenKingplayer.transform.position.y, -0.5f);
                     }
-                    return;
+                    else {
+                        KingOfTheHill.greenkingaura.transform.position = new Vector3(KingOfTheHill.greenKingplayer.transform.position.x, KingOfTheHill.greenKingplayer.transform.position.y, 0.4f);
+                    }
+                    KingOfTheHill.greenkingaura.transform.parent = KingOfTheHill.greenKingplayer.transform;
+                    if (PlayerControl.LocalPlayer == KingOfTheHill.greenKingplayer) {
+                        new CustomMessage(Language.statusKingOfTheHillTexts[0], 5, -1, 1.6f, 16);
+                        KingOfTheHill.localArrows[3].arrow.SetActive(false);
+                        KingOfTheHill.localArrows[4].arrow.SetActive(false);
+                        KingOfTheHill.localArrows[5].arrow.SetActive(false);
+                    }
+                    KingOfTheHill.greenKingplayer.MurderPlayer(KingOfTheHill.usurperPlayer);
+                    if (PlayerControl.LocalPlayer == KingOfTheHill.usurperPlayer) {
+                        KingOfTheHill.localArrows[3].arrow.SetActive(false);
+                        KingOfTheHill.localArrows[4].arrow.SetActive(true);
+                        KingOfTheHill.localArrows[5].arrow.SetActive(true);
+                    }
                 }
+                else if (murdered.PlayerId == KingOfTheHill.yellowKingplayer.PlayerId) {
+                    KingOfTheHill.yellowTeam.Remove(KingOfTheHill.yellowKingplayer);
+                    KingOfTheHill.yellowKingplayer = KingOfTheHill.usurperPlayer;
+                    KingOfTheHill.yellowTeam.Add(KingOfTheHill.usurperPlayer);
+                    KingOfTheHill.usurperPlayer = murdered;
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        KingOfTheHill.yellowkingaura.transform.position = new Vector3(KingOfTheHill.yellowKingplayer.transform.position.x, KingOfTheHill.yellowKingplayer.transform.position.y, -0.5f);
+                    }
+                    else {
+                        KingOfTheHill.yellowkingaura.transform.position = new Vector3(KingOfTheHill.yellowKingplayer.transform.position.x, KingOfTheHill.yellowKingplayer.transform.position.y, 0.4f);
+                    }
+                    KingOfTheHill.yellowkingaura.transform.parent = KingOfTheHill.yellowKingplayer.transform;
+                    if (PlayerControl.LocalPlayer == KingOfTheHill.yellowKingplayer) {
+                        new CustomMessage(Language.statusKingOfTheHillTexts[1], 5, -1, 1.6f, 16);
+                        KingOfTheHill.localArrows[3].arrow.SetActive(false);
+                        KingOfTheHill.localArrows[4].arrow.SetActive(false);
+                        KingOfTheHill.localArrows[5].arrow.SetActive(false);
+                    }
+                    KingOfTheHill.yellowKingplayer.MurderPlayer(KingOfTheHill.usurperPlayer);
+                    if (PlayerControl.LocalPlayer == KingOfTheHill.usurperPlayer) {
+                        KingOfTheHill.localArrows[3].arrow.SetActive(false);
+                        KingOfTheHill.localArrows[4].arrow.SetActive(true);
+                        KingOfTheHill.localArrows[5].arrow.SetActive(true);
+                    }
+                }
+                else {
+                    killer.MurderPlayer(murdered);
+                }
+            }
+            else {
+                killer.MurderPlayer(murdered);
             }
         }
 
@@ -6468,7 +6232,7 @@ namespace LasMonjas
                     KingOfTheHill.yellowteamAlerted = true;
                     foreach (PlayerControl yellowplayer in KingOfTheHill.yellowTeam) {
                         if (yellowplayer != null && yellowplayer == PlayerControl.LocalPlayer) {
-                            new CustomMessage(Language.statusKingOfTheHillTexts[2], 5, -1, 1.3f, 11);
+                            new CustomMessage(Language.statusKingOfTheHillTexts[2], 5, -1, 1.3f, 16);
                         }
                     }
                 }
@@ -6520,7 +6284,7 @@ namespace LasMonjas
                     KingOfTheHill.greenteamAlerted = true;
                     foreach (PlayerControl greenplayer in KingOfTheHill.greenTeam) {
                         if (greenplayer != null && greenplayer == PlayerControl.LocalPlayer) {
-                            new CustomMessage(Language.statusKingOfTheHillTexts[3], 5, -1, 1.3f, 11);
+                            new CustomMessage(Language.statusKingOfTheHillTexts[3], 5, -1, 1.3f, 16);
                         }
                     }
                 }
@@ -6535,10 +6299,10 @@ namespace LasMonjas
 
                     if (!HotPotato.firstPotatoTransfered) {
                         HotPotato.firstPotatoTransfered = true;
-                        new CustomMessage(Language.introTexts[5], HotPotato.matchDuration, -1, -1f, 18);
-                        new CustomMessage(Language.introTexts[1], HotPotato.matchDuration, -1, -1.3f, 15);
+                        new CustomMessage(Language.introTexts[5], LasMonjas.gamemodeMatchDuration, -1, -1f, 18);
+                        new CustomMessage(Language.introTexts[1], LasMonjas.gamemodeMatchDuration, -1, -1.3f, 15);
                         HotPotato.hotpotatopointCounter = Language.introTexts[5] + "<color=#808080FF>" + HotPotato.hotPotatoPlayer.name + "</color> | " + Language.introTexts[6] + "<color=#00F7FFFF>" + HotPotato.notPotatoTeam.Count + "</color>";
-                        new CustomMessage(HotPotato.hotpotatopointCounter, HotPotato.matchDuration, -1, 1.9f, 17);
+                        new CustomMessage(HotPotato.hotpotatopointCounter, LasMonjas.gamemodeMatchDuration, -1, 1.9f, 17);
                     }
 
                     if (HotPotato.resetTimeForTransfer) {
@@ -6644,393 +6408,382 @@ namespace LasMonjas
         }
 
         public static void zombieTakeKeyItem(byte survivorWhoTookTheKey, byte keyId) {
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                // survivor player take key item
-                if (player.PlayerId == survivorWhoTookTheKey) {
-                    if (ZombieLaboratory.survivorPlayer01 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer01.PlayerId) {
-                        ZombieLaboratory.survivorPlayer01HasKeyItem = true;
-                        ZombieLaboratory.survivorPlayer01FoundBox = keyId;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer02 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer02.PlayerId) {
-                        ZombieLaboratory.survivorPlayer02HasKeyItem = true;
-                        ZombieLaboratory.survivorPlayer02FoundBox = keyId;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer03 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer03.PlayerId) {
-                        ZombieLaboratory.survivorPlayer03HasKeyItem = true;
-                        ZombieLaboratory.survivorPlayer03FoundBox = keyId;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer04 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer04.PlayerId) {
-                        ZombieLaboratory.survivorPlayer04HasKeyItem = true;
-                        ZombieLaboratory.survivorPlayer04FoundBox = keyId;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer05 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer05.PlayerId) {
-                        ZombieLaboratory.survivorPlayer05HasKeyItem = true;
-                        ZombieLaboratory.survivorPlayer05FoundBox = keyId;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer06 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer06.PlayerId) {
-                        ZombieLaboratory.survivorPlayer06HasKeyItem = true;
-                        ZombieLaboratory.survivorPlayer06FoundBox = keyId;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer07 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer07.PlayerId) {
-                        ZombieLaboratory.survivorPlayer07HasKeyItem = true;
-                        ZombieLaboratory.survivorPlayer07FoundBox = keyId;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer08 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer08.PlayerId) {
-                        ZombieLaboratory.survivorPlayer08HasKeyItem = true;
-                        ZombieLaboratory.survivorPlayer08FoundBox = keyId;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer09 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer09.PlayerId) {
-                        ZombieLaboratory.survivorPlayer09HasKeyItem = true;
-                        ZombieLaboratory.survivorPlayer09FoundBox = keyId;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer10 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer10.PlayerId) {
-                        ZombieLaboratory.survivorPlayer10HasKeyItem = true;
-                        ZombieLaboratory.survivorPlayer10FoundBox = keyId;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer11 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer11.PlayerId) {
-                        ZombieLaboratory.survivorPlayer11HasKeyItem = true;
-                        ZombieLaboratory.survivorPlayer11FoundBox = keyId;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer12 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer12.PlayerId) {
-                        ZombieLaboratory.survivorPlayer12HasKeyItem = true;
-                        ZombieLaboratory.survivorPlayer12FoundBox = keyId;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer13 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer13.PlayerId) {
-                        ZombieLaboratory.survivorPlayer13HasKeyItem = true;
-                        ZombieLaboratory.survivorPlayer13FoundBox = keyId;
-                    }
-                    switch (keyId) {
-                        case 1:
-                            ZombieLaboratory.keyItem01BeingHeld = true;
-                            ZombieLaboratory.laboratoryKeyItem01.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.keyItem01.GetComponent<SpriteRenderer>().sprite;
-                            ZombieLaboratory.laboratoryKeyItem01.transform.parent = player.transform;
-                            ZombieLaboratory.laboratoryKeyItem01.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
-                            ZombieLaboratory.laboratoryKeyItem01.SetActive(true);
-                            break;
-                        case 2:
-                            ZombieLaboratory.keyItem02BeingHeld = true;
-                            ZombieLaboratory.laboratoryKeyItem02.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.keyItem02.GetComponent<SpriteRenderer>().sprite;
-                            ZombieLaboratory.laboratoryKeyItem02.transform.parent = player.transform;
-                            ZombieLaboratory.laboratoryKeyItem02.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
-                            ZombieLaboratory.laboratoryKeyItem02.SetActive(true);
-                            break;
-                        case 3:
-                            ZombieLaboratory.keyItem03BeingHeld = true;
-                            ZombieLaboratory.laboratoryKeyItem03.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.keyItem03.GetComponent<SpriteRenderer>().sprite;
-                            ZombieLaboratory.laboratoryKeyItem03.transform.parent = player.transform;
-                            ZombieLaboratory.laboratoryKeyItem03.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
-                            ZombieLaboratory.laboratoryKeyItem03.SetActive(true);
-                            break;
-                        case 4:
-                            ZombieLaboratory.keyItem04BeingHeld = true;
-                            ZombieLaboratory.laboratoryKeyItem04.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.keyItem04.GetComponent<SpriteRenderer>().sprite;
-                            ZombieLaboratory.laboratoryKeyItem04.transform.parent = player.transform;
-                            ZombieLaboratory.laboratoryKeyItem04.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
-                            ZombieLaboratory.laboratoryKeyItem04.SetActive(true);
-                            break;
-                        case 5:
-                            ZombieLaboratory.keyItem05BeingHeld = true;
-                            ZombieLaboratory.laboratoryKeyItem05.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.keyItem05.GetComponent<SpriteRenderer>().sprite;
-                            ZombieLaboratory.laboratoryKeyItem05.transform.parent = player.transform;
-                            ZombieLaboratory.laboratoryKeyItem05.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
-                            ZombieLaboratory.laboratoryKeyItem05.SetActive(true);
-                            break;
-                        case 6:
-                            ZombieLaboratory.keyItem06BeingHeld = true;
-                            ZombieLaboratory.laboratoryKeyItem06.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.keyItem06.GetComponent<SpriteRenderer>().sprite;
-                            ZombieLaboratory.laboratoryKeyItem06.transform.parent = player.transform;
-                            ZombieLaboratory.laboratoryKeyItem06.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
-                            ZombieLaboratory.laboratoryKeyItem06.SetActive(true);
-                            break;
-                    }
-                }
+            PlayerControl survivorTookKey = Helpers.playerById(survivorWhoTookTheKey);
 
+            // survivor player take key item
+
+            if (ZombieLaboratory.survivorPlayer01 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer01.PlayerId) {
+                ZombieLaboratory.survivorPlayer01HasKeyItem = true;
+                ZombieLaboratory.survivorPlayer01FoundBox = keyId;
+            }
+            else if (ZombieLaboratory.survivorPlayer02 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer02.PlayerId) {
+                ZombieLaboratory.survivorPlayer02HasKeyItem = true;
+                ZombieLaboratory.survivorPlayer02FoundBox = keyId;
+            }
+            else if (ZombieLaboratory.survivorPlayer03 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer03.PlayerId) {
+                ZombieLaboratory.survivorPlayer03HasKeyItem = true;
+                ZombieLaboratory.survivorPlayer03FoundBox = keyId;
+            }
+            else if (ZombieLaboratory.survivorPlayer04 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer04.PlayerId) {
+                ZombieLaboratory.survivorPlayer04HasKeyItem = true;
+                ZombieLaboratory.survivorPlayer04FoundBox = keyId;
+            }
+            else if (ZombieLaboratory.survivorPlayer05 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer05.PlayerId) {
+                ZombieLaboratory.survivorPlayer05HasKeyItem = true;
+                ZombieLaboratory.survivorPlayer05FoundBox = keyId;
+            }
+            else if (ZombieLaboratory.survivorPlayer06 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer06.PlayerId) {
+                ZombieLaboratory.survivorPlayer06HasKeyItem = true;
+                ZombieLaboratory.survivorPlayer06FoundBox = keyId;
+            }
+            else if (ZombieLaboratory.survivorPlayer07 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer07.PlayerId) {
+                ZombieLaboratory.survivorPlayer07HasKeyItem = true;
+                ZombieLaboratory.survivorPlayer07FoundBox = keyId;
+            }
+            else if (ZombieLaboratory.survivorPlayer08 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer08.PlayerId) {
+                ZombieLaboratory.survivorPlayer08HasKeyItem = true;
+                ZombieLaboratory.survivorPlayer08FoundBox = keyId;
+            }
+            else if (ZombieLaboratory.survivorPlayer09 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer09.PlayerId) {
+                ZombieLaboratory.survivorPlayer09HasKeyItem = true;
+                ZombieLaboratory.survivorPlayer09FoundBox = keyId;
+            }
+            else if (ZombieLaboratory.survivorPlayer10 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer10.PlayerId) {
+                ZombieLaboratory.survivorPlayer10HasKeyItem = true;
+                ZombieLaboratory.survivorPlayer10FoundBox = keyId;
+            }
+            else if (ZombieLaboratory.survivorPlayer11 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer11.PlayerId) {
+                ZombieLaboratory.survivorPlayer11HasKeyItem = true;
+                ZombieLaboratory.survivorPlayer11FoundBox = keyId;
+            }
+            else if (ZombieLaboratory.survivorPlayer12 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer12.PlayerId) {
+                ZombieLaboratory.survivorPlayer12HasKeyItem = true;
+                ZombieLaboratory.survivorPlayer12FoundBox = keyId;
+            }
+            else if (ZombieLaboratory.survivorPlayer13 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer13.PlayerId) {
+                ZombieLaboratory.survivorPlayer13HasKeyItem = true;
+                ZombieLaboratory.survivorPlayer13FoundBox = keyId;
+            }
+            switch (keyId) {
+                case 1:
+                    ZombieLaboratory.keyItem01BeingHeld = true;
+                    ZombieLaboratory.laboratoryKeyItem01.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.keyItem01.GetComponent<SpriteRenderer>().sprite;
+                    survivorTakeKey(survivorTookKey, ZombieLaboratory.laboratoryKeyItem01);
+                    break;
+                case 2:
+                    ZombieLaboratory.keyItem02BeingHeld = true;
+                    ZombieLaboratory.laboratoryKeyItem02.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.keyItem02.GetComponent<SpriteRenderer>().sprite;
+                    survivorTakeKey(survivorTookKey, ZombieLaboratory.laboratoryKeyItem02);
+                    break;
+                case 3:
+                    ZombieLaboratory.keyItem03BeingHeld = true;
+                    ZombieLaboratory.laboratoryKeyItem03.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.keyItem03.GetComponent<SpriteRenderer>().sprite;
+                    survivorTakeKey(survivorTookKey, ZombieLaboratory.laboratoryKeyItem03);
+                    break;
+                case 4:
+                    ZombieLaboratory.keyItem04BeingHeld = true;
+                    ZombieLaboratory.laboratoryKeyItem04.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.keyItem04.GetComponent<SpriteRenderer>().sprite;
+                    survivorTakeKey(survivorTookKey, ZombieLaboratory.laboratoryKeyItem04);
+                    break;
+                case 5:
+                    ZombieLaboratory.keyItem05BeingHeld = true;
+                    ZombieLaboratory.laboratoryKeyItem05.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.keyItem05.GetComponent<SpriteRenderer>().sprite;
+                    survivorTakeKey(survivorTookKey, ZombieLaboratory.laboratoryKeyItem05);
+                    break;
+                case 6:
+                    ZombieLaboratory.keyItem06BeingHeld = true;
+                    ZombieLaboratory.laboratoryKeyItem06.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.keyItem06.GetComponent<SpriteRenderer>().sprite;
+                    survivorTakeKey(survivorTookKey, ZombieLaboratory.laboratoryKeyItem06);
+                    break;
             }
         }
 
+        public static void survivorTakeKey(PlayerControl survivor, GameObject keyItem) {
+            keyItem.transform.parent = survivor.transform;
+            keyItem.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
+            keyItem.SetActive(true);
+        }
+
         public static void zombieDeliverKeyItem(byte survivorWhoHasKey, byte keyId) {
-            foreach (PlayerControl player in ZombieLaboratory.survivorTeam) {
-                // survivor deliver keyitem
-                if (player.PlayerId == survivorWhoHasKey) {
-                    if (ZombieLaboratory.survivorPlayer01 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer01.PlayerId) {
-                        ZombieLaboratory.survivorPlayer01HasKeyItem = false;
-                        ZombieLaboratory.survivorPlayer01FoundBox = 0;
+
+            // survivor deliver keyitem            
+            if (ZombieLaboratory.survivorPlayer01 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer01.PlayerId) {
+                ZombieLaboratory.survivorPlayer01HasKeyItem = false;
+                ZombieLaboratory.survivorPlayer01FoundBox = 0;
+            }
+            else if (ZombieLaboratory.survivorPlayer02 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer02.PlayerId) {
+                ZombieLaboratory.survivorPlayer02HasKeyItem = false;
+                ZombieLaboratory.survivorPlayer02FoundBox = 0;
+            }
+            else if (ZombieLaboratory.survivorPlayer03 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer03.PlayerId) {
+                ZombieLaboratory.survivorPlayer03HasKeyItem = false;
+                ZombieLaboratory.survivorPlayer03FoundBox = 0;
+            }
+            else if (ZombieLaboratory.survivorPlayer04 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer04.PlayerId) {
+                ZombieLaboratory.survivorPlayer04HasKeyItem = false;
+                ZombieLaboratory.survivorPlayer04FoundBox = 0;
+            }
+            else if (ZombieLaboratory.survivorPlayer05 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer05.PlayerId) {
+                ZombieLaboratory.survivorPlayer05HasKeyItem = false;
+                ZombieLaboratory.survivorPlayer05FoundBox = 0;
+            }
+            else if (ZombieLaboratory.survivorPlayer06 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer06.PlayerId) {
+                ZombieLaboratory.survivorPlayer06HasKeyItem = false;
+                ZombieLaboratory.survivorPlayer06FoundBox = 0;
+            }
+            else if (ZombieLaboratory.survivorPlayer07 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer07.PlayerId) {
+                ZombieLaboratory.survivorPlayer07HasKeyItem = false;
+                ZombieLaboratory.survivorPlayer07FoundBox = 0;
+            }
+            else if (ZombieLaboratory.survivorPlayer08 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer08.PlayerId) {
+                ZombieLaboratory.survivorPlayer08HasKeyItem = false;
+                ZombieLaboratory.survivorPlayer08FoundBox = 0;
+            }
+            else if (ZombieLaboratory.survivorPlayer09 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer09.PlayerId) {
+                ZombieLaboratory.survivorPlayer09HasKeyItem = false;
+                ZombieLaboratory.survivorPlayer09FoundBox = 0;
+            }
+            else if (ZombieLaboratory.survivorPlayer10 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer10.PlayerId) {
+                ZombieLaboratory.survivorPlayer10HasKeyItem = false;
+                ZombieLaboratory.survivorPlayer10FoundBox = 0;
+            }
+            else if (ZombieLaboratory.survivorPlayer11 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer11.PlayerId) {
+                ZombieLaboratory.survivorPlayer11HasKeyItem = false;
+                ZombieLaboratory.survivorPlayer11FoundBox = 0;
+            }
+            else if (ZombieLaboratory.survivorPlayer12 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer12.PlayerId) {
+                ZombieLaboratory.survivorPlayer12HasKeyItem = false;
+                ZombieLaboratory.survivorPlayer12FoundBox = 0;
+            }
+            else if (ZombieLaboratory.survivorPlayer13 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer13.PlayerId) {
+                ZombieLaboratory.survivorPlayer13HasKeyItem = false;
+                ZombieLaboratory.survivorPlayer13FoundBox = 0;
+            }
+            GameObject myKeyItem = null;
+            switch (keyId) {
+                case 1:
+                    myKeyItem = ZombieLaboratory.laboratoryKeyItem01;
+                    ZombieLaboratory.keyItem01BeingHeld = true;
+                    break;
+                case 2:
+                    myKeyItem = ZombieLaboratory.laboratoryKeyItem02;
+                    ZombieLaboratory.keyItem02BeingHeld = true;
+                    break;
+                case 3:
+                    myKeyItem = ZombieLaboratory.laboratoryKeyItem03;
+                    ZombieLaboratory.keyItem03BeingHeld = true;
+                    break;
+                case 4:
+                    myKeyItem = ZombieLaboratory.laboratoryKeyItem04;
+                    ZombieLaboratory.keyItem04BeingHeld = true;
+                    break;
+                case 5:
+                    myKeyItem = ZombieLaboratory.laboratoryKeyItem05;
+                    ZombieLaboratory.keyItem05BeingHeld = true;
+                    break;
+                case 6:
+                    myKeyItem = ZombieLaboratory.laboratoryKeyItem06;
+                    ZombieLaboratory.keyItem06BeingHeld = true;
+                    break;
+            }
+            switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
+                // Skeld
+                case 0:
+                    if (activatedSensei) {
+                        switch (myKeyItem.name) {
+                            case "keyItem01":
+                                myKeyItem.transform.position = new Vector3(-13.5f, 8.25f, -0.2f);
+                                break;
+                            case "keyItem02":
+                                myKeyItem.transform.position = new Vector3(-13.15f, 8.25f, -0.2f);
+                                break;
+                            case "keyItem03":
+                                myKeyItem.transform.position = new Vector3(-12.8f, 8.25f, -0.2f);
+                                break;
+                            case "keyItem04":
+                                myKeyItem.transform.position = new Vector3(-12.45f, 8.25f, -0.2f);
+                                break;
+                            case "keyItem05":
+                                myKeyItem.transform.position = new Vector3(-12.1f, 8.25f, -0.2f);
+                                break;
+                            case "keyItem06":
+                                myKeyItem.transform.position = new Vector3(-11.85f, 8.25f, -0.2f);
+                                break;
+                        }
                     }
-                    else if (ZombieLaboratory.survivorPlayer02 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer02.PlayerId) {
-                        ZombieLaboratory.survivorPlayer02HasKeyItem = false;
-                        ZombieLaboratory.survivorPlayer02FoundBox = 0;
+                    else {
+                        switch (myKeyItem.name) {
+                            case "keyItem01":
+                                myKeyItem.transform.position = new Vector3(-11.85f, 4.5f, -0.2f);
+                                break;
+                            case "keyItem02":
+                                myKeyItem.transform.position = new Vector3(-11.5f, 4.5f, -0.2f);
+                                break;
+                            case "keyItem03":
+                                myKeyItem.transform.position = new Vector3(-11.15f, 4.5f, -0.2f);
+                                break;
+                            case "keyItem04":
+                                myKeyItem.transform.position = new Vector3(-10.8f, 4.5f, -0.2f);
+                                break;
+                            case "keyItem05":
+                                myKeyItem.transform.position = new Vector3(-10.45f, 4.5f, -0.2f);
+                                break;
+                            case "keyItem06":
+                                myKeyItem.transform.position = new Vector3(-10.1f, 4.5f, -0.2f);
+                                break;
+                        }
                     }
-                    else if (ZombieLaboratory.survivorPlayer03 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer03.PlayerId) {
-                        ZombieLaboratory.survivorPlayer03HasKeyItem = false;
-                        ZombieLaboratory.survivorPlayer03FoundBox = 0;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer04 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer04.PlayerId) {
-                        ZombieLaboratory.survivorPlayer04HasKeyItem = false;
-                        ZombieLaboratory.survivorPlayer04FoundBox = 0;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer05 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer05.PlayerId) {
-                        ZombieLaboratory.survivorPlayer05HasKeyItem = false;
-                        ZombieLaboratory.survivorPlayer05FoundBox = 0;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer06 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer06.PlayerId) {
-                        ZombieLaboratory.survivorPlayer06HasKeyItem = false;
-                        ZombieLaboratory.survivorPlayer06FoundBox = 0;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer07 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer07.PlayerId) {
-                        ZombieLaboratory.survivorPlayer07HasKeyItem = false;
-                        ZombieLaboratory.survivorPlayer07FoundBox = 0;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer08 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer08.PlayerId) {
-                        ZombieLaboratory.survivorPlayer08HasKeyItem = false;
-                        ZombieLaboratory.survivorPlayer08FoundBox = 0;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer09 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer09.PlayerId) {
-                        ZombieLaboratory.survivorPlayer09HasKeyItem = false;
-                        ZombieLaboratory.survivorPlayer09FoundBox = 0;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer10 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer10.PlayerId) {
-                        ZombieLaboratory.survivorPlayer10HasKeyItem = false;
-                        ZombieLaboratory.survivorPlayer10FoundBox = 0;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer11 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer11.PlayerId) {
-                        ZombieLaboratory.survivorPlayer11HasKeyItem = false;
-                        ZombieLaboratory.survivorPlayer11FoundBox = 0;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer12 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer12.PlayerId) {
-                        ZombieLaboratory.survivorPlayer12HasKeyItem = false;
-                        ZombieLaboratory.survivorPlayer12FoundBox = 0;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer13 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer13.PlayerId) {
-                        ZombieLaboratory.survivorPlayer13HasKeyItem = false;
-                        ZombieLaboratory.survivorPlayer13FoundBox = 0;
-                    }
-                    GameObject myKeyItem = null;
-                    switch (keyId) {
-                        case 1:
-                            myKeyItem = ZombieLaboratory.laboratoryKeyItem01;
-                            ZombieLaboratory.keyItem01BeingHeld = true;
+                    break;
+                // MiraHQ
+                case 1:
+                    switch (myKeyItem.name) {
+                        case "keyItem01":
+                            myKeyItem.transform.position = new Vector3(0.25f, 2.15f, -0.2f);
                             break;
-                        case 2:
-                            myKeyItem = ZombieLaboratory.laboratoryKeyItem02;
-                            ZombieLaboratory.keyItem02BeingHeld = true;
+                        case "keyItem02":
+                            myKeyItem.transform.position = new Vector3(0.6f, 2.15f, -0.2f);
                             break;
-                        case 3:
-                            myKeyItem = ZombieLaboratory.laboratoryKeyItem03;
-                            ZombieLaboratory.keyItem03BeingHeld = true;
+                        case "keyItem03":
+                            myKeyItem.transform.position = new Vector3(0.95f, 2.15f, -0.2f);
                             break;
-                        case 4:
-                            myKeyItem = ZombieLaboratory.laboratoryKeyItem04;
-                            ZombieLaboratory.keyItem04BeingHeld = true;
+                        case "keyItem04":
+                            myKeyItem.transform.position = new Vector3(1.3f, 2.15f, -0.2f);
                             break;
-                        case 5:
-                            myKeyItem = ZombieLaboratory.laboratoryKeyItem05;
-                            ZombieLaboratory.keyItem05BeingHeld = true;
+                        case "keyItem05":
+                            myKeyItem.transform.position = new Vector3(1.65f, 2.15f, -0.2f);
                             break;
-                        case 6:
-                            myKeyItem = ZombieLaboratory.laboratoryKeyItem06;
-                            ZombieLaboratory.keyItem06BeingHeld = true;
+                        case "keyItem06":
+                            myKeyItem.transform.position = new Vector3(2f, 2.15f, -0.2f);
                             break;
                     }
-                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
-                        // Skeld
-                        case 0:
-                            if (activatedSensei) {
-                                switch (myKeyItem.name) {
-                                    case "keyItem01":
-                                        myKeyItem.transform.position = new Vector3(-13.5f, 8.25f, -0.2f);
-                                        break;
-                                    case "keyItem02":
-                                        myKeyItem.transform.position = new Vector3(-13.15f, 8.25f, -0.2f);
-                                        break;
-                                    case "keyItem03":
-                                        myKeyItem.transform.position = new Vector3(-12.8f, 8.25f, -0.2f);
-                                        break;
-                                    case "keyItem04":
-                                        myKeyItem.transform.position = new Vector3(-12.45f, 8.25f, -0.2f);
-                                        break;
-                                    case "keyItem05":
-                                        myKeyItem.transform.position = new Vector3(-12.1f, 8.25f, -0.2f);
-                                        break;
-                                    case "keyItem06":
-                                        myKeyItem.transform.position = new Vector3(-11.85f, 8.25f, -0.2f);
-                                        break;
-                                }
+                    break;
+                // Polus
+                case 2:
+                    switch (myKeyItem.name) {
+                        case "keyItem01":
+                            myKeyItem.transform.position = new Vector3(15.2f, -1.5f, -0.2f);
+                            break;
+                        case "keyItem02":
+                            myKeyItem.transform.position = new Vector3(15.55f, -1.5f, -0.2f);
+                            break;
+                        case "keyItem03":
+                            myKeyItem.transform.position = new Vector3(15.9f, -1.5f, -0.2f);
+                            break;
+                        case "keyItem04":
+                            myKeyItem.transform.position = new Vector3(16.25f, -1.5f, -0.2f);
+                            break;
+                        case "keyItem05":
+                            myKeyItem.transform.position = new Vector3(16.6f, -1.5f, -0.2f);
+                            break;
+                        case "keyItem06":
+                            myKeyItem.transform.position = new Vector3(16.95f, -1.5f, -0.2f);
+                            break;
+                    }
+                    break;
+                // Dleks
+                case 3:
+                    switch (myKeyItem.name) {
+                        case "keyItem01":
+                            myKeyItem.transform.position = new Vector3(11.85f, 4.5f, -0.2f);
+                            break;
+                        case "keyItem02":
+                            myKeyItem.transform.position = new Vector3(11.5f, 4.5f, -0.2f);
+                            break;
+                        case "keyItem03":
+                            myKeyItem.transform.position = new Vector3(11.15f, 4.5f, -0.2f);
+                            break;
+                        case "keyItem04":
+                            myKeyItem.transform.position = new Vector3(10.8f, 4.5f, -0.2f);
+                            break;
+                        case "keyItem05":
+                            myKeyItem.transform.position = new Vector3(10.45f, 4.5f, -0.2f);
+                            break;
+                        case "keyItem06":
+                            myKeyItem.transform.position = new Vector3(10.1f, 4.5f, -0.2f);
+                            break;
+                    }
+                    break;
+                // Airship
+                case 4:
+                    switch (myKeyItem.name) {
+                        case "keyItem01":
+                            myKeyItem.transform.position = new Vector3(-19.95f, 4f, -0.2f);
+                            break;
+                        case "keyItem02":
+                            myKeyItem.transform.position = new Vector3(-19.6f, 4f, -0.2f);
+                            break;
+                        case "keyItem03":
+                            myKeyItem.transform.position = new Vector3(-19.25f, 4f, -0.2f);
+                            break;
+                        case "keyItem04":
+                            myKeyItem.transform.position = new Vector3(-18.9f, 4f, -0.2f);
+                            break;
+                        case "keyItem05":
+                            myKeyItem.transform.position = new Vector3(-18.55f, 4f, -0.2f);
+                            break;
+                        case "keyItem06":
+                            myKeyItem.transform.position = new Vector3(-18.2f, 4f, -0.2f);
+                            break;
+                    }
+                    break;
+                // Submerged
+                case 5:
+                    switch (myKeyItem.name) {
+                        case "keyItem01":
+                            if (myKeyItem.transform.position.y > 0) {
+                                myKeyItem.transform.position = new Vector3(-7.45f, 32.9f, -1f);
                             }
                             else {
-                                switch (myKeyItem.name) {
-                                    case "keyItem01":
-                                        myKeyItem.transform.position = new Vector3(-11.85f, 4.5f, -0.2f);
-                                        break;
-                                    case "keyItem02":
-                                        myKeyItem.transform.position = new Vector3(-11.5f, 4.5f, -0.2f);
-                                        break;
-                                    case "keyItem03":
-                                        myKeyItem.transform.position = new Vector3(-11.15f, 4.5f, -0.2f);
-                                        break;
-                                    case "keyItem04":
-                                        myKeyItem.transform.position = new Vector3(-10.8f, 4.5f, -0.2f);
-                                        break;
-                                    case "keyItem05":
-                                        myKeyItem.transform.position = new Vector3(-10.45f, 4.5f, -0.2f);
-                                        break;
-                                    case "keyItem06":
-                                        myKeyItem.transform.position = new Vector3(-10.1f, 4.5f, -0.2f);
-                                        break;
-                                }
+                                myKeyItem.transform.position = new Vector3(-15.65f, -37.95f, -1f);
                             }
                             break;
-                        // MiraHQ
-                        case 1:
-                            switch (myKeyItem.name) {
-                                case "keyItem01":
-                                    myKeyItem.transform.position = new Vector3(0.25f, 2.15f, -0.2f);
-                                    break;
-                                case "keyItem02":
-                                    myKeyItem.transform.position = new Vector3(0.6f, 2.15f, -0.2f);
-                                    break;
-                                case "keyItem03":
-                                    myKeyItem.transform.position = new Vector3(0.95f, 2.15f, -0.2f);
-                                    break;
-                                case "keyItem04":
-                                    myKeyItem.transform.position = new Vector3(1.3f, 2.15f, -0.2f);
-                                    break;
-                                case "keyItem05":
-                                    myKeyItem.transform.position = new Vector3(1.65f, 2.15f, -0.2f);
-                                    break;
-                                case "keyItem06":
-                                    myKeyItem.transform.position = new Vector3(2f, 2.15f, -0.2f);
-                                    break;
+                        case "keyItem02":
+                            if (myKeyItem.transform.position.y > 0) {
+                                myKeyItem.transform.position = new Vector3(-7.1f, 32.9f, -1f);
+                            }
+                            else {
+                                myKeyItem.transform.position = new Vector3(-15.3f, -37.95f, -1f);
                             }
                             break;
-                        // Polus
-                        case 2:
-                            switch (myKeyItem.name) {
-                                case "keyItem01":
-                                    myKeyItem.transform.position = new Vector3(15.2f, -1.5f, -0.2f);
-                                    break;
-                                case "keyItem02":
-                                    myKeyItem.transform.position = new Vector3(15.55f, -1.5f, -0.2f);
-                                    break;
-                                case "keyItem03":
-                                    myKeyItem.transform.position = new Vector3(15.9f, -1.5f, -0.2f);
-                                    break;
-                                case "keyItem04":
-                                    myKeyItem.transform.position = new Vector3(16.25f, -1.5f, -0.2f);
-                                    break;
-                                case "keyItem05":
-                                    myKeyItem.transform.position = new Vector3(16.6f, -1.5f, -0.2f);
-                                    break;
-                                case "keyItem06":
-                                    myKeyItem.transform.position = new Vector3(16.95f, -1.5f, -0.2f);
-                                    break;
+                        case "keyItem03":
+                            if (myKeyItem.transform.position.y > 0) {
+                                myKeyItem.transform.position = new Vector3(-6.75f, 32.9f, -1f);
+                            }
+                            else {
+                                myKeyItem.transform.position = new Vector3(-14.95f, -37.95f, -1f);
                             }
                             break;
-                        // Dleks
-                        case 3:
-                            switch (myKeyItem.name) {
-                                case "keyItem01":
-                                    myKeyItem.transform.position = new Vector3(11.85f, 4.5f, -0.2f);
-                                    break;
-                                case "keyItem02":
-                                    myKeyItem.transform.position = new Vector3(11.5f, 4.5f, -0.2f);
-                                    break;
-                                case "keyItem03":
-                                    myKeyItem.transform.position = new Vector3(11.15f, 4.5f, -0.2f);
-                                    break;
-                                case "keyItem04":
-                                    myKeyItem.transform.position = new Vector3(10.8f, 4.5f, -0.2f);
-                                    break;
-                                case "keyItem05":
-                                    myKeyItem.transform.position = new Vector3(10.45f, 4.5f, -0.2f);
-                                    break;
-                                case "keyItem06":
-                                    myKeyItem.transform.position = new Vector3(10.1f, 4.5f, -0.2f);
-                                    break;
+                        case "keyItem04":
+                            if (myKeyItem.transform.position.y > 0) {
+                                myKeyItem.transform.position = new Vector3(-6.4f, 32.9f, -1f);
+                            }
+                            else {
+                                myKeyItem.transform.position = new Vector3(-14.6f, -37.95f, -1f);
                             }
                             break;
-                        // Airship
-                        case 4:
-                            switch (myKeyItem.name) {
-                                case "keyItem01":
-                                    myKeyItem.transform.position = new Vector3(-19.95f, 4f, -0.2f);
-                                    break;
-                                case "keyItem02":
-                                    myKeyItem.transform.position = new Vector3(-19.6f, 4f, -0.2f);
-                                    break;
-                                case "keyItem03":
-                                    myKeyItem.transform.position = new Vector3(-19.25f, 4f, -0.2f);
-                                    break;
-                                case "keyItem04":
-                                    myKeyItem.transform.position = new Vector3(-18.9f, 4f, -0.2f);
-                                    break;
-                                case "keyItem05":
-                                    myKeyItem.transform.position = new Vector3(-18.55f, 4f, -0.2f);
-                                    break;
-                                case "keyItem06":
-                                    myKeyItem.transform.position = new Vector3(-18.2f, 4f, -0.2f);
-                                    break;
+                        case "keyItem05":
+                            if (myKeyItem.transform.position.y > 0) {
+                                myKeyItem.transform.position = new Vector3(-6.05f, 32.9f, -1f);
+                            }
+                            else {
+                                myKeyItem.transform.position = new Vector3(-14.25f, -37.95f, -1f);
                             }
                             break;
-                        // Submerged
-                        case 5:
-                            switch (myKeyItem.name) {
-                                case "keyItem01":
-                                    if (myKeyItem.transform.position.y > 0) {
-                                        myKeyItem.transform.position = new Vector3(-7.45f, 32.9f, -1f);
-                                    }
-                                    else {
-                                        myKeyItem.transform.position = new Vector3(-15.65f, -37.95f, -1f);
-                                    }
-                                    break;
-                                case "keyItem02":
-                                    if (myKeyItem.transform.position.y > 0) {
-                                        myKeyItem.transform.position = new Vector3(-7.1f, 32.9f, -1f);
-                                    }
-                                    else {
-                                        myKeyItem.transform.position = new Vector3(-15.3f, -37.95f, -1f);
-                                    }
-                                    break;
-                                case "keyItem03":
-                                    if (myKeyItem.transform.position.y > 0) {
-                                        myKeyItem.transform.position = new Vector3(-6.75f, 32.9f, -1f);
-                                    }
-                                    else {
-                                        myKeyItem.transform.position = new Vector3(-14.95f, -37.95f, -1f);
-                                    }
-                                    break;
-                                case "keyItem04":
-                                    if (myKeyItem.transform.position.y > 0) {
-                                        myKeyItem.transform.position = new Vector3(-6.4f, 32.9f, -1f);
-                                    }
-                                    else {
-                                        myKeyItem.transform.position = new Vector3(-14.6f, -37.95f, -1f);
-                                    }
-                                    break;
-                                case "keyItem05":
-                                    if (myKeyItem.transform.position.y > 0) {
-                                        myKeyItem.transform.position = new Vector3(-6.05f, 32.9f, -1f);
-                                    }
-                                    else {
-                                        myKeyItem.transform.position = new Vector3(-14.25f, -37.95f, -1f);
-                                    }
-                                    break;
-                                case "keyItem06":
-                                    if (myKeyItem.transform.position.y > 0) {
-                                        myKeyItem.transform.position = new Vector3(-5.7f, 32.9f, -1f);
-                                    }
-                                    else {
-                                        myKeyItem.transform.position = new Vector3(-13.9f, -37.95f, -1f);
-                                    }
-                                    break;
+                        case "keyItem06":
+                            if (myKeyItem.transform.position.y > 0) {
+                                myKeyItem.transform.position = new Vector3(-5.7f, 32.9f, -1f);
+                            }
+                            else {
+                                myKeyItem.transform.position = new Vector3(-13.9f, -37.95f, -1f);
                             }
                             break;
                     }
-                    myKeyItem.transform.SetParent(null);
-                }
+                    break;
             }
+            myKeyItem.transform.SetParent(null);
 
             ZombieLaboratory.currentKeyItems += 1;
-            new CustomMessage(Language.statusZombieLaboratoryTexts[0], 5, -1, 1.6f, 21);
+            new CustomMessage(Language.statusZombieLaboratoryTexts[0], 5, -1, 1.6f, 16);
             ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
             if (ZombieLaboratory.currentKeyItems >= 6) {
                 ZombieLaboratory.nursePlayerHasCureReady = true;
@@ -7038,237 +6791,231 @@ namespace LasMonjas
         }
 
         public static void zombieLaboratoryRevertedKeyPosition(byte survivorWhoHasKey, byte keyRevertedId) {
-            foreach (PlayerControl player in ZombieLaboratory.survivorTeam) {
-                if (player.PlayerId == survivorWhoHasKey) {
-                    if (ZombieLaboratory.survivorPlayer01 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer01.PlayerId) {
-                        ZombieLaboratory.survivorPlayer01FoundBox = 0;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer02 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer02.PlayerId) {
-                        ZombieLaboratory.survivorPlayer02FoundBox = 0;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer03 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer03.PlayerId) {
-                        ZombieLaboratory.survivorPlayer03FoundBox = 0;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer04 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer04.PlayerId) {
-                        ZombieLaboratory.survivorPlayer04FoundBox = 0;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer05 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer05.PlayerId) {
-                        ZombieLaboratory.survivorPlayer05FoundBox = 0;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer06 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer06.PlayerId) {
-                        ZombieLaboratory.survivorPlayer06FoundBox = 0;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer07 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer07.PlayerId) {
-                        ZombieLaboratory.survivorPlayer07FoundBox = 0;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer08 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer08.PlayerId) {
-                        ZombieLaboratory.survivorPlayer08FoundBox = 0;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer09 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer09.PlayerId) {
-                        ZombieLaboratory.survivorPlayer09FoundBox = 0;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer10 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer10.PlayerId) {
-                        ZombieLaboratory.survivorPlayer10FoundBox = 0;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer11 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer11.PlayerId) {
-                        ZombieLaboratory.survivorPlayer11FoundBox = 0;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer12 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer12.PlayerId) {
-                        ZombieLaboratory.survivorPlayer12FoundBox = 0;
-                    }
-                    else if (ZombieLaboratory.survivorPlayer13 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer13.PlayerId) {
-                        ZombieLaboratory.survivorPlayer13FoundBox = 0;
-                    }
 
+            if (ZombieLaboratory.survivorPlayer01 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer01.PlayerId) {
+                ZombieLaboratory.survivorPlayer01FoundBox = 0;
+            }
+            else if (ZombieLaboratory.survivorPlayer02 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer02.PlayerId) {
+                ZombieLaboratory.survivorPlayer02FoundBox = 0;
+            }
+            else if (ZombieLaboratory.survivorPlayer03 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer03.PlayerId) {
+                ZombieLaboratory.survivorPlayer03FoundBox = 0;
+            }
+            else if (ZombieLaboratory.survivorPlayer04 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer04.PlayerId) {
+                ZombieLaboratory.survivorPlayer04FoundBox = 0;
+            }
+            else if (ZombieLaboratory.survivorPlayer05 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer05.PlayerId) {
+                ZombieLaboratory.survivorPlayer05FoundBox = 0;
+            }
+            else if (ZombieLaboratory.survivorPlayer06 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer06.PlayerId) {
+                ZombieLaboratory.survivorPlayer06FoundBox = 0;
+            }
+            else if (ZombieLaboratory.survivorPlayer07 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer07.PlayerId) {
+                ZombieLaboratory.survivorPlayer07FoundBox = 0;
+            }
+            else if (ZombieLaboratory.survivorPlayer08 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer08.PlayerId) {
+                ZombieLaboratory.survivorPlayer08FoundBox = 0;
+            }
+            else if (ZombieLaboratory.survivorPlayer09 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer09.PlayerId) {
+                ZombieLaboratory.survivorPlayer09FoundBox = 0;
+            }
+            else if (ZombieLaboratory.survivorPlayer10 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer10.PlayerId) {
+                ZombieLaboratory.survivorPlayer10FoundBox = 0;
+            }
+            else if (ZombieLaboratory.survivorPlayer11 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer11.PlayerId) {
+                ZombieLaboratory.survivorPlayer11FoundBox = 0;
+            }
+            else if (ZombieLaboratory.survivorPlayer12 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer12.PlayerId) {
+                ZombieLaboratory.survivorPlayer12FoundBox = 0;
+            }
+            else if (ZombieLaboratory.survivorPlayer13 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer13.PlayerId) {
+                ZombieLaboratory.survivorPlayer13FoundBox = 0;
+            }
+
+            switch (keyRevertedId) {
+                case 1:
+                    ZombieLaboratory.laboratoryKeyItem01.transform.SetParent(null);
+                    ZombieLaboratory.laboratoryKeyItem01.transform.position = ZombieLaboratory.susBoxPositions[0];
+                    ZombieLaboratory.keyItem01BeingHeld = false;
+                    break;
+                case 2:
+                    ZombieLaboratory.laboratoryKeyItem02.transform.SetParent(null);
+                    ZombieLaboratory.laboratoryKeyItem02.transform.position = ZombieLaboratory.susBoxPositions[1];
+                    ZombieLaboratory.keyItem02BeingHeld = false;
+                    break;
+                case 3:
+                    ZombieLaboratory.laboratoryKeyItem03.transform.SetParent(null);
+                    ZombieLaboratory.laboratoryKeyItem03.transform.position = ZombieLaboratory.susBoxPositions[2];
+                    ZombieLaboratory.keyItem03BeingHeld = false;
+                    break;
+                case 4:
+                    ZombieLaboratory.laboratoryKeyItem04.transform.SetParent(null);
+                    ZombieLaboratory.laboratoryKeyItem04.transform.position = ZombieLaboratory.susBoxPositions[3];
+                    ZombieLaboratory.keyItem04BeingHeld = false;
+                    break;
+                case 5:
+                    ZombieLaboratory.laboratoryKeyItem05.transform.SetParent(null);
+                    ZombieLaboratory.laboratoryKeyItem05.transform.position = ZombieLaboratory.susBoxPositions[4];
+                    ZombieLaboratory.keyItem05BeingHeld = false;
+                    break;
+                case 6:
+                    ZombieLaboratory.laboratoryKeyItem06.transform.SetParent(null);
+                    ZombieLaboratory.laboratoryKeyItem06.transform.position = ZombieLaboratory.susBoxPositions[5];
+                    ZombieLaboratory.keyItem06BeingHeld = false;
+                    break;
+            }
+
+            // zombies can't see key items, hide it after infecting a player
+            foreach (PlayerControl zombie in ZombieLaboratory.zombieTeam) {
+                if (zombie != null & zombie == PlayerControl.LocalPlayer) {
                     switch (keyRevertedId) {
                         case 1:
-                            ZombieLaboratory.laboratoryKeyItem01.transform.SetParent(null);
-                            ZombieLaboratory.laboratoryKeyItem01.transform.position = ZombieLaboratory.susBoxPositions[0];
-                            ZombieLaboratory.keyItem01BeingHeld = false;
+                            ZombieLaboratory.laboratoryKeyItem01.SetActive(false);
                             break;
                         case 2:
-                            ZombieLaboratory.laboratoryKeyItem02.transform.SetParent(null);
-                            ZombieLaboratory.laboratoryKeyItem02.transform.position = ZombieLaboratory.susBoxPositions[1];
-                            ZombieLaboratory.keyItem02BeingHeld = false;
+                            ZombieLaboratory.laboratoryKeyItem02.SetActive(false);
                             break;
                         case 3:
-                            ZombieLaboratory.laboratoryKeyItem03.transform.SetParent(null);
-                            ZombieLaboratory.laboratoryKeyItem03.transform.position = ZombieLaboratory.susBoxPositions[2];
-                            ZombieLaboratory.keyItem03BeingHeld = false;
+                            ZombieLaboratory.laboratoryKeyItem03.SetActive(false);
                             break;
                         case 4:
-                            ZombieLaboratory.laboratoryKeyItem04.transform.SetParent(null);
-                            ZombieLaboratory.laboratoryKeyItem04.transform.position = ZombieLaboratory.susBoxPositions[3];
-                            ZombieLaboratory.keyItem04BeingHeld = false;
+                            ZombieLaboratory.laboratoryKeyItem04.SetActive(false);
                             break;
                         case 5:
-                            ZombieLaboratory.laboratoryKeyItem05.transform.SetParent(null);
-                            ZombieLaboratory.laboratoryKeyItem05.transform.position = ZombieLaboratory.susBoxPositions[4];
-                            ZombieLaboratory.keyItem05BeingHeld = false;
+                            ZombieLaboratory.laboratoryKeyItem05.SetActive(false);
                             break;
                         case 6:
-                            ZombieLaboratory.laboratoryKeyItem06.transform.SetParent(null);
-                            ZombieLaboratory.laboratoryKeyItem06.transform.position = ZombieLaboratory.susBoxPositions[5];
-                            ZombieLaboratory.keyItem06BeingHeld = false;
+                            ZombieLaboratory.laboratoryKeyItem06.SetActive(false);
                             break;
-                    }
-
-                    // zombies can't see key items, hide it after infecting a player
-                    foreach (PlayerControl zombie in ZombieLaboratory.zombieTeam) {
-                        if (zombie != null & zombie == PlayerControl.LocalPlayer) {
-                            switch (keyRevertedId) {
-                                case 1:
-                                    ZombieLaboratory.laboratoryKeyItem01.SetActive(false);
-                                    break;
-                                case 2:
-                                    ZombieLaboratory.laboratoryKeyItem02.SetActive(false);
-                                    break;
-                                case 3:
-                                    ZombieLaboratory.laboratoryKeyItem03.SetActive(false);
-                                    break;
-                                case 4:
-                                    ZombieLaboratory.laboratoryKeyItem04.SetActive(false);
-                                    break;
-                                case 5:
-                                    ZombieLaboratory.laboratoryKeyItem05.SetActive(false);
-                                    break;
-                                case 6:
-                                    ZombieLaboratory.laboratoryKeyItem06.SetActive(false);
-                                    break;
-                            }
-                        }
                     }
                 }
             }
         }
 
         public static void zombieInfect(byte targetId) {
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                if (player.PlayerId == targetId) {
+            PlayerControl survivorInfected = Helpers.playerById(targetId);
 
-                    // Assign infect bool
-                    if (ZombieLaboratory.survivorPlayer01 != null && player == ZombieLaboratory.survivorPlayer01) {
-                        if (!ZombieLaboratory.survivorPlayer01IsInfected) {
-                            ZombieLaboratory.survivorPlayer01IsInfected = true;
-                            ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer01);
-                        }
-                        else {
-                            return;
-                        }
-                    }
-                    else if (ZombieLaboratory.survivorPlayer02 != null && player == ZombieLaboratory.survivorPlayer02) {
-                        if (!ZombieLaboratory.survivorPlayer02IsInfected) {
-                            ZombieLaboratory.survivorPlayer02IsInfected = true;
-                            ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer02);
-                        }
-                        else {
-                            return;
-                        }
-                    }
-                    else if (ZombieLaboratory.survivorPlayer03 != null && player == ZombieLaboratory.survivorPlayer03) {
-                        if (!ZombieLaboratory.survivorPlayer03IsInfected) {
-                            ZombieLaboratory.survivorPlayer03IsInfected = true;
-                            ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer03);
-                        }
-                        else {
-                            return;
-                        }
-                    }
-                    else if (ZombieLaboratory.survivorPlayer04 != null && player == ZombieLaboratory.survivorPlayer04) {
-                        if (!ZombieLaboratory.survivorPlayer04IsInfected) {
-                            ZombieLaboratory.survivorPlayer04IsInfected = true;
-                            ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer04);
-                        }
-                        else {
-                            return;
-                        }
-                    }
-                    else if (ZombieLaboratory.survivorPlayer05 != null && player == ZombieLaboratory.survivorPlayer05) {
-                        if (!ZombieLaboratory.survivorPlayer05IsInfected) {
-                            ZombieLaboratory.survivorPlayer05IsInfected = true;
-                            ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer05);
-                        }
-                        else {
-                            return;
-                        }
-                    }
-                    else if (ZombieLaboratory.survivorPlayer06 != null && player == ZombieLaboratory.survivorPlayer06) {
-                        if (!ZombieLaboratory.survivorPlayer06IsInfected) {
-                            ZombieLaboratory.survivorPlayer06IsInfected = true;
-                            ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer06);
-                        }
-                        else {
-                            return;
-                        }
-                    }
-                    else if (ZombieLaboratory.survivorPlayer07 != null && player == ZombieLaboratory.survivorPlayer07) {
-                        if (!ZombieLaboratory.survivorPlayer07IsInfected) {
-                            ZombieLaboratory.survivorPlayer07IsInfected = true;
-                            ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer07);
-                        }
-                        else {
-                            return;
-                        }
-                    }
-                    else if (ZombieLaboratory.survivorPlayer08 != null && player == ZombieLaboratory.survivorPlayer08) {
-                        if (!ZombieLaboratory.survivorPlayer08IsInfected) {
-                            ZombieLaboratory.survivorPlayer08IsInfected = true;
-                            ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer08);
-                        }
-                        else {
-                            return;
-                        }
-                    }
-                    else if (ZombieLaboratory.survivorPlayer09 != null && player == ZombieLaboratory.survivorPlayer09) {
-                        if (!ZombieLaboratory.survivorPlayer09IsInfected) {
-                            ZombieLaboratory.survivorPlayer09IsInfected = true;
-                            ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer09);
-                        }
-                        else {
-                            return;
-                        }
-                    }
-                    else if (ZombieLaboratory.survivorPlayer10 != null && player == ZombieLaboratory.survivorPlayer10) {
-                        if (!ZombieLaboratory.survivorPlayer10IsInfected) {
-                            ZombieLaboratory.survivorPlayer10IsInfected = true;
-                            ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer10);
-                        }
-                        else {
-                            return;
-                        }
-                    }
-                    else if (ZombieLaboratory.survivorPlayer11 != null && player == ZombieLaboratory.survivorPlayer11) {
-                        if (!ZombieLaboratory.survivorPlayer11IsInfected) {
-                            ZombieLaboratory.survivorPlayer11IsInfected = true;
-                            ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer11);
-                        }
-                        else {
-                            return;
-                        }
-                    }
-                    else if (ZombieLaboratory.survivorPlayer12 != null && player == ZombieLaboratory.survivorPlayer12) {
-                        if (!ZombieLaboratory.survivorPlayer12IsInfected) {
-                            ZombieLaboratory.survivorPlayer12IsInfected = true;
-                            ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer12);
-                        }
-                        else {
-                            return;
-                        }
-                    }
-                    else if (ZombieLaboratory.survivorPlayer13 != null && player == ZombieLaboratory.survivorPlayer13) {
-                        if (!ZombieLaboratory.survivorPlayer13IsInfected) {
-                            ZombieLaboratory.survivorPlayer13IsInfected = true;
-                            ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer13);
-                        }
-                        else {
-                            return;
-                        }
-                    }
-
-                    new CustomMessage(Language.statusZombieLaboratoryTexts[1], 5, -1, 1.3f, 21);
-                    ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
+            // Assign infect bool
+            if (ZombieLaboratory.survivorPlayer01 != null && survivorInfected == ZombieLaboratory.survivorPlayer01) {
+                if (!ZombieLaboratory.survivorPlayer01IsInfected) {
+                    ZombieLaboratory.survivorPlayer01IsInfected = true;
+                    ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer01);
+                }
+                else {
+                    return;
                 }
             }
+            else if (ZombieLaboratory.survivorPlayer02 != null && survivorInfected == ZombieLaboratory.survivorPlayer02) {
+                if (!ZombieLaboratory.survivorPlayer02IsInfected) {
+                    ZombieLaboratory.survivorPlayer02IsInfected = true;
+                    ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer02);
+                }
+                else {
+                    return;
+                }
+            }
+            else if (ZombieLaboratory.survivorPlayer03 != null && survivorInfected == ZombieLaboratory.survivorPlayer03) {
+                if (!ZombieLaboratory.survivorPlayer03IsInfected) {
+                    ZombieLaboratory.survivorPlayer03IsInfected = true;
+                    ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer03);
+                }
+                else {
+                    return;
+                }
+            }
+            else if (ZombieLaboratory.survivorPlayer04 != null && survivorInfected == ZombieLaboratory.survivorPlayer04) {
+                if (!ZombieLaboratory.survivorPlayer04IsInfected) {
+                    ZombieLaboratory.survivorPlayer04IsInfected = true;
+                    ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer04);
+                }
+                else {
+                    return;
+                }
+            }
+            else if (ZombieLaboratory.survivorPlayer05 != null && survivorInfected == ZombieLaboratory.survivorPlayer05) {
+                if (!ZombieLaboratory.survivorPlayer05IsInfected) {
+                    ZombieLaboratory.survivorPlayer05IsInfected = true;
+                    ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer05);
+                }
+                else {
+                    return;
+                }
+            }
+            else if (ZombieLaboratory.survivorPlayer06 != null && survivorInfected == ZombieLaboratory.survivorPlayer06) {
+                if (!ZombieLaboratory.survivorPlayer06IsInfected) {
+                    ZombieLaboratory.survivorPlayer06IsInfected = true;
+                    ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer06);
+                }
+                else {
+                    return;
+                }
+            }
+            else if (ZombieLaboratory.survivorPlayer07 != null && survivorInfected == ZombieLaboratory.survivorPlayer07) {
+                if (!ZombieLaboratory.survivorPlayer07IsInfected) {
+                    ZombieLaboratory.survivorPlayer07IsInfected = true;
+                    ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer07);
+                }
+                else {
+                    return;
+                }
+            }
+            else if (ZombieLaboratory.survivorPlayer08 != null && survivorInfected == ZombieLaboratory.survivorPlayer08) {
+                if (!ZombieLaboratory.survivorPlayer08IsInfected) {
+                    ZombieLaboratory.survivorPlayer08IsInfected = true;
+                    ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer08);
+                }
+                else {
+                    return;
+                }
+            }
+            else if (ZombieLaboratory.survivorPlayer09 != null && survivorInfected == ZombieLaboratory.survivorPlayer09) {
+                if (!ZombieLaboratory.survivorPlayer09IsInfected) {
+                    ZombieLaboratory.survivorPlayer09IsInfected = true;
+                    ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer09);
+                }
+                else {
+                    return;
+                }
+            }
+            else if (ZombieLaboratory.survivorPlayer10 != null && survivorInfected == ZombieLaboratory.survivorPlayer10) {
+                if (!ZombieLaboratory.survivorPlayer10IsInfected) {
+                    ZombieLaboratory.survivorPlayer10IsInfected = true;
+                    ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer10);
+                }
+                else {
+                    return;
+                }
+            }
+            else if (ZombieLaboratory.survivorPlayer11 != null && survivorInfected == ZombieLaboratory.survivorPlayer11) {
+                if (!ZombieLaboratory.survivorPlayer11IsInfected) {
+                    ZombieLaboratory.survivorPlayer11IsInfected = true;
+                    ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer11);
+                }
+                else {
+                    return;
+                }
+            }
+            else if (ZombieLaboratory.survivorPlayer12 != null && survivorInfected == ZombieLaboratory.survivorPlayer12) {
+                if (!ZombieLaboratory.survivorPlayer12IsInfected) {
+                    ZombieLaboratory.survivorPlayer12IsInfected = true;
+                    ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer12);
+                }
+                else {
+                    return;
+                }
+            }
+            else if (ZombieLaboratory.survivorPlayer13 != null && survivorInfected == ZombieLaboratory.survivorPlayer13) {
+                if (!ZombieLaboratory.survivorPlayer13IsInfected) {
+                    ZombieLaboratory.survivorPlayer13IsInfected = true;
+                    ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer13);
+                }
+                else {
+                    return;
+                }
+            }
+
+            new CustomMessage(Language.statusZombieLaboratoryTexts[1], 5, -1, 1.3f, 16);
+            ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
         }
 
         public static void zombieLaboratoryTurnZombie(byte playerId) {
@@ -7361,7 +7108,7 @@ namespace LasMonjas
                 }
             }
 
-            new CustomMessage(Language.statusZombieLaboratoryTexts[2], 5, -1, 1f, 21);
+            new CustomMessage(Language.statusZombieLaboratoryTexts[2], 5, -1, 1f, 16);
             ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
             HudManager.Instance.StartCoroutine(Effects.Lerp(1, new Action<float>((p) => { // Delayed action
                 if (p == 1f) {
@@ -7373,444 +7120,272 @@ namespace LasMonjas
             })));
         }
 
-        public static void zombieKills(byte targetId, int whichplayer) {
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                if (player.PlayerId == targetId) {
-                    switch (whichplayer) {
-                        case 1:
-                            ZombieLaboratory.zombiePlayer01.MurderPlayer(player);
-                            break;
-                        case 2:
-                            ZombieLaboratory.zombiePlayer02.MurderPlayer(player);
-                            break;
-                        case 3:
-                            ZombieLaboratory.zombiePlayer03.MurderPlayer(player);
-                            break;
-                        case 4:
-                            ZombieLaboratory.zombiePlayer04.MurderPlayer(player);
-                            break;
-                        case 5:
-                            ZombieLaboratory.zombiePlayer05.MurderPlayer(player);
-                            break;
-                        case 6:
-                            ZombieLaboratory.zombiePlayer06.MurderPlayer(player);
-                            break;
-                        case 7:
-                            ZombieLaboratory.zombiePlayer07.MurderPlayer(player);
-                            break;
-                        case 8:
-                            ZombieLaboratory.zombiePlayer08.MurderPlayer(player);
-                            break;
-                        case 9:
-                            ZombieLaboratory.zombiePlayer09.MurderPlayer(player);
-                            break;
-                        case 10:
-                            ZombieLaboratory.zombiePlayer10.MurderPlayer(player);
-                            break;
-                        case 11:
-                            ZombieLaboratory.zombiePlayer11.MurderPlayer(player);
-                            break;
-                        case 12:
-                            ZombieLaboratory.zombiePlayer12.MurderPlayer(player);
-                            break;
-                        case 13:
-                            ZombieLaboratory.zombiePlayer13.MurderPlayer(player);
-                            break;
-                        case 14:
-                            ZombieLaboratory.zombiePlayer14.MurderPlayer(player);
-                            break;
-                        case 15:
-                            ZombieLaboratory.survivorPlayer01.MurderPlayer(player);
-                            ZombieLaboratory.survivorPlayer01CanKill = false;
-                            break;
-                        case 16:
-                            ZombieLaboratory.survivorPlayer02.MurderPlayer(player);
-                            ZombieLaboratory.survivorPlayer02CanKill = false;
-                            break;
-                        case 17:
-                            ZombieLaboratory.survivorPlayer03.MurderPlayer(player);
-                            ZombieLaboratory.survivorPlayer03CanKill = false;
-                            break;
-                        case 18:
-                            ZombieLaboratory.survivorPlayer04.MurderPlayer(player);
-                            ZombieLaboratory.survivorPlayer04CanKill = false;
-                            break;
-                        case 19:
-                            ZombieLaboratory.survivorPlayer05.MurderPlayer(player);
-                            ZombieLaboratory.survivorPlayer05CanKill = false;
-                            break;
-                        case 20:
-                            ZombieLaboratory.survivorPlayer06.MurderPlayer(player);
-                            ZombieLaboratory.survivorPlayer06CanKill = false;
-                            break;
-                        case 21:
-                            ZombieLaboratory.survivorPlayer07.MurderPlayer(player);
-                            ZombieLaboratory.survivorPlayer07CanKill = false;
-                            break;
-                        case 22:
-                            ZombieLaboratory.survivorPlayer08.MurderPlayer(player);
-                            ZombieLaboratory.survivorPlayer08CanKill = false;
-                            break;
-                        case 23:
-                            ZombieLaboratory.survivorPlayer09.MurderPlayer(player);
-                            ZombieLaboratory.survivorPlayer09CanKill = false;
-                            break;
-                        case 24:
-                            ZombieLaboratory.survivorPlayer10.MurderPlayer(player);
-                            ZombieLaboratory.survivorPlayer10CanKill = false;
-                            break;
-                        case 25:
-                            ZombieLaboratory.survivorPlayer11.MurderPlayer(player);
-                            ZombieLaboratory.survivorPlayer11CanKill = false;
-                            break;
-                        case 26:
-                            ZombieLaboratory.survivorPlayer12.MurderPlayer(player);
-                            ZombieLaboratory.survivorPlayer12CanKill = false;
-                            break;
-                        case 27:
-                            ZombieLaboratory.survivorPlayer13.MurderPlayer(player);
-                            ZombieLaboratory.survivorPlayer13CanKill = false;
-                            break;
-                    }
-                    return;
-                }
-            }
-        }
-
-        public static void zombieAmmoRecover(int whichplayer) {
-            switch (whichplayer) {
-                case 1:
-                    ZombieLaboratory.survivorPlayer01CanKill = true;
-                    break;
-                case 2:
-                    ZombieLaboratory.survivorPlayer02CanKill = true;
-                    break;
-                case 3:
-                    ZombieLaboratory.survivorPlayer03CanKill = true;
-                    break;
-                case 4:
-                    ZombieLaboratory.survivorPlayer04CanKill = true;
-                    break;
-                case 5:
-                    ZombieLaboratory.survivorPlayer05CanKill = true;
-                    break;
-                case 6:
-                    ZombieLaboratory.survivorPlayer06CanKill = true;
-                    break;
-                case 7:
-                    ZombieLaboratory.survivorPlayer07CanKill = true;
-                    break;
-                case 8:
-                    ZombieLaboratory.survivorPlayer08CanKill = true;
-                    break;
-                case 9:
-                    ZombieLaboratory.survivorPlayer09CanKill = true;
-                    break;
-                case 10:
-                    ZombieLaboratory.survivorPlayer10CanKill = true;
-                    break;
-                case 11:
-                    ZombieLaboratory.survivorPlayer11CanKill = true;
-                    break;
-                case 12:
-                    ZombieLaboratory.survivorPlayer12CanKill = true;
-                    break;
-                case 13:
-                    ZombieLaboratory.survivorPlayer13CanKill = true;
-                    break;
-            }
-        }
-
         public static void zombieNurseHeal(byte targetId) {
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                if (player.PlayerId == targetId) {
-                    if (ZombieLaboratory.survivorPlayer01 != null && player == ZombieLaboratory.survivorPlayer01) {
-                        ZombieLaboratory.survivorPlayer01IsInfected = false;
-                        ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer01);
-                        nurseHealSound(targetId);
-                    }
-                    else if (ZombieLaboratory.survivorPlayer02 != null && player == ZombieLaboratory.survivorPlayer02) {
-                        ZombieLaboratory.survivorPlayer02IsInfected = false;
-                        ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer02);
-                        nurseHealSound(targetId);
-                    }
-                    else if (ZombieLaboratory.survivorPlayer03 != null && player == ZombieLaboratory.survivorPlayer03) {
-                        ZombieLaboratory.survivorPlayer03IsInfected = false;
-                        ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer03);
-                        nurseHealSound(targetId);
-                    }
-                    else if (ZombieLaboratory.survivorPlayer04 != null && player == ZombieLaboratory.survivorPlayer04) {
-                        ZombieLaboratory.survivorPlayer04IsInfected = false;
-                        ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer04);
-                        nurseHealSound(targetId);
-                    }
-                    else if (ZombieLaboratory.survivorPlayer05 != null && player == ZombieLaboratory.survivorPlayer05) {
-                        ZombieLaboratory.survivorPlayer05IsInfected = false;
-                        ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer05);
-                        nurseHealSound(targetId);
-                    }
-                    else if (ZombieLaboratory.survivorPlayer06 != null && player == ZombieLaboratory.survivorPlayer06) {
-                        ZombieLaboratory.survivorPlayer06IsInfected = false;
-                        ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer06);
-                        nurseHealSound(targetId);
-                    }
-                    else if (ZombieLaboratory.survivorPlayer07 != null && player == ZombieLaboratory.survivorPlayer07) {
-                        ZombieLaboratory.survivorPlayer07IsInfected = false;
-                        ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer07);
-                        nurseHealSound(targetId);
-                    }
-                    else if (ZombieLaboratory.survivorPlayer08 != null && player == ZombieLaboratory.survivorPlayer08) {
-                        ZombieLaboratory.survivorPlayer08IsInfected = false;
-                        ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer08);
-                        nurseHealSound(targetId);
-                    }
-                    else if (ZombieLaboratory.survivorPlayer09 != null && player == ZombieLaboratory.survivorPlayer09) {
-                        ZombieLaboratory.survivorPlayer09IsInfected = false;
-                        ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer09);
-                        nurseHealSound(targetId);
-                    }
-                    else if (ZombieLaboratory.survivorPlayer10 != null && player == ZombieLaboratory.survivorPlayer10) {
-                        ZombieLaboratory.survivorPlayer10IsInfected = false;
-                        ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer10);
-                        nurseHealSound(targetId);
-                    }
-                    else if (ZombieLaboratory.survivorPlayer11 != null && player == ZombieLaboratory.survivorPlayer11) {
-                        ZombieLaboratory.survivorPlayer11IsInfected = false;
-                        ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer11);
-                        nurseHealSound(targetId);
-                    }
-                    else if (ZombieLaboratory.survivorPlayer12 != null && player == ZombieLaboratory.survivorPlayer12) {
-                        ZombieLaboratory.survivorPlayer12IsInfected = false;
-                        ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer12);
-                        nurseHealSound(targetId);
-                    }
-                    else if (ZombieLaboratory.survivorPlayer13 != null && player == ZombieLaboratory.survivorPlayer13) {
-                        ZombieLaboratory.survivorPlayer13IsInfected = false;
-                        ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer13);
-                        nurseHealSound(targetId);
-                    }
-                    else if (ZombieLaboratory.zombiePlayer01 != null && player == ZombieLaboratory.zombiePlayer01) {
-                        ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer01);
-                    }
-                    else if (ZombieLaboratory.zombiePlayer02 != null && player == ZombieLaboratory.zombiePlayer02) {
-                        ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer02);
-                    }
-                    else if (ZombieLaboratory.zombiePlayer03 != null && player == ZombieLaboratory.zombiePlayer03) {
-                        ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer03);
-                    }
-                    else if (ZombieLaboratory.zombiePlayer04 != null && player == ZombieLaboratory.zombiePlayer04) {
-                        ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer04);
-                    }
-                    else if (ZombieLaboratory.zombiePlayer05 != null && player == ZombieLaboratory.zombiePlayer05) {
-                        ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer05);
-                    }
-                    else if (ZombieLaboratory.zombiePlayer06 != null && player == ZombieLaboratory.zombiePlayer06) {
-                        ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer06);
-                    }
-                    else if (ZombieLaboratory.zombiePlayer07 != null && player == ZombieLaboratory.zombiePlayer07) {
-                        ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer07);
-                    }
-                    else if (ZombieLaboratory.zombiePlayer08 != null && player == ZombieLaboratory.zombiePlayer08) {
-                        ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer08);
-                    }
-                    else if (ZombieLaboratory.zombiePlayer09 != null && player == ZombieLaboratory.zombiePlayer09) {
-                        ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer09);
-                    }
-                    else if (ZombieLaboratory.zombiePlayer10 != null && player == ZombieLaboratory.zombiePlayer10) {
-                        ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer10);
-                    }
-                    else if (ZombieLaboratory.zombiePlayer11 != null && player == ZombieLaboratory.zombiePlayer11) {
-                        ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer11);
-                    }
-                    else if (ZombieLaboratory.zombiePlayer12 != null && player == ZombieLaboratory.zombiePlayer12) {
-                        ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer12);
-                    }
-                    else if (ZombieLaboratory.zombiePlayer13 != null && player == ZombieLaboratory.zombiePlayer13) {
-                        ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer13);
-                    }
-                    else if (ZombieLaboratory.zombiePlayer14 != null && player == ZombieLaboratory.zombiePlayer14) {
-                        ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer14);
-                    }
-                    ZombieLaboratory.laboratoryNurseMedKit.SetActive(false);
-                    ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
-                }
-            }
-        }
+            PlayerControl survivorHealed = Helpers.playerById(targetId);
 
-        public static void nurseHealSound(byte playerId) {
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+            if (ZombieLaboratory.survivorPlayer01 != null && survivorHealed == ZombieLaboratory.survivorPlayer01) {
+                ZombieLaboratory.survivorPlayer01IsInfected = false;
+                ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer01);
                 SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
-                if (player.PlayerId == playerId && playerId == PlayerControl.LocalPlayer.PlayerId) {
-                    HudManager.Instance.FullScreen.enabled = true;
-                    HudManager.Instance.StartCoroutine(Effects.Lerp(0.5f, new Action<float>((p) => {
-                        var renderer = HudManager.Instance.FullScreen;
-                        Color c = new Color(255f / 255f, 197f / 255f, 255f / 255f, 0f);
-                        if (p < 0.5) {
-                            if (renderer != null)
-                                renderer.color = new Color(c.r, c.g, c.b, Mathf.Clamp01(p * 2 * 0.75f));
-                        }
-                        else {
-                            if (renderer != null)
-                                renderer.color = new Color(c.r, c.g, c.b, Mathf.Clamp01((1 - p) * 2 * 0.75f));
-                        }
-                    })));
-                }
             }
+            else if (ZombieLaboratory.survivorPlayer02 != null && survivorHealed == ZombieLaboratory.survivorPlayer02) {
+                ZombieLaboratory.survivorPlayer02IsInfected = false;
+                ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer02);
+                SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
+            }
+            else if (ZombieLaboratory.survivorPlayer03 != null && survivorHealed == ZombieLaboratory.survivorPlayer03) {
+                ZombieLaboratory.survivorPlayer03IsInfected = false;
+                ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer03);
+                SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
+            }
+            else if (ZombieLaboratory.survivorPlayer04 != null && survivorHealed == ZombieLaboratory.survivorPlayer04) {
+                ZombieLaboratory.survivorPlayer04IsInfected = false;
+                ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer04);
+                SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
+            }
+            else if (ZombieLaboratory.survivorPlayer05 != null && survivorHealed == ZombieLaboratory.survivorPlayer05) {
+                ZombieLaboratory.survivorPlayer05IsInfected = false;
+                ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer05);
+                SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
+            }
+            else if (ZombieLaboratory.survivorPlayer06 != null && survivorHealed == ZombieLaboratory.survivorPlayer06) {
+                ZombieLaboratory.survivorPlayer06IsInfected = false;
+                ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer06);
+                SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
+            }
+            else if (ZombieLaboratory.survivorPlayer07 != null && survivorHealed == ZombieLaboratory.survivorPlayer07) {
+                ZombieLaboratory.survivorPlayer07IsInfected = false;
+                ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer07);
+                SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
+            }
+            else if (ZombieLaboratory.survivorPlayer08 != null && survivorHealed == ZombieLaboratory.survivorPlayer08) {
+                ZombieLaboratory.survivorPlayer08IsInfected = false;
+                ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer08);
+                SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
+            }
+            else if (ZombieLaboratory.survivorPlayer09 != null && survivorHealed == ZombieLaboratory.survivorPlayer09) {
+                ZombieLaboratory.survivorPlayer09IsInfected = false;
+                ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer09);
+                SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
+            }
+            else if (ZombieLaboratory.survivorPlayer10 != null && survivorHealed == ZombieLaboratory.survivorPlayer10) {
+                ZombieLaboratory.survivorPlayer10IsInfected = false;
+                ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer10);
+                SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
+            }
+            else if (ZombieLaboratory.survivorPlayer11 != null && survivorHealed == ZombieLaboratory.survivorPlayer11) {
+                ZombieLaboratory.survivorPlayer11IsInfected = false;
+                ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer11);
+                SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
+            }
+            else if (ZombieLaboratory.survivorPlayer12 != null && survivorHealed == ZombieLaboratory.survivorPlayer12) {
+                ZombieLaboratory.survivorPlayer12IsInfected = false;
+                ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer12);
+                SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
+            }
+            else if (ZombieLaboratory.survivorPlayer13 != null && survivorHealed == ZombieLaboratory.survivorPlayer13) {
+                ZombieLaboratory.survivorPlayer13IsInfected = false;
+                ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer13);
+                SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
+            }
+            else if (ZombieLaboratory.zombiePlayer01 != null && survivorHealed == ZombieLaboratory.zombiePlayer01) {
+                ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer01);
+            }
+            else if (ZombieLaboratory.zombiePlayer02 != null && survivorHealed == ZombieLaboratory.zombiePlayer02) {
+                ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer02);
+            }
+            else if (ZombieLaboratory.zombiePlayer03 != null && survivorHealed == ZombieLaboratory.zombiePlayer03) {
+                ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer03);
+            }
+            else if (ZombieLaboratory.zombiePlayer04 != null && survivorHealed == ZombieLaboratory.zombiePlayer04) {
+                ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer04);
+            }
+            else if (ZombieLaboratory.zombiePlayer05 != null && survivorHealed == ZombieLaboratory.zombiePlayer05) {
+                ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer05);
+            }
+            else if (ZombieLaboratory.zombiePlayer06 != null && survivorHealed == ZombieLaboratory.zombiePlayer06) {
+                ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer06);
+            }
+            else if (ZombieLaboratory.zombiePlayer07 != null && survivorHealed == ZombieLaboratory.zombiePlayer07) {
+                ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer07);
+            }
+            else if (ZombieLaboratory.zombiePlayer08 != null && survivorHealed == ZombieLaboratory.zombiePlayer08) {
+                ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer08);
+            }
+            else if (ZombieLaboratory.zombiePlayer09 != null && survivorHealed == ZombieLaboratory.zombiePlayer09) {
+                ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer09);
+            }
+            else if (ZombieLaboratory.zombiePlayer10 != null && survivorHealed == ZombieLaboratory.zombiePlayer10) {
+                ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer10);
+            }
+            else if (ZombieLaboratory.zombiePlayer11 != null && survivorHealed == ZombieLaboratory.zombiePlayer11) {
+                ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer11);
+            }
+            else if (ZombieLaboratory.zombiePlayer12 != null && survivorHealed == ZombieLaboratory.zombiePlayer12) {
+                ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer12);
+            }
+            else if (ZombieLaboratory.zombiePlayer13 != null && survivorHealed == ZombieLaboratory.zombiePlayer13) {
+                ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer13);
+            }
+            else if (ZombieLaboratory.zombiePlayer14 != null && survivorHealed == ZombieLaboratory.zombiePlayer14) {
+                ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer14);
+            }
+            ZombieLaboratory.laboratoryNurseMedKit.SetActive(false);
+            ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
         }
 
         public static void enterLeaveInfirmary(byte survivorId, bool isEntering, byte whichExit) {
-            foreach (PlayerControl player in ZombieLaboratory.survivorTeam) {
-                if (player.PlayerId == survivorId) {
-                    if (isEntering) {
-                        switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
-                            case 0:
-                                if (activatedSensei) {
-                                    player.transform.position = new Vector3(-12f, 7.15f, player.transform.position.z);
-                                }
-                                else {
-                                    player.transform.position = new Vector3(-10.2f, 3.6f, player.transform.position.z);
-                                }
-                                break;
+            PlayerControl survivorEnter = Helpers.playerById(survivorId);
+
+            if (isEntering) {
+                switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
+                    case 0:
+                        if (activatedSensei) {
+                            survivorEnter.transform.position = new Vector3(-12f, 7.15f, survivorEnter.transform.position.z);
+                        }
+                        else {
+                            survivorEnter.transform.position = new Vector3(-10.2f, 3.6f, survivorEnter.transform.position.z);
+                        }
+                        break;
+                    case 1:
+                        survivorEnter.transform.position = new Vector3(1.8f, 1.25f, survivorEnter.transform.position.z);
+                        break;
+                    case 2:
+                        survivorEnter.transform.position = new Vector3(16.65f, -2.5f, survivorEnter.transform.position.z);
+                        break;
+                    case 3:
+                        survivorEnter.transform.position = new Vector3(10.2f, 3.6f, survivorEnter.transform.position.z);
+                        break;
+                    case 4:
+                        survivorEnter.transform.position = new Vector3(-18.5f, 2.9f, survivorEnter.transform.position.z);
+                        break;
+                    case 5:
+                        if (survivorEnter.transform.position.y > 0) {
+                            survivorEnter.transform.position = new Vector3(-6f, 31.85f, survivorEnter.transform.position.z);
+                        }
+                        else {
+                            survivorEnter.transform.position = new Vector3(-14.15f, -39.25f, survivorEnter.transform.position.z);
+                        }
+                        break;
+                }
+            }
+            else {
+                switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
+                    case 0:
+                        if (activatedSensei) {
+                            switch (whichExit) {
+                                case 1:
+                                    survivorEnter.transform.position = new Vector3(-12f, 5f, survivorEnter.transform.position.z);
+                                    break;
+                                case 2:
+                                    survivorEnter.transform.position = new Vector3(-15.5f, 3f, survivorEnter.transform.position.z);
+                                    break;
+                                case 3:
+                                    survivorEnter.transform.position = new Vector3(-6.75f, 8.25f, survivorEnter.transform.position.z);
+                                    break;
+                            }
+                        }
+                        else {
+                            switch (whichExit) {
+                                case 1:
+                                    survivorEnter.transform.position = new Vector3(-10.2f, 1.18f, survivorEnter.transform.position.z);
+                                    break;
+                                case 2:
+                                    survivorEnter.transform.position = new Vector3(-17f, -1f, survivorEnter.transform.position.z);
+                                    break;
+                                case 3:
+                                    survivorEnter.transform.position = new Vector3(-3.25f, 5.25f, survivorEnter.transform.position.z);
+                                    break;
+                            }
+                        }
+                        break;
+                    case 1:
+                        switch (whichExit) {
                             case 1:
-                                player.transform.position = new Vector3(1.8f, 1.25f, player.transform.position.z);
+                                survivorEnter.transform.position = new Vector3(1.8f, -1f, survivorEnter.transform.position.z);
                                 break;
                             case 2:
-                                player.transform.position = new Vector3(16.65f, -2.5f, player.transform.position.z);
+                                survivorEnter.transform.position = new Vector3(-3.4f, 3.5f, survivorEnter.transform.position.z);
                                 break;
                             case 3:
-                                player.transform.position = new Vector3(10.2f, 3.6f, player.transform.position.z);
+                                survivorEnter.transform.position = new Vector3(4.5f, 1.5f, survivorEnter.transform.position.z);
                                 break;
-                            case 4:
-                                player.transform.position = new Vector3(-18.5f, 2.9f, player.transform.position.z);
+                        }
+                        break;
+                    case 2:
+                        switch (whichExit) {
+                            case 1:
+                                survivorEnter.transform.position = new Vector3(16.65f, -5f, survivorEnter.transform.position.z);
                                 break;
-                            case 5:
-                                if (player.transform.position.y > 0) {
-                                    player.transform.position = new Vector3(-6f, 31.85f, player.transform.position.z);
+                            case 2:
+                                survivorEnter.transform.position = new Vector3(5.5f, -9.5f, survivorEnter.transform.position.z);
+                                break;
+                            case 3:
+                                survivorEnter.transform.position = new Vector3(34.75f, -6f, survivorEnter.transform.position.z);
+                                break;
+                        }
+                        break;
+                    case 3:
+                        switch (whichExit) {
+                            case 1:
+                                survivorEnter.transform.position = new Vector3(10.2f, 1.18f, survivorEnter.transform.position.z);
+                                break;
+                            case 2:
+                                survivorEnter.transform.position = new Vector3(17f, -1f, survivorEnter.transform.position.z);
+                                break;
+                            case 3:
+                                survivorEnter.transform.position = new Vector3(3.25f, 5.25f, survivorEnter.transform.position.z);
+                                break;
+                        }
+                        break;
+                    case 4:
+                        switch (whichExit) {
+                            case 1:
+                                survivorEnter.transform.position = new Vector3(-18.5f, 0.75f, survivorEnter.transform.position.z);
+                                break;
+                            case 2:
+                                survivorEnter.transform.position = new Vector3(-14.25f, -8f, survivorEnter.transform.position.z);
+                                break;
+                            case 3:
+                                survivorEnter.transform.position = new Vector3(-10.75f, 8.5f, survivorEnter.transform.position.z);
+                                break;
+                        }
+                        break;
+                    case 5:
+                        switch (whichExit) {
+                            case 1:
+                                if (survivorEnter.transform.position.y > 0) {
+                                    survivorEnter.transform.position = new Vector3(-6f, 28.5f, survivorEnter.transform.position.z);
                                 }
                                 else {
-                                    player.transform.position = new Vector3(-14.15f, -39.25f, player.transform.position.z);
+                                    survivorEnter.transform.position = new Vector3(-11f, -39.5f, survivorEnter.transform.position.z);
+                                }
+                                break;
+                            case 2:
+                                if (survivorEnter.transform.position.y > 0) {
+                                    survivorEnter.transform.position = new Vector3(-12.15f, 20.15f, survivorEnter.transform.position.z);
+                                }
+                                else {
+                                    survivorEnter.transform.position = new Vector3(-13.5f, -34.25f, survivorEnter.transform.position.z);
+                                }
+                                break;
+                            case 3:
+                                if (survivorEnter.transform.position.y > 0) {
+                                    survivorEnter.transform.position = new Vector3(0f, 32f, survivorEnter.transform.position.z);
+                                }
+                                else {
+                                    survivorEnter.transform.position = new Vector3(5.15f, -39.25f, survivorEnter.transform.position.z);
                                 }
                                 break;
                         }
-                    }
-                    else {
-                        switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
-                            case 0:
-                                if (activatedSensei) {
-                                    switch (whichExit) {
-                                        case 1:
-                                            player.transform.position = new Vector3(-12f, 5f, player.transform.position.z);
-                                            break;
-                                        case 2:
-                                            player.transform.position = new Vector3(-15.5f, 3f, player.transform.position.z);
-                                            break;
-                                        case 3:
-                                            player.transform.position = new Vector3(-6.75f, 8.25f, player.transform.position.z);
-                                            break;
-                                    }
-                                }
-                                else {
-                                    switch (whichExit) {
-                                        case 1:
-                                            player.transform.position = new Vector3(-10.2f, 1.18f, player.transform.position.z);
-                                            break;
-                                        case 2:
-                                            player.transform.position = new Vector3(-17f, -1f, player.transform.position.z);
-                                            break;
-                                        case 3:
-                                            player.transform.position = new Vector3(-3.25f, 5.25f, player.transform.position.z);
-                                            break;
-                                    }
-                                }
-                                break;
-                            case 1:
-                                switch (whichExit) {
-                                    case 1:
-                                        player.transform.position = new Vector3(1.8f, -1f, player.transform.position.z);
-                                        break;
-                                    case 2:
-                                        player.transform.position = new Vector3(-3.4f, 3.5f, player.transform.position.z);
-                                        break;
-                                    case 3:
-                                        player.transform.position = new Vector3(4.5f, 1.5f, player.transform.position.z);
-                                        break;
-                                }
-                                break;
-                            case 2:
-                                switch (whichExit) {
-                                    case 1:
-                                        player.transform.position = new Vector3(16.65f, -5f, player.transform.position.z);
-                                        break;
-                                    case 2:
-                                        player.transform.position = new Vector3(5.5f, -9.5f, player.transform.position.z);
-                                        break;
-                                    case 3:
-                                        player.transform.position = new Vector3(34.75f, -6f, player.transform.position.z);
-                                        break;
-                                }
-                                break;
-                            case 3:
-                                switch (whichExit) {
-                                    case 1:
-                                        player.transform.position = new Vector3(10.2f, 1.18f, player.transform.position.z);
-                                        break;
-                                    case 2:
-                                        player.transform.position = new Vector3(17f, -1f, player.transform.position.z);
-                                        break;
-                                    case 3:
-                                        player.transform.position = new Vector3(3.25f, 5.25f, player.transform.position.z);
-                                        break;
-                                }
-                                break;
-                            case 4:
-                                switch (whichExit) {
-                                    case 1:
-                                        player.transform.position = new Vector3(-18.5f, 0.75f, player.transform.position.z);
-                                        break;
-                                    case 2:
-                                        player.transform.position = new Vector3(-14.25f, -8f, player.transform.position.z);
-                                        break;
-                                    case 3:
-                                        player.transform.position = new Vector3(-10.75f, 8.5f, player.transform.position.z);
-                                        break;
-                                }
-                                break;
-                            case 5:
-                                switch (whichExit) {
-                                    case 1:
-                                        if (player.transform.position.y > 0) {
-                                            player.transform.position = new Vector3(-6f, 28.5f, player.transform.position.z);
-                                        }
-                                        else {
-                                            player.transform.position = new Vector3(-11f, -39.5f, player.transform.position.z);
-                                        }
-                                        break;
-                                    case 2:
-                                        if (player.transform.position.y > 0) {
-                                            player.transform.position = new Vector3(-12.15f, 20.15f, player.transform.position.z);
-                                        }
-                                        else {
-                                            player.transform.position = new Vector3(-13.5f, -34.25f, player.transform.position.z);
-                                        }
-                                        break;
-                                    case 3:
-                                        if (player.transform.position.y > 0) {
-                                            player.transform.position = new Vector3(0f, 32f, player.transform.position.z);
-                                        }
-                                        else {
-                                            player.transform.position = new Vector3(5.15f, -39.25f, player.transform.position.z);
-                                        }
-                                        break;
-                                }
-                                break;
-                        }
-                    }
+                        break;
                 }
             }
         }
 
         public static void nurseHasMedKit() {
             ZombieLaboratory.laboratoryNurseMedKit.SetActive(true);
+            ZombieLaboratory.nursePlayerHasMedKit = true;
         }
 
         public static void zombieSurvivorsWin() {
@@ -7819,425 +7394,422 @@ namespace LasMonjas
         }
 
         public static void battleRoyaleKills(byte targetId, byte sourceId) {
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                if (player.PlayerId == targetId) {
+            PlayerControl murderer = Helpers.playerById(targetId);
 
-                    // Hit sound
-                    if (player == PlayerControl.LocalPlayer) {
-                        SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleGetHit, false, 100f);
+            // Hit sound
+            if (murderer == PlayerControl.LocalPlayer) {
+                SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleGetHit, false, 100f);
+            }
+
+            if (BattleRoyale.matchType == 0) {
+                new BattleRoyaleFootprint(murderer, 0);
+
+                // Remove 1 life and check remaining lifes
+                if (BattleRoyale.soloPlayer01 != null && murderer == BattleRoyale.soloPlayer01) {
+                    BattleRoyale.soloPlayer01Lifes -= 1;
+                    if (BattleRoyale.soloPlayer01Lifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        battleRoyaleCheckWin(0);
                     }
-
-                    if (BattleRoyale.matchType == 0) {
-                        new BattleRoyaleFootprint(player, 0);
-
-                        // Remove 1 life and check remaining lifes
-                        if (BattleRoyale.soloPlayer01 != null && player == BattleRoyale.soloPlayer01) {
-                            BattleRoyale.soloPlayer01Lifes -= 1;
-                            if (BattleRoyale.soloPlayer01Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                battleRoyaleCheckWin(0);
-                            }
-                        }
-                        else if (BattleRoyale.soloPlayer02 != null && player == BattleRoyale.soloPlayer02) {
-                            BattleRoyale.soloPlayer02Lifes -= 1;
-                            if (BattleRoyale.soloPlayer02Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                battleRoyaleCheckWin(0);
-                            }
-                        }
-                        else if (BattleRoyale.soloPlayer03 != null && player == BattleRoyale.soloPlayer03) {
-                            BattleRoyale.soloPlayer03Lifes -= 1;
-                            if (BattleRoyale.soloPlayer03Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                battleRoyaleCheckWin(0);
-                            }
-                        }
-                        else if (BattleRoyale.soloPlayer04 != null && player == BattleRoyale.soloPlayer04) {
-                            BattleRoyale.soloPlayer04Lifes -= 1;
-                            if (BattleRoyale.soloPlayer04Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                battleRoyaleCheckWin(0);
-                            }
-                        }
-                        else if (BattleRoyale.soloPlayer05 != null && player == BattleRoyale.soloPlayer05) {
-                            BattleRoyale.soloPlayer05Lifes -= 1;
-                            if (BattleRoyale.soloPlayer05Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                battleRoyaleCheckWin(0);
-                            }
-                        }
-                        else if (BattleRoyale.soloPlayer06 != null && player == BattleRoyale.soloPlayer06) {
-                            BattleRoyale.soloPlayer06Lifes -= 1;
-                            if (BattleRoyale.soloPlayer06Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                battleRoyaleCheckWin(0);
-                            }
-                        }
-                        else if (BattleRoyale.soloPlayer07 != null && player == BattleRoyale.soloPlayer07) {
-                            BattleRoyale.soloPlayer07Lifes -= 1;
-                            if (BattleRoyale.soloPlayer07Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                battleRoyaleCheckWin(0);
-                            }
-                        }
-                        else if (BattleRoyale.soloPlayer08 != null && player == BattleRoyale.soloPlayer08) {
-                            BattleRoyale.soloPlayer08Lifes -= 1;
-                            if (BattleRoyale.soloPlayer08Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                battleRoyaleCheckWin(0);
-                            }
-                        }
-                        else if (BattleRoyale.soloPlayer09 != null && player == BattleRoyale.soloPlayer09) {
-                            BattleRoyale.soloPlayer09Lifes -= 1;
-                            if (BattleRoyale.soloPlayer09Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                battleRoyaleCheckWin(0);
-                            }
-                        }
-                        else if (BattleRoyale.soloPlayer10 != null && player == BattleRoyale.soloPlayer10) {
-                            BattleRoyale.soloPlayer10Lifes -= 1;
-                            if (BattleRoyale.soloPlayer10Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                battleRoyaleCheckWin(0);
-                            }
-                        }
-                        else if (BattleRoyale.soloPlayer11 != null && player == BattleRoyale.soloPlayer11) {
-                            BattleRoyale.soloPlayer11Lifes -= 1;
-                            if (BattleRoyale.soloPlayer11Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                battleRoyaleCheckWin(0);
-                            }
-                        }
-                        else if (BattleRoyale.soloPlayer12 != null && player == BattleRoyale.soloPlayer12) {
-                            BattleRoyale.soloPlayer12Lifes -= 1;
-                            if (BattleRoyale.soloPlayer12Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                battleRoyaleCheckWin(0);
-                            }
-                        }
-                        else if (BattleRoyale.soloPlayer13 != null && player == BattleRoyale.soloPlayer13) {
-                            BattleRoyale.soloPlayer13Lifes -= 1;
-                            if (BattleRoyale.soloPlayer13Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                battleRoyaleCheckWin(0);
-                            }
-                        }
-                        else if (BattleRoyale.soloPlayer14 != null && player == BattleRoyale.soloPlayer14) {
-                            BattleRoyale.soloPlayer14Lifes -= 1;
-                            if (BattleRoyale.soloPlayer14Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                battleRoyaleCheckWin(0);
-                            }
-                        }
-                        else if (BattleRoyale.soloPlayer15 != null && player == BattleRoyale.soloPlayer15) {
-                            BattleRoyale.soloPlayer15Lifes -= 1;
-                            if (BattleRoyale.soloPlayer15Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                battleRoyaleCheckWin(0);
-                            }
+                }
+                else if (BattleRoyale.soloPlayer02 != null && murderer == BattleRoyale.soloPlayer02) {
+                    BattleRoyale.soloPlayer02Lifes -= 1;
+                    if (BattleRoyale.soloPlayer02Lifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        battleRoyaleCheckWin(0);
+                    }
+                }
+                else if (BattleRoyale.soloPlayer03 != null && murderer == BattleRoyale.soloPlayer03) {
+                    BattleRoyale.soloPlayer03Lifes -= 1;
+                    if (BattleRoyale.soloPlayer03Lifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        battleRoyaleCheckWin(0);
+                    }
+                }
+                else if (BattleRoyale.soloPlayer04 != null && murderer == BattleRoyale.soloPlayer04) {
+                    BattleRoyale.soloPlayer04Lifes -= 1;
+                    if (BattleRoyale.soloPlayer04Lifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        battleRoyaleCheckWin(0);
+                    }
+                }
+                else if (BattleRoyale.soloPlayer05 != null && murderer == BattleRoyale.soloPlayer05) {
+                    BattleRoyale.soloPlayer05Lifes -= 1;
+                    if (BattleRoyale.soloPlayer05Lifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        battleRoyaleCheckWin(0);
+                    }
+                }
+                else if (BattleRoyale.soloPlayer06 != null && murderer == BattleRoyale.soloPlayer06) {
+                    BattleRoyale.soloPlayer06Lifes -= 1;
+                    if (BattleRoyale.soloPlayer06Lifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        battleRoyaleCheckWin(0);
+                    }
+                }
+                else if (BattleRoyale.soloPlayer07 != null && murderer == BattleRoyale.soloPlayer07) {
+                    BattleRoyale.soloPlayer07Lifes -= 1;
+                    if (BattleRoyale.soloPlayer07Lifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        battleRoyaleCheckWin(0);
+                    }
+                }
+                else if (BattleRoyale.soloPlayer08 != null && murderer == BattleRoyale.soloPlayer08) {
+                    BattleRoyale.soloPlayer08Lifes -= 1;
+                    if (BattleRoyale.soloPlayer08Lifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        battleRoyaleCheckWin(0);
+                    }
+                }
+                else if (BattleRoyale.soloPlayer09 != null && murderer == BattleRoyale.soloPlayer09) {
+                    BattleRoyale.soloPlayer09Lifes -= 1;
+                    if (BattleRoyale.soloPlayer09Lifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        battleRoyaleCheckWin(0);
+                    }
+                }
+                else if (BattleRoyale.soloPlayer10 != null && murderer == BattleRoyale.soloPlayer10) {
+                    BattleRoyale.soloPlayer10Lifes -= 1;
+                    if (BattleRoyale.soloPlayer10Lifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        battleRoyaleCheckWin(0);
+                    }
+                }
+                else if (BattleRoyale.soloPlayer11 != null && murderer == BattleRoyale.soloPlayer11) {
+                    BattleRoyale.soloPlayer11Lifes -= 1;
+                    if (BattleRoyale.soloPlayer11Lifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        battleRoyaleCheckWin(0);
+                    }
+                }
+                else if (BattleRoyale.soloPlayer12 != null && murderer == BattleRoyale.soloPlayer12) {
+                    BattleRoyale.soloPlayer12Lifes -= 1;
+                    if (BattleRoyale.soloPlayer12Lifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        battleRoyaleCheckWin(0);
+                    }
+                }
+                else if (BattleRoyale.soloPlayer13 != null && murderer == BattleRoyale.soloPlayer13) {
+                    BattleRoyale.soloPlayer13Lifes -= 1;
+                    if (BattleRoyale.soloPlayer13Lifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        battleRoyaleCheckWin(0);
+                    }
+                }
+                else if (BattleRoyale.soloPlayer14 != null && murderer == BattleRoyale.soloPlayer14) {
+                    BattleRoyale.soloPlayer14Lifes -= 1;
+                    if (BattleRoyale.soloPlayer14Lifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        battleRoyaleCheckWin(0);
+                    }
+                }
+                else if (BattleRoyale.soloPlayer15 != null && murderer == BattleRoyale.soloPlayer15) {
+                    BattleRoyale.soloPlayer15Lifes -= 1;
+                    if (BattleRoyale.soloPlayer15Lifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        battleRoyaleCheckWin(0);
+                    }
+                }
+            }
+            else {
+                // Remove 1 life and check remaining lifes
+                if (BattleRoyale.limePlayer01 != null && murderer == BattleRoyale.limePlayer01) {
+                    BattleRoyale.limePlayer01Lifes -= 1;
+                    new BattleRoyaleFootprint(murderer, 1);
+                    if (BattleRoyale.limePlayer01Lifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        switch (BattleRoyale.matchType) {
+                            case 1:
+                                battleRoyaleCheckWin(1);
+                                break;
+                            case 2:
+                                if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
+                                    battleRoyaleScoreCheck(3, 1);
+                                }
+                                else {
+                                    battleRoyaleScoreCheck(2, 1);
+                                }
+                                break;
                         }
                     }
-                    else {
-                        // Remove 1 life and check remaining lifes
-                        if (BattleRoyale.limePlayer01 != null && player == BattleRoyale.limePlayer01) {
-                            BattleRoyale.limePlayer01Lifes -= 1;
-                            new BattleRoyaleFootprint(player, 1);
-                            if (BattleRoyale.limePlayer01Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                switch (BattleRoyale.matchType) {
-                                    case 1:
-                                        battleRoyaleCheckWin(1);
-                                        break;
-                                    case 2:
-                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                            battleRoyaleScoreCheck(3, 1);
-                                        }
-                                        else {
-                                            battleRoyaleScoreCheck(2, 1);
-                                        }
-                                        break;
+                }
+                else if (BattleRoyale.limePlayer02 != null && murderer == BattleRoyale.limePlayer02) {
+                    BattleRoyale.limePlayer02Lifes -= 1;
+                    new BattleRoyaleFootprint(murderer, 1);
+                    if (BattleRoyale.limePlayer02Lifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        switch (BattleRoyale.matchType) {
+                            case 1:
+                                battleRoyaleCheckWin(1);
+                                break;
+                            case 2:
+                                if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
+                                    battleRoyaleScoreCheck(3, 1);
                                 }
-                            }
+                                else {
+                                    battleRoyaleScoreCheck(2, 1);
+                                }
+                                break;
                         }
-                        else if (BattleRoyale.limePlayer02 != null && player == BattleRoyale.limePlayer02) {
-                            BattleRoyale.limePlayer02Lifes -= 1;
-                            new BattleRoyaleFootprint(player, 1);
-                            if (BattleRoyale.limePlayer02Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                switch (BattleRoyale.matchType) {
-                                    case 1:
-                                        battleRoyaleCheckWin(1);
-                                        break;
-                                    case 2:
-                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                            battleRoyaleScoreCheck(3, 1);
-                                        }
-                                        else {
-                                            battleRoyaleScoreCheck(2, 1);
-                                        }
-                                        break;
+                    }
+                }
+                else if (BattleRoyale.limePlayer03 != null && murderer == BattleRoyale.limePlayer03) {
+                    BattleRoyale.limePlayer03Lifes -= 1;
+                    new BattleRoyaleFootprint(murderer, 1);
+                    if (BattleRoyale.limePlayer03Lifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        switch (BattleRoyale.matchType) {
+                            case 1:
+                                battleRoyaleCheckWin(1);
+                                break;
+                            case 2:
+                                if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
+                                    battleRoyaleScoreCheck(3, 1);
                                 }
-                            }
+                                else {
+                                    battleRoyaleScoreCheck(2, 1);
+                                }
+                                break;
                         }
-                        else if (BattleRoyale.limePlayer03 != null && player == BattleRoyale.limePlayer03) {
-                            BattleRoyale.limePlayer03Lifes -= 1;
-                            new BattleRoyaleFootprint(player, 1);
-                            if (BattleRoyale.limePlayer03Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                switch (BattleRoyale.matchType) {
-                                    case 1:
-                                        battleRoyaleCheckWin(1);
-                                        break;
-                                    case 2:
-                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                            battleRoyaleScoreCheck(3, 1);
-                                        }
-                                        else {
-                                            battleRoyaleScoreCheck(2, 1);
-                                        }
-                                        break;
+                    }
+                }
+                else if (BattleRoyale.limePlayer04 != null && murderer == BattleRoyale.limePlayer04) {
+                    BattleRoyale.limePlayer04Lifes -= 1;
+                    new BattleRoyaleFootprint(murderer, 1);
+                    if (BattleRoyale.limePlayer04Lifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        switch (BattleRoyale.matchType) {
+                            case 1:
+                                battleRoyaleCheckWin(1);
+                                break;
+                            case 2:
+                                if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
+                                    battleRoyaleScoreCheck(3, 1);
                                 }
-                            }
+                                else {
+                                    battleRoyaleScoreCheck(2, 1);
+                                }
+                                break;
                         }
-                        else if (BattleRoyale.limePlayer04 != null && player == BattleRoyale.limePlayer04) {
-                            BattleRoyale.limePlayer04Lifes -= 1;
-                            new BattleRoyaleFootprint(player, 1);
-                            if (BattleRoyale.limePlayer04Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                switch (BattleRoyale.matchType) {
-                                    case 1:
-                                        battleRoyaleCheckWin(1);
-                                        break;
-                                    case 2:
-                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                            battleRoyaleScoreCheck(3, 1);
-                                        }
-                                        else {
-                                            battleRoyaleScoreCheck(2, 1);
-                                        }
-                                        break;
+                    }
+                }
+                else if (BattleRoyale.limePlayer05 != null && murderer == BattleRoyale.limePlayer05) {
+                    BattleRoyale.limePlayer05Lifes -= 1;
+                    new BattleRoyaleFootprint(murderer, 1);
+                    if (BattleRoyale.limePlayer05Lifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        switch (BattleRoyale.matchType) {
+                            case 1:
+                                battleRoyaleCheckWin(1);
+                                break;
+                            case 2:
+                                if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
+                                    battleRoyaleScoreCheck(3, 1);
                                 }
-                            }
+                                else {
+                                    battleRoyaleScoreCheck(2, 1);
+                                }
+                                break;
                         }
-                        else if (BattleRoyale.limePlayer05 != null && player == BattleRoyale.limePlayer05) {
-                            BattleRoyale.limePlayer05Lifes -= 1;
-                            new BattleRoyaleFootprint(player, 1);
-                            if (BattleRoyale.limePlayer05Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                switch (BattleRoyale.matchType) {
-                                    case 1:
-                                        battleRoyaleCheckWin(1);
-                                        break;
-                                    case 2:
-                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                            battleRoyaleScoreCheck(3, 1);
-                                        }
-                                        else {
-                                            battleRoyaleScoreCheck(2, 1);
-                                        }
-                                        break;
+                    }
+                }
+                else if (BattleRoyale.limePlayer06 != null && murderer == BattleRoyale.limePlayer06) {
+                    BattleRoyale.limePlayer06Lifes -= 1;
+                    new BattleRoyaleFootprint(murderer, 1);
+                    if (BattleRoyale.limePlayer06Lifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        switch (BattleRoyale.matchType) {
+                            case 1:
+                                battleRoyaleCheckWin(1);
+                                break;
+                            case 2:
+                                if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
+                                    battleRoyaleScoreCheck(3, 1);
                                 }
-                            }
+                                else {
+                                    battleRoyaleScoreCheck(2, 1);
+                                }
+                                break;
                         }
-                        else if (BattleRoyale.limePlayer06 != null && player == BattleRoyale.limePlayer06) {
-                            BattleRoyale.limePlayer06Lifes -= 1;
-                            new BattleRoyaleFootprint(player, 1);
-                            if (BattleRoyale.limePlayer06Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                switch (BattleRoyale.matchType) {
-                                    case 1:
-                                        battleRoyaleCheckWin(1);
-                                        break;
-                                    case 2:
-                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                            battleRoyaleScoreCheck(3, 1);
-                                        }
-                                        else {
-                                            battleRoyaleScoreCheck(2, 1);
-                                        }
-                                        break;
+                    }
+                }
+                else if (BattleRoyale.limePlayer07 != null && murderer == BattleRoyale.limePlayer07) {
+                    BattleRoyale.limePlayer07Lifes -= 1;
+                    new BattleRoyaleFootprint(murderer, 1);
+                    if (BattleRoyale.limePlayer07Lifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        switch (BattleRoyale.matchType) {
+                            case 1:
+                                battleRoyaleCheckWin(1);
+                                break;
+                            case 2:
+                                if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
+                                    battleRoyaleScoreCheck(3, 1);
                                 }
-                            }
+                                else {
+                                    battleRoyaleScoreCheck(2, 1);
+                                }
+                                break;
                         }
-                        else if (BattleRoyale.limePlayer07 != null && player == BattleRoyale.limePlayer07) {
-                            BattleRoyale.limePlayer07Lifes -= 1;
-                            new BattleRoyaleFootprint(player, 1);
-                            if (BattleRoyale.limePlayer07Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                switch (BattleRoyale.matchType) {
-                                    case 1:
-                                        battleRoyaleCheckWin(1);
-                                        break;
-                                    case 2:
-                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                            battleRoyaleScoreCheck(3, 1);
-                                        }
-                                        else {
-                                            battleRoyaleScoreCheck(2, 1);
-                                        }
-                                        break;
+                    }
+                }
+                else if (BattleRoyale.pinkPlayer01 != null && murderer == BattleRoyale.pinkPlayer01) {
+                    BattleRoyale.pinkPlayer01Lifes -= 1;
+                    new BattleRoyaleFootprint(murderer, 2);
+                    if (BattleRoyale.pinkPlayer01Lifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        switch (BattleRoyale.matchType) {
+                            case 1:
+                                battleRoyaleCheckWin(2);
+                                break;
+                            case 2:
+                                if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
+                                    battleRoyaleScoreCheck(3, 1);
                                 }
-                            }
+                                else {
+                                    battleRoyaleScoreCheck(1, 1);
+                                }
+                                break;
                         }
-                        else if (BattleRoyale.pinkPlayer01 != null && player == BattleRoyale.pinkPlayer01) {
-                            BattleRoyale.pinkPlayer01Lifes -= 1;
-                            new BattleRoyaleFootprint(player, 2);
-                            if (BattleRoyale.pinkPlayer01Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                switch (BattleRoyale.matchType) {
-                                    case 1:
-                                        battleRoyaleCheckWin(2);
-                                        break;
-                                    case 2:
-                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                            battleRoyaleScoreCheck(3, 1);
-                                        }
-                                        else {
-                                            battleRoyaleScoreCheck(1, 1);
-                                        }
-                                        break;
+                    }
+                }
+                else if (BattleRoyale.pinkPlayer02 != null && murderer == BattleRoyale.pinkPlayer02) {
+                    BattleRoyale.pinkPlayer02Lifes -= 1;
+                    new BattleRoyaleFootprint(murderer, 2);
+                    if (BattleRoyale.pinkPlayer02Lifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        switch (BattleRoyale.matchType) {
+                            case 1:
+                                battleRoyaleCheckWin(2);
+                                break;
+                            case 2:
+                                if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
+                                    battleRoyaleScoreCheck(3, 1);
                                 }
-                            }
+                                else {
+                                    battleRoyaleScoreCheck(1, 1);
+                                }
+                                break;
                         }
-                        else if (BattleRoyale.pinkPlayer02 != null && player == BattleRoyale.pinkPlayer02) {
-                            BattleRoyale.pinkPlayer02Lifes -= 1;
-                            new BattleRoyaleFootprint(player, 2);
-                            if (BattleRoyale.pinkPlayer02Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                switch (BattleRoyale.matchType) {
-                                    case 1:
-                                        battleRoyaleCheckWin(2);
-                                        break;
-                                    case 2:
-                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                            battleRoyaleScoreCheck(3, 1);
-                                        }
-                                        else {
-                                            battleRoyaleScoreCheck(1, 1);
-                                        }
-                                        break;
+                    }
+                }
+                else if (BattleRoyale.pinkPlayer03 != null && murderer == BattleRoyale.pinkPlayer03) {
+                    BattleRoyale.pinkPlayer03Lifes -= 1;
+                    new BattleRoyaleFootprint(murderer, 2);
+                    if (BattleRoyale.pinkPlayer03Lifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        switch (BattleRoyale.matchType) {
+                            case 1:
+                                battleRoyaleCheckWin(2);
+                                break;
+                            case 2:
+                                if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
+                                    battleRoyaleScoreCheck(3, 1);
                                 }
-                            }
+                                else {
+                                    battleRoyaleScoreCheck(1, 1);
+                                }
+                                break;
                         }
-                        else if (BattleRoyale.pinkPlayer03 != null && player == BattleRoyale.pinkPlayer03) {
-                            BattleRoyale.pinkPlayer03Lifes -= 1;
-                            new BattleRoyaleFootprint(player, 2);
-                            if (BattleRoyale.pinkPlayer03Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                switch (BattleRoyale.matchType) {
-                                    case 1:
-                                        battleRoyaleCheckWin(2);
-                                        break;
-                                    case 2:
-                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                            battleRoyaleScoreCheck(3, 1);
-                                        }
-                                        else {
-                                            battleRoyaleScoreCheck(1, 1);
-                                        }
-                                        break;
+                    }
+                }
+                else if (BattleRoyale.pinkPlayer04 != null && murderer == BattleRoyale.pinkPlayer04) {
+                    BattleRoyale.pinkPlayer04Lifes -= 1;
+                    new BattleRoyaleFootprint(murderer, 2);
+                    if (BattleRoyale.pinkPlayer04Lifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        switch (BattleRoyale.matchType) {
+                            case 1:
+                                battleRoyaleCheckWin(2);
+                                break;
+                            case 2:
+                                if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
+                                    battleRoyaleScoreCheck(3, 1);
                                 }
-                            }
+                                else {
+                                    battleRoyaleScoreCheck(1, 1);
+                                }
+                                break;
                         }
-                        else if (BattleRoyale.pinkPlayer04 != null && player == BattleRoyale.pinkPlayer04) {
-                            BattleRoyale.pinkPlayer04Lifes -= 1;
-                            new BattleRoyaleFootprint(player, 2);
-                            if (BattleRoyale.pinkPlayer04Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                switch (BattleRoyale.matchType) {
-                                    case 1:
-                                        battleRoyaleCheckWin(2);
-                                        break;
-                                    case 2:
-                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                            battleRoyaleScoreCheck(3, 1);
-                                        }
-                                        else {
-                                            battleRoyaleScoreCheck(1, 1);
-                                        }
-                                        break;
+                    }
+                }
+                else if (BattleRoyale.pinkPlayer05 != null && murderer == BattleRoyale.pinkPlayer05) {
+                    BattleRoyale.pinkPlayer05Lifes -= 1;
+                    new BattleRoyaleFootprint(murderer, 2);
+                    if (BattleRoyale.pinkPlayer05Lifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        switch (BattleRoyale.matchType) {
+                            case 1:
+                                battleRoyaleCheckWin(2);
+                                break;
+                            case 2:
+                                if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
+                                    battleRoyaleScoreCheck(3, 1);
                                 }
-                            }
+                                else {
+                                    battleRoyaleScoreCheck(1, 1);
+                                }
+                                break;
                         }
-                        else if (BattleRoyale.pinkPlayer05 != null && player == BattleRoyale.pinkPlayer05) {
-                            BattleRoyale.pinkPlayer05Lifes -= 1;
-                            new BattleRoyaleFootprint(player, 2);
-                            if (BattleRoyale.pinkPlayer05Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                switch (BattleRoyale.matchType) {
-                                    case 1:
-                                        battleRoyaleCheckWin(2);
-                                        break;
-                                    case 2:
-                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                            battleRoyaleScoreCheck(3, 1);
-                                        }
-                                        else {
-                                            battleRoyaleScoreCheck(1, 1);
-                                        }
-                                        break;
+                    }
+                }
+                else if (BattleRoyale.pinkPlayer06 != null && murderer == BattleRoyale.pinkPlayer06) {
+                    BattleRoyale.pinkPlayer06Lifes -= 1;
+                    new BattleRoyaleFootprint(murderer, 2);
+                    if (BattleRoyale.pinkPlayer06Lifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        switch (BattleRoyale.matchType) {
+                            case 1:
+                                battleRoyaleCheckWin(2);
+                                break;
+                            case 2:
+                                if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
+                                    battleRoyaleScoreCheck(3, 1);
                                 }
-                            }
+                                else {
+                                    battleRoyaleScoreCheck(1, 1);
+                                }
+                                break;
                         }
-                        else if (BattleRoyale.pinkPlayer06 != null && player == BattleRoyale.pinkPlayer06) {
-                            BattleRoyale.pinkPlayer06Lifes -= 1;
-                            new BattleRoyaleFootprint(player, 2);
-                            if (BattleRoyale.pinkPlayer06Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                switch (BattleRoyale.matchType) {
-                                    case 1:
-                                        battleRoyaleCheckWin(2);
-                                        break;
-                                    case 2:
-                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                            battleRoyaleScoreCheck(3, 1);
-                                        }
-                                        else {
-                                            battleRoyaleScoreCheck(1, 1);
-                                        }
-                                        break;
+                    }
+                }
+                else if (BattleRoyale.pinkPlayer07 != null && murderer == BattleRoyale.pinkPlayer07) {
+                    BattleRoyale.pinkPlayer07Lifes -= 1;
+                    new BattleRoyaleFootprint(murderer, 2);
+                    if (BattleRoyale.pinkPlayer07Lifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        switch (BattleRoyale.matchType) {
+                            case 1:
+                                battleRoyaleCheckWin(2);
+                                break;
+                            case 2:
+                                if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
+                                    battleRoyaleScoreCheck(3, 1);
                                 }
-                            }
+                                else {
+                                    battleRoyaleScoreCheck(1, 1);
+                                }
+                                break;
                         }
-                        else if (BattleRoyale.pinkPlayer07 != null && player == BattleRoyale.pinkPlayer07) {
-                            BattleRoyale.pinkPlayer07Lifes -= 1;
-                            new BattleRoyaleFootprint(player, 2);
-                            if (BattleRoyale.pinkPlayer07Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                switch (BattleRoyale.matchType) {
-                                    case 1:
-                                        battleRoyaleCheckWin(2);
-                                        break;
-                                    case 2:
-                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                            battleRoyaleScoreCheck(3, 1);
-                                        }
-                                        else {
-                                            battleRoyaleScoreCheck(1, 1);
-                                        }
-                                        break;
+                    }
+                }
+                else if (BattleRoyale.serialKiller != null && murderer == BattleRoyale.serialKiller) {
+                    BattleRoyale.serialKillerLifes -= 1;
+                    new BattleRoyaleFootprint(murderer, 3);
+                    if (BattleRoyale.serialKillerLifes <= 0) {
+                        uncheckedMurderPlayer(sourceId, targetId, 0);
+                        switch (BattleRoyale.matchType) {
+                            case 1:
+                                battleRoyaleCheckWin(3);
+                                break;
+                            case 2:
+                                if (BattleRoyale.limePlayer01 != null && sourceId == BattleRoyale.limePlayer01.PlayerId || BattleRoyale.limePlayer02 != null && sourceId == BattleRoyale.limePlayer02.PlayerId || BattleRoyale.limePlayer03 != null && sourceId == BattleRoyale.limePlayer03.PlayerId || BattleRoyale.limePlayer04 != null && sourceId == BattleRoyale.limePlayer04.PlayerId || BattleRoyale.limePlayer05 != null && sourceId == BattleRoyale.limePlayer05.PlayerId || BattleRoyale.limePlayer06 != null && sourceId == BattleRoyale.limePlayer06.PlayerId || BattleRoyale.limePlayer07 != null && sourceId == BattleRoyale.limePlayer07.PlayerId) {
+                                    battleRoyaleScoreCheck(1, 3);
                                 }
-                            }
-                        }
-                        else if (BattleRoyale.serialKiller != null && player == BattleRoyale.serialKiller) {
-                            BattleRoyale.serialKillerLifes -= 1;
-                            new BattleRoyaleFootprint(player, 3);
-                            if (BattleRoyale.serialKillerLifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                switch (BattleRoyale.matchType) {
-                                    case 1:
-                                        battleRoyaleCheckWin(3);
-                                        break;
-                                    case 2:
-                                        if (BattleRoyale.limePlayer01 != null && sourceId == BattleRoyale.limePlayer01.PlayerId || BattleRoyale.limePlayer02 != null && sourceId == BattleRoyale.limePlayer02.PlayerId || BattleRoyale.limePlayer03 != null && sourceId == BattleRoyale.limePlayer03.PlayerId || BattleRoyale.limePlayer04 != null && sourceId == BattleRoyale.limePlayer04.PlayerId || BattleRoyale.limePlayer05 != null && sourceId == BattleRoyale.limePlayer05.PlayerId || BattleRoyale.limePlayer06 != null && sourceId == BattleRoyale.limePlayer06.PlayerId || BattleRoyale.limePlayer07 != null && sourceId == BattleRoyale.limePlayer07.PlayerId) {
-                                            battleRoyaleScoreCheck(1, 3);
-                                        }
-                                        else {
-                                            battleRoyaleScoreCheck(2, 3);
-                                        }
-                                        break;
+                                else {
+                                    battleRoyaleScoreCheck(2, 3);
                                 }
-                            }
+                                break;
                         }
                     }
                 }
@@ -8251,7 +7823,7 @@ namespace LasMonjas
             if (BattleRoyale.matchType == 0) {
                 int soloPlayersAlives = 0;
 
-                new CustomMessage(Language.statusBattleRoyaleTexts[0], 5, -1, 1.6f, 26);
+                new CustomMessage(Language.statusBattleRoyaleTexts[0], 5, -1, 1.6f, 16);
 
                 foreach (PlayerControl soloPlayer in BattleRoyale.soloPlayerTeam) {
 
@@ -8291,13 +7863,13 @@ namespace LasMonjas
                 }
 
                 if (whichTeamCheck == 1) {
-                    new CustomMessage(Language.statusBattleRoyaleTexts[1], 5, -1, 1.6f, 26);
+                    new CustomMessage(Language.statusBattleRoyaleTexts[1], 5, -1, 1.6f, 16);
                 }
                 else if (whichTeamCheck == 2) {
-                    new CustomMessage(Language.statusBattleRoyaleTexts[2], 5, -1, 1.3f, 26);
+                    new CustomMessage(Language.statusBattleRoyaleTexts[2], 5, -1, 1.3f, 16);
                 }
                 else if (whichTeamCheck == 3) {
-                    new CustomMessage(Language.statusBattleRoyaleTexts[3], 5, -1, 1f, 26);
+                    new CustomMessage(Language.statusBattleRoyaleTexts[3], 5, -1, 1f, 16);
                     if (limePlayersAlive <= 0) {
                         BattleRoyale.triggerPinkTeamWin = true;
                         GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
@@ -8351,15 +7923,15 @@ namespace LasMonjas
             switch (whichTeamCheck) {
                 case 1:
                     BattleRoyale.limePoints += 10 * multiplier;
-                    new CustomMessage(Language.statusBattleRoyaleTexts[4], 5, -1, 1.6f, 26);
+                    new CustomMessage(Language.statusBattleRoyaleTexts[4], 5, -1, 1.6f, 16);
                     break;
                 case 2:
                     BattleRoyale.pinkPoints += 10 * multiplier;
-                    new CustomMessage(Language.statusBattleRoyaleTexts[5], 5, -1, 1.3f, 26);
+                    new CustomMessage(Language.statusBattleRoyaleTexts[5], 5, -1, 1.3f, 16);
                     break;
                 case 3:
                     BattleRoyale.serialKillerPoints += 10 * multiplier;
-                    new CustomMessage(Language.statusBattleRoyaleTexts[6], 5, -1, 1f, 26);
+                    new CustomMessage(Language.statusBattleRoyaleTexts[6], 5, -1, 1f, 16);
                     break;
             }
             
@@ -8384,61 +7956,6 @@ namespace LasMonjas
             }
         }
 
-        public static void monjaFestivalKills(byte targetId, int whichplayer) {
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                if (player.PlayerId == targetId) {
-                    switch (whichplayer) {
-                        case 1:
-                            MonjaFestival.greenPlayer01.MurderPlayer(player);
-                            break;
-                        case 2:
-                            MonjaFestival.greenPlayer02.MurderPlayer(player);
-                            break;
-                        case 3:
-                            MonjaFestival.greenPlayer03.MurderPlayer(player);
-                            break;
-                        case 4:
-                            MonjaFestival.greenPlayer04.MurderPlayer(player);
-                            break;
-                        case 5:
-                            MonjaFestival.greenPlayer05.MurderPlayer(player);
-                            break;
-                        case 6:
-                            MonjaFestival.greenPlayer06.MurderPlayer(player);
-                            break;
-                        case 7:
-                            MonjaFestival.greenPlayer07.MurderPlayer(player);
-                            break;
-                        case 9:
-                            MonjaFestival.cyanPlayer01.MurderPlayer(player);
-                            break;
-                        case 10:
-                            MonjaFestival.cyanPlayer02.MurderPlayer(player);
-                            break;
-                        case 11:
-                            MonjaFestival.cyanPlayer03.MurderPlayer(player);
-                            break;
-                        case 12:
-                            MonjaFestival.cyanPlayer04.MurderPlayer(player);
-                            break;
-                        case 13:
-                            MonjaFestival.cyanPlayer05.MurderPlayer(player);
-                            break;
-                        case 14:
-                            MonjaFestival.cyanPlayer06.MurderPlayer(player);
-                            break;
-                        case 15:
-                            MonjaFestival.cyanPlayer07.MurderPlayer(player);
-                            break;
-                        case 16:
-                            MonjaFestival.bigMonjaPlayer.MurderPlayer(player);
-                            break;
-                    }
-                    return;
-                }
-            }
-        }
-
         public static void monjaFestivalBigMonjaInvisible() {
             if (MonjaFestival.bigMonjaPlayer == null) return;
 
@@ -8458,7 +7975,7 @@ namespace LasMonjas
                     MonjaFestival.bigSpawnOneCount.text = $"{MonjaFestival.bigSpawnOnePoints} / 30";
                     if (!MonjaFestival.bigSpawnOneReloading) {
                         Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.monjaBigOneReload());
-                    }                    
+                    }
                     break;
                 // Big Spawn Two
                 case 2:
@@ -8470,7 +7987,7 @@ namespace LasMonjas
                     MonjaFestival.bigSpawnTwoCount.text = $"{MonjaFestival.bigSpawnTwoPoints} / 30";
                     if (!MonjaFestival.bigSpawnTwoReloading) {
                         Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.monjaBigTwoReload());
-                    }                    
+                    }
                     break;
                 // Little Spawn One
                 case 3:
@@ -8482,7 +7999,7 @@ namespace LasMonjas
                     MonjaFestival.littleSpawnOneCount.text = $"{MonjaFestival.littleSpawnOnePoints} / 10";
                     if (!MonjaFestival.littleSpawnOneReloading) {
                         Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.monjaLittleOneReload());
-                    }                    
+                    }
                     break;
                 // Little Spawn Two
                 case 4:
@@ -8494,7 +8011,7 @@ namespace LasMonjas
                     MonjaFestival.littleSpawnTwoCount.text = $"{MonjaFestival.littleSpawnTwoPoints} / 10";
                     if (!MonjaFestival.littleSpawnTwoReloading) {
                         Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.monjaLittleTwoReload());
-                    }                    
+                    }
                     break;
                 // Little Spawn Three
                 case 5:
@@ -8506,7 +8023,7 @@ namespace LasMonjas
                     MonjaFestival.littleSpawnThreeCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
                     if (!MonjaFestival.littleSpawnThreeReloading) {
                         Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.monjaLittleThreeReload());
-                    }                    
+                    }
                     break;
                 // Little Spawn Four
                 case 6:
@@ -8518,13 +8035,13 @@ namespace LasMonjas
                     MonjaFestival.littleSpawnFourCount.text = $"{MonjaFestival.littleSpawnFourPoints} / 10";
                     if (!MonjaFestival.littleSpawnFourReloading) {
                         Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.monjaLittleFourReload());
-                    }                    
+                    }
                     break;
                 // Grey role steal from green
                 case 7:
                     foreach (PlayerControl greenPlayer in MonjaFestival.greenTeam) {
                         if (greenPlayer != null && greenPlayer == PlayerControl.LocalPlayer) {
-                            new CustomMessage(Language.statusMonjaFestivalTexts[0], 5, -1, 1.6f, 31);
+                            new CustomMessage(Language.statusMonjaFestivalTexts[0], 5, -1, 1.6f, 16);
                         }
                     }
                     MonjaFestival.greenPoints -= 1;
@@ -8538,7 +8055,7 @@ namespace LasMonjas
                 case 8:
                     foreach (PlayerControl cyanPlayer in MonjaFestival.cyanTeam) {
                         if (cyanPlayer != null && cyanPlayer == PlayerControl.LocalPlayer) {
-                            new CustomMessage(Language.statusMonjaFestivalTexts[0], 5, -1, 1.6f, 31);
+                            new CustomMessage(Language.statusMonjaFestivalTexts[0], 5, -1, 1.6f, 16);
                         }
                     }
                     MonjaFestival.cyanPoints -= 1;
@@ -9054,7 +8571,7 @@ namespace LasMonjas
                     MonjaFestival.bigMonjaPlayerItems -= 1;
                     MonjaFestival.bigMonjaPlayerDeliverCount.text = $"{MonjaFestival.bigMonjaPlayerItems} / 10";
                     break;
-            }           
+            }
         }
 
         public static void monjaFestivalDeliver (int deliverId) {
@@ -9083,19 +8600,19 @@ namespace LasMonjas
                 // Allul Monja for Green
                 case 4:
                     MonjaFestival.greenPoints += 10;
-                    new CustomMessage(Language.statusMonjaFestivalTexts[1], 5, -1, 1.3f, 31);
+                    new CustomMessage(Language.statusMonjaFestivalTexts[1], 5, -1, 1.3f, 16);
                     Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.allulMonjaReload());
                     break;
                 // Allul Monja for Cyan
                 case 5:
                     MonjaFestival.cyanPoints += 10;
-                    new CustomMessage(Language.statusMonjaFestivalTexts[2], 5, -1, 1.3f, 31);
+                    new CustomMessage(Language.statusMonjaFestivalTexts[2], 5, -1, 1.3f, 16);
                     Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.allulMonjaReload());
                     break;
                 // Allul Monja for Big Monja
                 case 6:
                     MonjaFestival.bigMonjaPoints += 10;
-                    new CustomMessage(Language.statusMonjaFestivalTexts[3], 5, -1, 1.3f, 31);
+                    new CustomMessage(Language.statusMonjaFestivalTexts[3], 5, -1, 1.3f, 16);
                     Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.allulMonjaReload());
                     break;
             }
@@ -9132,9 +8649,6 @@ namespace LasMonjas
                     break;
                 case (byte)CustomRPC.ShareOptions:
                     RPCProcedure.ShareOptions((int)reader.ReadPackedUInt32(), reader);
-                    break;
-                case (byte)CustomRPC.ForceEnd:
-                    RPCProcedure.forceEnd();
                     break;
                 case (byte)CustomRPC.SetRole:
                     byte roleId = reader.ReadByte();
@@ -9245,7 +8759,7 @@ namespace LasMonjas
                 case (byte)CustomRPC.ResetSilenced:
                     RPCProcedure.resetSilenced();
                     break;
-                    
+
                 // Role rebeldes functionality
 
                 case (byte)CustomRPC.RenegadeRecruitMinion:
@@ -9511,12 +9025,18 @@ namespace LasMonjas
                     RPCProcedure.whoWasI(playerWhoWasID, roleName);
                     break;
 
-                // Capture the flag funtionality
+                // Gamemodes
+                case (byte)CustomRPC.GamemodeKills:
+                    byte gamemodeTarget = reader.ReadByte();
+                    byte gamemodeSource = reader.ReadByte();
+                    RPCProcedure.gamemodeKills(gamemodeTarget, gamemodeSource);
+                    break;
 
-                case (byte)CustomRPC.CapturetheFlagKills:
-                    byte killId = reader.ReadByte();
-                    byte whichplayer = reader.ReadByte();
-                    RPCProcedure.capturetheFlagKills(killId, whichplayer);
+                // Capture the flag funtionality
+                case (byte)CustomRPC.CapturetheFlagStealerKill:
+                    byte killedId = reader.ReadByte();
+                    byte sourceId = reader.ReadByte();
+                    RPCProcedure.capturetheFlagStealerKill(killedId, sourceId);
                     break;
                 case (byte)CustomRPC.CaptureTheFlagWhoTookTheFlag:
                     byte bluePlayerWhoHasRedFlag = reader.ReadByte();
@@ -9529,11 +9049,6 @@ namespace LasMonjas
                     break;
 
                 // Police and Thief funtionality
-                case (byte)CustomRPC.PoliceandThiefKills:
-                    byte policeandthiefId = reader.ReadByte();
-                    byte whichpoliceorthief = reader.ReadByte();
-                    RPCProcedure.policeandThiefKills(policeandthiefId, whichpoliceorthief);
-                    break;
                 case (byte)CustomRPC.PoliceandThiefJail:
                     byte thiefId = reader.ReadByte();
                     RPCProcedure.policeandThiefJail(thiefId);
@@ -9561,10 +9076,10 @@ namespace LasMonjas
                     break;
 
                 // King of the hill funtionality
-                case (byte)CustomRPC.KingoftheHillKills:
+                case (byte)CustomRPC.KingoftheHillUsurperKill:
                     byte killerId = reader.ReadByte();
                     byte whichteamplayer = reader.ReadByte();
-                    RPCProcedure.kingOfTheHillKills(killerId, whichteamplayer);
+                    RPCProcedure.kingoftheHillUsurperKill(killerId, whichteamplayer);
                     break;
                 case (byte)CustomRPC.KingoftheHillCapture:
                     byte capturedId = reader.ReadByte();
@@ -9580,15 +9095,6 @@ namespace LasMonjas
                 // ZombieLaboratory
                 case (byte)CustomRPC.ZombieInfect:
                     RPCProcedure.zombieInfect(reader.ReadByte());
-                    break;
-                case (byte)CustomRPC.ZombieKills:
-                    byte zombiekillId = reader.ReadByte();
-                    byte whichkill = reader.ReadByte();
-                    RPCProcedure.zombieKills(zombiekillId, whichkill);
-                    break;
-                case (byte)CustomRPC.ZombieAmmoRecover:
-                    byte whichAmmo = reader.ReadByte();
-                    RPCProcedure.zombieAmmoRecover(whichAmmo);
                     break;
                 case (byte)CustomRPC.ZombieNurseHeal:
                     byte whichHeal = reader.ReadByte();
@@ -9629,11 +9135,6 @@ namespace LasMonjas
                     break;
 
                 // Monja Festival
-                case (byte)CustomRPC.MonjaFestivalKills:
-                    byte monjakillId = reader.ReadByte();
-                    byte whichmonjaplayer = reader.ReadByte();
-                    RPCProcedure.monjaFestivalKills(monjakillId, whichmonjaplayer);
-                    break;
                 case (byte)CustomRPC.MonjaFestivalBigMonjaInvisible:
                     RPCProcedure.monjaFestivalBigMonjaInvisible();
                     break;

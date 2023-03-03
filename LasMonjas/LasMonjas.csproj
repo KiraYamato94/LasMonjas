@@ -1,13 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <TargetFramework>net6.0</TargetFramework>
-        <Version>3.1.1</Version>
+        <Version>3.1.2</Version>
         <Description>Las Monjas</Description>
         <Authors>Allul</Authors>
     </PropertyGroup>
 
     <PropertyGroup>
-        <GameVersion>2022.12.14</GameVersion>
+        <GameVersion>2023.2.28</GameVersion>
         <DefineConstants>$(DefineConstants);STEAM</DefineConstants>
         <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     </PropertyGroup>

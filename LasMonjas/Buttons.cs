@@ -85,7 +85,7 @@ namespace LasMonjas
         public static CustomButton hidedPlayerOneHideThreeButton;
         public static CustomButton hidedPlayerTwoHideOneButton;
         public static CustomButton hidedPlayerTwoHideTwoButton;
-        public static CustomButton hidedPlayerTwoHideThreeButton; 
+        public static CustomButton hidedPlayerTwoHideThreeButton;
         public static CustomButton hidedPlayerThreeHideOneButton;
         public static CustomButton hidedPlayerThreeHideTwoButton;
         public static CustomButton hidedPlayerThreeHideThreeButton;
@@ -389,7 +389,7 @@ namespace LasMonjas
             hypnotistSpiralButton.MaxTimer = Hypnotist.cooldown;
             archerShowWeaponButton.MaxTimer = 10f;
             archerKillButton.MaxTimer = Archer.cooldown;
-            plumberMakeVentButton.MaxTimer = Plumber.cooldown; 
+            plumberMakeVentButton.MaxTimer = Plumber.cooldown;
             librarianSilenceButton.MaxTimer = Librarian.cooldown;
 
             // Rebels buttons
@@ -444,10 +444,10 @@ namespace LasMonjas
             seekerPerformMinigameButton.MaxTimer = Seeker.cooldown;
             seekerHideOneButton.MaxTimer = 5f;
             seekerHideTwoButton.MaxTimer = 5f;
-            seekerHideThreeButton.MaxTimer = 5f; 
+            seekerHideThreeButton.MaxTimer = 5f;
             hidedPlayerOneHideOneButton.MaxTimer = 5f;
             hidedPlayerOneHideTwoButton.MaxTimer = 5f;
-            hidedPlayerOneHideThreeButton.MaxTimer = 5f; 
+            hidedPlayerOneHideThreeButton.MaxTimer = 5f;
             hidedPlayerTwoHideOneButton.MaxTimer = 5f;
             hidedPlayerTwoHideTwoButton.MaxTimer = 5f;
             hidedPlayerTwoHideThreeButton.MaxTimer = 5f;
@@ -460,7 +460,7 @@ namespace LasMonjas
             mechanicRepairButton.MaxTimer = 10f;
             sheriffKillButton.MaxTimer = Sheriff.cooldown;
             detectiveButton.MaxTimer = Detective.cooldown;
-            detectiveButton.EffectDuration = Detective.duration; 
+            detectiveButton.EffectDuration = Detective.duration;
             forensicButton.MaxTimer = 20f;
             forensicButton.EffectDuration = Forensic.duration;
             timeTravelerShieldButton.MaxTimer = TimeTraveler.cooldown;
@@ -479,7 +479,7 @@ namespace LasMonjas
             sleuthLocateCorpsesButton.MaxTimer = Sleuth.corpsesPathfindCooldown;
             sleuthLocateCorpsesButton.EffectDuration = Sleuth.corpsesPathfindDuration;
             finkButton.MaxTimer = Fink.cooldown;
-            finkButton.EffectDuration = Fink.duration; 
+            finkButton.EffectDuration = Fink.duration;
             welderSealButton.MaxTimer = Welder.cooldown;
             spiritualistReviveButton.MaxTimer = 20f;
             spiritualistReviveButton.EffectDuration = Spiritualist.spiritualistReviveTime;
@@ -498,7 +498,7 @@ namespace LasMonjas
             shyButton.MaxTimer = Shy.cooldown;
             shyButton.EffectDuration = Shy.duration;
             taskMasterButton.MaxTimer = TaskMaster.cooldown;
-            taskMasterButton.EffectDuration = TaskMaster.duration; 
+            taskMasterButton.EffectDuration = TaskMaster.duration;
             jailerJailButton.MaxTimer = Jailer.cooldown;
 
             zoomOutButton.MaxTimer = 0f;
@@ -529,122 +529,122 @@ namespace LasMonjas
             Mechanic.mechanicRepairButtonText.text = $"{Mechanic.numberOfRepairs - Mechanic.timesUsedRepairs} / {Mechanic.numberOfRepairs}";
             FortuneTeller.fortuneTellerRevealButtonText.text = $"{FortuneTeller.numberOfFortunes - FortuneTeller.timesUsedFortune} / {FortuneTeller.numberOfFortunes}";
             Hacker.hackerAdminTableChargesText.text = $"{Hacker.chargesAdminTable} / {Hacker.toolsNumber}";
-            Hacker.hackerVitalsChargesText.text = $"{Hacker.chargesVitals} / {Hacker.toolsNumber}"; 
+            Hacker.hackerVitalsChargesText.text = $"{Hacker.chargesVitals} / {Hacker.toolsNumber}";
             Welder.welderButtonText.text = $"{Welder.remainingWelds} / {Welder.totalWelds}";
             Vigilant.vigilantButtonCameraText.text = $"{Vigilant.remainingCameras} / {Vigilant.totalCameras}";
             Vigilant.vigilantButtonCameraUsesText.text = $"{Vigilant.charges} / {Vigilant.maxCharges}";
             Hunter.targetButtonText.text = $" ";
             Jinx.jinxButtonJinxsText.text = $"{Jinx.jinxNumber - Jinx.jinxs} / {Jinx.jinxNumber}";
             Coward.cowardCallButtonText.text = $"{Coward.numberOfCalls - Coward.timesUsedCalls} / {Coward.numberOfCalls}";
-            Jailer.jailButtonText.text = $" ";            
-            
+            Jailer.jailButtonText.text = $" ";
+
             // Capture the flag buttons
-            redplayer01KillButton.MaxTimer = CaptureTheFlag.killCooldown;
+            redplayer01KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             redplayer01TakeFlagButton.MaxTimer = 0;
-            redplayer02KillButton.MaxTimer = CaptureTheFlag.killCooldown;
+            redplayer02KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             redplayer02TakeFlagButton.MaxTimer = 0;
-            redplayer03KillButton.MaxTimer = CaptureTheFlag.killCooldown;
+            redplayer03KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             redplayer03TakeFlagButton.MaxTimer = 0;
-            redplayer04KillButton.MaxTimer = CaptureTheFlag.killCooldown;
+            redplayer04KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             redplayer04TakeFlagButton.MaxTimer = 0;
-            redplayer05KillButton.MaxTimer = CaptureTheFlag.killCooldown;
+            redplayer05KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             redplayer05TakeFlagButton.MaxTimer = 0;
-            redplayer06KillButton.MaxTimer = CaptureTheFlag.killCooldown;
+            redplayer06KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             redplayer06TakeFlagButton.MaxTimer = 0;
-            redplayer07KillButton.MaxTimer = CaptureTheFlag.killCooldown;
+            redplayer07KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             redplayer07TakeFlagButton.MaxTimer = 0;
-            blueplayer01KillButton.MaxTimer = CaptureTheFlag.killCooldown;
+            blueplayer01KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             blueplayer01TakeFlagButton.MaxTimer = 0;
-            blueplayer02KillButton.MaxTimer = CaptureTheFlag.killCooldown;
+            blueplayer02KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             blueplayer02TakeFlagButton.MaxTimer = 0;
-            blueplayer03KillButton.MaxTimer = CaptureTheFlag.killCooldown;
+            blueplayer03KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             blueplayer03TakeFlagButton.MaxTimer = 0;
-            blueplayer04KillButton.MaxTimer = CaptureTheFlag.killCooldown;
+            blueplayer04KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             blueplayer04TakeFlagButton.MaxTimer = 0;
-            blueplayer05KillButton.MaxTimer = CaptureTheFlag.killCooldown;
+            blueplayer05KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             blueplayer05TakeFlagButton.MaxTimer = 0;
-            blueplayer06KillButton.MaxTimer = CaptureTheFlag.killCooldown;
+            blueplayer06KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             blueplayer06TakeFlagButton.MaxTimer = 0;
-            blueplayer07KillButton.MaxTimer = CaptureTheFlag.killCooldown;
+            blueplayer07KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             blueplayer07TakeFlagButton.MaxTimer = 0;
-            stealerPlayerKillButton.MaxTimer = CaptureTheFlag.killCooldown;
+            stealerPlayerKillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
 
             // Police And Thief buttons
-            policeplayer01KillButton.MaxTimer = PoliceAndThief.policeKillCooldown;
+            policeplayer01KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             policeplayer01JailButton.MaxTimer = PoliceAndThief.policeCatchCooldown;
             policeplayer01JailButton.EffectDuration = PoliceAndThief.captureThiefTime;
             policeplayer01LightButton.MaxTimer = 15;
             policeplayer01LightButton.EffectDuration = 10;
-            policeplayer02KillButton.MaxTimer = PoliceAndThief.policeKillCooldown;
+            policeplayer02KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             policeplayer02TaseButton.MaxTimer = PoliceAndThief.policeTaseCooldown;
             policeplayer02LightButton.MaxTimer = 15;
             policeplayer02LightButton.EffectDuration = 10;
-            policeplayer03KillButton.MaxTimer = PoliceAndThief.policeKillCooldown;
+            policeplayer03KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             policeplayer03JailButton.MaxTimer = PoliceAndThief.policeCatchCooldown;
             policeplayer03JailButton.EffectDuration = PoliceAndThief.captureThiefTime;
             policeplayer03LightButton.MaxTimer = 15;
             policeplayer03LightButton.EffectDuration = 10;
-            policeplayer04KillButton.MaxTimer = PoliceAndThief.policeKillCooldown;
+            policeplayer04KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             policeplayer04TaseButton.MaxTimer = PoliceAndThief.policeTaseCooldown;
             policeplayer04LightButton.MaxTimer = 15;
             policeplayer04LightButton.EffectDuration = 10;
-            policeplayer05KillButton.MaxTimer = PoliceAndThief.policeKillCooldown;
+            policeplayer05KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             policeplayer05JailButton.MaxTimer = PoliceAndThief.policeCatchCooldown;
             policeplayer05JailButton.EffectDuration = PoliceAndThief.captureThiefTime;
             policeplayer05LightButton.MaxTimer = 15;
-            policeplayer05LightButton.EffectDuration = 10; 
-            policeplayer06KillButton.MaxTimer = PoliceAndThief.policeKillCooldown;
+            policeplayer05LightButton.EffectDuration = 10;
+            policeplayer06KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             policeplayer06JailButton.MaxTimer = PoliceAndThief.policeCatchCooldown;
             policeplayer06JailButton.EffectDuration = PoliceAndThief.captureThiefTime;
             policeplayer06LightButton.MaxTimer = 15;
             policeplayer06LightButton.EffectDuration = 10;
 
-            thiefplayer01KillButton.MaxTimer = PoliceAndThief.thiefKillCooldown;
+            thiefplayer01KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown * 1.25f;
             thiefplayer01FreeThiefButton.MaxTimer = 20f;
             thiefplayer01TakeDeliverJewelButton.MaxTimer = 5f;
-            thiefplayer02KillButton.MaxTimer = PoliceAndThief.thiefKillCooldown;
+            thiefplayer02KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown * 1.25f;
             thiefplayer02FreeThiefButton.MaxTimer = 20f;
             thiefplayer02TakeDeliverJewelButton.MaxTimer = 5f;
-            thiefplayer03KillButton.MaxTimer = PoliceAndThief.thiefKillCooldown;
+            thiefplayer03KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown * 1.25f;
             thiefplayer03FreeThiefButton.MaxTimer = 20f;
             thiefplayer03TakeDeliverJewelButton.MaxTimer = 5f;
-            thiefplayer04KillButton.MaxTimer = PoliceAndThief.thiefKillCooldown;
+            thiefplayer04KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown * 1.25f;
             thiefplayer04FreeThiefButton.MaxTimer = 20f;
             thiefplayer04TakeDeliverJewelButton.MaxTimer = 5f;
-            thiefplayer05KillButton.MaxTimer = PoliceAndThief.thiefKillCooldown;
+            thiefplayer05KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown * 1.25f;
             thiefplayer05FreeThiefButton.MaxTimer = 20f;
             thiefplayer05TakeDeliverJewelButton.MaxTimer = 5f;
-            thiefplayer06KillButton.MaxTimer = PoliceAndThief.thiefKillCooldown;
+            thiefplayer06KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown * 1.25f;
             thiefplayer06FreeThiefButton.MaxTimer = 20f;
             thiefplayer06TakeDeliverJewelButton.MaxTimer = 5f;
-            thiefplayer07KillButton.MaxTimer = PoliceAndThief.thiefKillCooldown;
+            thiefplayer07KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown * 1.25f;
             thiefplayer07FreeThiefButton.MaxTimer = 20f;
             thiefplayer07TakeDeliverJewelButton.MaxTimer = 5f;
-            thiefplayer08KillButton.MaxTimer = PoliceAndThief.thiefKillCooldown;
+            thiefplayer08KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown * 1.25f;
             thiefplayer08FreeThiefButton.MaxTimer = 20f;
             thiefplayer08TakeDeliverJewelButton.MaxTimer = 5f;
-            thiefplayer09KillButton.MaxTimer = PoliceAndThief.thiefKillCooldown;
+            thiefplayer09KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown * 1.25f;
             thiefplayer09FreeThiefButton.MaxTimer = 20f;
             thiefplayer09TakeDeliverJewelButton.MaxTimer = 5f;
 
             // King of the hill buttons
             greenKingplayerCaptureZoneButton.MaxTimer = KingOfTheHill.captureCooldown;
-            greenKingplayerKillButton.MaxTimer = KingOfTheHill.killCooldown;
-            greenplayer01KillButton.MaxTimer = KingOfTheHill.killCooldown;
-            greenplayer02KillButton.MaxTimer = KingOfTheHill.killCooldown;
-            greenplayer03KillButton.MaxTimer = KingOfTheHill.killCooldown;
-            greenplayer04KillButton.MaxTimer = KingOfTheHill.killCooldown;
-            greenplayer05KillButton.MaxTimer = KingOfTheHill.killCooldown;
-            greenplayer06KillButton.MaxTimer = KingOfTheHill.killCooldown;
+            greenKingplayerKillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
+            greenplayer01KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
+            greenplayer02KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
+            greenplayer03KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
+            greenplayer04KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
+            greenplayer05KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
+            greenplayer06KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             yellowKingplayerCaptureZoneButton.MaxTimer = KingOfTheHill.captureCooldown;
-            yellowKingplayerKillButton.MaxTimer = KingOfTheHill.killCooldown;
-            yellowplayer01KillButton.MaxTimer = KingOfTheHill.killCooldown;
-            yellowplayer02KillButton.MaxTimer = KingOfTheHill.killCooldown;
-            yellowplayer03KillButton.MaxTimer = KingOfTheHill.killCooldown;
-            yellowplayer04KillButton.MaxTimer = KingOfTheHill.killCooldown;
-            yellowplayer05KillButton.MaxTimer = KingOfTheHill.killCooldown;
-            yellowplayer06KillButton.MaxTimer = KingOfTheHill.killCooldown;
-            usurperPlayerKillButton.MaxTimer = KingOfTheHill.killCooldown;
+            yellowKingplayerKillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
+            yellowplayer01KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
+            yellowplayer02KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
+            yellowplayer03KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
+            yellowplayer04KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
+            yellowplayer05KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
+            yellowplayer06KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
+            usurperPlayerKillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
 
             // Hot Potato buttons
             hotPotatoButton.MaxTimer = HotPotato.transferCooldown;
@@ -652,95 +652,95 @@ namespace LasMonjas
             // ZombieLaboratory
             zombie01InfectButton.MaxTimer = ZombieLaboratory.infectCooldown;
             zombie01InfectButton.EffectDuration = ZombieLaboratory.infectTime;
-            zombie01KillButton.MaxTimer = ZombieLaboratory.killCooldown;
+            zombie01KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             zombie02InfectButton.MaxTimer = ZombieLaboratory.infectCooldown;
             zombie02InfectButton.EffectDuration = ZombieLaboratory.infectTime;
-            zombie02KillButton.MaxTimer = ZombieLaboratory.killCooldown;
+            zombie02KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             zombie03InfectButton.MaxTimer = ZombieLaboratory.infectCooldown;
             zombie03InfectButton.EffectDuration = ZombieLaboratory.infectTime;
-            zombie03KillButton.MaxTimer = ZombieLaboratory.killCooldown;
+            zombie03KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             zombie04InfectButton.MaxTimer = ZombieLaboratory.infectCooldown;
             zombie04InfectButton.EffectDuration = ZombieLaboratory.infectTime;
-            zombie04KillButton.MaxTimer = ZombieLaboratory.killCooldown;
+            zombie04KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             zombie05InfectButton.MaxTimer = ZombieLaboratory.infectCooldown;
             zombie05InfectButton.EffectDuration = ZombieLaboratory.infectTime;
-            zombie05KillButton.MaxTimer = ZombieLaboratory.killCooldown;
+            zombie05KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             zombie06InfectButton.MaxTimer = ZombieLaboratory.infectCooldown;
             zombie06InfectButton.EffectDuration = ZombieLaboratory.infectTime;
-            zombie06KillButton.MaxTimer = ZombieLaboratory.killCooldown;
+            zombie06KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             zombie07InfectButton.MaxTimer = ZombieLaboratory.infectCooldown;
             zombie07InfectButton.EffectDuration = ZombieLaboratory.infectTime;
-            zombie07KillButton.MaxTimer = ZombieLaboratory.killCooldown;
+            zombie07KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             zombie08InfectButton.MaxTimer = ZombieLaboratory.infectCooldown;
             zombie08InfectButton.EffectDuration = ZombieLaboratory.infectTime;
-            zombie08KillButton.MaxTimer = ZombieLaboratory.killCooldown;
+            zombie08KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             zombie09InfectButton.MaxTimer = ZombieLaboratory.infectCooldown;
             zombie09InfectButton.EffectDuration = ZombieLaboratory.infectTime;
-            zombie09KillButton.MaxTimer = ZombieLaboratory.killCooldown;
+            zombie09KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             zombie10InfectButton.MaxTimer = ZombieLaboratory.infectCooldown;
             zombie10InfectButton.EffectDuration = ZombieLaboratory.infectTime;
-            zombie10KillButton.MaxTimer = ZombieLaboratory.killCooldown;
+            zombie10KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             zombie11InfectButton.MaxTimer = ZombieLaboratory.infectCooldown;
             zombie11InfectButton.EffectDuration = ZombieLaboratory.infectTime;
-            zombie11KillButton.MaxTimer = ZombieLaboratory.killCooldown;
+            zombie11KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             zombie12InfectButton.MaxTimer = ZombieLaboratory.infectCooldown;
             zombie12InfectButton.EffectDuration = ZombieLaboratory.infectTime;
-            zombie12KillButton.MaxTimer = ZombieLaboratory.killCooldown;
+            zombie12KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             zombie13InfectButton.MaxTimer = ZombieLaboratory.infectCooldown;
             zombie13InfectButton.EffectDuration = ZombieLaboratory.infectTime;
-            zombie13KillButton.MaxTimer = ZombieLaboratory.killCooldown;
+            zombie13KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             zombie14InfectButton.MaxTimer = ZombieLaboratory.infectCooldown;
             zombie14InfectButton.EffectDuration = ZombieLaboratory.infectTime;
-            zombie14KillButton.MaxTimer = ZombieLaboratory.killCooldown;
-            survivor01KillButton.MaxTimer = ZombieLaboratory.killCooldown;
+            zombie14KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
+            survivor01KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             survivor01FindDeliverButton.MaxTimer = ZombieLaboratory.searchBoxTimer;
             survivor01FindDeliverButton.EffectDuration = ZombieLaboratory.searchBoxTimer;
             survivor01EnterExitButton.MaxTimer = 5f;
-            survivor02KillButton.MaxTimer = ZombieLaboratory.killCooldown;
+            survivor02KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             survivor02FindDeliverButton.MaxTimer = ZombieLaboratory.searchBoxTimer;
             survivor02FindDeliverButton.EffectDuration = ZombieLaboratory.searchBoxTimer;
             survivor02EnterExitButton.MaxTimer = 5f;
-            survivor03KillButton.MaxTimer = ZombieLaboratory.killCooldown;
+            survivor03KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             survivor03FindDeliverButton.MaxTimer = ZombieLaboratory.searchBoxTimer;
             survivor03FindDeliverButton.EffectDuration = ZombieLaboratory.searchBoxTimer;
             survivor03EnterExitButton.MaxTimer = 5f;
-            survivor04KillButton.MaxTimer = ZombieLaboratory.killCooldown;
+            survivor04KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             survivor04FindDeliverButton.MaxTimer = ZombieLaboratory.searchBoxTimer;
             survivor04FindDeliverButton.EffectDuration = ZombieLaboratory.searchBoxTimer;
             survivor04EnterExitButton.MaxTimer = 5f;
-            survivor05KillButton.MaxTimer = ZombieLaboratory.killCooldown;
+            survivor05KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             survivor05FindDeliverButton.MaxTimer = ZombieLaboratory.searchBoxTimer;
             survivor05FindDeliverButton.EffectDuration = ZombieLaboratory.searchBoxTimer;
             survivor05EnterExitButton.MaxTimer = 5f;
-            survivor06KillButton.MaxTimer = ZombieLaboratory.killCooldown;
+            survivor06KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             survivor06FindDeliverButton.MaxTimer = ZombieLaboratory.searchBoxTimer;
             survivor06FindDeliverButton.EffectDuration = ZombieLaboratory.searchBoxTimer;
             survivor06EnterExitButton.MaxTimer = 5f;
-            survivor07KillButton.MaxTimer = ZombieLaboratory.killCooldown;
+            survivor07KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             survivor07FindDeliverButton.MaxTimer = ZombieLaboratory.searchBoxTimer;
             survivor07FindDeliverButton.EffectDuration = ZombieLaboratory.searchBoxTimer;
             survivor07EnterExitButton.MaxTimer = 5f;
-            survivor08KillButton.MaxTimer = ZombieLaboratory.killCooldown;
+            survivor08KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             survivor08FindDeliverButton.MaxTimer = ZombieLaboratory.searchBoxTimer;
             survivor08FindDeliverButton.EffectDuration = ZombieLaboratory.searchBoxTimer;
             survivor08EnterExitButton.MaxTimer = 5f;
-            survivor09KillButton.MaxTimer = ZombieLaboratory.killCooldown;
+            survivor09KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             survivor09FindDeliverButton.MaxTimer = ZombieLaboratory.searchBoxTimer;
             survivor09FindDeliverButton.EffectDuration = ZombieLaboratory.searchBoxTimer;
             survivor09EnterExitButton.MaxTimer = 5f;
-            survivor10KillButton.MaxTimer = ZombieLaboratory.killCooldown;
+            survivor10KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             survivor10FindDeliverButton.MaxTimer = ZombieLaboratory.searchBoxTimer;
             survivor10FindDeliverButton.EffectDuration = ZombieLaboratory.searchBoxTimer;
             survivor10EnterExitButton.MaxTimer = 5f;
-            survivor11KillButton.MaxTimer = ZombieLaboratory.killCooldown;
+            survivor11KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             survivor11FindDeliverButton.MaxTimer = ZombieLaboratory.searchBoxTimer;
             survivor11FindDeliverButton.EffectDuration = ZombieLaboratory.searchBoxTimer;
             survivor11EnterExitButton.MaxTimer = 5f;
-            survivor12KillButton.MaxTimer = ZombieLaboratory.killCooldown;
+            survivor12KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             survivor12FindDeliverButton.MaxTimer = ZombieLaboratory.searchBoxTimer;
             survivor12FindDeliverButton.EffectDuration = ZombieLaboratory.searchBoxTimer;
             survivor12EnterExitButton.MaxTimer = 5f;
-            survivor13KillButton.MaxTimer = ZombieLaboratory.killCooldown;
+            survivor13KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             survivor13FindDeliverButton.MaxTimer = ZombieLaboratory.searchBoxTimer;
             survivor13FindDeliverButton.EffectDuration = ZombieLaboratory.searchBoxTimer;
             survivor13EnterExitButton.MaxTimer = 5f;
@@ -781,66 +781,66 @@ namespace LasMonjas
             serialKillerKillButton.MaxTimer = BattleRoyale.serialKillerCooldown;
 
             // Monja Festival buttons
-            greenmonja01KillButton.MaxTimer = MonjaFestival.killCooldown;
+            greenmonja01KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             greenmonja01PickDeliverButton.MaxTimer = 1f;
             greenmonja01PickDeliverButton.EffectDuration = 1f;
             MonjaFestival.greenmonja01DeliverCount.text = $"{MonjaFestival.greenPlayer01Items} / 3";
-            greenmonja02KillButton.MaxTimer = MonjaFestival.killCooldown;
+            greenmonja02KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             greenmonja02PickDeliverButton.MaxTimer = 1f;
             greenmonja02PickDeliverButton.EffectDuration = 1f;
-            MonjaFestival.greenmonja02DeliverCount.text = $"{MonjaFestival.greenPlayer02Items} / 3"; 
-            greenmonja03KillButton.MaxTimer = MonjaFestival.killCooldown;
+            MonjaFestival.greenmonja02DeliverCount.text = $"{MonjaFestival.greenPlayer02Items} / 3";
+            greenmonja03KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             greenmonja03PickDeliverButton.MaxTimer = 1f;
             greenmonja03PickDeliverButton.EffectDuration = 1f;
-            MonjaFestival.greenmonja03DeliverCount.text = $"{MonjaFestival.greenPlayer03Items} / 3"; 
-            greenmonja04KillButton.MaxTimer = MonjaFestival.killCooldown;
+            MonjaFestival.greenmonja03DeliverCount.text = $"{MonjaFestival.greenPlayer03Items} / 3";
+            greenmonja04KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             greenmonja04PickDeliverButton.MaxTimer = 1f;
             greenmonja04PickDeliverButton.EffectDuration = 1f;
-            MonjaFestival.greenmonja04DeliverCount.text = $"{MonjaFestival.greenPlayer04Items} / 3"; 
-            greenmonja05KillButton.MaxTimer = MonjaFestival.killCooldown;
+            MonjaFestival.greenmonja04DeliverCount.text = $"{MonjaFestival.greenPlayer04Items} / 3";
+            greenmonja05KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             greenmonja05PickDeliverButton.MaxTimer = 1f;
             greenmonja05PickDeliverButton.EffectDuration = 1f;
-            MonjaFestival.greenmonja05DeliverCount.text = $"{MonjaFestival.greenPlayer05Items} / 3"; 
-            greenmonja06KillButton.MaxTimer = MonjaFestival.killCooldown;
+            MonjaFestival.greenmonja05DeliverCount.text = $"{MonjaFestival.greenPlayer05Items} / 3";
+            greenmonja06KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             greenmonja06PickDeliverButton.MaxTimer = 1f;
             greenmonja06PickDeliverButton.EffectDuration = 1f;
-            MonjaFestival.greenmonja06DeliverCount.text = $"{MonjaFestival.greenPlayer06Items} / 3"; 
-            greenmonja07KillButton.MaxTimer = MonjaFestival.killCooldown;
+            MonjaFestival.greenmonja06DeliverCount.text = $"{MonjaFestival.greenPlayer06Items} / 3";
+            greenmonja07KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             greenmonja07PickDeliverButton.MaxTimer = 1f;
             greenmonja07PickDeliverButton.EffectDuration = 1f;
-            MonjaFestival.greenmonja07DeliverCount.text = $"{MonjaFestival.greenPlayer07Items} / 3"; 
-            cyanmonja01KillButton.MaxTimer = MonjaFestival.killCooldown;
+            MonjaFestival.greenmonja07DeliverCount.text = $"{MonjaFestival.greenPlayer07Items} / 3";
+            cyanmonja01KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             cyanmonja01PickDeliverButton.MaxTimer = 1f;
             cyanmonja01PickDeliverButton.EffectDuration = 1f;
-            MonjaFestival.cyanPlayer01DeliverCount.text = $"{MonjaFestival.cyanPlayer01Items} / 3"; 
-            cyanmonja02KillButton.MaxTimer = MonjaFestival.killCooldown;
+            MonjaFestival.cyanPlayer01DeliverCount.text = $"{MonjaFestival.cyanPlayer01Items} / 3";
+            cyanmonja02KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             cyanmonja02PickDeliverButton.MaxTimer = 1f;
             cyanmonja02PickDeliverButton.EffectDuration = 1f;
-            MonjaFestival.cyanPlayer02DeliverCount.text = $"{MonjaFestival.cyanPlayer02Items} / 3"; 
-            cyanmonja03KillButton.MaxTimer = MonjaFestival.killCooldown;
+            MonjaFestival.cyanPlayer02DeliverCount.text = $"{MonjaFestival.cyanPlayer02Items} / 3";
+            cyanmonja03KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             cyanmonja03PickDeliverButton.MaxTimer = 1f;
             cyanmonja03PickDeliverButton.EffectDuration = 1f;
             MonjaFestival.cyanPlayer03DeliverCount.text = $"{MonjaFestival.cyanPlayer03Items} / 3";
-            cyanmonja04KillButton.MaxTimer = MonjaFestival.killCooldown;
+            cyanmonja04KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             cyanmonja04PickDeliverButton.MaxTimer = 1f;
             cyanmonja04PickDeliverButton.EffectDuration = 1f;
             MonjaFestival.cyanPlayer04DeliverCount.text = $"{MonjaFestival.cyanPlayer04Items} / 3";
-            cyanmonja05KillButton.MaxTimer = MonjaFestival.killCooldown;
+            cyanmonja05KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             cyanmonja05PickDeliverButton.MaxTimer = 1f;
             cyanmonja05PickDeliverButton.EffectDuration = 1f;
             MonjaFestival.cyanPlayer05DeliverCount.text = $"{MonjaFestival.cyanPlayer05Items} / 3";
-            cyanmonja06KillButton.MaxTimer = MonjaFestival.killCooldown;
+            cyanmonja06KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             cyanmonja06PickDeliverButton.MaxTimer = 1f;
             cyanmonja06PickDeliverButton.EffectDuration = 1f;
             MonjaFestival.cyanPlayer06DeliverCount.text = $"{MonjaFestival.cyanPlayer06Items} / 3";
-            cyanmonja07KillButton.MaxTimer = MonjaFestival.killCooldown;
+            cyanmonja07KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             cyanmonja07PickDeliverButton.MaxTimer = 1f;
             cyanmonja07PickDeliverButton.EffectDuration = 1f;
             MonjaFestival.cyanPlayer07DeliverCount.text = $"{MonjaFestival.cyanPlayer07Items} / 3";
             bigmonjaKillButton.MaxTimer = MonjaFestival.bigMonjaPlayerKillCooldown;
             bigmonjaPickDeliverButton.MaxTimer = MonjaFestival.bigMonjaPlayerFindDeliverCooldown;
             bigmonjaPickDeliverButton.EffectDuration = MonjaFestival.bigMonjaPlayerFindDeliverCooldown;
-            MonjaFestival.bigMonjaPlayerDeliverCount.text = $"{MonjaFestival.bigMonjaPlayerItems} / 10"; 
+            MonjaFestival.bigMonjaPlayerDeliverCount.text = $"{MonjaFestival.bigMonjaPlayerItems} / 10";
             bigmonjaInvisibleButton.MaxTimer = 10f;
             bigmonjaInvisibleButton.EffectDuration = 20f;
         }
@@ -1461,7 +1461,7 @@ namespace LasMonjas
                     }
 
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.chameleonInvisible, false, 100f);
-                    
+
                     Chameleon.duration = Chameleon.backUpduration;
                     chameleonInvisibleButton.EffectDuration = Chameleon.duration;
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChameleonInvisible, Hazel.SendOption.Reliable, -1);
@@ -1650,7 +1650,7 @@ namespace LasMonjas
             Hypnotist.trapsCounterButtonText.enableWordWrapping = false;
             Hypnotist.trapsCounterButtonText.transform.localScale = Vector3.one * 0.5f;
             Hypnotist.trapsCounterButtonText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
-            
+
             // Archer ShowWeapong
             archerShowWeaponButton = new CustomButton(
                 () => {
@@ -1958,7 +1958,7 @@ namespace LasMonjas
                        librarianSilenceButton.Timer = librarianSilenceButton.MaxTimer;
                        return;
                    }
-                   
+
                    if (Librarian.currentTarget != null) {
                        SoundManager.Instance.PlaySound(CustomMain.customAssets.bountyExilerTarget, false, 5f);
                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SilencePlayer, Hazel.SendOption.Reliable, -1);
@@ -1983,7 +1983,7 @@ namespace LasMonjas
             Librarian.targetNameButtonText.enableWordWrapping = false;
             Librarian.targetNameButtonText.transform.localScale = Vector3.one * 0.5f;
             Librarian.targetNameButtonText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
-            
+
             // Rebels buttons
 
             // Renegade Kill
@@ -2174,7 +2174,7 @@ namespace LasMonjas
             BountyHunter.targetNameButtonText.enableWordWrapping = false;
             BountyHunter.targetNameButtonText.transform.localScale = Vector3.one * 0.5f;
             BountyHunter.targetNameButtonText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
-            
+
             // Trapper place mine
             trapperMineButton = new CustomButton(
                 () => {
@@ -2445,7 +2445,7 @@ namespace LasMonjas
             Yinyanger.yanedButtonText.enableWordWrapping = false;
             Yinyanger.yanedButtonText.transform.localScale = Vector3.one * 0.5f;
             Yinyanger.yanedButtonText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
-            
+
             // Yinyanger Kill
             yinyangerKillButton = new CustomButton(
                 () => {
@@ -2594,7 +2594,7 @@ namespace LasMonjas
                     challengerChallengeButton.Timer = challengerChallengeButton.MaxTimer;
                 }
             );
-            
+
             // Challenger kill button counter
             Challenger.challengerDuelButtonText = GameObject.Instantiate(challengerChallengeButton.actionButton.cooldownTimerText, challengerChallengeButton.actionButton.cooldownTimerText.transform.parent);
             Challenger.challengerDuelButtonText.enableWordWrapping = false;
@@ -2859,7 +2859,7 @@ namespace LasMonjas
             Ninja.targetNameButtonText.enableWordWrapping = false;
             Ninja.targetNameButtonText.transform.localScale = Vector3.one * 0.5f;
             Ninja.targetNameButtonText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
-            
+
             // Berserker Kill
             berserkerKillButton = new CustomButton(
                 () => {
@@ -3023,11 +3023,11 @@ namespace LasMonjas
 
                     Yandere.currentTarget = null;
                     yandereKillButton.Timer = yandereKillButton.MaxTimer - 10f;
-                    
+
                 },
                 () => { return Yandere.yandere != null && Yandere.yandere == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => { return (Yandere.rampageMode || Yandere.currenStareTimes == Yandere.stareTimes) && Yandere.currentTarget && PlayerControl.LocalPlayer.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
-                () => { yandereKillButton.Timer = yandereKillButton.MaxTimer;                   
+                () => { yandereKillButton.Timer = yandereKillButton.MaxTimer;
                 },
                 __instance.KillButton.graphic.sprite,
                 new Vector3(0, 1f, 0),
@@ -3046,8 +3046,8 @@ namespace LasMonjas
                 () => {
 
                     strandedFindBoxButton.HasEffect = true;
-                    Stranded.selectedBox = Stranded.currentBox;   
-                    
+                    Stranded.selectedBox = Stranded.currentBox;
+
                 },
                 () => { return Stranded.stranded != null && Stranded.stranded == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
@@ -3063,7 +3063,7 @@ namespace LasMonjas
                             if (groundItem != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, groundItem.transform.position) < 0.5f) {
                                 Stranded.currentBox = groundItem;
                                 CanUse = true;
-                                switch (groundItem.name) {                                  
+                                switch (groundItem.name) {
                                     case "ammoBox":
                                         Stranded.foundBox = 1;
                                         break;
@@ -3132,7 +3132,7 @@ namespace LasMonjas
             Stranded.strandedSearchButtonText.enableWordWrapping = false;
             Stranded.strandedSearchButtonText.transform.localScale = Vector3.one * 0.5f;
             Stranded.strandedSearchButtonText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
-            
+
             // Stranded Kill
             strandedKillButton = new CustomButton(
                 () => {
@@ -3160,7 +3160,7 @@ namespace LasMonjas
 
                     Stranded.currentTarget = null;
                     strandedKillButton.Timer = strandedKillButton.MaxTimer;
-                    
+
                 },
                 () => { return Stranded.stranded != null && Stranded.stranded == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
@@ -3171,7 +3171,7 @@ namespace LasMonjas
                         }
                     }
                     return Stranded.currentTarget && PlayerControl.LocalPlayer.CanMove && (Stranded.storedAmmo > 0 || currentAlivePlayers <= 2) && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
-                () => { strandedKillButton.Timer = strandedKillButton.MaxTimer;                    
+                () => { strandedKillButton.Timer = strandedKillButton.MaxTimer;
                 },
                 __instance.KillButton.graphic.sprite,
                 new Vector3(0, 1f, 0),
@@ -3331,7 +3331,7 @@ namespace LasMonjas
                         MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaKill, Hazel.SendOption.Reliable, -1);
                         killWriter.Write(targetId);
                         AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                        RPCProcedure.monjaKill(targetId);                    
+                        RPCProcedure.monjaKill(targetId);
                     }
                     monjaFindDeliverButton.Timer = monjaFindDeliverButton.MaxTimer;
                 }
@@ -3342,10 +3342,10 @@ namespace LasMonjas
             Monja.objectCountButtonText.enableWordWrapping = false;
             Monja.objectCountButtonText.transform.localScale = Vector3.one * 0.5f;
             Monja.objectCountButtonText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
-            
+
             // Monja Kill
             monjaKillButton = new CustomButton(
-                () => {                    
+                () => {
                     if (Monja.currentTarget != null) {
 
                         byte targetId = 0;
@@ -3357,12 +3357,12 @@ namespace LasMonjas
                         RPCProcedure.monjaKill(targetId);
                     }
 
-                    Monja.currentTarget = null;                    
-                    monjaKillButton.Timer = 0.1f;                    
+                    Monja.currentTarget = null;
+                    monjaKillButton.Timer = 0.1f;
                 },
                 () => { return Monja.monja != null && Monja.monja == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => { return Monja.currentTarget && PlayerControl.LocalPlayer.CanMove && !Challenger.isDueling && (Monja.awakened || alivePlayers <= 2) && !Seeker.isMinigaming; },
-                () => { monjaKillButton.Timer = monjaKillButton.MaxTimer;                   
+                () => { monjaKillButton.Timer = monjaKillButton.MaxTimer;
                 },
                 __instance.KillButton.graphic.sprite,
                 new Vector3(0, 1f, 0),
@@ -3537,7 +3537,7 @@ namespace LasMonjas
             TreasureHunter.treasureCounterButtonText.enableWordWrapping = false;
             TreasureHunter.treasureCounterButtonText.transform.localScale = Vector3.one * 0.5f;
             TreasureHunter.treasureCounterButtonText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
-            
+
             // Devourer devour
             devourerButton = new CustomButton(
                 () => {
@@ -3594,7 +3594,7 @@ namespace LasMonjas
             Devourer.devourCounterButtonText.enableWordWrapping = false;
             Devourer.devourCounterButtonText.transform.localScale = Vector3.one * 0.5f;
             Devourer.devourCounterButtonText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
-            
+
             // Poisoner poison
             poisonerButton = new CustomButton(
                 () => {
@@ -3832,7 +3832,7 @@ namespace LasMonjas
                     int exilerTarget = rnd.Next(0, Exiler.possibleTargets.Count);
 
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.bountyExilerTarget, false, 100f);
-                    
+
                     PlayerControl finaltarget = Helpers.playerById(Exiler.possibleTargets[exilerTarget].PlayerId);
 
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetRandomTarget, Hazel.SendOption.Reliable, -1);
@@ -3920,7 +3920,7 @@ namespace LasMonjas
                         AmongUsClient.Instance.FinishRpcImmediately(writer);
                         RPCProcedure.seekerSetMinigamePlayers(Seeker.currentTarget.PlayerId);
                     }
-                    
+
                     seekerMinigameButton.Timer = seekerMinigameButton.MaxTimer;
                 },
                 () => { return !Seeker.isMinigaming && Seeker.seeker != null && Seeker.seeker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead;
@@ -3945,7 +3945,7 @@ namespace LasMonjas
                 Seeker.getTargetButtonSprite(),
                 new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.F          
+                KeyCode.F
             );
 
             // Seeker minigame button progress
@@ -3996,7 +3996,7 @@ namespace LasMonjas
                 () => {
                     return !Seeker.isMinigaming && Seeker.seeker != null && Seeker.seeker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead;
                 },
-                () => {                    
+                () => {
                     bool sabotageActive = false;
                     if (Bomberman.activeBomb == true || Illusionist.lightsOutTimer > 0) {
                         sabotageActive = true;
@@ -4453,7 +4453,7 @@ namespace LasMonjas
                     }
 
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.detectiveCheck, false, 100f);
-                    
+
                     Detective.duration = Detective.backUpduration;
                     detectiveButton.EffectDuration = Detective.duration;
                     detectiveButton.Timer = detectiveButton.MaxTimer;
@@ -4477,7 +4477,7 @@ namespace LasMonjas
                     detectiveButton.Timer = detectiveButton.MaxTimer;
                 }
             );
-            
+
             // Forensic button
             forensicButton = new CustomButton(
                 () => {
@@ -4536,7 +4536,7 @@ namespace LasMonjas
                     DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, $"{msg}");
 
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.forensicGhost, false, 100f);
-                    
+
                     // Remove ghost
                     if (Forensic.oneTimeUse) {
                         float closestDistance = float.MaxValue;
@@ -4771,7 +4771,7 @@ namespace LasMonjas
                     }
 
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.hackerHack, false, 100f);
-                    
+
                     Hacker.duration = Hacker.backUpduration;
                     hackerButton.EffectDuration = Hacker.duration;
                     hackerButton.Timer = hackerButton.MaxTimer;
@@ -4928,7 +4928,7 @@ namespace LasMonjas
                     }
 
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.sleuthTarget, false, 100f);
-                    
+
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SleuthUsedLocate, Hazel.SendOption.Reliable, -1);
                     writer.Write(Sleuth.currentTarget.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
@@ -4962,7 +4962,7 @@ namespace LasMonjas
                     }
 
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.sleuthBody, false, 100f);
-                    
+
                     Sleuth.corpsesPathfindDuration = Sleuth.backUpduration;
                     sleuthLocateCorpsesButton.EffectDuration = Sleuth.corpsesPathfindDuration;
 
@@ -5005,7 +5005,7 @@ namespace LasMonjas
                     }
 
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.finkSpy, false, 100f);
-                    
+
                     Fink.duration = Fink.backUpduration;
                     finkButton.EffectDuration = Fink.duration;
                     finkButton.Timer = finkButton.MaxTimer;
@@ -5055,7 +5055,7 @@ namespace LasMonjas
                     PlayerControl.LocalPlayer.moveable = true;
                 }
             );
-            
+
             // Welder button
             welderSealButton = new CustomButton(
                 () => {
@@ -5072,7 +5072,7 @@ namespace LasMonjas
                     }
 
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.mechanicWelderAction, false, 100f);
-                    
+
                     if (Welder.ventTarget != null) {
                         MessageWriter writer = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SealVent, Hazel.SendOption.Reliable);
                         writer.WritePacked(Welder.ventTarget.Id);
@@ -5104,7 +5104,7 @@ namespace LasMonjas
                                     canSeal = false;
                                 }
                             }
-                        }                      
+                        }
                     }
 
                     return Welder.ventTarget != null && canSeal && Welder.remainingWelds > 0 && Welder.remainingWelds <= Welder.totalWelds && PlayerControl.LocalPlayer.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
@@ -5194,7 +5194,7 @@ namespace LasMonjas
                     }
                 }
             );
-            
+
             // Vigilant camera button
             vigilantButton = new CustomButton(
                 () => {
@@ -5211,7 +5211,7 @@ namespace LasMonjas
                     }
 
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.bombermanPlaceBombClip, false, 100f);
-                    
+
                     if (GameOptionsManager.Instance.currentGameOptions.MapId != 1) { 
                         var pos = PlayerControl.LocalPlayer.transform.position;
                         byte[] buff = new byte[sizeof(float) * 2];
@@ -5344,7 +5344,7 @@ namespace LasMonjas
             Vigilant.vigilantButtonCameraUsesText.enableWordWrapping = false;
             Vigilant.vigilantButtonCameraUsesText.transform.localScale = Vector3.one * 0.5f;
             Vigilant.vigilantButtonCameraUsesText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
-           
+
             // Hunter button
             hunterButton = new CustomButton(
                 () => {
@@ -5357,7 +5357,7 @@ namespace LasMonjas
                     }
 
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.hunterTarget, false, 100f);
-                    
+
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.HunterUsedHunted, Hazel.SendOption.Reliable, -1);
                     writer.Write(Hunter.currentTarget.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
@@ -5377,7 +5377,7 @@ namespace LasMonjas
             Hunter.targetButtonText.enableWordWrapping = false;
             Hunter.targetButtonText.transform.localScale = Vector3.one * 0.5f;
             Hunter.targetButtonText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
-            
+
             // Jinx button
             jinxButton = new CustomButton(
                 () => {
@@ -5466,7 +5466,7 @@ namespace LasMonjas
             Coward.cowardCallButtonText.enableWordWrapping = false;
             Coward.cowardCallButtonText.transform.localScale = Vector3.one * 0.5f;
             Coward.cowardCallButtonText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
-            
+
             // Bat button
             batButton = new CustomButton(
                 () => {
@@ -5596,7 +5596,7 @@ namespace LasMonjas
                                         }
 
                                         SoundManager.Instance.PlaySound(CustomMain.customAssets.janitorDragBody, false, 100f);
-                                        
+
                                         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.DragPlaceBody, Hazel.SendOption.Reliable, -1);
                                         writer.Write(playerInfo.PlayerId);
                                         writer.Write(Necromancer.necromancer.Data.PlayerId);
@@ -5834,7 +5834,7 @@ namespace LasMonjas
                     }
 
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.shyThere, false, 100f);
-                    
+
                     Shy.duration = Shy.backUpduration;
                     shyButton.EffectDuration = Shy.duration;
 
@@ -5903,7 +5903,7 @@ namespace LasMonjas
                     taskMasterButton.Timer = taskMasterButton.MaxTimer;
                 }
             );
-            
+
             // Jailer jail
             jailerJailButton = new CustomButton(
                 () => {
@@ -5916,7 +5916,7 @@ namespace LasMonjas
                     }
 
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.jailerJail, false, 100f);
-                    
+
                     jailerJailButton.Timer = 0f;
 
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.JailerSetJailed, Hazel.SendOption.Reliable, -1);
@@ -5941,12 +5941,12 @@ namespace LasMonjas
             Jailer.jailButtonText.enableWordWrapping = false;
             Jailer.jailButtonText.transform.localScale = Vector3.one * 0.5f;
             Jailer.jailButtonText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0); 
-            
+
             // Zoom in/out button
             zoomOutButton = new CustomButton(
                 () => { Helpers.toggleZoom();
                 },
-                () => { if (PlayerControl.LocalPlayer == null || !PlayerControl.LocalPlayer.Data.IsDead /*|| PlayerControl.LocalPlayer.Data.Role.IsImpostor*/ || TimeTraveler.isRewinding || (howmanygamemodesareon == 1 && !HotPotato.hotPotatoMode)) return false;
+                () => { if (PlayerControl.LocalPlayer == null || !PlayerControl.LocalPlayer.Data.IsDead /*|| PlayerControl.LocalPlayer.Data.Role.IsImpostor*/ || TimeTraveler.isRewinding || (gameType >= 2 && gameType != 5)) return false;
                     var (playerCompleted, playerTotal) = TasksHandler.taskInfo(PlayerControl.LocalPlayer.Data);
                     int numberOfLeftTasks = playerTotal - playerCompleted;
                     return numberOfLeftTasks <= 0;
@@ -5970,7 +5970,7 @@ namespace LasMonjas
                             roleToGet = groundItem.name;
                         }
                     }
-                    
+
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.WhoWasI, Hazel.SendOption.Reliable, -1);
                     writer.Write(PlayerControl.LocalPlayer.PlayerId);
                     writer.Write(roleToGet);
@@ -5979,7 +5979,7 @@ namespace LasMonjas
 
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.mimicPuppeteerTransform, false, 100f);
                 },
-                () => { return whoAmIMode && !whoAmIFoundRole && !PlayerControl.LocalPlayer.Data.IsDead; },
+                () => { return gameType == 1 && !whoAmIFoundRole && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => {
                     bool CanUse = false;
                     if (whoAmIModeGlobalItems.Count != 0) {
@@ -6004,11 +6004,12 @@ namespace LasMonjas
             redplayer01KillButton = new CustomButton(
                 () => {
                     byte targetId = CaptureTheFlag.redplayer01currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.CapturetheFlagKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = CaptureTheFlag.redplayer01.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(1);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.capturetheFlagKills(targetId, 1);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     redplayer01KillButton.Timer = redplayer01KillButton.MaxTimer;
                     CaptureTheFlag.redplayer01currentTarget = null;
                 },
@@ -6072,11 +6073,12 @@ namespace LasMonjas
             redplayer02KillButton = new CustomButton(
                 () => {
                     byte targetId = CaptureTheFlag.redplayer02currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.CapturetheFlagKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = CaptureTheFlag.redplayer02.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(2);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.capturetheFlagKills(targetId, 2);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     redplayer02KillButton.Timer = redplayer02KillButton.MaxTimer;
                     CaptureTheFlag.redplayer02currentTarget = null;
                 },
@@ -6140,11 +6142,12 @@ namespace LasMonjas
             redplayer03KillButton = new CustomButton(
                 () => {
                     byte targetId = CaptureTheFlag.redplayer03currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.CapturetheFlagKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = CaptureTheFlag.redplayer03.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(3);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.capturetheFlagKills(targetId, 3);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     redplayer03KillButton.Timer = redplayer03KillButton.MaxTimer;
                     CaptureTheFlag.redplayer03currentTarget = null;
                 },
@@ -6208,11 +6211,12 @@ namespace LasMonjas
             redplayer04KillButton = new CustomButton(
                 () => {
                     byte targetId = CaptureTheFlag.redplayer04currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.CapturetheFlagKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = CaptureTheFlag.redplayer04.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(4);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.capturetheFlagKills(targetId, 4);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     redplayer04KillButton.Timer = redplayer04KillButton.MaxTimer;
                     CaptureTheFlag.redplayer04currentTarget = null;
                 },
@@ -6276,11 +6280,12 @@ namespace LasMonjas
             redplayer05KillButton = new CustomButton(
                 () => {
                     byte targetId = CaptureTheFlag.redplayer05currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.CapturetheFlagKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = CaptureTheFlag.redplayer05.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(5);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.capturetheFlagKills(targetId, 5);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     redplayer05KillButton.Timer = redplayer05KillButton.MaxTimer;
                     CaptureTheFlag.redplayer05currentTarget = null;
                 },
@@ -6344,11 +6349,12 @@ namespace LasMonjas
             redplayer06KillButton = new CustomButton(
                 () => {
                     byte targetId = CaptureTheFlag.redplayer06currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.CapturetheFlagKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = CaptureTheFlag.redplayer06.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(6);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.capturetheFlagKills(targetId, 6);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     redplayer06KillButton.Timer = redplayer06KillButton.MaxTimer;
                     CaptureTheFlag.redplayer06currentTarget = null;
                 },
@@ -6412,11 +6418,12 @@ namespace LasMonjas
             redplayer07KillButton = new CustomButton(
                 () => {
                     byte targetId = CaptureTheFlag.redplayer07currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.CapturetheFlagKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = CaptureTheFlag.redplayer07.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(7);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.capturetheFlagKills(targetId, 7);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     redplayer07KillButton.Timer = redplayer07KillButton.MaxTimer;
                     CaptureTheFlag.redplayer07currentTarget = null;
                 },
@@ -6480,11 +6487,12 @@ namespace LasMonjas
             blueplayer01KillButton = new CustomButton(
                 () => {
                     byte targetId = CaptureTheFlag.blueplayer01currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.CapturetheFlagKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = CaptureTheFlag.blueplayer01.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(9);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.capturetheFlagKills(targetId, 9);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     blueplayer01KillButton.Timer = blueplayer01KillButton.MaxTimer;
                     CaptureTheFlag.blueplayer01currentTarget = null;
                 },
@@ -6548,11 +6556,12 @@ namespace LasMonjas
             blueplayer02KillButton = new CustomButton(
                 () => {
                     byte targetId = CaptureTheFlag.blueplayer02currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.CapturetheFlagKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = CaptureTheFlag.blueplayer02.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(10);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.capturetheFlagKills(targetId, 10);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     blueplayer02KillButton.Timer = blueplayer02KillButton.MaxTimer;
                     CaptureTheFlag.blueplayer02currentTarget = null;
                 },
@@ -6616,11 +6625,12 @@ namespace LasMonjas
             blueplayer03KillButton = new CustomButton(
                 () => {
                     byte targetId = CaptureTheFlag.blueplayer03currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.CapturetheFlagKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = CaptureTheFlag.blueplayer03.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(11);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.capturetheFlagKills(targetId, 11);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     blueplayer03KillButton.Timer = blueplayer03KillButton.MaxTimer;
                     CaptureTheFlag.blueplayer03currentTarget = null;
                 },
@@ -6684,11 +6694,12 @@ namespace LasMonjas
             blueplayer04KillButton = new CustomButton(
                 () => {
                     byte targetId = CaptureTheFlag.blueplayer04currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.CapturetheFlagKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = CaptureTheFlag.blueplayer04.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(12);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.capturetheFlagKills(targetId, 12);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     blueplayer04KillButton.Timer = blueplayer04KillButton.MaxTimer;
                     CaptureTheFlag.blueplayer04currentTarget = null;
                 },
@@ -6752,11 +6763,12 @@ namespace LasMonjas
             blueplayer05KillButton = new CustomButton(
                 () => {
                     byte targetId = CaptureTheFlag.blueplayer05currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.CapturetheFlagKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = CaptureTheFlag.blueplayer05.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(13);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.capturetheFlagKills(targetId, 13);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     blueplayer05KillButton.Timer = blueplayer05KillButton.MaxTimer;
                     CaptureTheFlag.blueplayer05currentTarget = null;
                 },
@@ -6820,11 +6832,12 @@ namespace LasMonjas
             blueplayer06KillButton = new CustomButton(
                 () => {
                     byte targetId = CaptureTheFlag.blueplayer06currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.CapturetheFlagKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = CaptureTheFlag.blueplayer06.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(14);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.capturetheFlagKills(targetId, 14);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     blueplayer06KillButton.Timer = blueplayer06KillButton.MaxTimer;
                     CaptureTheFlag.blueplayer06currentTarget = null;
                 },
@@ -6888,11 +6901,12 @@ namespace LasMonjas
             blueplayer07KillButton = new CustomButton(
                 () => {
                     byte targetId = CaptureTheFlag.blueplayer07currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.CapturetheFlagKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = CaptureTheFlag.blueplayer07.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(15);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.capturetheFlagKills(targetId, 15);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     blueplayer07KillButton.Timer = blueplayer07KillButton.MaxTimer;
                     CaptureTheFlag.blueplayer07currentTarget = null;
                 },
@@ -6956,11 +6970,12 @@ namespace LasMonjas
             stealerPlayerKillButton = new CustomButton(
                 () => {
                     byte targetId = CaptureTheFlag.stealerPlayercurrentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.CapturetheFlagKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = CaptureTheFlag.stealerPlayer.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.CapturetheFlagStealerKill, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(16);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.capturetheFlagKills(targetId, 16);
+                    RPCProcedure.capturetheFlagStealerKill(targetId, sourceId);
                     stealerPlayerKillButton.Timer = stealerPlayerKillButton.MaxTimer;
                     CaptureTheFlag.stealerPlayercurrentTarget = null;
                 },
@@ -6992,11 +7007,12 @@ namespace LasMonjas
             policeplayer01KillButton = new CustomButton(
                 () => {
                     byte targetId = PoliceAndThief.policeplayer01currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PoliceandThiefKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = PoliceAndThief.policeplayer01.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(1);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.policeandThiefKills(targetId, 1);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     policeplayer01KillButton.Timer = policeplayer01KillButton.MaxTimer;
                     PoliceAndThief.policeplayer01currentTarget = null;
                 },
@@ -7085,11 +7101,12 @@ namespace LasMonjas
             policeplayer02KillButton = new CustomButton(
                 () => {
                     byte targetId = PoliceAndThief.policeplayer02currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PoliceandThiefKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = PoliceAndThief.policeplayer02.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(2);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.policeandThiefKills(targetId, 2);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     policeplayer02KillButton.Timer = policeplayer02KillButton.MaxTimer;
                     PoliceAndThief.policeplayer02currentTarget = null;
                 },
@@ -7107,7 +7124,7 @@ namespace LasMonjas
                 __instance,
                 KeyCode.Q
             );
-            
+
             // Policeplayer02 Tase
             policeplayer02TaseButton = new CustomButton(
                 () => {
@@ -7124,7 +7141,7 @@ namespace LasMonjas
 
                     policeplayer02TaseButton.Timer = policeplayer02TaseButton.MaxTimer;
                     PoliceAndThief.policeplayer02currentTarget = null; 
-                                        
+
                     target = null; 
                 },
                 () => { return PoliceAndThief.policeplayer02 != null && PoliceAndThief.policeplayer02 == PlayerControl.LocalPlayer; },
@@ -7192,11 +7209,12 @@ namespace LasMonjas
             policeplayer03KillButton = new CustomButton(
                 () => {
                     byte targetId = PoliceAndThief.policeplayer03currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PoliceandThiefKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = PoliceAndThief.policeplayer03.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(3);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.policeandThiefKills(targetId, 3);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     policeplayer03KillButton.Timer = policeplayer03KillButton.MaxTimer;
                     PoliceAndThief.policeplayer03currentTarget = null;
                 },
@@ -7286,11 +7304,12 @@ namespace LasMonjas
             policeplayer04KillButton = new CustomButton(
                 () => {
                     byte targetId = PoliceAndThief.policeplayer04currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PoliceandThiefKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = PoliceAndThief.policeplayer04.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(4);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.policeandThiefKills(targetId, 4);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     policeplayer04KillButton.Timer = policeplayer04KillButton.MaxTimer;
                     PoliceAndThief.policeplayer04currentTarget = null;
                 },
@@ -7393,11 +7412,12 @@ namespace LasMonjas
             policeplayer05KillButton = new CustomButton(
                 () => {
                     byte targetId = PoliceAndThief.policeplayer05currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PoliceandThiefKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = PoliceAndThief.policeplayer05.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(5);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.policeandThiefKills(targetId, 5);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     policeplayer05KillButton.Timer = policeplayer05KillButton.MaxTimer;
                     PoliceAndThief.policeplayer05currentTarget = null;
                 },
@@ -7487,11 +7507,12 @@ namespace LasMonjas
             policeplayer06KillButton = new CustomButton(
                 () => {
                     byte targetId = PoliceAndThief.policeplayer06currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PoliceandThiefKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = PoliceAndThief.policeplayer06.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(6);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.policeandThiefKills(targetId, 6);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     policeplayer06KillButton.Timer = policeplayer06KillButton.MaxTimer;
                     PoliceAndThief.policeplayer06currentTarget = null;
                 },
@@ -7576,16 +7597,17 @@ namespace LasMonjas
                 10,
                 () => { policeplayer06LightButton.Timer = policeplayer06LightButton.MaxTimer; }
             );
-            
+
             // Thiefplayer01 Kill
             thiefplayer01KillButton = new CustomButton(
                 () => {
                     byte targetId = PoliceAndThief.thiefplayer01currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PoliceandThiefKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = PoliceAndThief.thiefplayer01.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(7);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.policeandThiefKills(targetId, 7);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     thiefplayer01KillButton.Timer = thiefplayer01KillButton.MaxTimer;
                     PoliceAndThief.thiefplayer01currentTarget = null;
                 },
@@ -7632,7 +7654,7 @@ namespace LasMonjas
                             PoliceAndThief.localThiefDeliverArrow[1].Update(PoliceAndThief.jewelbuttontwo.transform.position);
                         }
                     }
-                    
+
                     bool CanUse = false;
                     if (PoliceAndThief.currentThiefsCaptured > 0) {
                         if ((PoliceAndThief.cellbuttontwo != null && Vector2.Distance(PoliceAndThief.thiefplayer01.transform.position, PoliceAndThief.cellbuttontwo.transform.position) < 0.4f || Vector2.Distance(PoliceAndThief.thiefplayer01.transform.position, PoliceAndThief.cellbutton.transform.position) < 0.4f) && !PoliceAndThief.thiefplayer01.Data.IsDead) {
@@ -7643,9 +7665,9 @@ namespace LasMonjas
                 },
                 () => { thiefplayer01FreeThiefButton.Timer = thiefplayer01FreeThiefButton.MaxTimer; },
                 PoliceAndThief.getFreeThiefButtonSprite(),
-                new Vector3(-1.9f, -0.06f, 0),
+                new Vector3(-3f, -0.06f, 0),
                 __instance,
-                KeyCode.F
+                KeyCode.T
             );
 
             // Thiefplayer01 Take/Deliver Jewel Button
@@ -7754,20 +7776,21 @@ namespace LasMonjas
                 },
                 () => { thiefplayer01TakeDeliverJewelButton.Timer = thiefplayer01TakeDeliverJewelButton.MaxTimer; },
                 PoliceAndThief.getTakeJewelButtonSprite(),
-                new Vector3(-3f, -0.06f, 0),
+                new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Thiefplayer02 Kill
             thiefplayer02KillButton = new CustomButton(
                 () => {
                     byte targetId = PoliceAndThief.thiefplayer02currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PoliceandThiefKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = PoliceAndThief.thiefplayer02.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(8);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.policeandThiefKills(targetId, 8);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     thiefplayer02KillButton.Timer = thiefplayer02KillButton.MaxTimer;
                     PoliceAndThief.thiefplayer02currentTarget = null;
                 },
@@ -7825,9 +7848,9 @@ namespace LasMonjas
                 },
                 () => { thiefplayer02FreeThiefButton.Timer = thiefplayer02FreeThiefButton.MaxTimer; },
                 PoliceAndThief.getFreeThiefButtonSprite(),
-                new Vector3(-1.9f, -0.06f, 0),
+                new Vector3(-3f, -0.06f, 0),
                 __instance,
-                KeyCode.F
+                KeyCode.T
             );
 
             // Thiefplayer02 Take/Deliver Jewel Button
@@ -7936,20 +7959,21 @@ namespace LasMonjas
                 },
                 () => { thiefplayer02TakeDeliverJewelButton.Timer = thiefplayer02TakeDeliverJewelButton.MaxTimer; },
                 PoliceAndThief.getTakeJewelButtonSprite(),
-                new Vector3(-3f, -0.06f, 0),
+                new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Thiefplayer03 Kill
             thiefplayer03KillButton = new CustomButton(
                 () => {
                     byte targetId = PoliceAndThief.thiefplayer03currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PoliceandThiefKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = PoliceAndThief.thiefplayer03.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(9);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.policeandThiefKills(targetId, 9);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     thiefplayer03KillButton.Timer = thiefplayer03KillButton.MaxTimer;
                     PoliceAndThief.thiefplayer03currentTarget = null;
                 },
@@ -7996,7 +8020,7 @@ namespace LasMonjas
                             PoliceAndThief.localThiefDeliverArrow[1].Update(PoliceAndThief.jewelbuttontwo.transform.position);
                         }
                     }
-                    
+
                     bool CanUse = false;
                     if (PoliceAndThief.currentThiefsCaptured > 0) {
                         if ((PoliceAndThief.cellbuttontwo != null && Vector2.Distance(PoliceAndThief.thiefplayer03.transform.position, PoliceAndThief.cellbuttontwo.transform.position) < 0.4f || Vector2.Distance(PoliceAndThief.thiefplayer03.transform.position, PoliceAndThief.cellbutton.transform.position) < 0.4f) && !PoliceAndThief.thiefplayer03.Data.IsDead) {
@@ -8007,9 +8031,9 @@ namespace LasMonjas
                 },
                 () => { thiefplayer03FreeThiefButton.Timer = thiefplayer03FreeThiefButton.MaxTimer; },
                 PoliceAndThief.getFreeThiefButtonSprite(),
-                new Vector3(-1.9f, -0.06f, 0),
+                new Vector3(-3f, -0.06f, 0),
                 __instance,
-                KeyCode.F
+                KeyCode.T
             );
 
             // Thiefplayer03 Take/Deliver Jewel Button
@@ -8118,20 +8142,21 @@ namespace LasMonjas
                 },
                 () => { thiefplayer03TakeDeliverJewelButton.Timer = thiefplayer03TakeDeliverJewelButton.MaxTimer; },
                 PoliceAndThief.getTakeJewelButtonSprite(),
-                new Vector3(-3f, -0.06f, 0),
+                new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Thiefplayer04 Kill
             thiefplayer04KillButton = new CustomButton(
                 () => {
                     byte targetId = PoliceAndThief.thiefplayer04currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PoliceandThiefKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = PoliceAndThief.thiefplayer04.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(10);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.policeandThiefKills(targetId, 10);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     thiefplayer04KillButton.Timer = thiefplayer04KillButton.MaxTimer;
                     PoliceAndThief.thiefplayer04currentTarget = null;
                 },
@@ -8178,7 +8203,7 @@ namespace LasMonjas
                             PoliceAndThief.localThiefDeliverArrow[1].Update(PoliceAndThief.jewelbuttontwo.transform.position);
                         }
                     }
-                    
+
                     bool CanUse = false;
                     if (PoliceAndThief.currentThiefsCaptured > 0) {
                         if ((PoliceAndThief.cellbuttontwo != null && Vector2.Distance(PoliceAndThief.thiefplayer04.transform.position, PoliceAndThief.cellbuttontwo.transform.position) < 0.4f || Vector2.Distance(PoliceAndThief.thiefplayer04.transform.position, PoliceAndThief.cellbutton.transform.position) < 0.4f) && !PoliceAndThief.thiefplayer04.Data.IsDead) {
@@ -8189,9 +8214,9 @@ namespace LasMonjas
                 },
                 () => { thiefplayer04FreeThiefButton.Timer = thiefplayer04FreeThiefButton.MaxTimer; },
                 PoliceAndThief.getFreeThiefButtonSprite(),
-                new Vector3(-1.9f, -0.06f, 0),
+                new Vector3(-3f, -0.06f, 0),
                 __instance,
-                KeyCode.F
+                KeyCode.T
             );
 
             // Thiefplayer04 Take/Deliver Jewel Button
@@ -8300,20 +8325,21 @@ namespace LasMonjas
                 },
                 () => { thiefplayer04TakeDeliverJewelButton.Timer = thiefplayer04TakeDeliverJewelButton.MaxTimer; },
                 PoliceAndThief.getTakeJewelButtonSprite(),
-                new Vector3(-3f, -0.06f, 0),
+                new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Thiefplayer05 Kill
             thiefplayer05KillButton = new CustomButton(
                 () => {
                     byte targetId = PoliceAndThief.thiefplayer05currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PoliceandThiefKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = PoliceAndThief.thiefplayer05.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(11);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.policeandThiefKills(targetId, 11);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     thiefplayer05KillButton.Timer = thiefplayer05KillButton.MaxTimer;
                     PoliceAndThief.thiefplayer05currentTarget = null;
                 },
@@ -8360,7 +8386,7 @@ namespace LasMonjas
                             PoliceAndThief.localThiefDeliverArrow[1].Update(PoliceAndThief.jewelbuttontwo.transform.position);
                         }
                     }
-                    
+
                     bool CanUse = false;
                     if (PoliceAndThief.currentThiefsCaptured > 0) {
                         if ((PoliceAndThief.cellbuttontwo != null && Vector2.Distance(PoliceAndThief.thiefplayer05.transform.position, PoliceAndThief.cellbuttontwo.transform.position) < 0.4f || Vector2.Distance(PoliceAndThief.thiefplayer05.transform.position, PoliceAndThief.cellbutton.transform.position) < 0.4f) && !PoliceAndThief.thiefplayer05.Data.IsDead) {
@@ -8371,9 +8397,9 @@ namespace LasMonjas
                 },
                 () => { thiefplayer05FreeThiefButton.Timer = thiefplayer05FreeThiefButton.MaxTimer; },
                 PoliceAndThief.getFreeThiefButtonSprite(),
-                new Vector3(-1.9f, -0.06f, 0),
+                new Vector3(-3f, -0.06f, 0),
                 __instance,
-                KeyCode.F
+                KeyCode.T
             );
 
             // Thiefplayer05 Take/Deliver Jewel Button
@@ -8482,20 +8508,21 @@ namespace LasMonjas
                 },
                 () => { thiefplayer05TakeDeliverJewelButton.Timer = thiefplayer05TakeDeliverJewelButton.MaxTimer; },
                 PoliceAndThief.getTakeJewelButtonSprite(),
-                new Vector3(-3f, -0.06f, 0),
+                new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Thiefplayer06 Kill
             thiefplayer06KillButton = new CustomButton(
                 () => {
                     byte targetId = PoliceAndThief.thiefplayer06currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PoliceandThiefKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = PoliceAndThief.thiefplayer06.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(12);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.policeandThiefKills(targetId, 12);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     thiefplayer06KillButton.Timer = thiefplayer06KillButton.MaxTimer;
                     PoliceAndThief.thiefplayer06currentTarget = null;
                 },
@@ -8542,7 +8569,7 @@ namespace LasMonjas
                             PoliceAndThief.localThiefDeliverArrow[1].Update(PoliceAndThief.jewelbuttontwo.transform.position);
                         }
                     }
-                    
+
                     bool CanUse = false;
                     if (PoliceAndThief.currentThiefsCaptured > 0) {
                         if ((PoliceAndThief.cellbuttontwo != null && Vector2.Distance(PoliceAndThief.thiefplayer06.transform.position, PoliceAndThief.cellbuttontwo.transform.position) < 0.4f || Vector2.Distance(PoliceAndThief.thiefplayer06.transform.position, PoliceAndThief.cellbutton.transform.position) < 0.4f) && !PoliceAndThief.thiefplayer06.Data.IsDead) {
@@ -8553,9 +8580,9 @@ namespace LasMonjas
                 },
                 () => { thiefplayer06FreeThiefButton.Timer = thiefplayer06FreeThiefButton.MaxTimer; },
                 PoliceAndThief.getFreeThiefButtonSprite(),
-                new Vector3(-1.9f, -0.06f, 0),
+                new Vector3(-3f, -0.06f, 0),
                 __instance,
-                KeyCode.F
+                KeyCode.T
             );
 
             // Thiefplayer06 Take/Deliver Jewel Button
@@ -8664,20 +8691,21 @@ namespace LasMonjas
                 },
                 () => { thiefplayer06TakeDeliverJewelButton.Timer = thiefplayer06TakeDeliverJewelButton.MaxTimer; },
                 PoliceAndThief.getTakeJewelButtonSprite(),
-                new Vector3(-3f, -0.06f, 0),
+                new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Thiefplayer07 Kill
             thiefplayer07KillButton = new CustomButton(
                 () => {
                     byte targetId = PoliceAndThief.thiefplayer07currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PoliceandThiefKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = PoliceAndThief.thiefplayer07.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(13);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.policeandThiefKills(targetId, 13);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     thiefplayer07KillButton.Timer = thiefplayer07KillButton.MaxTimer;
                     PoliceAndThief.thiefplayer07currentTarget = null;
                 },
@@ -8724,7 +8752,7 @@ namespace LasMonjas
                             PoliceAndThief.localThiefDeliverArrow[1].Update(PoliceAndThief.jewelbuttontwo.transform.position);
                         }
                     }
-                    
+
                     bool CanUse = false;
                     if (PoliceAndThief.currentThiefsCaptured > 0) {
                         if ((PoliceAndThief.cellbuttontwo != null && Vector2.Distance(PoliceAndThief.thiefplayer07.transform.position, PoliceAndThief.cellbuttontwo.transform.position) < 0.4f || Vector2.Distance(PoliceAndThief.thiefplayer07.transform.position, PoliceAndThief.cellbutton.transform.position) < 0.4f) && !PoliceAndThief.thiefplayer07.Data.IsDead) {
@@ -8735,9 +8763,9 @@ namespace LasMonjas
                 },
                 () => { thiefplayer07FreeThiefButton.Timer = thiefplayer07FreeThiefButton.MaxTimer; },
                 PoliceAndThief.getFreeThiefButtonSprite(),
-                new Vector3(-1.9f, -0.06f, 0),
+                new Vector3(-3f, -0.06f, 0),
                 __instance,
-                KeyCode.F
+                KeyCode.T
             );
 
             // Thiefplayer07 Take/Deliver Jewel Button
@@ -8846,20 +8874,21 @@ namespace LasMonjas
                 },
                 () => { thiefplayer07TakeDeliverJewelButton.Timer = thiefplayer07TakeDeliverJewelButton.MaxTimer; },
                 PoliceAndThief.getTakeJewelButtonSprite(),
-                new Vector3(-3f, -0.06f, 0),
+                new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Thiefplayer08 Kill
             thiefplayer08KillButton = new CustomButton(
                 () => {
                     byte targetId = PoliceAndThief.thiefplayer08currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PoliceandThiefKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = PoliceAndThief.thiefplayer08.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(14);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.policeandThiefKills(targetId, 14);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     thiefplayer08KillButton.Timer = thiefplayer08KillButton.MaxTimer;
                     PoliceAndThief.thiefplayer08currentTarget = null;
                 },
@@ -8906,7 +8935,7 @@ namespace LasMonjas
                             PoliceAndThief.localThiefDeliverArrow[1].Update(PoliceAndThief.jewelbuttontwo.transform.position);
                         }
                     }
-                    
+
                     bool CanUse = false;
                     if (PoliceAndThief.currentThiefsCaptured > 0) {
                         if ((PoliceAndThief.cellbuttontwo != null && Vector2.Distance(PoliceAndThief.thiefplayer08.transform.position, PoliceAndThief.cellbuttontwo.transform.position) < 0.4f || Vector2.Distance(PoliceAndThief.thiefplayer08.transform.position, PoliceAndThief.cellbutton.transform.position) < 0.4f) && !PoliceAndThief.thiefplayer08.Data.IsDead) {
@@ -8917,9 +8946,9 @@ namespace LasMonjas
                 },
                 () => { thiefplayer08FreeThiefButton.Timer = thiefplayer08FreeThiefButton.MaxTimer; },
                 PoliceAndThief.getFreeThiefButtonSprite(),
-                new Vector3(-1.9f, -0.06f, 0),
+                new Vector3(-3f, -0.06f, 0),
                 __instance,
-                KeyCode.F
+                KeyCode.T
             );
 
             // Thiefplayer08 Take/Deliver Jewel Button
@@ -9028,20 +9057,21 @@ namespace LasMonjas
                 },
                 () => { thiefplayer08TakeDeliverJewelButton.Timer = thiefplayer08TakeDeliverJewelButton.MaxTimer; },
                 PoliceAndThief.getTakeJewelButtonSprite(),
-                new Vector3(-3f, -0.06f, 0),
+                new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // Thiefplayer09 Kill
             thiefplayer09KillButton = new CustomButton(
                 () => {
                     byte targetId = PoliceAndThief.thiefplayer09currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PoliceandThiefKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = PoliceAndThief.thiefplayer09.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(15);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.policeandThiefKills(targetId, 15);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     thiefplayer09KillButton.Timer = thiefplayer09KillButton.MaxTimer;
                     PoliceAndThief.thiefplayer09currentTarget = null;
                 },
@@ -9088,7 +9118,7 @@ namespace LasMonjas
                             PoliceAndThief.localThiefDeliverArrow[1].Update(PoliceAndThief.jewelbuttontwo.transform.position);
                         }
                     }
-                    
+
                     bool CanUse = false;
                     if (PoliceAndThief.currentThiefsCaptured > 0) {
                         if ((PoliceAndThief.cellbuttontwo != null && Vector2.Distance(PoliceAndThief.thiefplayer09.transform.position, PoliceAndThief.cellbuttontwo.transform.position) < 0.4f || Vector2.Distance(PoliceAndThief.thiefplayer09.transform.position, PoliceAndThief.cellbutton.transform.position) < 0.4f) && !PoliceAndThief.thiefplayer09.Data.IsDead) {
@@ -9099,9 +9129,9 @@ namespace LasMonjas
                 },
                 () => { thiefplayer09FreeThiefButton.Timer = thiefplayer09FreeThiefButton.MaxTimer; },
                 PoliceAndThief.getFreeThiefButtonSprite(),
-                new Vector3(-1.9f, -0.06f, 0),
+                new Vector3(-3f, -0.06f, 0),
                 __instance,
-                KeyCode.F
+                KeyCode.T
             );
 
             // Thiefplayer09 Take/Deliver Jewel Button
@@ -9210,9 +9240,9 @@ namespace LasMonjas
                 },
                 () => { thiefplayer09TakeDeliverJewelButton.Timer = thiefplayer09TakeDeliverJewelButton.MaxTimer; },
                 PoliceAndThief.getTakeJewelButtonSprite(),
-                new Vector3(-3f, -0.06f, 0),
+                new Vector3(-1.9f, -0.06f, 0),
                 __instance,
-                KeyCode.T
+                KeyCode.F
             );
 
             // King of the hill buttons
@@ -9220,11 +9250,12 @@ namespace LasMonjas
             greenplayer01KillButton = new CustomButton(
                 () => {
                     byte targetId = KingOfTheHill.greenplayer01currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.KingoftheHillKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = KingOfTheHill.greenplayer01.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(1);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.kingOfTheHillKills(targetId, 1);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     greenplayer01KillButton.Timer = greenplayer01KillButton.MaxTimer;
                     KingOfTheHill.greenplayer01currentTarget = null;
                 },
@@ -9254,11 +9285,12 @@ namespace LasMonjas
             greenplayer02KillButton = new CustomButton(
                 () => {
                     byte targetId = KingOfTheHill.greenplayer02currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.KingoftheHillKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = KingOfTheHill.greenplayer02.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(2);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.kingOfTheHillKills(targetId, 2);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     greenplayer02KillButton.Timer = greenplayer02KillButton.MaxTimer;
                     KingOfTheHill.greenplayer02currentTarget = null;
                 },
@@ -9289,11 +9321,12 @@ namespace LasMonjas
             greenplayer03KillButton = new CustomButton(
                 () => {
                     byte targetId = KingOfTheHill.greenplayer03currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.KingoftheHillKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = KingOfTheHill.greenplayer03.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(3);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.kingOfTheHillKills(targetId, 3);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     greenplayer03KillButton.Timer = greenplayer03KillButton.MaxTimer;
                     KingOfTheHill.greenplayer03currentTarget = null;
                 },
@@ -9324,11 +9357,12 @@ namespace LasMonjas
             greenplayer04KillButton = new CustomButton(
                 () => {
                     byte targetId = KingOfTheHill.greenplayer04currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.KingoftheHillKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = KingOfTheHill.greenplayer04.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(4);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.kingOfTheHillKills(targetId, 4);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     greenplayer04KillButton.Timer = greenplayer04KillButton.MaxTimer;
                     KingOfTheHill.greenplayer04currentTarget = null;
                 },
@@ -9359,11 +9393,12 @@ namespace LasMonjas
             greenplayer05KillButton = new CustomButton(
                 () => {
                     byte targetId = KingOfTheHill.greenplayer05currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.KingoftheHillKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = KingOfTheHill.greenplayer05.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(5);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.kingOfTheHillKills(targetId, 5);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     greenplayer05KillButton.Timer = greenplayer05KillButton.MaxTimer;
                     KingOfTheHill.greenplayer05currentTarget = null;
                 },
@@ -9394,11 +9429,12 @@ namespace LasMonjas
             greenplayer06KillButton = new CustomButton(
                 () => {
                     byte targetId = KingOfTheHill.greenplayer06currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.KingoftheHillKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = KingOfTheHill.greenplayer06.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(6);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.kingOfTheHillKills(targetId, 6);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     greenplayer06KillButton.Timer = greenplayer06KillButton.MaxTimer;
                     KingOfTheHill.greenplayer06currentTarget = null;
                 },
@@ -9429,11 +9465,12 @@ namespace LasMonjas
             greenKingplayerKillButton = new CustomButton(
                 () => {
                     byte targetId = KingOfTheHill.greenKingplayercurrentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.KingoftheHillKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = KingOfTheHill.greenKingplayer.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(7);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.kingOfTheHillKills(targetId, 7);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     greenKingplayerKillButton.Timer = greenKingplayerKillButton.MaxTimer;
                     KingOfTheHill.greenKingplayercurrentTarget = null;
                 },
@@ -9451,11 +9488,12 @@ namespace LasMonjas
             yellowplayer01KillButton = new CustomButton(
                 () => {
                     byte targetId = KingOfTheHill.yellowplayer01currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.KingoftheHillKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = KingOfTheHill.yellowplayer01.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(9);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.kingOfTheHillKills(targetId, 9);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     yellowplayer01KillButton.Timer = yellowplayer01KillButton.MaxTimer;
                     KingOfTheHill.yellowplayer01currentTarget = null;
                 },
@@ -9482,16 +9520,16 @@ namespace LasMonjas
                 KeyCode.Q
             );
 
-
             // yellowplayer02 Kill
             yellowplayer02KillButton = new CustomButton(
                 () => {
                     byte targetId = KingOfTheHill.yellowplayer02currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.KingoftheHillKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = KingOfTheHill.yellowplayer02.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(10);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.kingOfTheHillKills(targetId, 10);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     yellowplayer02KillButton.Timer = yellowplayer02KillButton.MaxTimer;
                     KingOfTheHill.yellowplayer02currentTarget = null;
                 },
@@ -9522,11 +9560,12 @@ namespace LasMonjas
             yellowplayer03KillButton = new CustomButton(
                 () => {
                     byte targetId = KingOfTheHill.yellowplayer03currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.KingoftheHillKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = KingOfTheHill.yellowplayer03.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(11);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.kingOfTheHillKills(targetId, 11);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     yellowplayer03KillButton.Timer = yellowplayer03KillButton.MaxTimer;
                     KingOfTheHill.yellowplayer03currentTarget = null;
                 },
@@ -9557,11 +9596,12 @@ namespace LasMonjas
             yellowplayer04KillButton = new CustomButton(
                 () => {
                     byte targetId = KingOfTheHill.yellowplayer04currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.KingoftheHillKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = KingOfTheHill.yellowplayer04.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(12);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.kingOfTheHillKills(targetId, 12);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     yellowplayer04KillButton.Timer = yellowplayer04KillButton.MaxTimer;
                     KingOfTheHill.yellowplayer04currentTarget = null;
                 },
@@ -9592,11 +9632,12 @@ namespace LasMonjas
             yellowplayer05KillButton = new CustomButton(
                 () => {
                     byte targetId = KingOfTheHill.yellowplayer05currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.KingoftheHillKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = KingOfTheHill.yellowplayer05.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(13);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.kingOfTheHillKills(targetId, 13);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     yellowplayer05KillButton.Timer = yellowplayer05KillButton.MaxTimer;
                     KingOfTheHill.yellowplayer05currentTarget = null;
                 },
@@ -9627,11 +9668,12 @@ namespace LasMonjas
             yellowplayer06KillButton = new CustomButton(
                 () => {
                     byte targetId = KingOfTheHill.yellowplayer06currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.KingoftheHillKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = KingOfTheHill.yellowplayer06.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(14);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.kingOfTheHillKills(targetId, 14);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     yellowplayer06KillButton.Timer = yellowplayer06KillButton.MaxTimer;
                     KingOfTheHill.yellowplayer06currentTarget = null;
                 },
@@ -9658,15 +9700,40 @@ namespace LasMonjas
                 KeyCode.Q
             );
 
+            // yellowKingplayer Kill
+            yellowKingplayerKillButton = new CustomButton(
+                () => {
+                    byte targetId = KingOfTheHill.yellowKingplayercurrentTarget.PlayerId;
+                    byte sourceId = KingOfTheHill.yellowKingplayer.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
+                    killWriter.Write(targetId);
+                    killWriter.Write(sourceId);
+                    AmongUsClient.Instance.FinishRpcImmediately(killWriter);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
+                    yellowKingplayerKillButton.Timer = yellowKingplayerKillButton.MaxTimer;
+                    KingOfTheHill.yellowKingplayercurrentTarget = null;
+                },
+                () => { return KingOfTheHill.yellowKingplayer != null && KingOfTheHill.yellowKingplayer == PlayerControl.LocalPlayer && KingOfTheHill.kingCanKill; },
+                () => {
+                    return KingOfTheHill.yellowKingplayercurrentTarget && PlayerControl.LocalPlayer.CanMove && !KingOfTheHill.yellowKingIsReviving && !PlayerControl.LocalPlayer.Data.IsDead;
+                },
+                () => { yellowKingplayerKillButton.Timer = yellowKingplayerKillButton.MaxTimer; },
+                __instance.KillButton.graphic.sprite,
+                new Vector3(0, 1f, 0),
+                __instance,
+                KeyCode.Q
+            );
+
             // UsurperPlayer Kill
             usurperPlayerKillButton = new CustomButton(
                 () => {
                     byte targetId = KingOfTheHill.usurperPlayercurrentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.KingoftheHillKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = KingOfTheHill.usurperPlayer.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.KingoftheHillUsurperKill, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(15);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.kingOfTheHillKills(targetId, 15);
+                    RPCProcedure.kingoftheHillUsurperKill(targetId, sourceId);
                     usurperPlayerKillButton.Timer = usurperPlayerKillButton.MaxTimer;
                     KingOfTheHill.usurperPlayercurrentTarget = null;
                 },
@@ -9700,28 +9767,6 @@ namespace LasMonjas
                     return canUse && KingOfTheHill.usurperPlayercurrentTarget && PlayerControl.LocalPlayer.CanMove && !KingOfTheHill.usurperPlayerIsReviving && !PlayerControl.LocalPlayer.Data.IsDead;
                 },
                 () => { usurperPlayerKillButton.Timer = usurperPlayerKillButton.MaxTimer; },
-                __instance.KillButton.graphic.sprite,
-                new Vector3(0, 1f, 0),
-                __instance,
-                KeyCode.Q
-            );
-
-            // yellowKingplayer Kill
-            yellowKingplayerKillButton = new CustomButton(
-                () => {
-                    byte targetId = KingOfTheHill.yellowKingplayercurrentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.KingoftheHillKills, Hazel.SendOption.Reliable, -1);
-                    killWriter.Write(targetId);
-                    killWriter.Write(16);
-                    AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.kingOfTheHillKills(targetId, 16);
-                    yellowKingplayerKillButton.Timer = yellowKingplayerKillButton.MaxTimer;
-                    KingOfTheHill.yellowKingplayercurrentTarget = null;
-                },
-                () => { return KingOfTheHill.yellowKingplayer != null && KingOfTheHill.yellowKingplayer == PlayerControl.LocalPlayer && KingOfTheHill.kingCanKill; },
-                () => { return KingOfTheHill.yellowKingplayercurrentTarget && PlayerControl.LocalPlayer.CanMove && !KingOfTheHill.yellowKingIsReviving && !PlayerControl.LocalPlayer.Data.IsDead;
-                },
-                () => { yellowKingplayerKillButton.Timer = yellowKingplayerKillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 new Vector3(0, 1f, 0),
                 __instance,
@@ -9865,12 +9910,12 @@ namespace LasMonjas
                 () => {
 
                     hotPotatoButton.Timer = hotPotatoButton.MaxTimer;
-
+                    byte targetId = HotPotato.hotPotatoPlayerCurrentTarget.PlayerId;
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.HotPotatoTransfer, Hazel.SendOption.Reliable, -1);
-                    writer.Write(HotPotato.hotPotatoPlayerCurrentTarget.PlayerId);
+                    writer.Write(targetId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
 
-                    RPCProcedure.hotPotatoTransfer(HotPotato.hotPotatoPlayerCurrentTarget.PlayerId);
+                    RPCProcedure.hotPotatoTransfer(targetId);
                 },
                 () => { return HotPotato.hotPotatoPlayer != null && HotPotato.hotPotatoPlayer == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead; },
                 () => { return HotPotato.hotPotatoPlayerCurrentTarget && PlayerControl.LocalPlayer.CanMove && HotPotato.timeforTransfer >= 1;
@@ -10965,11 +11010,12 @@ namespace LasMonjas
             zombie01KillButton = new CustomButton(
                 () => {
                     byte targetId = ZombieLaboratory.zombiePlayer01currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = ZombieLaboratory.zombiePlayer01.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(1);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.zombieKills(targetId, 1);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     zombie01KillButton.Timer = zombie01KillButton.MaxTimer;
                     ZombieLaboratory.zombiePlayer01currentTarget = null;
                 },
@@ -10993,11 +11039,12 @@ namespace LasMonjas
             zombie02KillButton = new CustomButton(
                 () => {
                     byte targetId = ZombieLaboratory.zombiePlayer02currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = ZombieLaboratory.zombiePlayer02.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(2);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.zombieKills(targetId, 2);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     zombie02KillButton.Timer = zombie02KillButton.MaxTimer;
                     ZombieLaboratory.zombiePlayer02currentTarget = null;
                 },
@@ -11021,11 +11068,12 @@ namespace LasMonjas
             zombie03KillButton = new CustomButton(
                 () => {
                     byte targetId = ZombieLaboratory.zombiePlayer03currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = ZombieLaboratory.zombiePlayer03.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(3);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.zombieKills(targetId, 3);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     zombie03KillButton.Timer = zombie03KillButton.MaxTimer;
                     ZombieLaboratory.zombiePlayer03currentTarget = null;
                 },
@@ -11049,11 +11097,12 @@ namespace LasMonjas
             zombie04KillButton = new CustomButton(
                 () => {
                     byte targetId = ZombieLaboratory.zombiePlayer04currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = ZombieLaboratory.zombiePlayer04.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(4);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.zombieKills(targetId, 4);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     zombie04KillButton.Timer = zombie04KillButton.MaxTimer;
                     ZombieLaboratory.zombiePlayer04currentTarget = null;
                 },
@@ -11077,11 +11126,12 @@ namespace LasMonjas
             zombie05KillButton = new CustomButton(
                 () => {
                     byte targetId = ZombieLaboratory.zombiePlayer05currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = ZombieLaboratory.zombiePlayer05.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(5);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.zombieKills(targetId, 5);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     zombie05KillButton.Timer = zombie05KillButton.MaxTimer;
                     ZombieLaboratory.zombiePlayer05currentTarget = null;
                 },
@@ -11105,11 +11155,12 @@ namespace LasMonjas
             zombie06KillButton = new CustomButton(
                 () => {
                     byte targetId = ZombieLaboratory.zombiePlayer06currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = ZombieLaboratory.zombiePlayer06.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(6);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.zombieKills(targetId, 6);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     zombie06KillButton.Timer = zombie06KillButton.MaxTimer;
                     ZombieLaboratory.zombiePlayer06currentTarget = null;
                 },
@@ -11133,11 +11184,12 @@ namespace LasMonjas
             zombie07KillButton = new CustomButton(
                 () => {
                     byte targetId = ZombieLaboratory.zombiePlayer07currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = ZombieLaboratory.zombiePlayer07.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(7);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.zombieKills(targetId, 7);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     zombie07KillButton.Timer = zombie07KillButton.MaxTimer;
                     ZombieLaboratory.zombiePlayer07currentTarget = null;
                 },
@@ -11161,11 +11213,12 @@ namespace LasMonjas
             zombie08KillButton = new CustomButton(
                 () => {
                     byte targetId = ZombieLaboratory.zombiePlayer08currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = ZombieLaboratory.zombiePlayer08.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(8);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.zombieKills(targetId, 8);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     zombie08KillButton.Timer = zombie08KillButton.MaxTimer;
                     ZombieLaboratory.zombiePlayer08currentTarget = null;
                 },
@@ -11189,11 +11242,12 @@ namespace LasMonjas
             zombie09KillButton = new CustomButton(
                 () => {
                     byte targetId = ZombieLaboratory.zombiePlayer09currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = ZombieLaboratory.zombiePlayer09.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(9);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.zombieKills(targetId, 9);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     zombie09KillButton.Timer = zombie09KillButton.MaxTimer;
                     ZombieLaboratory.zombiePlayer09currentTarget = null;
                 },
@@ -11217,11 +11271,12 @@ namespace LasMonjas
             zombie10KillButton = new CustomButton(
                 () => {
                     byte targetId = ZombieLaboratory.zombiePlayer10currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = ZombieLaboratory.zombiePlayer10.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(10);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.zombieKills(targetId, 10);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     zombie10KillButton.Timer = zombie10KillButton.MaxTimer;
                     ZombieLaboratory.zombiePlayer10currentTarget = null;
                 },
@@ -11245,11 +11300,12 @@ namespace LasMonjas
             zombie11KillButton = new CustomButton(
                 () => {
                     byte targetId = ZombieLaboratory.zombiePlayer11currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = ZombieLaboratory.zombiePlayer11.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(11);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.zombieKills(targetId, 11);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     zombie11KillButton.Timer = zombie11KillButton.MaxTimer;
                     ZombieLaboratory.zombiePlayer11currentTarget = null;
                 },
@@ -11273,11 +11329,12 @@ namespace LasMonjas
             zombie12KillButton = new CustomButton(
                 () => {
                     byte targetId = ZombieLaboratory.zombiePlayer12currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = ZombieLaboratory.zombiePlayer12.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(12);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.zombieKills(targetId, 12);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     zombie12KillButton.Timer = zombie12KillButton.MaxTimer;
                     ZombieLaboratory.zombiePlayer12currentTarget = null;
                 },
@@ -11301,11 +11358,12 @@ namespace LasMonjas
             zombie13KillButton = new CustomButton(
                 () => {
                     byte targetId = ZombieLaboratory.zombiePlayer13currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = ZombieLaboratory.zombiePlayer13.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(13);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.zombieKills(targetId, 13);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     zombie13KillButton.Timer = zombie13KillButton.MaxTimer;
                     ZombieLaboratory.zombiePlayer13currentTarget = null;
                 },
@@ -11329,11 +11387,12 @@ namespace LasMonjas
             zombie14KillButton = new CustomButton(
                 () => {
                     byte targetId = ZombieLaboratory.zombiePlayer14currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = ZombieLaboratory.zombiePlayer14.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(14);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.zombieKills(targetId, 14);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     zombie14KillButton.Timer = zombie14KillButton.MaxTimer;
                     ZombieLaboratory.zombiePlayer14currentTarget = null;
                 },
@@ -11520,13 +11579,15 @@ namespace LasMonjas
             survivor01KillButton = new CustomButton(
                 () => {
                     byte targetId = ZombieLaboratory.survivorPlayer01currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = ZombieLaboratory.survivorPlayer01.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(15);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.zombieKills(targetId, 15);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     survivor01KillButton.Timer = survivor01KillButton.MaxTimer;
                     ZombieLaboratory.survivorPlayer01currentTarget = null;
+                    ZombieLaboratory.survivorPlayer01CanKill = false;
                 },
                 () => { return ZombieLaboratory.survivorPlayer01 != null && ZombieLaboratory.survivorPlayer01 == PlayerControl.LocalPlayer; },
                 () => {
@@ -11645,10 +11706,8 @@ namespace LasMonjas
                             RPCProcedure.zombieTakeKeyItem(targetId, keyId);
                         }
                         else if (ZombieLaboratory.survivorPlayer01FoundBox == 7) {
-                            MessageWriter ammoRecovered = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieAmmoRecover, Hazel.SendOption.Reliable, -1);
-                            ammoRecovered.Write(1);
-                            AmongUsClient.Instance.FinishRpcImmediately(ammoRecovered);
-                            RPCProcedure.zombieAmmoRecover(1);
+
+                            ZombieLaboratory.survivorPlayer01CanKill = true;
 
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.rechargeAmmoClip, false, 100f);
 
@@ -11732,13 +11791,15 @@ namespace LasMonjas
             survivor02KillButton = new CustomButton(
                 () => {
                     byte targetId = ZombieLaboratory.survivorPlayer02currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = ZombieLaboratory.survivorPlayer02.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(16);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.zombieKills(targetId, 16);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     survivor02KillButton.Timer = survivor02KillButton.MaxTimer;
                     ZombieLaboratory.survivorPlayer02currentTarget = null;
+                    ZombieLaboratory.survivorPlayer02CanKill = false;
                 },
                 () => { return ZombieLaboratory.survivorPlayer02 != null && ZombieLaboratory.survivorPlayer02 == PlayerControl.LocalPlayer; },
                 () => {
@@ -11857,10 +11918,8 @@ namespace LasMonjas
                             RPCProcedure.zombieTakeKeyItem(targetId, keyId);
                         }
                         else if (ZombieLaboratory.survivorPlayer02FoundBox == 7) {
-                            MessageWriter ammoRecovered = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieAmmoRecover, Hazel.SendOption.Reliable, -1);
-                            ammoRecovered.Write(2);
-                            AmongUsClient.Instance.FinishRpcImmediately(ammoRecovered);
-                            RPCProcedure.zombieAmmoRecover(2);
+
+                            ZombieLaboratory.survivorPlayer02CanKill = true;
 
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.rechargeAmmoClip, false, 100f);
 
@@ -11943,13 +12002,15 @@ namespace LasMonjas
             survivor03KillButton = new CustomButton(
                 () => {
                     byte targetId = ZombieLaboratory.survivorPlayer03currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = ZombieLaboratory.survivorPlayer03.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(17);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.zombieKills(targetId, 17);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     survivor03KillButton.Timer = survivor03KillButton.MaxTimer;
                     ZombieLaboratory.survivorPlayer03currentTarget = null;
+                    ZombieLaboratory.survivorPlayer03CanKill = false;
                 },
                 () => { return ZombieLaboratory.survivorPlayer03 != null && ZombieLaboratory.survivorPlayer03 == PlayerControl.LocalPlayer; },
                 () => {
@@ -12068,10 +12129,8 @@ namespace LasMonjas
                             RPCProcedure.zombieTakeKeyItem(targetId, keyId);
                         }
                         else if (ZombieLaboratory.survivorPlayer03FoundBox == 7) {
-                            MessageWriter ammoRecovered = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieAmmoRecover, Hazel.SendOption.Reliable, -1);
-                            ammoRecovered.Write(3);
-                            AmongUsClient.Instance.FinishRpcImmediately(ammoRecovered);
-                            RPCProcedure.zombieAmmoRecover(3);
+
+                            ZombieLaboratory.survivorPlayer03CanKill = true;
 
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.rechargeAmmoClip, false, 100f);
 
@@ -12154,13 +12213,15 @@ namespace LasMonjas
             survivor04KillButton = new CustomButton(
                 () => {
                     byte targetId = ZombieLaboratory.survivorPlayer04currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = ZombieLaboratory.survivorPlayer04.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(18);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.zombieKills(targetId, 18);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     survivor04KillButton.Timer = survivor04KillButton.MaxTimer;
                     ZombieLaboratory.survivorPlayer04currentTarget = null;
+                    ZombieLaboratory.survivorPlayer04CanKill = false;
                 },
                 () => { return ZombieLaboratory.survivorPlayer04 != null && ZombieLaboratory.survivorPlayer04 == PlayerControl.LocalPlayer; },
                 () => {
@@ -12279,10 +12340,8 @@ namespace LasMonjas
                             RPCProcedure.zombieTakeKeyItem(targetId, keyId);
                         }
                         else if (ZombieLaboratory.survivorPlayer04FoundBox == 7) {
-                            MessageWriter ammoRecovered = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieAmmoRecover, Hazel.SendOption.Reliable, -1);
-                            ammoRecovered.Write(4);
-                            AmongUsClient.Instance.FinishRpcImmediately(ammoRecovered);
-                            RPCProcedure.zombieAmmoRecover(4);
+
+                            ZombieLaboratory.survivorPlayer04CanKill = true;
 
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.rechargeAmmoClip, false, 100f);
 
@@ -12365,13 +12424,15 @@ namespace LasMonjas
             survivor05KillButton = new CustomButton(
                 () => {
                     byte targetId = ZombieLaboratory.survivorPlayer05currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = ZombieLaboratory.survivorPlayer05.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(19);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.zombieKills(targetId, 19);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     survivor05KillButton.Timer = survivor05KillButton.MaxTimer;
                     ZombieLaboratory.survivorPlayer05currentTarget = null;
+                    ZombieLaboratory.survivorPlayer05CanKill = false;
                 },
                 () => { return ZombieLaboratory.survivorPlayer05 != null && ZombieLaboratory.survivorPlayer05 == PlayerControl.LocalPlayer; },
                 () => {
@@ -12490,10 +12551,8 @@ namespace LasMonjas
                             RPCProcedure.zombieTakeKeyItem(targetId, keyId);
                         }
                         else if (ZombieLaboratory.survivorPlayer05FoundBox == 7) {
-                            MessageWriter ammoRecovered = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieAmmoRecover, Hazel.SendOption.Reliable, -1);
-                            ammoRecovered.Write(5);
-                            AmongUsClient.Instance.FinishRpcImmediately(ammoRecovered);
-                            RPCProcedure.zombieAmmoRecover(5);
+
+                            ZombieLaboratory.survivorPlayer05CanKill = true;
 
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.rechargeAmmoClip, false, 100f);
 
@@ -12576,13 +12635,15 @@ namespace LasMonjas
             survivor06KillButton = new CustomButton(
                 () => {
                     byte targetId = ZombieLaboratory.survivorPlayer06currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = ZombieLaboratory.survivorPlayer06.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(20);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.zombieKills(targetId, 20);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     survivor06KillButton.Timer = survivor06KillButton.MaxTimer;
                     ZombieLaboratory.survivorPlayer06currentTarget = null;
+                    ZombieLaboratory.survivorPlayer06CanKill = false;
                 },
                 () => { return ZombieLaboratory.survivorPlayer06 != null && ZombieLaboratory.survivorPlayer06 == PlayerControl.LocalPlayer; },
                 () => {
@@ -12701,10 +12762,8 @@ namespace LasMonjas
                             RPCProcedure.zombieTakeKeyItem(targetId, keyId);
                         }
                         else if (ZombieLaboratory.survivorPlayer06FoundBox == 7) {
-                            MessageWriter ammoRecovered = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieAmmoRecover, Hazel.SendOption.Reliable, -1);
-                            ammoRecovered.Write(6);
-                            AmongUsClient.Instance.FinishRpcImmediately(ammoRecovered);
-                            RPCProcedure.zombieAmmoRecover(6);
+
+                            ZombieLaboratory.survivorPlayer06CanKill = true;
 
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.rechargeAmmoClip, false, 100f);
 
@@ -12787,13 +12846,15 @@ namespace LasMonjas
             survivor07KillButton = new CustomButton(
                 () => {
                     byte targetId = ZombieLaboratory.survivorPlayer07currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = ZombieLaboratory.survivorPlayer07.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(21);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.zombieKills(targetId, 21);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     survivor07KillButton.Timer = survivor07KillButton.MaxTimer;
                     ZombieLaboratory.survivorPlayer07currentTarget = null;
+                    ZombieLaboratory.survivorPlayer07CanKill = false;
                 },
                 () => { return ZombieLaboratory.survivorPlayer07 != null && ZombieLaboratory.survivorPlayer07 == PlayerControl.LocalPlayer; },
                 () => {
@@ -12912,10 +12973,8 @@ namespace LasMonjas
                             RPCProcedure.zombieTakeKeyItem(targetId, keyId);
                         }
                         else if (ZombieLaboratory.survivorPlayer07FoundBox == 7) {
-                            MessageWriter ammoRecovered = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieAmmoRecover, Hazel.SendOption.Reliable, -1);
-                            ammoRecovered.Write(7);
-                            AmongUsClient.Instance.FinishRpcImmediately(ammoRecovered);
-                            RPCProcedure.zombieAmmoRecover(7);
+
+                            ZombieLaboratory.survivorPlayer07CanKill = true;
 
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.rechargeAmmoClip, false, 100f);
 
@@ -12998,13 +13057,15 @@ namespace LasMonjas
             survivor08KillButton = new CustomButton(
                 () => {
                     byte targetId = ZombieLaboratory.survivorPlayer08currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = ZombieLaboratory.survivorPlayer08.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(22);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.zombieKills(targetId, 22);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     survivor08KillButton.Timer = survivor08KillButton.MaxTimer;
                     ZombieLaboratory.survivorPlayer08currentTarget = null;
+                    ZombieLaboratory.survivorPlayer08CanKill = false;
                 },
                 () => { return ZombieLaboratory.survivorPlayer08 != null && ZombieLaboratory.survivorPlayer08 == PlayerControl.LocalPlayer; },
                 () => {
@@ -13123,10 +13184,8 @@ namespace LasMonjas
                             RPCProcedure.zombieTakeKeyItem(targetId, keyId);
                         }
                         else if (ZombieLaboratory.survivorPlayer08FoundBox == 7) {
-                            MessageWriter ammoRecovered = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieAmmoRecover, Hazel.SendOption.Reliable, -1);
-                            ammoRecovered.Write(8);
-                            AmongUsClient.Instance.FinishRpcImmediately(ammoRecovered);
-                            RPCProcedure.zombieAmmoRecover(8);
+
+                            ZombieLaboratory.survivorPlayer08CanKill = true;
 
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.rechargeAmmoClip, false, 100f);
 
@@ -13209,13 +13268,15 @@ namespace LasMonjas
             survivor09KillButton = new CustomButton(
                 () => {
                     byte targetId = ZombieLaboratory.survivorPlayer09currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = ZombieLaboratory.survivorPlayer09.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(23);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.zombieKills(targetId, 23);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     survivor09KillButton.Timer = survivor09KillButton.MaxTimer;
                     ZombieLaboratory.survivorPlayer09currentTarget = null;
+                    ZombieLaboratory.survivorPlayer09CanKill = false;
                 },
                 () => { return ZombieLaboratory.survivorPlayer09 != null && ZombieLaboratory.survivorPlayer09 == PlayerControl.LocalPlayer; },
                 () => {
@@ -13334,10 +13395,8 @@ namespace LasMonjas
                             RPCProcedure.zombieTakeKeyItem(targetId, keyId);
                         }
                         else if (ZombieLaboratory.survivorPlayer09FoundBox == 7) {
-                            MessageWriter ammoRecovered = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieAmmoRecover, Hazel.SendOption.Reliable, -1);
-                            ammoRecovered.Write(9);
-                            AmongUsClient.Instance.FinishRpcImmediately(ammoRecovered);
-                            RPCProcedure.zombieAmmoRecover(9);
+
+                            ZombieLaboratory.survivorPlayer09CanKill = true;
 
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.rechargeAmmoClip, false, 100f);
 
@@ -13420,13 +13479,15 @@ namespace LasMonjas
             survivor10KillButton = new CustomButton(
                 () => {
                     byte targetId = ZombieLaboratory.survivorPlayer10currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = ZombieLaboratory.survivorPlayer10.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(24);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.zombieKills(targetId, 24);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     survivor10KillButton.Timer = survivor10KillButton.MaxTimer;
                     ZombieLaboratory.survivorPlayer10currentTarget = null;
+                    ZombieLaboratory.survivorPlayer10CanKill = false;
                 },
                 () => { return ZombieLaboratory.survivorPlayer10 != null && ZombieLaboratory.survivorPlayer10 == PlayerControl.LocalPlayer; },
                 () => {
@@ -13545,10 +13606,8 @@ namespace LasMonjas
                             RPCProcedure.zombieTakeKeyItem(targetId, keyId);
                         }
                         else if (ZombieLaboratory.survivorPlayer10FoundBox == 7) {
-                            MessageWriter ammoRecovered = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieAmmoRecover, Hazel.SendOption.Reliable, -1);
-                            ammoRecovered.Write(10);
-                            AmongUsClient.Instance.FinishRpcImmediately(ammoRecovered);
-                            RPCProcedure.zombieAmmoRecover(10);
+
+                            ZombieLaboratory.survivorPlayer10CanKill = true;
 
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.rechargeAmmoClip, false, 100f);
 
@@ -13631,13 +13690,15 @@ namespace LasMonjas
             survivor11KillButton = new CustomButton(
                 () => {
                     byte targetId = ZombieLaboratory.survivorPlayer11currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = ZombieLaboratory.survivorPlayer11.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(25);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.zombieKills(targetId, 25);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     survivor11KillButton.Timer = survivor11KillButton.MaxTimer;
                     ZombieLaboratory.survivorPlayer11currentTarget = null;
+                    ZombieLaboratory.survivorPlayer11CanKill = false;
                 },
                 () => { return ZombieLaboratory.survivorPlayer11 != null && ZombieLaboratory.survivorPlayer11 == PlayerControl.LocalPlayer; },
                 () => {
@@ -13756,10 +13817,8 @@ namespace LasMonjas
                             RPCProcedure.zombieTakeKeyItem(targetId, keyId);
                         }
                         else if (ZombieLaboratory.survivorPlayer11FoundBox == 7) {
-                            MessageWriter ammoRecovered = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieAmmoRecover, Hazel.SendOption.Reliable, -1);
-                            ammoRecovered.Write(11);
-                            AmongUsClient.Instance.FinishRpcImmediately(ammoRecovered);
-                            RPCProcedure.zombieAmmoRecover(11);
+
+                            ZombieLaboratory.survivorPlayer11CanKill = true;
 
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.rechargeAmmoClip, false, 100f);
 
@@ -13842,13 +13901,15 @@ namespace LasMonjas
             survivor12KillButton = new CustomButton(
                 () => {
                     byte targetId = ZombieLaboratory.survivorPlayer12currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = ZombieLaboratory.survivorPlayer12.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(26);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.zombieKills(targetId, 26);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     survivor12KillButton.Timer = survivor12KillButton.MaxTimer;
                     ZombieLaboratory.survivorPlayer12currentTarget = null;
+                    ZombieLaboratory.survivorPlayer12CanKill = false;
                 },
                 () => { return ZombieLaboratory.survivorPlayer12 != null && ZombieLaboratory.survivorPlayer12 == PlayerControl.LocalPlayer; },
                 () => {
@@ -13967,10 +14028,8 @@ namespace LasMonjas
                             RPCProcedure.zombieTakeKeyItem(targetId, keyId);
                         }
                         else if (ZombieLaboratory.survivorPlayer12FoundBox == 7) {
-                            MessageWriter ammoRecovered = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieAmmoRecover, Hazel.SendOption.Reliable, -1);
-                            ammoRecovered.Write(12);
-                            AmongUsClient.Instance.FinishRpcImmediately(ammoRecovered);
-                            RPCProcedure.zombieAmmoRecover(12);
+
+                            ZombieLaboratory.survivorPlayer12CanKill = true;
 
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.rechargeAmmoClip, false, 100f);
 
@@ -14053,13 +14112,15 @@ namespace LasMonjas
             survivor13KillButton = new CustomButton(
                 () => {
                     byte targetId = ZombieLaboratory.survivorPlayer13currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = ZombieLaboratory.survivorPlayer13.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(27);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.zombieKills(targetId, 27);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     survivor13KillButton.Timer = survivor13KillButton.MaxTimer;
                     ZombieLaboratory.survivorPlayer13currentTarget = null;
+                    ZombieLaboratory.survivorPlayer13CanKill = false;
                 },
                 () => { return ZombieLaboratory.survivorPlayer13 != null && ZombieLaboratory.survivorPlayer13 == PlayerControl.LocalPlayer; },
                 () => {
@@ -14178,10 +14239,8 @@ namespace LasMonjas
                             RPCProcedure.zombieTakeKeyItem(targetId, keyId);
                         }
                         else if (ZombieLaboratory.survivorPlayer13FoundBox == 7) {
-                            MessageWriter ammoRecovered = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ZombieAmmoRecover, Hazel.SendOption.Reliable, -1);
-                            ammoRecovered.Write(13);
-                            AmongUsClient.Instance.FinishRpcImmediately(ammoRecovered);
-                            RPCProcedure.zombieAmmoRecover(13);
+
+                            ZombieLaboratory.survivorPlayer13CanKill = true;
 
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.rechargeAmmoClip, false, 100f);
 
@@ -14268,7 +14327,7 @@ namespace LasMonjas
                     PlayerControl target = BattleRoyale.GetShotPlayer(2 * 0.2f, 6, 1);
 
                     new BattleRoyaleShoot(BattleRoyale.soloPlayer01, 0, BattleRoyale.soloPlayer01mouseAngle);
-                    
+
                     if (target == null) {
                         soloPlayer01KillButton.Timer = soloPlayer01KillButton.MaxTimer;                      
                         return;
@@ -14332,7 +14391,7 @@ namespace LasMonjas
                     PlayerControl target = BattleRoyale.GetShotPlayer(2 * 0.2f, 6, 2);
 
                     new BattleRoyaleShoot(BattleRoyale.soloPlayer02, 0, BattleRoyale.soloPlayer02mouseAngle);
-                    
+
                     if (target == null) {
                         soloPlayer02KillButton.Timer = soloPlayer02KillButton.MaxTimer;                       
                         return;
@@ -14396,7 +14455,7 @@ namespace LasMonjas
                     PlayerControl target = BattleRoyale.GetShotPlayer(2 * 0.2f, 6, 3);
 
                     new BattleRoyaleShoot(BattleRoyale.soloPlayer03, 0, BattleRoyale.soloPlayer03mouseAngle); 
-                    
+
                     if (target == null) {
                         soloPlayer03KillButton.Timer = soloPlayer03KillButton.MaxTimer;                      
                         return;
@@ -14460,7 +14519,7 @@ namespace LasMonjas
                     PlayerControl target = BattleRoyale.GetShotPlayer(2 * 0.2f, 6, 4);
 
                     new BattleRoyaleShoot(BattleRoyale.soloPlayer04, 0, BattleRoyale.soloPlayer04mouseAngle);
-                    
+
                     if (target == null) {
                         soloPlayer04KillButton.Timer = soloPlayer04KillButton.MaxTimer;                       
                         return;
@@ -14524,7 +14583,7 @@ namespace LasMonjas
                     PlayerControl target = BattleRoyale.GetShotPlayer(2 * 0.2f, 6, 5);
 
                     new BattleRoyaleShoot(BattleRoyale.soloPlayer05, 0, BattleRoyale.soloPlayer05mouseAngle);
-                    
+
                     if (target == null) {
                         soloPlayer05KillButton.Timer = soloPlayer05KillButton.MaxTimer;
                         return;
@@ -14588,7 +14647,7 @@ namespace LasMonjas
                     PlayerControl target = BattleRoyale.GetShotPlayer(2 * 0.2f, 6, 6);
 
                     new BattleRoyaleShoot(BattleRoyale.soloPlayer06, 0, BattleRoyale.soloPlayer06mouseAngle);
-                    
+
                     if (target == null) {
                         soloPlayer06KillButton.Timer = soloPlayer06KillButton.MaxTimer;
                         return;
@@ -15329,7 +15388,7 @@ namespace LasMonjas
                             return;
                         }
                     }
-                    
+
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.limePlayer02.PlayerId);
@@ -15411,7 +15470,7 @@ namespace LasMonjas
                             return;
                         }
                     }
-                    
+
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.limePlayer03.PlayerId);
@@ -15493,7 +15552,7 @@ namespace LasMonjas
                             return;
                         }
                     }
-                    
+
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.limePlayer04.PlayerId);
@@ -15575,7 +15634,7 @@ namespace LasMonjas
                             return;
                         }
                     }
-                    
+
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.limePlayer05.PlayerId);
@@ -15657,7 +15716,7 @@ namespace LasMonjas
                             return;
                         }
                     }
-                    
+
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.limePlayer06.PlayerId);
@@ -15739,7 +15798,7 @@ namespace LasMonjas
                             return;
                         }
                     }
-                    
+
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.limePlayer07.PlayerId);
@@ -15821,7 +15880,7 @@ namespace LasMonjas
                             return;
                         }
                     }
-                    
+
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.pinkPlayer01.PlayerId);
@@ -15903,7 +15962,7 @@ namespace LasMonjas
                             return;
                         }
                     }
-                    
+
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.pinkPlayer02.PlayerId);
@@ -15985,7 +16044,7 @@ namespace LasMonjas
                             return;
                         }
                     }
-                    
+
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.pinkPlayer03.PlayerId);
@@ -16067,7 +16126,7 @@ namespace LasMonjas
                             return;
                         }
                     }
-                    
+
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.pinkPlayer04.PlayerId);
@@ -16149,7 +16208,7 @@ namespace LasMonjas
                             return;
                         }
                     }
-                    
+
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.pinkPlayer05.PlayerId);
@@ -16231,7 +16290,7 @@ namespace LasMonjas
                             return;
                         }
                     }
-                    
+
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.pinkPlayer06.PlayerId);
@@ -16313,7 +16372,7 @@ namespace LasMonjas
                             return;
                         }
                     }
-                    
+
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.pinkPlayer07.PlayerId);
@@ -16401,7 +16460,7 @@ namespace LasMonjas
                             return;
                         }
                     }
-                    
+
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.serialKiller.PlayerId);
@@ -16469,11 +16528,12 @@ namespace LasMonjas
             greenmonja01KillButton = new CustomButton(
                 () => {
                     byte targetId = MonjaFestival.greenPlayer01currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = MonjaFestival.greenPlayer01.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(1);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.monjaFestivalKills(targetId, 1);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     greenmonja01KillButton.Timer = greenmonja01KillButton.MaxTimer;
                     MonjaFestival.greenPlayer01currentTarget = null;
                 },
@@ -16490,11 +16550,12 @@ namespace LasMonjas
             greenmonja02KillButton = new CustomButton(
                 () => {
                     byte targetId = MonjaFestival.greenPlayer02currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = MonjaFestival.greenPlayer02.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(2);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.monjaFestivalKills(targetId, 2);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     greenmonja02KillButton.Timer = greenmonja02KillButton.MaxTimer;
                     MonjaFestival.greenPlayer02currentTarget = null;
                 },
@@ -16511,11 +16572,12 @@ namespace LasMonjas
             greenmonja03KillButton = new CustomButton(
                 () => {
                     byte targetId = MonjaFestival.greenPlayer03currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = MonjaFestival.greenPlayer03.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(3);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.monjaFestivalKills(targetId, 3);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     greenmonja03KillButton.Timer = greenmonja03KillButton.MaxTimer;
                     MonjaFestival.greenPlayer03currentTarget = null;
                 },
@@ -16532,11 +16594,12 @@ namespace LasMonjas
             greenmonja04KillButton = new CustomButton(
                 () => {
                     byte targetId = MonjaFestival.greenPlayer04currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = MonjaFestival.greenPlayer04.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(4);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.monjaFestivalKills(targetId, 4);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     greenmonja04KillButton.Timer = greenmonja04KillButton.MaxTimer;
                     MonjaFestival.greenPlayer04currentTarget = null;
                 },
@@ -16553,11 +16616,12 @@ namespace LasMonjas
             greenmonja05KillButton = new CustomButton(
                 () => {
                     byte targetId = MonjaFestival.greenPlayer05currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = MonjaFestival.greenPlayer05.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(5);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.monjaFestivalKills(targetId, 5);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     greenmonja05KillButton.Timer = greenmonja05KillButton.MaxTimer;
                     MonjaFestival.greenPlayer05currentTarget = null;
                 },
@@ -16574,11 +16638,12 @@ namespace LasMonjas
             greenmonja06KillButton = new CustomButton(
                 () => {
                     byte targetId = MonjaFestival.greenPlayer06currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = MonjaFestival.greenPlayer06.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(6);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.monjaFestivalKills(targetId, 6);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     greenmonja06KillButton.Timer = greenmonja06KillButton.MaxTimer;
                     MonjaFestival.greenPlayer06currentTarget = null;
                 },
@@ -16595,11 +16660,12 @@ namespace LasMonjas
             greenmonja07KillButton = new CustomButton(
                 () => {
                     byte targetId = MonjaFestival.greenPlayer07currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = MonjaFestival.greenPlayer07.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(7);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.monjaFestivalKills(targetId, 7);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     greenmonja07KillButton.Timer = greenmonja07KillButton.MaxTimer;
                     MonjaFestival.greenPlayer07currentTarget = null;
                 },
@@ -16616,11 +16682,12 @@ namespace LasMonjas
             cyanmonja01KillButton = new CustomButton(
                 () => {
                     byte targetId = MonjaFestival.cyanPlayer01currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = MonjaFestival.cyanPlayer01.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(9);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.monjaFestivalKills(targetId, 9);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     cyanmonja01KillButton.Timer = cyanmonja01KillButton.MaxTimer;
                     MonjaFestival.cyanPlayer01currentTarget = null;
                 },
@@ -16637,11 +16704,12 @@ namespace LasMonjas
             cyanmonja02KillButton = new CustomButton(
                 () => {
                     byte targetId = MonjaFestival.cyanPlayer02currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = MonjaFestival.cyanPlayer02.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(10);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.monjaFestivalKills(targetId, 10);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     cyanmonja02KillButton.Timer = cyanmonja02KillButton.MaxTimer;
                     MonjaFestival.cyanPlayer02currentTarget = null;
                 },
@@ -16658,11 +16726,12 @@ namespace LasMonjas
             cyanmonja03KillButton = new CustomButton(
                 () => {
                     byte targetId = MonjaFestival.cyanPlayer03currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = MonjaFestival.cyanPlayer03.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(11);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.monjaFestivalKills(targetId, 11);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     cyanmonja03KillButton.Timer = cyanmonja03KillButton.MaxTimer;
                     MonjaFestival.cyanPlayer03currentTarget = null;
                 },
@@ -16679,11 +16748,12 @@ namespace LasMonjas
             cyanmonja04KillButton = new CustomButton(
                 () => {
                     byte targetId = MonjaFestival.cyanPlayer04currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = MonjaFestival.cyanPlayer04.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(12);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.monjaFestivalKills(targetId, 12);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     cyanmonja04KillButton.Timer = cyanmonja04KillButton.MaxTimer;
                     MonjaFestival.cyanPlayer04currentTarget = null;
                 },
@@ -16700,11 +16770,12 @@ namespace LasMonjas
             cyanmonja05KillButton = new CustomButton(
                 () => {
                     byte targetId = MonjaFestival.cyanPlayer05currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = MonjaFestival.cyanPlayer05.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(13);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.monjaFestivalKills(targetId, 13);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     cyanmonja05KillButton.Timer = cyanmonja05KillButton.MaxTimer;
                     MonjaFestival.cyanPlayer05currentTarget = null;
                 },
@@ -16721,11 +16792,12 @@ namespace LasMonjas
             cyanmonja06KillButton = new CustomButton(
                 () => {
                     byte targetId = MonjaFestival.cyanPlayer06currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = MonjaFestival.cyanPlayer06.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(14);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.monjaFestivalKills(targetId, 14);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     cyanmonja06KillButton.Timer = cyanmonja06KillButton.MaxTimer;
                     MonjaFestival.cyanPlayer06currentTarget = null;
                 },
@@ -16742,11 +16814,12 @@ namespace LasMonjas
             cyanmonja07KillButton = new CustomButton(
                 () => {
                     byte targetId = MonjaFestival.cyanPlayer07currentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = MonjaFestival.cyanPlayer07.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(15);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.monjaFestivalKills(targetId, 15);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     cyanmonja07KillButton.Timer = cyanmonja07KillButton.MaxTimer;
                     MonjaFestival.cyanPlayer07currentTarget = null;
                 },
@@ -16763,11 +16836,12 @@ namespace LasMonjas
             bigmonjaKillButton = new CustomButton(
                 () => {
                     byte targetId = MonjaFestival.bigMonjaPlayercurrentTarget.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MonjaFestivalKills, Hazel.SendOption.Reliable, -1);
+                    byte sourceId = MonjaFestival.bigMonjaPlayer.PlayerId;
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
-                    killWriter.Write(16);
+                    killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.monjaFestivalKills(targetId, 16);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     bigmonjaKillButton.Timer = bigmonjaKillButton.MaxTimer;
                     MonjaFestival.bigMonjaPlayercurrentTarget = null;
                 },
@@ -16803,8 +16877,8 @@ namespace LasMonjas
                 () => {
                     bigmonjaInvisibleButton.Timer = bigmonjaInvisibleButton.MaxTimer;
                 }
-            );          
-            
+            );
+
             // Green Monja 01 find deliver button
             greenmonja01PickDeliverButton = new CustomButton(
                 () => {
@@ -19366,7 +19440,7 @@ namespace LasMonjas
             MonjaFestival.cyanPlayer07DeliverCount.enableWordWrapping = false;
             MonjaFestival.cyanPlayer07DeliverCount.transform.localScale = Vector3.one * 0.5f;
             MonjaFestival.cyanPlayer07DeliverCount.transform.localPosition += new Vector3(-0.07f, 0.7f, 0);
-            
+
             // Big Monja find deliver button
             bigmonjaPickDeliverButton = new CustomButton(
                 () => {
@@ -19567,7 +19641,7 @@ namespace LasMonjas
             MonjaFestival.bigMonjaPlayerDeliverCount.enableWordWrapping = false;
             MonjaFestival.bigMonjaPlayerDeliverCount.transform.localScale = Vector3.one * 0.5f;
             MonjaFestival.bigMonjaPlayerDeliverCount.transform.localPosition += new Vector3(-0.05f, 0.7f, 0); 
-            
+
             setCustomButtonCooldowns();
         }
     }

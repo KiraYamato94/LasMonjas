@@ -1,8 +1,5 @@
 using System.Collections.Generic;
-using System.Collections;
-using System;
 using UnityEngine;
-using static LasMonjas.LasMonjas;
 
 namespace LasMonjas
 {
@@ -25,7 +22,7 @@ namespace LasMonjas
         public static void clearAndReloadMapOptions() {
             camerasToAdd = new List<SurvCamera>();
             ventsToSeal = new List<Vent>();
-            playerIcons = new Dictionary<byte, PoolablePlayer>(); ;
+            playerIcons = new Dictionary<byte, PoolablePlayer>();
 
             showRoleSummary = LasMonjasPlugin.ShowRoleSummary.Value;
             activateMusic = LasMonjasPlugin.ActivateMusic.Value;

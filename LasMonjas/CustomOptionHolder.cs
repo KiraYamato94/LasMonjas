@@ -1,33 +1,26 @@
-using System.Collections.Generic;
 using UnityEngine;
-using BepInEx.Configuration;
-using System;
-using System.Linq;
-using HarmonyLib;
-using Hazel;
-using System.Reflection;
-using System.Text;
-using static LasMonjas.LasMonjas;
 using LasMonjas.Core;
 
 namespace LasMonjas
 {
     public class CustomOptionHolder {
         public static string[] rates = new string[]{"0%", "100%"}; 
-        public static string[] presets = new string[]{"Roles", "Gamemodes", "Preset 3", "Preset 4", "Preset 5" };
+        public static string[] presets = new string[]{"Roles", "Gamemodes", "Minigame Roles", "Preset 4", "Preset 5" };
 
-        // Game Options 
+        // Presets
         public static CustomOption presetSelection;
+
+        // Game Type
+        public static CustomOption gameType;
 
         // Global Settings
         public static CustomOption globalSettings;
         public static CustomOption activateRoles;
         public static CustomOption activateSenseiMap;
         public static CustomOption hideVentAnimOnShadows;
-        public static CustomOption whoAmIMode;
 
         // Roles Settings
-        public static CustomOption rolesSettings;        
+        public static CustomOption rolesSettings;
         public static CustomOption removeSwipeCard;
         public static CustomOption removeAirshipDoors;
         public static CustomOption nightVisionLightSabotage;
@@ -35,96 +28,49 @@ namespace LasMonjas
         public static CustomOption anonymousCommsSabotage;
         public static CustomOption slowSpeedOxigenSabotage;
 
-        // Modifiers
-        public static CustomOption activateModifiers;
-        public static CustomOption loverPlayer;
-        public static CustomOption lighterPlayer;
-        public static CustomOption blindPlayer;
-        public static CustomOption flashPlayer;
-        public static CustomOption bigchungusPlayer;
-        public static CustomOption theChosenOnePlayer;
-        public static CustomOption theChosenOneReportDelay;
-        public static CustomOption performerPlayer;
-        public static CustomOption performerDuration;
-        public static CustomOption proPlayer;
-        public static CustomOption paintballPlayer;
-        public static CustomOption paintballDuration;
-        public static CustomOption electricianPlayer;
-        public static CustomOption electricianDuration;
+        // Gamemode Settings
+        public static CustomOption gamemodeSettings;
+        public static CustomOption gamemodeMatchDuration;
+        public static CustomOption gamemodeKillCooldown;
+        public static CustomOption gamemodeReviveTime;
+        public static CustomOption gamemodeInvincibilityTimeAfterRevive;
 
+        // Gamemode Individual Settings
+        public static CustomOption gamemodeIndividualSettings;
         // Capture the flag
-        public static CustomOption captureTheFlagMode;
-        public static CustomOption flagMatchDuration;
         public static CustomOption requiredFlags;
-        public static CustomOption flagKillCooldown;
-        public static CustomOption flagReviveTime;
-        public static CustomOption flagInvincibilityTimeAfterRevive;
-
         // Police And Thief
-        public static CustomOption policeAndThiefMode;
-        public static CustomOption thiefModeMatchDuration;
         public static CustomOption thiefModerequiredJewels;
-        public static CustomOption thiefModePoliceKillCooldown;
         public static CustomOption thiefModePoliceTaseCooldown;
         public static CustomOption thiefModePoliceTaseDuration;
         public static CustomOption thiefModePoliceCanSeeJewels;
         public static CustomOption thiefModePoliceCatchCooldown;
         public static CustomOption thiefModecaptureThiefTime;
         public static CustomOption thiefModepolicevision;
-        public static CustomOption thiefModePoliceReviveTime;
         public static CustomOption thiefModeWhoCanThiefsKill;
-        public static CustomOption thiefModeKillCooldown;
-        public static CustomOption thiefModeThiefReviveTime;
-        public static CustomOption thiefModeInvincibilityTimeAfterRevive;
-
         // King of the hill
-        public static CustomOption kingOfTheHillMode;
-        public static CustomOption kingMatchDuration;
         public static CustomOption kingRequiredPoints;
         public static CustomOption kingCaptureCooldown;
-        public static CustomOption kingKillCooldown;
         public static CustomOption kingCanKill;
-        public static CustomOption kingReviveTime;
-        public static CustomOption kingInvincibilityTimeAfterRevive;
-
         // Hot Potato
-        public static CustomOption hotPotatoMode;
-        public static CustomOption hotPotatoMatchDuration;
         public static CustomOption hotPotatoTransferLimit;
         public static CustomOption hotPotatoCooldown;
         public static CustomOption hotPotatoNotPotatovision;
         public static CustomOption hotPotatoResetTimeForTransfer;
         public static CustomOption hotPotatoIncreaseTimeIfNoReset;
-
         // ZombieLaboratory
-        public static CustomOption zombieLaboratoryMode;
-        public static CustomOption zombieLaboratoryMatchDuration;
         public static CustomOption zombieLaboratoryStartZombies;
         public static CustomOption zombieLaboratoryInfectCooldown;
-        public static CustomOption zombieLaboratoryKillCooldown;
-        public static CustomOption zombieLaboratoryReviveTime;
-        public static CustomOption zombieLaboratoryInvincibilityTimeAfterRevive;
         public static CustomOption zombieLaboratoryInfectTime;
         public static CustomOption zombieLaboratoryMaxTimeForHeal;
         public static CustomOption zombieLaboratorySurvivorsVision;
         public static CustomOption zombieLaboratorySearchBoxTimer;
-
         // BattleRoyale
-        public static CustomOption battleRoyaleMode;
-        public static CustomOption battleRoyaleMatchDuration;
         public static CustomOption battleRoyaleMatchType;
         public static CustomOption battleRoyaleKillCooldown;
         public static CustomOption battleRoyaleLifes;
         public static CustomOption battleRoyaleScoreNeeded;
-        public static CustomOption battleRoyaleReviveTime;
-        public static CustomOption battleRoyaleInvincibilityTimeAfterRevive;
 
-        // MonjaFestival
-        public static CustomOption monjaFestivalMode;
-        public static CustomOption monjaFestivalMatchDuration;
-        public static CustomOption monjaFestivalKillCooldown;
-        public static CustomOption monjaFestivalReviveTime;
-        public static CustomOption monjaFestivalInvincibilityTimeAfterRevive;
 
         // Impostors configurable options
 
@@ -189,7 +135,7 @@ namespace LasMonjas
         public static CustomOption hypnotistCooldown;
         public static CustomOption hypnotistNumberOfSpirals;
         public static CustomOption hypnotistSpiralsDuration;
-        
+
         // Archer
         public static CustomOption archerSpawnRate;
         public static CustomOption archerShotSize;
@@ -204,14 +150,14 @@ namespace LasMonjas
 
         public static CustomOption librarianSpawnRate;
         public static CustomOption librarianCooldown;
-        
-        
+
+
         // Rebels configurable options
 
         // Renegade & Minion
         public static CustomOption renegadeSpawnRate;
         public static CustomOption renegadeCanUseVents;
-        public static CustomOption renegadeCanRecruitMinion;    
+        public static CustomOption renegadeCanRecruitMinion;
 
         // Bountyhunter
         public static CustomOption bountyHunterSpawnRate;
@@ -388,15 +334,15 @@ namespace LasMonjas
 
         // Spiritualist
         public static CustomOption spiritualistSpawnRate;
-        public static CustomOption spiritualistReviveTime;       
+        public static CustomOption spiritualistReviveTime;
 
         // Vigilant
         public static CustomOption vigilantSpawnRate;
         public static CustomOption vigilantCooldown;
         public static CustomOption vigilantCamDuration;
         public static CustomOption vigilantCamMaxCharges;
-        public static CustomOption vigilantCamRechargeTasksNumber;      
-        
+        public static CustomOption vigilantCamRechargeTasksNumber;
+
         // Hunter
         public static CustomOption hunterSpawnRate;
         public static CustomOption hunterResetTargetAfterMeeting;
@@ -450,6 +396,22 @@ namespace LasMonjas
         public static CustomOption jailerCooldown;
         public static CustomOption jailerDuration;
 
+        // Modifiers
+        public static CustomOption loverPlayer;
+        public static CustomOption lighterPlayer;
+        public static CustomOption blindPlayer;
+        public static CustomOption flashPlayer;
+        public static CustomOption bigchungusPlayer;
+        public static CustomOption theChosenOnePlayer;
+        public static CustomOption theChosenOneReportDelay;
+        public static CustomOption performerPlayer;
+        public static CustomOption performerDuration;
+        public static CustomOption proPlayer;
+        public static CustomOption paintballPlayer;
+        public static CustomOption paintballDuration;
+        public static CustomOption electricianPlayer;
+        public static CustomOption electricianDuration;
+
         public static string cs(Color c, string s) {
             return string.Format("<color=#{0:X2}{1:X2}{2:X2}{3:X2}>{4}</color>", ToByte(c.r), ToByte(c.g), ToByte(c.b), ToByte(c.a), s);
         }
@@ -460,117 +422,73 @@ namespace LasMonjas
         }
 
         public static void Load() {
-            
+
             // Game Options
             presetSelection = CustomOption.Create(0, cs(new Color(204f / 255f, 204f / 255f, 0, 1f), "Preset"), "setting", presets, null, true);
 
+            // Game Type
+            gameType = CustomOption.Create(1, cs(TaskMaster.color, "Game Type"), "setting", new string[] { "Roles", "Find a Role", "Capture the Flag", "Police and Thieves", "King of the Hill", "Hot Potato", "Zombie Laboratory", "Battle Royale", "Monja Festival" }, null, true);
+
             // Global Settings
-            globalSettings = CustomOption.Create(1, cs(Jailer.color, "Global Settings"), "setting", false, null, true);
-            activateRoles = CustomOption.Create(2, cs(Jailer.color, "Activate mod roles and gamemodes"), "setting", true, globalSettings);
-            activateSenseiMap = CustomOption.Create(3, cs(Jailer.color, "Activate Custom Skeld Map"), "setting", false, globalSettings);
-            hideVentAnimOnShadows = CustomOption.Create(4, cs(Jailer.color, "Hide Vent Anim on Shadows"), "setting", false, globalSettings);
+            globalSettings = CustomOption.Create(2, cs(Jailer.color, "Global Settings"), "setting", false, null, true);
+            activateRoles = CustomOption.Create(3, cs(Jailer.color, "Activate mod roles and gamemodes"), "setting", true, globalSettings);
+            activateSenseiMap = CustomOption.Create(4, cs(Jailer.color, "Activate Custom Skeld Map"), "setting", false, globalSettings);
+            hideVentAnimOnShadows = CustomOption.Create(5, cs(Jailer.color, "Hide Vent Anim on Shadows"), "setting", false, globalSettings);
 
             // Roles Settings
-            rolesSettings = CustomOption.Create(6, cs(Detective.color, "Roles Settings"), "setting", false, null, true);
-            whoAmIMode = CustomOption.Create(7, cs(Detective.color, "Find a Role Mode"), "setting", false, rolesSettings);
-            removeSwipeCard = CustomOption.Create(8, cs(Detective.color, "Remove Swipe Card Task"), "setting", false, rolesSettings);
-            removeAirshipDoors = CustomOption.Create(9, cs(Detective.color, "Remove Airship Doors"), "setting", false, rolesSettings);
-            nightVisionLightSabotage = CustomOption.Create(10, cs(Detective.color, "Night vision for lights sabotage"), "setting", false, rolesSettings);
-            screenShakeReactorSabotage = CustomOption.Create(11, cs(Detective.color, "Screen shake for reactor sabotage"), "setting", false, rolesSettings);
-            anonymousCommsSabotage = CustomOption.Create(12, cs(Detective.color, "Anonymous players for comms sabotage"), "setting", false, rolesSettings);
-            slowSpeedOxigenSabotage = CustomOption.Create(13, cs(Detective.color, "Decrease speed for oxygen sabotage"), "setting", false, rolesSettings);
+            rolesSettings = CustomOption.Create(10, cs(Shy.color, "Roles Settings"), "setting", false, null, true);
+            removeSwipeCard = CustomOption.Create(11, cs(Shy.color, "Remove Swipe Card Task"), "setting", false, rolesSettings);
+            removeAirshipDoors = CustomOption.Create(12, cs(Shy.color, "Remove Airship Doors"), "setting", false, rolesSettings);
+            nightVisionLightSabotage = CustomOption.Create(13, cs(Shy.color, "Night vision for lights sabotage"), "setting", false, rolesSettings);
+            screenShakeReactorSabotage = CustomOption.Create(14, cs(Shy.color, "Screen shake for reactor sabotage"), "setting", false, rolesSettings);
+            anonymousCommsSabotage = CustomOption.Create(15, cs(Shy.color, "Anonymous players for comms sabotage"), "setting", false, rolesSettings);
+            slowSpeedOxigenSabotage = CustomOption.Create(16, cs(Shy.color, "Decrease speed for oxygen sabotage"), "setting", false, rolesSettings);
 
-            // Modifiers
-            activateModifiers = CustomOption.Create(15, cs(Modifiers.color, "Modifiers"), "setting", false, null, true);
-            loverPlayer = CustomOption.Create(16, cs(Modifiers.color, "Lovers"), "setting", rates, activateModifiers, false);
-            lighterPlayer = CustomOption.Create(17, cs(Modifiers.color, "Lighter"), "setting", rates, activateModifiers, false);
-            blindPlayer = CustomOption.Create(18, cs(Modifiers.color, "Blind"), "setting", rates, activateModifiers, false);
-            flashPlayer = CustomOption.Create(19, cs(Modifiers.color, "Flash"), "setting", rates, activateModifiers, false);
-            bigchungusPlayer = CustomOption.Create(20, cs(Modifiers.color, "Big Chungus"), "setting", rates, activateModifiers, false);
-            theChosenOnePlayer = CustomOption.Create(21, cs(Modifiers.color, "The Chosen One"), "setting", rates, activateModifiers, false);
-            theChosenOneReportDelay = CustomOption.Create(22, cs(Modifiers.color, "The Chosen One") + ": Report Delay", "setting", 0f, 0f, 5f, 1f, activateModifiers);
-            performerPlayer = CustomOption.Create(23, cs(Modifiers.color, "Performer"), "setting", rates, activateModifiers, false);
-            performerDuration = CustomOption.Create(24, cs(Modifiers.color, "Performer") + ": Alarm Duration", "setting", 30f, 15f, 30f, 1f, activateModifiers);
-            proPlayer = CustomOption.Create(25, cs(Modifiers.color, "Pro"), "setting", rates, activateModifiers, false);
-            paintballPlayer = CustomOption.Create(26, cs(Modifiers.color, "Paintball"), "setting", rates, activateModifiers, false);
-            paintballDuration = CustomOption.Create(27, cs(Modifiers.color, "Paintball") + ": Paint Duration", "setting", 10f, 5f, 15f, 1f, activateModifiers);
-            electricianPlayer = CustomOption.Create(28, cs(Modifiers.color, "Electrician"), "setting", rates, activateModifiers, false);
-            electricianDuration = CustomOption.Create(29, cs(Modifiers.color, "Electrician") + ": Discharge Duration", "setting", 5f, 5f, 10f, 1f, activateModifiers);      
-            
+            // Gamemode Settings
+            gamemodeSettings = CustomOption.Create(20, cs(Sheriff.color, "Gamemode Global Settings"), "setting", false, null, true);
+            gamemodeMatchDuration = CustomOption.Create(21, cs(Sheriff.color, "Match Duration"), "setting", 180f, 180f, 420f, 30f, gamemodeSettings);
+            gamemodeKillCooldown = CustomOption.Create(22, cs(Sheriff.color, "Kill Cooldown"), "setting", 10f, 10f, 20f, 1f, gamemodeSettings);
+            gamemodeReviveTime = CustomOption.Create(23, cs(Sheriff.color, "Revive Wait Time"), "setting", 8f, 7f, 15f, 1f, gamemodeSettings);
+            gamemodeInvincibilityTimeAfterRevive = CustomOption.Create(24, cs(Sheriff.color, "Invincibility Time After Revive"), "setting", 3f, 2f, 5f, 1f, gamemodeSettings);
+
+            // Gamemode Individual Settings
+            gamemodeIndividualSettings = CustomOption.Create(30, cs(Sheriff.color, "Gamemode Individual Settings"), "gamemode", false, null, true);
             // Capture the flag mode
-            captureTheFlagMode = CustomOption.Create(30, cs(Sheriff.color, "Capture the Flag"), "gamemode", false, null, true);
-            flagMatchDuration = CustomOption.Create(31, cs(Sheriff.color, "Capture the Flag") + ": Match Duration", "gamemode", 180f, 180f, 300f, 30f, captureTheFlagMode);
-            requiredFlags = CustomOption.Create(32, cs(Sheriff.color, "Capture the Flag") + ": Score Number", "gamemode", 3f, 3f, 5f, 1f, captureTheFlagMode);
-            flagKillCooldown = CustomOption.Create(33, cs(Sheriff.color, "Capture the Flag") + ": Kill Cooldown", "gamemode", 10f, 5f, 15f, 1f, captureTheFlagMode);
-            flagReviveTime = CustomOption.Create(34, cs(Sheriff.color, "Capture the Flag") + ": Revive Wait Time", "gamemode", 8f, 7f, 15f, 1f, captureTheFlagMode);
-            flagInvincibilityTimeAfterRevive = CustomOption.Create(35, cs(Sheriff.color, "Capture the Flag") + ": Invincibility Time After Revive", "gamemode", 3f, 2f, 5f, 1f, captureTheFlagMode);
-
+            requiredFlags = CustomOption.Create(31, cs(Sheriff.color, "Capture the Flag") + ": Score Number", "gamemode", 3f, 3f, 5f, 1f, gamemodeIndividualSettings);
             // Police and Thief mode
-            policeAndThiefMode = CustomOption.Create(40, cs(Coward.color, "Police and Thieves"), "gamemode", false, null, true);
-            thiefModeMatchDuration = CustomOption.Create(41, cs(Coward.color, "Police and Thieves") + ": Match Duration", "gamemode", 300f, 300f, 450f, 30f, policeAndThiefMode);
-            thiefModerequiredJewels = CustomOption.Create(42, cs(Coward.color, "Police and Thieves") + ": Jewel Number", "gamemode", 15f, 8f, 15f, 1f, policeAndThiefMode);
-            thiefModePoliceKillCooldown = CustomOption.Create(43, cs(Coward.color, "Police and Thieves") + ": Police Kill Cooldown", "gamemode", 15f, 10f, 20f, 1f, policeAndThiefMode);
-            thiefModePoliceCatchCooldown = CustomOption.Create(44, cs(Coward.color, "Police and Thieves") + ": Police Arrest Cooldown", "gamemode", 10f, 5f, 15f, 1f, policeAndThiefMode);
-            thiefModecaptureThiefTime = CustomOption.Create(45, cs(Coward.color, "Police and Thieves") + ": Time to Arrest", "gamemode", 3f, 2f, 5f, 1f, policeAndThiefMode);
-            thiefModePoliceTaseCooldown = CustomOption.Create(46, cs(Coward.color, "Police and Thieves") + ": Police Tase Cooldown", "gamemode", 15f, 10f, 20f, 1f, policeAndThiefMode);
-            thiefModePoliceTaseDuration = CustomOption.Create(47, cs(Coward.color, "Police and Thieves") + ": Police Tase Duration", "gamemode", 3f, 3f, 5f, 1f, policeAndThiefMode);
-            thiefModePoliceCanSeeJewels = CustomOption.Create(48, cs(Coward.color, "Police and Thieves") + ": Police can see Jewels", "gamemode", false, policeAndThiefMode);
-            thiefModepolicevision = CustomOption.Create(49, cs(Coward.color, "Police and Thieves") + ": Police vision range", "gamemode", 0.8f, 0.4f, 1.4f, 0.2f, policeAndThiefMode);
-            thiefModePoliceReviveTime = CustomOption.Create(50, cs(Coward.color, "Police and Thieves") + ": Police Revive Wait Time", "gamemode", 8f, 8f, 13f, 1f, policeAndThiefMode);
-            thiefModeWhoCanThiefsKill = CustomOption.Create(51, cs(Coward.color, "Police and Thieves") + ": Who Can Thieves Kill", "gamemode", new string[] { "Taser", "All", "Nobody" }, policeAndThiefMode);
-            thiefModeKillCooldown = CustomOption.Create(52, cs(Coward.color, "Police and Thieves") + ": Thieves Kill Cooldown", "gamemode", 20f, 15f, 30f, 1f, policeAndThiefMode);
-            thiefModeThiefReviveTime = CustomOption.Create(53, cs(Coward.color, "Police and Thieves") + ": Thieves Revive Wait Time", "gamemode", 13f, 13f, 23f, 1f, policeAndThiefMode);
-            thiefModeInvincibilityTimeAfterRevive = CustomOption.Create(54, cs(Coward.color, "Police and Thieves") + ": Invincibility Time After Revive", "gamemode", 3f, 2f, 5f, 1f, policeAndThiefMode);
-
+            thiefModerequiredJewels = CustomOption.Create(41, cs(Coward.color, "Police and Thieves") + ": Jewel Number", "gamemode", 15f, 8f, 15f, 1f, gamemodeIndividualSettings);
+            thiefModePoliceCatchCooldown = CustomOption.Create(42, cs(Coward.color, "Police and Thieves") + ": Arrest Cooldown", "gamemode", 10f, 5f, 15f, 1f, gamemodeIndividualSettings);
+            thiefModecaptureThiefTime = CustomOption.Create(43, cs(Coward.color, "Police and Thieves") + ": Time to Arrest", "gamemode", 3f, 2f, 3f, 1f, gamemodeIndividualSettings);
+            thiefModePoliceTaseCooldown = CustomOption.Create(44, cs(Coward.color, "Police and Thieves") + ": Tase Cooldown", "gamemode", 15f, 10f, 15f, 1f, gamemodeIndividualSettings);
+            thiefModePoliceTaseDuration = CustomOption.Create(45, cs(Coward.color, "Police and Thieves") + ": Tase Duration", "gamemode", 3f, 3f, 5f, 1f, gamemodeIndividualSettings);
+            thiefModePoliceCanSeeJewels = CustomOption.Create(46, cs(Coward.color, "Police and Thieves") + ": Police can see Jewels", "gamemode", false, gamemodeIndividualSettings);
+            thiefModepolicevision = CustomOption.Create(47, cs(Coward.color, "Police and Thieves") + ": Police vision range", "gamemode", 0.8f, 0.4f, 1.4f, 0.2f, gamemodeIndividualSettings);
+            thiefModeWhoCanThiefsKill = CustomOption.Create(48, cs(Coward.color, "Police and Thieves") + ": Who Can Thieves Kill", "gamemode", new string[] { "Taser", "All", "Nobody" }, gamemodeIndividualSettings);
             // King of the hill mode
-            kingOfTheHillMode = CustomOption.Create(60, cs(Squire.color, "King of the Hill"), "gamemode", false, null, true);
-            kingMatchDuration = CustomOption.Create(61, cs(Squire.color, "King of the Hill") + ": Match Duration", "gamemode", 180f, 180f, 300f, 30f, kingOfTheHillMode);
-            kingRequiredPoints = CustomOption.Create(62, cs(Squire.color, "King of the Hill") + ": Score Number", "gamemode", 200f, 100f, 300f, 10f, kingOfTheHillMode);
-            kingCaptureCooldown = CustomOption.Create(63, cs(Squire.color, "King of the Hill") + ": Capture Cooldown", "gamemode", 10f, 5f, 15f, 1f, kingOfTheHillMode);
-            kingKillCooldown = CustomOption.Create(64, cs(Squire.color, "King of the Hill") + ": Kill Cooldown", "gamemode", 10f, 10f, 20f, 1f, kingOfTheHillMode);
-            kingCanKill = CustomOption.Create(65, cs(Squire.color, "King of the Hill") + ": Kings can Kill", "gamemode", false, kingOfTheHillMode);
-            kingReviveTime = CustomOption.Create(66, cs(Squire.color, "King of the Hill") + ": Revive Wait Time", "gamemode", 13f, 13f, 18f, 1f, kingOfTheHillMode);
-            kingInvincibilityTimeAfterRevive = CustomOption.Create(67, cs(Squire.color, "King of the Hill") + ": Invincibility Time After Revive", "gamemode", 3f, 2f, 5f, 1f, kingOfTheHillMode);
-
+            kingRequiredPoints = CustomOption.Create(51, cs(Squire.color, "King of the Hill") + ": Score Number", "gamemode", 200f, 100f, 300f, 10f, gamemodeIndividualSettings);
+            kingCaptureCooldown = CustomOption.Create(52, cs(Squire.color, "King of the Hill") + ": Capture Cooldown", "gamemode", 10f, 5f, 15f, 1f, gamemodeIndividualSettings);
+            kingCanKill = CustomOption.Create(53, cs(Squire.color, "King of the Hill") + ": Kings can Kill", "gamemode", false, gamemodeIndividualSettings);
             // Hot Potato
-            hotPotatoMode = CustomOption.Create(70, cs(Shy.color, "Hot Potato"), "gamemode", false, null, true);
-            hotPotatoMatchDuration = CustomOption.Create(71, cs(Shy.color, "Hot Potato") + ": Match Duration", "gamemode", 300f, 300f, 450f, 30f, hotPotatoMode);
-            hotPotatoTransferLimit = CustomOption.Create(72, cs(Shy.color, "Hot Potato") + ": Hot Potato Time Limit for Transfer", "gamemode", 20f, 10f, 30f, 1f, hotPotatoMode);
-            hotPotatoCooldown = CustomOption.Create(73, cs(Shy.color, "Hot Potato") + ": Hot Potato Transfer Cooldown", "gamemode", 5f, 5f, 10f, 1f, hotPotatoMode);
-            hotPotatoNotPotatovision = CustomOption.Create(74, cs(Shy.color, "Hot Potato") + ": Cold Potatoes vision range", "gamemode", 0.8f, 0.6f, 1f, 0.2f, hotPotatoMode);
-            hotPotatoResetTimeForTransfer = CustomOption.Create(75, cs(Shy.color, "Hot Potato") + ": Reset Hot Potato timer after Transfer", "gamemode", true, hotPotatoMode);
-            hotPotatoIncreaseTimeIfNoReset = CustomOption.Create(76, cs(Shy.color, "Hot Potato") + ": Extra Time when timer doesn't reset", "gamemode", 5f, 5f, 10f, 1f, hotPotatoMode);
-
+             hotPotatoTransferLimit = CustomOption.Create(61, cs(Shy.color, "Hot Potato") + ": Time Limit for Transfer", "gamemode", 20f, 10f, 30f, 1f, gamemodeIndividualSettings);
+            hotPotatoCooldown = CustomOption.Create(62, cs(Shy.color, "Hot Potato") + ": Transfer Cooldown", "gamemode", 5f, 5f, 10f, 1f, gamemodeIndividualSettings);
+            hotPotatoNotPotatovision = CustomOption.Create(63, cs(Shy.color, "Hot Potato") + ": Cold Potatoes vision range", "gamemode", 0.8f, 0.6f, 1f, 0.2f, gamemodeIndividualSettings);
+            hotPotatoResetTimeForTransfer = CustomOption.Create(64, cs(Shy.color, "Hot Potato") + ": Reset timer after Transfer", "gamemode", true, gamemodeIndividualSettings);
+            hotPotatoIncreaseTimeIfNoReset = CustomOption.Create(65, cs(Shy.color, "Hot Potato") + ": Extra Time when timer doesn't reset", "gamemode", 10f, 10f, 15f, 1f, gamemodeIndividualSettings);
             // ZombieLaboratory
-            zombieLaboratoryMode = CustomOption.Create(80, cs(Hunter.color, "Zombie Laboratory"), "gamemode", false, null, true);
-            zombieLaboratoryMatchDuration = CustomOption.Create(81, cs(Hunter.color, "Zombie Laboratory") + ": Match Duration", "gamemode", 300f, 300f, 450f, 30f, zombieLaboratoryMode);
-            zombieLaboratoryStartZombies = CustomOption.Create(82, cs(Hunter.color, "Zombie Laboratory") + ": Initial Zombies", "gamemode", 1f, 1f, 5f, 1f, zombieLaboratoryMode);
-            zombieLaboratoryInfectTime = CustomOption.Create(83, cs(Hunter.color, "Zombie Laboratory") + ": Time to Infect", "gamemode", 3f, 3f, 5f, 1f, zombieLaboratoryMode);
-            zombieLaboratoryInfectCooldown = CustomOption.Create(84, cs(Hunter.color, "Zombie Laboratory") + ": Infect Cooldown", "gamemode", 10f, 10f, 20f, 1f, zombieLaboratoryMode);
-            zombieLaboratorySearchBoxTimer = CustomOption.Create(85, cs(Hunter.color, "Zombie Laboratory") + ": Search Box Timer", "gamemode", 5f, 3f, 5f, 1f, zombieLaboratoryMode);
-            zombieLaboratorySurvivorsVision = CustomOption.Create(86, cs(Hunter.color, "Zombie Laboratory") + ": Survivors vision range", "gamemode", 0.8f, 0.8f, 1f, 0.2f, zombieLaboratoryMode);
-            zombieLaboratoryMaxTimeForHeal = CustomOption.Create(87, cs(Hunter.color, "Zombie Laboratory") + ": Time to use Medkit", "gamemode", 45f, 30f, 90f, 5f, zombieLaboratoryMode);
-            zombieLaboratoryKillCooldown = CustomOption.Create(88, cs(Hunter.color, "Zombie Laboratory") + ": Kill Cooldown", "gamemode", 10f, 10f, 20f, 1f, zombieLaboratoryMode);
-            zombieLaboratoryReviveTime = CustomOption.Create(89, cs(Hunter.color, "Zombie Laboratory") + ": Revive Wait Time", "gamemode", 8f, 8f, 13f, 1f, zombieLaboratoryMode);
-            zombieLaboratoryInvincibilityTimeAfterRevive = CustomOption.Create(90, cs(Hunter.color, "Zombie Laboratory") + ": Invincibility Time After Revive", "gamemode", 3f, 2f, 5f, 1f, zombieLaboratoryMode);
-
+            zombieLaboratoryStartZombies = CustomOption.Create(71, cs(Hunter.color, "Zombie Laboratory") + ": Initial Zombies", "gamemode", 1f, 1f, 5f, 1f, gamemodeIndividualSettings);
+            zombieLaboratoryInfectTime = CustomOption.Create(72, cs(Hunter.color, "Zombie Laboratory") + ": Time to Infect", "gamemode", 3f, 2f, 3f, 1f, gamemodeIndividualSettings);
+            zombieLaboratoryInfectCooldown = CustomOption.Create(73, cs(Hunter.color, "Zombie Laboratory") + ": Infect Cooldown", "gamemode", 10f, 10f, 20f, 1f, gamemodeIndividualSettings);
+            zombieLaboratorySearchBoxTimer = CustomOption.Create(74, cs(Hunter.color, "Zombie Laboratory") + ": Search Box Timer", "gamemode", 3f, 2f, 3f, 1f, gamemodeIndividualSettings);
+            zombieLaboratorySurvivorsVision = CustomOption.Create(75, cs(Hunter.color, "Zombie Laboratory") + ": Survivors vision range", "gamemode", 0.8f, 0.8f, 1f, 0.2f, gamemodeIndividualSettings);
+            zombieLaboratoryMaxTimeForHeal = CustomOption.Create(76, cs(Hunter.color, "Zombie Laboratory") + ": Time to use Medkit", "gamemode", 45f, 30f, 90f, 5f, gamemodeIndividualSettings);
             // Battle Royale
-            battleRoyaleMode = CustomOption.Create(100, cs(Sleuth.color, "Battle Royale"), "gamemode", false, null, true);
-            battleRoyaleMatchDuration = CustomOption.Create(101, cs(Sleuth.color, "Battle Royale") + ": Match Duration", "gamemode", 180f, 180f, 300f, 30f, battleRoyaleMode);
-            battleRoyaleMatchType = CustomOption.Create(102, cs(Sleuth.color, "Battle Royale") + ": Match Type", "gamemode", new string[] { "All vs All", "Team Battle", "Score Battle" }, battleRoyaleMode);
-            battleRoyaleKillCooldown = CustomOption.Create(103, cs(Sleuth.color, "Battle Royale") + ": Kill Cooldown", "gamemode", 1f, 1f, 3f, 1f, battleRoyaleMode);
-            battleRoyaleLifes = CustomOption.Create(104, cs(Sleuth.color, "Battle Royale") + ": Fighter Lifes", "gamemode", 3f, 3f, 10f, 1f, battleRoyaleMode);
-            battleRoyaleScoreNeeded = CustomOption.Create(105, cs(Sleuth.color, "Battle Royale") + ": Score Number", "gamemode", 200f, 100f, 300f, 10f, battleRoyaleMode);
-            battleRoyaleReviveTime = CustomOption.Create(106, cs(Sleuth.color, "Battle Royale") + ": Revive Wait Time", "gamemode", 5f, 3f, 5f, 1f, battleRoyaleMode);
-            battleRoyaleInvincibilityTimeAfterRevive = CustomOption.Create(107, cs(Sleuth.color, "Battle Royale") + ": Invincibility Time After Revive", "gamemode", 3f, 2f, 5f, 1f, battleRoyaleMode);
+            battleRoyaleMatchType = CustomOption.Create(81, cs(Sleuth.color, "Battle Royale") + ": Match Type", "gamemode", new string[] { "All vs All", "Team Battle", "Score Battle" }, gamemodeIndividualSettings);
+            battleRoyaleKillCooldown = CustomOption.Create(82, cs(Sleuth.color, "Battle Royale") + ": Shoot Cooldown", "gamemode", 1f, 1f, 3f, 1f, gamemodeIndividualSettings);
+            battleRoyaleLifes = CustomOption.Create(83, cs(Sleuth.color, "Battle Royale") + ": Fighter Lifes", "gamemode", 3f, 3f, 10f, 1f, gamemodeIndividualSettings);
+            battleRoyaleScoreNeeded = CustomOption.Create(84, cs(Sleuth.color, "Battle Royale") + ": Score Number", "gamemode", 200f, 100f, 300f, 10f, gamemodeIndividualSettings);
 
-            // Monja Festival
-            monjaFestivalMode = CustomOption.Create(750, cs(Monja.color, "Monja Festival"), "gamemode", false, null, true);
-            monjaFestivalMatchDuration = CustomOption.Create(751, cs(Monja.color, "Monja Festival") + ": Match Duration", "gamemode", 180f, 180f, 300f, 30f, monjaFestivalMode);
-            monjaFestivalKillCooldown = CustomOption.Create(752, cs(Monja.color, "Monja Festival") + ": Kill Cooldown", "gamemode", 10f, 10f, 20f, 1f, monjaFestivalMode);
-            monjaFestivalReviveTime = CustomOption.Create(753, cs(Monja.color, "Monja Festival") + ": Revive Wait Time", "gamemode", 10f, 10f, 15f, 1f, monjaFestivalMode);
-            monjaFestivalInvincibilityTimeAfterRevive = CustomOption.Create(754, cs(Monja.color, "Monja Festival") + ": Invincibility Time After Revive", "gamemode", 3f, 2f, 5f, 1f, monjaFestivalMode);
-            
+            // Monja Festival, reserved 90-99
+
             // Mimic options
             mimicSpawnRate = CustomOption.Create(150, cs(Mimic.color, "Mimic"), "impostor", rates, null, true);
             mimicDuration = CustomOption.Create(151, cs(Mimic.color, "Mimic") + ": Duration", "impostor", 10f, 10f, 15f, 1f, mimicSpawnRate);
@@ -692,7 +610,7 @@ namespace LasMonjas
 
             // Monja options
             monjaSpawnRate = CustomOption.Create(390, cs(Monja.color, "Monja"), "rebel", rates, null, true);
-            
+
             // Joker options
             jokerSpawnRate = CustomOption.Create(400, cs(Joker.color, "Joker"), "neutral", rates, null, true);
             jokerCanSabotage = CustomOption.Create(402, cs(Joker.color, "Joker") + ": Can Sabotage", "neutral", true, jokerSpawnRate);
@@ -823,7 +741,7 @@ namespace LasMonjas
 
             // Spiritualist options
             spiritualistSpawnRate = CustomOption.Create(640, cs(Spiritualist.color, "Spiritualist"), "crewmate", rates, null, true);
-            spiritualistReviveTime = CustomOption.Create(641, cs(Spiritualist.color, "Spiritualist") + ": Revive Player Time", "crewmate", 10f, 10f, 15f, 1f, spiritualistSpawnRate);          
+            spiritualistReviveTime = CustomOption.Create(641, cs(Spiritualist.color, "Spiritualist") + ": Revive Player Time", "crewmate", 10f, 10f, 15f, 1f, spiritualistSpawnRate);
 
             // Vigilant options
             vigilantSpawnRate = CustomOption.Create(650, cs(Vigilant.color, "Vigilant"), "crewmate", rates, null, true);
@@ -831,7 +749,7 @@ namespace LasMonjas
             vigilantCamDuration = CustomOption.Create(653, cs(Vigilant.color, "Vigilant") + ": Remote Camera Duration", "crewmate", 10f, 5f, 15f, 1f, vigilantSpawnRate);
             vigilantCamMaxCharges = CustomOption.Create(654, cs(Vigilant.color, "Vigilant") + ": Battery Uses", "crewmate", 5f, 1f, 5f, 1f, vigilantSpawnRate);
             vigilantCamRechargeTasksNumber = CustomOption.Create(655, cs(Vigilant.color, "Vigilant") + ": Tasks for recharge batteries", "crewmate", 2f, 1f, 3f, 1f, vigilantSpawnRate);
-                      
+
             // Hunter options
             hunterSpawnRate = CustomOption.Create(660, cs(Hunter.color, "Hunter"), "crewmate", rates, null, true);
             hunterResetTargetAfterMeeting = CustomOption.Create(661, cs(Hunter.color, "Hunter") + ": Can mark again after meeting", "crewmate", true, hunterSpawnRate);
@@ -884,6 +802,22 @@ namespace LasMonjas
             jailerSpawnRate = CustomOption.Create(740, cs(Jailer.color, "Jailer"), "crewmate", rates, null, true);
             jailerCooldown = CustomOption.Create(741, cs(Jailer.color, "Jailer") + ": Cooldown", "crewmate", 20f, 15f, 30f, 1f, jailerSpawnRate);
             jailerDuration = CustomOption.Create(742, cs(Jailer.color, "Jailer") + ": Jail Duration", "crewmate", 10f, 5f, 15f, 1f, jailerSpawnRate);
+
+            // Modifiers
+            loverPlayer = CustomOption.Create(801, cs(Modifiers.color, "Lovers"), "modifier", rates, null, true);
+            lighterPlayer = CustomOption.Create(802, cs(Modifiers.color, "Lighter"), "modifier", rates, null, true);
+            blindPlayer = CustomOption.Create(803, cs(Modifiers.color, "Blind"), "modifier", rates, null, true);
+            flashPlayer = CustomOption.Create(804, cs(Modifiers.color, "Flash"), "modifier", rates, null, true);
+            bigchungusPlayer = CustomOption.Create(805, cs(Modifiers.color, "Big Chungus"), "modifier", rates, null, true);
+            theChosenOnePlayer = CustomOption.Create(806, cs(Modifiers.color, "The Chosen One"), "modifier", rates, null, true);
+            theChosenOneReportDelay = CustomOption.Create(807, cs(Modifiers.color, "The Chosen One") + ": Report Delay", "modifier", 0f, 0f, 5f, 1f, theChosenOnePlayer);
+            performerPlayer = CustomOption.Create(808, cs(Modifiers.color, "Performer"), "modifier", rates, null, true);
+            performerDuration = CustomOption.Create(809, cs(Modifiers.color, "Performer") + ": Alarm Duration", "modifier", 30f, 15f, 30f, 1f, performerPlayer);
+            proPlayer = CustomOption.Create(810, cs(Modifiers.color, "Pro"), "modifier", rates, null, true);
+            paintballPlayer = CustomOption.Create(811, cs(Modifiers.color, "Paintball"), "modifier", rates, null, true);
+            paintballDuration = CustomOption.Create(812, cs(Modifiers.color, "Paintball") + ": Paint Duration", "modifier", 10f, 5f, 15f, 1f, paintballPlayer);
+            electricianPlayer = CustomOption.Create(813, cs(Modifiers.color, "Electrician"), "modifier", rates, null, true);
+            electricianDuration = CustomOption.Create(814, cs(Modifiers.color, "Electrician") + ": Discharge Duration", "modifier", 5f, 5f, 10f, 1f, electricianPlayer);
         }
-    }    
+    }
 }

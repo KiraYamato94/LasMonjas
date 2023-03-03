@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Collections;
-using Il2CppInterop;
 using UnityEngine;
 using System.Linq;
 using static LasMonjas.LasMonjas;
@@ -32,7 +30,7 @@ namespace LasMonjas
                 Texture2D texture = loadTextureFromResources(path);
                 return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);
             } catch {
-                System.Console.WriteLine("Error loading sprite from path: " + path);
+                //System.Console.WriteLine("Error loading sprite from path: " + path);
             }
             return null;
         }
@@ -44,11 +42,11 @@ namespace LasMonjas
                 Stream stream = assembly.GetManifestResourceStream(path);
                 var length = stream.Length;
                 var byteTexture = new Il2CppStructArray<byte>(length);
-                stream.Read(new Span<byte>(IntPtr.Add(byteTexture.Pointer, IntPtr.Size * 4).ToPointer(), (int)length)); 
+                stream.Read(new Span<byte>(IntPtr.Add(byteTexture.Pointer, IntPtr.Size * 4).ToPointer(), (int)length));
                 ImageConversion.LoadImage(texture, byteTexture, false);
                 return texture;
             } catch {
-                System.Console.WriteLine("Error loading texture from resources: " + path);
+                //System.Console.WriteLine("Error loading texture from resources: " + path);
             }
             return null;
         }
@@ -62,7 +60,7 @@ namespace LasMonjas
                     return texture;
                 }
             } catch {
-                System.Console.WriteLine("Error loading texture from disk: " + path);
+                //System.Console.WriteLine("Error loading texture from disk: " + path);
             }
             return null;
         }
@@ -74,7 +72,7 @@ namespace LasMonjas
                     return player;
             return null;
         }
-        
+
         public static Dictionary<byte, PlayerControl> allPlayersById()
         {
             Dictionary<byte, PlayerControl> res = new Dictionary<byte, PlayerControl>();
@@ -108,7 +106,7 @@ namespace LasMonjas
                     else
                         toRemove.Add(t); // TextTask does not have a corresponding RoleInfo and will hence be deleted
                 }
-            }   
+            }
 
             foreach (PlayerTask t in toRemove) {
                 t.OnRemove();
@@ -121,11 +119,11 @@ namespace LasMonjas
                 var task = new GameObject("RoleTask").AddComponent<ImportantTextTask>();
                 task.transform.SetParent(player.transform, false);
 
-                if (roleInfo.name == "Renegade") {
+                if (roleInfo.name == Language.roleInfoRoleNames[15]) {
                     var getMinionText = Renegade.canRecruitMinion ? Language.helpersTexts[0] : "";
-                    task.Text = cs(roleInfo.color, $"{roleInfo.name}: {Language.helpersTexts[1]}{getMinionText}");  
+                    task.Text = cs(roleInfo.color, $"{roleInfo.name}: {Language.helpersTexts[1]}{getMinionText}");
                 } else {
-                    task.Text = cs(roleInfo.color, $"{roleInfo.name}: {roleInfo.shortDescription}");  
+                    task.Text = cs(roleInfo.color, $"{roleInfo.name}: {roleInfo.shortDescription}");
                 }
 
                 player.myTasks.Insert(0, task);
@@ -136,19 +134,9 @@ namespace LasMonjas
             return CustomColors.lighterColors.Contains(colorId);
         }
 
-        public static bool isCustomServer() {
-            if (DestroyableSingleton<ServerManager>.Instance == null) return false;
-            StringNames n = DestroyableSingleton<ServerManager>.Instance.CurrentRegion.TranslateName;
-            return n != StringNames.ServerNA && n != StringNames.ServerEU && n != StringNames.ServerAS;
-        }
-
         //Fake tasks for neutral and rebel team
         public static bool hasFakeTasks(this PlayerControl player) {
             return (player == Joker.joker || player == RoleThief.rolethief || player == Pyromaniac.pyromaniac || player == TreasureHunter.treasureHunter || player == Devourer.devourer || player == Poisoner.poisoner || player == Puppeteer.puppeteer || player == Exiler.exiler || player == Amnesiac.amnesiac || player == Seeker.seeker || player == Renegade.renegade || player == Minion.minion || player == BountyHunter.bountyhunter || player == Trapper.trapper || player == Yinyanger.yinyanger || player == Challenger.challenger || player == Ninja.ninja || player == Berserker.berserker || player == Yandere.yandere || player == Stranded.stranded || player == Monja.monja || Renegade.formerRenegades.Any(x => x == player));
-        }
-
-        public static bool canBeErased(this PlayerControl player) {
-            return (player != Renegade.renegade && player != Minion.minion && !Renegade.formerRenegades.Contains(player));
         }
 
         public static void clearAllTasks(this PlayerControl player) {
@@ -158,7 +146,7 @@ namespace LasMonjas
                 UnityEngine.Object.Destroy(playerTask.gameObject);
             }
             player.myTasks.Clear();
-            
+
             if (player.Data != null && player.Data.Tasks != null)
                 player.Data.Tasks.Clear();
         }
@@ -218,7 +206,7 @@ namespace LasMonjas
             if (source.getPartner() == target) return false; // Members of team Lovers see the names of each other
             if ((source == Renegade.renegade || source == Minion.minion) && (target == Renegade.renegade || target == Minion.minion || target == Renegade.fakeMinion)) return false; // Members of team Renegade see the names of each other
             return true;
-        }      
+        }
 
         public static void setDefaultLook(this PlayerControl target) {
             target.setLook(target.Data.PlayerName, target.Data.DefaultOutfit.ColorId, target.Data.DefaultOutfit.HatId, target.Data.DefaultOutfit.VisorId, target.Data.DefaultOutfit.SkinId, target.Data.DefaultOutfit.PetId);
@@ -264,10 +252,31 @@ namespace LasMonjas
                     roleCouldUse = true;
                 }
             } else if (GameOptionsManager.Instance.currentGameMode == GameModes.Normal) {
-                if (howmanygamemodesareon == 1) {
-                    if (PlayerControl.LocalPlayer == player) {
-                        if (CaptureTheFlag.captureTheFlagMode) {
-                            if (PlayerControl.LocalPlayer != CaptureTheFlag.bluePlayerWhoHasRedFlag && PlayerControl.LocalPlayer != CaptureTheFlag.redPlayerWhoHasBlueFlag
+                switch (gameType) {
+                    case 0:
+                    case 1:
+                        if (Monja.awakened) {
+                            roleCouldUse = false;
+                        }
+                        else {
+                            if (Chameleon.chameleon != null && Chameleon.chameleon == player)
+                                roleCouldUse = false;
+                            else if (Janitor.janitor != null && Janitor.janitor == player && Janitor.dragginBody)
+                                roleCouldUse = false;
+                            else if (Renegade.canUseVents && Renegade.renegade != null && Renegade.renegade == player)
+                                roleCouldUse = true;
+                            else if (Renegade.canUseVents && Minion.minion != null && Minion.minion == player)
+                                roleCouldUse = true;
+                            else if (Stranded.canVent && Stranded.invisibleTimer <= 0f && Stranded.stranded != null && Stranded.stranded == player)
+                                roleCouldUse = true;
+                            else if (player.Data.Role.IsImpostor) {
+                                roleCouldUse = true;
+                            }
+                        }
+                        break;
+                    case 2:
+                        // CTF:
+                        if (PlayerControl.LocalPlayer != CaptureTheFlag.bluePlayerWhoHasRedFlag && PlayerControl.LocalPlayer != CaptureTheFlag.redPlayerWhoHasBlueFlag
                                 && (PlayerControl.LocalPlayer == CaptureTheFlag.redplayer01 && !CaptureTheFlag.redplayer01IsReviving
                                 || PlayerControl.LocalPlayer == CaptureTheFlag.redplayer02 && !CaptureTheFlag.redplayer02IsReviving
                                 || PlayerControl.LocalPlayer == CaptureTheFlag.redplayer03 && !CaptureTheFlag.redplayer03IsReviving
@@ -283,14 +292,15 @@ namespace LasMonjas
                                 || PlayerControl.LocalPlayer == CaptureTheFlag.blueplayer06 && !CaptureTheFlag.blueplayer06IsReviving
                                 || PlayerControl.LocalPlayer == CaptureTheFlag.blueplayer07 && !CaptureTheFlag.blueplayer07IsReviving
                                 || PlayerControl.LocalPlayer == CaptureTheFlag.stealerPlayer && !CaptureTheFlag.stealerPlayerIsReviving)) {
-                                roleCouldUse = true;
-                            }
-                            else {
-                                roleCouldUse = false;
-                            }
+                            roleCouldUse = true;
                         }
-                        else if (PoliceAndThief.policeAndThiefMode) {
-                            if (PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer01 && !PoliceAndThief.thiefplayer01IsStealing && !PoliceAndThief.thiefplayer01IsReviving
+                        else {
+                            roleCouldUse = false;
+                        }
+                        break;
+                    case 3:
+                        // PT:
+                        if (PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer01 && !PoliceAndThief.thiefplayer01IsStealing && !PoliceAndThief.thiefplayer01IsReviving
                                 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer02 && !PoliceAndThief.thiefplayer02IsStealing && !PoliceAndThief.thiefplayer02IsReviving
                                 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer03 && !PoliceAndThief.thiefplayer03IsStealing && !PoliceAndThief.thiefplayer03IsReviving
                                 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer04 && !PoliceAndThief.thiefplayer04IsStealing && !PoliceAndThief.thiefplayer04IsReviving
@@ -299,14 +309,15 @@ namespace LasMonjas
                                 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer07 && !PoliceAndThief.thiefplayer07IsStealing && !PoliceAndThief.thiefplayer07IsReviving
                                 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer08 && !PoliceAndThief.thiefplayer08IsStealing && !PoliceAndThief.thiefplayer08IsReviving
                                 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer09 && !PoliceAndThief.thiefplayer09IsStealing && !PoliceAndThief.thiefplayer09IsReviving) {
-                                roleCouldUse = true;
-                            }
-                            else {
-                                roleCouldUse = false;
-                            }
+                            roleCouldUse = true;
                         }
-                        else if (KingOfTheHill.kingOfTheHillMode) {
-                            if (PlayerControl.LocalPlayer != KingOfTheHill.greenKingplayer && PlayerControl.LocalPlayer != KingOfTheHill.yellowKingplayer
+                        else {
+                            roleCouldUse = false;
+                        }
+                        break;
+                    case 4:
+                        // KOTH:
+                        if (PlayerControl.LocalPlayer != KingOfTheHill.greenKingplayer && PlayerControl.LocalPlayer != KingOfTheHill.yellowKingplayer
                                 && (PlayerControl.LocalPlayer == KingOfTheHill.greenplayer01 && !KingOfTheHill.greenplayer01IsReviving
                                 || PlayerControl.LocalPlayer == KingOfTheHill.greenplayer02 && !KingOfTheHill.greenplayer02IsReviving
                                 || PlayerControl.LocalPlayer == KingOfTheHill.greenplayer03 && !KingOfTheHill.greenplayer03IsReviving
@@ -320,22 +331,24 @@ namespace LasMonjas
                                 || PlayerControl.LocalPlayer == KingOfTheHill.yellowplayer05 && !KingOfTheHill.yellowplayer05IsReviving
                                 || PlayerControl.LocalPlayer == KingOfTheHill.yellowplayer06 && !KingOfTheHill.yellowplayer06IsReviving
                                 || PlayerControl.LocalPlayer == KingOfTheHill.usurperPlayer && !KingOfTheHill.usurperPlayerIsReviving)) {
-                                roleCouldUse = true;
-                            }
-                            else {
-                                roleCouldUse = false;
-                            }
+                            roleCouldUse = true;
                         }
-                        else if (HotPotato.hotPotatoMode) {
-                            if (PlayerControl.LocalPlayer == HotPotato.hotPotatoPlayer) {
-                                roleCouldUse = true;
-                            }
-                            else {
-                                roleCouldUse = false;
-                            }
+                        else {
+                            roleCouldUse = false;
                         }
-                        else if (ZombieLaboratory.zombieLaboratoryMode) {
-                            if (PlayerControl.LocalPlayer == ZombieLaboratory.zombiePlayer01 && !ZombieLaboratory.zombiePlayer01IsReviving
+                        break;
+                    case 5:
+                        // HP:
+                        if (PlayerControl.LocalPlayer == HotPotato.hotPotatoPlayer) {
+                            roleCouldUse = true;
+                        }
+                        else {
+                            roleCouldUse = false;
+                        }
+                        break;
+                    case 6:
+                        // ZL:
+                        if (PlayerControl.LocalPlayer == ZombieLaboratory.zombiePlayer01 && !ZombieLaboratory.zombiePlayer01IsReviving
                                 || PlayerControl.LocalPlayer == ZombieLaboratory.zombiePlayer02 && !ZombieLaboratory.zombiePlayer02IsReviving
                                 || PlayerControl.LocalPlayer == ZombieLaboratory.zombiePlayer03 && !ZombieLaboratory.zombiePlayer03IsReviving
                                 || PlayerControl.LocalPlayer == ZombieLaboratory.zombiePlayer04 && !ZombieLaboratory.zombiePlayer04IsReviving
@@ -349,44 +362,25 @@ namespace LasMonjas
                                 || PlayerControl.LocalPlayer == ZombieLaboratory.zombiePlayer12 && !ZombieLaboratory.zombiePlayer12IsReviving
                                 || PlayerControl.LocalPlayer == ZombieLaboratory.zombiePlayer13 && !ZombieLaboratory.zombiePlayer13IsReviving
                                 || PlayerControl.LocalPlayer == ZombieLaboratory.zombiePlayer14 && !ZombieLaboratory.zombiePlayer14IsReviving) {
-                                roleCouldUse = true;
-                            }
-                            else {
-                                roleCouldUse = false;
-                            }
+                            roleCouldUse = true;
                         }
-                        else if (BattleRoyale.battleRoyaleMode) {
+                        else {
                             roleCouldUse = false;
                         }
-                        else if (MonjaFestival.monjaFestivalMode) {
-                            if (PlayerControl.LocalPlayer == MonjaFestival.bigMonjaPlayer) {
-                                roleCouldUse = true;
-                            }
-                            else {
-                                roleCouldUse = false;
-                            }
-                        }
-                    }
-                }
-                else {
-                    if (Monja.awakened) {
+                        break;
+                    case 7:
+                        // BR:
                         roleCouldUse = false;
-                    }
-                    else {
-                        if (Chameleon.chameleon != null && Chameleon.chameleon == player)
-                            roleCouldUse = false;
-                        else if (Janitor.janitor != null && Janitor.janitor == player && Janitor.dragginBody)
-                            roleCouldUse = false;
-                        else if (Renegade.canUseVents && Renegade.renegade != null && Renegade.renegade == player)
-                            roleCouldUse = true;
-                        else if (Renegade.canUseVents && Minion.minion != null && Minion.minion == player)
-                            roleCouldUse = true;
-                        else if (Stranded.canVent && Stranded.invisibleTimer <= 0f && Stranded.stranded != null && Stranded.stranded == player)
-                            roleCouldUse = true;
-                        else if (player.Data.Role.IsImpostor) {
+                        break;
+                    case 8:
+                        // MF:
+                        if (PlayerControl.LocalPlayer == MonjaFestival.bigMonjaPlayer) {
                             roleCouldUse = true;
                         }
-                    }
+                        else {
+                            roleCouldUse = false;
+                        }
+                        break;
                 }
             }
             return roleCouldUse;
@@ -396,7 +390,7 @@ namespace LasMonjas
             // Modified vanilla checks
             if (AmongUsClient.Instance.IsGameOver) return MurderAttemptResult.SuppressKill;
             if (killer == null || killer.Data == null || killer.Data.IsDead || killer.Data.Disconnected) return MurderAttemptResult.SuppressKill; // Allow non Impostor kills compared to vanilla code
-            if (target == null || target.Data == null || target.Data.IsDead || target.Data.Disconnected) return MurderAttemptResult.SuppressKill; // Allow killing players in vents compared to vanilla code           
+            if (target == null || target.Data == null || target.Data.IsDead || target.Data.Disconnected) return MurderAttemptResult.SuppressKill; // Allow killing players in vents compared to vanilla code
 
             // Handle jinx shot
             if (Jinx.jinxedList.Any(x => x.PlayerId == killer.PlayerId)) {
@@ -407,7 +401,7 @@ namespace LasMonjas
                 RPCProcedure.setJinxed(killer.PlayerId, 0);
 
                 return MurderAttemptResult.JinxKill;
-            } 
+            }
 
             // Block impostor shielded kill
             else if (Squire.shielded != null && Squire.shielded == target) {
@@ -416,7 +410,7 @@ namespace LasMonjas
                 RPCProcedure.shieldedMurderAttempt();
                 return MurderAttemptResult.SuppressKill;
             }
-            
+
             // Block impostor jailer kill and teleport the killer to prison
             else if (Jailer.jailedPlayer != null && Jailer.jailedPlayer == target) {
                 List<RoleInfo> infos = RoleInfo.getRoleInfoForPlayer(killer);
@@ -458,7 +452,7 @@ namespace LasMonjas
             return MurderAttemptResult.PerformKill;
         }
 
-        public static MurderAttemptResult checkMurderAttemptAndKill(PlayerControl killer, PlayerControl target, bool isMeetingStart = false, bool showAnimation = true)  {
+        public static MurderAttemptResult checkMurderAttemptAndKill(PlayerControl killer, PlayerControl target, bool isMeetingStart = false, bool showAnimation = true) {
             // The local player checks for the validity of the kill and performs it afterwards (different to vanilla, where the host performs all the checks)
             // The kill attempt will be shared using a custom RPC, hence combining modded and unmodded versions is impossible
 
@@ -471,18 +465,7 @@ namespace LasMonjas
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
                 RPCProcedure.uncheckedMurderPlayer(killer.PlayerId, target.PlayerId, showAnimation ? Byte.MaxValue : (byte)0);
             }
-            return murder;            
-        }            
-
-        public static List<PlayerControl> getKillerTeamMembers(PlayerControl player) {
-            List<PlayerControl> team = new List<PlayerControl>();
-            foreach(PlayerControl p in PlayerControl.AllPlayerControls) {
-                if (player.Data.Role.IsImpostor && p.Data.Role.IsImpostor && player.PlayerId != p.PlayerId && team.All(x => x.PlayerId != p.PlayerId)) team.Add(p);
-                else if (player == Renegade.renegade && p == Minion.minion) team.Add(p); 
-                else if (player == Minion.minion && p == Renegade.renegade) team.Add(p);
-            }
-            
-            return team;
+            return murder;
         }
 
         public static void Shuffle<T>(this IList<T> list) {
@@ -667,7 +650,7 @@ namespace LasMonjas
             bool activeSensei = CustomOptionHolder.activateSenseiMap.getBool();
 
             int senseiMapHide = customSkeldHS; 
-            
+
             if (GameOptionsManager.Instance.currentGameOptions.MapId == 0 && activatedSensei == false) {
                 if (GameOptionsManager.Instance.currentGameMode == GameModes.HideNSeek && senseiMapHide >= 50 || GameOptionsManager.Instance.currentGameMode == GameModes.Normal && activeSensei) {
                     // Spawn map + assign shadow and materials layers

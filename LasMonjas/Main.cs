@@ -1,25 +1,13 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
-using BepInEx.IL2CPP;
 using HarmonyLib;
-using Hazel;
-using System.Collections.Generic;
-using System.Security.Cryptography;
 using System.Linq;
-using System.Net;
-using System.IO;
-using System;
-using System.Reflection;
-using Il2CppInterop;
-using UnityEngine;
 using LasMonjas.Core;
 using LasMonjas.Patches;
 using BepInEx.Unity.IL2CPP;
-using Reactor;
 using Reactor.Networking;
 using Reactor.Networking.Attributes;
 using AmongUs.Data;
-using AmongUs.Data.Legacy;
 using AmongUs.GameOptions;
 
 namespace LasMonjas
@@ -32,7 +20,7 @@ namespace LasMonjas
     {
         public const string Id = "me.allul.lasmonjas";
 
-        public const string VersionString = "3.1.1";
+        public const string VersionString = "3.1.2";
 
         public static System.Version Version = System.Version.Parse(VersionString);
         internal static BepInEx.Logging.ManualLogSource Logger;

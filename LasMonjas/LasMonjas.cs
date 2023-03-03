@@ -1,17 +1,9 @@
-using System.Net;
 using System.Linq;
-using BepInEx;
-using BepInEx.Configuration;
-using BepInEx.IL2CPP;
 using HarmonyLib;
-using Hazel;
 using System;
 using System.Collections.Generic;
-using System.Collections;
-using System.IO;
 using UnityEngine;
 using LasMonjas.Objects;
-using LasMonjas.Patches;
 using LasMonjas.Core;
 using AmongUs.GameOptions;
 
@@ -55,14 +47,12 @@ namespace LasMonjas
         public static bool createdbattleroyale = false;
 
         public static bool createdmonjafestival = false;
-        
+
         public static bool activatedReportButtonAfterCustomMode = false;
 
         public static int quackNumber = 0;
 
         public static int alivePlayers = 15;
-
-        public static int howmanygamemodesareon = 0;
 
         public static int whichgamemodeHUD = 0;
 
@@ -83,7 +73,6 @@ namespace LasMonjas
 
         public static bool hideVentAnim = CustomOptionHolder.hideVentAnimOnShadows.getBool();
 
-        public static bool whoAmIMode = CustomOptionHolder.whoAmIMode.getBool();
         public static List<GameObject> whoAmIModeGlobalItems = new List<GameObject>();
         public static List<GameObject> whoAmIModeCrewItems = new List<GameObject>();
         public static List<GameObject> whoAmIModeImpostorItems = new List<GameObject>();
@@ -93,7 +82,19 @@ namespace LasMonjas
         public static bool whoAmIFoundRole = false;
         public static int customSkeldHS = 0;
 
+        public static int gameType = CustomOptionHolder.gameType.getSelection(); // 0 - Roles, 1 - Find a Role, 2 - CTF, 3 - PT, 4 - KOTH, 5 - HP, 6 - ZL, 7 - BR, 8 - MJ
+        public static float gamemodeMatchDuration = CustomOptionHolder.gamemodeMatchDuration.getFloat();
+        public static float gamemodeKillCooldown = CustomOptionHolder.gamemodeKillCooldown.getFloat();
+        public static float gamemodeReviveTime = CustomOptionHolder.gamemodeReviveTime.getFloat();
+        public static float gamemodeInvincibilityTime = CustomOptionHolder.gamemodeInvincibilityTimeAfterRevive.getFloat();
+
         public static void clearAndReloadRoles() {
+            gameType = CustomOptionHolder.gameType.getSelection();
+            gamemodeMatchDuration = CustomOptionHolder.gamemodeMatchDuration.getFloat();
+            gamemodeKillCooldown = CustomOptionHolder.gamemodeKillCooldown.getFloat();
+            gamemodeReviveTime = CustomOptionHolder.gamemodeReviveTime.getFloat();
+            gamemodeInvincibilityTime = CustomOptionHolder.gamemodeInvincibilityTimeAfterRevive.getFloat(); 
+
             Mimic.clearAndReload();
             Painter.clearAndReload();
             Demon.clearAndReload();
@@ -195,7 +196,6 @@ namespace LasMonjas
             activatedReportButtonAfterCustomMode = false;
             quackNumber = 0;
             alivePlayers = 15;
-            howmanygamemodesareon = 0;
             whichgamemodeHUD = 0;
             howmanyBattleRoyaleplayers = 0;
 
@@ -209,7 +209,7 @@ namespace LasMonjas
             isHappeningAnonymousComms = false;
             slowSpeedOxigen = CustomOptionHolder.slowSpeedOxigenSabotage.getBool();
             hideVentAnim = CustomOptionHolder.hideVentAnimOnShadows.getBool();
-            whoAmIMode = CustomOptionHolder.whoAmIMode.getBool();
+
             whoAmIModeGlobalItems.Clear();
             whoAmIModeCrewItems.Clear();
             whoAmIModeImpostorItems.Clear();
@@ -218,7 +218,6 @@ namespace LasMonjas
             createdWhoAmI = false;
             whoAmIFoundRole = false;
         }
-
     }
 
     public static class Mimic
@@ -781,7 +780,7 @@ namespace LasMonjas
     {
         public static PlayerControl plumber;
         public static Color color = Palette.ImpostorRed;
-        
+
         public static float cooldown = 30f;
         public static float currentVents = 0f;
         public static float maxVents = 0f;
@@ -817,14 +816,14 @@ namespace LasMonjas
         public static float cooldown = 30f;
 
         public static TMPro.TMP_Text targetNameButtonText;
-        
+
         private static Sprite overlaySprite;
         public static Sprite getLibrarianOverlaySprite() {
             if (overlaySprite) return overlaySprite;
             overlaySprite = Helpers.loadSpriteFromResources("LasMonjas.Images.LibrarianOverlay.png", 100f);
             return overlaySprite;
         }
-        
+
         private static Sprite librarianButtonSprite;
 
         public static Sprite getLibrarianButtonSprite() {
@@ -840,7 +839,7 @@ namespace LasMonjas
             cooldown = CustomOptionHolder.librarianCooldown.getFloat();
         }
     }
-    
+
     public static class Renegade
     {
         public static PlayerControl renegade;
@@ -918,7 +917,7 @@ namespace LasMonjas
         public static bool usedTarget;
 
         public static TMPro.TMP_Text targetNameButtonText;
-        
+
         private static Sprite buttonSprite;
         public static Sprite getButtonSprite() {
             if (buttonSprite) return buttonSprite;
@@ -967,7 +966,7 @@ namespace LasMonjas
             buttonTrapSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.TrapperTrapButton.png", 90f);
             return buttonTrapSprite;
         }
-        
+
         private static Sprite buttonMineSprite;
         public static Sprite getMineButtonSprite() {
             if (buttonMineSprite) return buttonMineSprite;
@@ -1209,7 +1208,7 @@ namespace LasMonjas
         public static PlayerControl markedTarget;
 
         public static TMPro.TMP_Text targetNameButtonText;
-        
+
         private static Sprite buttonMarkSprite;
         public static Sprite getMarkSprite() {
             if (buttonMarkSprite) return buttonMarkSprite;
@@ -1380,7 +1379,7 @@ namespace LasMonjas
                         susBoxPositions.Add(new Vector3(-4.5f, 1.25f, 0.4f));
                         susBoxPositions.Add(new Vector3(-3.85f, 5.25f, 0.4f));
                         susBoxPositions.Add(new Vector3(-20, -1.5f, 0.4f));
-                        susBoxPositions.Add(new Vector3(-16f, -1.5f, 0.4f));                        
+                        susBoxPositions.Add(new Vector3(-16f, -1.5f, 0.4f));
                         susBoxPositions.Add(new Vector3(-17.85f, 5.25f, 0.4f));
                         susBoxPositions.Add(new Vector3(-18.85f, -8f, 0.4f));
                         susBoxPositions.Add(new Vector3(-14.25f, -12.35f, 0.4f));
@@ -1426,7 +1425,7 @@ namespace LasMonjas
                         susBoxPositions.Add(new Vector3(-10.1f, 1.15f, 0.4f));
                         susBoxPositions.Add(new Vector3(-9.4f, -4.65f, 0.4f));
                         susBoxPositions.Add(new Vector3(-18.5f, -13.15f, 0.4f));
-                        susBoxPositions.Add(new Vector3(-12.1f, -14.5f, 0.4f));                        
+                        susBoxPositions.Add(new Vector3(-12.1f, -14.5f, 0.4f));
                         susBoxPositions.Add(new Vector3(-6.5f, -8.25f, 0.4f));
                         susBoxPositions.Add(new Vector3(-3.55f, -15f, 0.4f));
                         susBoxPositions.Add(new Vector3(6.3f, -7.25f, 0.4f));
@@ -1797,10 +1796,10 @@ namespace LasMonjas
                     itemListPositions.Add(new Vector3(-12.25f, 31f, -1f));
                     break;
             }
-            itemListPositions.Shuffle();            
+            itemListPositions.Shuffle();
         }
     }
-    
+
     public static class Joker
     {
         public static PlayerControl joker;
@@ -2130,7 +2129,7 @@ namespace LasMonjas
         public static GameObject minigameArenaHideTwoPointThree = null;
         public static GameObject minigameArenaHideThreePointOne = null;
         public static GameObject minigameArenaHideThreePointTwo = null;
-        public static GameObject minigameArenaHideThreePointThree = null; 
+        public static GameObject minigameArenaHideThreePointThree = null;
         public static TMPro.TMP_Text seekerPlayerPointsCount;
         public static TMPro.TMP_Text seekerPerformMinigamePlayerPointsCount;
         public static GameObject lowerminigameArenaHideOnePointOne = null;
@@ -2149,7 +2148,7 @@ namespace LasMonjas
             buttonTargetSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.SeekerTarget.png", 90f);
             return buttonTargetSprite;
         }
-        
+
         private static Sprite buttonMinigameSprite;
         public static Sprite getMinigameButtonSprite() {
             if (buttonMinigameSprite) return buttonMinigameSprite;
@@ -2240,11 +2239,11 @@ namespace LasMonjas
             lowerminigameArenaHideThreePointThree = null;
             howmanyselectedattacks = 0;
         }
-        
+
         public static void ResetOnePlayer(int whichPlayer) {
             switch (whichPlayer) {
                 case 1:
-                    hidedPlayerOne = null;                    
+                    hidedPlayerOne = null;
                     break;
                 case 2:
                     hidedPlayerTwo = null;
@@ -2757,7 +2756,7 @@ namespace LasMonjas
             corpsesPathfindDuration = CustomOptionHolder.sleuthCorpsesPathfindDuration.getFloat();
             backUpduration = corpsesPathfindDuration;
         }
-    }  
+    }
 
     public static class Fink
     {
@@ -3490,12 +3489,7 @@ namespace LasMonjas
         public static PlayerControl stealerPlayercurrentTarget = null;
         public static List<GameObject> stealerSpawns = new List<GameObject>();
 
-        public static bool captureTheFlagMode = false;
         public static float requiredFlags = 3;
-        public static float killCooldown = 10f;
-        public static float matchDuration = 300f;
-        public static float reviveTime = 5f;
-        public static float invincibilityTimeAfterRevive = 3f;
 
         public static GameObject redflag = null;
         public static GameObject redflagbase = null;
@@ -3598,17 +3592,8 @@ namespace LasMonjas
             stealerPlayerIsReviving = false;
             stealerPlayercurrentTarget = null;
             stealerSpawns.Clear();
-            if(CustomOptionHolder.captureTheFlagMode.getBool() == true) {
-                captureTheFlagMode = true;
-            }
-            else {
-                captureTheFlagMode = false;
-            }
+
             requiredFlags = CustomOptionHolder.requiredFlags.getFloat();
-            killCooldown = CustomOptionHolder.flagKillCooldown.getFloat();
-            matchDuration = CustomOptionHolder.flagMatchDuration.getFloat() + 10f;
-            reviveTime = CustomOptionHolder.flagReviveTime.getFloat();
-            invincibilityTimeAfterRevive = CustomOptionHolder.flagInvincibilityTimeAfterRevive.getFloat();
             redflag = null;
             redflagbase = null;
             redflagtaken = false;
@@ -3722,7 +3707,7 @@ namespace LasMonjas
         public static GameObject celltwo = null;
         public static GameObject cellbuttontwo = null;
         public static GameObject jewelbuttontwo = null; 
-        
+
         public static GameObject jewel01 = null;
         public static PlayerControl jewel01BeingStealed = null;
         public static GameObject jewel02 = null;
@@ -3754,21 +3739,14 @@ namespace LasMonjas
         public static GameObject jewel15 = null;
         public static PlayerControl jewel15BeingStealed = null;
 
-        public static bool policeAndThiefMode = false;
         public static float requiredJewels = 10;
-        public static float policeKillCooldown = 20f;
         public static float policeTaseCooldown = 20f;
         public static float policeTaseDuration = 5f;
         public static bool policeCanSeeJewels = false;
         public static float policeCatchCooldown = 10f;
         public static float captureThiefTime = 3f;
         public static float policeVision = 1f;
-        public static float matchDuration = 300f;
-        public static float policeReviveTime = 5f;
         public static int whoCanThiefsKill = 0;
-        public static float thiefKillCooldown = 20f;
-        public static float thiefReviveTime = 10f;
-        public static float invincibilityTimeAfterRevive = 3f;
 
         public static float currentJewelsStoled = 0;
         public static float currentThiefsCaptured = 0;
@@ -3789,7 +3767,7 @@ namespace LasMonjas
             buttonSpriteLight = Helpers.loadSpriteFromResources("LasMonjas.Images.PoliceAndThiefsLightButton.png", 90f);
             return buttonSpriteLight;
         }
-        
+
         private static Sprite buttonSpriteCaptureThief;
 
         public static Sprite getCaptureThiefButtonSprite() {
@@ -3837,7 +3815,7 @@ namespace LasMonjas
             buttonSpriteTaserThief = Helpers.loadSpriteFromResources("LasMonjas.Images.PoliceAndThiefsTaserButton.png", 90f);
             return buttonSpriteTaserThief;
         }
-        
+
         public static void clearAndReload() {
             cell = null;
             cellbutton = null;
@@ -3964,26 +3942,14 @@ namespace LasMonjas
             localThiefReleaseArrow = new List<Arrow>();
             localThiefDeliverArrow = new List<Arrow>();
 
-            if (CustomOptionHolder.policeAndThiefMode.getBool() == true) {
-                policeAndThiefMode = true;
-            }
-            else {
-                policeAndThiefMode = false;
-            }
             requiredJewels = CustomOptionHolder.thiefModerequiredJewels.getFloat();
-            policeKillCooldown = CustomOptionHolder.thiefModePoliceKillCooldown.getFloat();
             policeTaseCooldown = CustomOptionHolder.thiefModePoliceTaseCooldown.getFloat();
             policeTaseDuration = CustomOptionHolder.thiefModePoliceTaseDuration.getFloat();
             policeCanSeeJewels = CustomOptionHolder.thiefModePoliceCanSeeJewels.getBool();
             policeCatchCooldown = CustomOptionHolder.thiefModePoliceCatchCooldown.getFloat();
             captureThiefTime = CustomOptionHolder.thiefModecaptureThiefTime.getFloat();
             policeVision = CustomOptionHolder.thiefModepolicevision.getFloat();
-            matchDuration = CustomOptionHolder.thiefModeMatchDuration.getFloat() + 10f;
-            policeReviveTime = CustomOptionHolder.thiefModePoliceReviveTime.getFloat();
             whoCanThiefsKill = CustomOptionHolder.thiefModeWhoCanThiefsKill.getSelection();
-            thiefKillCooldown = CustomOptionHolder.thiefModeKillCooldown.getFloat();
-            thiefReviveTime = CustomOptionHolder.thiefModeThiefReviveTime.getFloat();
-            invincibilityTimeAfterRevive = CustomOptionHolder.thiefModeInvincibilityTimeAfterRevive.getFloat();
             currentJewelsStoled = 0;
             triggerThiefWin = false;
             triggerPoliceWin = false;
@@ -4080,14 +4046,9 @@ namespace LasMonjas
         public static bool usurperPlayerIsReviving = false;
         public static List<GameObject> usurperSpawns = new List<GameObject>();
 
-        public static bool kingOfTheHillMode = false;
         public static float requiredPoints = 150;
         public static float captureCooldown = 10f;
-        public static float killCooldown = 10f;
-        public static float matchDuration = 300f;
         public static bool kingCanKill = false;
-        public static float reviveTime = 5f;
-        public static float kingInvincibilityTimeAfterRevive = 3f;
 
         public static GameObject greenflag = null;
         public static float currentGreenTeamPoints = 0;
@@ -4194,20 +4155,9 @@ namespace LasMonjas
             usurperPlayerIsReviving = false;
             usurperSpawns.Clear();
 
-            if (CustomOptionHolder.kingOfTheHillMode.getBool() == true) {
-                kingOfTheHillMode = true;
-            }
-            else {
-                kingOfTheHillMode = false;
-            }
-
             requiredPoints = CustomOptionHolder.kingRequiredPoints.getFloat();
             captureCooldown = CustomOptionHolder.kingCaptureCooldown.getFloat();
-            killCooldown = CustomOptionHolder.kingKillCooldown.getFloat();
-            matchDuration = CustomOptionHolder.kingMatchDuration.getFloat() + 10f;
             kingCanKill = CustomOptionHolder.kingCanKill.getBool();
-            reviveTime = CustomOptionHolder.kingReviveTime.getFloat();
-            kingInvincibilityTimeAfterRevive = CustomOptionHolder.kingInvincibilityTimeAfterRevive.getFloat();
 
             greenflag = null;
             currentGreenTeamPoints = 0;
@@ -4278,10 +4228,8 @@ namespace LasMonjas
 
         public static GameObject hotPotato = null;
 
-        public static bool hotPotatoMode = false;
         public static float timeforTransfer = 15;
         public static float transferCooldown = 10f;
-        public static float matchDuration = 300f;
         public static float savedtimeforTransfer = 15;
         public static float notPotatoVision = 1f;
         public static bool resetTimeForTransfer = true;
@@ -4337,15 +4285,8 @@ namespace LasMonjas
             explodedPotato13 = null;
             explodedPotato14 = null;
 
-            if (CustomOptionHolder.hotPotatoMode.getBool() == true) {
-                hotPotatoMode = true;
-            }
-            else {
-                hotPotatoMode = false;
-            }
             timeforTransfer = CustomOptionHolder.hotPotatoTransferLimit.getFloat() + 10f;
             transferCooldown = CustomOptionHolder.hotPotatoCooldown.getFloat();
-            matchDuration = CustomOptionHolder.hotPotatoMatchDuration.getFloat();
             notPotatoVision = CustomOptionHolder.hotPotatoNotPotatovision.getFloat();
             resetTimeForTransfer = CustomOptionHolder.hotPotatoResetTimeForTransfer.getBool();
             increaseTimeIfNoReset = CustomOptionHolder.hotPotatoIncreaseTimeIfNoReset.getFloat(); 
@@ -4395,7 +4336,7 @@ namespace LasMonjas
         public static bool survivorPlayer02IsInfected = false;
         public static bool survivorPlayer02CanKill = false;
         public static bool survivorPlayer02HasKeyItem = false;
-        public static byte survivorPlayer02FoundBox = 0; 
+        public static byte survivorPlayer02FoundBox = 0;
         public static float survivorPlayer02Timer = 60;
         public static GameObject survivorPlayer02SelectedBox = null;
         public static GameObject survivorPlayer02CurrentBox = null;
@@ -4566,7 +4507,6 @@ namespace LasMonjas
         public static PlayerControl zombiePlayer14infectedTarget = null;
         public static bool zombiePlayer14IsReviving = false;
 
-        public static bool zombieLaboratoryMode = false;
         public static bool zombieSenseiMapLaboratoryMode = false;
 
         public static GameObject laboratory = null;
@@ -4600,12 +4540,8 @@ namespace LasMonjas
         public static bool keyItem05BeingHeld = false;
         public static bool keyItem06BeingHeld = false;
 
-        public static float matchDuration = 300f;
         public static float startZombies = 1f;
         public static float infectCooldown = 10f;
-        public static float killCooldown = 10f;
-        public static float reviveTime = 5f;
-        public static float invincibilityTimeAfterRevive = 3f;
         public static float infectTime = 3f;
         public static float timeForHeal = 20f;
         public static float survivorsVision = 1f;
@@ -4618,7 +4554,7 @@ namespace LasMonjas
 
 
         public static List<Arrow> localSurvivorsDeliverArrow = new List<Arrow>();
-        
+
         private static Sprite buttonInfect;
 
         public static Sprite getInfectButtonSprite() {
@@ -4922,12 +4858,6 @@ namespace LasMonjas
             zombiePlayer14infectedTarget = null;
             zombiePlayer14IsReviving = false;
 
-            if (CustomOptionHolder.zombieLaboratoryMode.getBool() == true) {
-                zombieLaboratoryMode = true;
-            }
-            else {
-                zombieLaboratoryMode = false;
-            }
             laboratory = null;
             laboratoryEnterButton = null;
             laboratoryExitButton = null;
@@ -4947,12 +4877,8 @@ namespace LasMonjas
             keyItem04BeingHeld = false;
             keyItem05BeingHeld = false;
             keyItem06BeingHeld = false;
-            matchDuration = CustomOptionHolder.zombieLaboratoryMatchDuration.getFloat() + 10f;
             startZombies = CustomOptionHolder.zombieLaboratoryStartZombies.getFloat();
             infectCooldown = CustomOptionHolder.zombieLaboratoryInfectCooldown.getFloat();
-            killCooldown = CustomOptionHolder.zombieLaboratoryKillCooldown.getFloat();
-            reviveTime = CustomOptionHolder.zombieLaboratoryReviveTime.getFloat();
-            invincibilityTimeAfterRevive = CustomOptionHolder.zombieLaboratoryInvincibilityTimeAfterRevive.getFloat();
             infectTime = CustomOptionHolder.zombieLaboratoryInfectTime.getFloat();
             survivorsVision = CustomOptionHolder.zombieLaboratorySurvivorsVision.getFloat();
             searchBoxTimer = CustomOptionHolder.zombieLaboratorySearchBoxTimer.getFloat();
@@ -5585,14 +5511,10 @@ namespace LasMonjas
         public static List<Vector3> soloPlayersSpawnPositions = new List<Vector3>();
         public static bool battleRoyaleSenseiMapMode = false;
 
-        public static bool battleRoyaleMode = false;
-        public static float killCooldown = 15;
-        public static float matchDuration = 300f;
+        public static float killCooldown = 1;
         public static float fighterLifes = 3f;
         public static int matchType = 0;
         public static float requiredScore = 0;
-        public static float reviveTime = 5f;
-        public static float invincibilityTimeAfterRevive = 3f;
 
         public static int limePoints = 0;
         public static int pinkPoints = 0;
@@ -5751,14 +5673,8 @@ namespace LasMonjas
             serialKillerWep = null;
             serialKillerIsReviving = false;
             serialKillerSpawns.Clear();
-            if (CustomOptionHolder.battleRoyaleMode.getBool() == true) {
-                battleRoyaleMode = true;
-            }
-            else {
-                battleRoyaleMode = false;
-            }
+
             killCooldown = CustomOptionHolder.battleRoyaleKillCooldown.getFloat();
-            matchDuration = CustomOptionHolder.battleRoyaleMatchDuration.getFloat();
             battleRoyaleSenseiMapMode = CustomOptionHolder.activateSenseiMap.getBool();
             matchType = CustomOptionHolder.battleRoyaleMatchType.getSelection();
             if (PlayerControl.AllPlayerControls.Count >= 11) {
@@ -5770,13 +5686,11 @@ namespace LasMonjas
                 serialKillerLifes = fighterLifes * 2;
             }
             requiredScore = CustomOptionHolder.battleRoyaleScoreNeeded.getFloat();
-            reviveTime = CustomOptionHolder.battleRoyaleReviveTime.getFloat();
-            invincibilityTimeAfterRevive = CustomOptionHolder.battleRoyaleInvincibilityTimeAfterRevive.getFloat();
 
             limePoints = 0;
             pinkPoints = 0;
             serialKillerPoints = 0; 
-        
+
             triggerSoloWin = false;
             triggerTimeWin = false;
             triggerLimeTeamWin = false;
@@ -6309,7 +6223,7 @@ namespace LasMonjas
 
         public static List<PlayerControl> bigMonjaTeam = new List<PlayerControl>();
         public static GameObject bigMonjaBase = null;
-        public static PlayerControl bigMonjaPlayer = null;        
+        public static PlayerControl bigMonjaPlayer = null;
         public static bool bigMonjaIsReviving = false;
         public static int bigMonjaPlayerItems = 0;
         public static GameObject bigMonjaPlayerselectedSpawn = null;
@@ -6324,12 +6238,7 @@ namespace LasMonjas
 
         public static bool monjaFestivalSenseiMapMode = false;
 
-        public static bool monjaFestivalMode = false;
-        public static float killCooldown = 15f;
-        public static float matchDuration = 300f;
         public static float grabDeliverTime = 1f;
-        public static float reviveTime = 5f;
-        public static float invincibilityTimeAfterRevive = 3f;
 
         public static GameObject bigSpawnOne = null;
         public static int bigSpawnOnePoints = 30;
@@ -6380,7 +6289,7 @@ namespace LasMonjas
         public static GameObject handsCyan05 = null;
         public static GameObject handsCyan06 = null;
         public static GameObject handsCyan07 = null;
-        
+
         public static bool triggerGreenTeamWin = false;
         public static bool triggerCyanTeamWin = false;
         public static bool triggerBigMonjaWin = false;
@@ -6584,24 +6493,15 @@ namespace LasMonjas
             bigMonjaPlayerfoundspawn = 0;
             bigMonjaPlayerInvisibleTimer = 0f;
             bigMonjaSpawns.Clear();
-            if (CustomOptionHolder.monjaFestivalMode.getBool() == true) {
-                monjaFestivalMode = true;
-            }
-            else {
-                monjaFestivalMode = false;
-            }
+
             grabDeliverTime = 1f;
-            killCooldown = CustomOptionHolder.monjaFestivalKillCooldown.getFloat();
-            matchDuration = CustomOptionHolder.monjaFestivalMatchDuration.getFloat();
-            monjaFestivalSenseiMapMode = CustomOptionHolder.activateSenseiMap.getBool();            
-            reviveTime = CustomOptionHolder.monjaFestivalReviveTime.getFloat();
-            invincibilityTimeAfterRevive = CustomOptionHolder.monjaFestivalInvincibilityTimeAfterRevive.getFloat();
+            monjaFestivalSenseiMapMode = CustomOptionHolder.activateSenseiMap.getBool();
             if (PlayerControl.AllPlayerControls.Count >= 11) {
-                bigMonjaPlayerKillCooldown = killCooldown / 3;
+                bigMonjaPlayerKillCooldown = LasMonjas.gamemodeKillCooldown / 3;
                 bigMonjaPlayerFindDeliverCooldown = grabDeliverTime / 3;
             }
             else {
-                bigMonjaPlayerKillCooldown = killCooldown / 2;
+                bigMonjaPlayerKillCooldown = LasMonjas.gamemodeKillCooldown / 2;
                 bigMonjaPlayerFindDeliverCooldown = grabDeliverTime / 2;
             }
             greenPoints = 0;
@@ -6663,7 +6563,7 @@ namespace LasMonjas
                         allulMonjaPositions.Add(new Vector3(-8.1f, -0.4f, 0.4f));
                         allulMonjaPositions.Add(new Vector3(13.8f, -0.3f, 0.4f));
                         allulMonjaPositions.Add(new Vector3(-19.8f, 5.4f, 0.4f));
-                        allulMonjaPositions.Add(new Vector3(-8.4f, -13.8f, 0.4f));                        
+                        allulMonjaPositions.Add(new Vector3(-8.4f, -13.8f, 0.4f));
                     }
                     else {
                         allulMonjaPositions.Add(new Vector3(-9.8f, -8.9f, 0.4f));
@@ -6907,7 +6807,7 @@ namespace LasMonjas
         public AudioClip tasksFinalMusic; 
         public AudioClip meetingCalmMusic;
         public AudioClip meetingCoreMusic;
-        public AudioClip meetingFinalMusic;       
+        public AudioClip meetingFinalMusic;
         public AudioClip winCrewmatesMusic;
         public AudioClip winImpostorsMusic;
         public AudioClip winNeutralsMusic;
