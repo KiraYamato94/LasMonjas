@@ -3,8 +3,6 @@ using Hazel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using static LasMonjas.LasMonjas;
 using static LasMonjas.GameHistory;
 using LasMonjas.Objects;
@@ -76,7 +74,7 @@ namespace LasMonjas.Patches {
         }
         // Show player roles on meeting for dead players
         public static void ghostsSeePlayerRoles() {
-            if (howmanygamemodesareon != 1) {
+            if (gameType <= 1) {
                 foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
                     if (p == PlayerControl.LocalPlayer || PlayerControl.LocalPlayer.Data.IsDead) {
 
@@ -129,7 +127,7 @@ namespace LasMonjas.Patches {
             }
         }
         static void impostorSetTarget() {
-            if (!PlayerControl.LocalPlayer.Data.Role.IsImpostor || Archer.archer != null && PlayerControl.LocalPlayer == Archer.archer || Demon.demon != null && PlayerControl.LocalPlayer == Demon.demon || !PlayerControl.LocalPlayer.CanMove || PlayerControl.LocalPlayer.Data.IsDead || howmanygamemodesareon == 1) { // !isImpostor || !canMove || isDead
+            if (!PlayerControl.LocalPlayer.Data.Role.IsImpostor || Archer.archer != null && PlayerControl.LocalPlayer == Archer.archer || Demon.demon != null && PlayerControl.LocalPlayer == Demon.demon || !PlayerControl.LocalPlayer.CanMove || PlayerControl.LocalPlayer.Data.IsDead || gameType >= 2) { // !isImpostor || !canMove || isDead
                 HudManager.Instance.KillButton.SetTarget(null);
                 return;
             }
@@ -606,9 +604,6 @@ namespace LasMonjas.Patches {
             setPlayerOutline(Jinx.target, Jinx.color);
             if (Jinx.target != null && Jinx.jinxedList.Any(p => p.Data.PlayerId == Jinx.target.Data.PlayerId)) Jinx.target = null; // Remove target if already Jinxed and didn't trigger the jinx
         }
-        static void necromancerUpdate() {
-            
-        }        
         static void shyUpdate() {
 
             if (Shy.shy == null)
@@ -660,7 +655,7 @@ namespace LasMonjas.Patches {
             if (Jailer.jailer == null || Jailer.jailer != PlayerControl.LocalPlayer) return;
             Jailer.currentTarget = setTarget();
             if (!Jailer.usedJail) setPlayerOutline(Jailer.currentTarget, Jailer.color);
-        }        
+        }
         static void theChosenOneUpdate() {
             if (Modifiers.theChosenOne == null || Modifiers.theChosenOne != PlayerControl.LocalPlayer) return;
 
@@ -741,11 +736,11 @@ namespace LasMonjas.Patches {
                     new PaintballTrail(player, killerPlayer);
                 }
             }
-        }              
-        
+        }
+
         static void captureTheFlagSetTarget() {
 
-            if (!CaptureTheFlag.captureTheFlagMode || CaptureTheFlag.captureTheFlagMode && howmanygamemodesareon != 1)
+            if (gameType != 2)
                 return;
 
             var untargetableAllPlayers = new List<PlayerControl>();
@@ -949,7 +944,7 @@ namespace LasMonjas.Patches {
 
         static void policeandThiefSetTarget() {
 
-            if (!PoliceAndThief.policeAndThiefMode || PoliceAndThief.policeAndThiefMode && howmanygamemodesareon != 1)
+            if (gameType != 3)
                 return;
 
             var untargetablePolice = new List<PlayerControl>();
@@ -1121,7 +1116,7 @@ namespace LasMonjas.Patches {
 
         static void kingOfTheHillSetTarget() {
 
-            if (!KingOfTheHill.kingOfTheHillMode || KingOfTheHill.kingOfTheHillMode && howmanygamemodesareon != 1)
+            if (gameType != 4)
                 return;
 
             var untargetableAllPlayers = new List<PlayerControl>();
@@ -1326,7 +1321,7 @@ namespace LasMonjas.Patches {
 
         static void hotPotatoSetTarget() {
 
-            if (!HotPotato.hotPotatoMode || HotPotato.hotPotatoMode && howmanygamemodesareon != 1)
+            if (gameType != 5)
                 return;
 
             if (HotPotato.hotPotatoPlayer != null && HotPotato.hotPotatoPlayer == PlayerControl.LocalPlayer) {
@@ -1337,7 +1332,7 @@ namespace LasMonjas.Patches {
 
         static void zombieLaboratorySetTarget() {
 
-            if (!ZombieLaboratory.zombieLaboratoryMode || ZombieLaboratory.zombieLaboratoryMode && howmanygamemodesareon != 1)
+            if (gameType != 6)
                 return;
 
             var untargetableSurvivorsPlayers = new List<PlayerControl>();
@@ -1353,8 +1348,8 @@ namespace LasMonjas.Patches {
             }
 
             if (ZombieLaboratory.nursePlayer != null) {
-                untargetableSurvivorsPlayers.Add(ZombieLaboratory.nursePlayer);                
-                untargetableZombiePlayers.Add(ZombieLaboratory.nursePlayer);                            
+                untargetableSurvivorsPlayers.Add(ZombieLaboratory.nursePlayer);
+                untargetableZombiePlayers.Add(ZombieLaboratory.nursePlayer);
             }
 
             // Prevent killing reviving players
@@ -1641,7 +1636,7 @@ namespace LasMonjas.Patches {
 
         static void monjaFestivalSetTarget() {
 
-            if (!MonjaFestival.monjaFestivalMode || MonjaFestival.monjaFestivalMode && howmanygamemodesareon != 1)
+            if (gameType != 8)
                 return;
 
             var untargetableAllPlayers = new List<PlayerControl>();
@@ -1859,7 +1854,7 @@ namespace LasMonjas.Patches {
 
                 // Ventcolor
                 ventColorUpdate();
-                
+
                 // Impostor
                 impostorSetTarget();
 
@@ -1894,13 +1889,13 @@ namespace LasMonjas.Patches {
 
                 // Trapper
                 trapperSetTarget();
-                
+
                 // Yinyanger
                 yinyangerSetTarget();
 
                 // Challenger
                 challengerSetTarget();
-                
+
                 // Ninja
                 ninjaSetTarget();
 
@@ -1957,7 +1952,7 @@ namespace LasMonjas.Patches {
                 sleuthUpdate();
 
                 // Fink
-                finkUpdate();       
+                finkUpdate();
 
                 // Welder
                 welderSetTarget();
@@ -1985,10 +1980,10 @@ namespace LasMonjas.Patches {
 
                 // Performer Update
                 performerUpdate();
-                
+
                 // Paintball
                 paintballTrail();
-                
+
                 // Capture the flag update
                 captureTheFlagSetTarget();
 
@@ -2029,15 +2024,15 @@ namespace LasMonjas.Patches {
             }
 
             // Murder the bitten player before the meeting starts or reset the bitten player
-            Helpers.handleDemonBiteOnBodyReport();        
-            
+            Helpers.handleDemonBiteOnBodyReport();
+
             // Murder the Spiritualist if someone reports a body or call emergency while trying to revive another player
             if (Spiritualist.spiritualist != null && Spiritualist.isReviving && Spiritualist.canRevive) {
                 MessageWriter murderSpiritualist = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MurderSpiritualistIfReportWhileReviving, Hazel.SendOption.Reliable, -1);
                 AmongUsClient.Instance.FinishRpcImmediately(murderSpiritualist);
                 RPCProcedure.murderSpiritualistIfReportWhileReviving();
             }
-            
+
             // Performer isreported
             if (Modifiers.performer != null && Modifiers.performer.Data.IsDead && !Modifiers.performerReported) {
                 MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PerformerIsReported, Hazel.SendOption.Reliable, -1);
@@ -2063,63 +2058,63 @@ namespace LasMonjas.Patches {
 
                     if (isForensicReport) {
                         if (deadPlayer.player == RoleThief.rolethief && deadPlayer.killerIfExisting.Data.PlayerName == RoleThief.rolethief.Data.PlayerName) {
-                            msg = $"Body Report (Role Thief): {Language.playerControlTexts[0]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                            msg = $"{Language.helpersTexts[2]} ({Language.roleInfoRoleNames[27]}): {Language.playerControlTexts[0]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                         }
                         else if (deadPlayer.player == BountyHunter.bountyhunter && deadPlayer.killerIfExisting.Data.PlayerName == BountyHunter.bountyhunter.Data.PlayerName) {
-                            msg = $"Body Report (Bounty Hunter): {Language.playerControlTexts[0]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                            msg = $"{Language.helpersTexts[2]} ({Language.roleInfoRoleNames[17]}): {Language.playerControlTexts[0]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                         }
                         else if (deadPlayer.player == Modifiers.lover1 && deadPlayer.killerIfExisting.Data.PlayerName == Modifiers.lover1.Data.PlayerName || deadPlayer.player == Modifiers.lover2 && deadPlayer.killerIfExisting.Data.PlayerName == Modifiers.lover2.Data.PlayerName) {
-                            msg = $"Body Report (Lover): {Language.playerControlTexts[0]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                            msg = $"{Language.helpersTexts[2]} ({Language.roleInfoRoleNames[72]}): {Language.playerControlTexts[0]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                         }
                         else if (deadPlayer.player == Sheriff.sheriff && deadPlayer.killerIfExisting.Data.PlayerName == Sheriff.sheriff.Data.PlayerName) {
-                            msg = $"Body Report (Sheriff): {Language.playerControlTexts[0]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                            msg = $"{Language.helpersTexts[2]} ({Language.roleInfoRoleNames[38]}): {Language.playerControlTexts[0]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                         }
                         else if (timeSinceDeath < Forensic.reportNameDuration * 1000) {
-                            msg = $"Body Report: {Language.playerControlTexts[1]} {deadPlayer.killerIfExisting.Data.PlayerName}! ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                            msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[1]} {deadPlayer.killerIfExisting.Data.PlayerName}! ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                         }
                         else if (timeSinceDeath < Forensic.reportColorDuration * 1000) {
                             var typeOfColor = Helpers.isLighterColor(deadPlayer.killerIfExisting.Data.DefaultOutfit.ColorId) ? Language.playerControlTexts[2] : Language.playerControlTexts[3];
-                            msg = $"Body Report: {Language.playerControlTexts[4]} {typeOfColor} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                            msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[4]} {typeOfColor} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                         }
                         else if (timeSinceDeath < Forensic.reportClueDuration * 1000) {
                             int randomClue = rnd.Next(1, 5);
                             switch (randomClue) {
                                 case 1:
                                     if (deadPlayer.killerIfExisting.Data.DefaultOutfit.HatId != null) {
-                                        msg = $"Body Report: {Language.playerControlTexts[5]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                                        msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[5]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                                     }
                                     else {
-                                        msg = $"Body Report: {Language.playerControlTexts[6]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                                        msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[6]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                                     }
                                     break;
                                 case 2:
                                     if (deadPlayer.killerIfExisting.Data.DefaultOutfit.SkinId != null) {
-                                        msg = $"Body Report: {Language.playerControlTexts[7]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                                        msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[7]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                                     }
                                     else {
-                                        msg = $"Body Report: {Language.playerControlTexts[8]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                                        msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[8]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                                     }
                                     break;
                                 case 3:
                                     if (deadPlayer.killerIfExisting.Data.DefaultOutfit.PetId != null) {
-                                        msg = $"Body Report: {Language.playerControlTexts[9]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                                        msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[9]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                                     }
                                     else {
-                                        msg = $"Body Report: {Language.playerControlTexts[10]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                                        msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[10]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                                     }
                                     break;
                                 case 4:
                                     if (deadPlayer.killerIfExisting.Data.DefaultOutfit.VisorId != null) {
-                                        msg = $"Body Report: {Language.playerControlTexts[11]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                                        msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[11]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                                     }
                                     else {
-                                        msg = $"Body Report: {Language.playerControlTexts[12]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                                        msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[12]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                                     }
                                     break;
                             }
                         }
                         else {
-                            msg = $"Body Report: {Language.playerControlTexts[13]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                            msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[13]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
                         }
                     }
 
@@ -2159,335 +2154,345 @@ namespace LasMonjas.Patches {
             if (resetToCrewmate) __instance.Data.Role.TeamType = RoleTeamTypes.Crewmate;
             if (resetToDead) __instance.Data.IsDead = true;
 
-            if (PlayerControl.LocalPlayer == target && GameOptionsManager.Instance.currentGameMode == GameModes.Normal) {
-                HudManager.Instance.StartCoroutine(Effects.Lerp(0.2f, new Action<float>((p) => { // Delayed action
-                    if (p == 1f) {
-                        if (HauntMenuMinigame.Instance) {
-                            HauntMenuMinigame.Instance.ForceClose();
-                            HauntMenuMinigame.Instance.amClosing = HauntMenuMinigame.CloseState.Closing;
-                        }
-                        HudManager.Instance.AbilityButton.Hide();
-                        target.NetTransform.Halt();
-                    }
-                })));
-            }
-            
-            // Remove fake tasks when player dies
-            if (target.hasFakeTasks()) {
-                if (Puppeteer.puppeteer != null && target == Puppeteer.puppeteer) {
-                    if (!Puppeteer.morphed) {
-                        target.clearAllTasks();
-                    }
-                }
-                else {
-                    target.clearAllTasks();
-                }
-            }            
-            
-            // Teleport body if killed while Monja Awakened
-            if (Monja.awakened) {
-                var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
-                body.transform.position = new Vector3(50, 50, 1);
-                if (target == Monja.monja) {
-                    RPCProcedure.monjaReset();
-                }
-            }
-
-            // Lover suicide trigger on murder
-            if ((Modifiers.lover1 != null && target == Modifiers.lover1) || (Modifiers.lover2 != null && target == Modifiers.lover2)) {
-                PlayerControl otherLover = target == Modifiers.lover1 ? Modifiers.lover2 : Modifiers.lover1;
-                if (otherLover != null && !otherLover.Data.IsDead) {
-                    otherLover.MurderPlayer(otherLover);
-                    if (Monja.awakened) {
-                        var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == otherLover.PlayerId);
-                        body.transform.position = new Vector3(50, 50, 1);
-                    }
-                }
-            }
-
-            // Kid trigger win on murder
-            if (Kid.kid != null && target == Kid.kid) {
-                Kid.triggerKidLose = true;
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.KidLose, false);
-            }
-            
-            // Janitor Button Sync
-            if (Janitor.janitor != null && PlayerControl.LocalPlayer == Janitor.janitor && __instance == Janitor.janitor && HudManagerStartPatch.janitorCleanButton != null)
-                HudManagerStartPatch.janitorCleanButton.Timer = Janitor.janitor.killTimer;
-
-            if (Janitor.janitor != null && target == Janitor.janitor && Janitor.dragginBody) {
-                Janitor.janitorResetValuesAtDead();
-            }
-
-            // Manipulator Button Sync
-            if (Manipulator.manipulator != null && PlayerControl.LocalPlayer == Manipulator.manipulator && __instance == Manipulator.manipulator && HudManagerStartPatch.manipulatorManipulateButton != null) {
-                if (Manipulator.manipulator.killTimer > HudManagerStartPatch.manipulatorManipulateButton.Timer) {
-                    HudManagerStartPatch.manipulatorManipulateButton.Timer = Manipulator.manipulator.killTimer;
-                }
-            }
-
-            // Chameleon reset invisibility
-            if (Chameleon.chameleon != null && target == Chameleon.chameleon) {
-                Chameleon.resetChameleon();
-            }
-            
-            // Sorcerer Button Sync
-            if (Sorcerer.sorcerer != null && PlayerControl.LocalPlayer == Sorcerer.sorcerer && __instance == Sorcerer.sorcerer && HudManagerStartPatch.sorcererSpellButton != null)
-                HudManagerStartPatch.sorcererSpellButton.Timer = HudManagerStartPatch.sorcererSpellButton.MaxTimer;
-
-            // Archer dead
-            if (Archer.archer != null && target == Archer.archer) {
-                if (Archer.Guides.Count != 0) {
-                    foreach (var guide in Archer.Guides) {
-                        guide.Value.color = Color.clear;
-                    }
-                }
-                Archer.weaponEquiped = false;
-                if (Archer.bow != null) {
-                    Archer.bow.gameObject.SetActive(Archer.weaponEquiped);
-                }
-            }
-            
-            // Librarian restore abilty use if silenced target died
-            if (Librarian.librarian != null && Librarian.targetLibrary != null && target == Librarian.targetLibrary) {
-                Librarian.targetLibrary = null;
-                Librarian.targetNameButtonText.text = "";
-            }
-
-            // BountyHunter suicide trigger if his target is murdered
-            if (BountyHunter.bountyhunter != null && target == BountyHunter.hasToKill && BountyHunter.bountyhunter != __instance) {
-                if (!BountyHunter.bountyhunter.Data.IsDead) {
-                    BountyHunter.bountyhunter.MurderPlayer(BountyHunter.bountyhunter);
-                }
-            }
-
-            // Yinyanger, reset both targets if he gets killed
-            if (Yinyanger.yinyanger != null && target == Yinyanger.yinyanger) {
-                Yinyanger.yinyedplayer = null;
-                Yinyanger.yangyedplayer = null;
-            }
-
-            // Yinyanger reset the selected target if one of them gets killed
-            if (Yinyanger.yinyanger != null && Yinyanger.yinyanger != __instance) {
-                if (Yinyanger.yinyedplayer != null && target == Yinyanger.yinyedplayer) {
-                    Yinyanger.resetYined();
-                }
-                if (Yinyanger.yangyedplayer != null && target == Yinyanger.yangyedplayer) {
-                    Yinyanger.resetYanged();
-                }
-            }
-            
-            // Ninja reset marked if killed
-            if (Ninja.ninja != null && Ninja.markedTarget != null && target == Ninja.markedTarget) {
-                Ninja.markedTarget = null;
-                Ninja.targetNameButtonText.text = "";
-            }
-
-            // Berserker reset if revived later
-            if (Berserker.berserker != null && target == Berserker.berserker) {
-                Berserker.killedFirstTime = false;
-                Berserker.timeToKill = Berserker.backupTimeToKill;
-            }
-            
-            // Yandere rampage mode
-            if (Yandere.yandere != null && Yandere.yandere != __instance && Yandere.target != null && target == Yandere.target && !Yandere.rampageMode) {
-                Yandere.rampageMode = true;
-                Yandere.yandereTargetButtonText.text = Language.statusRolesTexts[2];
-                Yandere.yandereKillButtonText.text = Language.statusRolesTexts[3];
-                if (PlayerControl.LocalPlayer == Yandere.yandere) {
-                    SoundManager.Instance.PlaySound(CustomMain.customAssets.hunterTarget, false, 100f);
-                }
-            }
-
-            // Stranded reset invisibility
-            if (Stranded.stranded != null && (target == Stranded.stranded || __instance == Stranded.stranded && Stranded.isInvisible)) {
-                Stranded.resetStranded();
-            }
-            
-            // Monja revert item if killed
-            if (Monja.monja != null && target.PlayerId == Monja.monja.PlayerId) {
-                if (Monja.isDeliveringItem) {
-                    RPCProcedure.monjaRevertItemPosition(Monja.itemId);
-                }
-            }
-
-            // Devourer play sound when someone dies
-            if (Devourer.devourer != null && Devourer.devourer == PlayerControl.LocalPlayer && !Devourer.devourer.Data.IsDead) {
-                SoundManager.Instance.PlaySound(CustomMain.customAssets.devourerDingClip, false, 100f);
-            }
-
-            // Poisoner restore Poison ability if poisonTarget died
-            if (Poisoner.poisoner != null && Poisoner.poisonedTarget != null && target == Poisoner.poisonedTarget) {
-                Poisoner.poisonedTarget = null;
-            }
-
-            // Puppeteer trigger counter or win if its was morphed
-            if (Puppeteer.puppeteer != null && target == Puppeteer.puppeteer && Puppeteer.morphed) {
-                // remove puppeteer corpse and dead entry
-                DeadBody[] array = UnityEngine.Object.FindObjectsOfType<DeadBody>();
-                for (int i = 0; i < array.Length; i++) {
-                    if (GameData.Instance.GetPlayerById(array[i].ParentId).PlayerId == target.PlayerId) {
-                        array[i].gameObject.active = false;
-                    }
-                }
-                HudManager.Instance.StartCoroutine(Effects.Lerp(0.25f, new Action<float>((p) => { // Delayed action
-                    if (p == 1f) {
-                        // revive puppeteer
-                        target.Revive();
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
-                            if (Puppeteer.puppeteer.transform.position.y > 0) {
-                                Puppeteer.puppeteer.transform.position = new Vector3(5.5f, 31.5f, -5);
+            switch (gameType) {
+                case 0:
+                case 1:
+                    if (PlayerControl.LocalPlayer == target && GameOptionsManager.Instance.currentGameMode == GameModes.Normal) {
+                        HudManager.Instance.StartCoroutine(Effects.Lerp(0.2f, new Action<float>((p) => { // Delayed action
+                            if (p == 1f) {
+                                if (HauntMenuMinigame.Instance) {
+                                    HauntMenuMinigame.Instance.ForceClose();
+                                    HauntMenuMinigame.Instance.amClosing = HauntMenuMinigame.CloseState.Closing;
+                                }
+                                HudManager.Instance.AbilityButton.Hide();
+                                target.NetTransform.Halt();
                             }
-                            else {
-                                Puppeteer.puppeteer.transform.position = new Vector3(-4.75f, -33.25f, -5);
+                        })));
+                    }
+
+                    // Remove fake tasks when player dies
+                    if (target.hasFakeTasks()) {
+                        if (Puppeteer.puppeteer != null && target == Puppeteer.puppeteer) {
+                            if (!Puppeteer.morphed) {
+                                target.clearAllTasks();
                             }
                         }
                         else {
-                            Puppeteer.puppeteer.transform.position = Puppeteer.positionPreMorphed;
+                            target.clearAllTasks();
                         }
-                        for (int i = 0; i < array.Length; i++) {
-                            if (GameData.Instance.GetPlayerById(array[i].ParentId).PlayerId == target.PlayerId) {
-                                UnityEngine.Object.Destroy(array[i].gameObject);
+                    }
+
+                    // Teleport body if killed while Monja Awakened
+                    if (Monja.awakened) {
+                        var monjaBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
+                        monjaBody.transform.position = new Vector3(50, 50, 1);
+                        if (target == Monja.monja) {
+                            RPCProcedure.monjaReset();
+                        }
+                    }
+
+                    // Lover suicide trigger on murder
+                    if ((Modifiers.lover1 != null && target == Modifiers.lover1) || (Modifiers.lover2 != null && target == Modifiers.lover2)) {
+                        PlayerControl otherLover = target == Modifiers.lover1 ? Modifiers.lover2 : Modifiers.lover1;
+                        if (otherLover != null && !otherLover.Data.IsDead) {
+                            otherLover.MurderPlayer(otherLover);
+                            if (Monja.awakened) {
+                                var loverBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == otherLover.PlayerId);
+                                loverBody.transform.position = new Vector3(50, 50, 1);
                             }
                         }
                     }
-                })));
-                
-                DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
-                HudManagerStartPatch.puppeteerTransformButton.Timer = HudManagerStartPatch.puppeteerTransformButton.MaxTimer;
-                HudManagerStartPatch.puppeteerSampleButton.Timer = HudManagerStartPatch.puppeteerSampleButton.MaxTimer;
-                Puppeteer.morphed = false;
-                Puppeteer.puppeteer.setDefaultLook();
-                Puppeteer.counter += 1;
-                Puppeteer.transformTarget = null;
-                Puppeteer.pickTarget = null;
-                Puppeteer.currentTarget = null;
-                Puppeteer.puppeteerText.text = $"{Puppeteer.counter}/{Puppeteer.numberOfKills}";
 
-                __instance.SetKillTimer(0f);
-                if (PlayerControl.LocalPlayer == __instance) {
-                    SoundManager.Instance.PlaySound(CustomMain.customAssets.puppeteerClip, false, 75f);
-                }
-
-                if (PlayerControl.LocalPlayer != Puppeteer.puppeteer) return;
-
-                if (Puppeteer.counter >= Puppeteer.numberOfKills) {
-                    MessageWriter winWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PuppeteerWin, Hazel.SendOption.Reliable, -1);
-                    AmongUsClient.Instance.FinishRpcImmediately(winWriter);
-                    RPCProcedure.puppeteerWin();
-                }
-            }
-
-            // Kill Exiler if the target is killed
-            if (Exiler.exiler != null && Exiler.target != null && target == Exiler.target && !Exiler.exiler.Data.IsDead) {
-                Exiler.exiler.MurderPlayer(Exiler.exiler);
-            }
-            
-            // Reset hided player if killed
-            if (Seeker.seeker != null) {
-                if (Seeker.seeker == target) {
-                    Seeker.ResetValues(false);
-                }
-                if (Seeker.hidedPlayerOne != null && target == Seeker.hidedPlayerOne) {
-                    Seeker.ResetOnePlayer(1);                    
-                }
-                if (Seeker.hidedPlayerTwo != null && target == Seeker.hidedPlayerTwo) {
-                    Seeker.ResetOnePlayer(2);
-                }
-                if (Seeker.hidedPlayerThree != null && target == Seeker.hidedPlayerThree) {
-                    Seeker.ResetOnePlayer(3);
-                }
-            }
-
-            // If Squire killed, remove the shield
-            if (Squire.squire != null && Squire.shielded != null && target == Squire.squire) {
-                Squire.shielded = null;
-            }
-            
-            // Forensic add body
-            if (Forensic.deadBodies != null) {
-                Forensic.featureDeadBodies.Add(new Tuple<DeadPlayer, Vector3>(deadPlayer, target.transform.position));
-            }
-            
-            // Sleuth store body positions
-            if (Sleuth.deadBodyPositions != null) Sleuth.deadBodyPositions.Add(target.transform.position);
-
-            // Fink reset camera on dead
-            if (Fink.fink != null && target == Fink.fink) {
-                Fink.resetCamera();
-                if (Fink.localArrows != null) {
-                    foreach (Arrow arrow in Fink.localArrows) arrow.arrow.SetActive(false);
-                }
-            }
-
-            // Vigilant delete doorlog item when killed
-            if (Vigilant.vigilantMira != null && target == Vigilant.vigilantMira) {
-                GameObject vigilantdoorlog = GameObject.Find("VigilantDoorLog");
-                if (vigilantdoorlog != null) {
-                    vigilantdoorlog.SetActive(false);
-                }
-            }           
-
-            // Hunter target suicide trigger on Hunter murder
-            if (Hunter.hunter != null && target == Hunter.hunter) {
-                if (Hunter.hunted != null && !Hunter.hunted.Data.IsDead) {
-                    Hunter.hunted.MurderPlayer(Hunter.hunted);
-                    Hunter.targetButtonText.text = $" ";
-                }
-            }
-
-            // Necromancer dead
-            if (Necromancer.necromancer != null && target == Necromancer.necromancer && Necromancer.dragginBody) {
-                Necromancer.necromancerResetValuesAtDead();
-            }
-            
-            // Task Master clear extra tasks if killed while doing them
-            if (TaskMaster.taskMaster != null && target == TaskMaster.taskMaster && TaskMaster.clearedInitialTasks) {
-                target.clearAllTasks();
-            }
-            
-            // If Jailer killed, remove the jailed
-            if (Jailer.jailer != null && Jailer.jailedPlayer != null && target == Jailer.jailer) {
-                Jailer.jailedPlayer = null;
-            }
-
-            // Performer timer upon death
-            if (Modifiers.performer != null && target == Modifiers.performer) {
-                Modifiers.performerDuration = CustomOptionHolder.performerDuration.getFloat();
-                // Ace Attorney Music Stop and play theater music
-                if (PlayerControl.LocalPlayer != Spiritualist.spiritualist && PlayerControl.LocalPlayer != TimeTraveler.timeTraveler) {
-                    if (!Monja.awakened) {
-                        RPCProcedure.changeMusic(7);
-                        SoundManager.Instance.PlaySound(CustomMain.customAssets.performerMusic, false, 5f);
+                    // Kid trigger win on murder
+                    if (Kid.kid != null && target == Kid.kid) {
+                        Kid.triggerKidLose = true;
+                        GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.KidLose, false);
                     }
-                    new DIO(Modifiers.performerDuration, Modifiers.performer);
-                }
-                Modifiers.performerMusicStop = false;
-            }
 
-            // Paintball trigger on death
-            if (Modifiers.paintball != null && target == Modifiers.paintball) {
-                if (PlayerControl.LocalPlayer == __instance) {
-                    SoundManager.Instance.PlaySound(CustomMain.customAssets.paintballDeath, false, 100f);
-                }
-                Modifiers.active = new Dictionary<byte, float>();
-                Modifiers.paintballKillerMap = new Dictionary<byte, byte>();
-                Modifiers.active.Add(__instance.PlayerId, Modifiers.paintballDuration);
-                Modifiers.paintballKillerMap.Add(__instance.PlayerId, target.PlayerId);
-            }
+                    // Janitor Button Sync
+                    if (Janitor.janitor != null && PlayerControl.LocalPlayer == Janitor.janitor && __instance == Janitor.janitor && HudManagerStartPatch.janitorCleanButton != null)
+                        HudManagerStartPatch.janitorCleanButton.Timer = Janitor.janitor.killTimer;
 
-            // Electrician discharge trigger on death
-            if (Modifiers.electrician != null && target == Modifiers.electrician) {
-                if (PlayerControl.LocalPlayer == __instance) {
-                    SoundManager.Instance.PlaySound(CustomMain.customAssets.policeTaser, false, 100f);
-                }
-                new Tased(Modifiers.electricianDuration, __instance);
-            }
+                    if (Janitor.janitor != null && target == Janitor.janitor && Janitor.dragginBody) {
+                        Janitor.janitorResetValuesAtDead();
+                    }
 
-            if (howmanygamemodesareon == 1) {
-                // Capture the flag revive player
-                if (CaptureTheFlag.captureTheFlagMode) {
+                    // Manipulator Button Sync
+                    if (Manipulator.manipulator != null && PlayerControl.LocalPlayer == Manipulator.manipulator && __instance == Manipulator.manipulator && HudManagerStartPatch.manipulatorManipulateButton != null) {
+                        if (Manipulator.manipulator.killTimer > HudManagerStartPatch.manipulatorManipulateButton.Timer) {
+                            HudManagerStartPatch.manipulatorManipulateButton.Timer = Manipulator.manipulator.killTimer;
+                        }
+                    }
+
+                    // Chameleon reset invisibility
+                    if (Chameleon.chameleon != null && target == Chameleon.chameleon) {
+                        Chameleon.resetChameleon();
+                    }
+
+                    // Sorcerer Button Sync
+                    if (Sorcerer.sorcerer != null && PlayerControl.LocalPlayer == Sorcerer.sorcerer && __instance == Sorcerer.sorcerer && HudManagerStartPatch.sorcererSpellButton != null)
+                        HudManagerStartPatch.sorcererSpellButton.Timer = HudManagerStartPatch.sorcererSpellButton.MaxTimer;
+
+                    // Archer dead
+                    if (Archer.archer != null && target == Archer.archer) {
+                        if (Archer.Guides.Count != 0) {
+                            foreach (var guide in Archer.Guides) {
+                                guide.Value.color = Color.clear;
+                            }
+                        }
+                        Archer.weaponEquiped = false;
+                        if (Archer.bow != null) {
+                            Archer.bow.gameObject.SetActive(Archer.weaponEquiped);
+                        }
+                    }
+
+                    // Librarian restore abilty use if silenced target died
+                    if (Librarian.librarian != null && Librarian.targetLibrary != null && target == Librarian.targetLibrary) {
+                        Librarian.targetLibrary = null;
+                        Librarian.targetNameButtonText.text = "";
+                    }
+
+                    // BountyHunter suicide trigger if his target is murdered
+                    if (BountyHunter.bountyhunter != null && target == BountyHunter.hasToKill && BountyHunter.bountyhunter != __instance) {
+                        if (!BountyHunter.bountyhunter.Data.IsDead) {
+                            BountyHunter.bountyhunter.MurderPlayer(BountyHunter.bountyhunter);
+                        }
+                    }
+
+                    // Yinyanger, reset both targets if he gets killed
+                    if (Yinyanger.yinyanger != null && target == Yinyanger.yinyanger) {
+                        Yinyanger.yinyedplayer = null;
+                        Yinyanger.yangyedplayer = null;
+                    }
+
+                    // Yinyanger reset the selected target if one of them gets killed
+                    if (Yinyanger.yinyanger != null && Yinyanger.yinyanger != __instance) {
+                        if (Yinyanger.yinyedplayer != null && target == Yinyanger.yinyedplayer) {
+                            Yinyanger.resetYined();
+                        }
+                        if (Yinyanger.yangyedplayer != null && target == Yinyanger.yangyedplayer) {
+                            Yinyanger.resetYanged();
+                        }
+                    }
+
+                    // Ninja reset marked if killed
+                    if (Ninja.ninja != null && Ninja.markedTarget != null && target == Ninja.markedTarget) {
+                        Ninja.markedTarget = null;
+                        Ninja.targetNameButtonText.text = "";
+                    }
+
+                    // Berserker reset if revived later
+                    if (Berserker.berserker != null && target == Berserker.berserker) {
+                        Berserker.killedFirstTime = false;
+                        Berserker.timeToKill = Berserker.backupTimeToKill;
+                    }
+
+                    // Yandere rampage mode
+                    if (Yandere.yandere != null && Yandere.yandere != __instance && Yandere.target != null && target == Yandere.target && !Yandere.rampageMode) {
+                        Yandere.rampageMode = true;
+                        Yandere.yandereTargetButtonText.text = Language.statusRolesTexts[2];
+                        Yandere.yandereKillButtonText.text = Language.statusRolesTexts[3];
+                        if (PlayerControl.LocalPlayer == Yandere.yandere) {
+                            SoundManager.Instance.PlaySound(CustomMain.customAssets.hunterTarget, false, 100f);
+                        }
+                    }
+
+                    // Stranded reset invisibility
+                    if (Stranded.stranded != null && (target == Stranded.stranded || __instance == Stranded.stranded && Stranded.isInvisible)) {
+                        Stranded.resetStranded();
+                    }
+
+                    // Monja revert item if killed
+                    if (Monja.monja != null && target.PlayerId == Monja.monja.PlayerId) {
+                        if (Monja.isDeliveringItem) {
+                            RPCProcedure.monjaRevertItemPosition(Monja.itemId);
+                        }
+                    }
+
+                    // Devourer play sound when someone dies
+                    if (Devourer.devourer != null && Devourer.devourer == PlayerControl.LocalPlayer && !Devourer.devourer.Data.IsDead) {
+                        SoundManager.Instance.PlaySound(CustomMain.customAssets.devourerDingClip, false, 100f);
+                    }
+
+                    // Poisoner restore Poison ability if poisonTarget died
+                    if (Poisoner.poisoner != null && Poisoner.poisonedTarget != null && target == Poisoner.poisonedTarget) {
+                        Poisoner.poisonedTarget = null;
+                    }
+
+                    // Puppeteer trigger counter or win if its was morphed
+                    if (Puppeteer.puppeteer != null && target == Puppeteer.puppeteer && Puppeteer.morphed) {
+                        // remove puppeteer corpse and dead entry
+                        DeadBody[] array = UnityEngine.Object.FindObjectsOfType<DeadBody>();
+                        for (int i = 0; i < array.Length; i++) {
+                            if (GameData.Instance.GetPlayerById(array[i].ParentId).PlayerId == target.PlayerId) {
+                                array[i].gameObject.active = false;
+                            }
+                        }
+                        HudManager.Instance.StartCoroutine(Effects.Lerp(0.25f, new Action<float>((p) => { // Delayed action
+                            if (p == 1f) {
+                                // revive puppeteer
+                                target.Revive();
+                                if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                                    if (Puppeteer.puppeteer.transform.position.y > 0) {
+                                        Puppeteer.puppeteer.transform.position = new Vector3(5.5f, 31.5f, -5);
+                                    }
+                                    else {
+                                        Puppeteer.puppeteer.transform.position = new Vector3(-4.75f, -33.25f, -5);
+                                    }
+                                }
+                                else {
+                                    Puppeteer.puppeteer.transform.position = Puppeteer.positionPreMorphed;
+                                }
+                                for (int i = 0; i < array.Length; i++) {
+                                    if (GameData.Instance.GetPlayerById(array[i].ParentId).PlayerId == target.PlayerId) {
+                                        UnityEngine.Object.Destroy(array[i].gameObject);
+                                    }
+                                }
+                            }
+                        })));
+
+                        DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
+                        if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
+                        HudManagerStartPatch.puppeteerTransformButton.Timer = HudManagerStartPatch.puppeteerTransformButton.MaxTimer;
+                        HudManagerStartPatch.puppeteerSampleButton.Timer = HudManagerStartPatch.puppeteerSampleButton.MaxTimer;
+                        Puppeteer.morphed = false;
+                        Puppeteer.puppeteer.setDefaultLook();
+                        Puppeteer.counter += 1;
+                        Puppeteer.transformTarget = null;
+                        Puppeteer.pickTarget = null;
+                        Puppeteer.currentTarget = null;
+                        Puppeteer.puppeteerText.text = $"{Puppeteer.counter}/{Puppeteer.numberOfKills}";
+
+                        __instance.SetKillTimer(0f);
+                        if (PlayerControl.LocalPlayer == __instance) {
+                            SoundManager.Instance.PlaySound(CustomMain.customAssets.puppeteerClip, false, 75f);
+                        }
+
+                        if (PlayerControl.LocalPlayer != Puppeteer.puppeteer) return;
+
+                        if (Puppeteer.counter >= Puppeteer.numberOfKills) {
+                            MessageWriter winWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PuppeteerWin, Hazel.SendOption.Reliable, -1);
+                            AmongUsClient.Instance.FinishRpcImmediately(winWriter);
+                            RPCProcedure.puppeteerWin();
+                        }
+                    }
+
+                    // Kill Exiler if the target is killed
+                    if (Exiler.exiler != null && Exiler.target != null && target == Exiler.target && !Exiler.exiler.Data.IsDead) {
+                        Exiler.exiler.MurderPlayer(Exiler.exiler);
+                    }
+
+                    // Reset hided player if killed
+                    if (Seeker.seeker != null) {
+                        if (Seeker.seeker == target) {
+                            Seeker.ResetValues(false);
+                        }
+                        if (Seeker.hidedPlayerOne != null && target == Seeker.hidedPlayerOne) {
+                            Seeker.ResetOnePlayer(1);
+                        }
+                        if (Seeker.hidedPlayerTwo != null && target == Seeker.hidedPlayerTwo) {
+                            Seeker.ResetOnePlayer(2);
+                        }
+                        if (Seeker.hidedPlayerThree != null && target == Seeker.hidedPlayerThree) {
+                            Seeker.ResetOnePlayer(3);
+                        }
+                    }
+
+                    // If Squire killed, remove the shield
+                    if (Squire.squire != null && Squire.shielded != null && target == Squire.squire) {
+                        Squire.shielded = null;
+                    }
+
+                    // Forensic add body
+                    if (Forensic.deadBodies != null) {
+                        Forensic.featureDeadBodies.Add(new Tuple<DeadPlayer, Vector3>(deadPlayer, target.transform.position));
+                    }
+
+                    // Sleuth store body positions
+                    if (Sleuth.deadBodyPositions != null) Sleuth.deadBodyPositions.Add(target.transform.position);
+
+                    // Fink reset camera on dead
+                    if (Fink.fink != null && target == Fink.fink) {
+                        Fink.resetCamera();
+                        if (Fink.localArrows != null) {
+                            foreach (Arrow arrow in Fink.localArrows) arrow.arrow.SetActive(false);
+                        }
+                    }
+
+                    // Vigilant delete doorlog item when killed
+                    if (Vigilant.vigilantMira != null && target == Vigilant.vigilantMira) {
+                        GameObject vigilantdoorlog = GameObject.Find("VigilantDoorLog");
+                        if (vigilantdoorlog != null) {
+                            vigilantdoorlog.SetActive(false);
+                        }
+                    }
+
+                    // Hunter target suicide trigger on Hunter murder
+                    if (Hunter.hunter != null && target == Hunter.hunter) {
+                        if (Hunter.hunted != null && !Hunter.hunted.Data.IsDead) {
+                            Hunter.hunted.MurderPlayer(Hunter.hunted);
+                            Hunter.targetButtonText.text = $" ";
+                        }
+                    }
+
+                    // Necromancer dead
+                    if (Necromancer.necromancer != null && target == Necromancer.necromancer && Necromancer.dragginBody) {
+                        Necromancer.necromancerResetValuesAtDead();
+                    }
+
+                    // Task Master clear extra tasks if killed while doing them
+                    if (TaskMaster.taskMaster != null && target == TaskMaster.taskMaster && TaskMaster.clearedInitialTasks) {
+                        target.clearAllTasks();
+                    }
+
+                    // If Jailer killed, remove the jailed
+                    if (Jailer.jailer != null && Jailer.jailedPlayer != null && target == Jailer.jailer) {
+                        Jailer.jailedPlayer = null;
+                    }
+
+                    // Performer timer upon death
+                    if (Modifiers.performer != null && target == Modifiers.performer) {
+                        Modifiers.performerDuration = CustomOptionHolder.performerDuration.getFloat();
+                        // Ace Attorney Music Stop and play theater music
+                        if (PlayerControl.LocalPlayer != Spiritualist.spiritualist && PlayerControl.LocalPlayer != TimeTraveler.timeTraveler) {
+                            if (!Monja.awakened) {
+                                RPCProcedure.changeMusic(7);
+                                SoundManager.Instance.PlaySound(CustomMain.customAssets.performerMusic, false, 5f);
+                            }
+                            new DIO(Modifiers.performerDuration, Modifiers.performer);
+                        }
+                        Modifiers.performerMusicStop = false;
+                    }
+
+                    // Paintball trigger on death
+                    if (Modifiers.paintball != null && target == Modifiers.paintball) {
+                        if (PlayerControl.LocalPlayer == __instance) {
+                            SoundManager.Instance.PlaySound(CustomMain.customAssets.paintballDeath, false, 100f);
+                        }
+                        Modifiers.active = new Dictionary<byte, float>();
+                        Modifiers.paintballKillerMap = new Dictionary<byte, byte>();
+                        Modifiers.active.Add(__instance.PlayerId, Modifiers.paintballDuration);
+                        Modifiers.paintballKillerMap.Add(__instance.PlayerId, target.PlayerId);
+                    }
+
+                    // Electrician discharge trigger on death
+                    if (Modifiers.electrician != null && target == Modifiers.electrician) {
+                        if (PlayerControl.LocalPlayer == __instance) {
+                            SoundManager.Instance.PlaySound(CustomMain.customAssets.policeTaser, false, 100f);
+                        }
+                        new Tased(Modifiers.electricianDuration, __instance);
+                    }
+
+                    // Check alive players for disable sabotage button if game result in 1vs1 special condition (impostor + rebel / impostor + captain / rebel + captain)
+                    alivePlayers = 0;
+                    foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                        if (!player.Data.IsDead) {
+                            alivePlayers += 1;
+                        }
+                    }
+                    break;
+                case 2:
+                    // CTF revive
                     // Capture the flag reset flag position if killed while having it
                     if (CaptureTheFlag.redPlayerWhoHasBlueFlag != null && target == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
                         CaptureTheFlag.blueflagtaken = false;
@@ -2567,17 +2572,17 @@ namespace LasMonjas.Patches {
 
                     // Capture the flag revive player
                     if (CaptureTheFlag.stealerPlayer != null && CaptureTheFlag.stealerPlayer.PlayerId == target.PlayerId) {
-                        var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
-                        body.transform.position = new Vector3(50, 50, 1);
+                        var ctfBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
+                        ctfBody.transform.position = new Vector3(50, 50, 1);
                         CaptureTheFlag.stealerPlayerIsReviving = true;
                         Helpers.alphaPlayer(true, CaptureTheFlag.stealerPlayer.PlayerId);
-                        HudManager.Instance.StartCoroutine(Effects.Lerp(CaptureTheFlag.reviveTime, new Action<float>((p) => {
+                        HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
                             if (p == 1f && CaptureTheFlag.stealerPlayer != null) {
                                 CaptureTheFlag.stealerPlayerIsReviving = false;
                                 Helpers.alphaPlayer(false, CaptureTheFlag.stealerPlayer.PlayerId);
                             }
                         })));
-                        HudManager.Instance.StartCoroutine(Effects.Lerp(CaptureTheFlag.reviveTime - CaptureTheFlag.invincibilityTimeAfterRevive, new Action<float>((p) => {
+                        HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
                             if (p == 1f && CaptureTheFlag.stealerPlayer != null) {
                                 CaptureTheFlag.stealerPlayer.Revive();
                                 switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
@@ -2617,7 +2622,7 @@ namespace LasMonjas.Patches {
                                         break;
                                 }
                                 DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                                if (body != null) UnityEngine.Object.Destroy(body.gameObject);
+                                if (ctfBody != null) UnityEngine.Object.Destroy(ctfBody.gameObject);
                                 if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
                             }
 
@@ -2627,8 +2632,8 @@ namespace LasMonjas.Patches {
 
                     foreach (PlayerControl player in CaptureTheFlag.redteamFlag) {
                         if (player.PlayerId == target.PlayerId) {
-                            var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
-                            body.transform.position = new Vector3(50, 50, 1);
+                            var ctfBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
+                            ctfBody.transform.position = new Vector3(50, 50, 1);
                             if (CaptureTheFlag.redplayer01 != null && target.PlayerId == CaptureTheFlag.redplayer01.PlayerId) {
                                 CaptureTheFlag.redplayer01IsReviving = true;
                             }
@@ -2651,7 +2656,7 @@ namespace LasMonjas.Patches {
                                 CaptureTheFlag.redplayer07IsReviving = true;
                             }
                             Helpers.alphaPlayer(true, player.PlayerId);
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(CaptureTheFlag.reviveTime, new Action<float>((p) => {
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     if (CaptureTheFlag.redplayer01 != null && target.PlayerId == CaptureTheFlag.redplayer01.PlayerId) {
                                         CaptureTheFlag.redplayer01IsReviving = false;
@@ -2678,7 +2683,7 @@ namespace LasMonjas.Patches {
                                 }
                             })));
 
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(CaptureTheFlag.reviveTime - CaptureTheFlag.invincibilityTimeAfterRevive, new Action<float>((p) => {
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     player.Revive();
                                     switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
@@ -2718,7 +2723,7 @@ namespace LasMonjas.Patches {
                                             break;
                                     }
                                     DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                                    if (body != null) UnityEngine.Object.Destroy(body.gameObject);
+                                    if (ctfBody != null) UnityEngine.Object.Destroy(ctfBody.gameObject);
                                     if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
                                 }
 
@@ -2728,8 +2733,8 @@ namespace LasMonjas.Patches {
                     }
                     foreach (PlayerControl player in CaptureTheFlag.blueteamFlag) {
                         if (player.PlayerId == target.PlayerId) {
-                            var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
-                            body.transform.position = new Vector3(50, 50, 1);
+                            var ctfBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
+                            ctfBody.transform.position = new Vector3(50, 50, 1);
                             if (CaptureTheFlag.blueplayer01 != null && target.PlayerId == CaptureTheFlag.blueplayer01.PlayerId) {
                                 CaptureTheFlag.blueplayer01IsReviving = true;
                             }
@@ -2752,7 +2757,7 @@ namespace LasMonjas.Patches {
                                 CaptureTheFlag.blueplayer07IsReviving = true;
                             }
                             Helpers.alphaPlayer(true, player.PlayerId);
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(CaptureTheFlag.reviveTime, new Action<float>((p) => {
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     if (CaptureTheFlag.blueplayer01 != null && target.PlayerId == CaptureTheFlag.blueplayer01.PlayerId) {
                                         CaptureTheFlag.blueplayer01IsReviving = false;
@@ -2779,7 +2784,7 @@ namespace LasMonjas.Patches {
                                 }
                             })));
 
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(CaptureTheFlag.reviveTime - CaptureTheFlag.invincibilityTimeAfterRevive, new Action<float>((p) => {
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     player.Revive();
                                     switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
@@ -2819,7 +2824,7 @@ namespace LasMonjas.Patches {
                                             break;
                                     }
                                     DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                                    if (body != null) UnityEngine.Object.Destroy(body.gameObject);
+                                    if (ctfBody != null) UnityEngine.Object.Destroy(ctfBody.gameObject);
                                     if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
                                 }
 
@@ -2827,14 +2832,13 @@ namespace LasMonjas.Patches {
 
                         }
                     }
-                }
-
-                // Police and Thief revive player
-                if (PoliceAndThief.policeAndThiefMode) {
+                    break;
+                case 3:
+                    // PT
                     foreach (PlayerControl player in PoliceAndThief.policeTeam) {
                         if (player.PlayerId == target.PlayerId) {
-                            var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
-                            body.transform.position = new Vector3(50, 50, 1);
+                            var ptBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
+                            ptBody.transform.position = new Vector3(50, 50, 1);
                             if (PoliceAndThief.policeplayer01 != null && target.PlayerId == PoliceAndThief.policeplayer01.PlayerId) {
                                 PoliceAndThief.policeplayer01IsReviving = true;
                             }
@@ -2854,7 +2858,7 @@ namespace LasMonjas.Patches {
                                 PoliceAndThief.policeplayer06IsReviving = true;
                             }
                             Helpers.alphaPlayer(true, player.PlayerId);
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(PoliceAndThief.policeReviveTime, new Action<float>((p) => {
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     if (PoliceAndThief.policeplayer01 != null && target.PlayerId == PoliceAndThief.policeplayer01.PlayerId) {
                                         PoliceAndThief.policeplayer01IsReviving = false;
@@ -2878,7 +2882,7 @@ namespace LasMonjas.Patches {
                                 }
                             })));
 
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(PoliceAndThief.policeReviveTime - PoliceAndThief.invincibilityTimeAfterRevive, new Action<float>((p) => {
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     player.Revive();
                                     switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
@@ -2918,7 +2922,7 @@ namespace LasMonjas.Patches {
                                             break;
                                     }
                                     DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                                    if (body != null) UnityEngine.Object.Destroy(body.gameObject);
+                                    if (ptBody != null) UnityEngine.Object.Destroy(ptBody.gameObject);
                                     if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
                                 }
 
@@ -2928,8 +2932,8 @@ namespace LasMonjas.Patches {
                     }
                     foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
                         if (player.PlayerId == target.PlayerId) {
-                            var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
-                            body.transform.position = new Vector3(50, 50, 1);
+                            var ptBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
+                            ptBody.transform.position = new Vector3(50, 50, 1);
                             if (PoliceAndThief.thiefplayer01 != null && target.PlayerId == PoliceAndThief.thiefplayer01.PlayerId) {
                                 if (PoliceAndThief.thiefplayer01IsStealing) {
                                     RPCProcedure.policeandThiefRevertedJewelPosition(target.PlayerId, PoliceAndThief.thiefplayer01JewelId);
@@ -2985,7 +2989,7 @@ namespace LasMonjas.Patches {
                                 PoliceAndThief.thiefplayer09IsReviving = true;
                             }
                             Helpers.alphaPlayer(true, player.PlayerId);
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(PoliceAndThief.thiefReviveTime, new Action<float>((p) => {
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime * 1.25f, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     if (PoliceAndThief.thiefplayer01 != null && target.PlayerId == PoliceAndThief.thiefplayer01.PlayerId) {
                                         PoliceAndThief.thiefplayer01IsReviving = false;
@@ -3018,7 +3022,7 @@ namespace LasMonjas.Patches {
                                 }
                             })));
 
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(PoliceAndThief.thiefReviveTime - PoliceAndThief.invincibilityTimeAfterRevive, new Action<float>((p) => {
+                            HudManager.Instance.StartCoroutine(Effects.Lerp((LasMonjas.gamemodeReviveTime * 1.25f) - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     player.Revive();
                                     switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
@@ -3058,7 +3062,7 @@ namespace LasMonjas.Patches {
                                             break;
                                     }
                                     DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                                    if (body != null) UnityEngine.Object.Destroy(body.gameObject);
+                                    if (ptBody != null) UnityEngine.Object.Destroy(ptBody.gameObject);
                                     if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
                                 }
 
@@ -3066,23 +3070,22 @@ namespace LasMonjas.Patches {
 
                         }
                     }
-                }
-
-                // King of the hill revive player
-                if (KingOfTheHill.kingOfTheHillMode) {
+                    break;
+                case 4:
+                    // KOTH
                     if (KingOfTheHill.usurperPlayer != null && KingOfTheHill.usurperPlayer.PlayerId == target.PlayerId) {
-                        var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
-                        body.transform.position = new Vector3(50, 50, 1);
+                        var kothBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
+                        kothBody.transform.position = new Vector3(50, 50, 1);
                         KingOfTheHill.usurperPlayerIsReviving = true;
                         Helpers.alphaPlayer(true, KingOfTheHill.usurperPlayer.PlayerId);
-                        HudManager.Instance.StartCoroutine(Effects.Lerp(KingOfTheHill.reviveTime, new Action<float>((p) => {
+                        HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
                             if (p == 1f && KingOfTheHill.usurperPlayer != null) {
                                 KingOfTheHill.usurperPlayerIsReviving = false;
                                 KingOfTheHill.usurperPlayer.cosmetics.nameText.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.nameText.color.r, KingOfTheHill.usurperPlayer.cosmetics.nameText.color.g, KingOfTheHill.usurperPlayer.cosmetics.nameText.color.b, 1f);
                                 Helpers.alphaPlayer(false, KingOfTheHill.usurperPlayer.PlayerId);
                             }
                         })));
-                        HudManager.Instance.StartCoroutine(Effects.Lerp(KingOfTheHill.reviveTime - KingOfTheHill.kingInvincibilityTimeAfterRevive, new Action<float>((p) => {
+                        HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
                             if (p == 1f && KingOfTheHill.usurperPlayer != null) {
                                 KingOfTheHill.usurperPlayer.Revive();
                                 switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
@@ -3122,7 +3125,7 @@ namespace LasMonjas.Patches {
                                         break;
                                 }
                                 DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                                if (body != null) UnityEngine.Object.Destroy(body.gameObject);
+                                if (kothBody != null) UnityEngine.Object.Destroy(kothBody.gameObject);
                                 if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
                             }
 
@@ -3132,8 +3135,8 @@ namespace LasMonjas.Patches {
 
                     foreach (PlayerControl player in KingOfTheHill.greenTeam) {
                         if (player.PlayerId == target.PlayerId) {
-                            var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
-                            body.transform.position = new Vector3(50, 50, 1);
+                            var kothBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
+                            kothBody.transform.position = new Vector3(50, 50, 1);
 
                             // Restore zones
                             if (KingOfTheHill.greenKingplayer != null && target.PlayerId == KingOfTheHill.greenKingplayer.PlayerId) {
@@ -3161,7 +3164,7 @@ namespace LasMonjas.Patches {
                                     KingOfTheHill.greenteamAlerted = true;
                                     foreach (PlayerControl greenplayer in KingOfTheHill.greenTeam) {
                                         if (greenplayer == PlayerControl.LocalPlayer && greenplayer != null) {
-                                            new CustomMessage(Language.statusKingOfTheHillTexts[4], 5, -1, 1f, 11);
+                                            new CustomMessage(Language.statusKingOfTheHillTexts[4], 5, -1, 1f, 16);
                                         }
                                     }
                                 }
@@ -3172,7 +3175,7 @@ namespace LasMonjas.Patches {
                                 if (kinggreenPlayer != null && kinggreenPlayer.killerIfExisting != null) {
                                     if (kinggreenPlayer.player == KingOfTheHill.greenKingplayer && kinggreenPlayer.killerIfExisting != KingOfTheHill.usurperPlayer) {
                                         KingOfTheHill.greenkingaura.SetActive(false);
-                                        HudManager.Instance.StartCoroutine(Effects.Lerp(KingOfTheHill.reviveTime - KingOfTheHill.kingInvincibilityTimeAfterRevive, new Action<float>((p) => {
+                                        HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
                                             if (p == 1f) {
                                                 KingOfTheHill.greenkingaura.SetActive(true);
                                             }
@@ -3199,7 +3202,7 @@ namespace LasMonjas.Patches {
                                 KingOfTheHill.greenplayer06IsReviving = true;
                             }
                             Helpers.alphaPlayer(true, player.PlayerId);
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(KingOfTheHill.reviveTime, new Action<float>((p) => {
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     if (KingOfTheHill.greenKingplayer != null && target.PlayerId == KingOfTheHill.greenKingplayer.PlayerId) {
                                         KingOfTheHill.greenKingIsReviving = false;
@@ -3225,7 +3228,7 @@ namespace LasMonjas.Patches {
                                     Helpers.alphaPlayer(false, player.PlayerId);
                                 }
                             })));
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(KingOfTheHill.reviveTime - KingOfTheHill.kingInvincibilityTimeAfterRevive, new Action<float>((p) => {
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     player.Revive();
                                     switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
@@ -3265,7 +3268,7 @@ namespace LasMonjas.Patches {
                                             break;
                                     }
                                     DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                                    if (body != null) UnityEngine.Object.Destroy(body.gameObject);
+                                    if (kothBody != null) UnityEngine.Object.Destroy(kothBody.gameObject);
                                     if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
                                 }
 
@@ -3275,8 +3278,8 @@ namespace LasMonjas.Patches {
                     }
                     foreach (PlayerControl player in KingOfTheHill.yellowTeam) {
                         if (player.PlayerId == target.PlayerId) {
-                            var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
-                            body.transform.position = new Vector3(50, 50, 1);
+                            var kothBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
+                            kothBody.transform.position = new Vector3(50, 50, 1);
 
                             // Restore zones
                             if (KingOfTheHill.yellowKingplayer != null && target.PlayerId == KingOfTheHill.yellowKingplayer.PlayerId) {
@@ -3304,7 +3307,7 @@ namespace LasMonjas.Patches {
                                     KingOfTheHill.yellowteamAlerted = true;
                                     foreach (PlayerControl yellowplayer in KingOfTheHill.yellowTeam) {
                                         if (yellowplayer == PlayerControl.LocalPlayer && yellowplayer != null) {
-                                            new CustomMessage(Language.statusKingOfTheHillTexts[4], 5, -1, 1f, 11);
+                                            new CustomMessage(Language.statusKingOfTheHillTexts[4], 5, -1, 1f, 16);
                                         }
                                     }
                                 }
@@ -3315,7 +3318,7 @@ namespace LasMonjas.Patches {
                                 if (kingyellowPlayer != null && kingyellowPlayer.killerIfExisting != null) {
                                     if (kingyellowPlayer.player == KingOfTheHill.yellowKingplayer && kingyellowPlayer.killerIfExisting != KingOfTheHill.usurperPlayer) {
                                         KingOfTheHill.yellowkingaura.SetActive(false);
-                                        HudManager.Instance.StartCoroutine(Effects.Lerp(KingOfTheHill.reviveTime - KingOfTheHill.kingInvincibilityTimeAfterRevive, new Action<float>((p) => {
+                                        HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
                                             if (p == 1f) {
                                                 KingOfTheHill.yellowkingaura.SetActive(true);
                                             }
@@ -3342,7 +3345,7 @@ namespace LasMonjas.Patches {
                                 KingOfTheHill.yellowplayer06IsReviving = true;
                             }
                             Helpers.alphaPlayer(true, player.PlayerId);
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(KingOfTheHill.reviveTime, new Action<float>((p) => {
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     if (KingOfTheHill.yellowKingplayer != null && target.PlayerId == KingOfTheHill.yellowKingplayer.PlayerId) {
                                         KingOfTheHill.yellowKingIsReviving = false;
@@ -3369,7 +3372,7 @@ namespace LasMonjas.Patches {
                                 }
                             })));
 
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(KingOfTheHill.reviveTime - KingOfTheHill.kingInvincibilityTimeAfterRevive, new Action<float>((p) => {
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     player.Revive();
                                     switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
@@ -3409,7 +3412,7 @@ namespace LasMonjas.Patches {
                                             break;
                                     }
                                     DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                                    if (body != null) UnityEngine.Object.Destroy(body.gameObject);
+                                    if (kothBody != null) UnityEngine.Object.Destroy(kothBody.gameObject);
                                     if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
                                 }
 
@@ -3417,14 +3420,13 @@ namespace LasMonjas.Patches {
 
                         }
                     }
-                }
-
-                // Hot Potato new potato on murder
-                if (HotPotato.hotPotatoMode) {
+                    break;
+                case 5:
+                    // HP
                     if (HotPotato.hotPotatoPlayer != null && HotPotato.hotPotatoPlayer.PlayerId == target.PlayerId) {
 
-                        var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
-                        body.transform.position = new Vector3(50, 50, 1);
+                        var hpBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
+                        hpBody.transform.position = new Vector3(50, 50, 1);
 
                         HotPotato.timeforTransfer = HotPotato.savedtimeforTransfer + 4f;
 
@@ -3567,16 +3569,13 @@ namespace LasMonjas.Patches {
                             }
                         })));
                     }
-                }
-
-                // ZombieLaboratory revive players
-                if (ZombieLaboratory.zombieLaboratoryMode) {
-
-                    // ZombieLaboratory revive players
+                    break;
+                case 6:
+                    // ZL
                     foreach (PlayerControl player in ZombieLaboratory.survivorTeam) {
                         if (player.PlayerId == target.PlayerId) {
-                            var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
-                            body.transform.position = new Vector3(50, 50, 1);
+                            var zlBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
+                            zlBody.transform.position = new Vector3(50, 50, 1);
                             if (ZombieLaboratory.survivorPlayer01 != null && target.PlayerId == ZombieLaboratory.survivorPlayer01.PlayerId) {
                                 ZombieLaboratory.survivorPlayer01IsReviving = true;
                                 ZombieLaboratory.survivorPlayer01CanKill = false;
@@ -3734,7 +3733,7 @@ namespace LasMonjas.Patches {
                                 }
                             }
                             Helpers.alphaPlayer(true, player.PlayerId);
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(ZombieLaboratory.reviveTime, new Action<float>((p) => {
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     if (ZombieLaboratory.survivorPlayer01 != null && target.PlayerId == ZombieLaboratory.survivorPlayer01.PlayerId) {
                                         ZombieLaboratory.survivorPlayer01IsReviving = false;
@@ -3779,7 +3778,7 @@ namespace LasMonjas.Patches {
                                 }
                             })));
 
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(ZombieLaboratory.reviveTime - ZombieLaboratory.invincibilityTimeAfterRevive, new Action<float>((p) => {
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     player.Revive();
                                     switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
@@ -3859,7 +3858,7 @@ namespace LasMonjas.Patches {
                                             break;
                                     }
                                     DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                                    if (body != null) UnityEngine.Object.Destroy(body.gameObject);
+                                    if (zlBody != null) UnityEngine.Object.Destroy(zlBody.gameObject);
                                     if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
                                 }
 
@@ -3868,8 +3867,8 @@ namespace LasMonjas.Patches {
                     }
                     foreach (PlayerControl player in ZombieLaboratory.zombieTeam) {
                         if (player.PlayerId == target.PlayerId) {
-                            var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
-                            body.transform.position = new Vector3(50, 50, 1);
+                            var zlBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
+                            zlBody.transform.position = new Vector3(50, 50, 1);
                             if (ZombieLaboratory.zombiePlayer01 != null && target.PlayerId == ZombieLaboratory.zombiePlayer01.PlayerId) {
                                 ZombieLaboratory.zombiePlayer01IsReviving = true;
                             }
@@ -3913,7 +3912,7 @@ namespace LasMonjas.Patches {
                                 ZombieLaboratory.zombiePlayer14IsReviving = true;
                             }
                             Helpers.alphaPlayer(true, player.PlayerId);
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(ZombieLaboratory.reviveTime, new Action<float>((p) => {
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     if (ZombieLaboratory.zombiePlayer01 != null && target.PlayerId == ZombieLaboratory.zombiePlayer01.PlayerId) {
                                         ZombieLaboratory.zombiePlayer01IsReviving = false;
@@ -3961,7 +3960,7 @@ namespace LasMonjas.Patches {
                                 }
                             })));
 
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(ZombieLaboratory.reviveTime - ZombieLaboratory.invincibilityTimeAfterRevive, new Action<float>((p) => {
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     player.Revive();
                                     switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
@@ -4001,7 +4000,7 @@ namespace LasMonjas.Patches {
                                             break;
                                     }
                                     DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                                    if (body != null) UnityEngine.Object.Destroy(body.gameObject);
+                                    if (zlBody != null) UnityEngine.Object.Destroy(zlBody.gameObject);
                                     if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
                                 }
 
@@ -4010,25 +4009,24 @@ namespace LasMonjas.Patches {
                         }
                     }
                     ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
-                }
-
-                // Battle Royale
-                if (BattleRoyale.battleRoyaleMode) {
-                    var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
-                    body.transform.position = new Vector3(50, 50, 1);
+                    break;
+                case 7:
+                    // BR
+                    var brBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
+                    brBody.transform.position = new Vector3(50, 50, 1);
 
                     if (BattleRoyale.matchType == 2) {
                         if (BattleRoyale.serialKiller != null && BattleRoyale.serialKiller.PlayerId == target.PlayerId) {
                             BattleRoyale.serialKillerIsReviving = true;
                             Helpers.alphaPlayer(true, BattleRoyale.serialKiller.PlayerId);
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(BattleRoyale.reviveTime, new Action<float>((p) => {
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
                                 if (p == 1f && BattleRoyale.serialKiller != null) {
                                     BattleRoyale.serialKillerIsReviving = false;
                                     BattleRoyale.serialKillerLifes = BattleRoyale.fighterLifes * 3;
                                     Helpers.alphaPlayer(false, BattleRoyale.serialKiller.PlayerId);
                                 }
                             })));
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(BattleRoyale.reviveTime - BattleRoyale.invincibilityTimeAfterRevive, new Action<float>((p) => {
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
                                 if (p == 1f && BattleRoyale.serialKiller != null) {
                                     BattleRoyale.serialKiller.Revive();
                                     switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
@@ -4068,7 +4066,7 @@ namespace LasMonjas.Patches {
                                             break;
                                     }
                                     DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                                    if (body != null) UnityEngine.Object.Destroy(body.gameObject);
+                                    if (brBody != null) UnityEngine.Object.Destroy(brBody.gameObject);
                                     if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
                                 }
 
@@ -4101,7 +4099,7 @@ namespace LasMonjas.Patches {
                                     BattleRoyale.limePlayer07IsReviving = true;
                                 }
                                 Helpers.alphaPlayer(true, player.PlayerId);
-                                HudManager.Instance.StartCoroutine(Effects.Lerp(BattleRoyale.reviveTime, new Action<float>((p) => {
+                                HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
                                     if (p == 1f && player != null) {
                                         if (BattleRoyale.limePlayer01 != null && target.PlayerId == BattleRoyale.limePlayer01.PlayerId) {
                                             BattleRoyale.limePlayer01IsReviving = false;
@@ -4134,7 +4132,7 @@ namespace LasMonjas.Patches {
                                         Helpers.alphaPlayer(false, player.PlayerId);
                                     }
                                 })));
-                                HudManager.Instance.StartCoroutine(Effects.Lerp(BattleRoyale.reviveTime - BattleRoyale.invincibilityTimeAfterRevive, new Action<float>((p) => {
+                                HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
                                     if (p == 1f && player != null) {
                                         player.Revive();
                                         switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
@@ -4174,7 +4172,7 @@ namespace LasMonjas.Patches {
                                                 break;
                                         }
                                         DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                                        if (body != null) UnityEngine.Object.Destroy(body.gameObject);
+                                        if (brBody != null) UnityEngine.Object.Destroy(brBody.gameObject);
                                         if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
                                     }
 
@@ -4207,7 +4205,7 @@ namespace LasMonjas.Patches {
                                     BattleRoyale.pinkPlayer07IsReviving = true;
                                 }
                                 Helpers.alphaPlayer(true, player.PlayerId);
-                                HudManager.Instance.StartCoroutine(Effects.Lerp(BattleRoyale.reviveTime, new Action<float>((p) => {
+                                HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
                                     if (p == 1f && player != null) {
                                         if (BattleRoyale.pinkPlayer01 != null && target.PlayerId == BattleRoyale.pinkPlayer01.PlayerId) {
                                             BattleRoyale.pinkPlayer01IsReviving = false;
@@ -4241,7 +4239,7 @@ namespace LasMonjas.Patches {
                                     }
                                 })));
 
-                                HudManager.Instance.StartCoroutine(Effects.Lerp(BattleRoyale.reviveTime - BattleRoyale.invincibilityTimeAfterRevive, new Action<float>((p) => {
+                                HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
                                     if (p == 1f && player != null) {
                                         player.Revive();
                                         switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
@@ -4281,7 +4279,7 @@ namespace LasMonjas.Patches {
                                                 break;
                                         }
                                         DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                                        if (body != null) UnityEngine.Object.Destroy(body.gameObject);
+                                        if (brBody != null) UnityEngine.Object.Destroy(brBody.gameObject);
                                         if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
                                     }
 
@@ -4290,10 +4288,9 @@ namespace LasMonjas.Patches {
                             }
                         }
                     }
-                }
-
-                // Monja Festival
-                if (MonjaFestival.monjaFestivalMode) {
+                    break;
+                case 8:
+                    // MF
                     var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
                     body.transform.position = new Vector3(50, 50, 1);
 
@@ -4310,17 +4307,17 @@ namespace LasMonjas.Patches {
                             littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
                             MonjaFestival.littleMonjasDroppedCount += 1;
                             MonjaFestival.bigMonjaSpawns.Add(littleMonja);
-                        }                        
+                        }
                         MonjaFestival.bigMonjaPlayerItems = 0;
-                        MonjaFestival.bigMonjaPlayerDeliverCount.text = $"{MonjaFestival.bigMonjaPlayerItems} / 10"; 
+                        MonjaFestival.bigMonjaPlayerDeliverCount.text = $"{MonjaFestival.bigMonjaPlayerItems} / 10";
                         Helpers.alphaPlayer(true, MonjaFestival.bigMonjaPlayer.PlayerId);
-                        HudManager.Instance.StartCoroutine(Effects.Lerp(MonjaFestival.reviveTime, new Action<float>((p) => {
+                        HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
                             if (p == 1f && MonjaFestival.bigMonjaPlayer != null) {
                                 MonjaFestival.bigMonjaIsReviving = false;
                                 Helpers.alphaPlayer(false, MonjaFestival.bigMonjaPlayer.PlayerId);
                             }
                         })));
-                        HudManager.Instance.StartCoroutine(Effects.Lerp(MonjaFestival.reviveTime - MonjaFestival.invincibilityTimeAfterRevive, new Action<float>((p) => {
+                        HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
                             if (p == 1f && MonjaFestival.bigMonjaPlayer != null) {
                                 MonjaFestival.bigMonjaPlayer.Revive();
                                 switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
@@ -4410,7 +4407,7 @@ namespace LasMonjas.Patches {
                                     littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
                                     MonjaFestival.littleMonjasDroppedCount += 1;
                                     MonjaFestival.bigMonjaSpawns.Add(littleMonja);
-                                }                                
+                                }
                                 MonjaFestival.greenPlayer03Items = 0;
                                 MonjaFestival.greenmonja03DeliverCount.text = $"{MonjaFestival.greenPlayer03Items} / 3";
                                 MonjaFestival.handsGreen03.GetComponent<SpriteRenderer>().sprite = null;
@@ -4425,7 +4422,7 @@ namespace LasMonjas.Patches {
                                     littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
                                     MonjaFestival.littleMonjasDroppedCount += 1;
                                     MonjaFestival.bigMonjaSpawns.Add(littleMonja);
-                                }                                
+                                }
                                 MonjaFestival.greenPlayer04Items = 0;
                                 MonjaFestival.greenmonja04DeliverCount.text = $"{MonjaFestival.greenPlayer04Items} / 3";
                                 MonjaFestival.handsGreen04.GetComponent<SpriteRenderer>().sprite = null;
@@ -4440,7 +4437,7 @@ namespace LasMonjas.Patches {
                                     littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
                                     MonjaFestival.littleMonjasDroppedCount += 1;
                                     MonjaFestival.bigMonjaSpawns.Add(littleMonja);
-                                }                                                         
+                                }
                                 MonjaFestival.greenPlayer05Items = 0;
                                 MonjaFestival.greenmonja05DeliverCount.text = $"{MonjaFestival.greenPlayer05Items} / 3";
                                 MonjaFestival.handsGreen05.GetComponent<SpriteRenderer>().sprite = null;
@@ -4455,7 +4452,7 @@ namespace LasMonjas.Patches {
                                     littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
                                     MonjaFestival.littleMonjasDroppedCount += 1;
                                     MonjaFestival.bigMonjaSpawns.Add(littleMonja);
-                                }                                                            
+                                }
                                 MonjaFestival.greenPlayer06Items = 0;
                                 MonjaFestival.greenmonja06DeliverCount.text = $"{MonjaFestival.greenPlayer06Items} / 3";
                                 MonjaFestival.handsGreen06.GetComponent<SpriteRenderer>().sprite = null;
@@ -4470,13 +4467,13 @@ namespace LasMonjas.Patches {
                                     littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
                                     MonjaFestival.littleMonjasDroppedCount += 1;
                                     MonjaFestival.bigMonjaSpawns.Add(littleMonja);
-                                }                                                             
+                                }
                                 MonjaFestival.greenPlayer07Items = 0;
                                 MonjaFestival.greenmonja07DeliverCount.text = $"{MonjaFestival.greenPlayer07Items} / 3";
                                 MonjaFestival.handsGreen07.GetComponent<SpriteRenderer>().sprite = null;
                             }
                             Helpers.alphaPlayer(true, player.PlayerId);
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(MonjaFestival.reviveTime, new Action<float>((p) => {
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     if (MonjaFestival.greenPlayer01 != null && target.PlayerId == MonjaFestival.greenPlayer01.PlayerId) {
                                         MonjaFestival.greenPlayer01IsReviving = false;
@@ -4502,7 +4499,7 @@ namespace LasMonjas.Patches {
                                     Helpers.alphaPlayer(false, player.PlayerId);
                                 }
                             })));
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(MonjaFestival.reviveTime - MonjaFestival.invincibilityTimeAfterRevive, new Action<float>((p) => {
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     player.Revive();
                                     switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
@@ -4550,7 +4547,7 @@ namespace LasMonjas.Patches {
 
                         }
                     }
-                    foreach (PlayerControl player in MonjaFestival.cyanTeam) { 
+                    foreach (PlayerControl player in MonjaFestival.cyanTeam) {
                         if (player.PlayerId == target.PlayerId) {
 
                             if (MonjaFestival.cyanPlayer01 != null && target.PlayerId == MonjaFestival.cyanPlayer01.PlayerId) {
@@ -4593,7 +4590,7 @@ namespace LasMonjas.Patches {
                                     littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
                                     MonjaFestival.littleMonjasDroppedCount += 1;
                                     MonjaFestival.bigMonjaSpawns.Add(littleMonja);
-                                }                                
+                                }
                                 MonjaFestival.cyanPlayer03Items = 0;
                                 MonjaFestival.cyanPlayer03DeliverCount.text = $"{MonjaFestival.cyanPlayer03Items} / 3";
                                 MonjaFestival.handsCyan03.GetComponent<SpriteRenderer>().sprite = null;
@@ -4608,7 +4605,7 @@ namespace LasMonjas.Patches {
                                     littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
                                     MonjaFestival.littleMonjasDroppedCount += 1;
                                     MonjaFestival.bigMonjaSpawns.Add(littleMonja);
-                                }                                
+                                }
                                 MonjaFestival.cyanPlayer04Items = 0;
                                 MonjaFestival.cyanPlayer04DeliverCount.text = $"{MonjaFestival.cyanPlayer04Items} / 3";
                                 MonjaFestival.handsCyan04.GetComponent<SpriteRenderer>().sprite = null;
@@ -4623,7 +4620,7 @@ namespace LasMonjas.Patches {
                                     littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
                                     MonjaFestival.littleMonjasDroppedCount += 1;
                                     MonjaFestival.bigMonjaSpawns.Add(littleMonja);
-                                }                                
+                                }
                                 MonjaFestival.cyanPlayer05Items = 0;
                                 MonjaFestival.cyanPlayer05DeliverCount.text = $"{MonjaFestival.cyanPlayer05Items} / 3";
                                 MonjaFestival.handsCyan05.GetComponent<SpriteRenderer>().sprite = null;
@@ -4638,7 +4635,7 @@ namespace LasMonjas.Patches {
                                     littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
                                     MonjaFestival.littleMonjasDroppedCount += 1;
                                     MonjaFestival.bigMonjaSpawns.Add(littleMonja);
-                                }                                
+                                }
                                 MonjaFestival.cyanPlayer06Items = 0;
                                 MonjaFestival.cyanPlayer06DeliverCount.text = $"{MonjaFestival.cyanPlayer06Items} / 3";
                                 MonjaFestival.handsCyan06.GetComponent<SpriteRenderer>().sprite = null;
@@ -4653,13 +4650,13 @@ namespace LasMonjas.Patches {
                                     littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
                                     MonjaFestival.littleMonjasDroppedCount += 1;
                                     MonjaFestival.bigMonjaSpawns.Add(littleMonja);
-                                }                                
+                                }
                                 MonjaFestival.cyanPlayer07Items = 0;
                                 MonjaFestival.cyanPlayer07DeliverCount.text = $"{MonjaFestival.cyanPlayer07Items} / 3";
                                 MonjaFestival.handsCyan07.GetComponent<SpriteRenderer>().sprite = null;
                             }
                             Helpers.alphaPlayer(true, player.PlayerId);
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(MonjaFestival.reviveTime, new Action<float>((p) => {
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     if (MonjaFestival.cyanPlayer01 != null && target.PlayerId == MonjaFestival.cyanPlayer01.PlayerId) {
                                         MonjaFestival.cyanPlayer01IsReviving = false;
@@ -4686,7 +4683,7 @@ namespace LasMonjas.Patches {
                                 }
                             })));
 
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(MonjaFestival.reviveTime - MonjaFestival.invincibilityTimeAfterRevive, new Action<float>((p) => {
+                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
                                     player.Revive();
                                     switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
@@ -4734,17 +4731,8 @@ namespace LasMonjas.Patches {
 
                         }
                     }
-                }
+                    break;
             }
-            else {
-                // Check alive players for disable sabotage button if game result in 1vs1 special condition (impostor + rebel / impostor + captain / rebel + captain)
-                alivePlayers = 0;
-                foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                    if (!player.Data.IsDead) {
-                        alivePlayers += 1;
-                    }
-                }
-            }          
         }
     }
 

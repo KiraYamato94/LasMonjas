@@ -2,15 +2,10 @@ using HarmonyLib;
 using Hazel;
 using System.Collections.Generic;
 using System.Linq;
-using Il2CppInterop;
 using static LasMonjas.LasMonjas;
 using LasMonjas.Objects;
-using static LasMonjas.MapOptions;
-using System.Collections;
 using System;
-using System.Text;
 using UnityEngine;
-using System.Reflection;
 using LasMonjas.Core;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using static LasMonjas.GameHistory;
@@ -21,7 +16,7 @@ namespace LasMonjas.Patches {
     class ExileControllerBeginPatch {
         public static GameData.PlayerInfo lastExiled; 
         public static void Prefix(ExileController __instance, [HarmonyArgument(0)]ref GameData.PlayerInfo exiled, [HarmonyArgument(1)]bool tie) {
-            lastExiled = exiled;           
+            lastExiled = exiled;
 
             // Sorcerer execute casted spells
             if (Sorcerer.sorcerer != null && Sorcerer.spelledPlayers != null && AmongUsClient.Instance.AmHost) {
@@ -45,7 +40,7 @@ namespace LasMonjas.Patches {
             if (Hypnotist.hypnotist != null && HypnotistSpiral.hypnotistSpirals.Count != 0) {
                 HypnotistSpiral.activateSpirals();
             }
-            
+
             // Plumber make vents
             if (Plumber.currentVents == Plumber.maxVents && !Plumber.madeVents) {
                 var ventId = ShipStatus.Instance.AllVents.Select(x => x.Id).Max() + 1;
@@ -72,7 +67,7 @@ namespace LasMonjas.Patches {
                 Plumber.Vents.Last().Right = Plumber.Vents.First();
                 Plumber.madeVents = true;
             }
-            
+
             // Welder vents seal after meeting
             foreach (Vent vent in MapOptions.ventsToSeal) {
                 PowerTools.SpriteAnim animator = vent.GetComponent<PowerTools.SpriteAnim>();
@@ -82,8 +77,8 @@ namespace LasMonjas.Patches {
                 vent.myRend.color = Color.white;
                 vent.name = "SealedVent_" + vent.name;
             }
-            MapOptions.ventsToSeal = new List<Vent>();          
-            
+            MapOptions.ventsToSeal = new List<Vent>();
+
             // Vigilant cameras activate after meeting
             var allCameras = ShipStatus.Instance.AllCameras.ToList();
             MapOptions.camerasToAdd.ForEach(camera => {
@@ -101,7 +96,7 @@ namespace LasMonjas.Patches {
 
             // Reset Puppeteer morph
             if (Puppeteer.puppeteer != null) {
-                Puppeteer.Reset();                
+                Puppeteer.Reset();
             }
         }
     }
@@ -115,7 +110,7 @@ namespace LasMonjas.Patches {
                 WrapUpPostfix(__instance.exiled);
             }
         }
-        
+
         [HarmonyPatch(typeof(AirshipExileController), nameof(AirshipExileController.WrapUpAndSpawn))]
         class AirshipExileControllerPatch {
             public static void Postfix(AirshipExileController __instance) {
@@ -129,7 +124,7 @@ namespace LasMonjas.Patches {
             if (GameOptionsManager.Instance.currentGameOptions.MapId != 5) return;
             if (obj.name.Contains("ExileCutscene")) {
                 WrapUpPostfix(ExileControllerBeginPatch.lastExiled);
-            }            
+            }
         }*/
 
         static void WrapUpPostfix(GameData.PlayerInfo exiled) {
@@ -270,7 +265,7 @@ namespace LasMonjas.Patches {
             RPCProcedure.changeMusic(2);
 
             // Show roles after meeting for dead players if the option is active
-            if (MapOptions.ghostsSeeRoles && howmanygamemodesareon != 1) {
+            if (MapOptions.ghostsSeeRoles && gameType <= 1) {
                 foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
                     if (p == PlayerControl.LocalPlayer || PlayerControl.LocalPlayer.Data.IsDead) {
                         Transform playerInfoTransform = p.cosmetics.nameText.transform.parent.FindChild("Info");

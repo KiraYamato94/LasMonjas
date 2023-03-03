@@ -2,7 +2,6 @@
 using Hazel;
 using System.Collections.Generic;
 using System.Linq;
-using Il2CppInterop;
 using UnityEngine;
 using System;
 using static LasMonjas.LasMonjas;
@@ -29,8 +28,15 @@ namespace LasMonjas.Patches
             AmongUsClient.Instance.FinishRpcImmediately(writer);
             RPCProcedure.resetVariables();
 
-            if (CustomOptionHolder.activateRoles.getBool() && GameOptionsManager.Instance.currentGameMode == GameModes.Normal) // Don't assign Roles if deactivated
-                getRoleAssignmentData();
+            if (GameOptionsManager.Instance.currentGameMode == GameModes.Normal) {
+                // Don't assign Roles if deactivated
+                if (!CustomOptionHolder.activateRoles.getBool()) {
+                    gameType = 0;
+                }
+                else {
+                    getRoleAssignmentData();
+                }
+            }
         }
 
         private static void getRoleAssignmentData() {
@@ -41,33 +47,14 @@ namespace LasMonjas.Patches
             impostors.RemoveAll(x => !x.Data.Role.IsImpostor);
             List<PlayerControl> modifiers = PlayerControl.AllPlayerControls.ToArray().ToList().OrderBy(x => Guid.NewGuid()).ToList();
 
-            if (CaptureTheFlag.captureTheFlagMode) {
-                howmanygamemodesareon += 1;
-            }
-            if (PoliceAndThief.policeAndThiefMode) {
-                howmanygamemodesareon += 1;
-            }
-            if (KingOfTheHill.kingOfTheHillMode) {
-                howmanygamemodesareon += 1;
-            }
-            if (HotPotato.hotPotatoMode) {
-                howmanygamemodesareon += 1;
-            }
-            if (ZombieLaboratory.zombieLaboratoryMode) {
-                howmanygamemodesareon += 1;
-            }
-            if (BattleRoyale.battleRoyaleMode) {
-                howmanygamemodesareon += 1;
-            }
-            if (MonjaFestival.monjaFestivalMode) {
-                howmanygamemodesareon += 1;
-            }
+            myGamemodeList.Clear();
+            bool oddNumber = false;
+            int playerNumber = 1;
 
             // Assign roles only if the game won't be a custom gamemode
-            if (howmanygamemodesareon != 1) {
-
-                if (!whoAmIMode) {
-
+            switch (gameType) {
+                case 0:
+                // Roles
                     int crewmateMax = 15;
                     int neutralMax = 1;
                     int impostorMax = 3;
@@ -161,7 +148,7 @@ namespace LasMonjas.Patches
                             (rebelMax > 0 && ensuredRebelRoles.Count > 0) ||
                             (neutralMax > 0 && ensuredNeutralRoles.Count > 0) ||
                             (crewmateMax > 0 && ensuredCrewmateRoles.Count > 0)
-                        ))) {
+                    ))) {
 
                         Dictionary<RoleType, List<byte>> rolesToAssign = new Dictionary<RoleType, List<byte>>();
                         if (impostors.Count > 0 && impostorMax > 0 && ensuredImpostorRoles.Count > 0) rolesToAssign.Add(RoleType.Impostor, ensuredImpostorRoles);
@@ -185,24 +172,21 @@ namespace LasMonjas.Patches
                             case RoleType.Crewmate: crewmateMax--; break;
                         }
                     }
-                }
-                // Add modifiers after selecting the roles
-                if (CustomOptionHolder.activateModifiers.getSelection() == 1) {
+
+                    // Add modifiers after selecting the roles
                     assignModifiers();
-                }               
-            }
-            else {
-                if (CaptureTheFlag.captureTheFlagMode) {
-                    // Capture the flag    
-                    myGamemodeList.Clear();
-                    bool oddNumber = false;
+                    break;
+                case 1:
+                    // Find a Role
+                    break;
+                case 2:
+                    // CTF
                     if (Mathf.Ceil(PlayerControl.AllPlayerControls.Count) % 2 != 0) {
                         oddNumber = true;
                         setRoleToRandomPlayer((byte)RoleId.StealerPlayer, modifiers);
                     }
-                    int myflag = 1;
                     while (myGamemodeList.Count < (Mathf.Round(PlayerControl.AllPlayerControls.Count / 2))) {
-                        switch (myflag) {
+                        switch (playerNumber) {
                             case 1:
                                 setRoleToRandomPlayer((byte)RoleId.RedPlayer01, modifiers);
                                 break;
@@ -225,12 +209,12 @@ namespace LasMonjas.Patches
                                 setRoleToRandomPlayer((byte)RoleId.RedPlayer07, modifiers);
                                 break;
                         }
-                        myGamemodeList.Add(myflag);
-                        myflag += 1;
+                        myGamemodeList.Add(playerNumber);
+                        playerNumber += 1;
                     }
-                    int myblueflag = 9;
+                    playerNumber = 9;
                     while (!oddNumber && myGamemodeList.Count < PlayerControl.AllPlayerControls.Count || oddNumber && myGamemodeList.Count < PlayerControl.AllPlayerControls.Count - 1) {
-                        switch (myblueflag) {
+                        switch (playerNumber) {
                             case 9:
                                 setRoleToRandomPlayer((byte)RoleId.BluePlayer01, modifiers);
                                 break;
@@ -253,16 +237,14 @@ namespace LasMonjas.Patches
                                 setRoleToRandomPlayer((byte)RoleId.BluePlayer07, modifiers);
                                 break;
                         }
-                        myGamemodeList.Add(myblueflag);
-                        myblueflag += 1;
+                        myGamemodeList.Add(playerNumber);
+                        playerNumber += 1;
                     }
-                }
-                else if (PoliceAndThief.policeAndThiefMode) {
-                    // Police and Thief    
-                    myGamemodeList.Clear();
-                    int mypolice = 1;
+                    break;
+                case 3:
+                    // PT
                     while (myGamemodeList.Count < (Mathf.Round(PlayerControl.AllPlayerControls.Count / 2.39f))) {
-                        switch (mypolice) {
+                        switch (playerNumber) {
                             case 1:
                                 setRoleToRandomPlayer((byte)RoleId.PolicePlayer01, modifiers);
                                 break;
@@ -282,12 +264,12 @@ namespace LasMonjas.Patches
                                 setRoleToRandomPlayer((byte)RoleId.PolicePlayer06, modifiers);
                                 break;
                         }
-                        myGamemodeList.Add(mypolice);
-                        mypolice += 1;
+                        myGamemodeList.Add(playerNumber);
+                        playerNumber += 1;
                     }
-                    int mythief = 7;
+                    playerNumber = 7;
                     while (myGamemodeList.Count < PlayerControl.AllPlayerControls.Count) {
-                        switch (mythief) {
+                        switch (playerNumber) {
                             case 7:
                                 setRoleToRandomPlayer((byte)RoleId.ThiefPlayer01, modifiers);
                                 break;
@@ -316,21 +298,18 @@ namespace LasMonjas.Patches
                                 setRoleToRandomPlayer((byte)RoleId.ThiefPlayer09, modifiers);
                                 break;
                         }
-                        myGamemodeList.Add(mythief);
-                        mythief += 1;
+                        myGamemodeList.Add(playerNumber);
+                        playerNumber += 1;
                     }
-                }
-                else if (KingOfTheHill.kingOfTheHillMode) {
-                    // King of the hill    
-                    myGamemodeList.Clear();
-                    bool oddNumber = false;
+                    break;
+                case 4:
+                    // KOTH
                     if (Mathf.Ceil(PlayerControl.AllPlayerControls.Count) % 2 != 0) {
                         oddNumber = true;
                         setRoleToRandomPlayer((byte)RoleId.UsurperPlayer, modifiers);
                     }
-                    int myking = 1;
                     while (myGamemodeList.Count < (Mathf.Round(PlayerControl.AllPlayerControls.Count / 2))) {
-                        switch (myking) {
+                        switch (playerNumber) {
                             case 1:
                                 setRoleToRandomPlayer((byte)RoleId.GreenKing, modifiers);
                                 break;
@@ -353,12 +332,12 @@ namespace LasMonjas.Patches
                                 setRoleToRandomPlayer((byte)RoleId.GreenPlayer06, modifiers);
                                 break;
                         }
-                        myGamemodeList.Add(myking);
-                        myking += 1;
+                        myGamemodeList.Add(playerNumber);
+                        playerNumber += 1;
                     }
-                    int myyellowking = 9;
+                    playerNumber = 9;
                     while (!oddNumber && myGamemodeList.Count < PlayerControl.AllPlayerControls.Count || oddNumber && myGamemodeList.Count < PlayerControl.AllPlayerControls.Count - 1) {
-                        switch (myyellowking) {
+                        switch (playerNumber) {
                             case 9:
                                 setRoleToRandomPlayer((byte)RoleId.YellowKing, modifiers);
                                 break;
@@ -381,16 +360,14 @@ namespace LasMonjas.Patches
                                 setRoleToRandomPlayer((byte)RoleId.YellowPlayer06, modifiers);
                                 break;
                         }
-                        myGamemodeList.Add(myyellowking);
-                        myyellowking += 1;
+                        myGamemodeList.Add(playerNumber);
+                        playerNumber += 1;
                     }
-                }
-                else if (HotPotato.hotPotatoMode) {
-                    // Hot Potato   
-                    myGamemodeList.Clear();
-                    int mypotato = 1;
+                    break;
+                case 5:
+                    // HP
                     while (myGamemodeList.Count < PlayerControl.AllPlayerControls.Count) {
-                        switch (mypotato) {
+                        switch (playerNumber) {
                             case 1:
                                 setRoleToRandomPlayer((byte)RoleId.HotPotato, modifiers);
                                 break;
@@ -437,18 +414,16 @@ namespace LasMonjas.Patches
                                 setRoleToRandomPlayer((byte)RoleId.NotPotato14, modifiers);
                                 break;
                         }
-                        myGamemodeList.Add(mypotato);
-                        mypotato += 1;
+                        myGamemodeList.Add(playerNumber);
+                        playerNumber += 1;
                     }
-                }
-                else if (ZombieLaboratory.zombieLaboratoryMode) {
-                    // ZombieLaboratory
-                    myGamemodeList.Clear();
-                    int myzombie = 1;
+                    break;
+                case 6:
+                    // ZL
                     while (myGamemodeList.Count < PlayerControl.AllPlayerControls.Count) {
                         switch (ZombieLaboratory.startZombies) {
                             case 1:
-                                switch (myzombie) {
+                                switch (playerNumber) {
                                     case 1:
                                         setRoleToRandomPlayer((byte)RoleId.ZombiePlayer01, modifiers);
                                         break;
@@ -497,7 +472,7 @@ namespace LasMonjas.Patches
                                 }
                                 break;
                             case 2:
-                                switch (myzombie) {
+                                switch (playerNumber) {
                                     case 1:
                                         setRoleToRandomPlayer((byte)RoleId.ZombiePlayer01, modifiers);
                                         break;
@@ -546,7 +521,7 @@ namespace LasMonjas.Patches
                                 }
                                 break;
                             case 3:
-                                switch (myzombie) {
+                                switch (playerNumber) {
                                     case 1:
                                         setRoleToRandomPlayer((byte)RoleId.ZombiePlayer01, modifiers);
                                         break;
@@ -595,7 +570,7 @@ namespace LasMonjas.Patches
                                 }
                                 break;
                             case 4:
-                                switch (myzombie) {
+                                switch (playerNumber) {
                                     case 1:
                                         setRoleToRandomPlayer((byte)RoleId.ZombiePlayer01, modifiers);
                                         break;
@@ -644,7 +619,7 @@ namespace LasMonjas.Patches
                                 }
                                 break;
                             case 5:
-                                switch (myzombie) {
+                                switch (playerNumber) {
                                     case 1:
                                         setRoleToRandomPlayer((byte)RoleId.ZombiePlayer01, modifiers);
                                         break;
@@ -693,17 +668,15 @@ namespace LasMonjas.Patches
                                 }
                                 break;
                         }
-                        myGamemodeList.Add(myzombie);
-                        myzombie += 1;
+                        myGamemodeList.Add(playerNumber);
+                        playerNumber += 1;
                     }
-                }
-                else if (BattleRoyale.battleRoyaleMode) {
-                    // Battle Royale   
-                    myGamemodeList.Clear();
+                    break;
+                case 7:
+                    // BR
                     if (BattleRoyale.matchType == 0) {
-                        int myBattle = 1;
                         while (myGamemodeList.Count < PlayerControl.AllPlayerControls.Count) {
-                            switch (myBattle) {
+                            switch (playerNumber) {
                                 case 1:
                                     setRoleToRandomPlayer((byte)RoleId.SoloPlayer01, modifiers);
                                     break;
@@ -750,21 +723,18 @@ namespace LasMonjas.Patches
                                     setRoleToRandomPlayer((byte)RoleId.SoloPlayer15, modifiers);
                                     break;
                             }
-                            myGamemodeList.Add(myBattle);
-                            myBattle += 1;
+                            myGamemodeList.Add(playerNumber);
+                            playerNumber += 1;
                         }
                     }
                     else {
-                        // Battle Royale Teams   
-                        myGamemodeList.Clear();
-                        bool oddNumber = false;
+                        // Battle Royale Teams
                         if (Mathf.Ceil(PlayerControl.AllPlayerControls.Count) % 2 != 0) {
                             oddNumber = true;
                             setRoleToRandomPlayer((byte)RoleId.SerialKiller, modifiers);
                         }
-                        int myBattleLime = 1;
                         while (myGamemodeList.Count < (Mathf.Round(PlayerControl.AllPlayerControls.Count / 2))) {
-                            switch (myBattleLime) {
+                            switch (playerNumber) {
                                 case 1:
                                     setRoleToRandomPlayer((byte)RoleId.LimePlayer01, modifiers);
                                     break;
@@ -787,12 +757,12 @@ namespace LasMonjas.Patches
                                     setRoleToRandomPlayer((byte)RoleId.LimePlayer07, modifiers);
                                     break;
                             }
-                            myGamemodeList.Add(myBattleLime);
-                            myBattleLime += 1;
+                            myGamemodeList.Add(playerNumber);
+                            playerNumber += 1;
                         }
-                        int myBattlePink = 9;
+                        playerNumber = 9;
                         while (!oddNumber && myGamemodeList.Count < PlayerControl.AllPlayerControls.Count || oddNumber && myGamemodeList.Count < PlayerControl.AllPlayerControls.Count - 1) {
-                            switch (myBattlePink) {
+                            switch (playerNumber) {
                                 case 9:
                                     setRoleToRandomPlayer((byte)RoleId.PinkPlayer01, modifiers);
                                     break;
@@ -815,22 +785,19 @@ namespace LasMonjas.Patches
                                     setRoleToRandomPlayer((byte)RoleId.PinkPlayer07, modifiers);
                                     break;
                             }
-                            myGamemodeList.Add(myBattlePink);
-                            myBattlePink += 1;
+                            myGamemodeList.Add(playerNumber);
+                            playerNumber += 1;
                         }
                     }
-                }
-                else if (MonjaFestival.monjaFestivalMode) {
-                    // Monja Festival   
-                    myGamemodeList.Clear();
-                    bool oddNumber = false;
+                    break;
+                case 8:
+                    // MF
                     if (Mathf.Ceil(PlayerControl.AllPlayerControls.Count) % 2 != 0) {
                         oddNumber = true;
                         setRoleToRandomPlayer((byte)RoleId.BigMonja, modifiers);
                     }
-                    int myMonjaGreen = 1;
                     while (myGamemodeList.Count < (Mathf.Round(PlayerControl.AllPlayerControls.Count / 2))) {
-                        switch (myMonjaGreen) {
+                        switch (playerNumber) {
                             case 1:
                                 setRoleToRandomPlayer((byte)RoleId.GreenMonjaPlayer01, modifiers);
                                 break;
@@ -853,12 +820,12 @@ namespace LasMonjas.Patches
                                 setRoleToRandomPlayer((byte)RoleId.GreenMonjaPlayer07, modifiers);
                                 break;
                         }
-                        myGamemodeList.Add(myMonjaGreen);
-                        myMonjaGreen += 1;
+                        myGamemodeList.Add(playerNumber);
+                        playerNumber += 1;
                     }
-                    int myMonjaPink = 9;
+                    playerNumber = 9;
                     while (!oddNumber && myGamemodeList.Count < PlayerControl.AllPlayerControls.Count || oddNumber && myGamemodeList.Count < PlayerControl.AllPlayerControls.Count - 1) {
-                        switch (myMonjaPink) {
+                        switch (playerNumber) {
                             case 9:
                                 setRoleToRandomPlayer((byte)RoleId.CyanPlayer01, modifiers);
                                 break;
@@ -881,10 +848,10 @@ namespace LasMonjas.Patches
                                 setRoleToRandomPlayer((byte)RoleId.CyanPlayer07, modifiers);
                                 break;
                         }
-                        myGamemodeList.Add(myMonjaPink);
-                        myMonjaPink += 1;
+                        myGamemodeList.Add(playerNumber);
+                        playerNumber += 1;
                     }
-                }
+                    break;
             }
         }
 
@@ -933,9 +900,9 @@ namespace LasMonjas.Patches
             assignModifiersToPlayers(ensuredModifiers, players, modifierCount); // Assign ensured modifier
 
             modifierCount -= ensuredModifiers.Count;
-            if (modifierCount <= 0) return;            
+            if (modifierCount <= 0) return;
         }
-        
+
         private static byte setRoleToRandomPlayer(byte roleId, List<PlayerControl> playerList, bool removePlayer = true) {
             var index = rnd.Next(0, playerList.Count);
             byte playerId = playerList[index].PlayerId;
@@ -953,13 +920,13 @@ namespace LasMonjas.Patches
             int selection = 0;
             switch (roleId) {
                 case RoleId.Lover:
-                    selection = CustomOptionHolder.loverPlayer.getSelection(); 
+                    selection = CustomOptionHolder.loverPlayer.getSelection();
                     break;
                 case RoleId.Lighter:
-                    selection = CustomOptionHolder.lighterPlayer.getSelection(); 
+                    selection = CustomOptionHolder.lighterPlayer.getSelection();
                     break;
                 case RoleId.Blind:
-                    selection = CustomOptionHolder.blindPlayer.getSelection(); 
+                    selection = CustomOptionHolder.blindPlayer.getSelection();
                     break;
                 case RoleId.Flash:
                     selection = CustomOptionHolder.flashPlayer.getSelection();
@@ -1002,7 +969,7 @@ namespace LasMonjas.Patches
                 playerList.RemoveAll(x => x.PlayerId == playerId);
             }
         }
-        
+
         private static byte setModifierToRandomPlayer(byte modifierId, List<PlayerControl> playerList, byte flag = 0) {
             var index = rnd.Next(0, playerList.Count);
             byte playerId = playerList[index].PlayerId;

@@ -23,7 +23,7 @@ namespace LasMonjas.Patches
                     __instance.body.velocity *= 0.90f;
                 else if (__instance.AmOwner && GameData.Instance && __instance.myPlayer.CanMove && Modifiers.pro != null && __instance.myPlayer.PlayerId == Modifiers.pro.PlayerId)
                     __instance.body.velocity *= -1;
-                else if (__instance.AmOwner && GameData.Instance && __instance.myPlayer.CanMove && ZombieLaboratory.nursePlayer != null && __instance.myPlayer.PlayerId == ZombieLaboratory.nursePlayer.PlayerId && howmanygamemodesareon == 1 && ZombieLaboratory.currentKeyItems >= 3)
+                else if (__instance.AmOwner && GameData.Instance && __instance.myPlayer.CanMove && ZombieLaboratory.nursePlayer != null && __instance.myPlayer.PlayerId == ZombieLaboratory.nursePlayer.PlayerId && gameType == 6 && ZombieLaboratory.currentKeyItems >= 3)
                     __instance.body.velocity *= 1.10f;
             }
         }
@@ -43,7 +43,7 @@ namespace LasMonjas.Patches
                     __instance.body.velocity *= 1.10f;
                 else if (!__instance.AmOwner && __instance.interpolateMovement != 0.0f && Modifiers.bigchungus != null && __instance.gameObject.GetComponent<PlayerControl>().PlayerId == Modifiers.bigchungus.PlayerId && !Challenger.isDueling && !Seeker.isMinigaming && !LasMonjas.isHappeningAnonymousComms)
                     __instance.body.velocity *= 0.90f;
-                else if (!__instance.AmOwner && __instance.interpolateMovement != 0.0f && ZombieLaboratory.nursePlayer != null && __instance.gameObject.GetComponent<PlayerControl>().PlayerId == ZombieLaboratory.nursePlayer.PlayerId && howmanygamemodesareon == 1 && ZombieLaboratory.currentKeyItems >= 3)
+                else if (!__instance.AmOwner && __instance.interpolateMovement != 0.0f && ZombieLaboratory.nursePlayer != null && __instance.gameObject.GetComponent<PlayerControl>().PlayerId == ZombieLaboratory.nursePlayer.PlayerId && gameType == 6 && ZombieLaboratory.currentKeyItems >= 3)
                     __instance.body.velocity *= 1.10f;
             }
         }

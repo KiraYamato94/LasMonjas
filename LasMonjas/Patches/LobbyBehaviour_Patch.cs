@@ -1,14 +1,9 @@
 ﻿using HarmonyLib;
 using UnityEngine;
-using System.Reflection;
 using System.Collections.Generic;
 using Hazel;
 using System;
-using Il2CppInterop;
 using System.Linq;
-using System.Collections;
-using Reactor;
-using Il2CppSystem.Security.Cryptography;
 using AmongUs.GameOptions;
 using static LasMonjas.LasMonjas;
 
@@ -67,13 +62,8 @@ namespace LasMonjas.Patches
                 if (MapOptions.activateMusic) {
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.lobbyMusic, true, 5f);
                 }
-                CaptureTheFlag.captureTheFlagMode = false;
-                PoliceAndThief.policeAndThiefMode = false;
-                KingOfTheHill.kingOfTheHillMode = false;
-                HotPotato.hotPotatoMode = false;
-                ZombieLaboratory.zombieLaboratoryMode = false;
-                BattleRoyale.battleRoyaleMode = false;
-                MonjaFestival.monjaFestivalMode = false;
+
+                gameType = 0;
 
                 if (prefab == null) {
                     LoadPrefab();

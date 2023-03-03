@@ -1,7 +1,5 @@
 using HarmonyLib;
 using System;
-using System.IO;
-using System.Net.Http;
 using UnityEngine;
 using static LasMonjas.LasMonjas;
 using LasMonjas.Objects;
@@ -9,7 +7,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Hazel;
 using static LasMonjas.RoleInfo;
-using Reactor;
 using static LasMonjas.MapOptions;
 using LasMonjas.Core;
 using static LasMonjas.HudManagerStartPatch;
@@ -70,8 +67,153 @@ namespace LasMonjas.Patches {
         }
         static void setNameColors() {
 
-            if (howmanygamemodesareon == 1) {
-                if (CaptureTheFlag.captureTheFlagMode) {
+            switch (gameType) {
+                case 0:
+                case 1:
+                    // Crewmates name color
+                    if (Captain.captain != null && Captain.captain == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Captain.captain, Captain.color);
+                    else if (Mechanic.mechanic != null && Mechanic.mechanic == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Mechanic.mechanic, Mechanic.color);
+                    else if (Sheriff.sheriff != null && Sheriff.sheriff == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Sheriff.sheriff, Sheriff.color);
+                    else if (Detective.detective != null && Detective.detective == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Detective.detective, Detective.color);
+                    else if (Forensic.forensic != null && Forensic.forensic == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Forensic.forensic, Forensic.color);
+                    else if (TimeTraveler.timeTraveler != null && TimeTraveler.timeTraveler == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(TimeTraveler.timeTraveler, TimeTraveler.color);
+                    else if (Squire.squire != null && Squire.squire == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Squire.squire, Squire.color);
+                    else if (Cheater.cheater != null && Cheater.cheater == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Cheater.cheater, Cheater.color);
+                    else if (FortuneTeller.fortuneTeller != null && FortuneTeller.fortuneTeller == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(FortuneTeller.fortuneTeller, FortuneTeller.color);
+                    else if (Hacker.hacker != null && Hacker.hacker == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Hacker.hacker, Hacker.color);
+                    else if (Sleuth.sleuth != null && Sleuth.sleuth == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Sleuth.sleuth, Sleuth.color);
+                    else if (Fink.fink != null && Fink.fink == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Fink.fink, Fink.color);
+                    else if (Kid.kid != null && Kid.kid == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Kid.kid, Kid.color);
+                    else if (Welder.welder != null && Welder.welder == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Welder.welder, Welder.color);
+                    else if (Spiritualist.spiritualist != null && Spiritualist.spiritualist == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Spiritualist.spiritualist, Spiritualist.color);
+                    else if (Coward.coward != null && Coward.coward == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Coward.coward, Coward.color);
+                    else if (Vigilant.vigilant != null && Vigilant.vigilant == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Vigilant.vigilant, Vigilant.color);
+                    else if (Vigilant.vigilantMira != null && Vigilant.vigilantMira == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Vigilant.vigilantMira, Vigilant.color);
+                    else if (Hunter.hunter != null && Hunter.hunter == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Hunter.hunter, Hunter.color);
+                    else if (Jinx.jinx != null && Jinx.jinx == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Jinx.jinx, Jinx.color);
+                    else if (Bat.bat != null && Bat.bat == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Bat.bat, Bat.color);
+                    else if (Necromancer.necromancer != null && Necromancer.necromancer == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Necromancer.necromancer, Necromancer.color);
+                    else if (Engineer.engineer != null && Engineer.engineer == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Engineer.engineer, Engineer.color);
+                    else if (Shy.shy != null && Shy.shy == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Shy.shy, Shy.color);
+                    else if (TaskMaster.taskMaster != null && TaskMaster.taskMaster == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(TaskMaster.taskMaster, TaskMaster.color);
+                    else if (Jailer.jailer != null && Jailer.jailer == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Jailer.jailer, Jailer.color);
+
+                    // Neutrals name color
+                    else if (Joker.joker != null && Joker.joker == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Joker.joker, Joker.color);
+                    else if (RoleThief.rolethief != null && RoleThief.rolethief == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(RoleThief.rolethief, RoleThief.color);
+                    else if (Pyromaniac.pyromaniac != null && Pyromaniac.pyromaniac == PlayerControl.LocalPlayer) {
+                        setPlayerNameColor(Pyromaniac.pyromaniac, Pyromaniac.color);
+                    }
+                    else if (TreasureHunter.treasureHunter != null && TreasureHunter.treasureHunter == PlayerControl.LocalPlayer) {
+                        setPlayerNameColor(TreasureHunter.treasureHunter, TreasureHunter.color);
+                    }
+                    else if (Devourer.devourer != null && Devourer.devourer == PlayerControl.LocalPlayer) {
+                        setPlayerNameColor(Devourer.devourer, Devourer.color);
+                    }
+                    else if (Poisoner.poisoner != null && Poisoner.poisoner == PlayerControl.LocalPlayer) {
+                        setPlayerNameColor(Poisoner.poisoner, Poisoner.color);
+                    }
+                    else if (Puppeteer.puppeteer != null && Puppeteer.puppeteer == PlayerControl.LocalPlayer) {
+                        setPlayerNameColor(Puppeteer.puppeteer, Puppeteer.color);
+                    }
+                    else if (Exiler.exiler != null && Exiler.exiler == PlayerControl.LocalPlayer) {
+                        setPlayerNameColor(Exiler.exiler, Exiler.color);
+                        if (Exiler.target != null) {
+                            setPlayerNameColor(Exiler.target, Sheriff.color);
+                            if (Challenger.isDueling) {
+                                setPlayerNameColor(Exiler.target, Color.white);
+                            }
+                        }
+                    }
+                    else if (Amnesiac.amnesiac != null && Amnesiac.amnesiac == PlayerControl.LocalPlayer) {
+                        setPlayerNameColor(Amnesiac.amnesiac, Amnesiac.color);
+                    }
+                    else if (Seeker.seeker != null && Seeker.seeker == PlayerControl.LocalPlayer) {
+                        setPlayerNameColor(Seeker.seeker, Seeker.color);
+                    }
+
+                    // Rebels name color
+                    else if (Renegade.renegade != null && Renegade.renegade == PlayerControl.LocalPlayer) {
+                        // Renegade can see his minion
+                        setPlayerNameColor(Renegade.renegade, Renegade.color);
+                        if (Minion.minion != null) {
+                            setPlayerNameColor(Minion.minion, Renegade.color);
+                        }
+                        if (Renegade.fakeMinion != null) {
+                            setPlayerNameColor(Renegade.fakeMinion, Renegade.color);
+                        }
+                    }
+                    else if (BountyHunter.bountyhunter != null && BountyHunter.bountyhunter == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(BountyHunter.bountyhunter, BountyHunter.color);
+                    else if (Trapper.trapper != null && Trapper.trapper == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Trapper.trapper, Trapper.color);
+                    else if (Yinyanger.yinyanger != null && Yinyanger.yinyanger == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Yinyanger.yinyanger, Yinyanger.color);
+                    else if (Challenger.challenger != null && Challenger.challenger == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Challenger.challenger, Challenger.color);
+                    else if (Ninja.ninja != null && Ninja.ninja == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Ninja.ninja, Ninja.color);
+                    else if (Berserker.berserker != null && Berserker.berserker == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Berserker.berserker, Berserker.color);
+                    else if (Yandere.yandere != null && Yandere.yandere == PlayerControl.LocalPlayer) {
+                        setPlayerNameColor(Yandere.yandere, Yandere.color);
+                        if (Yandere.target != null) {
+                            setPlayerNameColor(Yandere.target, Sheriff.color);
+                            if (Seeker.isMinigaming) {
+                                setPlayerNameColor(Yandere.target, Color.white);
+                            }
+                        }
+                    }
+                    else if (Stranded.stranded != null && Stranded.stranded == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Stranded.stranded, Stranded.color);
+                    else if (Monja.monja != null && Monja.monja == PlayerControl.LocalPlayer)
+                        setPlayerNameColor(Monja.monja, Monja.color);
+
+                    else if (Modifiers.lover1 != null && Modifiers.lover2 != null && (Modifiers.lover1 == PlayerControl.LocalPlayer || Modifiers.lover2 == PlayerControl.LocalPlayer)) {
+                        setPlayerNameColor(Modifiers.lover1, Modifiers.loverscolor);
+                        setPlayerNameColor(Modifiers.lover2, Modifiers.loverscolor);
+                    }
+                    // No else if here, as a Lover of team Renegade needs the colors
+                    if (Minion.minion != null && Minion.minion == PlayerControl.LocalPlayer) {
+                        // Minion can see the renegade
+                        setPlayerNameColor(Minion.minion, Minion.color);
+                        if (Renegade.renegade != null) {
+                            setPlayerNameColor(Renegade.renegade, Renegade.color);
+                        }
+                    }
+
+                    // Impostor roles with no color changes: Mimic, Painter, Demon, Janitor, Illusionist, Manipulator, Bomberman, Chameleon, Gambler, Sorcerer, Medusa, Hypnotist, Archer, Plumber, Librarian 
+                    break;
+                case 2:
+                    // CTF
                     if (CaptureTheFlag.stealerPlayer != null) {
                         setPlayerNameColor(CaptureTheFlag.stealerPlayer, Palette.PlayerColors[15]);
                     }
@@ -86,8 +228,9 @@ namespace LasMonjas.Patches {
                             setPlayerNameColor(blueplayer, Palette.PlayerColors[1]);
                         }
                     }
-                }
-                else if (PoliceAndThief.policeAndThiefMode) {
+                    break;
+                case 3:
+                    // PT
                     foreach (PlayerControl policeplayer in PoliceAndThief.policeTeam) {
                         if (policeplayer != null) {
                             if (PoliceAndThief.policeplayer02 != null && policeplayer == PoliceAndThief.policeplayer02 || PoliceAndThief.policeplayer04 != null && policeplayer == PoliceAndThief.policeplayer04) {
@@ -103,8 +246,9 @@ namespace LasMonjas.Patches {
                             setPlayerNameColor(thiefplayer, Palette.PlayerColors[16]);
                         }
                     }
-                }
-                else if (KingOfTheHill.kingOfTheHillMode) {
+                    break;
+                case 4:
+                    // KOTH
                     if (KingOfTheHill.usurperPlayer != null) {
                         setPlayerNameColor(KingOfTheHill.usurperPlayer, Palette.PlayerColors[15]);
                     }
@@ -119,9 +263,9 @@ namespace LasMonjas.Patches {
                             setPlayerNameColor(yellowplayer, Palette.PlayerColors[5]);
                         }
                     }
-                }
-                else if (HotPotato.hotPotatoMode) {
-
+                    break;
+                case 5:
+                    // HP
                     foreach (PlayerControl notpotatoplayer in HotPotato.notPotatoTeam) {
                         if (notpotatoplayer != null) {
                             setPlayerNameColor(notpotatoplayer, Palette.PlayerColors[10]);
@@ -137,9 +281,9 @@ namespace LasMonjas.Patches {
                     if (HotPotato.hotPotatoPlayer != null) {
                         setPlayerNameColor(HotPotato.hotPotatoPlayer, Palette.PlayerColors[15]);
                     }
-                }
-                else if (ZombieLaboratory.zombieLaboratoryMode) {
-
+                    break;
+                case 6:
+                    // ZL
                     foreach (PlayerControl survivorPlayer in ZombieLaboratory.survivorTeam) {
                         if (survivorPlayer != null) {
                             setPlayerNameColor(survivorPlayer, Palette.PlayerColors[10]);
@@ -161,9 +305,9 @@ namespace LasMonjas.Patches {
                     if (ZombieLaboratory.nursePlayer != null) {
                         setPlayerNameColor(ZombieLaboratory.nursePlayer, Palette.PlayerColors[3]);
                     }
-                }
-                else if (BattleRoyale.battleRoyaleMode) {
-
+                    break;
+                case 7:
+                    // BR
                     if (BattleRoyale.matchType == 0) {
                         foreach (PlayerControl soloPlayer in BattleRoyale.soloPlayerTeam) {
                             if (soloPlayer != null) {
@@ -188,9 +332,9 @@ namespace LasMonjas.Patches {
                             }
                         }
                     }
-                }
-                else if (MonjaFestival.monjaFestivalMode) {
-
+                    break;
+                case 8:
+                    // MF
                     if (MonjaFestival.bigMonjaPlayer != null) {
                         setPlayerNameColor(MonjaFestival.bigMonjaPlayer, Palette.PlayerColors[15]);
                     }
@@ -206,425 +350,284 @@ namespace LasMonjas.Patches {
                             setPlayerNameColor(cyanplayer, Palette.PlayerColors[10]);
                         }
                     }
-
-                }
-            }
-            else {
-                // Crewmates name color
-                if (Captain.captain != null && Captain.captain == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Captain.captain, Captain.color);
-                else if (Mechanic.mechanic != null && Mechanic.mechanic == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Mechanic.mechanic, Mechanic.color);
-                else if (Sheriff.sheriff != null && Sheriff.sheriff == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Sheriff.sheriff, Sheriff.color);
-                else if (Detective.detective != null && Detective.detective == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Detective.detective, Detective.color);
-                else if (Forensic.forensic != null && Forensic.forensic == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Forensic.forensic, Forensic.color);
-                else if (TimeTraveler.timeTraveler != null && TimeTraveler.timeTraveler == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(TimeTraveler.timeTraveler, TimeTraveler.color);
-                else if (Squire.squire != null && Squire.squire == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Squire.squire, Squire.color);
-                else if (Cheater.cheater != null && Cheater.cheater == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Cheater.cheater, Cheater.color);
-                else if (FortuneTeller.fortuneTeller != null && FortuneTeller.fortuneTeller == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(FortuneTeller.fortuneTeller, FortuneTeller.color);
-                else if (Hacker.hacker != null && Hacker.hacker == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Hacker.hacker, Hacker.color);
-                else if (Sleuth.sleuth != null && Sleuth.sleuth == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Sleuth.sleuth, Sleuth.color);
-                else if (Fink.fink != null && Fink.fink == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Fink.fink, Fink.color);
-                else if (Kid.kid != null && Kid.kid == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Kid.kid, Kid.color);
-                else if (Welder.welder != null && Welder.welder == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Welder.welder, Welder.color);
-                else if (Spiritualist.spiritualist != null && Spiritualist.spiritualist == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Spiritualist.spiritualist, Spiritualist.color);
-                else if (Coward.coward != null && Coward.coward == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Coward.coward, Coward.color);
-                else if (Vigilant.vigilant != null && Vigilant.vigilant == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Vigilant.vigilant, Vigilant.color);
-                else if (Vigilant.vigilantMira != null && Vigilant.vigilantMira == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Vigilant.vigilantMira, Vigilant.color);
-                else if (Hunter.hunter != null && Hunter.hunter == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Hunter.hunter, Hunter.color);
-                else if (Jinx.jinx != null && Jinx.jinx == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Jinx.jinx, Jinx.color);
-                else if (Bat.bat != null && Bat.bat == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Bat.bat, Bat.color);
-                else if (Necromancer.necromancer != null && Necromancer.necromancer == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Necromancer.necromancer, Necromancer.color);
-                else if (Engineer.engineer != null && Engineer.engineer == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Engineer.engineer, Engineer.color);
-                else if (Shy.shy != null && Shy.shy == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Shy.shy, Shy.color);
-                else if (TaskMaster.taskMaster != null && TaskMaster.taskMaster == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(TaskMaster.taskMaster, TaskMaster.color);
-                else if (Jailer.jailer != null && Jailer.jailer == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Jailer.jailer, Jailer.color);
-
-                // Neutrals name color
-                else if (Joker.joker != null && Joker.joker == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Joker.joker, Joker.color);
-                else if (RoleThief.rolethief != null && RoleThief.rolethief == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(RoleThief.rolethief, RoleThief.color);
-                else if (Pyromaniac.pyromaniac != null && Pyromaniac.pyromaniac == PlayerControl.LocalPlayer) {
-                    setPlayerNameColor(Pyromaniac.pyromaniac, Pyromaniac.color);
-                }
-                else if (TreasureHunter.treasureHunter != null && TreasureHunter.treasureHunter == PlayerControl.LocalPlayer) {
-                    setPlayerNameColor(TreasureHunter.treasureHunter, TreasureHunter.color);
-                }
-                else if (Devourer.devourer != null && Devourer.devourer == PlayerControl.LocalPlayer) {
-                    setPlayerNameColor(Devourer.devourer, Devourer.color);
-                }
-                else if (Poisoner.poisoner != null && Poisoner.poisoner == PlayerControl.LocalPlayer) {
-                    setPlayerNameColor(Poisoner.poisoner, Poisoner.color);
-                }
-                else if (Puppeteer.puppeteer != null && Puppeteer.puppeteer == PlayerControl.LocalPlayer) {
-                    setPlayerNameColor(Puppeteer.puppeteer, Puppeteer.color);
-                }
-                else if (Exiler.exiler != null && Exiler.exiler == PlayerControl.LocalPlayer) {
-                    setPlayerNameColor(Exiler.exiler, Exiler.color);
-                    if (Exiler.target != null) {
-                        setPlayerNameColor(Exiler.target, Sheriff.color);
-                        if (Challenger.isDueling) {
-                            setPlayerNameColor(Exiler.target, Color.white);
-                        }
-                    }
-                }
-                else if (Amnesiac.amnesiac != null && Amnesiac.amnesiac == PlayerControl.LocalPlayer) {
-                    setPlayerNameColor(Amnesiac.amnesiac, Amnesiac.color);
-                }
-                else if (Seeker.seeker != null && Seeker.seeker == PlayerControl.LocalPlayer) {
-                    setPlayerNameColor(Seeker.seeker, Seeker.color);
-                }
-
-                // Rebels name color
-                else if (Renegade.renegade != null && Renegade.renegade == PlayerControl.LocalPlayer) {
-                    // Renegade can see his minion
-                    setPlayerNameColor(Renegade.renegade, Renegade.color);
-                    if (Minion.minion != null) {
-                        setPlayerNameColor(Minion.minion, Renegade.color);
-                    }
-                    if (Renegade.fakeMinion != null) {
-                        setPlayerNameColor(Renegade.fakeMinion, Renegade.color);
-                    }
-                }
-                else if (BountyHunter.bountyhunter != null && BountyHunter.bountyhunter == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(BountyHunter.bountyhunter, BountyHunter.color);
-                else if (Trapper.trapper != null && Trapper.trapper == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Trapper.trapper, Trapper.color);
-                else if (Yinyanger.yinyanger != null && Yinyanger.yinyanger == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Yinyanger.yinyanger, Yinyanger.color);
-                else if (Challenger.challenger != null && Challenger.challenger == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Challenger.challenger, Challenger.color);
-                else if (Ninja.ninja != null && Ninja.ninja == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Ninja.ninja, Ninja.color);
-                else if (Berserker.berserker != null && Berserker.berserker == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Berserker.berserker, Berserker.color);
-                else if (Yandere.yandere != null && Yandere.yandere == PlayerControl.LocalPlayer) {
-                    setPlayerNameColor(Yandere.yandere, Yandere.color);
-                    if (Yandere.target != null) {
-                        setPlayerNameColor(Yandere.target, Sheriff.color);
-                        if (Seeker.isMinigaming) {
-                            setPlayerNameColor(Yandere.target, Color.white);
-                        }
-                    }
-                }
-                else if (Stranded.stranded != null && Stranded.stranded == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Stranded.stranded, Stranded.color);
-                else if (Monja.monja != null && Monja.monja == PlayerControl.LocalPlayer)
-                    setPlayerNameColor(Monja.monja, Monja.color);
-
-                else if (Modifiers.lover1 != null && Modifiers.lover2 != null && (Modifiers.lover1 == PlayerControl.LocalPlayer || Modifiers.lover2 == PlayerControl.LocalPlayer)) {
-                    setPlayerNameColor(Modifiers.lover1, Modifiers.loverscolor);
-                    setPlayerNameColor(Modifiers.lover2, Modifiers.loverscolor);
-                }
-                // No else if here, as a Lover of team Renegade needs the colors
-                if (Minion.minion != null && Minion.minion == PlayerControl.LocalPlayer) {
-                    // Minion can see the renegade
-                    setPlayerNameColor(Minion.minion, Minion.color);
-                    if (Renegade.renegade != null) {
-                        setPlayerNameColor(Renegade.renegade, Renegade.color);
-                    }
-                }
-
-                // Impostor roles with no color changes: Mimic, Painter, Demon, Janitor, Illusionist, Manipulator, Bomberman, Chameleon, Gambler, Sorcerer, Medusa, Hypnotist, Archer, Plumber, Librarian 
+                    break;
             }
         }
         static void setNameTags() {
 
-            // Lovers add a heart to their names
-            if (Modifiers.lover1 != null && Modifiers.lover2 != null && (Modifiers.lover1 == PlayerControl.LocalPlayer || Modifiers.lover2 == PlayerControl.LocalPlayer)) {
-                string suffix = Helpers.cs(Modifiers.loverscolor, " ♥");
-                Modifiers.lover1.cosmetics.nameText.text += suffix;
-                Modifiers.lover2.cosmetics.nameText.text += suffix;
+            switch (gameType) {
+                case 0:
+                case 1:
+                    // Lovers add a heart to their names
+                    if (Modifiers.lover1 != null && Modifiers.lover2 != null && (Modifiers.lover1 == PlayerControl.LocalPlayer || Modifiers.lover2 == PlayerControl.LocalPlayer)) {
+                        string suffix = Helpers.cs(Modifiers.loverscolor, " ♥");
+                        Modifiers.lover1.cosmetics.nameText.text += suffix;
+                        Modifiers.lover2.cosmetics.nameText.text += suffix;
 
-                if (MeetingHud.Instance != null)
-                    foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
-                        if (Modifiers.lover1.PlayerId == player.TargetPlayerId || Modifiers.lover2.PlayerId == player.TargetPlayerId)
-                            player.NameText.text += suffix;
-            }
-
-            // Forensic show color type on meeting
-            if (PlayerControl.LocalPlayer == Forensic.forensic) {
-                if (MeetingHud.Instance != null) {
-                    foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates) {
-                        var target = Helpers.playerById(player.TargetPlayerId);
-                        if (target != null) player.NameText.text += $" ({(Helpers.isLighterColor(target.Data.DefaultOutfit.ColorId) ? "L" : "D")})";
+                        if (MeetingHud.Instance != null)
+                            foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
+                                if (Modifiers.lover1.PlayerId == player.TargetPlayerId || Modifiers.lover2.PlayerId == player.TargetPlayerId)
+                                    player.NameText.text += suffix;
                     }
-                }
-            }
 
-            // Zombie Laboratory Timers
-            if (ZombieLaboratory.zombieLaboratoryMode && howmanygamemodesareon == 1) {
-                foreach (PlayerControl survivorPlayer in ZombieLaboratory.survivorTeam) {
-                    if (survivorPlayer == PlayerControl.LocalPlayer) {
-                        if (ZombieLaboratory.survivorPlayer01 != null) {
-                            string suffix = Helpers.cs(Sheriff.color, " (" + ZombieLaboratory.survivorPlayer01Timer.ToString("F0") + ")");
-                            ZombieLaboratory.survivorPlayer01.cosmetics.nameText.text += suffix;
-                        }
-                        if (ZombieLaboratory.survivorPlayer02 != null) {
-                            string suffix = Helpers.cs(Sheriff.color, " (" + ZombieLaboratory.survivorPlayer02Timer.ToString("F0") + ")");
-                            ZombieLaboratory.survivorPlayer02.cosmetics.nameText.text += suffix;
-                        }
-                        if (ZombieLaboratory.survivorPlayer03 != null) {
-                            string suffix = Helpers.cs(Sheriff.color, " (" + ZombieLaboratory.survivorPlayer03Timer.ToString("F0") + ")");
-                            ZombieLaboratory.survivorPlayer03.cosmetics.nameText.text += suffix;
-                        }
-                        if (ZombieLaboratory.survivorPlayer04 != null) {
-                            string suffix = Helpers.cs(Sheriff.color, " (" + ZombieLaboratory.survivorPlayer04Timer.ToString("F0") + ")");
-                            ZombieLaboratory.survivorPlayer04.cosmetics.nameText.text += suffix;
-                        }
-                        if (ZombieLaboratory.survivorPlayer05 != null) {
-                            string suffix = Helpers.cs(Sheriff.color, " (" + ZombieLaboratory.survivorPlayer05Timer.ToString("F0") + ")");
-                            ZombieLaboratory.survivorPlayer05.cosmetics.nameText.text += suffix;
-                        }
-                        if (ZombieLaboratory.survivorPlayer06 != null) {
-                            string suffix = Helpers.cs(Sheriff.color, " (" + ZombieLaboratory.survivorPlayer06Timer.ToString("F0") + ")");
-                            ZombieLaboratory.survivorPlayer06.cosmetics.nameText.text += suffix;
-                        }
-                        if (ZombieLaboratory.survivorPlayer07 != null) {
-                            string suffix = Helpers.cs(Sheriff.color, " (" + ZombieLaboratory.survivorPlayer07Timer.ToString("F0") + ")");
-                            ZombieLaboratory.survivorPlayer07.cosmetics.nameText.text += suffix;
-                        }
-                        if (ZombieLaboratory.survivorPlayer08 != null) {
-                            string suffix = Helpers.cs(Sheriff.color, " (" + ZombieLaboratory.survivorPlayer08Timer.ToString("F0") + ")");
-                            ZombieLaboratory.survivorPlayer08.cosmetics.nameText.text += suffix;
-                        }
-                        if (ZombieLaboratory.survivorPlayer09 != null) {
-                            string suffix = Helpers.cs(Sheriff.color, " (" + ZombieLaboratory.survivorPlayer09Timer.ToString("F0") + ")");
-                            ZombieLaboratory.survivorPlayer09.cosmetics.nameText.text += suffix;
-                        }
-                        if (ZombieLaboratory.survivorPlayer10 != null) {
-                            string suffix = Helpers.cs(Sheriff.color, " (" + ZombieLaboratory.survivorPlayer10Timer.ToString("F0") + ")");
-                            ZombieLaboratory.survivorPlayer10.cosmetics.nameText.text += suffix;
-                        }
-                        if (ZombieLaboratory.survivorPlayer11 != null) {
-                            string suffix = Helpers.cs(Sheriff.color, " (" + ZombieLaboratory.survivorPlayer11Timer.ToString("F0") + ")");
-                            ZombieLaboratory.survivorPlayer11.cosmetics.nameText.text += suffix;
-                        }
-                        if (ZombieLaboratory.survivorPlayer12 != null) {
-                            string suffix = Helpers.cs(Sheriff.color, " (" + ZombieLaboratory.survivorPlayer12Timer.ToString("F0") + ")");
-                            ZombieLaboratory.survivorPlayer12.cosmetics.nameText.text += suffix;
-                        }
-                        if (ZombieLaboratory.survivorPlayer13 != null) {
-                            string suffix = Helpers.cs(Sheriff.color, " (" + ZombieLaboratory.survivorPlayer13Timer.ToString("F0") + ")");
-                            ZombieLaboratory.survivorPlayer13.cosmetics.nameText.text += suffix;
+                    // Forensic show color type on meeting
+                    if (Forensic.forensic != null && PlayerControl.LocalPlayer == Forensic.forensic) {
+                        if (MeetingHud.Instance != null) {
+                            foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates) {
+                                var target = Helpers.playerById(player.TargetPlayerId);
+                                if (target != null) player.NameText.text += $" ({(Helpers.isLighterColor(target.Data.DefaultOutfit.ColorId) ? "L" : "D")})";
+                            }
                         }
                     }
-                }
-            }
-            
-            // Battle Royale Lifes
-            if (BattleRoyale.battleRoyaleMode && howmanygamemodesareon == 1) {
-                if (BattleRoyale.matchType == 0) {
-                    if (PlayerControl.LocalPlayer.Data.IsDead) {
-                        if (BattleRoyale.soloPlayer01 != null) {
-                            BattleRoyale.soloPlayer01.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer01Lifes + "♥)");
+                    break;
+                case 6:
+                    // ZL Timers
+                    foreach (PlayerControl survivorPlayer in ZombieLaboratory.survivorTeam) {
+                        if (survivorPlayer == PlayerControl.LocalPlayer) {
+                            if (ZombieLaboratory.survivorPlayer01 != null) {
+                                string suffix = Helpers.cs(Sheriff.color, " (" + ZombieLaboratory.survivorPlayer01Timer.ToString("F0") + ")");
+                                ZombieLaboratory.survivorPlayer01.cosmetics.nameText.text += suffix;
+                            }
+                            if (ZombieLaboratory.survivorPlayer02 != null) {
+                                string suffix = Helpers.cs(Sheriff.color, " (" + ZombieLaboratory.survivorPlayer02Timer.ToString("F0") + ")");
+                                ZombieLaboratory.survivorPlayer02.cosmetics.nameText.text += suffix;
+                            }
+                            if (ZombieLaboratory.survivorPlayer03 != null) {
+                                string suffix = Helpers.cs(Sheriff.color, " (" + ZombieLaboratory.survivorPlayer03Timer.ToString("F0") + ")");
+                                ZombieLaboratory.survivorPlayer03.cosmetics.nameText.text += suffix;
+                            }
+                            if (ZombieLaboratory.survivorPlayer04 != null) {
+                                string suffix = Helpers.cs(Sheriff.color, " (" + ZombieLaboratory.survivorPlayer04Timer.ToString("F0") + ")");
+                                ZombieLaboratory.survivorPlayer04.cosmetics.nameText.text += suffix;
+                            }
+                            if (ZombieLaboratory.survivorPlayer05 != null) {
+                                string suffix = Helpers.cs(Sheriff.color, " (" + ZombieLaboratory.survivorPlayer05Timer.ToString("F0") + ")");
+                                ZombieLaboratory.survivorPlayer05.cosmetics.nameText.text += suffix;
+                            }
+                            if (ZombieLaboratory.survivorPlayer06 != null) {
+                                string suffix = Helpers.cs(Sheriff.color, " (" + ZombieLaboratory.survivorPlayer06Timer.ToString("F0") + ")");
+                                ZombieLaboratory.survivorPlayer06.cosmetics.nameText.text += suffix;
+                            }
+                            if (ZombieLaboratory.survivorPlayer07 != null) {
+                                string suffix = Helpers.cs(Sheriff.color, " (" + ZombieLaboratory.survivorPlayer07Timer.ToString("F0") + ")");
+                                ZombieLaboratory.survivorPlayer07.cosmetics.nameText.text += suffix;
+                            }
+                            if (ZombieLaboratory.survivorPlayer08 != null) {
+                                string suffix = Helpers.cs(Sheriff.color, " (" + ZombieLaboratory.survivorPlayer08Timer.ToString("F0") + ")");
+                                ZombieLaboratory.survivorPlayer08.cosmetics.nameText.text += suffix;
+                            }
+                            if (ZombieLaboratory.survivorPlayer09 != null) {
+                                string suffix = Helpers.cs(Sheriff.color, " (" + ZombieLaboratory.survivorPlayer09Timer.ToString("F0") + ")");
+                                ZombieLaboratory.survivorPlayer09.cosmetics.nameText.text += suffix;
+                            }
+                            if (ZombieLaboratory.survivorPlayer10 != null) {
+                                string suffix = Helpers.cs(Sheriff.color, " (" + ZombieLaboratory.survivorPlayer10Timer.ToString("F0") + ")");
+                                ZombieLaboratory.survivorPlayer10.cosmetics.nameText.text += suffix;
+                            }
+                            if (ZombieLaboratory.survivorPlayer11 != null) {
+                                string suffix = Helpers.cs(Sheriff.color, " (" + ZombieLaboratory.survivorPlayer11Timer.ToString("F0") + ")");
+                                ZombieLaboratory.survivorPlayer11.cosmetics.nameText.text += suffix;
+                            }
+                            if (ZombieLaboratory.survivorPlayer12 != null) {
+                                string suffix = Helpers.cs(Sheriff.color, " (" + ZombieLaboratory.survivorPlayer12Timer.ToString("F0") + ")");
+                                ZombieLaboratory.survivorPlayer12.cosmetics.nameText.text += suffix;
+                            }
+                            if (ZombieLaboratory.survivorPlayer13 != null) {
+                                string suffix = Helpers.cs(Sheriff.color, " (" + ZombieLaboratory.survivorPlayer13Timer.ToString("F0") + ")");
+                                ZombieLaboratory.survivorPlayer13.cosmetics.nameText.text += suffix;
+                            }
                         }
-                        if (BattleRoyale.soloPlayer02 != null) {
-                            BattleRoyale.soloPlayer02.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer02Lifes + "♥)");
+                    }
+                    break;
+                case 7:
+                    // BR Lives
+                    if (BattleRoyale.matchType == 0) {
+                        if (PlayerControl.LocalPlayer.Data.IsDead) {
+                            if (BattleRoyale.soloPlayer01 != null) {
+                                BattleRoyale.soloPlayer01.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer01Lifes + "♥)");
+                            }
+                            if (BattleRoyale.soloPlayer02 != null) {
+                                BattleRoyale.soloPlayer02.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer02Lifes + "♥)");
+                            }
+                            if (BattleRoyale.soloPlayer03 != null) {
+                                BattleRoyale.soloPlayer03.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer03Lifes + "♥)");
+                            }
+                            if (BattleRoyale.soloPlayer04 != null) {
+                                BattleRoyale.soloPlayer04.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer04Lifes + "♥)");
+                            }
+                            if (BattleRoyale.soloPlayer05 != null) {
+                                BattleRoyale.soloPlayer05.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer05Lifes + "♥)");
+                            }
+                            if (BattleRoyale.soloPlayer06 != null) {
+                                BattleRoyale.soloPlayer06.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer06Lifes + "♥)");
+                            }
+                            if (BattleRoyale.soloPlayer07 != null) {
+                                BattleRoyale.soloPlayer07.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer07Lifes + "♥)");
+                            }
+                            if (BattleRoyale.soloPlayer08 != null) {
+                                BattleRoyale.soloPlayer08.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer08Lifes + "♥)");
+                            }
+                            if (BattleRoyale.soloPlayer09 != null) {
+                                BattleRoyale.soloPlayer09.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer09Lifes + "♥)");
+                            }
+                            if (BattleRoyale.soloPlayer10 != null) {
+                                BattleRoyale.soloPlayer10.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer10Lifes + "♥)");
+                            }
+                            if (BattleRoyale.soloPlayer11 != null) {
+                                BattleRoyale.soloPlayer11.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer11Lifes + "♥)");
+                            }
+                            if (BattleRoyale.soloPlayer12 != null) {
+                                BattleRoyale.soloPlayer12.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer12Lifes + "♥)");
+                            }
+                            if (BattleRoyale.soloPlayer13 != null) {
+                                BattleRoyale.soloPlayer13.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer13Lifes + "♥)");
+                            }
+                            if (BattleRoyale.soloPlayer14 != null) {
+                                BattleRoyale.soloPlayer14.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer14Lifes + "♥)");
+                            }
+                            if (BattleRoyale.soloPlayer15 != null) {
+                                BattleRoyale.soloPlayer15.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer15Lifes + "♥)");
+                            }
                         }
-                        if (BattleRoyale.soloPlayer03 != null) {
-                            BattleRoyale.soloPlayer03.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer03Lifes + "♥)");
-                        }
-                        if (BattleRoyale.soloPlayer04 != null) {
-                            BattleRoyale.soloPlayer04.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer04Lifes + "♥)");
-                        }
-                        if (BattleRoyale.soloPlayer05 != null) {
-                            BattleRoyale.soloPlayer05.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer05Lifes + "♥)");
-                        }
-                        if (BattleRoyale.soloPlayer06 != null) {
-                            BattleRoyale.soloPlayer06.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer06Lifes + "♥)");
-                        }
-                        if (BattleRoyale.soloPlayer07 != null) {
-                            BattleRoyale.soloPlayer07.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer07Lifes + "♥)");
-                        }
-                        if (BattleRoyale.soloPlayer08 != null) {
-                            BattleRoyale.soloPlayer08.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer08Lifes + "♥)");
-                        }
-                        if (BattleRoyale.soloPlayer09 != null) {
-                            BattleRoyale.soloPlayer09.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer09Lifes + "♥)");
-                        }
-                        if (BattleRoyale.soloPlayer10 != null) {
-                            BattleRoyale.soloPlayer10.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer10Lifes + "♥)");
-                        }
-                        if (BattleRoyale.soloPlayer11 != null) {
-                            BattleRoyale.soloPlayer11.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer11Lifes + "♥)");
-                        }
-                        if (BattleRoyale.soloPlayer12 != null) {
-                            BattleRoyale.soloPlayer12.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer12Lifes + "♥)");
-                        }
-                        if (BattleRoyale.soloPlayer13 != null) {
-                            BattleRoyale.soloPlayer13.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer13Lifes + "♥)");
-                        }
-                        if (BattleRoyale.soloPlayer14 != null) {
-                            BattleRoyale.soloPlayer14.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer14Lifes + "♥)");
-                        }
-                        if (BattleRoyale.soloPlayer15 != null) {
-                            BattleRoyale.soloPlayer15.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer15Lifes + "♥)");
+                        else {
+                            if (BattleRoyale.soloPlayer01 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer01) {
+                                string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer01Lifes + "♥)");
+                                BattleRoyale.soloPlayer01.cosmetics.nameText.text += suffix;
+                            }
+                            if (BattleRoyale.soloPlayer02 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer02) {
+                                string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer02Lifes + "♥)");
+                                BattleRoyale.soloPlayer02.cosmetics.nameText.text += suffix;
+                            }
+                            if (BattleRoyale.soloPlayer03 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer03) {
+                                string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer03Lifes + "♥)");
+                                BattleRoyale.soloPlayer03.cosmetics.nameText.text += suffix;
+                            }
+                            if (BattleRoyale.soloPlayer04 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer04) {
+                                string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer04Lifes + "♥)");
+                                BattleRoyale.soloPlayer04.cosmetics.nameText.text += suffix;
+                            }
+                            if (BattleRoyale.soloPlayer05 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer05) {
+                                string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer05Lifes + "♥)");
+                                BattleRoyale.soloPlayer05.cosmetics.nameText.text += suffix;
+                            }
+                            if (BattleRoyale.soloPlayer06 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer06) {
+                                string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer06Lifes + "♥)");
+                                BattleRoyale.soloPlayer06.cosmetics.nameText.text += suffix;
+                            }
+                            if (BattleRoyale.soloPlayer07 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer07) {
+                                string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer07Lifes + "♥)");
+                                BattleRoyale.soloPlayer07.cosmetics.nameText.text += suffix;
+                            }
+                            if (BattleRoyale.soloPlayer08 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer08) {
+                                string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer08Lifes + "♥)");
+                                BattleRoyale.soloPlayer08.cosmetics.nameText.text += suffix;
+                            }
+                            if (BattleRoyale.soloPlayer09 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer09) {
+                                string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer09Lifes + "♥)");
+                                BattleRoyale.soloPlayer09.cosmetics.nameText.text += suffix;
+                            }
+                            if (BattleRoyale.soloPlayer10 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer10) {
+                                string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer10Lifes + "♥)");
+                                BattleRoyale.soloPlayer10.cosmetics.nameText.text += suffix;
+                            }
+                            if (BattleRoyale.soloPlayer11 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer11) {
+                                string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer11Lifes + "♥)");
+                                BattleRoyale.soloPlayer11.cosmetics.nameText.text += suffix;
+                            }
+                            if (BattleRoyale.soloPlayer12 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer12) {
+                                string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer12Lifes + "♥)");
+                                BattleRoyale.soloPlayer12.cosmetics.nameText.text += suffix;
+                            }
+                            if (BattleRoyale.soloPlayer13 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer13) {
+                                string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer13Lifes + "♥)");
+                                BattleRoyale.soloPlayer13.cosmetics.nameText.text += suffix;
+                            }
+                            if (BattleRoyale.soloPlayer14 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer14) {
+                                string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer14Lifes + "♥)");
+                                BattleRoyale.soloPlayer14.cosmetics.nameText.text += suffix;
+                            }
+                            if (BattleRoyale.soloPlayer15 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer15) {
+                                string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer15Lifes + "♥)");
+                                BattleRoyale.soloPlayer15.cosmetics.nameText.text += suffix;
+                            }
                         }
                     }
                     else {
-                        if (BattleRoyale.soloPlayer01 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer01) {
-                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer01Lifes + "♥)");
-                            BattleRoyale.soloPlayer01.cosmetics.nameText.text += suffix;
+                        foreach (PlayerControl limePlayer in BattleRoyale.limeTeam) {
+                            if (limePlayer == PlayerControl.LocalPlayer) {
+                                if (BattleRoyale.limePlayer01 != null) {
+                                    string suffix = Helpers.cs(FortuneTeller.color, " (" + BattleRoyale.limePlayer01Lifes + "♥)");
+                                    BattleRoyale.limePlayer01.cosmetics.nameText.text += suffix;
+                                }
+                                if (BattleRoyale.limePlayer02 != null) {
+                                    string suffix = Helpers.cs(FortuneTeller.color, " (" + BattleRoyale.limePlayer02Lifes + "♥)");
+                                    BattleRoyale.limePlayer02.cosmetics.nameText.text += suffix;
+                                }
+                                if (BattleRoyale.limePlayer03 != null) {
+                                    string suffix = Helpers.cs(FortuneTeller.color, " (" + BattleRoyale.limePlayer03Lifes + "♥)");
+                                    BattleRoyale.limePlayer03.cosmetics.nameText.text += suffix;
+                                }
+                                if (BattleRoyale.limePlayer04 != null) {
+                                    string suffix = Helpers.cs(FortuneTeller.color, " (" + BattleRoyale.limePlayer04Lifes + "♥)");
+                                    BattleRoyale.limePlayer04.cosmetics.nameText.text += suffix;
+                                }
+                                if (BattleRoyale.limePlayer05 != null) {
+                                    string suffix = Helpers.cs(FortuneTeller.color, " (" + BattleRoyale.limePlayer05Lifes + "♥)");
+                                    BattleRoyale.limePlayer05.cosmetics.nameText.text += suffix;
+                                }
+                                if (BattleRoyale.limePlayer06 != null) {
+                                    string suffix = Helpers.cs(FortuneTeller.color, " (" + BattleRoyale.limePlayer06Lifes + "♥)");
+                                    BattleRoyale.limePlayer06.cosmetics.nameText.text += suffix;
+                                }
+                                if (BattleRoyale.limePlayer07 != null) {
+                                    string suffix = Helpers.cs(FortuneTeller.color, " (" + BattleRoyale.limePlayer07Lifes + "♥)");
+                                    BattleRoyale.limePlayer07.cosmetics.nameText.text += suffix;
+                                }
+                            }
                         }
-                        if (BattleRoyale.soloPlayer02 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer02) {
-                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer02Lifes + "♥)");
-                            BattleRoyale.soloPlayer02.cosmetics.nameText.text += suffix;
+                        foreach (PlayerControl pinkPlayer in BattleRoyale.pinkTeam) {
+                            if (pinkPlayer == PlayerControl.LocalPlayer) {
+                                if (BattleRoyale.pinkPlayer01 != null) {
+                                    string suffix = Helpers.cs(Shy.color, " (" + BattleRoyale.pinkPlayer01Lifes + "♥)");
+                                    BattleRoyale.pinkPlayer01.cosmetics.nameText.text += suffix;
+                                }
+                                if (BattleRoyale.pinkPlayer02 != null) {
+                                    string suffix = Helpers.cs(Shy.color, " (" + BattleRoyale.pinkPlayer02Lifes + "♥)");
+                                    BattleRoyale.pinkPlayer02.cosmetics.nameText.text += suffix;
+                                }
+                                if (BattleRoyale.pinkPlayer03 != null) {
+                                    string suffix = Helpers.cs(Shy.color, " (" + BattleRoyale.pinkPlayer03Lifes + "♥)");
+                                    BattleRoyale.pinkPlayer03.cosmetics.nameText.text += suffix;
+                                }
+                                if (BattleRoyale.pinkPlayer04 != null) {
+                                    string suffix = Helpers.cs(Shy.color, " (" + BattleRoyale.pinkPlayer04Lifes + "♥)");
+                                    BattleRoyale.pinkPlayer04.cosmetics.nameText.text += suffix;
+                                }
+                                if (BattleRoyale.pinkPlayer05 != null) {
+                                    string suffix = Helpers.cs(Shy.color, " (" + BattleRoyale.pinkPlayer05Lifes + "♥)");
+                                    BattleRoyale.pinkPlayer05.cosmetics.nameText.text += suffix;
+                                }
+                                if (BattleRoyale.pinkPlayer06 != null) {
+                                    string suffix = Helpers.cs(Shy.color, " (" + BattleRoyale.pinkPlayer06Lifes + "♥)");
+                                    BattleRoyale.pinkPlayer06.cosmetics.nameText.text += suffix;
+                                }
+                                if (BattleRoyale.pinkPlayer07 != null) {
+                                    string suffix = Helpers.cs(Shy.color, " (" + BattleRoyale.pinkPlayer07Lifes + "♥)");
+                                    BattleRoyale.pinkPlayer07.cosmetics.nameText.text += suffix;
+                                }
+                            }
                         }
-                        if (BattleRoyale.soloPlayer03 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer03) {
-                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer03Lifes + "♥)");
-                            BattleRoyale.soloPlayer03.cosmetics.nameText.text += suffix;
-                        }
-                        if (BattleRoyale.soloPlayer04 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer04) {
-                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer04Lifes + "♥)");
-                            BattleRoyale.soloPlayer04.cosmetics.nameText.text += suffix;
-                        }
-                        if (BattleRoyale.soloPlayer05 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer05) {
-                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer05Lifes + "♥)");
-                            BattleRoyale.soloPlayer05.cosmetics.nameText.text += suffix;
-                        }
-                        if (BattleRoyale.soloPlayer06 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer06) {
-                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer06Lifes + "♥)");
-                            BattleRoyale.soloPlayer06.cosmetics.nameText.text += suffix;
-                        }
-                        if (BattleRoyale.soloPlayer07 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer07) {
-                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer07Lifes + "♥)");
-                            BattleRoyale.soloPlayer07.cosmetics.nameText.text += suffix;
-                        }
-                        if (BattleRoyale.soloPlayer08 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer08) {
-                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer08Lifes + "♥)");
-                            BattleRoyale.soloPlayer08.cosmetics.nameText.text += suffix;
-                        }
-                        if (BattleRoyale.soloPlayer09 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer09) {
-                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer09Lifes + "♥)");
-                            BattleRoyale.soloPlayer09.cosmetics.nameText.text += suffix;
-                        }
-                        if (BattleRoyale.soloPlayer10 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer10) {
-                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer10Lifes + "♥)");
-                            BattleRoyale.soloPlayer10.cosmetics.nameText.text += suffix;
-                        }
-                        if (BattleRoyale.soloPlayer11 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer11) {
-                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer11Lifes + "♥)");
-                            BattleRoyale.soloPlayer11.cosmetics.nameText.text += suffix;
-                        }
-                        if (BattleRoyale.soloPlayer12 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer12) {
-                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer12Lifes + "♥)");
-                            BattleRoyale.soloPlayer12.cosmetics.nameText.text += suffix;
-                        }
-                        if (BattleRoyale.soloPlayer13 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer13) {
-                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer13Lifes + "♥)");
-                            BattleRoyale.soloPlayer13.cosmetics.nameText.text += suffix;
-                        }
-                        if (BattleRoyale.soloPlayer14 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer14) {
-                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer14Lifes + "♥)");
-                            BattleRoyale.soloPlayer14.cosmetics.nameText.text += suffix;
-                        }
-                        if (BattleRoyale.soloPlayer15 != null && PlayerControl.LocalPlayer == BattleRoyale.soloPlayer15) {
-                            string suffix = Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer15Lifes + "♥)");
-                            BattleRoyale.soloPlayer15.cosmetics.nameText.text += suffix;
+                        if (BattleRoyale.serialKiller != null && PlayerControl.LocalPlayer == BattleRoyale.serialKiller) {
+                            string suffix = Helpers.cs(Joker.color, " (" + BattleRoyale.serialKillerLifes + "♥)");
+                            BattleRoyale.serialKiller.cosmetics.nameText.text += suffix;
                         }
                     }
-                }
-                else {
-                    foreach (PlayerControl limePlayer in BattleRoyale.limeTeam) {
-                        if (limePlayer == PlayerControl.LocalPlayer) {
-                            if (BattleRoyale.limePlayer01 != null) {
-                                string suffix = Helpers.cs(FortuneTeller.color, " (" + BattleRoyale.limePlayer01Lifes + "♥)");
-                                BattleRoyale.limePlayer01.cosmetics.nameText.text += suffix;
-                            }
-                            if (BattleRoyale.limePlayer02 != null) {
-                                string suffix = Helpers.cs(FortuneTeller.color, " (" + BattleRoyale.limePlayer02Lifes + "♥)");
-                                BattleRoyale.limePlayer02.cosmetics.nameText.text += suffix;
-                            }
-                            if (BattleRoyale.limePlayer03 != null) {
-                                string suffix = Helpers.cs(FortuneTeller.color, " (" + BattleRoyale.limePlayer03Lifes + "♥)");
-                                BattleRoyale.limePlayer03.cosmetics.nameText.text += suffix;
-                            }
-                            if (BattleRoyale.limePlayer04 != null) {
-                                string suffix = Helpers.cs(FortuneTeller.color, " (" + BattleRoyale.limePlayer04Lifes + "♥)");
-                                BattleRoyale.limePlayer04.cosmetics.nameText.text += suffix;
-                            }
-                            if (BattleRoyale.limePlayer05 != null) {
-                                string suffix = Helpers.cs(FortuneTeller.color, " (" + BattleRoyale.limePlayer05Lifes + "♥)");
-                                BattleRoyale.limePlayer05.cosmetics.nameText.text += suffix;
-                            }
-                            if (BattleRoyale.limePlayer06 != null) {
-                                string suffix = Helpers.cs(FortuneTeller.color, " (" + BattleRoyale.limePlayer06Lifes + "♥)");
-                                BattleRoyale.limePlayer06.cosmetics.nameText.text += suffix;
-                            }
-                            if (BattleRoyale.limePlayer07 != null) {
-                                string suffix = Helpers.cs(FortuneTeller.color, " (" + BattleRoyale.limePlayer07Lifes + "♥)");
-                                BattleRoyale.limePlayer07.cosmetics.nameText.text += suffix;
-                            }
-                        }
-                    }
-                    foreach (PlayerControl pinkPlayer in BattleRoyale.pinkTeam) {
-                        if (pinkPlayer == PlayerControl.LocalPlayer) {
-                            if (BattleRoyale.pinkPlayer01 != null) {
-                                string suffix = Helpers.cs(Shy.color, " (" + BattleRoyale.pinkPlayer01Lifes + "♥)");
-                                BattleRoyale.pinkPlayer01.cosmetics.nameText.text += suffix;
-                            }
-                            if (BattleRoyale.pinkPlayer02 != null) {
-                                string suffix = Helpers.cs(Shy.color, " (" + BattleRoyale.pinkPlayer02Lifes + "♥)");
-                                BattleRoyale.pinkPlayer02.cosmetics.nameText.text += suffix;
-                            }
-                            if (BattleRoyale.pinkPlayer03 != null) {
-                                string suffix = Helpers.cs(Shy.color, " (" + BattleRoyale.pinkPlayer03Lifes + "♥)");
-                                BattleRoyale.pinkPlayer03.cosmetics.nameText.text += suffix;
-                            }
-                            if (BattleRoyale.pinkPlayer04 != null) {
-                                string suffix = Helpers.cs(Shy.color, " (" + BattleRoyale.pinkPlayer04Lifes + "♥)");
-                                BattleRoyale.pinkPlayer04.cosmetics.nameText.text += suffix;
-                            }
-                            if (BattleRoyale.pinkPlayer05 != null) {
-                                string suffix = Helpers.cs(Shy.color, " (" + BattleRoyale.pinkPlayer05Lifes + "♥)");
-                                BattleRoyale.pinkPlayer05.cosmetics.nameText.text += suffix;
-                            }
-                            if (BattleRoyale.pinkPlayer06 != null) {
-                                string suffix = Helpers.cs(Shy.color, " (" + BattleRoyale.pinkPlayer06Lifes + "♥)");
-                                BattleRoyale.pinkPlayer06.cosmetics.nameText.text += suffix;
-                            }
-                            if (BattleRoyale.pinkPlayer07 != null) {
-                                string suffix = Helpers.cs(Shy.color, " (" + BattleRoyale.pinkPlayer07Lifes + "♥)");
-                                BattleRoyale.pinkPlayer07.cosmetics.nameText.text += suffix;
-                            }
-                        }
-                    }
-                    if (BattleRoyale.serialKiller != null && PlayerControl.LocalPlayer == BattleRoyale.serialKiller) {
-                        string suffix = Helpers.cs(Joker.color, " (" + BattleRoyale.serialKillerLifes + "♥)");
-                        BattleRoyale.serialKiller.cosmetics.nameText.text += suffix;
-                    }
-                }
+                    break;
             }
         }
         static void UpdateMiniMap() {
 
-            if (MapBehaviour.Instance != null && MapBehaviour.Instance.IsOpen && howmanygamemodesareon == 1) {
+            if (MapBehaviour.Instance != null && MapBehaviour.Instance.IsOpen && gameType >= 2) {
                 switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                     case 0:
                         GameObject minimapSabotageSkeld = GameObject.Find("Main Camera/Hud/ShipMap(Clone)/InfectedOverlay");
@@ -692,7 +695,7 @@ namespace LasMonjas.Patches {
                         break;
                 }
             }
-            else if (MapBehaviour.Instance != null && MapBehaviour.Instance.IsOpen && GameOptionsManager.Instance.currentGameOptions.MapId == 0 && activatedSensei && !updatedSenseiMinimap && howmanygamemodesareon != 1) {
+            else if (MapBehaviour.Instance != null && MapBehaviour.Instance.IsOpen && GameOptionsManager.Instance.currentGameOptions.MapId == 0 && activatedSensei && !updatedSenseiMinimap && gameType <= 1) {
                 GameObject mymap = GameObject.Find("Main Camera/Hud/ShipMap(Clone)/Background");
                 mymap.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.customMinimap.GetComponent<SpriteRenderer>().sprite;
                 GameObject hereindicator = GameObject.Find("Main Camera/Hud/ShipMap(Clone)/HereIndicatorParent");
@@ -734,7 +737,7 @@ namespace LasMonjas.Patches {
             }
 
             // If bomb, lights actives or special 1vs1 condition, prevent sabotage open map
-            if (GameOptionsManager.Instance.currentGameMode == GameModes.Normal && howmanygamemodesareon != 1 && PlayerControl.LocalPlayer.Data.Role.IsImpostor && MapBehaviour.Instance != null && MapBehaviour.Instance.IsOpen && (alivePlayers <= 2 || Bomberman.activeBomb || Challenger.isDueling || Seeker.isMinigaming || Illusionist.lightsOutTimer > 0 || Monja.awakened)) {
+            if (GameOptionsManager.Instance.currentGameMode == GameModes.Normal && gameType <= 1 && PlayerControl.LocalPlayer.Data.Role.IsImpostor && MapBehaviour.Instance != null && MapBehaviour.Instance.IsOpen && (alivePlayers <= 2 || Bomberman.activeBomb || Challenger.isDueling || Seeker.isMinigaming || Illusionist.lightsOutTimer > 0 || Monja.awakened)) {
                 MapBehaviour.Instance.Close();
             }
         }
@@ -787,13 +790,13 @@ namespace LasMonjas.Patches {
                 enabled = false;
             else if (Archer.archer != null && PlayerControl.LocalPlayer == Archer.archer && !Challenger.isDueling && !Seeker.isMinigaming)
                 enabled = false;
-            else if (Challenger.isDueling || Seeker.isMinigaming || Monja.awakened || howmanygamemodesareon == 1)
+            else if (Challenger.isDueling || Seeker.isMinigaming || Monja.awakened || gameType >= 2)
                 enabled = false;
             if (enabled) __instance.KillButton.Show();
             else __instance.KillButton.Hide();
         }
         static void updateReportButton(HudManager __instance) {
-            if (howmanygamemodesareon != 1) {
+            if (gameType <= 1) {
                 if (!activatedReportButtonAfterCustomMode) {
                     __instance.ReportButton.gameObject.SetActive(true);
                     __instance.ReportButton.graphic.enabled = true;
@@ -804,7 +807,7 @@ namespace LasMonjas.Patches {
             }
 
             bool enabled = true;
-            if (howmanygamemodesareon == 1 || Monja.awakened)
+            if (gameType >= 2 || Monja.awakened)
                 enabled = false;
             enabled &= __instance.ReportButton.isActiveAndEnabled;
 
@@ -814,61 +817,64 @@ namespace LasMonjas.Patches {
         }
         static void timerUpdate() {
             var deltaTime = Time.deltaTime;
-            if (Illusionist.illusionist != null) {
-                Illusionist.lightsOutTimer -= deltaTime;
-            }
-            if (Bomberman.bomberman != null) {
-                Bomberman.bombTimer -= deltaTime;
-            }
-            if (Medusa.medusa != null) {
-                Medusa.messageTimer -= deltaTime;
-            }
-            if (Hypnotist.hypnotist != null) {
-                Hypnotist.messageTimer -= deltaTime;
-            }
-            if (Berserker.berserker != null && Berserker.killedFirstTime && MeetingHud.Instance == null && !Seeker.isMinigaming && !Berserker.berserker.Data.IsDead) {
-                Berserker.timeToKill -= deltaTime;
-                Berserker.berserkerCountButtonText.text = $"{Berserker.timeToKill.ToString("F0")}";
-                if (Berserker.timeToKill < 0) {
-                    Berserker.berserker.MurderPlayer(Berserker.berserker);
-                }
-            }
-            if (Monja.monja != null && Monja.awakened) {
-                Monja.awakenTimer -= deltaTime;
-            }
-            if (Detective.detective != null) {
-                Detective.detectiveTimer -= deltaTime;
-            }
-            if (Hacker.hacker != null) {
-                Hacker.hackerTimer -= deltaTime;
-            }    
-            if (Sleuth.sleuth != null) {
-                Sleuth.corpsesPathfindTimer -= deltaTime;
-            }            
-            if (Fink.fink != null) {
-                Fink.finkTimer -= deltaTime;
-            }         
-            if (Bat.bat != null) {
-                Bat.frequencyTimer -= deltaTime;
-            }
-            if (Engineer.engineer != null) {
-                Engineer.messageTimer -= deltaTime;
-            }
-            if (Shy.shy != null) {
-                Shy.timer -= deltaTime;
-            }
-            if (TaskMaster.taskMaster != null) {
-                TaskMaster.taskTimer -= deltaTime;
-            }
-            if (Modifiers.performer != null) {
-                Modifiers.performerDuration -= deltaTime;
-            }
 
-            if (howmanygamemodesareon == 1) {
-                // Capture the flag timer
-                if (CaptureTheFlag.captureTheFlagMode) {
-                    CaptureTheFlag.matchDuration -= deltaTime;
-                    if (CaptureTheFlag.matchDuration < 0) {
+            switch (gameType) {
+                case 0:
+                case 1:
+                    if (Illusionist.illusionist != null) {
+                        Illusionist.lightsOutTimer -= deltaTime;
+                    }
+                    if (Bomberman.bomberman != null) {
+                        Bomberman.bombTimer -= deltaTime;
+                    }
+                    if (Medusa.medusa != null) {
+                        Medusa.messageTimer -= deltaTime;
+                    }
+                    if (Hypnotist.hypnotist != null) {
+                        Hypnotist.messageTimer -= deltaTime;
+                    }
+                    if (Berserker.berserker != null && Berserker.killedFirstTime && MeetingHud.Instance == null && !Seeker.isMinigaming && !Berserker.berserker.Data.IsDead) {
+                        Berserker.timeToKill -= deltaTime;
+                        Berserker.berserkerCountButtonText.text = $"{Berserker.timeToKill.ToString("F0")}";
+                        if (Berserker.timeToKill < 0) {
+                            Berserker.berserker.MurderPlayer(Berserker.berserker);
+                        }
+                    }
+                    if (Monja.monja != null && Monja.awakened) {
+                        Monja.awakenTimer -= deltaTime;
+                    }
+                    if (Detective.detective != null) {
+                        Detective.detectiveTimer -= deltaTime;
+                    }
+                    if (Hacker.hacker != null) {
+                        Hacker.hackerTimer -= deltaTime;
+                    }
+                    if (Sleuth.sleuth != null) {
+                        Sleuth.corpsesPathfindTimer -= deltaTime;
+                    }
+                    if (Fink.fink != null) {
+                        Fink.finkTimer -= deltaTime;
+                    }
+                    if (Bat.bat != null) {
+                        Bat.frequencyTimer -= deltaTime;
+                    }
+                    if (Engineer.engineer != null) {
+                        Engineer.messageTimer -= deltaTime;
+                    }
+                    if (Shy.shy != null) {
+                        Shy.timer -= deltaTime;
+                    }
+                    if (TaskMaster.taskMaster != null) {
+                        TaskMaster.taskTimer -= deltaTime;
+                    }
+                    if (Modifiers.performer != null) {
+                        Modifiers.performerDuration -= deltaTime;
+                    }
+                    break;
+                case 2:
+                    // CTF timers
+                    LasMonjas.gamemodeMatchDuration -= deltaTime;
+                    if (LasMonjas.gamemodeMatchDuration < 0) {
                         // both teams with same points = Draw
                         if (CaptureTheFlag.currentRedTeamPoints == CaptureTheFlag.currentBlueTeamPoints) {
                             CaptureTheFlag.triggerDrawWin = true;
@@ -885,10 +891,9 @@ namespace LasMonjas.Patches {
                             GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BlueTeamFlagWin, false);
                         }
                     }
-                }
-
-                // Police and Thief timer, always police team wins if thiefs ran out of time
-                if (PoliceAndThief.policeAndThiefMode) {
+                    break;
+                case 3:
+                    // PT timers
                     PoliceAndThief.policeplayer01lightTimer -= deltaTime;
                     PoliceAndThief.policeplayer02lightTimer -= deltaTime;
                     PoliceAndThief.policeplayer03lightTimer -= deltaTime;
@@ -896,17 +901,16 @@ namespace LasMonjas.Patches {
                     PoliceAndThief.policeplayer05lightTimer -= deltaTime;
                     PoliceAndThief.policeplayer06lightTimer -= deltaTime;
 
-                    PoliceAndThief.matchDuration -= deltaTime;
-                    if (PoliceAndThief.matchDuration < 0) {
+                    LasMonjas.gamemodeMatchDuration -= deltaTime;
+                    if (LasMonjas.gamemodeMatchDuration < 0) {
                         PoliceAndThief.triggerPoliceWin = true;
                         GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.ThiefModePoliceWin, false);
                     }
-                }
-
-                // King of the hill timer
-                if (KingOfTheHill.kingOfTheHillMode) {
-                    KingOfTheHill.matchDuration -= deltaTime;
-                    if (KingOfTheHill.matchDuration < 0) {
+                    break;
+                case 4:
+                    // KOTH:
+                    LasMonjas.gamemodeMatchDuration -= deltaTime;
+                    if (LasMonjas.gamemodeMatchDuration < 0) {
                         // both teams with same points = draw
                         if (KingOfTheHill.currentGreenTeamPoints == KingOfTheHill.currentYellowTeamPoints) {
                             KingOfTheHill.triggerDrawWin = true;
@@ -925,14 +929,14 @@ namespace LasMonjas.Patches {
                     }
 
                     if (KingOfTheHill.totalGreenKingzonescaptured != 0) {
-                        KingOfTheHill.currentGreenTeamPoints += KingOfTheHill.totalGreenKingzonescaptured * deltaTime; ;
+                        KingOfTheHill.currentGreenTeamPoints += KingOfTheHill.totalGreenKingzonescaptured * deltaTime;
                         if (KingOfTheHill.currentGreenTeamPoints >= KingOfTheHill.requiredPoints) {
                             KingOfTheHill.triggerGreenTeamWin = true;
                             GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.GreenTeamHillWin, false);
                         }
                     }
                     if (KingOfTheHill.totalYellowKingzonescaptured != 0) {
-                        KingOfTheHill.currentYellowTeamPoints += KingOfTheHill.totalYellowKingzonescaptured * deltaTime; ;
+                        KingOfTheHill.currentYellowTeamPoints += KingOfTheHill.totalYellowKingzonescaptured * deltaTime;
                         if (KingOfTheHill.currentYellowTeamPoints >= KingOfTheHill.requiredPoints) {
                             KingOfTheHill.triggerYellowTeamWin = true;
                             GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.YellowTeamHillWin, false);
@@ -940,11 +944,9 @@ namespace LasMonjas.Patches {
                     }
 
                     KingOfTheHill.kingpointCounter = Language.introTexts[2] + "<color=#00FF00FF>" + KingOfTheHill.currentGreenTeamPoints.ToString("F0") + "</color> - " + "<color=#FFFF00FF>" + KingOfTheHill.currentYellowTeamPoints.ToString("F0") + "</color>";
-
-                }
-
-                // Hot Potato timer
-                if (HotPotato.hotPotatoMode) {
+                    break;
+                case 5:
+                    // HP timers
                     if (HotPotato.firstPotatoTransfered) {
                         HotPotato.timeforTransfer -= deltaTime;
 
@@ -952,29 +954,27 @@ namespace LasMonjas.Patches {
                             HotPotato.hotPotatoPlayer.MurderPlayer(HotPotato.hotPotatoPlayer);
                         }
 
-                        HotPotato.matchDuration -= deltaTime;
+                        LasMonjas.gamemodeMatchDuration -= deltaTime;
 
-                        if (HotPotato.matchDuration < 0) {
+                        if (LasMonjas.gamemodeMatchDuration < 0) {
                             HotPotato.triggerHotPotatoEnd = true;
                             GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.HotPotatoEnd, false);
                         }
                     }
-                }
+                    break;
+                case 6:
+                    // ZL timers
+                    LasMonjas.gamemodeMatchDuration -= deltaTime;
 
-                // ZombieLaboratory timer
-                if (ZombieLaboratory.zombieLaboratoryMode) {
-                    ZombieLaboratory.matchDuration -= deltaTime;
-
-                    if (ZombieLaboratory.matchDuration < 0) {
+                    if (LasMonjas.gamemodeMatchDuration < 0) {
                         ZombieLaboratory.triggerZombieWin = true;
                         GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.ZombieWin, false);
                     }
-                }
-
-                // Battle Royale timer
-                if (BattleRoyale.battleRoyaleMode) {
-                    BattleRoyale.matchDuration -= deltaTime;
-                    if (BattleRoyale.matchDuration < 0) {
+                    break;
+                case 7:
+                    // BR timers
+                    LasMonjas.gamemodeMatchDuration -= deltaTime;
+                    if (LasMonjas.gamemodeMatchDuration < 0) {
                         if (BattleRoyale.matchType == 2) {
                             if (BattleRoyale.serialKiller != null) {
                                 // all teams with same points = Draw
@@ -1026,18 +1026,11 @@ namespace LasMonjas.Patches {
                             GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleTimeWin, false);
                         }
                     }
-                }
-                
-                // Monja Festival timer
-                if (MonjaFestival.monjaFestivalMode) {
-                    MonjaFestival.matchDuration -= deltaTime;
-                    if (MonjaFestival.matchDuration < 0) {
-                        Reactor.Utilities.Coroutines.Stop(monjaBigOneReload());
-                        Reactor.Utilities.Coroutines.Stop(monjaBigTwoReload());
-                        Reactor.Utilities.Coroutines.Stop(monjaLittleOneReload());
-                        Reactor.Utilities.Coroutines.Stop(monjaLittleTwoReload());
-                        Reactor.Utilities.Coroutines.Stop(monjaLittleThreeReload());
-                        Reactor.Utilities.Coroutines.Stop(monjaLittleFourReload()); 
+                    break;
+                case 8:
+                    // MF
+                    LasMonjas.gamemodeMatchDuration -= deltaTime;
+                    if (LasMonjas.gamemodeMatchDuration < 0) {
                         if (MonjaFestival.bigMonjaPlayer != null) {
                             // all teams with same points = Draw
                             if (MonjaFestival.greenPoints == MonjaFestival.cyanPoints && MonjaFestival.cyanPoints == MonjaFestival.bigMonjaPoints) {
@@ -1081,9 +1074,9 @@ namespace LasMonjas.Patches {
                                 MonjaFestival.triggerCyanTeamWin = true;
                                 GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.MonjaFestivalCyanWin, false);
                             }
-                        }                        
+                        }
                     }
-                }
+                    break;
             }
         }
 
@@ -1360,7 +1353,7 @@ namespace LasMonjas.Patches {
 
             HudManager.Instance.StartCoroutine(Effects.Lerp(7, new Action<float>((p) => {
 
-                if (p == 1f) {                    
+                if (p == 1f) {
 
                     // If after the duel both are dead, teleport their body to the emergency button
                     if (Challenger.challenger.Data.IsDead && Challenger.rivalPlayer.Data.IsDead) {
@@ -1428,10 +1421,10 @@ namespace LasMonjas.Patches {
                     Challenger.ResetValues();
                 }
             })));
-        }        
-        
+        }
+
         static void challengerTeleportBodies(DeadBody body) {
-            
+
             GameObject emerButton = null;
 
             switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
@@ -1454,7 +1447,7 @@ namespace LasMonjas.Patches {
                     emerButton = GameObject.Find("console-mr-callmeeting");
                     break;
             }
-            
+
             if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                 if (body.transform.position.y > 0) {
                     body.transform.position = new Vector3(5f, 19.5f, -5);
@@ -1490,7 +1483,7 @@ namespace LasMonjas.Patches {
                 }
             }
         }
-        
+
         static void exilerWinIfDisconnect() {
             if (Exiler.exiler == null) return;
 
@@ -1522,7 +1515,7 @@ namespace LasMonjas.Patches {
             }
 
             while (Seeker.howmanyselectedattacks < Seeker.currentPlayers + 1)
-                return;          
+                return;
 
             if (Seeker.onlyOneFinishMinigame && !Seeker.timeOutMinigame) {
                 Seeker.onlyOneFinishMinigame = false;
@@ -1541,7 +1534,7 @@ namespace LasMonjas.Patches {
                 case 3:
                     new MonjaCuloDio(3, Seeker.seeker, 3);
                     break;
-            }            
+            }
 
             if (timeOut == 0) {
                 HudManager.Instance.StartCoroutine(Effects.Lerp(3, new Action<float>((p) => {
@@ -1585,7 +1578,7 @@ namespace LasMonjas.Patches {
                         }
                         Seeker.seekerPlayerPointsCount.text = $"{Seeker.currentPlayers} / 3";
                         Seeker.seekerPerformMinigamePlayerPointsCount.text = $"{Seeker.currentPoints} / {Seeker.neededPoints}"; 
-                        new CustomMessage(Language.statusRolesTexts[4] + Seeker.currentPoints, 3, -1, 1.6f, 29);
+                        new CustomMessage(Language.statusRolesTexts[4] + Seeker.currentPoints, 3, -1, 1.6f, 8);
                     }
                 })));
             }
@@ -1643,7 +1636,7 @@ namespace LasMonjas.Patches {
                         }
                         Seeker.seekerPlayerPointsCount.text = $"{Seeker.currentPlayers} / 3";
                         Seeker.seekerPerformMinigamePlayerPointsCount.text = $"{Seeker.currentPoints} / {Seeker.neededPoints}"; 
-                        new CustomMessage(Language.statusRolesTexts[4] + Seeker.currentPoints, 3, -1, 1.6f, 29);
+                        new CustomMessage(Language.statusRolesTexts[4] + Seeker.currentPoints, 3, -1, 1.6f, 8);
                     }
                 })));
             }
@@ -1717,8 +1710,8 @@ namespace LasMonjas.Patches {
                     }
                 }
             })));
-        }              
-        
+        }
+
         static void fortuneTellerUpdate() {
             if (FortuneTeller.fortuneTeller == null || FortuneTeller.fortuneTeller != PlayerControl.LocalPlayer) return;
 
@@ -1748,7 +1741,7 @@ namespace LasMonjas.Patches {
                     }
                 }
             }
-        }       
+        }
         public static void kidUpdate() {
             foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
                 if (p == null) continue;
@@ -1799,7 +1792,7 @@ namespace LasMonjas.Patches {
                     Spiritualist.spiritualist.cosmetics.nameText.color = Spiritualist.color;
                 }
             }
-        }      
+        }
         static void vigilantMiraUpdate() {
 
             if (Vigilant.vigilantMira == null || Vigilant.vigilantMira.Data.IsDead || Vigilant.vigilantMira != PlayerControl.LocalPlayer || GameOptionsManager.Instance.currentGameOptions.MapId != 1) {
@@ -1811,14 +1804,14 @@ namespace LasMonjas.Patches {
                 Vigilant.doorLogActivated = !Vigilant.doorLogActivated;
                 Vigilant.doorLog.SetActive(Vigilant.doorLogActivated);
             }
-        }        
+        }
         static void batUpdate() {
             if (Bat.bat == null)
                 return;
 
             if (Bat.frequencyTimer > 0 && Bat.bat != PlayerControl.LocalPlayer) {
                 if (!Bat.bat.Data.IsDead && Vector2.Distance(Bat.bat.transform.position, PlayerControl.LocalPlayer.transform.position) < (1f * Bat.frequencyRange)) {
-                    
+
                     PlayerControl.LocalPlayer.killTimer += Time.fixedDeltaTime;
 
                     foreach (CustomButton button in CustomButton.buttons) {
@@ -1866,10 +1859,10 @@ namespace LasMonjas.Patches {
                     }
                 }
             }
-        }       
+        }
         static void captureTheFlagUpdate() {
 
-            if (!CaptureTheFlag.captureTheFlagMode && howmanygamemodesareon != 1)
+            if (gameType != 2)
                 return;
 
             if (CaptureTheFlag.redPlayerWhoHasBlueFlag != null && CaptureTheFlag.redPlayerWhoHasBlueFlag.Data.Disconnected) {
@@ -1948,7 +1941,7 @@ namespace LasMonjas.Patches {
         }
         static void policeandthiefUpdate() {
 
-            if (!PoliceAndThief.policeAndThiefMode && howmanygamemodesareon != 1)
+            if (gameType != 3)
                 return;
 
             // Check number of thiefs if a thief disconnects
@@ -2032,7 +2025,7 @@ namespace LasMonjas.Patches {
         }
         static void kingOfTheHillUpdate() {
 
-            if (!KingOfTheHill.kingOfTheHillMode && howmanygamemodesareon != 1)
+            if (gameType != 4)
                 return;
 
             // If king disconnects, assing new king
@@ -2048,7 +2041,7 @@ namespace LasMonjas.Patches {
                 }
                 KingOfTheHill.greenkingaura.transform.parent = KingOfTheHill.greenKingplayer.transform;
                 if (PlayerControl.LocalPlayer == KingOfTheHill.greenKingplayer) {
-                    new CustomMessage(Language.statusKingOfTheHillTexts[0], 5, -1, 1.6f, 11);
+                    new CustomMessage(Language.statusKingOfTheHillTexts[0], 5, -1, 1.6f, 16);
                     KingOfTheHill.localArrows[3].arrow.SetActive(false);
                 }
                 KingOfTheHill.greenKingIsReviving = false;
@@ -2076,7 +2069,7 @@ namespace LasMonjas.Patches {
                 KingOfTheHill.greenTeam.RemoveAt(0);
                 KingOfTheHill.greenTeam.Add(KingOfTheHill.greenKingplayer);
                 return;
-            }           
+            }
 
             if (KingOfTheHill.yellowKingplayer != null && KingOfTheHill.yellowKingplayer.Data.Disconnected) {
                 KingOfTheHill.yellowTeam.Remove(KingOfTheHill.yellowKingplayer);
@@ -2090,7 +2083,7 @@ namespace LasMonjas.Patches {
                 }
                 KingOfTheHill.yellowkingaura.transform.parent = KingOfTheHill.yellowKingplayer.transform;
                 if (PlayerControl.LocalPlayer == KingOfTheHill.yellowKingplayer) {
-                    new CustomMessage(Language.statusKingOfTheHillTexts[1], 5, -1, 1.6f, 11);
+                    new CustomMessage(Language.statusKingOfTheHillTexts[1], 5, -1, 1.6f, 16);
                     KingOfTheHill.localArrows[3].arrow.SetActive(false);
                 }
                 KingOfTheHill.yellowKingIsReviving = false;
@@ -2118,11 +2111,11 @@ namespace LasMonjas.Patches {
                 KingOfTheHill.yellowTeam.RemoveAt(0);
                 KingOfTheHill.yellowTeam.Add(KingOfTheHill.yellowKingplayer);
                 return;
-            }        
+            }
         }
         static void hotPotatoUpdate() {
 
-            if (!HotPotato.hotPotatoMode && howmanygamemodesareon != 1)
+            if (gameType != 5)
                 return;
 
             // Hide hot potato sprite if in vent
@@ -2140,10 +2133,10 @@ namespace LasMonjas.Patches {
 
                 if (!HotPotato.firstPotatoTransfered) {
                     HotPotato.firstPotatoTransfered = true;
-                    new CustomMessage(Language.introTexts[5], HotPotato.matchDuration, -1, -1f, 18);
-                    new CustomMessage(Language.introTexts[1], HotPotato.matchDuration, -1, -1.3f, 15);
+                    new CustomMessage(Language.introTexts[5], LasMonjas.gamemodeMatchDuration, -1, -1f, 18);
+                    new CustomMessage(Language.introTexts[1], LasMonjas.gamemodeMatchDuration, -1, -1.3f, 15);
                     HotPotato.hotpotatopointCounter = Language.introTexts[5] + "<color=#808080FF>" + HotPotato.hotPotatoPlayer.name + "</color> | " + Language.introTexts[6] + "<color=#00F7FFFF>" + HotPotato.notPotatoTeam.Count + "</color>";
-                    new CustomMessage(HotPotato.hotpotatopointCounter, HotPotato.matchDuration, -1, 1.9f, 17);
+                    new CustomMessage(HotPotato.hotpotatopointCounter, LasMonjas.gamemodeMatchDuration, -1, 1.9f, 17);
                 }
 
                 HotPotato.timeforTransfer = HotPotato.savedtimeforTransfer;
@@ -2284,10 +2277,10 @@ namespace LasMonjas.Patches {
                 }
             }
         }
-        
+
         static void zombieLaboratoryUpdate() {
 
-            if (!ZombieLaboratory.zombieLaboratoryMode && howmanygamemodesareon != 1)
+            if(gameType != 6)
                 return;
 
             var deltaTime = Time.deltaTime;
@@ -2747,7 +2740,7 @@ namespace LasMonjas.Patches {
         }
         static void battleRoyaleUpdate() {
 
-            if (!BattleRoyale.battleRoyaleMode && howmanygamemodesareon != 1)
+            if (gameType != 7)
                 return;
 
             if (BattleRoyale.matchType == 0) {
@@ -3047,7 +3040,7 @@ namespace LasMonjas.Patches {
 
         static void monjaFestivalUpdate() {
 
-            if (!MonjaFestival.monjaFestivalMode && howmanygamemodesareon != 1)
+            if (gameType != 8)
                 return;
 
             // Big Monja invisible
@@ -3067,7 +3060,7 @@ namespace LasMonjas.Patches {
                 if (MonjaFestival.bigMonjaPlayerInvisibleTimer <= 0f) {
                     MonjaFestival.resetBigMonja();
                 }
-            }          
+            }
 
             // Green Team disconnects
             foreach (PlayerControl greenPlayer in MonjaFestival.greenTeam) {
@@ -3270,6 +3263,9 @@ namespace LasMonjas.Patches {
             MonjaFestival.bigSpawnOneReloading = true;
             while (MonjaFestival.bigSpawnOnePoints < 30) {
                 yield return new WaitForSeconds(10);
+                if (AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Ended) {
+                    break;
+                }
                 MonjaFestival.bigSpawnOnePoints += 1;
                 MonjaFestival.bigSpawnOne.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.bigSpawnOneFull.GetComponent<SpriteRenderer>().sprite;
                 MonjaFestival.bigSpawnOneCount.text = $"{MonjaFestival.bigSpawnOnePoints} / 30";
@@ -3283,6 +3279,9 @@ namespace LasMonjas.Patches {
             MonjaFestival.bigSpawnTwoReloading = true;
             while (MonjaFestival.bigSpawnTwoPoints < 30) {
                 yield return new WaitForSeconds(10);
+                if (AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Ended) {
+                    break;
+                }
                 MonjaFestival.bigSpawnTwoPoints += 1;
                 MonjaFestival.bigSpawnTwo.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.bigSpawnOneFull.GetComponent<SpriteRenderer>().sprite;
                 MonjaFestival.bigSpawnTwoCount.text = $"{MonjaFestival.bigSpawnTwoPoints} / 30";
@@ -3296,6 +3295,9 @@ namespace LasMonjas.Patches {
             MonjaFestival.littleSpawnOneReloading = true;
             while (MonjaFestival.littleSpawnOnePoints < 10) {
                 yield return new WaitForSeconds(20);
+                if (AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Ended) {
+                    break;
+                }
                 MonjaFestival.littleSpawnOnePoints += 1;
                 MonjaFestival.littleSpawnOne.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.littleSpawnOneFull.GetComponent<SpriteRenderer>().sprite;
                 MonjaFestival.littleSpawnOneCount.text = $"{MonjaFestival.littleSpawnOnePoints} / 10";
@@ -3309,6 +3311,9 @@ namespace LasMonjas.Patches {
             MonjaFestival.littleSpawnTwoReloading = true;
             while (MonjaFestival.littleSpawnTwoPoints < 10) {
                 yield return new WaitForSeconds(20);
+                if (AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Ended) {
+                    break;
+                }
                 MonjaFestival.littleSpawnTwoPoints += 1;
                 MonjaFestival.littleSpawnTwo.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.littleSpawnOneFull.GetComponent<SpriteRenderer>().sprite;
                 MonjaFestival.littleSpawnTwoCount.text = $"{MonjaFestival.littleSpawnTwoPoints} / 10";
@@ -3322,6 +3327,9 @@ namespace LasMonjas.Patches {
             MonjaFestival.littleSpawnThreeReloading = true;
             while (MonjaFestival.littleSpawnThreePoints < 10) {
                 yield return new WaitForSeconds(20);
+                if (AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Ended) {
+                    break;
+                }
                 MonjaFestival.littleSpawnThreePoints += 1;
                 MonjaFestival.littleSpawnThree.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.littleSpawnOneFull.GetComponent<SpriteRenderer>().sprite;
                 MonjaFestival.littleSpawnThreeCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
@@ -3335,6 +3343,9 @@ namespace LasMonjas.Patches {
             MonjaFestival.littleSpawnFourReloading = true;
             while (MonjaFestival.littleSpawnFourPoints < 10) {
                 yield return new WaitForSeconds(20);
+                if (AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Ended) {
+                    break;
+                }
                 MonjaFestival.littleSpawnFourPoints += 1;
                 MonjaFestival.littleSpawnFour.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.littleSpawnOneFull.GetComponent<SpriteRenderer>().sprite;
                 MonjaFestival.littleSpawnFourCount.text = $"{MonjaFestival.littleSpawnFourPoints} / 10";
@@ -3348,7 +3359,9 @@ namespace LasMonjas.Patches {
             int randomPosition = rnd.Next(0, 5);
             MonjaFestival.allulMonja.transform.position = MonjaFestival.allulMonjaPositions[randomPosition];
             yield return new WaitForSeconds(45);
-            MonjaFestival.allulMonja.SetActive(true);
+            if (AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started) {
+                MonjaFestival.allulMonja.SetActive(true);
+            }
         }
 
         static void Postfix(HudManager __instance) {

@@ -1,9 +1,4 @@
 ﻿using HarmonyLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace LasMonjas.Patches {
@@ -43,10 +38,10 @@ namespace LasMonjas.Patches {
 
             static void Postfix(PingTracker __instance) {
 
-                __instance.text.text += "\n<color=#CC00FFFF>Las Monjas "+ LasMonjasPlugin.Version.ToString() +"</color>";
+                __instance.text.text += "\n<color=#CC00FFFF>Las Monjas "+ LasMonjasPlugin.Version.ToString() + "</color>";
                 __instance.transform.localPosition = new Vector3(1.25f, 3f, __instance.transform.localPosition.z);
             }
-        }     
+        }
 
         //
 
@@ -65,7 +60,7 @@ namespace LasMonjas.Patches {
                 var lasMonjasLogo = new GameObject("bannerLogo_LasMonjas");
                 lasMonjasLogo.transform.position = Vector3.up;
                 var renderer = lasMonjasLogo.AddComponent<SpriteRenderer>();
-                renderer.sprite = Helpers.loadSpriteFromResources("LasMonjas.Images.Banner.png", 300f);                                
+                renderer.sprite = Helpers.loadSpriteFromResources("LasMonjas.Images.Banner.png", 300f);
             }
         }
     }

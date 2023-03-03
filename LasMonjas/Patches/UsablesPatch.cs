@@ -5,12 +5,10 @@ using UnityEngine;
 using System.Linq;
 using static LasMonjas.LasMonjas;
 using static LasMonjas.GameHistory;
-using static LasMonjas.MapOptions;
 using System.Collections.Generic;
 using PowerTools;
 using LasMonjas.Core;
 using AmongUs.GameOptions;
-using static UnityEngine.GraphicsBuffer;
 
 namespace LasMonjas.Patches
 {
@@ -23,7 +21,7 @@ namespace LasMonjas.Patches
                 __runOriginal = true;
                 return __runOriginal;
             }
-            
+
             if (!__runOriginal) {
                 return false;
             }
@@ -127,10 +125,10 @@ namespace LasMonjas.Patches
             if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) return;
 
             if (GameOptionsManager.Instance.currentGameMode == GameModes.Normal) {
-                if (__instance.AmOwner && __instance.roleCanUseVents() && howmanygamemodesareon == 1) {
+                if (__instance.AmOwner && __instance.roleCanUseVents() && gameType >= 2) {
                     HudManager.Instance.ImpostorVentButton.Show();
                 }
-                else if (__instance.AmOwner && __instance.roleCanUseVents() && HudManager.Instance.ReportButton.isActiveAndEnabled || __instance.AmOwner && __instance.roleCanUseVents() && HudManager.Instance.ReportButton.isActiveAndEnabled && howmanygamemodesareon != 1) {
+                else if (__instance.AmOwner && __instance.roleCanUseVents() && HudManager.Instance.ReportButton.isActiveAndEnabled || __instance.AmOwner && __instance.roleCanUseVents() && HudManager.Instance.ReportButton.isActiveAndEnabled && gameType <= 1) {
                     HudManager.Instance.ImpostorVentButton.Show();
                 }
             }
@@ -168,7 +166,7 @@ namespace LasMonjas.Patches
                 if (!__instance.EnterVentAnim) {
                     return false;
                 }
-                
+
                 var truePosition = PlayerControl.LocalPlayer.GetTruePosition();
 
                 Vector2 vector = pc.GetTruePosition() - truePosition;
@@ -194,11 +192,11 @@ namespace LasMonjas.Patches
         public static class ExitVentPatch
         {
             public static bool Prefix(Vent __instance, PlayerControl pc) {
-                
+
                 if (!__instance.ExitVentAnim) {
                     return false;
                 }
-                
+
                 var truePosition = PlayerControl.LocalPlayer.GetTruePosition();
 
                 Vector2 vector = pc.GetTruePosition() - truePosition;
@@ -220,7 +218,7 @@ namespace LasMonjas.Patches
             }
         }
     }
-    
+
     [HarmonyPatch(typeof(KillButton), nameof(KillButton.DoClick))]
     class KillButtonDoClickPatch
     {
@@ -249,7 +247,7 @@ namespace LasMonjas.Patches
     class MapBehaviourCloseHauntButton
     {
         static void Postfix() {
-            if (GameOptionsManager.Instance.currentGameMode == GameModes.Normal && howmanygamemodesareon != 1) {
+            if (GameOptionsManager.Instance.currentGameMode == GameModes.Normal && gameType <= 1) {
                 foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
                     if (player == PlayerControl.LocalPlayer) {
                         HudManager.Instance.AbilityButton.Hide();
@@ -271,7 +269,7 @@ namespace LasMonjas.Patches
         static bool Prefix(SabotageButton __instance) {
 
             // Block sabotage button on custom gamemodes
-            if (howmanygamemodesareon == 1 || Monja.awakened) {
+            if (gameType >= 2 || Monja.awakened) {
                 return false;
             }
             else {
@@ -303,7 +301,7 @@ namespace LasMonjas.Patches
         static void Postfix() {
 
             // Change sabotage button image and block sabotages if capture the flag mode or police and thief mode
-            if (howmanygamemodesareon == 1 || Monja.awakened) {
+            if (gameType >= 2 || Monja.awakened) {
                 HudManager.Instance.SabotageButton.Hide();
             }
 
@@ -342,7 +340,7 @@ namespace LasMonjas.Patches
         static bool Prefix(ReportButton __instance) {
 
             // Block report button if dueling or gamemodes)
-            bool blockReport = Challenger.isDueling || Spiritualist.preventReport || howmanygamemodesareon == 1 || Monja.awakened || Seeker.isMinigaming;
+            bool blockReport = Challenger.isDueling || Spiritualist.preventReport || gameType >= 2 || Monja.awakened || Seeker.isMinigaming;
             if (blockReport) return false;
 
             return true;
@@ -357,7 +355,7 @@ namespace LasMonjas.Patches
             var statusText = "";
 
             // Deactivate emergency button for custom gamemodes
-            if (howmanygamemodesareon == 1) {
+            if (gameType >= 2) {
                 roleCanCallEmergency = false;
                 statusText = Language.usablesTexts[0];
             }
@@ -390,7 +388,7 @@ namespace LasMonjas.Patches
                 roleCanCallEmergency = false;
                 statusText = Language.usablesTexts[5];
             }
-            
+
             // Deactivate emergency button if Monja awakened
             if (Monja.monja != null && Monja.awakened) {
                 roleCanCallEmergency = false;
@@ -413,7 +411,7 @@ namespace LasMonjas.Patches
     {
         static bool Prefix(AbilityButton __instance) {
 
-            bool blockAbility = howmanygamemodesareon == 1 && !HotPotato.hotPotato;
+            bool blockAbility = gameType >= 2 && !HotPotato.hotPotato;
             if (blockAbility) return false;
 
             return true;
@@ -425,12 +423,12 @@ namespace LasMonjas.Patches
     {
         static void Postfix() {
 
-            if (howmanygamemodesareon == 1 && !HotPotato.hotPotato) {
+            if (gameType >= 2 && !HotPotato.hotPotato) {
                 HudManager.Instance.AbilityButton.Hide();
             }           
         }
     }
-    
+
     [HarmonyPatch]
     class VitalsMinigamePatch
     {
@@ -645,7 +643,7 @@ namespace LasMonjas.Patches
     class SurveillanceMinigamePatch
     {
         private static int page = 0;
-        private static float timer = 0f;       
+        private static float timer = 0f;
 
         [HarmonyPatch(typeof(SurveillanceMinigame), nameof(SurveillanceMinigame.Begin))]
         class SurveillanceMinigameBeginPatch
@@ -816,7 +814,7 @@ namespace LasMonjas.Patches
             }
 
         }
-        
+
         [HarmonyPatch(typeof(PlanetSurveillanceMinigame), nameof(PlanetSurveillanceMinigame.Begin))]
         class PlanetSurveillanceMinigameBeginPatch
         {
@@ -838,7 +836,7 @@ namespace LasMonjas.Patches
 
                     canNightOverlay = true;
                     removeNightOverlay = true;
-                }                
+                }
             }
         }
 
@@ -847,7 +845,7 @@ namespace LasMonjas.Patches
         {
 
             public static bool Prefix(PlanetSurveillanceMinigame __instance) {
-               
+
                 if (nightVision && !PlayerControl.LocalPlayer.Data.Role.IsImpostor) {
                     if (Modifiers.lighter != null && PlayerControl.LocalPlayer == Modifiers.lighter) return false;
                     foreach (PlayerTask task in PlayerControl.LocalPlayer.myTasks) {

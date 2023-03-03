@@ -4,38 +4,39 @@ using System;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine.Events;
-using UnityEngine.SceneManagement;
 using static UnityEngine.UI.Button;
 using Object = UnityEngine.Object;
+using LasMonjas.Core;
 
 namespace LasMonjas.Patches 
 {
     [HarmonyPatch]
     public static class ClientOptionsPatch
     {
-        private static SelectionBehaviour[] AllOptions = {
-            new SelectionBehaviour("Game Summary", () => MapOptions.showRoleSummary = LasMonjasPlugin.ShowRoleSummary.Value = !LasMonjasPlugin.ShowRoleSummary.Value, LasMonjasPlugin.ShowRoleSummary.Value),
-            new SelectionBehaviour("Activate Music", () => MapOptions.activateMusic = LasMonjasPlugin.ActivateMusic.Value = !LasMonjasPlugin.ActivateMusic.Value, LasMonjasPlugin.ActivateMusic.Value),
-            new SelectionBehaviour("Ghosts Can \nSee Roles", () => MapOptions.ghostsSeeRoles = LasMonjasPlugin.GhostsSeeRoles.Value = !LasMonjasPlugin.GhostsSeeRoles.Value, LasMonjasPlugin.GhostsSeeRoles.Value),
+        public static SelectionBehaviour[] AllOptions = {
+            new SelectionBehaviour(Language.clientOptionNames[0], () => MapOptions.showRoleSummary = LasMonjasPlugin.ShowRoleSummary.Value = !LasMonjasPlugin.ShowRoleSummary.Value, LasMonjasPlugin.ShowRoleSummary.Value),
+            new SelectionBehaviour(Language.clientOptionNames[1], () => MapOptions.activateMusic = LasMonjasPlugin.ActivateMusic.Value = !LasMonjasPlugin.ActivateMusic.Value, LasMonjasPlugin.ActivateMusic.Value),
+            new SelectionBehaviour(Language.clientOptionNames[2], () => MapOptions.ghostsSeeRoles = LasMonjasPlugin.GhostsSeeRoles.Value = !LasMonjasPlugin.GhostsSeeRoles.Value, LasMonjasPlugin.GhostsSeeRoles.Value),
             //new SelectionBehaviour("Horse Mode", () => MapOptions.horseMode = LasMonjasPlugin.HorseMode.Value = !LasMonjasPlugin.HorseMode.Value, LasMonjasPlugin.HorseMode.Value),
-            new SelectionBehaviour("Monja Cursor", () => MapOptions.monjaCursor = LasMonjasPlugin.MonjaCursor.Value = !LasMonjasPlugin.MonjaCursor.Value, LasMonjasPlugin.MonjaCursor.Value),
+            new SelectionBehaviour(Language.clientOptionNames[3], () => MapOptions.monjaCursor = LasMonjasPlugin.MonjaCursor.Value = !LasMonjasPlugin.MonjaCursor.Value, LasMonjasPlugin.MonjaCursor.Value),
         };
-        
+
         private static GameObject popUp;
         private static TextMeshPro titleText;
 
         private static ToggleButtonBehaviour buttonPrefab;
         private static Vector3? _origin;
-        
+
         [HarmonyPostfix]
         [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.Start))]
         public static void MainMenuManager_StartPostfix(MainMenuManager __instance)
         {
-            var tmp = __instance.Announcement.transform.Find("Title_Text").gameObject.GetComponent<TextMeshPro>();
+            var label = new GameObject("LasMonjas Options");
+            var tmp = label.AddComponent<TextMeshPro>();
+            tmp.fontSize = 4;
             tmp.alignment = TextAlignmentOptions.Center;
             tmp.transform.localPosition += Vector3.left * 0.2f;
             titleText = Object.Instantiate(tmp);
-            Object.Destroy(titleText.GetComponent<TextTranslatorTMP>());
             titleText.gameObject.SetActive(false);
             Object.DontDestroyOnLoad(titleText);
         }
@@ -58,7 +59,7 @@ namespace LasMonjas.Patches
                 buttonPrefab.name = "CensorChatPrefab";
                 buttonPrefab.gameObject.SetActive(false);
             }
-            
+
             SetUpOptions();
             InitializeMoreButton(__instance);
         }
@@ -78,7 +79,7 @@ namespace LasMonjas.Patches
                 if (gObj.name != "Background" && gObj.name != "CloseButton")
                     Object.Destroy(gObj);
             }
-            
+
             popUp.SetActive(false);
         }
 
@@ -97,10 +98,10 @@ namespace LasMonjas.Patches
             __instance.EnableFriendInvitesButton.Text.transform.localScale = new Vector3(1.2f, 1, 1);
 
             moreOptions.transform.localPosition = _origin.Value + Vector3.right * 4f / 3f;
-            moreOptions.transform.localScale = new Vector3(0.66f, 1, 1); 
-            
+            moreOptions.transform.localScale = new Vector3(0.66f, 1, 1);
+
             moreOptions.gameObject.SetActive(true);
-            moreOptions.Text.text = "<color=#CC00FFFF>Las Monjas Options</color>";
+            moreOptions.Text.text = "<color=#CC00FFFF>Las Monjas " + Language.clientOptionNames[4] +"</color>";
             moreOptions.Text.transform.localScale = new Vector3(1 / 0.66f, 1, 1);
             var moreOptionsButton = moreOptions.GetComponent<PassiveButton>();
             moreOptionsButton.OnClick = new ButtonClickedEvent();
@@ -130,26 +131,26 @@ namespace LasMonjas.Patches
             popUp.gameObject.SetActive(true);
             SetUpOptions();
         }
-        
+
         private static void CheckSetTitle()
         {
             if (!popUp || popUp.GetComponentInChildren<TextMeshPro>() || !titleText) return;
-            
+
             var title = Object.Instantiate(titleText, popUp.transform);
             title.GetComponent<RectTransform>().localPosition = Vector3.up * 2.3f;
             title.gameObject.SetActive(true);
-            title.text = "Las Monjas Options";
+            title.text = "Las Monjas " + Language.clientOptionNames[4];
             title.name = "TitleText";
         }
 
         private static void SetUpOptions()
         {
             if (popUp.transform.GetComponentInChildren<ToggleButtonBehaviour>()) return;
-            
+
             for (var i = 0; i < AllOptions.Length; i++)
             {
                 var info = AllOptions[i];
-                
+
                 var button = Object.Instantiate(buttonPrefab, popUp.transform);
                 var pos = new Vector3(i % 2 == 0 ? -1.17f : 1.17f, 1.3f - i / 2 * 0.8f, -.5f);
 
@@ -158,27 +159,27 @@ namespace LasMonjas.Patches
 
                 button.onState = info.DefaultValue;
                 button.Background.color = button.onState ? Color.green : Palette.ImpostorRed;
-                
+
                 button.Text.text = info.Title;
-                button.Text.fontSizeMin = button.Text.fontSizeMax = 2.5f;
+                button.Text.fontSizeMin = button.Text.fontSizeMax = 1.75f;
                 button.Text.font = Object.Instantiate(titleText.font);
                 button.Text.GetComponent<RectTransform>().sizeDelta = new Vector2(2, 2);
 
                 button.name = info.Title.Replace(" ", "") + "Toggle";
                 button.gameObject.SetActive(true);
-                
+
                 var passiveButton = button.GetComponent<PassiveButton>();
                 var colliderButton = button.GetComponent<BoxCollider2D>();
-                
+
                 colliderButton.size = new Vector2(2.2f, .7f);
-                
+
                 passiveButton.OnClick = new ButtonClickedEvent();
                 passiveButton.OnMouseOut = new UnityEvent();
                 passiveButton.OnMouseOver = new UnityEvent();
 
                 passiveButton.OnClick.AddListener((Action) (() =>
                 {
-                    if (info.Title == "Monja Cursor") {
+                    if (info.Title == Language.clientOptionNames[3]) {
                         Helpers.enableCursor("toggle");
                     }
                     button.onState = info.OnClick();
@@ -201,7 +202,7 @@ namespace LasMonjas.Patches
             }
         }
         
-        private class SelectionBehaviour
+        public class SelectionBehaviour
         {
             public string Title;
             public Func<bool> OnClick;
