@@ -36,6 +36,17 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
   
+**Version 3.1.2 (3rd March 2023)**
+- Compatibilty patch for 2023.2.28
+- Added kill counter for killing roles to the game summary
+- Sorted lobby options (added modifiers tab, global gamemode options, game type, mouse scroll...)
+- Almost every single mod word is now translated to the supported languages
+- 1 new hat
+
+**Version 3.1.1 (17th February 2023)**
+- Reduced preset's number from 10 to 5 to fix a little issue that could bug the lobby for the host
+- Submerged's download button won't appear until it's ready for the latest Among Us game version
+
 **Version 3.1.0 (14th February 2023)**
 - New Gamemode: Monja Festival
 - 12 new hats and 6 new nameplates to celebrate Las Monjas 1st Anniversary and Valentine's Day
