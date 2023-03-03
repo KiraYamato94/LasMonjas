@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections;
 using UnityEngine;
 using System.Linq;
 using LasMonjas.Patches;
@@ -48,12 +47,12 @@ namespace LasMonjas.Objects {
                 position = new Vector3(p.x, p.y, PlayerControl.LocalPlayer.transform.position.z + 1f);
             }
             position += (Vector3)PlayerControl.LocalPlayer.Collider.offset; 
-            
+
             gameObject.transform.position = position;
             var hatRenderer = gameObject.AddComponent<SpriteRenderer>();
             hatRenderer.sprite = getHatAnimationSprite(0);
 
-            
+
             var referenceVent = UnityEngine.Object.FindObjectOfType<Vent>();
             vent = UnityEngine.Object.Instantiate<Vent>(referenceVent);
             vent.gameObject.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover); 
@@ -75,7 +74,7 @@ namespace LasMonjas.Objects {
             vent.gameObject.SetActive(false);
             vent.name = "Hat_" + vent.Id;
 
-            
+
             var playerIsIllusionist = PlayerControl.LocalPlayer == Illusionist.illusionist;
             gameObject.SetActive(playerIsIllusionist);
 

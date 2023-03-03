@@ -66,7 +66,7 @@ namespace LasMonjas.Objects
                 })));
             }
             else {
-                HudManager.Instance.StartCoroutine(Effects.Lerp(300, new Action<float>((p) => {
+                HudManager.Instance.StartCoroutine(Effects.Lerp(420, new Action<float>((p) => {
 
                     if (p == 1f && footprint != null) {
                         UnityEngine.Object.Destroy(footprint);

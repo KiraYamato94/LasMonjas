@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections;
 using UnityEngine;
-using System.Linq;
-using static LasMonjas.HudManagerStartPatch;
 using Hazel;
 using LasMonjas.Patches;
 using LasMonjas.Core;
@@ -84,7 +81,7 @@ namespace LasMonjas.Objects
                 engineerTrap.gameObject.SetActive(false);
             }
 
-            engineerTraps.Add(this);            
+            engineerTraps.Add(this);
         }
 
         public static void clearTraps() {
@@ -143,7 +140,7 @@ namespace LasMonjas.Objects
                                 MapBehaviour.Instance.Close();
                             }
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.treasureHunterPlaceTreasure, false, 100f);
-                            new CustomMessage(Language.statusRolesTexts[0], 5, -1, 1f, 23);
+                            new CustomMessage(Language.statusRolesTexts[0], 5, -1, 1f, 10);
                         }
 
                         PlayerControl target = Helpers.playerById(player.PlayerId);
@@ -153,13 +150,13 @@ namespace LasMonjas.Objects
                         AmongUsClient.Instance.FinishRpcImmediately(killWriter);
                         RPCProcedure.activateEngineerTrap(target.PlayerId, engineerTrap.myTrapType);
 
-                    }                   
+                    }
 
                     if (p == 1f && engineerTrap != null) {
                         Engineer.currentTrapNumber -= 1;
                         engineerTrap.engineerTrap.transform.position = new Vector3(-1000, 500, 0);
                         //UnityEngine.Object.Destroy(trap);
-                        //traps.Remove(this);                   
+                        //traps.Remove(this);
                     }
 
                 })));

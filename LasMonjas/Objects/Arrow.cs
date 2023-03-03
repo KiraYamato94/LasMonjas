@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Collections;
 using UnityEngine;
 
 namespace LasMonjas.Objects {
@@ -43,7 +40,7 @@ namespace LasMonjas.Objects {
             if (color.HasValue) image.color = color.Value;
 
             arrowBehaviour.target = target;
-            //arrowBehaviour.Update(); // Use submerged arrows                        
+            //arrowBehaviour.Update(); // Use submerged arrows
 
             Camera main = Camera.main;
             Vector2 vector = target - main.transform.position;

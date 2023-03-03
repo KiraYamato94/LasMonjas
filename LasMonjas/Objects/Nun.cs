@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Collections;
 using UnityEngine;
 using LasMonjas.Patches;
 
@@ -28,7 +26,7 @@ namespace LasMonjas.Objects {
 
         public Nun(Vector2 p) {
             nun = new GameObject("Nun");
-            nun.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover); 
+            nun.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
             background = new GameObject("Background");
             background.transform.SetParent(nun.transform);
             if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {

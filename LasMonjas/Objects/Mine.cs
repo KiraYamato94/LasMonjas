@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections;
 using UnityEngine;
-using System.Linq;
-using static LasMonjas.HudManagerStartPatch;
 using Hazel;
 using LasMonjas.Patches;
 
@@ -64,12 +61,12 @@ namespace LasMonjas.Objects
                         AmongUsClient.Instance.FinishRpcImmediately(killWriter);
                         RPCProcedure.mineKill(target.PlayerId);
                     }
-                }                
-                
+                }
+
                 if (p == 1f && mine != null) {
                     Trapper.currentMineNumber -= 1;
                     mine.transform.position = new Vector3 (-1000, 500, 0);
-                    //mines.Remove(this); 
+                    //mines.Remove(this);
                     //UnityEngine.Object.Destroy(mine);
                 }
 

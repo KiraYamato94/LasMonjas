@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections;
 using UnityEngine;
-using System.Linq;
-using static LasMonjas.HudManagerStartPatch;
 using Hazel;
 using LasMonjas.Patches;
 using LasMonjas.Core;
@@ -94,30 +91,30 @@ namespace LasMonjas.Objects
 
                         foreach (HypnotistSpiral spiral in hypnotistSpirals) {
                             spiral.isActive = false;
-                        }                      
+                        }
 
                         Hypnotist.messageTimer = Hypnotist.spiralDuration;
                         SoundManager.Instance.PlaySound(CustomMain.customAssets.medusaPetrify, false, 100f);
                         if (MapBehaviour.Instance) {
                             MapBehaviour.Instance.Close();
                         }
-                        new CustomMessage(Language.statusRolesTexts[1], Hypnotist.spiralDuration, -1, 1.3f, 22);
+                        new CustomMessage(Language.statusRolesTexts[1], Hypnotist.spiralDuration, -1, 1.3f, 4);
                         PlayerControl target = Helpers.playerById(player.PlayerId);
                         MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ActivateSpiralTrap, Hazel.SendOption.Reliable, -1);
                         killWriter.Write(player.PlayerId);
                         AmongUsClient.Instance.FinishRpcImmediately(killWriter);
                         RPCProcedure.activateSpiralTrap(target.PlayerId);
-                    }                    
+                    }
 
                     if (p == 1f && hypnotistSpiral != null) {
                         hypnotistSpiral.hypnotistSpiral.transform.position = new Vector3(-1000, 500, 0);
                         //UnityEngine.Object.Destroy(trap);
-                        //traps.Remove(this);                   
+                        //traps.Remove(this);
                     }
 
                 })));
             }
             return;
-        }       
+        }
     }
 }

@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections;
 using UnityEngine;
-using System.Linq;
-using static LasMonjas.HudManagerStartPatch;
 using Hazel;
 using LasMonjas.Patches;
 
@@ -63,12 +60,12 @@ namespace LasMonjas.Objects
                         AmongUsClient.Instance.FinishRpcImmediately(killWriter);
                         RPCProcedure.activateTrap(target.PlayerId);
                     }
-                }                
-                
+                }
+
                 if (p == 1f && trap != null) {
                     Trapper.currentTrapNumber -= 1;
                     trap.transform.position = new Vector3 (-1000, 500, 0);
-                    //traps.Remove(this);                   
+                    //traps.Remove(this);
                     //UnityEngine.Object.Destroy(trap);
                 }
 
