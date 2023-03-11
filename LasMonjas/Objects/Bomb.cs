@@ -14,7 +14,6 @@ namespace LasMonjas.Objects
         private GameObject bomb;
         private SpriteRenderer spriteRenderer;
         private float timer;
-        private bool touchedPlayer = false;
         private int localBombNumber = 0;
 
         public static Sprite getBombSprite() {
@@ -43,19 +42,11 @@ namespace LasMonjas.Objects
 
             timer = bombDuration;
             localBombNumber = localcurrentBombNumber;
+            Bomberman.bombObject = bomb;
 
             HudManager.Instance.StartCoroutine(Effects.Lerp(bombDuration, new Action<float>((p) => {
 
                 timer -= Time.deltaTime;
-
-                var player = PlayerControl.LocalPlayer;
-
-                if (!touchedPlayer && Vector2.Distance(player.transform.position, bomb.transform.position) < 0.5f && player != Bomberman.bomberman && !player.Data.IsDead) {
-                    touchedPlayer = true;
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.FixBomb, Hazel.SendOption.Reliable, -1);
-                    AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.fixBomb();
-                }
 
                 if (timer <= 0f) {
                     if (Bomberman.activeBomb == true && localBombNumber == Bomberman.currentBombNumber) { 
