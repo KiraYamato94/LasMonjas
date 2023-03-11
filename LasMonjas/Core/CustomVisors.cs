@@ -77,9 +77,6 @@ namespace LasMonjas.Core
                 }
             }
 
-            public static Sprite GetSprite(string name)
-                => AssetLoader.LoadVisorsAsset(name).Cast<GameObject>().GetComponent<SpriteRenderer>().sprite;
-
             public static int VisorID = 0;
             /// <summary>
             /// Creates hat based on specified values
@@ -108,5 +105,23 @@ namespace LasMonjas.Core
                 return newVisor;
             }
         }
+
+        [HarmonyPatch(typeof(VisorsTab), nameof(VisorsTab.OnEnable))]
+        public static class EnableSprite
+        {
+            public static void Postfix() {
+                GameObject innerVisors = GameObject.Find("VisorGroup").transform.GetChild(0).transform.GetChild(0).gameObject;
+                int visor = 0;
+                for (int i = 1; i < innerVisors.transform.GetChildCount(); i++) {
+                    if (innerVisors.transform.GetChild(i).transform.GetChild(2).transform.GetChild(0).GetComponent<SpriteRenderer>().sprite == null) {
+                        innerVisors.transform.GetChild(i).transform.GetChild(2).transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = GetSprite(authorDatas[visor].VisorName);
+                        visor += 1;
+                    }
+                }
+            }
+        }
+
+        public static Sprite GetSprite(string name)
+                => AssetLoader.LoadVisorsAsset(name).Cast<GameObject>().GetComponent<SpriteRenderer>().sprite;
     }
 }

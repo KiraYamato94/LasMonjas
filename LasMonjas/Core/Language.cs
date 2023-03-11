@@ -85,6 +85,8 @@ namespace LasMonjas.Core
                         CustomOptionHolder.cs(Sheriff.color, "Gamemode Global Settings"),
                         "- " + CustomOptionHolder.cs(Sheriff.color, "Match Duration"),
                         "- " + CustomOptionHolder.cs(Sheriff.color, "Kill Cooldown"),
+                        "- " + CustomOptionHolder.cs(Sheriff.color, "Enable flashlight if possible"),
+                        "- " + CustomOptionHolder.cs(Sheriff.color, "Flashlight range"),
                         "- " + CustomOptionHolder.cs(Sheriff.color, "Revive Wait Time"),
                         "- " + CustomOptionHolder.cs(Sheriff.color, "Invincibility Time After Revive"),
                         CustomOptionHolder.cs(Sheriff.color, "Gamemode Individual Settings"),
@@ -95,23 +97,20 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(Coward.color, "Police and Thieves") + ": Tase Cooldown",
                         "- " + CustomOptionHolder.cs(Coward.color, "Police and Thieves") + ": Tase Duration",
                         "- " + CustomOptionHolder.cs(Coward.color, "Police and Thieves") + ": Police can see Jewels",
-                        "- " + CustomOptionHolder.cs(Coward.color, "Police and Thieves") + ": Police vision range",
-                        "- " + CustomOptionHolder.cs(Coward.color, "Police and Thieves") + ": Who Can Thieves Kill", // 27
+                        "- " + CustomOptionHolder.cs(Coward.color, "Police and Thieves") + ": Who Can Thieves Kill", // 28
                         "- " + CustomOptionHolder.cs(Squire.color, "King of the Hill") + ": Score Number",
                         "- " + CustomOptionHolder.cs(Squire.color, "King of the Hill") + ": Capture Cooldown",
                         "- " + CustomOptionHolder.cs(Squire.color, "King of the Hill") + ": Kings can Kill",
                         "- " + CustomOptionHolder.cs(Shy.color, "Hot Potato") + ": Hot Potato Time Limit for Transfer",
                         "- " + CustomOptionHolder.cs(Shy.color, "Hot Potato") + ": Hot Potato Transfer Cooldown",
-                        "- " + CustomOptionHolder.cs(Shy.color, "Hot Potato") + ": Cold Potatoes vision range",
                         "- " + CustomOptionHolder.cs(Shy.color, "Hot Potato") + ": Reset Hot Potato timer after Transfer",
                         "- " + CustomOptionHolder.cs(Shy.color, "Hot Potato") + ": Extra Time when timer doesn't reset",
                         "- " + CustomOptionHolder.cs(Hunter.color, "Zombie Laboratory") + ": Initial Zombies",
                         "- " + CustomOptionHolder.cs(Hunter.color, "Zombie Laboratory") + ": Time to Infect",
                         "- " + CustomOptionHolder.cs(Hunter.color, "Zombie Laboratory") + ": Infect Cooldown",
                         "- " + CustomOptionHolder.cs(Hunter.color, "Zombie Laboratory") + ": Search Box Timer",
-                        "- " + CustomOptionHolder.cs(Hunter.color, "Zombie Laboratory") + ": Vision range",
                         "- " + CustomOptionHolder.cs(Hunter.color, "Zombie Laboratory") + ": Time to use Medkit",
-                        "- " + CustomOptionHolder.cs(Sleuth.color, "Battle Royale") + ": Match Type", // 42
+                        "- " + CustomOptionHolder.cs(Sleuth.color, "Battle Royale") + ": Match Type", // 41
                         "- " + CustomOptionHolder.cs(Sleuth.color, "Battle Royale") + ": Shoot Cooldown",
                         "- " + CustomOptionHolder.cs(Sleuth.color, "Battle Royale") + ": Fighter Lifes",
                         "- " + CustomOptionHolder.cs(Sleuth.color, "Battle Royale") + ": Score Number",
@@ -142,7 +141,6 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(Gambler.color, "Gambler") + ": Ignore shields",
                         CustomOptionHolder.cs(Sorcerer.color, "Sorcerer"),
                         "- " + CustomOptionHolder.cs(Sorcerer.color, "Sorcerer") + ": Cooldown",
-                        "- " + CustomOptionHolder.cs(Sorcerer.color, "Sorcerer") + ": Additional Cooldown per Spell",
                         "- " + CustomOptionHolder.cs(Sorcerer.color, "Sorcerer") + ": Spell Duration",
                         "- " + CustomOptionHolder.cs(Sorcerer.color, "Sorcerer") + ": Can use emergency button",
                         CustomOptionHolder.cs(Medusa.color, "Medusa"),
@@ -154,7 +152,6 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(Hypnotist.color, "Hypnotist") + ": Spiral Number",
                         "- " + CustomOptionHolder.cs(Hypnotist.color, "Hypnotist") + ": Spiral Effect Duration",
                         CustomOptionHolder.cs(Archer.color, "Archer"),
-                        "- " + CustomOptionHolder.cs(Archer.color, "Archer") + ": Arrow Size",
                         "- " + CustomOptionHolder.cs(Archer.color, "Archer") + ": Arrow Range",
                         "- " + CustomOptionHolder.cs(Archer.color, "Archer") + ": Notify Range",
                         "- " + CustomOptionHolder.cs(Archer.color, "Archer") + ": Aim Duration",
@@ -199,7 +196,6 @@ namespace LasMonjas.Core
                         CustomOptionHolder.cs(Devourer.color, "Devourer"),
                         "- " + CustomOptionHolder.cs(Devourer.color, "Devourer") + ": Devours to Win",
                         CustomOptionHolder.cs(Poisoner.color, "Poisoner"),
-                        "- " + CustomOptionHolder.cs(Poisoner.color, "Poisoner") + ": Time to Poison",
                         "- " + CustomOptionHolder.cs(Poisoner.color, "Poisoner") + ": Poison Infect Range",
                         "- " + CustomOptionHolder.cs(Poisoner.color, "Poisoner") + ": Time to fully Poison",
                         "- " + CustomOptionHolder.cs(Poisoner.color, "Poisoner") + ": Can Sabotage",
@@ -218,12 +214,10 @@ namespace LasMonjas.Core
                         CustomOptionHolder.cs(Sheriff.color, "Sheriff"),
                         "- " + CustomOptionHolder.cs(Sheriff.color, "Sheriff") + ": Can Kill Neutrals",
                         CustomOptionHolder.cs(Detective.color, "Detective"),
-                        "- " + CustomOptionHolder.cs(Detective.color, "Detective") + ": Show Footprints", // 149
+                        "- " + CustomOptionHolder.cs(Detective.color, "Detective") + ": Show Footprints", // 145
                         "- " + CustomOptionHolder.cs(Detective.color, "Detective") + ": Cooldown",
                         "- " + CustomOptionHolder.cs(Detective.color, "Detective") + ": Show Footprints Duration",
                         "- " + CustomOptionHolder.cs(Detective.color, "Detective") + ": Anonymous Footprints",
-                        "- " + CustomOptionHolder.cs(Detective.color, "Detective") + ": Footprints Interval",
-                        "- " + CustomOptionHolder.cs(Detective.color, "Detective") + ": Footprints Duration",
                         CustomOptionHolder.cs(Forensic.color, "Forensic"),
                         "- " + CustomOptionHolder.cs(Forensic.color, "Forensic") + ": Time to know the name",
                         "- " + CustomOptionHolder.cs(Forensic.color, "Forensic") + ": Time to know the color type",
@@ -234,9 +228,8 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(TimeTraveler.color, "Time Traveler") + ": Cooldown",
                         "- " + CustomOptionHolder.cs(TimeTraveler.color, "Time Traveler") + ": Shield Duration",
                         "- " + CustomOptionHolder.cs(TimeTraveler.color, "Time Traveler") + ": Rewind Duration",
-                        "- " + CustomOptionHolder.cs(TimeTraveler.color, "Time Traveler") + ": Revive player during Rewind",
                         CustomOptionHolder.cs(Squire.color, "Squire"),
-                        "- " + CustomOptionHolder.cs(Squire.color, "Squire") + ": Show Shielded Player to", // 167
+                        "- " + CustomOptionHolder.cs(Squire.color, "Squire") + ": Show Shielded Player to", // 160
                         "- " + CustomOptionHolder.cs(Squire.color, "Squire") + ": Play murder attempt sound if shielded",
                         "- " + CustomOptionHolder.cs(Squire.color, "Squire") + ": Can shield again after meeting",
                         CustomOptionHolder.cs(Cheater.color, "Cheater"),
@@ -246,8 +239,9 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(FortuneTeller.color, "Fortune Teller") + ": Cooldown",
                         "- " + CustomOptionHolder.cs(FortuneTeller.color, "Fortune Teller") + ": Reveal Time",
                         "- " + CustomOptionHolder.cs(FortuneTeller.color, "Fortune Teller") + ": Reveal Number",
-                        "- " + CustomOptionHolder.cs(FortuneTeller.color, "Fortune Teller") + ": Revealed Information", // 177
-                        "- " + CustomOptionHolder.cs(FortuneTeller.color, "Fortune Teller") + ": Show Notification to", // 178
+                        "- " + CustomOptionHolder.cs(FortuneTeller.color, "Fortune Teller") + ": Revealed Information", // 170
+                        "- " + CustomOptionHolder.cs(FortuneTeller.color, "Fortune Teller") + ": Show Notification to", // 171
+                        "- " + CustomOptionHolder.cs(FortuneTeller.color, "Fortune Teller") + ": Can use emergency button",
                         CustomOptionHolder.cs(Hacker.color, "Hacker"),
                         "- " + CustomOptionHolder.cs(Hacker.color, "Hacker") + ": Cooldown",
                         "- " + CustomOptionHolder.cs(Hacker.color, "Hacker") + ": Duration",
@@ -260,7 +254,6 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(Sleuth.color, "Sleuth") + ": Track Corpses Duration",
                         CustomOptionHolder.cs(Fink.color, "Fink"),
                         "- " + CustomOptionHolder.cs(Fink.color, "Fink") + ": Tasks remaining for being revealed to Impostors",
-                        "- " + CustomOptionHolder.cs(Fink.color, "Fink") + ": Can reveal Renegade / Minion",
                         "- " + CustomOptionHolder.cs(Fink.color, "Fink") + ": Cooldown",
                         "- " + CustomOptionHolder.cs(Fink.color, "Fink") + ": Hawkeye Duration",
                         CustomOptionHolder.cs(Kid.color, "Kid"),
@@ -268,7 +261,6 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(Welder.color, "Welder") + ": Cooldown",
                         "- " + CustomOptionHolder.cs(Welder.color, "Welder") + ": Seal Number",
                         CustomOptionHolder.cs(Spiritualist.color, "Spiritualist"),
-                        "- " + CustomOptionHolder.cs(Spiritualist.color, "Spiritualist") + ": Revive Player Time",
                         CustomOptionHolder.cs(Vigilant.color, "Vigilant"),
                         "- " + CustomOptionHolder.cs(Vigilant.color, "Vigilant") + ": Cooldown",
                         "- " + CustomOptionHolder.cs(Vigilant.color, "Vigilant") + ": Remote Camera Duration",
@@ -330,22 +322,22 @@ namespace LasMonjas.Core
                             case 1:
                                 CustomOption.options[o].selections = new string[] { "Roles", "Find a Role", "Capture the Flag", "Police and Thieves", "King of the Hill", "Hot Potato", "Zombie Laboratory", "Battle Royale", "Monja Festival" };
                                 break;
-                            case 27:
+                            case 28:
                                 CustomOption.options[o].selections = new string[] { "Taser", "All", "Nobody" };
                                 break;
-                            case 42:
+                            case 41:
                                 CustomOption.options[o].selections = new string[] { "All vs All", "Team Battle", "Score Battle" };
                                 break;
-                            case 149:
+                            case 145:
                                 CustomOption.options[o].selections = new string[] { "Button Use", "Always" };
                                 break;
-                            case 167:
+                            case 160:
                                 CustomOption.options[o].selections = new string[] { "Squire", "Both", "All" };
                                 break;
-                            case 177:
+                            case 170:
                                 CustomOption.options[o].selections = new string[] { "Good / Bad", "Role Name" };
                                 break;
-                            case 178:
+                            case 171:
                                 CustomOption.options[o].selections = new string[] { "Impostors", "Crewmates", "All", "Nobody" };
                                 break;
                         }
@@ -588,7 +580,7 @@ namespace LasMonjas.Core
                         "♥Survive as a couple\nwith your partner♥",
                         "<color=#FF00D1FF>♥Survive as a couple with your partner♥. </color><color=#FF1919FF>Kill the rest</color>",//115
                         "<color=#FF00D1FF>♥Survive as a couple\nwith your partner♥. </color><color=#FF1919FF>Kill the rest</color>",
-                        "Get more monjitas\nthan the other teams",
+                        "Get more\nmonjitas than the other teams",
                     }; 
                     exileControllerTexts = new string[] {
                         " was the ",
@@ -686,7 +678,8 @@ namespace LasMonjas.Core
                         "The Sorcerer can't use the emergency button!",
                         "There's a Bomb, you can't use the emergency button!",
                         "There's a Blackout, emergency button doesn't work!",
-                        "THE MONJA HAS AWAKENED, RUN YOU FOOLS!"
+                        "THE MONJA HAS AWAKENED, RUN YOU FOOLS!",
+                        "The Fortune Teller can't use the emergency button!",
                     }; 
                     buttonsTexts = new string[] {
                         "Ghost of (",
@@ -701,6 +694,7 @@ namespace LasMonjas.Core
                         "Body Report",
                         "You don't have a Role.",
                         "No info found.",
+                        "Tab for next page",
                     };
                     impSummaryTexts = new string[] {
                         "Mimic: impostor who can mimic the appearance of other player.",
@@ -750,7 +744,7 @@ namespace LasMonjas.Core
                         "Sheriff: crewmate who can kill players.\nHe dies if he tries to kill a crewmate.",
                         "Detective: crewmate who can see player's footprints.\nFootprints don't spawn close to vents and only spawn if Detective is alive.",
                         "Forensic: crewmate who gets clues by reporting bodies and asking player's ghosts.\nThe clues that he can get by reporting a body are the killer's name, color type or something about his appearance.\nGhosts appear on the next round where a body was and their clues are which role killed that player, killer's color type or how much time has passed before reporting the body.",
-                        "Time Traveler: crewmate who can rewind the time two times per game, reviving players that were killed during the rewind.\nHe can rewind the time if there's no active sabotage, the time rewinds also if someone tries to kill him while he's shielded by time shield.\nThis role can't use Vitals.",
+                        "Time Traveler: crewmate who can rewind the time two times per game, reviving players that were killed during the rewind.\nHe can rewind the time if there's no active sabotage, the time rewinds also if someone tries to kill him while he's shielded by time shield.",
                         "Squire: crewmate who can put a shield on a player.\nThe shield last until he gets exiled or killed. Trying to kill the shielded player will trigger a sound heard by Impostors, Rebels, Sheriff, Squire and the shielded player.",
                         "Cheater: crewmate who can swap the votes of two players.\nAfter swapping votes, he gets exiled if one of those two players turned out to be a crewmate.",
                         "Fortune Teller: crewmate who can reveal if a player is good or bad.\nRevealing triggers a sound and turns the screen blue for both players.\nThe name turns red for bad roles and cyan for good ones.",
@@ -875,6 +869,8 @@ namespace LasMonjas.Core
                         CustomOptionHolder.cs(Sheriff.color, "Opciones Globales de Modos de Juego"),
                         "- " + CustomOptionHolder.cs(Sheriff.color, "Duracion de Partida"),
                         "- " + CustomOptionHolder.cs(Sheriff.color, "Recarga de Matar"),
+                        "- " + CustomOptionHolder.cs(Sheriff.color, "Activar linterna si es posible"),
+                        "- " + CustomOptionHolder.cs(Sheriff.color, "Rango de linterna"),
                         "- " + CustomOptionHolder.cs(Sheriff.color, "Tiempo para revivir"),
                         "- " + CustomOptionHolder.cs(Sheriff.color, "Invincibilidad tras revivir"),
                         CustomOptionHolder.cs(Sheriff.color, "Opciones Individuales de Modos de Juego"),
@@ -885,21 +881,18 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(Coward.color, "Polis y Cacos") + ": Recarga de Taser",
                         "- " + CustomOptionHolder.cs(Coward.color, "Polis y Cacos") + ": Duracion de Taser",
                         "- " + CustomOptionHolder.cs(Coward.color, "Polis y Cacos") + ": Joyas visibles para Polis",
-                        "- " + CustomOptionHolder.cs(Coward.color, "Polis y Cacos") + ": Rango vision Polis",
                         "- " + CustomOptionHolder.cs(Coward.color, "Polis y Cacos") + ": Ladrones pueden matar",
                         "- " + CustomOptionHolder.cs(Squire.color, "Rey de la Colina") + ": Puntuacion Necesaria",
                         "- " + CustomOptionHolder.cs(Squire.color, "Rey de la Colina") + ": Tiempo de Captura",
                         "- " + CustomOptionHolder.cs(Squire.color, "Rey de la Colina") + ": Los Reyes pueden matar",
                         "- " + CustomOptionHolder.cs(Shy.color, "Patata Caliente") + ": Tiempo limite para transferir Patata",
                         "- " + CustomOptionHolder.cs(Shy.color, "Patata Caliente") + ": Recarga de transferir Patata",
-                        "- " + CustomOptionHolder.cs(Shy.color, "Patata Caliente") + ": Rango vision Patatas Frias",
                         "- " + CustomOptionHolder.cs(Shy.color, "Patata Caliente") + ": Reiniciar tiempo al transferir Patata",
                         "- " + CustomOptionHolder.cs(Shy.color, "Patata Caliente") + ": Tiempo extra si no se reinica al transferir",
                         "- " + CustomOptionHolder.cs(Hunter.color, "Laboratorio Zombie") + ": Zombies Iniciales",
                         "- " + CustomOptionHolder.cs(Hunter.color, "Laboratorio Zombie") + ": Tiempo para Infectar",
                         "- " + CustomOptionHolder.cs(Hunter.color, "Laboratorio Zombie") + ": Recarga de Infectar",
                         "- " + CustomOptionHolder.cs(Hunter.color, "Laboratorio Zombie") + ": Tiempo para Buscar Cajas",
-                        "- " + CustomOptionHolder.cs(Hunter.color, "Laboratorio Zombie") + ": Rango vision",
                         "- " + CustomOptionHolder.cs(Hunter.color, "Laboratorio Zombie") + ": Tiempo limite para curar Infeccion",
                         "- " + CustomOptionHolder.cs(Sleuth.color, "Batalla Campal") + ": Tipo de Partida",
                         "- " + CustomOptionHolder.cs(Sleuth.color, "Batalla Campal") + ": Recarga de Matar",
@@ -932,7 +925,6 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(Gambler.color, "Apostador") + ": Ignora escudos",
                         CustomOptionHolder.cs(Sorcerer.color, "Hechicero"),
                         "- " + CustomOptionHolder.cs(Sorcerer.color, "Hechicero") + ": Recarga",
-                        "- " + CustomOptionHolder.cs(Sorcerer.color, "Hechicero") + ": Recarga adicional por hechizo",
                         "- " + CustomOptionHolder.cs(Sorcerer.color, "Hechicero") + ": Duracion de Hechizar",
                         "- " + CustomOptionHolder.cs(Sorcerer.color, "Hechicero") + ": Puede convocar reuniones",
                         CustomOptionHolder.cs(Medusa.color, "Medusa"),
@@ -944,7 +936,6 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(Hypnotist.color, "Hipnotizador") + ": Cantidad de Espirales",
                         "- " + CustomOptionHolder.cs(Hypnotist.color, "Hipnotizador") + ": Duracion de Efecto Spiral",
                         CustomOptionHolder.cs(Archer.color, "Arquero"),
-                        "- " + CustomOptionHolder.cs(Archer.color, "Arquero") + ": Anchura de Flecha",
                         "- " + CustomOptionHolder.cs(Archer.color, "Arquero") + ": Distancia de Flecha",
                         "- " + CustomOptionHolder.cs(Archer.color, "Arquero") + ": Distancia de notifiacion",
                         "- " + CustomOptionHolder.cs(Archer.color, "Arquero") + ": Duracion de mirilla",
@@ -989,7 +980,6 @@ namespace LasMonjas.Core
                         CustomOptionHolder.cs(Devourer.color, "Devorador"),
                         "- " + CustomOptionHolder.cs(Devourer.color, "Devorador") + ": Cantidad de cuerpos",
                         CustomOptionHolder.cs(Poisoner.color, "Envenenador"),
-                        "- " + CustomOptionHolder.cs(Poisoner.color, "Envenenador") + ": Tiempo para Envenenar",
                         "- " + CustomOptionHolder.cs(Poisoner.color, "Envenenador") + ": Rango de infeccion",
                         "- " + CustomOptionHolder.cs(Poisoner.color, "Envenenador") + ": Tiempo para envenenar al 100%",
                         "- " + CustomOptionHolder.cs(Poisoner.color, "Envenenador") + ": Puede sabotear",
@@ -1012,8 +1002,6 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(Detective.color, "Detective") + ": Recarga",
                         "- " + CustomOptionHolder.cs(Detective.color, "Detective") + ": Duracion de revelar Huellas",
                         "- " + CustomOptionHolder.cs(Detective.color, "Detective") + ": Huellas Anonimas",
-                        "- " + CustomOptionHolder.cs(Detective.color, "Detective") + ": Intervalo de Huellas",
-                        "- " + CustomOptionHolder.cs(Detective.color, "Detective") + ": Duracion de Huellas",
                         CustomOptionHolder.cs(Forensic.color, "Forense"),
                         "- " + CustomOptionHolder.cs(Forensic.color, "Forense") + ": Tiempo para obtener el nombre",
                         "- " + CustomOptionHolder.cs(Forensic.color, "Forense") + ": Tiempo para obtener el tipo de color",
@@ -1024,7 +1012,6 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(TimeTraveler.color, "Viajero Temporal") + ": Recarga",
                         "- " + CustomOptionHolder.cs(TimeTraveler.color, "Viajero Temporal") + ": Duracion de Escudo",
                         "- " + CustomOptionHolder.cs(TimeTraveler.color, "Viajero Temporal") + ": Segundos retrocedidos en el tiempo",
-                        "- " + CustomOptionHolder.cs(TimeTraveler.color, "Viajero Temporal") + ": Revivir jugadores al retroceder en el tiempo",
                         CustomOptionHolder.cs(Squire.color, "Defensor"),
                         "- " + CustomOptionHolder.cs(Squire.color, "Defensor") + ": Mostrar jugador escudado",
                         "- " + CustomOptionHolder.cs(Squire.color, "Defensor") + ": Sonido de intento de asesinato del escudado",
@@ -1038,6 +1025,7 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(FortuneTeller.color, "Adivino") + ": Cantidad de Revelaciones",
                         "- " + CustomOptionHolder.cs(FortuneTeller.color, "Adivino") + ": Informacion Revelada",
                         "- " + CustomOptionHolder.cs(FortuneTeller.color, "Adivino") + ": Mostrar notifiacion",
+                        "- " + CustomOptionHolder.cs(FortuneTeller.color, "Adivino") + ": Puede convocar reuniones",
                         CustomOptionHolder.cs(Hacker.color, "Hacker"),
                         "- " + CustomOptionHolder.cs(Hacker.color, "Hacker") + ": Recarga",
                         "- " + CustomOptionHolder.cs(Hacker.color, "Hacker") + ": Duracion",
@@ -1050,7 +1038,6 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(Sleuth.color, "Sabueso") + ": Duracion de rastrear cuerpos",
                         CustomOptionHolder.cs(Fink.color, "Soplon"),
                         "- " + CustomOptionHolder.cs(Fink.color, "Soplon") + ": Tareas restantes para ser reveleado a Impostores",
-                        "- " + CustomOptionHolder.cs(Fink.color, "Soplon") + ": Puede revelar al Renegado / Subdito",
                         "- " + CustomOptionHolder.cs(Fink.color, "Soplon") + ": Recarga",
                         "- " + CustomOptionHolder.cs(Fink.color, "Soplon") + ": Duracion de Espiar",
                         CustomOptionHolder.cs(Kid.color, "Niño"),
@@ -1058,7 +1045,6 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(Welder.color, "Soldador") + ": Recarga",
                         "- " + CustomOptionHolder.cs(Welder.color, "Soldador") + ": Cantidad de Sellados",
                         CustomOptionHolder.cs(Spiritualist.color, "Espiritista"),
-                        "- " + CustomOptionHolder.cs(Spiritualist.color, "Espiritista") + ": Duracion de Revivir",
                         CustomOptionHolder.cs(Vigilant.color, "Vigilante"),
                         "- " + CustomOptionHolder.cs(Vigilant.color, "Vigilante") + ": Recarga",
                         "- " + CustomOptionHolder.cs(Vigilant.color, "Vigilante") + ": Duracion de Camaras Remotas",
@@ -1120,22 +1106,22 @@ namespace LasMonjas.Core
                             case 1:
                                 CustomOption.options[o].selections = new string[] { "Roles", "Encuentra un Rol", "Captura la Bandera", "Polis y Cacos", "Rey de la Colina", "Patata Caliente", "Laboratorio Zombie", "Batalla Campal", "Monja Festival" };
                                 break;                            
-                            case 27:
+                            case 28:
                                 CustomOption.options[o].selections = new string[] { "Taser", "Todos", "Nadie" };
                                 break;
-                            case 42:
+                            case 41:
                                 CustomOption.options[o].selections = new string[] { "Individual", "Por Equipos", "Por Puntuacion" };
                                 break;
-                            case 149:
+                            case 145:
                                 CustomOption.options[o].selections = new string[] { "Uso de Boton", "Siempre" };
                                 break;
-                            case 167:
+                            case 160:
                                 CustomOption.options[o].selections = new string[] { "Defensor", "Ambos", "Todos" };
                                 break;
-                            case 177:
+                            case 170:
                                 CustomOption.options[o].selections = new string[] { "Bueno / Malo", "Nombre Rol" };
                                 break;
-                            case 178:
+                            case 171:
                                 CustomOption.options[o].selections = new string[] { "Impostores", "Tripulantes", "Todos", "Nadie" };
                                 break;
                         }
@@ -1378,7 +1364,7 @@ namespace LasMonjas.Core
                         "♥Sobrevive en pareja♥",
                         "<color=#FF00D1FF>♥Sobrevive en pareja♥. </color><color=#FF1919FF>Mata al resto</color>",//115
                         "<color=#FF00D1FF>♥Sobrevive en pareja♥. </color><color=#FF1919FF>Mata al resto</color>",
-                        "Consigue mas monjitas\nque el rival",
+                        "Consigue\nmas monjitas que el rival",
                     };
                     exileControllerTexts = new string[] {
                         " era el ",
@@ -1476,7 +1462,8 @@ namespace LasMonjas.Core
                         "¡El Hechicero no puede usar\nel boton de emergencia!",
                         "¡Hay una Bomba, no se puede usar\nel boton de emergencia!",
                         "¡Hay un Apagon, el boton de emergencia no funciona!",
-                        "!LA MONJA HA DESPERTADO, CORRED INSENSATOS!"
+                        "¡LA MONJA HA DESPERTADO, CORRED INSENSATOS!",
+                        "¡El Adivino no puede usar\nel boton de emergencia!",
                     };
                     buttonsTexts = new string[] {
                         "Fantasma de (",
@@ -1491,6 +1478,7 @@ namespace LasMonjas.Core
                         "Report de Cadaver",
                         "No tienes un rol",
                         "No se encontro informacion.",
+                        "Tab para pasar pagina.",
                     };
                     impSummaryTexts = new string[] {
                         "Imitador: impostor que puede copiar el aspecto de otro jugador durante un tiempo determinado.",
@@ -1540,7 +1528,7 @@ namespace LasMonjas.Core
                         "Sheriff: tripulante que puede matar a otros jugadores.\nSi intenta matar a un tripulante se muere.",
                         "Detective: tripulante que puede ver las huellas de los jugadores.\nLas huellas no aparecen cerca de las rejillas y solo aparecen mientras el Detective esta vivo.",
                         "Forense: tripulante que puede obtener pistas reportando cuerpos y hablando con fantasmas.\nLas pistas al reportar cuerpos pueden ser el nombre del asesino, su tono de color o algo sobre su apariencia.\nLos fantasmas de los jugadores que murieron aparecen tras la siguiente ruenion y sus pistas pueden ser que rol tiene el asesino, su tono de color y cuanto tiempo paso hasta que reportaron el cuerpo.",
-                        "Viajero Temporal: tripulante que puede rebobinar el tiempo dos veces por partida, reviviendo a los jugadores que murieron durante ese tiempo.\nSolo puede rebobinar el tiempo si no hay un sabotaje activo o si lo intenta matar mientras tiene el escudo temporal activado.\nNo puede usar Vitales.",
+                        "Viajero Temporal: tripulante que puede rebobinar el tiempo dos veces por partida, reviviendo a los jugadores que murieron durante ese tiempo.\nSolo puede rebobinar el tiempo si no hay un sabotaje activo o si lo intenta matar mientras tiene el escudo temporal activado.",
                         "Defensor: tripulante que puede proteger a otro jugador con un escudo.\nEl escudo dura hasta que el Defensor es expulsado, asesinado o se convoca una reunion. Si intentas matar al escudado los Impostores, Rebeles, Sheriff, Defensor y el escudado escucharan un sonido.",
                         "Tramposo: tripulante que puede intercambiar los votos de dos jugadores.\nSi cambia los votos y el expulsado era inocente, el Tramposo tambien es expulsado.",
                         "Adivino: tripulante que puede revelear quien es bueno o malo.\nTras revelar a un jugador se escuchara un sonido y la pantalla se volvera azul para ambos jugadores dependiendo de la opcion de a quien notificar que ha sido revelado.\nEl nombre de los jugadores revelados se volvera rojo si es malo y azul si es bueno.",
@@ -1665,6 +1653,8 @@ namespace LasMonjas.Core
                         CustomOptionHolder.cs(Sheriff.color, "ゲームモードのグローバル設定"),
                         "- " + CustomOptionHolder.cs(Sheriff.color, "一致期間"),
                         "- " + CustomOptionHolder.cs(Sheriff.color, "Kill のクールダウン"),
+                        "- " + CustomOptionHolder.cs(Sheriff.color, "可能であれば懐中電灯を有効にする"),
+                        "- " + CustomOptionHolder.cs(Sheriff.color, "懐中電灯の範囲"),
                         "- " + CustomOptionHolder.cs(Sheriff.color, "復活の待ち時間"),
                         "- " + CustomOptionHolder.cs(Sheriff.color, "復活後の無敵時間"),
                         CustomOptionHolder.cs(Sheriff.color, "ゲームモードの個別設定"),
@@ -1675,21 +1665,18 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(Coward.color, "警察と泥棒") + ": 警察のスタンガンのクールダウン",
                         "- " + CustomOptionHolder.cs(Coward.color, "警察と泥棒") + ": 警察のスタンガンの期間",
                         "- " + CustomOptionHolder.cs(Coward.color, "警察と泥棒") + ": 警察は宝石をみることができる",
-                        "- " + CustomOptionHolder.cs(Coward.color, "警察と泥棒") + ": 警察の視界の距離",
                         "- " + CustomOptionHolder.cs(Coward.color, "警察と泥棒") + ": 泥棒は誰を殺すことができますか",
                         "- " + CustomOptionHolder.cs(Squire.color, "キングオブザヒル") + ": スコア番号",
                         "- " + CustomOptionHolder.cs(Squire.color, "キングオブザヒル") + ": クールダウンのキャプチャ",
                         "- " + CustomOptionHolder.cs(Squire.color, "キングオブザヒル") + ": 王は Kill 可能",
                         "- " + CustomOptionHolder.cs(Shy.color, "焼き芋") + ": ホットポテトの転送時間制限",
                         "- " + CustomOptionHolder.cs(Shy.color, "焼き芋") + ": ホットポテトの転送クールダウン",
-                        "- " + CustomOptionHolder.cs(Shy.color, "焼き芋") + ": コールドポテトの視界の距離",
                         "- " + CustomOptionHolder.cs(Shy.color, "焼き芋") + ": 転送後のホットポテトの時間のリセット",
                         "- " + CustomOptionHolder.cs(Shy.color, "焼き芋") + ": タイマーがリセットされない場合の追加時間",
                         "- " + CustomOptionHolder.cs(Hunter.color, "ゾンビ研究所") + ": 最初のゾンビ",
                         "- " + CustomOptionHolder.cs(Hunter.color, "ゾンビ研究所") + ": 感染までの時間",
                         "- " + CustomOptionHolder.cs(Hunter.color, "ゾンビ研究所") + ": 感染のクールダウン",
                         "- " + CustomOptionHolder.cs(Hunter.color, "ゾンビ研究所") + ": ボックスタイマーの探索",
-                        "- " + CustomOptionHolder.cs(Hunter.color, "ゾンビ研究所") + ": 生存者の視野の範囲",
                         "- " + CustomOptionHolder.cs(Hunter.color, "ゾンビ研究所") + ": 応急処置キットの使用時間",
                         "- " + CustomOptionHolder.cs(Sleuth.color, "バトルロワイアル") + ": 試合の種類",
                         "- " + CustomOptionHolder.cs(Sleuth.color, "バトルロワイアル") + ": Kill のクールダウン",
@@ -1722,7 +1709,6 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(Gambler.color, "ギャンブラー") + ": シールドの無視",
                         CustomOptionHolder.cs(Sorcerer.color, "ソーサラー"),
                         "- " + CustomOptionHolder.cs(Sorcerer.color, "ソーサラー") + ": クールダウン",
-                        "- " + CustomOptionHolder.cs(Sorcerer.color, "ソーサラー") + ": スペル毎の追加のクールダウン",
                         "- " + CustomOptionHolder.cs(Sorcerer.color, "ソーサラー") + ": スペルの期間",
                         "- " + CustomOptionHolder.cs(Sorcerer.color, "ソーサラー") + ": 緊急ボタンの使用",
                         CustomOptionHolder.cs(Medusa.color, "メデューサ"),
@@ -1734,7 +1720,6 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(Hypnotist.color, "催眠術師") + ": スパイラル番号",
                         "- " + CustomOptionHolder.cs(Hypnotist.color, "催眠術師") + ": スパイラル効果期間",
                         CustomOptionHolder.cs(Archer.color, "射手"),
-                        "- " + CustomOptionHolder.cs(Archer.color, "射手") + ": 矢のサイズ",
                         "- " + CustomOptionHolder.cs(Archer.color, "射手") + ": 矢の範囲",
                         "- " + CustomOptionHolder.cs(Archer.color, "射手") + ": 通知範囲",
                         "- " + CustomOptionHolder.cs(Archer.color, "射手") + ": 標的の範囲",
@@ -1779,7 +1764,6 @@ namespace LasMonjas.Core
                         CustomOptionHolder.cs(Devourer.color, "むさぼり食う者"),
                         "- " + CustomOptionHolder.cs(Devourer.color, "むさぼり食う者") + ": 勝つために貪ります",
                         CustomOptionHolder.cs(Poisoner.color, "毒殺者"),
-                        "- " + CustomOptionHolder.cs(Poisoner.color, "毒殺者") + ": 毒する時間",
                         "- " + CustomOptionHolder.cs(Poisoner.color, "毒殺者") + ": 毒感染範囲",
                         "- " + CustomOptionHolder.cs(Poisoner.color, "毒殺者") + ": 完全に毒する時間",
                         "- " + CustomOptionHolder.cs(Poisoner.color, "毒殺者") + ": 妨害可能",
@@ -1802,8 +1786,6 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(Detective.color, "隠密") + ": クールダウン",
                         "- " + CustomOptionHolder.cs(Detective.color, "隠密") + ": フットプリントの期間を表示します",
                         "- " + CustomOptionHolder.cs(Detective.color, "隠密") + ": 匿名のフットプリント",
-                        "- " + CustomOptionHolder.cs(Detective.color, "隠密") + ": フットプリント間隔",
-                        "- " + CustomOptionHolder.cs(Detective.color, "隠密") + ": フットプリントの期間",
                         CustomOptionHolder.cs(Forensic.color, "フォレンジック"),
                         "- " + CustomOptionHolder.cs(Forensic.color, "フォレンジック") + ": 名前を知る時間",
                         "- " + CustomOptionHolder.cs(Forensic.color, "フォレンジック") + ": 色のカラーを知る時間",
@@ -1814,7 +1796,6 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(TimeTraveler.color, "タイムトラベラー") + ": クールダウン",
                         "- " + CustomOptionHolder.cs(TimeTraveler.color, "タイムトラベラー") + ": シールド期間",
                         "- " + CustomOptionHolder.cs(TimeTraveler.color, "タイムトラベラー") + ": 巻き戻し期間",
-                        "- " + CustomOptionHolder.cs(TimeTraveler.color, "タイムトラベラー") + ": 巻き戻し中にプレーヤーを復活させます",
                         CustomOptionHolder.cs(Squire.color, "スクワイア"),
                         "- " + CustomOptionHolder.cs(Squire.color, "スクワイア") + ": シールドプレーヤーを",
                         "- " + CustomOptionHolder.cs(Squire.color, "スクワイア") + ": シールドされた場合、殺人試みの音を再生します",
@@ -1828,6 +1809,7 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(FortuneTeller.color, "占い師") + ": 数字を明らかにします",
                         "- " + CustomOptionHolder.cs(FortuneTeller.color, "占い師") + ": 明らかにされた情報",
                         "- " + CustomOptionHolder.cs(FortuneTeller.color, "占い師") + ": 通知を示す",
+                        "- " + CustomOptionHolder.cs(FortuneTeller.color, "占い師") + ": 緊急ボタンの使用",
                         CustomOptionHolder.cs(Hacker.color, "ハッカー"),
                         "- " + CustomOptionHolder.cs(Hacker.color, "ハッカー") + ": クールダウン",
                         "- " + CustomOptionHolder.cs(Hacker.color, "ハッカー") + ": 期間",
@@ -1840,7 +1822,6 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(Sleuth.color, "探偵") + ": 死体の期間を追跡します",
                         CustomOptionHolder.cs(Fink.color, "フィンク"),
                         "- " + CustomOptionHolder.cs(Fink.color, "フィンク") + ": 詐欺師に啓示されるためのタスク",
-                        "- " + CustomOptionHolder.cs(Fink.color, "フィンク") + ": 明らかにすることができます レネゲード / ミニオン",
                         "- " + CustomOptionHolder.cs(Fink.color, "フィンク") + ": クールダウン",
                         "- " + CustomOptionHolder.cs(Fink.color, "フィンク") + ": タカの目の期間",
                         CustomOptionHolder.cs(Kid.color, "子供"),
@@ -1848,7 +1829,6 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(Welder.color, "溶接機") + ": クールダウン",
                         "- " + CustomOptionHolder.cs(Welder.color, "溶接機") + ": シール番号",
                         CustomOptionHolder.cs(Spiritualist.color, "スピリチュアリスト"),
-                        "- " + CustomOptionHolder.cs(Spiritualist.color, "スピリチュアリスト") + ": プレーヤーの時間を復活させます",
                         CustomOptionHolder.cs(Vigilant.color, "警戒"),
                         "- " + CustomOptionHolder.cs(Vigilant.color, "警戒") + ": クールダウン",
                         "- " + CustomOptionHolder.cs(Vigilant.color, "警戒") + ": リモートカメラの期間",
@@ -1910,22 +1890,22 @@ namespace LasMonjas.Core
                             case 1:
                                 CustomOption.options[o].selections = new string[] { "役割", "役割を探す", "旗を取れ", "警察と泥棒", "キングオブザヒル", "焼き芋", "ゾンビ研究所", "バトルロワイアル", "もんじゃ祭り" };
                                 break;                            
-                            case 27:
+                            case 28:
                                 CustomOption.options[o].selections = new string[] { "テーザー", "全て", "誰でもない" };
                                 break;
-                            case 42:
+                            case 41:
                                 CustomOption.options[o].selections = new string[] { "全て vs 全て", "チームバトル", "スコアバトル" };
                                 break;
-                            case 149:
+                            case 145:
                                 CustomOption.options[o].selections = new string[] { "ボタンの使用", "常に" };
                                 break;
-                            case 167:
+                            case 160:
                                 CustomOption.options[o].selections = new string[] { "スクワイア", " 双方", "全て" };
                                 break;
-                            case 177:
+                            case 170:
                                 CustomOption.options[o].selections = new string[] { " 善い/悪い", "ロール名" };
                                 break;
-                            case 178:
+                            case 171:
                                 CustomOption.options[o].selections = new string[] { "詐欺師", "クルー", "全て", "誰でもない" };
                                 break;
                         }
@@ -2266,7 +2246,8 @@ namespace LasMonjas.Core
                         "ソーサラー非常ボタンが使えない！",
                         "爆弾があります、緊急招集ボタンは使用できません！",
                         "停電中です。緊急招集ボタンは使用できません！",
-                        "もんじゃ目覚めた, 走る！"
+                        "もんじゃ目覚めた, 走る！",
+                        "占い師は非常ボタンが使えない！"
                     };
                     buttonsTexts = new string[] {
                         "プレイヤーゴースト (",
@@ -2281,6 +2262,7 @@ namespace LasMonjas.Core
                         "ボディレポート",
                         "あなたには役割がありません。",
                         "情報が見つかりません",
+                        "Tab 次のページへ",
                     };
                     impSummaryTexts = new string[] {
                         "ミミック: 他のプレイヤーになりすますことができるインポスター。",
@@ -2330,7 +2312,7 @@ namespace LasMonjas.Core
                         "シェリフ: 選手を殺すことができるクルーメイト。\nしかし、彼が乗組員を殺そうとすると彼は死にます。",
                         "隠密: プレイヤーの足跡を見ることができるクルーメイト。\nフットプリントはベントを閉じないで、探偵が生きている場合にのみスポーンしません。",
                         "フォレンジック: 身体を報告し、プレイヤーの幽霊に尋ねることで手がかりを得る乗組員。\n身体を報告することで彼が得ることができる手がかりは、キラーの名前、色の種類、または彼の外観に関する何かです。\nゴーストは次のラウンドに登場し、身体が存在し、その手がかりがそのプレーヤー、キラーの色のタイプ、または体を報告する前にどれだけの時間が経過したかを殺しました。",
-                        "タイムトラベラー: ゲームごとに2回時間を巻き戻すことができ、巻き戻し中に殺されたプレイヤーを復活させることができるクルーメイト。\n彼は、積極的な妨害行為がなければ時間を巻き戻すことができます。時間は、彼がタイムシールドで保護されている間に誰かが彼を殺そうとする場合にも巻き戻します。\nこの役割はバイタルを使用できません。",
+                        "タイムトラベラー: ゲームごとに2回時間を巻き戻すことができ、巻き戻し中に殺されたプレイヤーを復活させることができるクルーメイト。\n彼は、積極的な妨害行為がなければ時間を巻き戻すことができます。時間は、彼がタイムシールドで保護されている間に誰かが彼を殺そうとする場合にも巻き戻します。",
                         "スクワイア: プレーヤーにシールドを置くことができるクルーメイト。\n彼が追放されたり殺されたりするまで、盾は続きます。シールドプレーヤーを殺そうとすると、詐欺師、反乱軍、保安官、スクワイア、シールドプレイヤーが聞いた音が引き起こされます。",
                         "詐欺師: 2人のプレーヤーの票を交換できるクルーメイト。\n投票を交換した後、これら2人のプレーヤーのうちの1人が乗組員で​​あることが判明した場合、彼は追放されます。",
                         "占い師: プレーヤーが良いか悪いかを明らかにできるクルーメイト。\n明らかにすると、音がトリガーされ、両方のプレイヤーの画面が青くなります。\n名前は悪い役割では赤くなり、シアンは良い役割については赤くなります。",
@@ -2455,6 +2437,8 @@ namespace LasMonjas.Core
                         CustomOptionHolder.cs(Sheriff.color, "小游戏模式通用设置"),
                         "- " + CustomOptionHolder.cs(Sheriff.color, "游戏时间"),
                         "- " + CustomOptionHolder.cs(Sheriff.color, "击杀冷却"),
+                        "- " + CustomOptionHolder.cs(Sheriff.color, "在一定情况下允许使用手电筒"),
+                        "- " + CustomOptionHolder.cs(Sheriff.color, "手电筒照明范围"),
                         "- " + CustomOptionHolder.cs(Sheriff.color, "复活所需时间"),
                         "- " + CustomOptionHolder.cs(Sheriff.color, "复活后无敌时间"),
                         CustomOptionHolder.cs(Sheriff.color, "小游戏模式独立设置"),
@@ -2465,21 +2449,18 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(Coward.color, "警察抓小偷") + ": 武警电击枪冷却",
                         "- " + CustomOptionHolder.cs(Coward.color, "警察抓小偷") + ": 武警电击效果持续时间",
                         "- " + CustomOptionHolder.cs(Coward.color, "警察抓小偷") + ": 珠宝对警察可见",
-                        "- " + CustomOptionHolder.cs(Coward.color, "警察抓小偷") + ": 警察视野范围",
                         "- " + CustomOptionHolder.cs(Coward.color, "警察抓小偷") + ": 小偷可以击杀",
                         "- " + CustomOptionHolder.cs(Squire.color, "山丘之王") + ": 分数",
                         "- " + CustomOptionHolder.cs(Squire.color, "山丘之王") + ": 占点冷却",
                         "- " + CustomOptionHolder.cs(Squire.color, "山丘之王") + ": 国王可以击杀",
                         "- " + CustomOptionHolder.cs(Shy.color, "烫手山芋") + ": 烫手山芋爆炸倒计时",
                         "- " + CustomOptionHolder.cs(Shy.color, "烫手山芋") + ": 烫手山芋传递冷却",
-                        "- " + CustomOptionHolder.cs(Shy.color, "烫手山芋") + ": 凉山芋视野范围",
                         "- " + CustomOptionHolder.cs(Shy.color, "烫手山芋") + ": 传递烫手山芋会重置爆炸时间",
                         "- " + CustomOptionHolder.cs(Shy.color, "烫手山芋") + ": 若爆炸时间不重置烫手山芋转移后增加的时间",
                         "- " + CustomOptionHolder.cs(Hunter.color, "生化危机") + ": 初始僵尸数",
                         "- " + CustomOptionHolder.cs(Hunter.color, "生化危机") + ": 僵尸感染所需时间",
                         "- " + CustomOptionHolder.cs(Hunter.color, "生化危机") + ": 僵尸感染冷却",
                         "- " + CustomOptionHolder.cs(Hunter.color, "生化危机") + ": 幸存者打开箱子所需时间",
-                        "- " + CustomOptionHolder.cs(Hunter.color, "生化危机") + ": 幸存者视野",
                         "- " + CustomOptionHolder.cs(Hunter.color, "生化危机") + ": 护士治愈所需时间",
                         "- " + CustomOptionHolder.cs(Sleuth.color, "大逃杀") + ": 游戏模式",
                         "- " + CustomOptionHolder.cs(Sleuth.color, "大逃杀") + ": 击杀冷却",
@@ -2512,7 +2493,6 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(Gambler.color, "赌徒") + ": 无视护盾",
                         CustomOptionHolder.cs(Sorcerer.color, "女巫"),
                         "- " + CustomOptionHolder.cs(Sorcerer.color, "女巫") + ": 下咒冷却",
-                        "- " + CustomOptionHolder.cs(Sorcerer.color, "女巫") + ": 每次诅咒追加冷却",
                         "- " + CustomOptionHolder.cs(Sorcerer.color, "女巫") + ": 诅咒所需时间",
                         "- " + CustomOptionHolder.cs(Sorcerer.color, "女巫") + ": 可以使用紧急会议",
                         CustomOptionHolder.cs(Medusa.color, "美杜莎"),
@@ -2524,7 +2504,6 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(Hypnotist.color, "催眠师") + ": 催眠陷阱最大个数",
                         "- " + CustomOptionHolder.cs(Hypnotist.color, "催眠师") + ": 催眠陷阱持续时间",
                         CustomOptionHolder.cs(Archer.color, "弓箭手"),
-                        "- " + CustomOptionHolder.cs(Archer.color, "弓箭手") + ": 箭矢大小",
                         "- " + CustomOptionHolder.cs(Archer.color, "弓箭手") + ": 弓箭射程",
                         "- " + CustomOptionHolder.cs(Archer.color, "弓箭手") + ": 警报生效范围",
                         "- " + CustomOptionHolder.cs(Archer.color, "弓箭手") + ": 瞄准所需时间",
@@ -2569,7 +2548,6 @@ namespace LasMonjas.Core
                         CustomOptionHolder.cs(Devourer.color, "秃鹫"),
                         "- " + CustomOptionHolder.cs(Devourer.color, "秃鹫") + ": 获胜所需吞噬尸体数",
                         CustomOptionHolder.cs(Poisoner.color, "毒师"),
-                        "- " + CustomOptionHolder.cs(Poisoner.color, "毒师") + ": 下毒所需时间",
                         "- " + CustomOptionHolder.cs(Poisoner.color, "毒师") + ": 毒药影响范围",
                         "- " + CustomOptionHolder.cs(Poisoner.color, "毒师") + ": 完全中毒所需时间",
                         "- " + CustomOptionHolder.cs(Poisoner.color, "毒师") + ": 可以破坏",
@@ -2588,12 +2566,10 @@ namespace LasMonjas.Core
                         CustomOptionHolder.cs(Sheriff.color, "警长"),
                         "- " + CustomOptionHolder.cs(Sheriff.color, "警长") + ": 可以击杀中立阵营玩家",
                         CustomOptionHolder.cs(Detective.color, "侦探"),
-                        "- " + CustomOptionHolder.cs(Detective.color, "侦探") + ": 技能发动方式", // 191
+                        "- " + CustomOptionHolder.cs(Detective.color, "侦探") + ": 技能发动方式",
                         "- " + CustomOptionHolder.cs(Detective.color, "侦探") + ": 技能冷却",
                         "- " + CustomOptionHolder.cs(Detective.color, "侦探") + ": 技能持续时间",
                         "- " + CustomOptionHolder.cs(Detective.color, "侦探") + ": 足迹匿名",
-                        "- " + CustomOptionHolder.cs(Detective.color, "侦探") + ": 足迹生成间隔时间",
-                        "- " + CustomOptionHolder.cs(Detective.color, "侦探") + ": 足迹持续时间",
                         CustomOptionHolder.cs(Forensic.color, "法医"),
                         "- " + CustomOptionHolder.cs(Forensic.color, "法医") + ": 通过尸检得知凶手是谁所需的报告时间",
                         "- " + CustomOptionHolder.cs(Forensic.color, "法医") + ": 通过尸检得知凶手颜色类型所需的报告时间",
@@ -2604,9 +2580,8 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(TimeTraveler.color, "时间之主") + ": 技能冷却",
                         "- " + CustomOptionHolder.cs(TimeTraveler.color, "时间之主") + ": 时光之盾持续时间",
                         "- " + CustomOptionHolder.cs(TimeTraveler.color, "时间之主") + ": 回溯的时间",
-                        "- " + CustomOptionHolder.cs(TimeTraveler.color, "时间之主") + ": 复活在回溯的时间段内死亡的玩家",
                         CustomOptionHolder.cs(Squire.color, "卫兵"),
-                        "- " + CustomOptionHolder.cs(Squire.color, "卫兵") + ": 可见护盾的玩家", // 209
+                        "- " + CustomOptionHolder.cs(Squire.color, "卫兵") + ": 可见护盾的玩家",
                         "- " + CustomOptionHolder.cs(Squire.color, "卫兵") + ": 击杀被护盾抵挡后播放击杀尝试音效",
                         "- " + CustomOptionHolder.cs(Squire.color, "卫兵") + ": 会议后护盾重置",
                         CustomOptionHolder.cs(Cheater.color, "换票师"),
@@ -2616,8 +2591,9 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(FortuneTeller.color, "预言家") + ": 查验冷却",
                         "- " + CustomOptionHolder.cs(FortuneTeller.color, "预言家") + ": 查验所需时间",
                         "- " + CustomOptionHolder.cs(FortuneTeller.color, "预言家") + ": 最大查验次数",
-                        "- " + CustomOptionHolder.cs(FortuneTeller.color, "预言家") + ": 查验获得的信息", // 219
-                        "- " + CustomOptionHolder.cs(FortuneTeller.color, "预言家") + ": 被查验后会得到信息的玩家", // 220
+                        "- " + CustomOptionHolder.cs(FortuneTeller.color, "预言家") + ": 查验获得的信息",
+                        "- " + CustomOptionHolder.cs(FortuneTeller.color, "预言家") + ": 被查验后会得到信息的玩家",
+                        "- " + CustomOptionHolder.cs(FortuneTeller.color, "预言家") + ": 可以召开紧急会议",
                         CustomOptionHolder.cs(Hacker.color, "黑客"),
                         "- " + CustomOptionHolder.cs(Hacker.color, "黑客") + ": 技能冷却",
                         "- " + CustomOptionHolder.cs(Hacker.color, "黑客") + ": 技能持续时间",
@@ -2630,7 +2606,6 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(Sleuth.color, "追踪者") + ": 追踪尸体持续时间",
                         CustomOptionHolder.cs(Fink.color, "告密者"),
                         "- " + CustomOptionHolder.cs(Fink.color, "告密者") + ": 被内鬼阵营玩家确认时剩余的任务数",
-                        "- " + CustomOptionHolder.cs(Fink.color, "告密者") + ": 可以与变节者阵营玩家相互确认",
                         "- " + CustomOptionHolder.cs(Fink.color, "告密者") + ": 千里眼冷却",
                         "- " + CustomOptionHolder.cs(Fink.color, "告密者") + ": 千里眼持续时间",
                         CustomOptionHolder.cs(Kid.color, "小孩"),
@@ -2638,7 +2613,6 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(Welder.color, "焊工") + ": 封锁冷却",
                         "- " + CustomOptionHolder.cs(Welder.color, "焊工") + ": 最大封锁次数",
                         CustomOptionHolder.cs(Spiritualist.color, "殉道者"),
-                        "- " + CustomOptionHolder.cs(Spiritualist.color, "殉道者") + ": 复活玩家所需时间",
                         CustomOptionHolder.cs(Vigilant.color, "哨兵"),
                         "- " + CustomOptionHolder.cs(Vigilant.color, "哨兵") + ": 安装冷却",
                         "- " + CustomOptionHolder.cs(Vigilant.color, "哨兵") + ": 远程监控持续时间",
@@ -2700,22 +2674,22 @@ namespace LasMonjas.Core
                             case 1:
                                 CustomOption.options[o].selections = new string[] { "常规", "启用模组职业", "夺旗赛", "警察抓小偷", "山丘之王", "烫手山芋", "生化危机", "大逃杀", "玩偶狂欢" };
                                 break;                            
-                            case 27:
+                            case 28:
                                 CustomOption.options[o].selections = new string[] { "辅警", "警察阵营", "关闭" };
                                 break;
-                            case 42:
+                            case 41:
                                 CustomOption.options[o].selections = new string[] { "死斗", "团队死斗", "团队积分赛" };
                                 break;
-                            case 149:
+                            case 145:
                                 CustomOption.options[o].selections = new string[] { "主动技能", "持续生效" };
                                 break;
-                            case 167:
+                            case 160:
                                 CustomOption.options[o].selections = new string[] { "卫兵", "卫兵与被保护玩家", "所有玩家" };
                                 break;
-                            case 177:
+                            case 170:
                                 CustomOption.options[o].selections = new string[] { "好人/坏人", "职业" };
                                 break;
-                            case 178:
+                            case 171:
                                 CustomOption.options[o].selections = new string[] { "内鬼", "船员", "所有人", "没有人" };
                                 break;
                         }
@@ -3056,7 +3030,8 @@ namespace LasMonjas.Core
                         "女巫不能发起紧急会议",
                         "飞船要爆炸了！你不能发起紧急会议",
                         "停电了，紧急会议按钮用不了了！",
-                        "古神已经苏醒，你们这群小笨蛋快逃吧！！！"
+                        "古神已经苏醒，你们这群小笨蛋快逃吧！！！",
+                        "预言家古神不能发起紧急会议"
                     };
                     buttonsTexts = new string[] {
                         "鬼魂 (",
@@ -3070,7 +3045,8 @@ namespace LasMonjas.Core
                         "杀死所有人",
                         "报告尸体",
                         "你没有职业。",
-                        "没有找到信息。"
+                        "没有找到信息。",
+                        "按Tab查看下一页"
                     };
                     impSummaryTexts = new string[] {
                         "化形者: 化形者属于内鬼阵营，可以在一定时间内将自己的外形变化为其他玩家。",
@@ -3120,7 +3096,7 @@ namespace LasMonjas.Core
                         "警长: 警长属于船员阵营，可以击杀其他玩家。\n若警长尝试击杀船员阵营玩家，警长将会死亡。",
                         "侦探: 侦探属于船员阵营，可以看到其他玩家的脚印。\n脚印在管道附近不会显示，且只会对存活的侦探显示。",
                         "法医: 法医属于船员阵营，可以通过报告尸体获得线索，也可以对玩家的鬼魂进行询问。\n通过报告尸体，法医可以获得的线索有：凶手是谁，凶手的颜色深浅或凶手身上的装扮的有无。\n玩家的鬼魂将在这名玩家死亡后的下一轮行动阶段出现在他们那轮死亡时的所在地点。通过询问鬼魂，法医可以获得的线索有：凶手的职业，凶手的颜色深浅，在报告之前该玩家已经死亡了多长时间。",
-                        "时间之主: 时间之主属于船员阵营，每局游戏拥有两次回溯时间的机会。时间回溯期间被击杀的玩家也会复活。\n时间之主每局游戏可以在紧急破坏未发生时主动回溯一次时间；此外，时间之主在时光之盾状态下被击杀的场合，也会触发一次时间回溯。\n时间之主不能观看生命监测装置。",
+                        "时间之主: 时间之主属于船员阵营，每局游戏拥有两次回溯时间的机会。时间回溯期间被击杀的玩家也会复活。\n时间之主每局游戏可以在紧急破坏未发生时主动回溯一次时间；此外，时间之主在时光之盾状态下被击杀的场合，也会触发一次时间回溯。",
                         "卫兵: 卫兵属于船员阵营，可以用护盾保护一名玩家。\n护盾的作用时间持续到卫兵被放逐或被击杀为止。若有玩家尝试击杀被护盾保护的玩家，所有内鬼与背叛者阵营玩家、警长、卫兵与被护盾保护的玩家都会听到提示音效。",
                         "换票师: 换票师属于船员阵营，可以交换两名玩家在会议阶段的得票。\n换票师换票后，若被换票的这两名玩家中有一名玩家被放逐且是船员，换票师被放逐。",
                         "预言家: 预言家属于船员阵营，可以查验一名玩家的身份是好人或坏人。\n预言家查验时，预言家与被查验的玩家都会看到屏幕的蓝色闪光，并触发提示音效。\n被查验对象为坏人时，被查验对象的昵称变为红色；被查验对象为好人时，昵称变为青色。",

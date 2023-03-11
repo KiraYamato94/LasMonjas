@@ -59,6 +59,7 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "Sensei", HatName = "Blocky 16bits", NoBounce = true},
             new AuthorData {AuthorName = "Sensei", HatName = "Fascinante", NoBounce = true},
             new AuthorData {AuthorName = "Sensei", HatName = "Pingas", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "Sensei", HatName = "Suavemente", NoBounce = true},
             new AuthorData {AuthorName = "Muaresito", HatName = "Cell", NoBounce = true, altShader = true},
             new AuthorData {AuthorName = "Muaresito", HatName = "Ghost", NoBounce = true, altShader = true},
             new AuthorData {AuthorName = "Muaresito", HatName = "Goodbye", NoBounce = true},
@@ -149,6 +150,17 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "Booman", HatName = "Sniper", NoBounce = true},
             new AuthorData {AuthorName = "Booman", HatName = "Rocketman", NoBounce = true, altShader = true},
             new AuthorData {AuthorName = "Boa", HatName = "Cat Princess", FloorHatName ="Cat Princess_climb", ClimbHatName = "Cat Princess_climb", LeftImageName = "Cat Princess", NoBounce = true},
+            new AuthorData {AuthorName = "Xeno<33", HatName = "3rd Eye", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "Xeno<33", HatName = "Candles", NoBounce = false},
+            new AuthorData {AuthorName = "Xeno<33", HatName = "Double Visor", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "Xeno<33", HatName = "Green Hat", NoBounce = true},
+            new AuthorData {AuthorName = "Xeno<33", HatName = "Idea", NoBounce = false},
+            new AuthorData {AuthorName = "Xeno<33", HatName = "Sheep", NoBounce = false},
+            new AuthorData {AuthorName = "Xeno<33", HatName = "Sus Guy", NoBounce = true},
+            new AuthorData {AuthorName = "Xeno<33", HatName = "UFO", NoBounce = true},
+            new AuthorData {AuthorName = "Xeno<33", HatName = "Electric Rat", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "Xeno<33", HatName = "Royal Blonde Hair", NoBounce = true},
+            new AuthorData {AuthorName = "Dontae", HatName = "Tea Cup", NoBounce = true, altShader = true},
         };
 
         internal static Dictionary<int, AuthorData> IdToData = new Dictionary<int, AuthorData>();
@@ -212,9 +224,6 @@ namespace LasMonjas.Core
                 }
             }
 
-            public static Sprite GetSprite(string name)
-                => AssetLoader.LoadHatAsset(name).Cast<GameObject>().GetComponent<SpriteRenderer>().sprite;
-
             public static int HatID = 0;
             /// <summary>
             /// Creates hat based on specified values
@@ -253,5 +262,22 @@ namespace LasMonjas.Core
                 return newHat;
             }
         }
+
+        [HarmonyPatch(typeof(HatsTab), nameof(HatsTab.OnEnable))]
+        public static class EnableSprite
+        {
+            public static void Postfix() {
+                GameObject innerHats = GameObject.Find("HatsGroup").transform.GetChild(1).transform.GetChild(0).gameObject;
+                int hat = 0;
+                for (int i = 1; i < innerHats.transform.GetChildCount(); i++) {
+                    if (innerHats.transform.GetChild(i).transform.GetChild(2).transform.GetChild(0).GetComponent<SpriteRenderer>().sprite == null) {
+                        innerHats.transform.GetChild(i).transform.GetChild(2).transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = GetSprite(authorDatas[hat].HatName);
+                        hat += 1;
+                    }
+                }
+            }
+        }
+        public static Sprite GetSprite(string name)
+                => AssetLoader.LoadHatAsset(name).Cast<GameObject>().GetComponent<SpriteRenderer>().sprite;
     }
 }

@@ -556,13 +556,13 @@ namespace LasMonjas.Core
             int defaultSettingsLines = 23;
             int roleSettingsLines = defaultSettingsLines + 41;
             int detailedSettingsP1 = roleSettingsLines + 25;
-            int detailedSettingsP2 = detailedSettingsP1 + 26;
-            int detailedSettingsP3 = detailedSettingsP2 + 28;
-            int detailedSettingsP4 = detailedSettingsP3 + 47;
-            int detailedSettingsP5 = detailedSettingsP4 + 41;
-            int detailedSettingsP6 = detailedSettingsP5 + 29;
+            int detailedSettingsP2 = detailedSettingsP1 + 28;
+            int detailedSettingsP3 = detailedSettingsP2 + 25;
+            int detailedSettingsP4 = detailedSettingsP3 + 45;
+            int detailedSettingsP5 = detailedSettingsP4 + 40;
+            int detailedSettingsP6 = detailedSettingsP5 + 26;
             int detailedSettingsP7 = detailedSettingsP6 + 34;
-            int detailedSettingsP8 = detailedSettingsP7 + 26;
+            int detailedSettingsP8 = detailedSettingsP7 + 24;
             int end1 = hudString.TakeWhile(c => (defaultSettingsLines -= (c == '\n' ? 1 : 0)) > 0).Count();
             int end2 = hudString.TakeWhile(c => (roleSettingsLines -= (c == '\n' ? 1 : 0)) > 0).Count();
             int end3 = hudString.TakeWhile(c => (detailedSettingsP1 -= (c == '\n' ? 1 : 0)) > 0).Count();
@@ -610,16 +610,16 @@ namespace LasMonjas.Core
                     int gapfour = 2;
                     int indexfour = hudString.TakeWhile(c => (gapfour -= (c == '\n' ? 1 : 0)) > 0).Count();
                     hudString = hudString.Insert(indexfour, "\n");
-                    gapfour = 11;
+                    gapfour = 10;
                     indexfour = hudString.TakeWhile(c => (gapfour -= (c == '\n' ? 1 : 0)) > 0).Count();
                     hudString = hudString.Insert(indexfour, "\n");
-                    gapfour = 15;
+                    gapfour = 14;
                     indexfour = hudString.TakeWhile(c => (gapfour -= (c == '\n' ? 1 : 0)) > 0).Count();
                     hudString = hudString.Insert(indexfour, "\n");
-                    gapfour = 21;
+                    gapfour = 19;
                     indexfour = hudString.TakeWhile(c => (gapfour -= (c == '\n' ? 1 : 0)) > 0).Count();
                     hudString = hudString.Insert(indexfour, "\n");
-                    gapfour = 28;
+                    gapfour = 25;
                     indexfour = hudString.TakeWhile(c => (gapfour -= (c == '\n' ? 1 : 0)) > 0).Count();
                     hudString = hudString.Insert(indexfour, "\n");
                     break;
@@ -643,7 +643,7 @@ namespace LasMonjas.Core
                     break;
             }
 
-            hudString += $"\nTab for next page ({counter + 1}/11)";
+            hudString += $"\n{Language.helpersTexts[5]} ({counter + 1}/11)";
             __result = hudString;
         }
     }
