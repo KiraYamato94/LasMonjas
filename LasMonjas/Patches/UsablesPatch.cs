@@ -395,6 +395,12 @@ namespace LasMonjas.Patches
                 statusText = Language.usablesTexts[6];
             }
 
+            // Deactivate emergency button for Gambler
+            if (FortuneTeller.fortuneTeller != null && FortuneTeller.fortuneTeller == PlayerControl.LocalPlayer && !FortuneTeller.canCallEmergency) {
+                roleCanCallEmergency = false;
+                statusText = Language.usablesTexts[7];
+            }
+            
             if (!roleCanCallEmergency) {
                 __instance.StatusText.text = statusText;
                 __instance.NumberText.text = string.Empty;

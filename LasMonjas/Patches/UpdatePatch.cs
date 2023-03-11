@@ -873,8 +873,8 @@ namespace LasMonjas.Patches {
                     break;
                 case 2:
                     // CTF timers
-                    LasMonjas.gamemodeMatchDuration -= deltaTime;
-                    if (LasMonjas.gamemodeMatchDuration < 0) {
+                    gamemodeMatchDuration -= deltaTime;
+                    if (gamemodeMatchDuration < 0) {
                         // both teams with same points = Draw
                         if (CaptureTheFlag.currentRedTeamPoints == CaptureTheFlag.currentBlueTeamPoints) {
                             CaptureTheFlag.triggerDrawWin = true;
@@ -901,16 +901,16 @@ namespace LasMonjas.Patches {
                     PoliceAndThief.policeplayer05lightTimer -= deltaTime;
                     PoliceAndThief.policeplayer06lightTimer -= deltaTime;
 
-                    LasMonjas.gamemodeMatchDuration -= deltaTime;
-                    if (LasMonjas.gamemodeMatchDuration < 0) {
+                    gamemodeMatchDuration -= deltaTime;
+                    if (gamemodeMatchDuration < 0) {
                         PoliceAndThief.triggerPoliceWin = true;
                         GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.ThiefModePoliceWin, false);
                     }
                     break;
                 case 4:
                     // KOTH:
-                    LasMonjas.gamemodeMatchDuration -= deltaTime;
-                    if (LasMonjas.gamemodeMatchDuration < 0) {
+                    gamemodeMatchDuration -= deltaTime;
+                    if (gamemodeMatchDuration < 0) {
                         // both teams with same points = draw
                         if (KingOfTheHill.currentGreenTeamPoints == KingOfTheHill.currentYellowTeamPoints) {
                             KingOfTheHill.triggerDrawWin = true;
@@ -951,12 +951,13 @@ namespace LasMonjas.Patches {
                         HotPotato.timeforTransfer -= deltaTime;
 
                         if (HotPotato.timeforTransfer <= 0 && !HotPotato.hotPotatoPlayer.Data.IsDead) {
+                            HotPotato.hotPotatoPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
                             HotPotato.hotPotatoPlayer.MurderPlayer(HotPotato.hotPotatoPlayer);
                         }
 
-                        LasMonjas.gamemodeMatchDuration -= deltaTime;
+                        gamemodeMatchDuration -= deltaTime;
 
-                        if (LasMonjas.gamemodeMatchDuration < 0) {
+                        if (gamemodeMatchDuration < 0) {
                             HotPotato.triggerHotPotatoEnd = true;
                             GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.HotPotatoEnd, false);
                         }
@@ -964,17 +965,17 @@ namespace LasMonjas.Patches {
                     break;
                 case 6:
                     // ZL timers
-                    LasMonjas.gamemodeMatchDuration -= deltaTime;
+                    gamemodeMatchDuration -= deltaTime;
 
-                    if (LasMonjas.gamemodeMatchDuration < 0) {
+                    if (gamemodeMatchDuration < 0) {
                         ZombieLaboratory.triggerZombieWin = true;
                         GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.ZombieWin, false);
                     }
                     break;
                 case 7:
                     // BR timers
-                    LasMonjas.gamemodeMatchDuration -= deltaTime;
-                    if (LasMonjas.gamemodeMatchDuration < 0) {
+                    gamemodeMatchDuration -= deltaTime;
+                    if (gamemodeMatchDuration < 0) {
                         if (BattleRoyale.matchType == 2) {
                             if (BattleRoyale.serialKiller != null) {
                                 // all teams with same points = Draw
@@ -1029,8 +1030,8 @@ namespace LasMonjas.Patches {
                     break;
                 case 8:
                     // MF
-                    LasMonjas.gamemodeMatchDuration -= deltaTime;
-                    if (LasMonjas.gamemodeMatchDuration < 0) {
+                    gamemodeMatchDuration -= deltaTime;
+                    if (gamemodeMatchDuration < 0) {
                         if (MonjaFestival.bigMonjaPlayer != null) {
                             // all teams with same points = Draw
                             if (MonjaFestival.greenPoints == MonjaFestival.cyanPoints && MonjaFestival.cyanPoints == MonjaFestival.bigMonjaPoints) {
@@ -2156,6 +2157,7 @@ namespace LasMonjas.Patches {
                 }
 
                 HotPotato.hotPotatoPlayer = HotPotato.notPotatoTeam[0];
+                HotPotato.hotPotatoPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                 HotPotato.hotPotato.transform.position = HotPotato.hotPotatoPlayer.transform.position + new Vector3(0, 0.5f, -0.25f);
                 HotPotato.hotPotato.transform.parent = HotPotato.hotPotatoPlayer.transform;
 

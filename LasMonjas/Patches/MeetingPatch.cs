@@ -461,11 +461,6 @@ namespace LasMonjas.Patches {
                     button.OnClick.RemoveAllListeners();
                     int copiedIndex = i;
                     button.OnClick.AddListener((UnityEngine.Events.UnityAction)(() => captainOnClick(copiedIndex, __instance)));
-
-                    TMPro.TextMeshPro targetBoxRemainText = UnityEngine.Object.Instantiate(__instance.playerStates[0].NameText, targetBox.transform);
-                    targetBoxRemainText.alignment = TMPro.TextAlignmentOptions.Center;
-                    targetBoxRemainText.transform.localPosition = new Vector3(0.2f, -0.3f, targetBoxRemainText.transform.localPosition.z);
-                    targetBoxRemainText.transform.localScale *= 1.7f;
                 }
             }
         }

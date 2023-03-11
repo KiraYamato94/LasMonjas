@@ -395,17 +395,6 @@ namespace LasMonjas.Patches {
 
                         if (localPlayerPositions.Count > 1) localPlayerPositions.RemoveAt(0); // Skip every second position to rewind twice as fast, but never skip the last position
                     }
-
-                    // Try reviving LOCAL player 
-                    if (TimeTraveler.reviveDuringRewind && PlayerControl.LocalPlayer.Data.IsDead) {
-                        DeadPlayer deadPlayer = deadPlayers.Where(x => x.player == PlayerControl.LocalPlayer).FirstOrDefault();
-                        if (deadPlayer != null && next.Item2 < deadPlayer.timeOfDeath) {
-                            MessageWriter write = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.TimeTravelerRevive, Hazel.SendOption.Reliable, -1);
-                            write.Write(PlayerControl.LocalPlayer.PlayerId);
-                            AmongUsClient.Instance.FinishRpcImmediately(write);
-                            RPCProcedure.timeTravelerRevive(PlayerControl.LocalPlayer.PlayerId);
-                        }
-                    }
                 }
                 else {
                     TimeTraveler.isRewinding = false;
@@ -500,32 +489,32 @@ namespace LasMonjas.Patches {
         }
         static void finkUpdate() {
 
-            if (Fink.fink == null || Fink.fink.Data.IsDead) return;
-
-            if (Fink.localArrows == null) return;
+            if (Fink.fink == null || Fink.fink.Data.IsDead || Fink.localArrows == null) return;
 
             foreach (Arrow arrow in Fink.localArrows) arrow.arrow.SetActive(false);
 
             var (playerCompleted, playerTotal) = TasksHandler.taskInfo(Fink.fink.Data);
             int numberOfTasks = playerTotal - playerCompleted;
-
-            if (numberOfTasks <= Fink.taskCountForImpostors && (PlayerControl.LocalPlayer.Data.Role.IsImpostor || (Fink.includeTeamRenegade && (PlayerControl.LocalPlayer == Renegade.renegade || PlayerControl.LocalPlayer == Minion.minion)))) {
-                if (Fink.localArrows.Count == 0) Fink.localArrows.Add(new Arrow(Fink.color));
-                if (Fink.localArrows.Count != 0 && Fink.localArrows[0] != null) {
-                    Fink.localArrows[0].arrow.SetActive(true);
-                    Fink.localArrows[0].Update(Fink.fink.transform.position);
+            if (numberOfTasks <= Fink.taskCountForImpostors) {
+                if (numberOfTasks <= Fink.taskCountForImpostors && PlayerControl.LocalPlayer.Data.Role.IsImpostor) {
+                    if (Fink.localArrows.Count == 0) {
+                        Fink.localArrows.Add(new Arrow(Fink.color));
+                        SoundManager.Instance.PlaySound(CustomMain.customAssets.bountyExilerTarget, false, 5f);
+                    }
+                    if (Fink.localArrows.Count != 0 && Fink.localArrows[0] != null) {
+                        Fink.localArrows[0].arrow.SetActive(true);
+                        Fink.localArrows[0].Update(Fink.fink.transform.position);
+                    }
                 }
             }
             else if (PlayerControl.LocalPlayer == Fink.fink && numberOfTasks == 0 && !Challenger.isDueling && !Seeker.isMinigaming && !isHappeningAnonymousComms) {
                 int arrowIndex = 0;
                 foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
                     bool arrowForImp = p.Data.Role.IsImpostor;
-                    bool arrowForTeamRenegade = Fink.includeTeamRenegade && (p == Renegade.renegade || p == Minion.minion);
 
-                    if (!p.Data.IsDead && (arrowForImp || arrowForTeamRenegade)) {
+                    if (!p.Data.IsDead && arrowForImp) {
                         if (arrowIndex >= Fink.localArrows.Count) {
                             Fink.localArrows.Add(new Arrow(Color.red));
-                            if (p == Renegade.renegade || p == Minion.minion) Fink.localArrows.Add(new Arrow(Renegade.color));
                         }
                         if (arrowIndex < Fink.localArrows.Count && Fink.localArrows[arrowIndex] != null) {
                             Fink.localArrows[arrowIndex].arrow.SetActive(true);
@@ -692,7 +681,7 @@ namespace LasMonjas.Patches {
         }
         static void performerUpdate() {
             if (Modifiers.performer != null) {
-                if (Modifiers.performerDuration > 0 && Modifiers.performer.Data.IsDead && !Modifiers.performerReported && (PlayerControl.LocalPlayer != Modifiers.performer && PlayerControl.LocalPlayer != Spiritualist.spiritualist && PlayerControl.LocalPlayer != TimeTraveler.timeTraveler)) {
+                if (Modifiers.performerDuration > 0 && Modifiers.performer.Data.IsDead && !Modifiers.performerReported && (PlayerControl.LocalPlayer != Modifiers.performer && PlayerControl.LocalPlayer != Spiritualist.spiritualist)) {
                     if (Modifiers.performerLocalPerformerArrows.Count == 0) Modifiers.performerLocalPerformerArrows.Add(new Arrow(Modifiers.color));
                     if (Modifiers.performerLocalPerformerArrows.Count != 0 && Modifiers.performerLocalPerformerArrows[0] != null) {
                         Modifiers.performerLocalPerformerArrows[0].arrow.SetActive(true);
@@ -708,7 +697,7 @@ namespace LasMonjas.Patches {
                 }
 
                 // Upon performer duration, stop the music and play bomb music if there's a bomb or normal task music
-                if (Modifiers.performer.Data.IsDead && Modifiers.performerDuration <= 0 && !Modifiers.performerMusicStop && !Modifiers.performerReported && (PlayerControl.LocalPlayer != Spiritualist.spiritualist && PlayerControl.LocalPlayer != TimeTraveler.timeTraveler)) {
+                if (Modifiers.performer.Data.IsDead && Modifiers.performerDuration <= 0 && !Modifiers.performerMusicStop && !Modifiers.performerReported && (PlayerControl.LocalPlayer != Spiritualist.spiritualist)) {
                     Modifiers.performerMusicStop = true;
                     SoundManager.Instance.StopSound(CustomMain.customAssets.performerMusic);
                     if (Bomberman.activeBomb) {
@@ -2575,11 +2564,13 @@ namespace LasMonjas.Patches {
                         var ctfBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
                         ctfBody.transform.position = new Vector3(50, 50, 1);
                         CaptureTheFlag.stealerPlayerIsReviving = true;
+                        CaptureTheFlag.stealerPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
                         Helpers.alphaPlayer(true, CaptureTheFlag.stealerPlayer.PlayerId);
                         HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
                             if (p == 1f && CaptureTheFlag.stealerPlayer != null) {
                                 CaptureTheFlag.stealerPlayerIsReviving = false;
                                 Helpers.alphaPlayer(false, CaptureTheFlag.stealerPlayer.PlayerId);
+                                CaptureTheFlag.stealerPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                             }
                         })));
                         HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
@@ -3077,12 +3068,14 @@ namespace LasMonjas.Patches {
                         var kothBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
                         kothBody.transform.position = new Vector3(50, 50, 1);
                         KingOfTheHill.usurperPlayerIsReviving = true;
+                        KingOfTheHill.usurperPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
                         Helpers.alphaPlayer(true, KingOfTheHill.usurperPlayer.PlayerId);
                         HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
                             if (p == 1f && KingOfTheHill.usurperPlayer != null) {
                                 KingOfTheHill.usurperPlayerIsReviving = false;
                                 KingOfTheHill.usurperPlayer.cosmetics.nameText.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.nameText.color.r, KingOfTheHill.usurperPlayer.cosmetics.nameText.color.g, KingOfTheHill.usurperPlayer.cosmetics.nameText.color.b, 1f);
                                 Helpers.alphaPlayer(false, KingOfTheHill.usurperPlayer.PlayerId);
+                                KingOfTheHill.usurperPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                             }
                         })));
                         HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
@@ -3555,6 +3548,7 @@ namespace LasMonjas.Patches {
 
                                 HotPotato.hotPotatoPlayer.NetTransform.Halt();
                                 HotPotato.hotPotatoPlayer.moveable = false;
+                                HotPotato.hotPotatoPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                 HotPotato.hotPotato.transform.position = HotPotato.hotPotatoPlayer.transform.position + new Vector3(0, 0.5f, -0.25f);
                                 HotPotato.hotPotato.transform.parent = HotPotato.hotPotatoPlayer.transform;
 
@@ -3911,6 +3905,7 @@ namespace LasMonjas.Patches {
                             else if (ZombieLaboratory.zombiePlayer14 != null && target.PlayerId == ZombieLaboratory.zombiePlayer14.PlayerId) {
                                 ZombieLaboratory.zombiePlayer14IsReviving = true;
                             }
+                            player.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
                             Helpers.alphaPlayer(true, player.PlayerId);
                             HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
                                 if (p == 1f && player != null) {
@@ -3957,6 +3952,7 @@ namespace LasMonjas.Patches {
                                         ZombieLaboratory.zombiePlayer14IsReviving = false;
                                     }
                                     Helpers.alphaPlayer(false, player.PlayerId);
+                                    player.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                 }
                             })));
 
@@ -4018,12 +4014,14 @@ namespace LasMonjas.Patches {
                     if (BattleRoyale.matchType == 2) {
                         if (BattleRoyale.serialKiller != null && BattleRoyale.serialKiller.PlayerId == target.PlayerId) {
                             BattleRoyale.serialKillerIsReviving = true;
+                            BattleRoyale.serialKiller.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
                             Helpers.alphaPlayer(true, BattleRoyale.serialKiller.PlayerId);
                             HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
                                 if (p == 1f && BattleRoyale.serialKiller != null) {
                                     BattleRoyale.serialKillerIsReviving = false;
                                     BattleRoyale.serialKillerLifes = BattleRoyale.fighterLifes * 3;
                                     Helpers.alphaPlayer(false, BattleRoyale.serialKiller.PlayerId);
+                                    BattleRoyale.serialKiller.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                 }
                             })));
                             HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
@@ -4310,11 +4308,13 @@ namespace LasMonjas.Patches {
                         }
                         MonjaFestival.bigMonjaPlayerItems = 0;
                         MonjaFestival.bigMonjaPlayerDeliverCount.text = $"{MonjaFestival.bigMonjaPlayerItems} / 10";
+                        MonjaFestival.bigMonjaPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
                         Helpers.alphaPlayer(true, MonjaFestival.bigMonjaPlayer.PlayerId);
                         HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
                             if (p == 1f && MonjaFestival.bigMonjaPlayer != null) {
                                 MonjaFestival.bigMonjaIsReviving = false;
                                 Helpers.alphaPlayer(false, MonjaFestival.bigMonjaPlayer.PlayerId);
+                                MonjaFestival.bigMonjaPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                             }
                         })));
                         HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {

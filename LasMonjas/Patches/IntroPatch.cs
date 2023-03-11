@@ -228,7 +228,7 @@ namespace LasMonjas.Patches
                         // ZL
                         SoundManager.Instance.PlaySound(CustomMain.customAssets.zombieLaboratoryMusic, true, 25f);
                         // Intro zombie teams
-                        if (PlayerControl.LocalPlayer == ZombieLaboratory.zombiePlayer01) {
+                        if (PlayerControl.LocalPlayer == ZombieLaboratory.zombiePlayer01 || PlayerControl.LocalPlayer == ZombieLaboratory.zombiePlayer02 || PlayerControl.LocalPlayer == ZombieLaboratory.zombiePlayer03 || PlayerControl.LocalPlayer == ZombieLaboratory.zombiePlayer04 || PlayerControl.LocalPlayer == ZombieLaboratory.zombiePlayer05) {
                             var greyTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
                             greyTeam.Add(PlayerControl.LocalPlayer);
                             yourTeam = greyTeam;
@@ -472,24 +472,6 @@ namespace LasMonjas.Patches
                         Seeker.lowerminigameArenaHideThreePointThree = lowerseekerArena.transform.GetChild(2).transform.GetChild(2).gameObject;
                     }
                     createdseekerarena = true;
-                }
-
-                // Remove vitals use for TimeTraveler
-                if (TimeTraveler.timeTraveler != null && PlayerControl.LocalPlayer == TimeTraveler.timeTraveler) {
-                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
-                        case 2:
-                            GameObject polusvitals = GameObject.Find("panel_vitals");
-                            polusvitals.GetComponent<BoxCollider2D>().enabled = false;
-                            break;
-                        case 4:
-                            GameObject airshipvitals = GameObject.Find("panel_vitals");
-                            airshipvitals.GetComponent<CircleCollider2D>().enabled = false;
-                            break;
-                        case 5:
-                            GameObject submergedvitals = GameObject.Find("panel_vitals(Clone)");
-                            submergedvitals.GetComponent<CircleCollider2D>().enabled = false;
-                            break;
-                    }
                 }
 
                 // Submerged remove Chameleon special vent
@@ -767,21 +749,22 @@ namespace LasMonjas.Patches
                                     case 2:
                                         // CTF:
                                         if (activatedSensei) {
-                                            if (PlayerControl.LocalPlayer == CaptureTheFlag.stealerPlayer) {
+                                            if (CaptureTheFlag.stealerPlayer != null) {
+                                                CaptureTheFlag.stealerPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                                 CaptureTheFlag.stealerPlayer.transform.position = new Vector3(-3.65f, 5f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(CaptureTheFlag.stealerPlayer);
                                             }
 
                                             foreach (PlayerControl player in CaptureTheFlag.redteamFlag) {
-                                                if (player == PlayerControl.LocalPlayer)
-                                                    player.transform.position = new Vector3(-17.5f, -1.15f, PlayerControl.LocalPlayer.transform.position.z);
+                                                player.transform.position = new Vector3(-17.5f, -1.15f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(player);
                                             }
+
                                             foreach (PlayerControl player in CaptureTheFlag.blueteamFlag) {
-                                                if (player == PlayerControl.LocalPlayer)
-                                                    player.transform.position = new Vector3(7.7f, -0.95f, PlayerControl.LocalPlayer.transform.position.z);
+                                                player.transform.position = new Vector3(7.7f, -0.95f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(player);
                                             }
+
                                             if (PlayerControl.LocalPlayer != null && !createdcapturetheflag) {
                                                 GameObject redflag = GameObject.Instantiate(CustomMain.customAssets.redflag, PlayerControl.LocalPlayer.transform.parent);
                                                 redflag.name = "redflag";
@@ -805,21 +788,22 @@ namespace LasMonjas.Patches
                                             }
                                         }
                                         else {
-                                            if (PlayerControl.LocalPlayer == CaptureTheFlag.stealerPlayer) {
+                                            if (CaptureTheFlag.stealerPlayer != null) {
+                                                CaptureTheFlag.stealerPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                                 CaptureTheFlag.stealerPlayer.transform.position = new Vector3(6.35f, -7.5f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(CaptureTheFlag.stealerPlayer);
                                             }
 
                                             foreach (PlayerControl player in CaptureTheFlag.redteamFlag) {
-                                                if (player == PlayerControl.LocalPlayer)
-                                                    player.transform.position = new Vector3(-20.5f, -5.15f, PlayerControl.LocalPlayer.transform.position.z);
+                                                player.transform.position = new Vector3(-20.5f, -5.15f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(player);
+
                                             }
                                             foreach (PlayerControl player in CaptureTheFlag.blueteamFlag) {
-                                                if (player == PlayerControl.LocalPlayer)
-                                                    player.transform.position = new Vector3(16.5f, -4.45f, PlayerControl.LocalPlayer.transform.position.z);
+                                                player.transform.position = new Vector3(16.5f, -4.45f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(player);
                                             }
+
                                             if (PlayerControl.LocalPlayer != null && !createdcapturetheflag) {
                                                 GameObject redflag = GameObject.Instantiate(CustomMain.customAssets.redflag, PlayerControl.LocalPlayer.transform.parent);
                                                 redflag.name = "redflag";
@@ -847,15 +831,14 @@ namespace LasMonjas.Patches
                                         // PT:
                                         if (activatedSensei) {
                                             foreach (PlayerControl player in PoliceAndThief.policeTeam) {
-                                                if (player == PlayerControl.LocalPlayer)
-                                                    player.transform.position = new Vector3(-12f, 5f, PlayerControl.LocalPlayer.transform.position.z);
+                                                player.transform.position = new Vector3(-12f, 5f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(player);
                                             }
-                                            foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
-                                                if (player == PlayerControl.LocalPlayer) {
-                                                    player.transform.position = new Vector3(13.75f, -0.2f, PlayerControl.LocalPlayer.transform.position.z);
-                                                    Helpers.clearAllTasks(player);
 
+                                            foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
+                                                player.transform.position = new Vector3(13.75f, -0.2f, PlayerControl.LocalPlayer.transform.position.z);
+                                                Helpers.clearAllTasks(player);
+                                                if (player == PlayerControl.LocalPlayer) {
                                                     // Add Arrows pointing the release and deliver point
                                                     if (PoliceAndThief.localThiefReleaseArrow.Count == 0) {
                                                         PoliceAndThief.localThiefReleaseArrow.Add(new Arrow(Palette.PlayerColors[10]));
@@ -967,15 +950,13 @@ namespace LasMonjas.Patches
                                         }
                                         else {
                                             foreach (PlayerControl player in PoliceAndThief.policeTeam) {
-                                                if (player == PlayerControl.LocalPlayer)
-                                                    player.transform.position = new Vector3(-10.2f, 1.18f, PlayerControl.LocalPlayer.transform.position.z);
+                                                player.transform.position = new Vector3(-10.2f, 1.18f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(player);
                                             }
                                             foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
+                                                player.transform.position = new Vector3(-1.31f, -16.25f, PlayerControl.LocalPlayer.transform.position.z);
+                                                Helpers.clearAllTasks(player);
                                                 if (player == PlayerControl.LocalPlayer) {
-                                                    player.transform.position = new Vector3(-1.31f, -16.25f, PlayerControl.LocalPlayer.transform.position.z);
-                                                    Helpers.clearAllTasks(player);
-
                                                     // Add Arrows pointing the release and deliver point
                                                     if (PoliceAndThief.localThiefReleaseArrow.Count == 0) {
                                                         PoliceAndThief.localThiefReleaseArrow.Add(new Arrow(Palette.PlayerColors[10]));
@@ -1092,21 +1073,22 @@ namespace LasMonjas.Patches
                                     case 4:
                                         // KOTH:
                                         if (activatedSensei) {
-                                            if (PlayerControl.LocalPlayer == KingOfTheHill.usurperPlayer) {
+                                            if (KingOfTheHill.usurperPlayer != null) {
+                                                KingOfTheHill.usurperPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                                 KingOfTheHill.usurperPlayer.transform.position = new Vector3(-6.8f, 10.75f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(KingOfTheHill.usurperPlayer);
                                             }
 
                                             foreach (PlayerControl player in KingOfTheHill.greenTeam) {
-                                                if (player == PlayerControl.LocalPlayer)
-                                                    player.transform.position = new Vector3(-16.4f, -10.25f, PlayerControl.LocalPlayer.transform.position.z);
+                                                player.transform.position = new Vector3(-16.4f, -10.25f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(player);
                                             }
+
                                             foreach (PlayerControl player in KingOfTheHill.yellowTeam) {
-                                                if (player == PlayerControl.LocalPlayer)
-                                                    player.transform.position = new Vector3(7f, -14.15f, PlayerControl.LocalPlayer.transform.position.z);
+                                                player.transform.position = new Vector3(7f, -14.15f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(player);
                                             }
+
                                             if (PlayerControl.LocalPlayer != null && !createdkingofthehill) {
                                                 GameObject greenteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
                                                 greenteamfloor.name = "greenteamfloor";
@@ -1155,21 +1137,22 @@ namespace LasMonjas.Patches
                                             }
                                         }
                                         else {
-                                            if (PlayerControl.LocalPlayer == KingOfTheHill.usurperPlayer) {
+                                            if (KingOfTheHill.usurperPlayer != null) {
+                                                KingOfTheHill.usurperPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                                 KingOfTheHill.usurperPlayer.transform.position = new Vector3(-1f, 5.35f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(KingOfTheHill.usurperPlayer);
                                             }
 
                                             foreach (PlayerControl player in KingOfTheHill.greenTeam) {
-                                                if (player == PlayerControl.LocalPlayer)
-                                                    player.transform.position = new Vector3(-7f, -8.25f, PlayerControl.LocalPlayer.transform.position.z);
+                                                player.transform.position = new Vector3(-7f, -8.25f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(player);
                                             }
+
                                             foreach (PlayerControl player in KingOfTheHill.yellowTeam) {
-                                                if (player == PlayerControl.LocalPlayer)
-                                                    player.transform.position = new Vector3(6.25f, -3.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                                player.transform.position = new Vector3(6.25f, -3.5f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(player);
                                             }
+
                                             if (PlayerControl.LocalPlayer != null && !createdkingofthehill) {
                                                 GameObject greenteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
                                                 greenteamfloor.name = "greenteamfloor";
@@ -1221,14 +1204,12 @@ namespace LasMonjas.Patches
                                     case 5:
                                         // HP:
                                         if (activatedSensei) {
-                                            if (PlayerControl.LocalPlayer == HotPotato.hotPotatoPlayer) {
-                                                HotPotato.hotPotatoPlayer.transform.position = new Vector3(-6.5f, -2.25f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(HotPotato.hotPotatoPlayer);
-                                            }
+                                            HotPotato.hotPotatoPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                                            HotPotato.hotPotatoPlayer.transform.position = new Vector3(-6.5f, -2.25f, PlayerControl.LocalPlayer.transform.position.z);
+                                            Helpers.clearAllTasks(HotPotato.hotPotatoPlayer);
 
                                             foreach (PlayerControl player in HotPotato.notPotatoTeam) {
-                                                if (player == PlayerControl.LocalPlayer)
-                                                    player.transform.position = new Vector3(12.5f, -0.25f, PlayerControl.LocalPlayer.transform.position.z);
+                                                player.transform.position = new Vector3(12.5f, -0.25f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(player);
                                             }
 
@@ -1241,14 +1222,12 @@ namespace LasMonjas.Patches
                                             }
                                         }
                                         else {
-                                            if (PlayerControl.LocalPlayer == HotPotato.hotPotatoPlayer) {
-                                                HotPotato.hotPotatoPlayer.transform.position = new Vector3(-0.75f, -7f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(HotPotato.hotPotatoPlayer);
-                                            }
+                                            HotPotato.hotPotatoPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                                            HotPotato.hotPotatoPlayer.transform.position = new Vector3(-0.75f, -7f, PlayerControl.LocalPlayer.transform.position.z);
+                                            Helpers.clearAllTasks(HotPotato.hotPotatoPlayer);
 
                                             foreach (PlayerControl player in HotPotato.notPotatoTeam) {
-                                                if (player == PlayerControl.LocalPlayer)
-                                                    player.transform.position = new Vector3(6.25f, -3.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                                player.transform.position = new Vector3(6.25f, -3.5f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(player);
                                             }
 
@@ -1265,10 +1244,11 @@ namespace LasMonjas.Patches
                                         // ZL:
                                         if (activatedSensei) {
                                             foreach (PlayerControl player in ZombieLaboratory.zombieTeam) {
-                                                if (player == PlayerControl.LocalPlayer)
-                                                    player.transform.position = new Vector3(-4.85f, 6, PlayerControl.LocalPlayer.transform.position.z);
+                                                player.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                                                player.transform.position = new Vector3(-4.85f, 6, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(player);
                                             }
+
                                             foreach (PlayerControl player in ZombieLaboratory.survivorTeam) {
                                                 if (player == PlayerControl.LocalPlayer && PlayerControl.LocalPlayer != ZombieLaboratory.nursePlayer) {
                                                     player.transform.position = new Vector3(4.75f, -8.5f, PlayerControl.LocalPlayer.transform.position.z);
@@ -1337,8 +1317,8 @@ namespace LasMonjas.Patches
                                         }
                                         else {
                                             foreach (PlayerControl player in ZombieLaboratory.zombieTeam) {
-                                                if (player == PlayerControl.LocalPlayer)
-                                                    player.transform.position = new Vector3(-17.25f, -13.25f, PlayerControl.LocalPlayer.transform.position.z);
+                                                player.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                                                player.transform.position = new Vector3(-17.25f, -13.25f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(player);
                                             }
 
@@ -1421,7 +1401,8 @@ namespace LasMonjas.Patches
                                                 }
                                             }
                                             else {
-                                                if (PlayerControl.LocalPlayer == BattleRoyale.serialKiller) {
+                                                if (BattleRoyale.serialKiller != null) {
+                                                    BattleRoyale.serialKiller.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                                     BattleRoyale.serialKiller.transform.position = new Vector3(-3.65f, 5f, PlayerControl.LocalPlayer.transform.position.z);
                                                     Helpers.clearAllTasks(BattleRoyale.serialKiller);
                                                 }
@@ -1430,6 +1411,7 @@ namespace LasMonjas.Patches
                                                     player.transform.position = new Vector3(-17.5f, -1.15f, PlayerControl.LocalPlayer.transform.position.z);
                                                     Helpers.clearAllTasks(player);
                                                 }
+
                                                 foreach (PlayerControl player in BattleRoyale.pinkTeam) {
                                                     player.transform.position = new Vector3(7.7f, -0.95f, PlayerControl.LocalPlayer.transform.position.z);
                                                     Helpers.clearAllTasks(player);
@@ -1461,7 +1443,8 @@ namespace LasMonjas.Patches
                                             }
                                             else {
 
-                                                if (PlayerControl.LocalPlayer == BattleRoyale.serialKiller) {
+                                                if (BattleRoyale.serialKiller != null) {
+                                                    BattleRoyale.serialKiller.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                                     BattleRoyale.serialKiller.transform.position = new Vector3(6.35f, -7.5f, PlayerControl.LocalPlayer.transform.position.z);
                                                     Helpers.clearAllTasks(BattleRoyale.serialKiller);
                                                 }
@@ -1494,21 +1477,22 @@ namespace LasMonjas.Patches
                                     case 8:
                                         // MF:
                                         if (activatedSensei) {
-                                            if (PlayerControl.LocalPlayer == MonjaFestival.bigMonjaPlayer) {
+                                            if (MonjaFestival.bigMonjaPlayer != null) {
+                                                MonjaFestival.bigMonjaPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                                 MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-12f, 7f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(MonjaFestival.bigMonjaPlayer);
                                             }
 
                                             foreach (PlayerControl player in MonjaFestival.greenTeam) {
-                                                if (player == PlayerControl.LocalPlayer)
-                                                    player.transform.position = new Vector3(-10.5f, -10, PlayerControl.LocalPlayer.transform.position.z);
+                                                player.transform.position = new Vector3(-10.5f, -10, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(player);
                                             }
+
                                             foreach (PlayerControl player in MonjaFestival.cyanTeam) {
-                                                if (player == PlayerControl.LocalPlayer)
-                                                    player.transform.position = new Vector3(7.4f, -5f, PlayerControl.LocalPlayer.transform.position.z);
+                                                player.transform.position = new Vector3(7.4f, -5f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(player);
                                             }
+
                                             if (PlayerControl.LocalPlayer != null && !createdmonjafestival) {
                                                 GameObject bigSpawnOne = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
                                                 bigSpawnOne.name = "bigSpawnOne";
@@ -1605,19 +1589,19 @@ namespace LasMonjas.Patches
                                             }
                                         }
                                         else {
-                                            if (PlayerControl.LocalPlayer == MonjaFestival.bigMonjaPlayer) {
+                                            if (MonjaFestival.bigMonjaPlayer != null) {
+                                                MonjaFestival.bigMonjaPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                                 MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(4.5f, -7.25f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(MonjaFestival.bigMonjaPlayer);
                                             }
 
                                             foreach (PlayerControl player in MonjaFestival.greenTeam) {
-                                                if (player == PlayerControl.LocalPlayer)
-                                                    player.transform.position = new Vector3(-9f, -2.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                                player.transform.position = new Vector3(-9f, -2.5f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(player);
                                             }
+
                                             foreach (PlayerControl player in MonjaFestival.cyanTeam) {
-                                                if (player == PlayerControl.LocalPlayer)
-                                                    player.transform.position = new Vector3(5f, -15.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                                player.transform.position = new Vector3(5f, -15.5f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(player);
                                             }
 
@@ -1732,21 +1716,22 @@ namespace LasMonjas.Patches
                                 switch (gameType) {
                                     case 2:
                                         // CTF:
-                                        if (PlayerControl.LocalPlayer == CaptureTheFlag.stealerPlayer) {
+                                        if (CaptureTheFlag.stealerPlayer != null) {
+                                            CaptureTheFlag.stealerPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                             CaptureTheFlag.stealerPlayer.transform.position = new Vector3(17.75f, 24f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(CaptureTheFlag.stealerPlayer);
                                         }
 
                                         foreach (PlayerControl player in CaptureTheFlag.redteamFlag) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(2.53f, 10.75f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(2.53f, 10.75f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
+
                                         foreach (PlayerControl player in CaptureTheFlag.blueteamFlag) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(23.25f, 5.25f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(23.25f, 5.25f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
+
                                         if (PlayerControl.LocalPlayer != null && !createdcapturetheflag) {
                                             GameObject redflag = GameObject.Instantiate(CustomMain.customAssets.redflag, PlayerControl.LocalPlayer.transform.parent);
                                             redflag.name = "redflag";
@@ -1772,15 +1757,14 @@ namespace LasMonjas.Patches
                                     case 3:
                                         // PT:
                                         foreach (PlayerControl player in PoliceAndThief.policeTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(1.8f, -1f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(1.8f, -1f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
-                                        foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
-                                            if (player == PlayerControl.LocalPlayer) {
-                                                player.transform.position = new Vector3(17.75f, 11.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
 
+                                        foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
+                                            player.transform.position = new Vector3(17.75f, 11.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                            Helpers.clearAllTasks(player);
+                                            if (player == PlayerControl.LocalPlayer) {
                                                 // Add Arrows pointing the release and deliver point
                                                 if (PoliceAndThief.localThiefReleaseArrow.Count == 0) {
                                                     PoliceAndThief.localThiefReleaseArrow.Add(new Arrow(Palette.PlayerColors[10]));
@@ -1792,6 +1776,7 @@ namespace LasMonjas.Patches
                                                 }
                                             }
                                         }
+
                                         if (PlayerControl.LocalPlayer != null && !createdpoliceandthief) {
                                             GameObject cell = GameObject.Instantiate(CustomMain.customAssets.cell, PlayerControl.LocalPlayer.transform.parent);
                                             cell.name = "cell";
@@ -1892,21 +1877,22 @@ namespace LasMonjas.Patches
                                         break;
                                     case 4:
                                         // KOTH:
-                                        if (PlayerControl.LocalPlayer == KingOfTheHill.usurperPlayer) {
+                                        if (KingOfTheHill.usurperPlayer != null) {
+                                            KingOfTheHill.usurperPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                             KingOfTheHill.usurperPlayer.transform.position = new Vector3(2.5f, 11f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(KingOfTheHill.usurperPlayer);
                                         }
 
                                         foreach (PlayerControl player in KingOfTheHill.greenTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(-4.45f, 1.75f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(-4.45f, 1.75f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
+
                                         foreach (PlayerControl player in KingOfTheHill.yellowTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(19.5f, 4.7f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(19.5f, 4.7f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
+
                                         if (PlayerControl.LocalPlayer != null && !createdkingofthehill) {
                                             GameObject greenteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
                                             greenteamfloor.name = "greenteamfloor";
@@ -1956,14 +1942,12 @@ namespace LasMonjas.Patches
                                         break;
                                     case 5:
                                         // HP:
-                                        if (PlayerControl.LocalPlayer == HotPotato.hotPotatoPlayer) {
-                                            HotPotato.hotPotatoPlayer.transform.position = new Vector3(6.15f, 6.25f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(HotPotato.hotPotatoPlayer);
-                                        }
+                                        HotPotato.hotPotatoPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                                        HotPotato.hotPotatoPlayer.transform.position = new Vector3(6.15f, 6.25f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(HotPotato.hotPotatoPlayer);
 
                                         foreach (PlayerControl player in HotPotato.notPotatoTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(17.75f, 11.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(17.75f, 11.5f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
 
@@ -1978,10 +1962,11 @@ namespace LasMonjas.Patches
                                     case 6:
                                         // ZL:
                                         foreach (PlayerControl player in ZombieLaboratory.zombieTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(18.5f, -1.85f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                                            player.transform.position = new Vector3(18.5f, -1.85f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
+
                                         foreach (PlayerControl player in ZombieLaboratory.survivorTeam) {
                                             if (player == PlayerControl.LocalPlayer && PlayerControl.LocalPlayer != ZombieLaboratory.nursePlayer) {
                                                 player.transform.position = new Vector3(6.1f, 5.75f, PlayerControl.LocalPlayer.transform.position.z);
@@ -2058,7 +2043,8 @@ namespace LasMonjas.Patches
                                             }
                                         }
                                         else {
-                                            if (PlayerControl.LocalPlayer == BattleRoyale.serialKiller) {
+                                            if (BattleRoyale.serialKiller != null) {
+                                                BattleRoyale.serialKiller.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                                 BattleRoyale.serialKiller.transform.position = new Vector3(16.25f, 24.5f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(BattleRoyale.serialKiller);
                                             }
@@ -2067,6 +2053,7 @@ namespace LasMonjas.Patches
                                                 player.transform.position = new Vector3(6.15f, 13.25f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(player);
                                             }
+
                                             foreach (PlayerControl player in BattleRoyale.pinkTeam) {
                                                 player.transform.position = new Vector3(22.25f, 3f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(player);
@@ -2089,21 +2076,22 @@ namespace LasMonjas.Patches
                                         break;
                                     case 8:
                                         // MF:
-                                        if (PlayerControl.LocalPlayer == MonjaFestival.bigMonjaPlayer) {
+                                        if (MonjaFestival.bigMonjaPlayer != null) {
+                                            MonjaFestival.bigMonjaPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                             MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-4.45f, 2f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(MonjaFestival.bigMonjaPlayer);
                                         }
 
                                         foreach (PlayerControl player in MonjaFestival.greenTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(23f, 4.75f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(23f, 4.75f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
+
                                         foreach (PlayerControl player in MonjaFestival.cyanTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(8.5f, 13f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(8.5f, 13f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
+
                                         if (PlayerControl.LocalPlayer != null && !createdmonjafestival) {
                                             GameObject bigSpawnOne = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
                                             bigSpawnOne.name = "bigSpawnOne";
@@ -2223,21 +2211,22 @@ namespace LasMonjas.Patches
                                 switch (gameType) {
                                     case 2:
                                         // CTF:
-                                        if (PlayerControl.LocalPlayer == CaptureTheFlag.stealerPlayer) {
+                                        if (CaptureTheFlag.stealerPlayer != null) {
+                                            CaptureTheFlag.stealerPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                             CaptureTheFlag.stealerPlayer.transform.position = new Vector3(31.75f, -13f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(CaptureTheFlag.stealerPlayer);
                                         }
 
                                         foreach (PlayerControl player in CaptureTheFlag.redteamFlag) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(36.4f, -21.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(36.4f, -21.5f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
+
                                         foreach (PlayerControl player in CaptureTheFlag.blueteamFlag) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(5.4f, -9.45f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(5.4f, -9.45f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
+
                                         if (PlayerControl.LocalPlayer != null && !createdcapturetheflag) {
                                             GameObject redflag = GameObject.Instantiate(CustomMain.customAssets.redflag, PlayerControl.LocalPlayer.transform.parent);
                                             redflag.name = "redflag";
@@ -2263,15 +2252,14 @@ namespace LasMonjas.Patches
                                     case 3:
                                         // PT:
                                         foreach (PlayerControl player in PoliceAndThief.policeTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(8.18f, -7.4f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(8.18f, -7.4f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
-                                        foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
-                                            if (player == PlayerControl.LocalPlayer) {
-                                                player.transform.position = new Vector3(30f, -15.75f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
 
+                                        foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
+                                            player.transform.position = new Vector3(30f, -15.75f, PlayerControl.LocalPlayer.transform.position.z);
+                                            Helpers.clearAllTasks(player);
+                                            if (player == PlayerControl.LocalPlayer) {
                                                 // Add Arrows pointing the release and deliver point
                                                 if (PoliceAndThief.localThiefReleaseArrow.Count == 0) {
                                                     PoliceAndThief.localThiefReleaseArrow.Add(new Arrow(Palette.PlayerColors[10]));
@@ -2283,6 +2271,7 @@ namespace LasMonjas.Patches
                                                 }
                                             }
                                         }
+
                                         if (PlayerControl.LocalPlayer != null && !createdpoliceandthief) {
                                             GameObject cell = GameObject.Instantiate(CustomMain.customAssets.cell, PlayerControl.LocalPlayer.transform.parent);
                                             cell.name = "cell";
@@ -2383,21 +2372,22 @@ namespace LasMonjas.Patches
                                         break;
                                     case 4:
                                         // KOTH:
-                                        if (PlayerControl.LocalPlayer == KingOfTheHill.usurperPlayer) {
+                                        if (KingOfTheHill.usurperPlayer != null) {
+                                            KingOfTheHill.usurperPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                             KingOfTheHill.usurperPlayer.transform.position = new Vector3(20.5f, -12f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(KingOfTheHill.usurperPlayer);
                                         }
 
                                         foreach (PlayerControl player in KingOfTheHill.greenTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(2.25f, -23.75f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(2.25f, -23.75f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
+
                                         foreach (PlayerControl player in KingOfTheHill.yellowTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(36.35f, -6.15f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(36.35f, -6.15f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
+
                                         if (PlayerControl.LocalPlayer != null && !createdkingofthehill) {
                                             GameObject greenteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
                                             greenteamfloor.name = "greenteamfloor";
@@ -2447,14 +2437,12 @@ namespace LasMonjas.Patches
                                         break;
                                     case 5:
                                         // HP:
-                                        if (PlayerControl.LocalPlayer == HotPotato.hotPotatoPlayer) {
-                                            HotPotato.hotPotatoPlayer.transform.position = new Vector3(20.5f, -11.75f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(HotPotato.hotPotatoPlayer);
-                                        }
+                                        HotPotato.hotPotatoPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                                        HotPotato.hotPotatoPlayer.transform.position = new Vector3(20.5f, -11.75f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(HotPotato.hotPotatoPlayer);
 
                                         foreach (PlayerControl player in HotPotato.notPotatoTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(12.25f, -16f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(12.25f, -16f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
 
@@ -2469,10 +2457,11 @@ namespace LasMonjas.Patches
                                     case 6:
                                         // ZL:
                                         foreach (PlayerControl player in ZombieLaboratory.zombieTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(17.15f, -17.15f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                                            player.transform.position = new Vector3(17.15f, -17.15f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
+
                                         foreach (PlayerControl player in ZombieLaboratory.survivorTeam) {
                                             if (player == PlayerControl.LocalPlayer && PlayerControl.LocalPlayer != ZombieLaboratory.nursePlayer) {
                                                 player.transform.position = new Vector3(40.4f, -6.8f, PlayerControl.LocalPlayer.transform.position.z);
@@ -2549,7 +2538,8 @@ namespace LasMonjas.Patches
                                             }
                                         }
                                         else {
-                                            if (PlayerControl.LocalPlayer == BattleRoyale.serialKiller) {
+                                            if (BattleRoyale.serialKiller != null) {
+                                                BattleRoyale.serialKiller.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                                 BattleRoyale.serialKiller.transform.position = new Vector3(22.3f, -19.15f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(BattleRoyale.serialKiller);
                                             }
@@ -2580,19 +2570,19 @@ namespace LasMonjas.Patches
                                         break;
                                     case 8:
                                         // MF:
-                                        if (PlayerControl.LocalPlayer == MonjaFestival.bigMonjaPlayer) {
+                                        if (MonjaFestival.bigMonjaPlayer != null) {
+                                            MonjaFestival.bigMonjaPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                             MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(21.75f, -25.15f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(MonjaFestival.bigMonjaPlayer);
                                         }
 
                                         foreach (PlayerControl player in MonjaFestival.greenTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(31.5f, -7.75f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(31.5f, -7.75f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
+
                                         foreach (PlayerControl player in MonjaFestival.cyanTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(2.35f, -23.75f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(2.35f, -23.75f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
                                         if (PlayerControl.LocalPlayer != null && !createdmonjafestival) {
@@ -2712,21 +2702,22 @@ namespace LasMonjas.Patches
                                 switch (gameType) {
                                     case 2:
                                         // CTF:
-                                        if (PlayerControl.LocalPlayer == CaptureTheFlag.stealerPlayer) {
+                                        if (CaptureTheFlag.stealerPlayer != null) {
+                                            CaptureTheFlag.stealerPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                             CaptureTheFlag.stealerPlayer.transform.position = new Vector3(-6.35f, -7.5f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(CaptureTheFlag.stealerPlayer);
                                         }
 
                                         foreach (PlayerControl player in CaptureTheFlag.redteamFlag) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(20.5f, -5.15f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(20.5f, -5.15f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
+
                                         foreach (PlayerControl player in CaptureTheFlag.blueteamFlag) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(-16.5f, -4.45f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(-16.5f, -4.45f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
+
                                         if (PlayerControl.LocalPlayer != null && !createdcapturetheflag) {
                                             GameObject redflag = GameObject.Instantiate(CustomMain.customAssets.redflag, PlayerControl.LocalPlayer.transform.parent);
                                             redflag.name = "redflag";
@@ -2752,15 +2743,14 @@ namespace LasMonjas.Patches
                                     case 3:
                                         // PT:
                                         foreach (PlayerControl player in PoliceAndThief.policeTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(10.2f, 1.18f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(10.2f, 1.18f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
-                                        foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
-                                            if (player == PlayerControl.LocalPlayer) {
-                                                player.transform.position = new Vector3(1.31f, -16.25f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
 
+                                        foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
+                                            player.transform.position = new Vector3(1.31f, -16.25f, PlayerControl.LocalPlayer.transform.position.z);
+                                            Helpers.clearAllTasks(player);
+                                            if (player == PlayerControl.LocalPlayer) {
                                                 // Add Arrows pointing the release and deliver point
                                                 if (PoliceAndThief.localThiefReleaseArrow.Count == 0) {
                                                     PoliceAndThief.localThiefReleaseArrow.Add(new Arrow(Palette.PlayerColors[10]));
@@ -2772,6 +2762,7 @@ namespace LasMonjas.Patches
                                                 }
                                             }
                                         }
+
                                         if (PlayerControl.LocalPlayer != null && !createdpoliceandthief) {
                                             GameObject cell = GameObject.Instantiate(CustomMain.customAssets.cell, PlayerControl.LocalPlayer.transform.parent);
                                             cell.name = "cell";
@@ -2875,21 +2866,22 @@ namespace LasMonjas.Patches
                                         break;
                                     case 4:
                                         // KOTH:
-                                        if (PlayerControl.LocalPlayer == KingOfTheHill.usurperPlayer) {
+                                        if (KingOfTheHill.usurperPlayer != null) {
+                                            KingOfTheHill.usurperPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                             KingOfTheHill.usurperPlayer.transform.position = new Vector3(1f, 5.35f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(KingOfTheHill.usurperPlayer);
                                         }
 
                                         foreach (PlayerControl player in KingOfTheHill.greenTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(7f, -8.25f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(7f, -8.25f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
+
                                         foreach (PlayerControl player in KingOfTheHill.yellowTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(-6.25f, -3.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(-6.25f, -3.5f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
+
                                         if (PlayerControl.LocalPlayer != null && !createdkingofthehill) {
                                             GameObject greenteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
                                             greenteamfloor.name = "greenteamfloor";
@@ -2939,14 +2931,12 @@ namespace LasMonjas.Patches
                                         break;
                                     case 5:
                                         // HP:
-                                        if (PlayerControl.LocalPlayer == HotPotato.hotPotatoPlayer) {
-                                            HotPotato.hotPotatoPlayer.transform.position = new Vector3(0.75f, -7f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(HotPotato.hotPotatoPlayer);
-                                        }
+                                        HotPotato.hotPotatoPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                                        HotPotato.hotPotatoPlayer.transform.position = new Vector3(0.75f, -7f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(HotPotato.hotPotatoPlayer);
 
                                         foreach (PlayerControl player in HotPotato.notPotatoTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(-6.25f, -3.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(-6.25f, -3.5f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
 
@@ -2961,8 +2951,8 @@ namespace LasMonjas.Patches
                                     case 6:
                                         // ZL:
                                         foreach (PlayerControl player in ZombieLaboratory.zombieTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(17.25f, -13.25f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                                            player.transform.position = new Vector3(17.25f, -13.25f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
 
@@ -3043,7 +3033,8 @@ namespace LasMonjas.Patches
                                         }
                                         else {
 
-                                            if (PlayerControl.LocalPlayer == BattleRoyale.serialKiller) {
+                                            if (BattleRoyale.serialKiller != null) {
+                                                BattleRoyale.serialKiller.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                                 BattleRoyale.serialKiller.transform.position = new Vector3(-6.35f, -7.5f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(BattleRoyale.serialKiller);
                                             }
@@ -3052,6 +3043,7 @@ namespace LasMonjas.Patches
                                                 player.transform.position = new Vector3(17f, -5.5f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(player);
                                             }
+
                                             foreach (PlayerControl player in BattleRoyale.pinkTeam) {
                                                 player.transform.position = new Vector3(-12f, -4.75f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(player);
@@ -3074,21 +3066,22 @@ namespace LasMonjas.Patches
                                         break;
                                     case 8:
                                         // MF:
-                                        if (PlayerControl.LocalPlayer == MonjaFestival.bigMonjaPlayer) {
+                                        if (MonjaFestival.bigMonjaPlayer != null) {
+                                            MonjaFestival.bigMonjaPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                             MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-4.5f, -7.25f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(MonjaFestival.bigMonjaPlayer);
                                         }
 
                                         foreach (PlayerControl player in MonjaFestival.greenTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(9f, -2.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(9f, -2.5f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
+
                                         foreach (PlayerControl player in MonjaFestival.cyanTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(-5f, -15.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(-5f, -15.5f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
+
                                         if (PlayerControl.LocalPlayer != null && !createdmonjafestival) {
                                             GameObject bigSpawnOne = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
                                             bigSpawnOne.name = "bigSpawnOne";
@@ -3199,21 +3192,22 @@ namespace LasMonjas.Patches
                                 switch (gameType) {
                                     case 2:
                                         // CTF:
-                                        if (PlayerControl.LocalPlayer == CaptureTheFlag.stealerPlayer) {
+                                        if (CaptureTheFlag.stealerPlayer != null) {
+                                            CaptureTheFlag.stealerPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                             CaptureTheFlag.stealerPlayer.transform.position = new Vector3(10.25f, -15.35f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(CaptureTheFlag.stealerPlayer);
                                         }
 
                                         foreach (PlayerControl player in CaptureTheFlag.redteamFlag) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(-17.5f, -1f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(-17.5f, -1f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
+
                                         foreach (PlayerControl player in CaptureTheFlag.blueteamFlag) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(33.6f, 1.45f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(33.6f, 1.45f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
+
                                         if (PlayerControl.LocalPlayer != null && !createdcapturetheflag) {
                                             GameObject redflag = GameObject.Instantiate(CustomMain.customAssets.redflag, PlayerControl.LocalPlayer.transform.parent);
                                             redflag.name = "redflag";
@@ -3239,15 +3233,14 @@ namespace LasMonjas.Patches
                                     case 3:
                                         // PT:
                                         foreach (PlayerControl player in PoliceAndThief.policeTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(-18.5f, 0.75f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(-18.5f, 0.75f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
-                                        foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
-                                            if (player == PlayerControl.LocalPlayer) {
-                                                player.transform.position = new Vector3(7.15f, -14.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
 
+                                        foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
+                                            player.transform.position = new Vector3(7.15f, -14.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                            Helpers.clearAllTasks(player);
+                                            if (player == PlayerControl.LocalPlayer) {
                                                 // Add Arrows pointing the release and deliver point
                                                 if (PoliceAndThief.localThiefReleaseArrow.Count == 0) {
                                                     PoliceAndThief.localThiefReleaseArrow.Add(new Arrow(Palette.PlayerColors[10]));
@@ -3259,6 +3252,7 @@ namespace LasMonjas.Patches
                                                 }
                                             }
                                         }
+
                                         if (PlayerControl.LocalPlayer != null && !createdpoliceandthief) {
                                             GameObject cell = GameObject.Instantiate(CustomMain.customAssets.cell, PlayerControl.LocalPlayer.transform.parent);
                                             cell.name = "cell";
@@ -3359,21 +3353,22 @@ namespace LasMonjas.Patches
                                         break;
                                     case 4:
                                         // KOTH:
-                                        if (PlayerControl.LocalPlayer == KingOfTheHill.usurperPlayer) {
+                                        if (KingOfTheHill.usurperPlayer != null) {
+                                            KingOfTheHill.usurperPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                             KingOfTheHill.usurperPlayer.transform.position = new Vector3(12.25f, 2f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(KingOfTheHill.usurperPlayer);
                                         }
 
                                         foreach (PlayerControl player in KingOfTheHill.greenTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(-13.9f, -14.45f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(-13.9f, -14.45f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
+
                                         foreach (PlayerControl player in KingOfTheHill.yellowTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(37.35f, -3.25f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(37.35f, -3.25f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
+
                                         if (PlayerControl.LocalPlayer != null && !createdkingofthehill) {
                                             GameObject greenteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
                                             greenteamfloor.name = "greenteamfloor";
@@ -3423,14 +3418,12 @@ namespace LasMonjas.Patches
                                         break;
                                     case 5:
                                         // HP:
-                                        if (PlayerControl.LocalPlayer == HotPotato.hotPotatoPlayer) {
-                                            HotPotato.hotPotatoPlayer.transform.position = new Vector3(12.25f, 2f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(HotPotato.hotPotatoPlayer);
-                                        }
+                                        HotPotato.hotPotatoPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                                        HotPotato.hotPotatoPlayer.transform.position = new Vector3(12.25f, 2f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(HotPotato.hotPotatoPlayer);
 
                                         foreach (PlayerControl player in HotPotato.notPotatoTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(6.25f, 2.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(6.25f, 2.5f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
 
@@ -3445,8 +3438,8 @@ namespace LasMonjas.Patches
                                     case 6:
                                         // ZL:
                                         foreach (PlayerControl player in ZombieLaboratory.zombieTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(32.35f, 7.25f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                                            player.transform.position = new Vector3(32.35f, 7.25f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
 
@@ -3527,7 +3520,8 @@ namespace LasMonjas.Patches
                                         }
                                         else {
 
-                                            if (PlayerControl.LocalPlayer == BattleRoyale.serialKiller) {
+                                            if (BattleRoyale.serialKiller != null) {
+                                                BattleRoyale.serialKiller.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                                 BattleRoyale.serialKiller.transform.position = new Vector3(12.25f, 2f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(BattleRoyale.serialKiller);
                                             }
@@ -3558,21 +3552,22 @@ namespace LasMonjas.Patches
                                         break;
                                     case 8:
                                         // MF:
-                                        if (PlayerControl.LocalPlayer == MonjaFestival.bigMonjaPlayer) {
+                                        if (MonjaFestival.bigMonjaPlayer != null) {
+                                            MonjaFestival.bigMonjaPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                             MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(6.35f, 2.5f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(MonjaFestival.bigMonjaPlayer);
                                         }
 
                                         foreach (PlayerControl player in MonjaFestival.greenTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(-10.15f, -6.75f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(-10.15f, -6.75f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
+
                                         foreach (PlayerControl player in MonjaFestival.cyanTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(38.25f, 0f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(38.25f, 0f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
+
                                         if (PlayerControl.LocalPlayer != null && !createdmonjafestival) {
                                             GameObject bigSpawnOne = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
                                             bigSpawnOne.name = "bigSpawnOne";
@@ -3707,21 +3702,22 @@ namespace LasMonjas.Patches
                                 switch (gameType) {
                                     case 2:
                                         // CTF:
-                                        if (PlayerControl.LocalPlayer == CaptureTheFlag.stealerPlayer) {
+                                        if (CaptureTheFlag.stealerPlayer != null) {
+                                            CaptureTheFlag.stealerPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                             CaptureTheFlag.stealerPlayer.transform.position = new Vector3(1f, 10f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(CaptureTheFlag.stealerPlayer);
                                         }
 
                                         foreach (PlayerControl player in CaptureTheFlag.redteamFlag) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(-8.35f, 28.25f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(-8.35f, 28.25f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
+
                                         foreach (PlayerControl player in CaptureTheFlag.blueteamFlag) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(12.5f, -31.25f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(12.5f, -31.25f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
+
                                         if (PlayerControl.LocalPlayer != null && !createdcapturetheflag) {
                                             GameObject redflag = GameObject.Instantiate(CustomMain.customAssets.redflag, PlayerControl.LocalPlayer.transform.parent);
                                             redflag.name = "redflag";
@@ -3755,15 +3751,14 @@ namespace LasMonjas.Patches
                                     case 3:
                                         // PT:
                                         foreach (PlayerControl player in PoliceAndThief.policeTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(-8.45f, 27f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(-8.45f, 27f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
-                                        foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
-                                            if (player == PlayerControl.LocalPlayer) {
-                                                player.transform.position = new Vector3(1f, 10f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
 
+                                        foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
+                                            player.transform.position = new Vector3(1f, 10f, PlayerControl.LocalPlayer.transform.position.z);
+                                            Helpers.clearAllTasks(player);
+                                            if (player == PlayerControl.LocalPlayer) {
                                                 // Add Arrows pointing the release and deliver point
                                                 if (PoliceAndThief.localThiefReleaseArrow.Count == 0) {
                                                     PoliceAndThief.localThiefReleaseArrow.Add(new Arrow(Palette.PlayerColors[10]));
@@ -3779,6 +3774,7 @@ namespace LasMonjas.Patches
                                                 }
                                             }
                                         }
+
                                         if (PlayerControl.LocalPlayer != null && !createdpoliceandthief) {
                                             GameObject cell = GameObject.Instantiate(CustomMain.customAssets.cell, PlayerControl.LocalPlayer.transform.parent);
                                             cell.name = "cell";
@@ -3899,21 +3895,22 @@ namespace LasMonjas.Patches
                                         break;
                                     case 4:
                                         // KOTH:
-                                        if (PlayerControl.LocalPlayer == KingOfTheHill.usurperPlayer) {
+                                        if (KingOfTheHill.usurperPlayer != null) {
+                                            KingOfTheHill.usurperPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                             KingOfTheHill.usurperPlayer.transform.position = new Vector3(5.75f, 31.25f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(KingOfTheHill.usurperPlayer);
                                         }
 
                                         foreach (PlayerControl player in KingOfTheHill.greenTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(-12.25f, 18.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(-12.25f, 18.5f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
+
                                         foreach (PlayerControl player in KingOfTheHill.yellowTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(-8.5f, -39.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(-8.5f, -39.5f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
+
                                         if (PlayerControl.LocalPlayer != null && !createdkingofthehill) {
                                             GameObject greenteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
                                             greenteamfloor.name = "greenteamfloor";
@@ -3971,14 +3968,12 @@ namespace LasMonjas.Patches
                                         break;
                                     case 5:
                                         // HP:
-                                        if (PlayerControl.LocalPlayer == HotPotato.hotPotatoPlayer) {
-                                            HotPotato.hotPotatoPlayer.transform.position = new Vector3(-4.25f, -33.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(HotPotato.hotPotatoPlayer);
-                                        }
+                                        HotPotato.hotPotatoPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                                        HotPotato.hotPotatoPlayer.transform.position = new Vector3(-4.25f, -33.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                        Helpers.clearAllTasks(HotPotato.hotPotatoPlayer);
 
                                         foreach (PlayerControl player in HotPotato.notPotatoTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(13f, -25.25f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.transform.position = new Vector3(13f, -25.25f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
 
@@ -3993,8 +3988,8 @@ namespace LasMonjas.Patches
                                     case 6:
                                         // ZL:
                                         foreach (PlayerControl player in ZombieLaboratory.zombieTeam) {
-                                            if (player == PlayerControl.LocalPlayer)
-                                                player.transform.position = new Vector3(1f, 10f, PlayerControl.LocalPlayer.transform.position.z);
+                                            player.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                                            player.transform.position = new Vector3(1f, 10f, PlayerControl.LocalPlayer.transform.position.z);
                                             Helpers.clearAllTasks(player);
                                         }
 
@@ -4097,7 +4092,8 @@ namespace LasMonjas.Patches
                                         }
                                         else {
 
-                                            if (PlayerControl.LocalPlayer == BattleRoyale.serialKiller) {
+                                            if (BattleRoyale.serialKiller != null) {
+                                                BattleRoyale.serialKiller.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                                 BattleRoyale.serialKiller.transform.position = new Vector3(5.75f, 31.25f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(BattleRoyale.serialKiller);
                                             }
@@ -4106,6 +4102,7 @@ namespace LasMonjas.Patches
                                                 player.transform.position = new Vector3(-12.25f, 18.5f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(player);
                                             }
+
                                             foreach (PlayerControl player in BattleRoyale.pinkTeam) {
                                                 player.transform.position = new Vector3(-8.5f, -39.5f, PlayerControl.LocalPlayer.transform.position.z);
                                                 Helpers.clearAllTasks(player);
