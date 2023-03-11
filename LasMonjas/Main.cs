@@ -9,6 +9,8 @@ using Reactor.Networking;
 using Reactor.Networking.Attributes;
 using AmongUs.Data;
 using AmongUs.GameOptions;
+using Il2CppInterop.Runtime.InteropTypes.Arrays;
+using System;
 
 namespace LasMonjas
 {
@@ -20,7 +22,7 @@ namespace LasMonjas
     {
         public const string Id = "me.allul.lasmonjas";
 
-        public const string VersionString = "3.1.2";
+        public const string VersionString = "3.1.3";
 
         public static System.Version Version = System.Version.Parse(VersionString);
         internal static BepInEx.Logging.ManualLogSource Logger;
@@ -36,6 +38,29 @@ namespace LasMonjas
         //public static ConfigEntry<bool> HorseMode { get; set; }
         public static ConfigEntry<bool> MonjaCursor { get; set; }
         public static ConfigEntry<int> modLanguage { get; set; }
+        public static ConfigEntry<string> IpCustom { get; set; }
+        public static ConfigEntry<ushort> PortCustom { get; set; }
+        
+        public static IRegionInfo[] defaultRegions;
+        public static void UpdateRegions() {
+            ServerManager serverManager = DestroyableSingleton<ServerManager>.Instance;
+            var regions = new IRegionInfo[] {
+                new StaticHttpRegionInfo("Custom", StringNames.NoTranslation, IpCustom.Value, new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("Custom", IpCustom.Value, PortCustom.Value, false) })).Cast<IRegionInfo>()
+            };
+
+            IRegionInfo currentRegion = serverManager.CurrentRegion;
+
+            foreach (IRegionInfo region in regions) {
+                if (region != null) { }
+                if (currentRegion != null && region.Name.Equals(currentRegion.Name, StringComparison.OrdinalIgnoreCase))
+                    currentRegion = region;
+                serverManager.AddOrUpdateRegion(region);
+            }
+            
+            if (currentRegion != null) {
+                serverManager.SetRegion(currentRegion);
+            }
+        }
 
         public override void Load() {
             Logger = Log;
@@ -45,9 +70,14 @@ namespace LasMonjas
             GhostsSeeRoles = Config.Bind("Custom", "Ghosts See Roles", true);
             //HorseMode = Config.Bind("Custom", "Horse Mode", false);
             MonjaCursor = Config.Bind("Custom", "Monja Cursor", true);
-
+            IpCustom = Config.Bind("Custom", "Custom Server IP", "127.0.0.1");
+            PortCustom = Config.Bind("Custom", "Custom Server Port", (ushort)22023);
             modLanguage = Config.Bind("Custom", "Mod Language", 1);
 
+            defaultRegions = ServerManager.DefaultRegions;
+
+            UpdateRegions(); 
+            
             GameOptionsData.RecommendedImpostors = GameOptionsData.MaxImpostors = Enumerable.Repeat(3, 16).ToArray(); // Max Imp = Recommended Imp = 3
             GameOptionsData.MinPlayers = Enumerable.Repeat(4, 15).ToArray(); // Min Players = 4
 

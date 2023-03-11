@@ -341,7 +341,6 @@ namespace LasMonjas
         SheriffKill,
         TimeTravelerShield,
         TimeTravelerRewindTime,
-        TimeTravelerRevive,
         SquireSetShielded,
         ShieldedMurderAttempt,
         CheaterCheat,
@@ -376,7 +375,6 @@ namespace LasMonjas
         GamemodeKills,
         
         // Capture the flag
-        CapturetheFlagStealerKill,
         CaptureTheFlagWhoTookTheFlag,
         CaptureTheFlagWhichTeamScored,
 
@@ -389,7 +387,6 @@ namespace LasMonjas
         PoliceandThiefsTased,
 
         // King of the hill
-        KingoftheHillUsurperKill,
         KingoftheHillCapture,
 
         // Hot Potato
@@ -404,9 +401,6 @@ namespace LasMonjas
         EnterLeaveInfirmary,
         NurseHasMedKit,
         ZombieLaboratoryTurnZombie,
-
-        // Battle Royale
-        BattleRoyaleKills,
 
         // Monja Festival
         MonjaFestivalBigMonjaInvisible,
@@ -1511,18 +1505,16 @@ namespace LasMonjas
         }
 
         public static void fixBomb() {
-            GameObject bomb = GameObject.Find("Bomb");
-            if (bomb != null) {
-                bomb.name = "DefusedBomb";
+            if (Bomberman.bombObject != null) {
                 Bomberman.activeBomb = false;
-                bomb.SetActive(false);
+                Bomberman.bombObject.SetActive(false); 
                 resetBomberBombButton();
-
                 //Music after fix bomb
                 if (!Monja.awakened) {
                     changeMusic(2);
                 }
-            }
+                Bomberman.bombObject = null;
+            }            
         }
         public static void bombermanWin() {
             SoundManager.Instance.PlaySound(CustomMain.customAssets.bombermanBombClip, false, 100f);
@@ -3467,37 +3459,6 @@ namespace LasMonjas
             PlayerControl.LocalPlayer.moveable = false;
         }
 
-        public static void timeTravelerRevive(byte playerId) {
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls)
-                if (player.PlayerId == playerId) {
-                    player.Revive();
-                    var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == playerId);
-                    DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == playerId).FirstOrDefault();
-                    if (body != null) UnityEngine.Object.Destroy(body.gameObject);
-                    if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
-                    if (Modifiers.performer != null && player.PlayerId == Modifiers.performer.PlayerId) {
-                        performerIsReported(1);
-                    }
-                    if (Vigilant.vigilantMira != null && player.PlayerId == Vigilant.vigilantMira.PlayerId) {
-                        vigilantMiraRestoreDoorlogItem();
-                    }
-                    if (Hunter.hunter != null && player.PlayerId == Hunter.hunter.PlayerId) {
-                        Hunter.resetHunted();
-                    }
-                    if (Janitor.janitor != null && Janitor.dragginBody) {
-                        janitorResetValues();
-                    }
-                    if (Necromancer.necromancer != null && Necromancer.dragginBody) {
-                        necromancerResetValues();
-                    }
-                    if (TaskMaster.taskMaster != null && player == TaskMaster.taskMaster && TaskMaster.clearedInitialTasks) {
-                        setNewExtraTasks();
-                    }
-                    // Reset zoomed out ghosts
-                    Helpers.toggleZoom(reset: true);
-                }
-        }
-
         public static void squireSetShielded(byte shieldedId) {
             Squire.usedShield = true;
             foreach (PlayerControl player in PlayerControl.AllPlayerControls)
@@ -4675,127 +4636,737 @@ namespace LasMonjas
         public static void gamemodeKills(byte targetId, byte sourceId) {
             PlayerControl killer = Helpers.playerById(sourceId);
             PlayerControl murdered = Helpers.playerById(targetId);
-            killer.MurderPlayer(murdered);
-        }
 
-        public static void capturetheFlagStealerKill(byte targetId, byte sourceId) {
-            PlayerControl killer = Helpers.playerById(sourceId);
-            PlayerControl murdered = Helpers.playerById(targetId);
-
-            if (CaptureTheFlag.stealerPlayer != null && sourceId == CaptureTheFlag.stealerPlayer.PlayerId) {
-                if (CaptureTheFlag.redPlayerWhoHasBlueFlag != null && murdered.PlayerId == CaptureTheFlag.redPlayerWhoHasBlueFlag.PlayerId) {
-                    if (PlayerControl.LocalPlayer == CaptureTheFlag.stealerPlayer) {
-                        new CustomMessage(Language.statusCaptureTheFlagTexts[0], 5, -1, 1f, 16);
+            switch (gameType) {
+                // CTF
+                case 2:
+                    if (CaptureTheFlag.stealerPlayer != null && sourceId == CaptureTheFlag.stealerPlayer.PlayerId) {
+                        if (CaptureTheFlag.redPlayerWhoHasBlueFlag != null && murdered.PlayerId == CaptureTheFlag.redPlayerWhoHasBlueFlag.PlayerId) {
+                            if (PlayerControl.LocalPlayer == CaptureTheFlag.stealerPlayer) {
+                                new CustomMessage(Language.statusCaptureTheFlagTexts[0], 5, -1, 1f, 16);
+                            }
+                            if (CaptureTheFlag.redplayer01 != null && CaptureTheFlag.redplayer01 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
+                                CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer01);
+                                CaptureTheFlag.redplayer01 = CaptureTheFlag.stealerPlayer;
+                                CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
+                                CaptureTheFlag.stealerPlayer = murdered;
+                                CaptureTheFlag.redplayer01.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                                CaptureTheFlag.redplayer01.MurderPlayer(CaptureTheFlag.stealerPlayer);
+                            }
+                            else if (CaptureTheFlag.redplayer02 != null && CaptureTheFlag.redplayer02 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
+                                CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer02);
+                                CaptureTheFlag.redplayer02 = CaptureTheFlag.stealerPlayer;
+                                CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
+                                CaptureTheFlag.stealerPlayer = murdered;
+                                CaptureTheFlag.redplayer02.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                                CaptureTheFlag.redplayer02.MurderPlayer(CaptureTheFlag.stealerPlayer);
+                            }
+                            else if (CaptureTheFlag.redplayer03 != null && CaptureTheFlag.redplayer03 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
+                                CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer03);
+                                CaptureTheFlag.redplayer03 = CaptureTheFlag.stealerPlayer;
+                                CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
+                                CaptureTheFlag.stealerPlayer = murdered;
+                                CaptureTheFlag.redplayer03.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                                CaptureTheFlag.redplayer03.MurderPlayer(CaptureTheFlag.stealerPlayer);
+                            }
+                            else if (CaptureTheFlag.redplayer04 != null && CaptureTheFlag.redplayer04 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
+                                CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer04);
+                                CaptureTheFlag.redplayer04 = CaptureTheFlag.stealerPlayer;
+                                CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
+                                CaptureTheFlag.stealerPlayer = murdered;
+                                CaptureTheFlag.redplayer04.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                                CaptureTheFlag.redplayer04.MurderPlayer(CaptureTheFlag.stealerPlayer);
+                            }
+                            else if (CaptureTheFlag.redplayer05 != null && CaptureTheFlag.redplayer05 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
+                                CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer05);
+                                CaptureTheFlag.redplayer05 = CaptureTheFlag.stealerPlayer;
+                                CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
+                                CaptureTheFlag.stealerPlayer = murdered;
+                                CaptureTheFlag.redplayer05.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                                CaptureTheFlag.redplayer05.MurderPlayer(CaptureTheFlag.stealerPlayer);
+                            }
+                            else if (CaptureTheFlag.redplayer06 != null && CaptureTheFlag.redplayer06 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
+                                CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer06);
+                                CaptureTheFlag.redplayer06 = CaptureTheFlag.stealerPlayer;
+                                CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
+                                CaptureTheFlag.stealerPlayer = murdered;
+                                CaptureTheFlag.redplayer06.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                                CaptureTheFlag.redplayer06.MurderPlayer(CaptureTheFlag.stealerPlayer);
+                            }
+                            else if (CaptureTheFlag.redplayer07 != null && CaptureTheFlag.redplayer07 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
+                                CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer07);
+                                CaptureTheFlag.redplayer07 = CaptureTheFlag.stealerPlayer;
+                                CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
+                                CaptureTheFlag.stealerPlayer = murdered;
+                                CaptureTheFlag.redplayer07.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                                CaptureTheFlag.redplayer07.MurderPlayer(CaptureTheFlag.stealerPlayer);
+                            }
+                        }
+                        else if (CaptureTheFlag.bluePlayerWhoHasRedFlag != null && murdered.PlayerId == CaptureTheFlag.bluePlayerWhoHasRedFlag.PlayerId) {
+                            if (PlayerControl.LocalPlayer == CaptureTheFlag.stealerPlayer) {
+                                new CustomMessage(Language.statusCaptureTheFlagTexts[1], 5, -1, 1f, 16);
+                            }
+                            if (CaptureTheFlag.blueplayer01 != null && CaptureTheFlag.blueplayer01 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
+                                CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer01);
+                                CaptureTheFlag.blueplayer01 = CaptureTheFlag.stealerPlayer;
+                                CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
+                                CaptureTheFlag.stealerPlayer = murdered;
+                                CaptureTheFlag.blueplayer01.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                                CaptureTheFlag.blueplayer01.MurderPlayer(CaptureTheFlag.stealerPlayer);
+                            }
+                            else if (CaptureTheFlag.blueplayer02 != null && CaptureTheFlag.blueplayer02 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
+                                CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer02);
+                                CaptureTheFlag.blueplayer02 = CaptureTheFlag.stealerPlayer;
+                                CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
+                                CaptureTheFlag.stealerPlayer = murdered;
+                                CaptureTheFlag.blueplayer02.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                                CaptureTheFlag.blueplayer02.MurderPlayer(CaptureTheFlag.stealerPlayer);
+                            }
+                            else if (CaptureTheFlag.blueplayer03 != null && CaptureTheFlag.blueplayer03 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
+                                CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer03);
+                                CaptureTheFlag.blueplayer03 = CaptureTheFlag.stealerPlayer;
+                                CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
+                                CaptureTheFlag.stealerPlayer = murdered;
+                                CaptureTheFlag.blueplayer03.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                                CaptureTheFlag.blueplayer03.MurderPlayer(CaptureTheFlag.stealerPlayer);
+                            }
+                            else if (CaptureTheFlag.blueplayer04 != null && CaptureTheFlag.blueplayer04 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
+                                CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer04);
+                                CaptureTheFlag.blueplayer04 = CaptureTheFlag.stealerPlayer;
+                                CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
+                                CaptureTheFlag.stealerPlayer = murdered;
+                                CaptureTheFlag.blueplayer04.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                                CaptureTheFlag.blueplayer04.MurderPlayer(CaptureTheFlag.stealerPlayer);
+                            }
+                            else if (CaptureTheFlag.blueplayer05 != null && CaptureTheFlag.blueplayer05 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
+                                CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer05);
+                                CaptureTheFlag.blueplayer05 = CaptureTheFlag.stealerPlayer;
+                                CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
+                                CaptureTheFlag.stealerPlayer = murdered;
+                                CaptureTheFlag.blueplayer05.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                                CaptureTheFlag.blueplayer05.MurderPlayer(CaptureTheFlag.stealerPlayer);
+                            }
+                            else if (CaptureTheFlag.blueplayer06 != null && CaptureTheFlag.blueplayer06 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
+                                CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer06);
+                                CaptureTheFlag.blueplayer06 = CaptureTheFlag.stealerPlayer;
+                                CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
+                                CaptureTheFlag.stealerPlayer = murdered;
+                                CaptureTheFlag.blueplayer06.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                                CaptureTheFlag.blueplayer06.MurderPlayer(CaptureTheFlag.stealerPlayer);
+                            }
+                            else if (CaptureTheFlag.blueplayer07 != null && CaptureTheFlag.blueplayer07 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
+                                CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer07);
+                                CaptureTheFlag.blueplayer07 = CaptureTheFlag.stealerPlayer;
+                                CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
+                                CaptureTheFlag.stealerPlayer = murdered;
+                                CaptureTheFlag.blueplayer07.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                                CaptureTheFlag.blueplayer07.MurderPlayer(CaptureTheFlag.stealerPlayer);
+                            }
+                        }
+                        else {
+                            CaptureTheFlag.stealerPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                            killer.MurderPlayer(murdered);
+                            CaptureTheFlag.stealerPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                        }
                     }
-                    if (CaptureTheFlag.redplayer01 != null && CaptureTheFlag.redplayer01 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
-                        CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer01);
-                        CaptureTheFlag.redplayer01 = CaptureTheFlag.stealerPlayer;
-                        CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                        CaptureTheFlag.stealerPlayer = murdered;
-                        CaptureTheFlag.redplayer01.MurderPlayer(CaptureTheFlag.stealerPlayer);
+                    else {
+                        killer.MurderPlayer(murdered);
                     }
-                    else if (CaptureTheFlag.redplayer02 != null && CaptureTheFlag.redplayer02 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
-                        CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer02);
-                        CaptureTheFlag.redplayer02 = CaptureTheFlag.stealerPlayer;
-                        CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                        CaptureTheFlag.stealerPlayer = murdered;
-                        CaptureTheFlag.redplayer02.MurderPlayer(CaptureTheFlag.stealerPlayer);
-                    }
-                    else if (CaptureTheFlag.redplayer03 != null && CaptureTheFlag.redplayer03 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
-                        CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer03);
-                        CaptureTheFlag.redplayer03 = CaptureTheFlag.stealerPlayer;
-                        CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                        CaptureTheFlag.stealerPlayer = murdered;
-                        CaptureTheFlag.redplayer03.MurderPlayer(CaptureTheFlag.stealerPlayer);
-                    }
-                    else if (CaptureTheFlag.redplayer04 != null && CaptureTheFlag.redplayer04 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
-                        CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer04);
-                        CaptureTheFlag.redplayer04 = CaptureTheFlag.stealerPlayer;
-                        CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                        CaptureTheFlag.stealerPlayer = murdered;
-                        CaptureTheFlag.redplayer04.MurderPlayer(CaptureTheFlag.stealerPlayer);
-                    }
-                    else if (CaptureTheFlag.redplayer05 != null && CaptureTheFlag.redplayer05 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
-                        CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer05);
-                        CaptureTheFlag.redplayer05 = CaptureTheFlag.stealerPlayer;
-                        CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                        CaptureTheFlag.stealerPlayer = murdered;
-                        CaptureTheFlag.redplayer05.MurderPlayer(CaptureTheFlag.stealerPlayer);
-                    }
-                    else if (CaptureTheFlag.redplayer06 != null && CaptureTheFlag.redplayer06 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
-                        CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer06);
-                        CaptureTheFlag.redplayer06 = CaptureTheFlag.stealerPlayer;
-                        CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                        CaptureTheFlag.stealerPlayer = murdered;
-                        CaptureTheFlag.redplayer06.MurderPlayer(CaptureTheFlag.stealerPlayer);
-                    }
-                    else if (CaptureTheFlag.redplayer07 != null && CaptureTheFlag.redplayer07 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
-                        CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer07);
-                        CaptureTheFlag.redplayer07 = CaptureTheFlag.stealerPlayer;
-                        CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                        CaptureTheFlag.stealerPlayer = murdered;
-                        CaptureTheFlag.redplayer07.MurderPlayer(CaptureTheFlag.stealerPlayer);
-                    }
-                }
-                else if (CaptureTheFlag.bluePlayerWhoHasRedFlag != null && murdered.PlayerId == CaptureTheFlag.bluePlayerWhoHasRedFlag.PlayerId) {
-                    if (PlayerControl.LocalPlayer == CaptureTheFlag.stealerPlayer) {
-                        new CustomMessage(Language.statusCaptureTheFlagTexts[1], 5, -1, 1f, 16);
-                    }
-                    if (CaptureTheFlag.blueplayer01 != null && CaptureTheFlag.blueplayer01 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
-                        CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer01);
-                        CaptureTheFlag.blueplayer01 = CaptureTheFlag.stealerPlayer;
-                        CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                        CaptureTheFlag.stealerPlayer = murdered;
-                        CaptureTheFlag.blueplayer01.MurderPlayer(CaptureTheFlag.stealerPlayer);
-                    }
-                    else if (CaptureTheFlag.blueplayer02 != null && CaptureTheFlag.blueplayer02 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
-                        CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer02);
-                        CaptureTheFlag.blueplayer02 = CaptureTheFlag.stealerPlayer;
-                        CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                        CaptureTheFlag.stealerPlayer = murdered;
-                        CaptureTheFlag.blueplayer02.MurderPlayer(CaptureTheFlag.stealerPlayer);
-                    }
-                    else if (CaptureTheFlag.blueplayer03 != null && CaptureTheFlag.blueplayer03 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
-                        CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer03);
-                        CaptureTheFlag.blueplayer03 = CaptureTheFlag.stealerPlayer;
-                        CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                        CaptureTheFlag.stealerPlayer = murdered;
-                        CaptureTheFlag.blueplayer03.MurderPlayer(CaptureTheFlag.stealerPlayer);
-                    }
-                    else if (CaptureTheFlag.blueplayer04 != null && CaptureTheFlag.blueplayer04 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
-                        CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer04);
-                        CaptureTheFlag.blueplayer04 = CaptureTheFlag.stealerPlayer;
-                        CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                        CaptureTheFlag.stealerPlayer = murdered;
-                        CaptureTheFlag.blueplayer04.MurderPlayer(CaptureTheFlag.stealerPlayer);
-                    }
-                    else if (CaptureTheFlag.blueplayer05 != null && CaptureTheFlag.blueplayer05 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
-                        CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer05);
-                        CaptureTheFlag.blueplayer05 = CaptureTheFlag.stealerPlayer;
-                        CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                        CaptureTheFlag.stealerPlayer = murdered;
-                        CaptureTheFlag.blueplayer05.MurderPlayer(CaptureTheFlag.stealerPlayer);
-                    }
-                    else if (CaptureTheFlag.blueplayer06 != null && CaptureTheFlag.blueplayer06 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
-                        CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer06);
-                        CaptureTheFlag.blueplayer06 = CaptureTheFlag.stealerPlayer;
-                        CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                        CaptureTheFlag.stealerPlayer = murdered;
-                        CaptureTheFlag.blueplayer06.MurderPlayer(CaptureTheFlag.stealerPlayer);
-                    }
-                    else if (CaptureTheFlag.blueplayer07 != null && CaptureTheFlag.blueplayer07 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
-                        CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer07);
-                        CaptureTheFlag.blueplayer07 = CaptureTheFlag.stealerPlayer;
-                        CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                        CaptureTheFlag.stealerPlayer = murdered;
-                        CaptureTheFlag.blueplayer07.MurderPlayer(CaptureTheFlag.stealerPlayer);
-                    }
-                }
-                else {
+                    break;
+                // PAT
+                case 3:
                     killer.MurderPlayer(murdered);
-                }
-            } else {
-                killer.MurderPlayer(murdered);
+                    break;
+                // KOTH
+                case 4:
+                    if (KingOfTheHill.usurperPlayer != null && sourceId == KingOfTheHill.usurperPlayer.PlayerId) {
+                        if (murdered.PlayerId == KingOfTheHill.greenKingplayer.PlayerId) {
+                            KingOfTheHill.greenTeam.Remove(KingOfTheHill.greenKingplayer);
+                            KingOfTheHill.greenKingplayer = KingOfTheHill.usurperPlayer;
+                            KingOfTheHill.greenTeam.Add(KingOfTheHill.usurperPlayer);
+                            KingOfTheHill.usurperPlayer = murdered;
+                            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                                KingOfTheHill.greenkingaura.transform.position = new Vector3(KingOfTheHill.greenKingplayer.transform.position.x, KingOfTheHill.greenKingplayer.transform.position.y, -0.5f);
+                            }
+                            else {
+                                KingOfTheHill.greenkingaura.transform.position = new Vector3(KingOfTheHill.greenKingplayer.transform.position.x, KingOfTheHill.greenKingplayer.transform.position.y, 0.4f);
+                            }
+                            KingOfTheHill.greenkingaura.transform.parent = KingOfTheHill.greenKingplayer.transform;
+                            if (PlayerControl.LocalPlayer == KingOfTheHill.greenKingplayer) {
+                                new CustomMessage(Language.statusKingOfTheHillTexts[0], 5, -1, 1.6f, 16);
+                                KingOfTheHill.localArrows[3].arrow.SetActive(false);
+                                KingOfTheHill.localArrows[4].arrow.SetActive(false);
+                                KingOfTheHill.localArrows[5].arrow.SetActive(false);
+                            }
+                            KingOfTheHill.greenKingplayer.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                            KingOfTheHill.greenKingplayer.MurderPlayer(KingOfTheHill.usurperPlayer);
+                            if (PlayerControl.LocalPlayer == KingOfTheHill.usurperPlayer) {
+                                KingOfTheHill.localArrows[3].arrow.SetActive(false);
+                                KingOfTheHill.localArrows[4].arrow.SetActive(true);
+                                KingOfTheHill.localArrows[5].arrow.SetActive(true);
+                            }
+                        }
+                        else if (murdered.PlayerId == KingOfTheHill.yellowKingplayer.PlayerId) {
+                            KingOfTheHill.yellowTeam.Remove(KingOfTheHill.yellowKingplayer);
+                            KingOfTheHill.yellowKingplayer = KingOfTheHill.usurperPlayer;
+                            KingOfTheHill.yellowTeam.Add(KingOfTheHill.usurperPlayer);
+                            KingOfTheHill.usurperPlayer = murdered;
+                            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                                KingOfTheHill.yellowkingaura.transform.position = new Vector3(KingOfTheHill.yellowKingplayer.transform.position.x, KingOfTheHill.yellowKingplayer.transform.position.y, -0.5f);
+                            }
+                            else {
+                                KingOfTheHill.yellowkingaura.transform.position = new Vector3(KingOfTheHill.yellowKingplayer.transform.position.x, KingOfTheHill.yellowKingplayer.transform.position.y, 0.4f);
+                            }
+                            KingOfTheHill.yellowkingaura.transform.parent = KingOfTheHill.yellowKingplayer.transform;
+                            if (PlayerControl.LocalPlayer == KingOfTheHill.yellowKingplayer) {
+                                new CustomMessage(Language.statusKingOfTheHillTexts[1], 5, -1, 1.6f, 16);
+                                KingOfTheHill.localArrows[3].arrow.SetActive(false);
+                                KingOfTheHill.localArrows[4].arrow.SetActive(false);
+                                KingOfTheHill.localArrows[5].arrow.SetActive(false);
+                            }
+                            KingOfTheHill.yellowKingplayer.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                            KingOfTheHill.yellowKingplayer.MurderPlayer(KingOfTheHill.usurperPlayer);
+                            if (PlayerControl.LocalPlayer == KingOfTheHill.usurperPlayer) {
+                                KingOfTheHill.localArrows[3].arrow.SetActive(false);
+                                KingOfTheHill.localArrows[4].arrow.SetActive(true);
+                                KingOfTheHill.localArrows[5].arrow.SetActive(true);
+                            }
+                        }
+                        else {
+                            KingOfTheHill.usurperPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                            killer.MurderPlayer(murdered);
+                            KingOfTheHill.usurperPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                        }
+                    }
+                    else {
+                        killer.MurderPlayer(murdered);
+                    }
+                    break;
+                // ZL
+                case 6:
+                    if (ZombieLaboratory.zombiePlayer01 != null && killer == ZombieLaboratory.zombiePlayer01) {
+                        ZombieLaboratory.zombiePlayer01.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                    }
+                    if (ZombieLaboratory.zombiePlayer02 != null && killer == ZombieLaboratory.zombiePlayer02) {
+                        ZombieLaboratory.zombiePlayer02.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                    }
+                    if (ZombieLaboratory.zombiePlayer03 != null && killer == ZombieLaboratory.zombiePlayer03) {
+                        ZombieLaboratory.zombiePlayer03.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                    }
+                    if (ZombieLaboratory.zombiePlayer04 != null && killer == ZombieLaboratory.zombiePlayer04) {
+                        ZombieLaboratory.zombiePlayer04.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                    }
+                    if (ZombieLaboratory.zombiePlayer05 != null && killer == ZombieLaboratory.zombiePlayer05) {
+                        ZombieLaboratory.zombiePlayer05.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                    }
+                    if (ZombieLaboratory.zombiePlayer06 != null && killer == ZombieLaboratory.zombiePlayer06) {
+                        ZombieLaboratory.zombiePlayer06.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                    }
+                    if (ZombieLaboratory.zombiePlayer07 != null && killer == ZombieLaboratory.zombiePlayer07) {
+                        ZombieLaboratory.zombiePlayer07.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                    }
+                    if (ZombieLaboratory.zombiePlayer08 != null && killer == ZombieLaboratory.zombiePlayer08) {
+                        ZombieLaboratory.zombiePlayer08.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                    }
+                    if (ZombieLaboratory.zombiePlayer09 != null && killer == ZombieLaboratory.zombiePlayer09) {
+                        ZombieLaboratory.zombiePlayer09.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                    }
+                    if (ZombieLaboratory.zombiePlayer10 != null && killer == ZombieLaboratory.zombiePlayer10) {
+                        ZombieLaboratory.zombiePlayer10.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                    }
+                    if (ZombieLaboratory.zombiePlayer11 != null && killer == ZombieLaboratory.zombiePlayer11) {
+                        ZombieLaboratory.zombiePlayer11.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                    }
+                    if (ZombieLaboratory.zombiePlayer12 != null && killer == ZombieLaboratory.zombiePlayer12) {
+                        ZombieLaboratory.zombiePlayer12.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                    }
+                    if (ZombieLaboratory.zombiePlayer13 != null && killer == ZombieLaboratory.zombiePlayer13) {
+                        ZombieLaboratory.zombiePlayer13.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                    }
+                    if (ZombieLaboratory.zombiePlayer14 != null && killer == ZombieLaboratory.zombiePlayer14) {
+                        ZombieLaboratory.zombiePlayer14.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                    }
+                    killer.MurderPlayer(murdered);
+                    if (ZombieLaboratory.zombiePlayer01 != null && killer == ZombieLaboratory.zombiePlayer01) {
+                        ZombieLaboratory.zombiePlayer01.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                    }
+                    if (ZombieLaboratory.zombiePlayer02 != null && killer == ZombieLaboratory.zombiePlayer02) {
+                        ZombieLaboratory.zombiePlayer02.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                    }
+                    if (ZombieLaboratory.zombiePlayer03 != null && killer == ZombieLaboratory.zombiePlayer03) {
+                        ZombieLaboratory.zombiePlayer03.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                    }
+                    if (ZombieLaboratory.zombiePlayer04 != null && killer == ZombieLaboratory.zombiePlayer04) {
+                        ZombieLaboratory.zombiePlayer04.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                    }
+                    if (ZombieLaboratory.zombiePlayer05 != null && killer == ZombieLaboratory.zombiePlayer05) {
+                        ZombieLaboratory.zombiePlayer05.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                    }
+                    if (ZombieLaboratory.zombiePlayer06 != null && killer == ZombieLaboratory.zombiePlayer06) {
+                        ZombieLaboratory.zombiePlayer06.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                    }
+                    if (ZombieLaboratory.zombiePlayer07 != null && killer == ZombieLaboratory.zombiePlayer07) {
+                        ZombieLaboratory.zombiePlayer07.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                    }
+                    if (ZombieLaboratory.zombiePlayer08 != null && killer == ZombieLaboratory.zombiePlayer08) {
+                        ZombieLaboratory.zombiePlayer08.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                    }
+                    if (ZombieLaboratory.zombiePlayer09 != null && killer == ZombieLaboratory.zombiePlayer09) {
+                        ZombieLaboratory.zombiePlayer09.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                    }
+                    if (ZombieLaboratory.zombiePlayer10 != null && killer == ZombieLaboratory.zombiePlayer10) {
+                        ZombieLaboratory.zombiePlayer10.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                    }
+                    if (ZombieLaboratory.zombiePlayer11 != null && killer == ZombieLaboratory.zombiePlayer11) {
+                        ZombieLaboratory.zombiePlayer11.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                    }
+                    if (ZombieLaboratory.zombiePlayer12 != null && killer == ZombieLaboratory.zombiePlayer12) {
+                        ZombieLaboratory.zombiePlayer12.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                    }
+                    if (ZombieLaboratory.zombiePlayer13 != null && killer == ZombieLaboratory.zombiePlayer13) {
+                        ZombieLaboratory.zombiePlayer13.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                    }
+                    if (ZombieLaboratory.zombiePlayer14 != null && killer == ZombieLaboratory.zombiePlayer14) {
+                        ZombieLaboratory.zombiePlayer14.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                    }
+                    break;
+                // BR
+                case 7:
+                    // Hit sound
+                    if (murdered == PlayerControl.LocalPlayer) {
+                        SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleGetHit, false, 100f);
+                    }
+
+                    if (BattleRoyale.matchType == 0) {
+                        new BattleRoyaleFootprint(murdered, 0);
+
+                        // Remove 1 life and check remaining lifes
+                        if (BattleRoyale.soloPlayer01 != null && murdered == BattleRoyale.soloPlayer01) {
+                            BattleRoyale.soloPlayer01Lifes -= 1;
+                            if (BattleRoyale.soloPlayer01Lifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                battleRoyaleCheckWin(0);
+                            }
+                        }
+                        else if (BattleRoyale.soloPlayer02 != null && murdered == BattleRoyale.soloPlayer02) {
+                            BattleRoyale.soloPlayer02Lifes -= 1;
+                            if (BattleRoyale.soloPlayer02Lifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                battleRoyaleCheckWin(0);
+                            }
+                        }
+                        else if (BattleRoyale.soloPlayer03 != null && murdered == BattleRoyale.soloPlayer03) {
+                            BattleRoyale.soloPlayer03Lifes -= 1;
+                            if (BattleRoyale.soloPlayer03Lifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                battleRoyaleCheckWin(0);
+                            }
+                        }
+                        else if (BattleRoyale.soloPlayer04 != null && murdered == BattleRoyale.soloPlayer04) {
+                            BattleRoyale.soloPlayer04Lifes -= 1;
+                            if (BattleRoyale.soloPlayer04Lifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                battleRoyaleCheckWin(0);
+                            }
+                        }
+                        else if (BattleRoyale.soloPlayer05 != null && murdered == BattleRoyale.soloPlayer05) {
+                            BattleRoyale.soloPlayer05Lifes -= 1;
+                            if (BattleRoyale.soloPlayer05Lifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                battleRoyaleCheckWin(0);
+                            }
+                        }
+                        else if (BattleRoyale.soloPlayer06 != null && murdered == BattleRoyale.soloPlayer06) {
+                            BattleRoyale.soloPlayer06Lifes -= 1;
+                            if (BattleRoyale.soloPlayer06Lifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                battleRoyaleCheckWin(0);
+                            }
+                        }
+                        else if (BattleRoyale.soloPlayer07 != null && murdered == BattleRoyale.soloPlayer07) {
+                            BattleRoyale.soloPlayer07Lifes -= 1;
+                            if (BattleRoyale.soloPlayer07Lifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                battleRoyaleCheckWin(0);
+                            }
+                        }
+                        else if (BattleRoyale.soloPlayer08 != null && murdered == BattleRoyale.soloPlayer08) {
+                            BattleRoyale.soloPlayer08Lifes -= 1;
+                            if (BattleRoyale.soloPlayer08Lifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                battleRoyaleCheckWin(0);
+                            }
+                        }
+                        else if (BattleRoyale.soloPlayer09 != null && murdered == BattleRoyale.soloPlayer09) {
+                            BattleRoyale.soloPlayer09Lifes -= 1;
+                            if (BattleRoyale.soloPlayer09Lifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                battleRoyaleCheckWin(0);
+                            }
+                        }
+                        else if (BattleRoyale.soloPlayer10 != null && murdered == BattleRoyale.soloPlayer10) {
+                            BattleRoyale.soloPlayer10Lifes -= 1;
+                            if (BattleRoyale.soloPlayer10Lifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                battleRoyaleCheckWin(0);
+                            }
+                        }
+                        else if (BattleRoyale.soloPlayer11 != null && murdered == BattleRoyale.soloPlayer11) {
+                            BattleRoyale.soloPlayer11Lifes -= 1;
+                            if (BattleRoyale.soloPlayer11Lifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                battleRoyaleCheckWin(0);
+                            }
+                        }
+                        else if (BattleRoyale.soloPlayer12 != null && murdered == BattleRoyale.soloPlayer12) {
+                            BattleRoyale.soloPlayer12Lifes -= 1;
+                            if (BattleRoyale.soloPlayer12Lifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                battleRoyaleCheckWin(0);
+                            }
+                        }
+                        else if (BattleRoyale.soloPlayer13 != null && murdered == BattleRoyale.soloPlayer13) {
+                            BattleRoyale.soloPlayer13Lifes -= 1;
+                            if (BattleRoyale.soloPlayer13Lifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                battleRoyaleCheckWin(0);
+                            }
+                        }
+                        else if (BattleRoyale.soloPlayer14 != null && murdered == BattleRoyale.soloPlayer14) {
+                            BattleRoyale.soloPlayer14Lifes -= 1;
+                            if (BattleRoyale.soloPlayer14Lifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                battleRoyaleCheckWin(0);
+                            }
+                        }
+                        else if (BattleRoyale.soloPlayer15 != null && murdered == BattleRoyale.soloPlayer15) {
+                            BattleRoyale.soloPlayer15Lifes -= 1;
+                            if (BattleRoyale.soloPlayer15Lifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                battleRoyaleCheckWin(0);
+                            }
+                        }
+                    }
+                    else {
+                        if (BattleRoyale.serialKiller != null && killer == BattleRoyale.serialKiller) {
+                            BattleRoyale.serialKiller.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                        }
+                        // Remove 1 life and check remaining lifes
+                        if (BattleRoyale.limePlayer01 != null && murdered == BattleRoyale.limePlayer01) {
+                            BattleRoyale.limePlayer01Lifes -= 1;
+                            new BattleRoyaleFootprint(murdered, 1);
+                            if (BattleRoyale.limePlayer01Lifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                switch (BattleRoyale.matchType) {
+                                    case 1:
+                                        battleRoyaleCheckWin(1);
+                                        break;
+                                    case 2:
+                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
+                                            battleRoyaleScoreCheck(3, 1);
+                                        }
+                                        else {
+                                            battleRoyaleScoreCheck(2, 1);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                        else if (BattleRoyale.limePlayer02 != null && murdered == BattleRoyale.limePlayer02) {
+                            BattleRoyale.limePlayer02Lifes -= 1;
+                            new BattleRoyaleFootprint(murdered, 1);
+                            if (BattleRoyale.limePlayer02Lifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                switch (BattleRoyale.matchType) {
+                                    case 1:
+                                        battleRoyaleCheckWin(1);
+                                        break;
+                                    case 2:
+                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
+                                            battleRoyaleScoreCheck(3, 1);
+                                        }
+                                        else {
+                                            battleRoyaleScoreCheck(2, 1);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                        else if (BattleRoyale.limePlayer03 != null && murdered == BattleRoyale.limePlayer03) {
+                            BattleRoyale.limePlayer03Lifes -= 1;
+                            new BattleRoyaleFootprint(murdered, 1);
+                            if (BattleRoyale.limePlayer03Lifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                switch (BattleRoyale.matchType) {
+                                    case 1:
+                                        battleRoyaleCheckWin(1);
+                                        break;
+                                    case 2:
+                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
+                                            battleRoyaleScoreCheck(3, 1);
+                                        }
+                                        else {
+                                            battleRoyaleScoreCheck(2, 1);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                        else if (BattleRoyale.limePlayer04 != null && murdered == BattleRoyale.limePlayer04) {
+                            BattleRoyale.limePlayer04Lifes -= 1;
+                            new BattleRoyaleFootprint(murdered, 1);
+                            if (BattleRoyale.limePlayer04Lifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                switch (BattleRoyale.matchType) {
+                                    case 1:
+                                        battleRoyaleCheckWin(1);
+                                        break;
+                                    case 2:
+                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
+                                            battleRoyaleScoreCheck(3, 1);
+                                        }
+                                        else {
+                                            battleRoyaleScoreCheck(2, 1);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                        else if (BattleRoyale.limePlayer05 != null && murdered == BattleRoyale.limePlayer05) {
+                            BattleRoyale.limePlayer05Lifes -= 1;
+                            new BattleRoyaleFootprint(murdered, 1);
+                            if (BattleRoyale.limePlayer05Lifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                switch (BattleRoyale.matchType) {
+                                    case 1:
+                                        battleRoyaleCheckWin(1);
+                                        break;
+                                    case 2:
+                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
+                                            battleRoyaleScoreCheck(3, 1);
+                                        }
+                                        else {
+                                            battleRoyaleScoreCheck(2, 1);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                        else if (BattleRoyale.limePlayer06 != null && murdered == BattleRoyale.limePlayer06) {
+                            BattleRoyale.limePlayer06Lifes -= 1;
+                            new BattleRoyaleFootprint(murdered, 1);
+                            if (BattleRoyale.limePlayer06Lifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                switch (BattleRoyale.matchType) {
+                                    case 1:
+                                        battleRoyaleCheckWin(1);
+                                        break;
+                                    case 2:
+                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
+                                            battleRoyaleScoreCheck(3, 1);
+                                        }
+                                        else {
+                                            battleRoyaleScoreCheck(2, 1);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                        else if (BattleRoyale.limePlayer07 != null && murdered == BattleRoyale.limePlayer07) {
+                            BattleRoyale.limePlayer07Lifes -= 1;
+                            new BattleRoyaleFootprint(murdered, 1);
+                            if (BattleRoyale.limePlayer07Lifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                switch (BattleRoyale.matchType) {
+                                    case 1:
+                                        battleRoyaleCheckWin(1);
+                                        break;
+                                    case 2:
+                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
+                                            battleRoyaleScoreCheck(3, 1);
+                                        }
+                                        else {
+                                            battleRoyaleScoreCheck(2, 1);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                        else if (BattleRoyale.pinkPlayer01 != null && murdered == BattleRoyale.pinkPlayer01) {
+                            BattleRoyale.pinkPlayer01Lifes -= 1;
+                            new BattleRoyaleFootprint(murdered, 2);
+                            if (BattleRoyale.pinkPlayer01Lifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                switch (BattleRoyale.matchType) {
+                                    case 1:
+                                        battleRoyaleCheckWin(2);
+                                        break;
+                                    case 2:
+                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
+                                            battleRoyaleScoreCheck(3, 1);
+                                        }
+                                        else {
+                                            battleRoyaleScoreCheck(1, 1);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                        else if (BattleRoyale.pinkPlayer02 != null && murdered == BattleRoyale.pinkPlayer02) {
+                            BattleRoyale.pinkPlayer02Lifes -= 1;
+                            new BattleRoyaleFootprint(murdered, 2);
+                            if (BattleRoyale.pinkPlayer02Lifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                switch (BattleRoyale.matchType) {
+                                    case 1:
+                                        battleRoyaleCheckWin(2);
+                                        break;
+                                    case 2:
+                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
+                                            battleRoyaleScoreCheck(3, 1);
+                                        }
+                                        else {
+                                            battleRoyaleScoreCheck(1, 1);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                        else if (BattleRoyale.pinkPlayer03 != null && murdered == BattleRoyale.pinkPlayer03) {
+                            BattleRoyale.pinkPlayer03Lifes -= 1;
+                            new BattleRoyaleFootprint(murdered, 2);
+                            if (BattleRoyale.pinkPlayer03Lifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                switch (BattleRoyale.matchType) {
+                                    case 1:
+                                        battleRoyaleCheckWin(2);
+                                        break;
+                                    case 2:
+                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
+                                            battleRoyaleScoreCheck(3, 1);
+                                        }
+                                        else {
+                                            battleRoyaleScoreCheck(1, 1);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                        else if (BattleRoyale.pinkPlayer04 != null && murdered == BattleRoyale.pinkPlayer04) {
+                            BattleRoyale.pinkPlayer04Lifes -= 1;
+                            new BattleRoyaleFootprint(murdered, 2);
+                            if (BattleRoyale.pinkPlayer04Lifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                switch (BattleRoyale.matchType) {
+                                    case 1:
+                                        battleRoyaleCheckWin(2);
+                                        break;
+                                    case 2:
+                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
+                                            battleRoyaleScoreCheck(3, 1);
+                                        }
+                                        else {
+                                            battleRoyaleScoreCheck(1, 1);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                        else if (BattleRoyale.pinkPlayer05 != null && murdered == BattleRoyale.pinkPlayer05) {
+                            BattleRoyale.pinkPlayer05Lifes -= 1;
+                            new BattleRoyaleFootprint(murdered, 2);
+                            if (BattleRoyale.pinkPlayer05Lifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                switch (BattleRoyale.matchType) {
+                                    case 1:
+                                        battleRoyaleCheckWin(2);
+                                        break;
+                                    case 2:
+                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
+                                            battleRoyaleScoreCheck(3, 1);
+                                        }
+                                        else {
+                                            battleRoyaleScoreCheck(1, 1);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                        else if (BattleRoyale.pinkPlayer06 != null && murdered == BattleRoyale.pinkPlayer06) {
+                            BattleRoyale.pinkPlayer06Lifes -= 1;
+                            new BattleRoyaleFootprint(murdered, 2);
+                            if (BattleRoyale.pinkPlayer06Lifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                switch (BattleRoyale.matchType) {
+                                    case 1:
+                                        battleRoyaleCheckWin(2);
+                                        break;
+                                    case 2:
+                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
+                                            battleRoyaleScoreCheck(3, 1);
+                                        }
+                                        else {
+                                            battleRoyaleScoreCheck(1, 1);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                        else if (BattleRoyale.pinkPlayer07 != null && murdered == BattleRoyale.pinkPlayer07) {
+                            BattleRoyale.pinkPlayer07Lifes -= 1;
+                            new BattleRoyaleFootprint(murdered, 2);
+                            if (BattleRoyale.pinkPlayer07Lifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                switch (BattleRoyale.matchType) {
+                                    case 1:
+                                        battleRoyaleCheckWin(2);
+                                        break;
+                                    case 2:
+                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
+                                            battleRoyaleScoreCheck(3, 1);
+                                        }
+                                        else {
+                                            battleRoyaleScoreCheck(1, 1);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                        else if (BattleRoyale.serialKiller != null && murdered == BattleRoyale.serialKiller) {
+                            BattleRoyale.serialKillerLifes -= 1;
+                            new BattleRoyaleFootprint(murdered, 3);
+                            if (BattleRoyale.serialKillerLifes <= 0) {
+                                uncheckedMurderPlayer(sourceId, targetId, 0);
+                                switch (BattleRoyale.matchType) {
+                                    case 1:
+                                        battleRoyaleCheckWin(3);
+                                        break;
+                                    case 2:
+                                        if (BattleRoyale.limePlayer01 != null && sourceId == BattleRoyale.limePlayer01.PlayerId || BattleRoyale.limePlayer02 != null && sourceId == BattleRoyale.limePlayer02.PlayerId || BattleRoyale.limePlayer03 != null && sourceId == BattleRoyale.limePlayer03.PlayerId || BattleRoyale.limePlayer04 != null && sourceId == BattleRoyale.limePlayer04.PlayerId || BattleRoyale.limePlayer05 != null && sourceId == BattleRoyale.limePlayer05.PlayerId || BattleRoyale.limePlayer06 != null && sourceId == BattleRoyale.limePlayer06.PlayerId || BattleRoyale.limePlayer07 != null && sourceId == BattleRoyale.limePlayer07.PlayerId) {
+                                            battleRoyaleScoreCheck(1, 3);
+                                        }
+                                        else {
+                                            battleRoyaleScoreCheck(2, 3);
+                                        }
+                                        break;
+                                }
+                            }
+                        }
+                        if (BattleRoyale.serialKiller != null && killer == BattleRoyale.serialKiller) {
+                            BattleRoyale.serialKiller.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                        }
+                    }
+                    break;
+                // MJ
+                case 8:
+                    if (MonjaFestival.bigMonjaPlayer != null && killer == MonjaFestival.bigMonjaPlayer) {
+                        MonjaFestival.bigMonjaPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                    }
+                    killer.MurderPlayer(murdered);
+                    if (MonjaFestival.bigMonjaPlayer != null && killer == MonjaFestival.bigMonjaPlayer) {
+                        MonjaFestival.bigMonjaPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                    }
+                    break;
             }
         }
 
@@ -6120,70 +6691,6 @@ namespace LasMonjas
             return;
         }
 
-        public static void kingoftheHillUsurperKill(byte targetId, byte sourceId) {
-            PlayerControl killer = Helpers.playerById(sourceId);
-            PlayerControl murdered = Helpers.playerById(targetId);
-
-            if (KingOfTheHill.usurperPlayer != null && sourceId == KingOfTheHill.usurperPlayer.PlayerId) {
-                if (murdered.PlayerId == KingOfTheHill.greenKingplayer.PlayerId) {
-                    KingOfTheHill.greenTeam.Remove(KingOfTheHill.greenKingplayer);
-                    KingOfTheHill.greenKingplayer = KingOfTheHill.usurperPlayer;
-                    KingOfTheHill.greenTeam.Add(KingOfTheHill.usurperPlayer);
-                    KingOfTheHill.usurperPlayer = murdered;
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
-                        KingOfTheHill.greenkingaura.transform.position = new Vector3(KingOfTheHill.greenKingplayer.transform.position.x, KingOfTheHill.greenKingplayer.transform.position.y, -0.5f);
-                    }
-                    else {
-                        KingOfTheHill.greenkingaura.transform.position = new Vector3(KingOfTheHill.greenKingplayer.transform.position.x, KingOfTheHill.greenKingplayer.transform.position.y, 0.4f);
-                    }
-                    KingOfTheHill.greenkingaura.transform.parent = KingOfTheHill.greenKingplayer.transform;
-                    if (PlayerControl.LocalPlayer == KingOfTheHill.greenKingplayer) {
-                        new CustomMessage(Language.statusKingOfTheHillTexts[0], 5, -1, 1.6f, 16);
-                        KingOfTheHill.localArrows[3].arrow.SetActive(false);
-                        KingOfTheHill.localArrows[4].arrow.SetActive(false);
-                        KingOfTheHill.localArrows[5].arrow.SetActive(false);
-                    }
-                    KingOfTheHill.greenKingplayer.MurderPlayer(KingOfTheHill.usurperPlayer);
-                    if (PlayerControl.LocalPlayer == KingOfTheHill.usurperPlayer) {
-                        KingOfTheHill.localArrows[3].arrow.SetActive(false);
-                        KingOfTheHill.localArrows[4].arrow.SetActive(true);
-                        KingOfTheHill.localArrows[5].arrow.SetActive(true);
-                    }
-                }
-                else if (murdered.PlayerId == KingOfTheHill.yellowKingplayer.PlayerId) {
-                    KingOfTheHill.yellowTeam.Remove(KingOfTheHill.yellowKingplayer);
-                    KingOfTheHill.yellowKingplayer = KingOfTheHill.usurperPlayer;
-                    KingOfTheHill.yellowTeam.Add(KingOfTheHill.usurperPlayer);
-                    KingOfTheHill.usurperPlayer = murdered;
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
-                        KingOfTheHill.yellowkingaura.transform.position = new Vector3(KingOfTheHill.yellowKingplayer.transform.position.x, KingOfTheHill.yellowKingplayer.transform.position.y, -0.5f);
-                    }
-                    else {
-                        KingOfTheHill.yellowkingaura.transform.position = new Vector3(KingOfTheHill.yellowKingplayer.transform.position.x, KingOfTheHill.yellowKingplayer.transform.position.y, 0.4f);
-                    }
-                    KingOfTheHill.yellowkingaura.transform.parent = KingOfTheHill.yellowKingplayer.transform;
-                    if (PlayerControl.LocalPlayer == KingOfTheHill.yellowKingplayer) {
-                        new CustomMessage(Language.statusKingOfTheHillTexts[1], 5, -1, 1.6f, 16);
-                        KingOfTheHill.localArrows[3].arrow.SetActive(false);
-                        KingOfTheHill.localArrows[4].arrow.SetActive(false);
-                        KingOfTheHill.localArrows[5].arrow.SetActive(false);
-                    }
-                    KingOfTheHill.yellowKingplayer.MurderPlayer(KingOfTheHill.usurperPlayer);
-                    if (PlayerControl.LocalPlayer == KingOfTheHill.usurperPlayer) {
-                        KingOfTheHill.localArrows[3].arrow.SetActive(false);
-                        KingOfTheHill.localArrows[4].arrow.SetActive(true);
-                        KingOfTheHill.localArrows[5].arrow.SetActive(true);
-                    }
-                }
-                else {
-                    killer.MurderPlayer(murdered);
-                }
-            }
-            else {
-                killer.MurderPlayer(murdered);
-            }
-        }
-
         public static void kingoftheHillCapture(int whichzone, int whichking) {
 
             // Green team
@@ -6313,6 +6820,7 @@ namespace LasMonjas
                     }
 
                     oldHotPotato = HotPotato.hotPotatoPlayer;
+                    oldHotPotato.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
 
                     HotPotato.notPotatoTeam.Add(oldHotPotato);
 
@@ -6377,6 +6885,7 @@ namespace LasMonjas
                     HotPotato.hotPotatoPlayer = player;
                     HotPotato.hotPotatoPlayer.NetTransform.Halt();
                     HotPotato.hotPotatoPlayer.moveable = false;
+                    HotPotato.hotPotatoPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                     HotPotato.hotPotato.transform.position = HotPotato.hotPotatoPlayer.transform.position + new Vector3(0, 0.5f, -0.25f);
                     HotPotato.hotPotato.transform.parent = HotPotato.hotPotatoPlayer.transform;
 
@@ -7074,7 +7583,7 @@ namespace LasMonjas
                 ZombieLaboratory.zombiePlayer14 = player;
                 ZombieLaboratory.zombieTeam.Add(player);
             }
-
+            player.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
             if (!player.Data.IsDead) {
                 switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                     case 0:
@@ -7393,429 +7902,6 @@ namespace LasMonjas
             ZombieLaboratory.triggerSurvivorWin = true;
         }
 
-        public static void battleRoyaleKills(byte targetId, byte sourceId) {
-            PlayerControl murderer = Helpers.playerById(targetId);
-
-            // Hit sound
-            if (murderer == PlayerControl.LocalPlayer) {
-                SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleGetHit, false, 100f);
-            }
-
-            if (BattleRoyale.matchType == 0) {
-                new BattleRoyaleFootprint(murderer, 0);
-
-                // Remove 1 life and check remaining lifes
-                if (BattleRoyale.soloPlayer01 != null && murderer == BattleRoyale.soloPlayer01) {
-                    BattleRoyale.soloPlayer01Lifes -= 1;
-                    if (BattleRoyale.soloPlayer01Lifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        battleRoyaleCheckWin(0);
-                    }
-                }
-                else if (BattleRoyale.soloPlayer02 != null && murderer == BattleRoyale.soloPlayer02) {
-                    BattleRoyale.soloPlayer02Lifes -= 1;
-                    if (BattleRoyale.soloPlayer02Lifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        battleRoyaleCheckWin(0);
-                    }
-                }
-                else if (BattleRoyale.soloPlayer03 != null && murderer == BattleRoyale.soloPlayer03) {
-                    BattleRoyale.soloPlayer03Lifes -= 1;
-                    if (BattleRoyale.soloPlayer03Lifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        battleRoyaleCheckWin(0);
-                    }
-                }
-                else if (BattleRoyale.soloPlayer04 != null && murderer == BattleRoyale.soloPlayer04) {
-                    BattleRoyale.soloPlayer04Lifes -= 1;
-                    if (BattleRoyale.soloPlayer04Lifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        battleRoyaleCheckWin(0);
-                    }
-                }
-                else if (BattleRoyale.soloPlayer05 != null && murderer == BattleRoyale.soloPlayer05) {
-                    BattleRoyale.soloPlayer05Lifes -= 1;
-                    if (BattleRoyale.soloPlayer05Lifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        battleRoyaleCheckWin(0);
-                    }
-                }
-                else if (BattleRoyale.soloPlayer06 != null && murderer == BattleRoyale.soloPlayer06) {
-                    BattleRoyale.soloPlayer06Lifes -= 1;
-                    if (BattleRoyale.soloPlayer06Lifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        battleRoyaleCheckWin(0);
-                    }
-                }
-                else if (BattleRoyale.soloPlayer07 != null && murderer == BattleRoyale.soloPlayer07) {
-                    BattleRoyale.soloPlayer07Lifes -= 1;
-                    if (BattleRoyale.soloPlayer07Lifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        battleRoyaleCheckWin(0);
-                    }
-                }
-                else if (BattleRoyale.soloPlayer08 != null && murderer == BattleRoyale.soloPlayer08) {
-                    BattleRoyale.soloPlayer08Lifes -= 1;
-                    if (BattleRoyale.soloPlayer08Lifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        battleRoyaleCheckWin(0);
-                    }
-                }
-                else if (BattleRoyale.soloPlayer09 != null && murderer == BattleRoyale.soloPlayer09) {
-                    BattleRoyale.soloPlayer09Lifes -= 1;
-                    if (BattleRoyale.soloPlayer09Lifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        battleRoyaleCheckWin(0);
-                    }
-                }
-                else if (BattleRoyale.soloPlayer10 != null && murderer == BattleRoyale.soloPlayer10) {
-                    BattleRoyale.soloPlayer10Lifes -= 1;
-                    if (BattleRoyale.soloPlayer10Lifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        battleRoyaleCheckWin(0);
-                    }
-                }
-                else if (BattleRoyale.soloPlayer11 != null && murderer == BattleRoyale.soloPlayer11) {
-                    BattleRoyale.soloPlayer11Lifes -= 1;
-                    if (BattleRoyale.soloPlayer11Lifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        battleRoyaleCheckWin(0);
-                    }
-                }
-                else if (BattleRoyale.soloPlayer12 != null && murderer == BattleRoyale.soloPlayer12) {
-                    BattleRoyale.soloPlayer12Lifes -= 1;
-                    if (BattleRoyale.soloPlayer12Lifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        battleRoyaleCheckWin(0);
-                    }
-                }
-                else if (BattleRoyale.soloPlayer13 != null && murderer == BattleRoyale.soloPlayer13) {
-                    BattleRoyale.soloPlayer13Lifes -= 1;
-                    if (BattleRoyale.soloPlayer13Lifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        battleRoyaleCheckWin(0);
-                    }
-                }
-                else if (BattleRoyale.soloPlayer14 != null && murderer == BattleRoyale.soloPlayer14) {
-                    BattleRoyale.soloPlayer14Lifes -= 1;
-                    if (BattleRoyale.soloPlayer14Lifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        battleRoyaleCheckWin(0);
-                    }
-                }
-                else if (BattleRoyale.soloPlayer15 != null && murderer == BattleRoyale.soloPlayer15) {
-                    BattleRoyale.soloPlayer15Lifes -= 1;
-                    if (BattleRoyale.soloPlayer15Lifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        battleRoyaleCheckWin(0);
-                    }
-                }
-            }
-            else {
-                // Remove 1 life and check remaining lifes
-                if (BattleRoyale.limePlayer01 != null && murderer == BattleRoyale.limePlayer01) {
-                    BattleRoyale.limePlayer01Lifes -= 1;
-                    new BattleRoyaleFootprint(murderer, 1);
-                    if (BattleRoyale.limePlayer01Lifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        switch (BattleRoyale.matchType) {
-                            case 1:
-                                battleRoyaleCheckWin(1);
-                                break;
-                            case 2:
-                                if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                    battleRoyaleScoreCheck(3, 1);
-                                }
-                                else {
-                                    battleRoyaleScoreCheck(2, 1);
-                                }
-                                break;
-                        }
-                    }
-                }
-                else if (BattleRoyale.limePlayer02 != null && murderer == BattleRoyale.limePlayer02) {
-                    BattleRoyale.limePlayer02Lifes -= 1;
-                    new BattleRoyaleFootprint(murderer, 1);
-                    if (BattleRoyale.limePlayer02Lifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        switch (BattleRoyale.matchType) {
-                            case 1:
-                                battleRoyaleCheckWin(1);
-                                break;
-                            case 2:
-                                if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                    battleRoyaleScoreCheck(3, 1);
-                                }
-                                else {
-                                    battleRoyaleScoreCheck(2, 1);
-                                }
-                                break;
-                        }
-                    }
-                }
-                else if (BattleRoyale.limePlayer03 != null && murderer == BattleRoyale.limePlayer03) {
-                    BattleRoyale.limePlayer03Lifes -= 1;
-                    new BattleRoyaleFootprint(murderer, 1);
-                    if (BattleRoyale.limePlayer03Lifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        switch (BattleRoyale.matchType) {
-                            case 1:
-                                battleRoyaleCheckWin(1);
-                                break;
-                            case 2:
-                                if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                    battleRoyaleScoreCheck(3, 1);
-                                }
-                                else {
-                                    battleRoyaleScoreCheck(2, 1);
-                                }
-                                break;
-                        }
-                    }
-                }
-                else if (BattleRoyale.limePlayer04 != null && murderer == BattleRoyale.limePlayer04) {
-                    BattleRoyale.limePlayer04Lifes -= 1;
-                    new BattleRoyaleFootprint(murderer, 1);
-                    if (BattleRoyale.limePlayer04Lifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        switch (BattleRoyale.matchType) {
-                            case 1:
-                                battleRoyaleCheckWin(1);
-                                break;
-                            case 2:
-                                if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                    battleRoyaleScoreCheck(3, 1);
-                                }
-                                else {
-                                    battleRoyaleScoreCheck(2, 1);
-                                }
-                                break;
-                        }
-                    }
-                }
-                else if (BattleRoyale.limePlayer05 != null && murderer == BattleRoyale.limePlayer05) {
-                    BattleRoyale.limePlayer05Lifes -= 1;
-                    new BattleRoyaleFootprint(murderer, 1);
-                    if (BattleRoyale.limePlayer05Lifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        switch (BattleRoyale.matchType) {
-                            case 1:
-                                battleRoyaleCheckWin(1);
-                                break;
-                            case 2:
-                                if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                    battleRoyaleScoreCheck(3, 1);
-                                }
-                                else {
-                                    battleRoyaleScoreCheck(2, 1);
-                                }
-                                break;
-                        }
-                    }
-                }
-                else if (BattleRoyale.limePlayer06 != null && murderer == BattleRoyale.limePlayer06) {
-                    BattleRoyale.limePlayer06Lifes -= 1;
-                    new BattleRoyaleFootprint(murderer, 1);
-                    if (BattleRoyale.limePlayer06Lifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        switch (BattleRoyale.matchType) {
-                            case 1:
-                                battleRoyaleCheckWin(1);
-                                break;
-                            case 2:
-                                if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                    battleRoyaleScoreCheck(3, 1);
-                                }
-                                else {
-                                    battleRoyaleScoreCheck(2, 1);
-                                }
-                                break;
-                        }
-                    }
-                }
-                else if (BattleRoyale.limePlayer07 != null && murderer == BattleRoyale.limePlayer07) {
-                    BattleRoyale.limePlayer07Lifes -= 1;
-                    new BattleRoyaleFootprint(murderer, 1);
-                    if (BattleRoyale.limePlayer07Lifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        switch (BattleRoyale.matchType) {
-                            case 1:
-                                battleRoyaleCheckWin(1);
-                                break;
-                            case 2:
-                                if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                    battleRoyaleScoreCheck(3, 1);
-                                }
-                                else {
-                                    battleRoyaleScoreCheck(2, 1);
-                                }
-                                break;
-                        }
-                    }
-                }
-                else if (BattleRoyale.pinkPlayer01 != null && murderer == BattleRoyale.pinkPlayer01) {
-                    BattleRoyale.pinkPlayer01Lifes -= 1;
-                    new BattleRoyaleFootprint(murderer, 2);
-                    if (BattleRoyale.pinkPlayer01Lifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        switch (BattleRoyale.matchType) {
-                            case 1:
-                                battleRoyaleCheckWin(2);
-                                break;
-                            case 2:
-                                if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                    battleRoyaleScoreCheck(3, 1);
-                                }
-                                else {
-                                    battleRoyaleScoreCheck(1, 1);
-                                }
-                                break;
-                        }
-                    }
-                }
-                else if (BattleRoyale.pinkPlayer02 != null && murderer == BattleRoyale.pinkPlayer02) {
-                    BattleRoyale.pinkPlayer02Lifes -= 1;
-                    new BattleRoyaleFootprint(murderer, 2);
-                    if (BattleRoyale.pinkPlayer02Lifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        switch (BattleRoyale.matchType) {
-                            case 1:
-                                battleRoyaleCheckWin(2);
-                                break;
-                            case 2:
-                                if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                    battleRoyaleScoreCheck(3, 1);
-                                }
-                                else {
-                                    battleRoyaleScoreCheck(1, 1);
-                                }
-                                break;
-                        }
-                    }
-                }
-                else if (BattleRoyale.pinkPlayer03 != null && murderer == BattleRoyale.pinkPlayer03) {
-                    BattleRoyale.pinkPlayer03Lifes -= 1;
-                    new BattleRoyaleFootprint(murderer, 2);
-                    if (BattleRoyale.pinkPlayer03Lifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        switch (BattleRoyale.matchType) {
-                            case 1:
-                                battleRoyaleCheckWin(2);
-                                break;
-                            case 2:
-                                if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                    battleRoyaleScoreCheck(3, 1);
-                                }
-                                else {
-                                    battleRoyaleScoreCheck(1, 1);
-                                }
-                                break;
-                        }
-                    }
-                }
-                else if (BattleRoyale.pinkPlayer04 != null && murderer == BattleRoyale.pinkPlayer04) {
-                    BattleRoyale.pinkPlayer04Lifes -= 1;
-                    new BattleRoyaleFootprint(murderer, 2);
-                    if (BattleRoyale.pinkPlayer04Lifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        switch (BattleRoyale.matchType) {
-                            case 1:
-                                battleRoyaleCheckWin(2);
-                                break;
-                            case 2:
-                                if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                    battleRoyaleScoreCheck(3, 1);
-                                }
-                                else {
-                                    battleRoyaleScoreCheck(1, 1);
-                                }
-                                break;
-                        }
-                    }
-                }
-                else if (BattleRoyale.pinkPlayer05 != null && murderer == BattleRoyale.pinkPlayer05) {
-                    BattleRoyale.pinkPlayer05Lifes -= 1;
-                    new BattleRoyaleFootprint(murderer, 2);
-                    if (BattleRoyale.pinkPlayer05Lifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        switch (BattleRoyale.matchType) {
-                            case 1:
-                                battleRoyaleCheckWin(2);
-                                break;
-                            case 2:
-                                if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                    battleRoyaleScoreCheck(3, 1);
-                                }
-                                else {
-                                    battleRoyaleScoreCheck(1, 1);
-                                }
-                                break;
-                        }
-                    }
-                }
-                else if (BattleRoyale.pinkPlayer06 != null && murderer == BattleRoyale.pinkPlayer06) {
-                    BattleRoyale.pinkPlayer06Lifes -= 1;
-                    new BattleRoyaleFootprint(murderer, 2);
-                    if (BattleRoyale.pinkPlayer06Lifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        switch (BattleRoyale.matchType) {
-                            case 1:
-                                battleRoyaleCheckWin(2);
-                                break;
-                            case 2:
-                                if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                    battleRoyaleScoreCheck(3, 1);
-                                }
-                                else {
-                                    battleRoyaleScoreCheck(1, 1);
-                                }
-                                break;
-                        }
-                    }
-                }
-                else if (BattleRoyale.pinkPlayer07 != null && murderer == BattleRoyale.pinkPlayer07) {
-                    BattleRoyale.pinkPlayer07Lifes -= 1;
-                    new BattleRoyaleFootprint(murderer, 2);
-                    if (BattleRoyale.pinkPlayer07Lifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        switch (BattleRoyale.matchType) {
-                            case 1:
-                                battleRoyaleCheckWin(2);
-                                break;
-                            case 2:
-                                if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                    battleRoyaleScoreCheck(3, 1);
-                                }
-                                else {
-                                    battleRoyaleScoreCheck(1, 1);
-                                }
-                                break;
-                        }
-                    }
-                }
-                else if (BattleRoyale.serialKiller != null && murderer == BattleRoyale.serialKiller) {
-                    BattleRoyale.serialKillerLifes -= 1;
-                    new BattleRoyaleFootprint(murderer, 3);
-                    if (BattleRoyale.serialKillerLifes <= 0) {
-                        uncheckedMurderPlayer(sourceId, targetId, 0);
-                        switch (BattleRoyale.matchType) {
-                            case 1:
-                                battleRoyaleCheckWin(3);
-                                break;
-                            case 2:
-                                if (BattleRoyale.limePlayer01 != null && sourceId == BattleRoyale.limePlayer01.PlayerId || BattleRoyale.limePlayer02 != null && sourceId == BattleRoyale.limePlayer02.PlayerId || BattleRoyale.limePlayer03 != null && sourceId == BattleRoyale.limePlayer03.PlayerId || BattleRoyale.limePlayer04 != null && sourceId == BattleRoyale.limePlayer04.PlayerId || BattleRoyale.limePlayer05 != null && sourceId == BattleRoyale.limePlayer05.PlayerId || BattleRoyale.limePlayer06 != null && sourceId == BattleRoyale.limePlayer06.PlayerId || BattleRoyale.limePlayer07 != null && sourceId == BattleRoyale.limePlayer07.PlayerId) {
-                                    battleRoyaleScoreCheck(1, 3);
-                                }
-                                else {
-                                    battleRoyaleScoreCheck(2, 3);
-                                }
-                                break;
-                        }
-                    }
-                }
-            }
-        }
-
         public static void battleRoyaleCheckWin(int whichTeamCheck) {
 
             SoundManager.Instance.PlaySound(CustomMain.customAssets.yinyangerYinyangColisionClip, false, 100f);
@@ -7960,6 +8046,7 @@ namespace LasMonjas
             if (MonjaFestival.bigMonjaPlayer == null) return;
 
             MonjaFestival.bigMonjaPlayerInvisibleTimer = 20f;
+            MonjaFestival.bigMonjaPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
         }
 
         public static void monjaFestivalFindSpawns(byte monjaSpawn) {
@@ -8074,225 +8161,85 @@ namespace LasMonjas
                 case 1:
                     MonjaFestival.greenPlayer01Items += 1;
                     MonjaFestival.greenmonja01DeliverCount.text = $"{MonjaFestival.greenPlayer01Items} / 3";
-                    switch (MonjaFestival.greenPlayer01Items) {
-                        case 1:
-                            MonjaFestival.handsGreen01.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 2:
-                            MonjaFestival.handsGreen01.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 3:
-                            MonjaFestival.handsGreen01.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                    }
+                    monjaFestivalShowHands(MonjaFestival.greenPlayer01Items, MonjaFestival.handsGreen01);
                     break;
                 // Green Monja 02
                 case 2:
                     MonjaFestival.greenPlayer02Items += 1;
                     MonjaFestival.greenmonja02DeliverCount.text = $"{MonjaFestival.greenPlayer02Items} / 3";
-                    switch (MonjaFestival.greenPlayer02Items) {
-                        case 1:
-                            MonjaFestival.handsGreen02.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 2:
-                            MonjaFestival.handsGreen02.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 3:
-                            MonjaFestival.handsGreen02.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                    }
+                    monjaFestivalShowHands(MonjaFestival.greenPlayer02Items, MonjaFestival.handsGreen02);
                     break;
                 // Green Monja 03
                 case 3:
                     MonjaFestival.greenPlayer03Items += 1;
                     MonjaFestival.greenmonja03DeliverCount.text = $"{MonjaFestival.greenPlayer03Items} / 3";
-                    switch (MonjaFestival.greenPlayer03Items) {
-                        case 1:
-                            MonjaFestival.handsGreen03.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 2:
-                            MonjaFestival.handsGreen03.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 3:
-                            MonjaFestival.handsGreen03.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                    }
+                    monjaFestivalShowHands(MonjaFestival.greenPlayer03Items, MonjaFestival.handsGreen03);
                     break;
                 // Green Monja 04
                 case 4:
                     MonjaFestival.greenPlayer04Items += 1;
                     MonjaFestival.greenmonja04DeliverCount.text = $"{MonjaFestival.greenPlayer04Items} / 3";
-                    switch (MonjaFestival.greenPlayer04Items) {
-                        case 1:
-                            MonjaFestival.handsGreen04.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 2:
-                            MonjaFestival.handsGreen04.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 3:
-                            MonjaFestival.handsGreen04.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                    }
+                    monjaFestivalShowHands(MonjaFestival.greenPlayer04Items, MonjaFestival.handsGreen04);
                     break;
                 // Green Monja 05
                 case 5:
                     MonjaFestival.greenPlayer05Items += 1;
                     MonjaFestival.greenmonja05DeliverCount.text = $"{MonjaFestival.greenPlayer05Items} / 3";
-                    switch (MonjaFestival.greenPlayer05Items) {
-                        case 1:
-                            MonjaFestival.handsGreen05.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 2:
-                            MonjaFestival.handsGreen05.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 3:
-                            MonjaFestival.handsGreen05.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                    }
+                    monjaFestivalShowHands(MonjaFestival.greenPlayer05Items, MonjaFestival.handsGreen05);
                     break;
                 // Green Monja 06
                 case 6:
                     MonjaFestival.greenPlayer06Items += 1;
                     MonjaFestival.greenmonja06DeliverCount.text = $"{MonjaFestival.greenPlayer06Items} / 3";
-                    switch (MonjaFestival.greenPlayer06Items) {
-                        case 1:
-                            MonjaFestival.handsGreen06.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 2:
-                            MonjaFestival.handsGreen06.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 3:
-                            MonjaFestival.handsGreen06.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                    }
+                    monjaFestivalShowHands(MonjaFestival.greenPlayer06Items, MonjaFestival.handsGreen06);
                     break;
                 // Green Monja 07
                 case 7:
                     MonjaFestival.greenPlayer07Items += 1;
                     MonjaFestival.greenmonja07DeliverCount.text = $"{MonjaFestival.greenPlayer07Items} / 3";
-                    switch (MonjaFestival.greenPlayer07Items) {
-                        case 1:
-                            MonjaFestival.handsGreen07.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 2:
-                            MonjaFestival.handsGreen07.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 3:
-                            MonjaFestival.handsGreen07.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                    }
+                    monjaFestivalShowHands(MonjaFestival.greenPlayer07Items, MonjaFestival.handsGreen07);
                     break;
                 // Cyan Monja 01
                 case 8:
                     MonjaFestival.cyanPlayer01Items += 1;
                     MonjaFestival.cyanPlayer01DeliverCount.text = $"{MonjaFestival.cyanPlayer01Items} / 3";
-                    switch (MonjaFestival.cyanPlayer01Items) {
-                        case 1:
-                            MonjaFestival.handsCyan01.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 2:
-                            MonjaFestival.handsCyan01.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 3:
-                            MonjaFestival.handsCyan01.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                    }
+                    monjaFestivalShowHands(MonjaFestival.cyanPlayer01Items, MonjaFestival.handsCyan01);
                     break;
                 // Cyan Monja 02
                 case 9:
                     MonjaFestival.cyanPlayer02Items += 1;
                     MonjaFestival.cyanPlayer02DeliverCount.text = $"{MonjaFestival.cyanPlayer02Items} / 3";
-                    switch (MonjaFestival.cyanPlayer02Items) {
-                        case 1:
-                            MonjaFestival.handsCyan02.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 2:
-                            MonjaFestival.handsCyan02.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 3:
-                            MonjaFestival.handsCyan02.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                    }
+                    monjaFestivalShowHands(MonjaFestival.cyanPlayer02Items, MonjaFestival.handsCyan02);
                     break;
                 // Cyan Monja 03
                 case 10:
                     MonjaFestival.cyanPlayer03Items += 1;
                     MonjaFestival.cyanPlayer03DeliverCount.text = $"{MonjaFestival.cyanPlayer03Items} / 3";
-                    switch (MonjaFestival.cyanPlayer03Items) {
-                        case 1:
-                            MonjaFestival.handsCyan03.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 2:
-                            MonjaFestival.handsCyan03.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 3:
-                            MonjaFestival.handsCyan03.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                    }
+                    monjaFestivalShowHands(MonjaFestival.cyanPlayer03Items, MonjaFestival.handsCyan03);
                     break;
                 // Cyan Monja 04
                 case 11:
                     MonjaFestival.cyanPlayer04Items += 1;
                     MonjaFestival.cyanPlayer04DeliverCount.text = $"{MonjaFestival.cyanPlayer04Items} / 3";
-                    switch (MonjaFestival.cyanPlayer04Items) {
-                        case 1:
-                            MonjaFestival.handsCyan04.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 2:
-                            MonjaFestival.handsCyan04.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 3:
-                            MonjaFestival.handsCyan04.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                    }
+                    monjaFestivalShowHands(MonjaFestival.cyanPlayer04Items, MonjaFestival.handsCyan04);
                     break;
                 // Cyan Monja 05
                 case 12:
                     MonjaFestival.cyanPlayer05Items += 1;
                     MonjaFestival.cyanPlayer05DeliverCount.text = $"{MonjaFestival.cyanPlayer05Items} / 3";
-                    switch (MonjaFestival.cyanPlayer05Items) {
-                        case 1:
-                            MonjaFestival.handsCyan05.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 2:
-                            MonjaFestival.handsCyan05.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 3:
-                            MonjaFestival.handsCyan05.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                    }
+                    monjaFestivalShowHands(MonjaFestival.cyanPlayer05Items, MonjaFestival.handsCyan05);
                     break;
                 // Cyan Monja 06
                 case 13:
                     MonjaFestival.cyanPlayer06Items += 1;
                     MonjaFestival.cyanPlayer06DeliverCount.text = $"{MonjaFestival.cyanPlayer06Items} / 3";
-                    switch (MonjaFestival.cyanPlayer06Items) {
-                        case 1:
-                            MonjaFestival.handsCyan06.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 2:
-                            MonjaFestival.handsCyan06.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 3:
-                            MonjaFestival.handsCyan06.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                    }
+                    monjaFestivalShowHands(MonjaFestival.cyanPlayer06Items, MonjaFestival.handsCyan06);
                     break;
                 // Cyan Monja 07
                 case 14:
                     MonjaFestival.cyanPlayer07Items += 1;
                     MonjaFestival.cyanPlayer07DeliverCount.text = $"{MonjaFestival.cyanPlayer07Items} / 3";
-                    switch (MonjaFestival.cyanPlayer07Items) {
-                        case 1:
-                            MonjaFestival.handsCyan07.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 2:
-                            MonjaFestival.handsCyan07.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 3:
-                            MonjaFestival.handsCyan07.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                    }
+                    monjaFestivalShowHands(MonjaFestival.cyanPlayer07Items, MonjaFestival.handsCyan07);
                     break;
                 // Big Monja
                 case 15:
@@ -8304,272 +8251,107 @@ namespace LasMonjas
                 case 21:
                     MonjaFestival.greenPlayer01Items -= 1;
                     MonjaFestival.greenmonja01DeliverCount.text = $"{MonjaFestival.greenPlayer01Items} / 3";
-                    switch (MonjaFestival.greenPlayer01Items) {
-                        case 0:
-                            MonjaFestival.handsGreen01.GetComponent<SpriteRenderer>().sprite = null;
-                            break;
-                        case 1:
-                            MonjaFestival.handsGreen01.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 2:
-                            MonjaFestival.handsGreen01.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 3:
-                            MonjaFestival.handsGreen01.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                    }
+                    monjaFestivalShowHands(MonjaFestival.greenPlayer01Items, MonjaFestival.handsGreen01);
                     break;
                 // Green Monja 02 deliver
                 case 22:
                     MonjaFestival.greenPlayer02Items -= 1;
                     MonjaFestival.greenmonja02DeliverCount.text = $"{MonjaFestival.greenPlayer02Items} / 3";
-                    switch (MonjaFestival.greenPlayer02Items) {
-                        case 0:
-                            MonjaFestival.handsGreen02.GetComponent<SpriteRenderer>().sprite = null;
-                            break;
-                        case 1:
-                            MonjaFestival.handsGreen02.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 2:
-                            MonjaFestival.handsGreen02.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 3:
-                            MonjaFestival.handsGreen02.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                    }
+                    monjaFestivalShowHands(MonjaFestival.greenPlayer02Items, MonjaFestival.handsGreen02);
                     break;
                 // Green Monja 03 deliver
                 case 23:
                     MonjaFestival.greenPlayer03Items -= 1;
                     MonjaFestival.greenmonja03DeliverCount.text = $"{MonjaFestival.greenPlayer03Items} / 3";
-                    switch (MonjaFestival.greenPlayer03Items) {
-                        case 0:
-                            MonjaFestival.handsGreen03.GetComponent<SpriteRenderer>().sprite = null;
-                            break;
-                        case 1:
-                            MonjaFestival.handsGreen03.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 2:
-                            MonjaFestival.handsGreen03.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 3:
-                            MonjaFestival.handsGreen03.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                    }
+                    monjaFestivalShowHands(MonjaFestival.greenPlayer03Items, MonjaFestival.handsGreen03);
                     break;
                 // Green Monja 04 deliver
                 case 24:
                     MonjaFestival.greenPlayer04Items -= 1;
                     MonjaFestival.greenmonja04DeliverCount.text = $"{MonjaFestival.greenPlayer04Items} / 3";
-                    switch (MonjaFestival.greenPlayer04Items) {
-                        case 0:
-                            MonjaFestival.handsGreen04.GetComponent<SpriteRenderer>().sprite = null;
-                            break;
-                        case 1:
-                            MonjaFestival.handsGreen04.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 2:
-                            MonjaFestival.handsGreen04.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 3:
-                            MonjaFestival.handsGreen04.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                    }
+                    monjaFestivalShowHands(MonjaFestival.greenPlayer04Items, MonjaFestival.handsGreen04);
                     break;
                 // Green Monja 05 deliver
                 case 25:
                     MonjaFestival.greenPlayer05Items -= 1;
                     MonjaFestival.greenmonja05DeliverCount.text = $"{MonjaFestival.greenPlayer05Items} / 3";
-                    switch (MonjaFestival.greenPlayer05Items) {
-                        case 0:
-                            MonjaFestival.handsGreen05.GetComponent<SpriteRenderer>().sprite = null;
-                            break;
-                        case 1:
-                            MonjaFestival.handsGreen05.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 2:
-                            MonjaFestival.handsGreen05.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 3:
-                            MonjaFestival.handsGreen05.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                    }
+                    monjaFestivalShowHands(MonjaFestival.greenPlayer05Items, MonjaFestival.handsGreen05);
                     break;
                 // Green Monja 06 deliver
                 case 26:
                     MonjaFestival.greenPlayer06Items -= 1;
                     MonjaFestival.greenmonja06DeliverCount.text = $"{MonjaFestival.greenPlayer06Items} / 3";
-                    switch (MonjaFestival.greenPlayer06Items) {
-                        case 0:
-                            MonjaFestival.handsGreen06.GetComponent<SpriteRenderer>().sprite = null;
-                            break;
-                        case 1:
-                            MonjaFestival.handsGreen06.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 2:
-                            MonjaFestival.handsGreen06.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 3:
-                            MonjaFestival.handsGreen06.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                    }
+                    monjaFestivalShowHands(MonjaFestival.greenPlayer06Items, MonjaFestival.handsGreen06);
                     break;
                 // Green Monja 07 deliver
                 case 27:
                     MonjaFestival.greenPlayer07Items -= 1;
                     MonjaFestival.greenmonja07DeliverCount.text = $"{MonjaFestival.greenPlayer07Items} / 3";
-                    switch (MonjaFestival.greenPlayer07Items) {
-                        case 0:
-                            MonjaFestival.handsGreen07.GetComponent<SpriteRenderer>().sprite = null;
-                            break;
-                        case 1:
-                            MonjaFestival.handsGreen07.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 2:
-                            MonjaFestival.handsGreen07.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 3:
-                            MonjaFestival.handsGreen07.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                    }
+                    monjaFestivalShowHands(MonjaFestival.greenPlayer07Items, MonjaFestival.handsGreen07);
                     break;
                 // Cyan Monja 01 deliver
                 case 28:
                     MonjaFestival.cyanPlayer01Items -= 1;
                     MonjaFestival.cyanPlayer01DeliverCount.text = $"{MonjaFestival.cyanPlayer01Items} / 3";
-                    switch (MonjaFestival.cyanPlayer01Items) {
-                        case 0:
-                            MonjaFestival.handsCyan01.GetComponent<SpriteRenderer>().sprite = null;
-                            break;
-                        case 1:
-                            MonjaFestival.handsCyan01.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 2:
-                            MonjaFestival.handsCyan01.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 3:
-                            MonjaFestival.handsCyan01.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                    }
+                    monjaFestivalShowHands(MonjaFestival.cyanPlayer01Items, MonjaFestival.handsCyan01);
                     break;
                 // Cyan Monja 02 deliver
                 case 29:
                     MonjaFestival.cyanPlayer02Items -= 1;
                     MonjaFestival.cyanPlayer02DeliverCount.text = $"{MonjaFestival.cyanPlayer02Items} / 3";
-                    switch (MonjaFestival.cyanPlayer02Items) {
-                        case 0:
-                            MonjaFestival.handsCyan02.GetComponent<SpriteRenderer>().sprite = null;
-                            break;
-                        case 1:
-                            MonjaFestival.handsCyan02.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 2:
-                            MonjaFestival.handsCyan02.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 3:
-                            MonjaFestival.handsCyan02.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                    }
+                    monjaFestivalShowHands(MonjaFestival.cyanPlayer02Items, MonjaFestival.handsCyan02);
                     break;
                 // Cyan Monja 03 deliver
                 case 30:
                     MonjaFestival.cyanPlayer03Items -= 1;
                     MonjaFestival.cyanPlayer03DeliverCount.text = $"{MonjaFestival.cyanPlayer03Items} / 3";
-                    switch (MonjaFestival.cyanPlayer03Items) {
-                        case 0:
-                            MonjaFestival.handsCyan03.GetComponent<SpriteRenderer>().sprite = null;
-                            break;
-                        case 1:
-                            MonjaFestival.handsCyan03.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 2:
-                            MonjaFestival.handsCyan03.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 3:
-                            MonjaFestival.handsCyan03.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                    }
+                    monjaFestivalShowHands(MonjaFestival.cyanPlayer03Items, MonjaFestival.handsCyan03);
                     break;
                 // Cyan Monja 04 deliver
                 case 31:
                     MonjaFestival.cyanPlayer04Items -= 1;
                     MonjaFestival.cyanPlayer04DeliverCount.text = $"{MonjaFestival.cyanPlayer04Items} / 3";
-                    switch (MonjaFestival.cyanPlayer04Items) {
-                        case 0:
-                            MonjaFestival.handsCyan04.GetComponent<SpriteRenderer>().sprite = null;
-                            break;
-                        case 1:
-                            MonjaFestival.handsCyan04.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 2:
-                            MonjaFestival.handsCyan04.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 3:
-                            MonjaFestival.handsCyan04.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                    }
+                    monjaFestivalShowHands(MonjaFestival.cyanPlayer04Items, MonjaFestival.handsCyan04);
                     break;
                 // Cyan Monja 05 deliver
                 case 32:
                     MonjaFestival.cyanPlayer05Items -= 1;
                     MonjaFestival.cyanPlayer05DeliverCount.text = $"{MonjaFestival.cyanPlayer05Items} / 3";
-                    switch (MonjaFestival.cyanPlayer05Items) {
-                        case 0:
-                            MonjaFestival.handsCyan05.GetComponent<SpriteRenderer>().sprite = null;
-                            break;
-                        case 1:
-                            MonjaFestival.handsCyan05.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 2:
-                            MonjaFestival.handsCyan05.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 3:
-                            MonjaFestival.handsCyan05.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                    }
+                    monjaFestivalShowHands(MonjaFestival.cyanPlayer05Items, MonjaFestival.handsCyan05);
                     break;
                 // Cyan Monja 06 deliver
                 case 33:
                     MonjaFestival.cyanPlayer06Items -= 1;
                     MonjaFestival.cyanPlayer06DeliverCount.text = $"{MonjaFestival.cyanPlayer06Items} / 3";
-                    switch (MonjaFestival.cyanPlayer06Items) {
-                        case 0:
-                            MonjaFestival.handsCyan06.GetComponent<SpriteRenderer>().sprite = null;
-                            break;
-                        case 1:
-                            MonjaFestival.handsCyan06.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 2:
-                            MonjaFestival.handsCyan06.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 3:
-                            MonjaFestival.handsCyan06.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                    }
+                    monjaFestivalShowHands(MonjaFestival.cyanPlayer06Items, MonjaFestival.handsCyan06);
                     break;
                 // Cyan Monja 07 deliver
                 case 34:
                     MonjaFestival.cyanPlayer07Items -= 1;
                     MonjaFestival.cyanPlayer07DeliverCount.text = $"{MonjaFestival.cyanPlayer07Items} / 3";
-                    switch (MonjaFestival.cyanPlayer07Items) {
-                        case 0:
-                            MonjaFestival.handsCyan07.GetComponent<SpriteRenderer>().sprite = null;
-                            break;
-                        case 1:
-                            MonjaFestival.handsCyan07.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 2:
-                            MonjaFestival.handsCyan07.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                        case 3:
-                            MonjaFestival.handsCyan07.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeCyanMonja.GetComponent<SpriteRenderer>().sprite;
-                            break;
-                    }
+                    monjaFestivalShowHands(MonjaFestival.cyanPlayer07Items, MonjaFestival.handsCyan07);
                     break;
                 // Big Monja
                 case 35:
                     MonjaFestival.bigMonjaPlayerItems -= 1;
                     MonjaFestival.bigMonjaPlayerDeliverCount.text = $"{MonjaFestival.bigMonjaPlayerItems} / 10";
+                    break;
+            }
+        }
+
+        public static void monjaFestivalShowHands(int itemNumber, GameObject playerHand) {
+            switch (itemNumber) {
+                case 0:
+                    playerHand.GetComponent<SpriteRenderer>().sprite = null;
+                    break;
+                case 1:
+                    playerHand.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                    break;
+                case 2:
+                    playerHand.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                    break;
+                case 3:
+                    playerHand.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
                     break;
             }
         }
@@ -8919,9 +8701,6 @@ namespace LasMonjas
                 case (byte)CustomRPC.TimeTravelerRewindTime:
                     RPCProcedure.timeTravelerRewindTime();
                     break;
-                case (byte)CustomRPC.TimeTravelerRevive:
-                    RPCProcedure.timeTravelerRevive(reader.ReadByte());
-                    break;
                 case (byte)CustomRPC.SquireSetShielded:
                     RPCProcedure.squireSetShielded(reader.ReadByte());
                     break;
@@ -9033,11 +8812,6 @@ namespace LasMonjas
                     break;
 
                 // Capture the flag funtionality
-                case (byte)CustomRPC.CapturetheFlagStealerKill:
-                    byte killedId = reader.ReadByte();
-                    byte sourceId = reader.ReadByte();
-                    RPCProcedure.capturetheFlagStealerKill(killedId, sourceId);
-                    break;
                 case (byte)CustomRPC.CaptureTheFlagWhoTookTheFlag:
                     byte bluePlayerWhoHasRedFlag = reader.ReadByte();
                     byte redorblue = reader.ReadByte();
@@ -9076,11 +8850,6 @@ namespace LasMonjas
                     break;
 
                 // King of the hill funtionality
-                case (byte)CustomRPC.KingoftheHillUsurperKill:
-                    byte killerId = reader.ReadByte();
-                    byte whichteamplayer = reader.ReadByte();
-                    RPCProcedure.kingoftheHillUsurperKill(killerId, whichteamplayer);
-                    break;
                 case (byte)CustomRPC.KingoftheHillCapture:
                     byte capturedId = reader.ReadByte();
                     byte whichKingCaptured = reader.ReadByte();
@@ -9125,13 +8894,6 @@ namespace LasMonjas
                 case (byte)CustomRPC.ZombieLaboratoryTurnZombie:
                     byte survivorWhoTurned = reader.ReadByte();
                     RPCProcedure.zombieLaboratoryTurnZombie(survivorWhoTurned);
-                    break;
-
-                // Battle Royale
-                case (byte)CustomRPC.BattleRoyaleKills:
-                    byte battlekillId = reader.ReadByte();
-                    byte battlewhichplayer = reader.ReadByte();
-                    RPCProcedure.battleRoyaleKills(battlekillId, battlewhichplayer);
                     break;
 
                 // Monja Festival

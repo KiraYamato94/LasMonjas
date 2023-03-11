@@ -32,6 +32,8 @@ namespace LasMonjas
         public static CustomOption gamemodeSettings;
         public static CustomOption gamemodeMatchDuration;
         public static CustomOption gamemodeKillCooldown;
+        public static CustomOption gamemodeEnableFlashlight;
+        public static CustomOption gamemodeFlashlightRange;
         public static CustomOption gamemodeReviveTime;
         public static CustomOption gamemodeInvincibilityTimeAfterRevive;
 
@@ -46,7 +48,6 @@ namespace LasMonjas
         public static CustomOption thiefModePoliceCanSeeJewels;
         public static CustomOption thiefModePoliceCatchCooldown;
         public static CustomOption thiefModecaptureThiefTime;
-        public static CustomOption thiefModepolicevision;
         public static CustomOption thiefModeWhoCanThiefsKill;
         // King of the hill
         public static CustomOption kingRequiredPoints;
@@ -55,7 +56,6 @@ namespace LasMonjas
         // Hot Potato
         public static CustomOption hotPotatoTransferLimit;
         public static CustomOption hotPotatoCooldown;
-        public static CustomOption hotPotatoNotPotatovision;
         public static CustomOption hotPotatoResetTimeForTransfer;
         public static CustomOption hotPotatoIncreaseTimeIfNoReset;
         // ZombieLaboratory
@@ -63,7 +63,6 @@ namespace LasMonjas
         public static CustomOption zombieLaboratoryInfectCooldown;
         public static CustomOption zombieLaboratoryInfectTime;
         public static CustomOption zombieLaboratoryMaxTimeForHeal;
-        public static CustomOption zombieLaboratorySurvivorsVision;
         public static CustomOption zombieLaboratorySearchBoxTimer;
         // BattleRoyale
         public static CustomOption battleRoyaleMatchType;
@@ -120,7 +119,6 @@ namespace LasMonjas
         // Sorcerer
         public static CustomOption sorcererSpawnRate;
         public static CustomOption sorcererCooldown;
-        public static CustomOption sorcererAdditionalCooldown;
         public static CustomOption sorcererSpellDuration;
         public static CustomOption sorcererCanCallEmergency;
 
@@ -138,7 +136,6 @@ namespace LasMonjas
 
         // Archer
         public static CustomOption archerSpawnRate;
-        public static CustomOption archerShotSize;
         public static CustomOption archerShotRange;
         public static CustomOption archerNoticeRange;
         public static CustomOption archerAimAssistDuration;
@@ -224,7 +221,6 @@ namespace LasMonjas
 
         // Poisoner
         public static CustomOption poisonerSpawnRate;
-        public static CustomOption poisonerDuration;
         public static CustomOption poisonerInfectRange;
         public static CustomOption poisonerInfectDuration;
         public static CustomOption poisonerCanSabotage;
@@ -266,8 +262,6 @@ namespace LasMonjas
         public static CustomOption detectiveCooldown;
         public static CustomOption detectiveShowFootPrintDuration;
         public static CustomOption detectiveAnonymousFootprints;
-        public static CustomOption detectiveFootprintIntervall;
-        public static CustomOption detectiveFootprintDuration;
 
         // Forensic
         public static CustomOption forensicSpawnRate;
@@ -282,7 +276,6 @@ namespace LasMonjas
         public static CustomOption timeTravelerCooldown;
         public static CustomOption timeTravelerRewindTime;
         public static CustomOption timeTravelerShieldDuration;
-        public static CustomOption timeTravelerReviveDuringRewind;
 
         // Squire
         public static CustomOption squireSpawnRate;
@@ -302,6 +295,7 @@ namespace LasMonjas
         public static CustomOption fortuneTellerNumberOfSee;
         public static CustomOption fortuneTellerKindOfInfo;
         public static CustomOption fortuneTellerPlayersWithNotification;
+        public static CustomOption fortuneTellerCanCallEmergency;
 
         // Hacker
         public static CustomOption hackerSpawnRate;
@@ -320,7 +314,6 @@ namespace LasMonjas
         // Fink
         public static CustomOption finkSpawnRate;
         public static CustomOption finkLeftTasksForImpostors;
-        public static CustomOption finkIncludeTeamRenegade;
         public static CustomOption finkCooldown;
         public static CustomOption finkDuration;
 
@@ -334,7 +327,6 @@ namespace LasMonjas
 
         // Spiritualist
         public static CustomOption spiritualistSpawnRate;
-        public static CustomOption spiritualistReviveTime;
 
         // Vigilant
         public static CustomOption vigilantSpawnRate;
@@ -448,8 +440,10 @@ namespace LasMonjas
             gamemodeSettings = CustomOption.Create(20, cs(Sheriff.color, "Gamemode Global Settings"), "setting", false, null, true);
             gamemodeMatchDuration = CustomOption.Create(21, cs(Sheriff.color, "Match Duration"), "setting", 180f, 180f, 420f, 30f, gamemodeSettings);
             gamemodeKillCooldown = CustomOption.Create(22, cs(Sheriff.color, "Kill Cooldown"), "setting", 10f, 10f, 20f, 1f, gamemodeSettings);
-            gamemodeReviveTime = CustomOption.Create(23, cs(Sheriff.color, "Revive Wait Time"), "setting", 8f, 7f, 15f, 1f, gamemodeSettings);
-            gamemodeInvincibilityTimeAfterRevive = CustomOption.Create(24, cs(Sheriff.color, "Invincibility Time After Revive"), "setting", 3f, 2f, 5f, 1f, gamemodeSettings);
+            gamemodeEnableFlashlight = CustomOption.Create(23, cs(Sheriff.color, "Enable flashlight if possible"), "setting", true, gamemodeSettings);
+            gamemodeFlashlightRange = CustomOption.Create(24, cs(Sheriff.color, "Flashlight range"), "setting", 0.8f, 0.6f, 1.2f, 0.2f, gamemodeSettings);
+            gamemodeReviveTime = CustomOption.Create(25, cs(Sheriff.color, "Revive Wait Time"), "setting", 8f, 7f, 15f, 1f, gamemodeSettings);
+            gamemodeInvincibilityTimeAfterRevive = CustomOption.Create(26, cs(Sheriff.color, "Invincibility Time After Revive"), "setting", 3f, 2f, 5f, 1f, gamemodeSettings);
 
             // Gamemode Individual Settings
             gamemodeIndividualSettings = CustomOption.Create(30, cs(Sheriff.color, "Gamemode Individual Settings"), "gamemode", false, null, true);
@@ -462,25 +456,22 @@ namespace LasMonjas
             thiefModePoliceTaseCooldown = CustomOption.Create(44, cs(Coward.color, "Police and Thieves") + ": Tase Cooldown", "gamemode", 15f, 10f, 15f, 1f, gamemodeIndividualSettings);
             thiefModePoliceTaseDuration = CustomOption.Create(45, cs(Coward.color, "Police and Thieves") + ": Tase Duration", "gamemode", 3f, 3f, 5f, 1f, gamemodeIndividualSettings);
             thiefModePoliceCanSeeJewels = CustomOption.Create(46, cs(Coward.color, "Police and Thieves") + ": Police can see Jewels", "gamemode", false, gamemodeIndividualSettings);
-            thiefModepolicevision = CustomOption.Create(47, cs(Coward.color, "Police and Thieves") + ": Police vision range", "gamemode", 0.8f, 0.4f, 1.4f, 0.2f, gamemodeIndividualSettings);
-            thiefModeWhoCanThiefsKill = CustomOption.Create(48, cs(Coward.color, "Police and Thieves") + ": Who Can Thieves Kill", "gamemode", new string[] { "Taser", "All", "Nobody" }, gamemodeIndividualSettings);
+            thiefModeWhoCanThiefsKill = CustomOption.Create(47, cs(Coward.color, "Police and Thieves") + ": Who Can Thieves Kill", "gamemode", new string[] { "Taser", "All", "Nobody" }, gamemodeIndividualSettings);
             // King of the hill mode
             kingRequiredPoints = CustomOption.Create(51, cs(Squire.color, "King of the Hill") + ": Score Number", "gamemode", 200f, 100f, 300f, 10f, gamemodeIndividualSettings);
             kingCaptureCooldown = CustomOption.Create(52, cs(Squire.color, "King of the Hill") + ": Capture Cooldown", "gamemode", 10f, 5f, 15f, 1f, gamemodeIndividualSettings);
             kingCanKill = CustomOption.Create(53, cs(Squire.color, "King of the Hill") + ": Kings can Kill", "gamemode", false, gamemodeIndividualSettings);
             // Hot Potato
-             hotPotatoTransferLimit = CustomOption.Create(61, cs(Shy.color, "Hot Potato") + ": Time Limit for Transfer", "gamemode", 20f, 10f, 30f, 1f, gamemodeIndividualSettings);
+            hotPotatoTransferLimit = CustomOption.Create(61, cs(Shy.color, "Hot Potato") + ": Time Limit for Transfer", "gamemode", 20f, 10f, 30f, 1f, gamemodeIndividualSettings);
             hotPotatoCooldown = CustomOption.Create(62, cs(Shy.color, "Hot Potato") + ": Transfer Cooldown", "gamemode", 5f, 5f, 10f, 1f, gamemodeIndividualSettings);
-            hotPotatoNotPotatovision = CustomOption.Create(63, cs(Shy.color, "Hot Potato") + ": Cold Potatoes vision range", "gamemode", 0.8f, 0.6f, 1f, 0.2f, gamemodeIndividualSettings);
-            hotPotatoResetTimeForTransfer = CustomOption.Create(64, cs(Shy.color, "Hot Potato") + ": Reset timer after Transfer", "gamemode", true, gamemodeIndividualSettings);
-            hotPotatoIncreaseTimeIfNoReset = CustomOption.Create(65, cs(Shy.color, "Hot Potato") + ": Extra Time when timer doesn't reset", "gamemode", 10f, 10f, 15f, 1f, gamemodeIndividualSettings);
+            hotPotatoResetTimeForTransfer = CustomOption.Create(63, cs(Shy.color, "Hot Potato") + ": Reset timer after Transfer", "gamemode", true, gamemodeIndividualSettings);
+            hotPotatoIncreaseTimeIfNoReset = CustomOption.Create(64, cs(Shy.color, "Hot Potato") + ": Extra Time when timer doesn't reset", "gamemode", 10f, 10f, 15f, 1f, gamemodeIndividualSettings);
             // ZombieLaboratory
             zombieLaboratoryStartZombies = CustomOption.Create(71, cs(Hunter.color, "Zombie Laboratory") + ": Initial Zombies", "gamemode", 1f, 1f, 5f, 1f, gamemodeIndividualSettings);
             zombieLaboratoryInfectTime = CustomOption.Create(72, cs(Hunter.color, "Zombie Laboratory") + ": Time to Infect", "gamemode", 3f, 2f, 3f, 1f, gamemodeIndividualSettings);
             zombieLaboratoryInfectCooldown = CustomOption.Create(73, cs(Hunter.color, "Zombie Laboratory") + ": Infect Cooldown", "gamemode", 10f, 10f, 20f, 1f, gamemodeIndividualSettings);
             zombieLaboratorySearchBoxTimer = CustomOption.Create(74, cs(Hunter.color, "Zombie Laboratory") + ": Search Box Timer", "gamemode", 3f, 2f, 3f, 1f, gamemodeIndividualSettings);
-            zombieLaboratorySurvivorsVision = CustomOption.Create(75, cs(Hunter.color, "Zombie Laboratory") + ": Survivors vision range", "gamemode", 0.8f, 0.8f, 1f, 0.2f, gamemodeIndividualSettings);
-            zombieLaboratoryMaxTimeForHeal = CustomOption.Create(76, cs(Hunter.color, "Zombie Laboratory") + ": Time to use Medkit", "gamemode", 45f, 30f, 90f, 5f, gamemodeIndividualSettings);
+            zombieLaboratoryMaxTimeForHeal = CustomOption.Create(75, cs(Hunter.color, "Zombie Laboratory") + ": Time to use Medkit", "gamemode", 45f, 30f, 90f, 5f, gamemodeIndividualSettings);
             // Battle Royale
             battleRoyaleMatchType = CustomOption.Create(81, cs(Sleuth.color, "Battle Royale") + ": Match Type", "gamemode", new string[] { "All vs All", "Team Battle", "Score Battle" }, gamemodeIndividualSettings);
             battleRoyaleKillCooldown = CustomOption.Create(82, cs(Sleuth.color, "Battle Royale") + ": Shoot Cooldown", "gamemode", 1f, 1f, 3f, 1f, gamemodeIndividualSettings);
@@ -534,10 +525,9 @@ namespace LasMonjas
 
             // Sorcerer Options
             sorcererSpawnRate = CustomOption.Create(240, cs(Sorcerer.color, "Sorcerer"), "impostor", rates, null, true);
-            sorcererCooldown = CustomOption.Create(241, cs(Sorcerer.color, "Sorcerer") + ": Cooldown", "impostor", 20f, 20f, 40f, 2.5f, sorcererSpawnRate);
-            sorcererAdditionalCooldown = CustomOption.Create(242, cs(Sorcerer.color, "Sorcerer") + ": Additional Cooldown per Spell", "impostor", 5f, 5f, 10f, 1f, sorcererSpawnRate);
-            sorcererSpellDuration = CustomOption.Create(244, cs(Sorcerer.color, "Sorcerer") + ": Spell Duration", "impostor", 3f, 3f, 5f, 1f, sorcererSpawnRate);
-            sorcererCanCallEmergency = CustomOption.Create(245, cs(Sorcerer.color, "Sorcerer") + ": Can use emergency button", "impostor", false, sorcererSpawnRate);
+            sorcererCooldown = CustomOption.Create(241, cs(Sorcerer.color, "Sorcerer") + ": Cooldown", "impostor", 30f, 30f, 40f, 2.5f, sorcererSpawnRate);
+            sorcererSpellDuration = CustomOption.Create(242, cs(Sorcerer.color, "Sorcerer") + ": Spell Duration", "impostor", 3f, 3f, 5f, 1f, sorcererSpawnRate);
+            sorcererCanCallEmergency = CustomOption.Create(243, cs(Sorcerer.color, "Sorcerer") + ": Can use emergency button", "impostor", false, sorcererSpawnRate);
 
             // Medusa options
             medusaSpawnRate = CustomOption.Create(250, cs(Medusa.color, "Medusa"), "impostor", rates, null, true);
@@ -553,10 +543,9 @@ namespace LasMonjas
 
             // Archer options
             archerSpawnRate = CustomOption.Create(270, cs(Archer.color, "Archer"), "impostor", rates, null, true);
-            archerShotSize = CustomOption.Create(271, cs(Archer.color, "Archer") + ": Arrow Size", "impostor", 2f, 1f, 3f, 1f, archerSpawnRate);
-            archerShotRange = CustomOption.Create(272, cs(Archer.color, "Archer") + ": Arrow Range", "impostor", 15f, 5f, 15f, 1f, archerSpawnRate);
-            archerNoticeRange = CustomOption.Create(273, cs(Archer.color, "Archer") + ": Notify Range", "impostor", 10f, 10f, 30f, 2.5f, archerSpawnRate);
-            archerAimAssistDuration = CustomOption.Create(274, cs(Archer.color, "Archer") + ": Aim Duration", "impostor", 10f, 3f, 10f, 1f, archerSpawnRate);
+            archerShotRange = CustomOption.Create(271, cs(Archer.color, "Archer") + ": Arrow Range", "impostor", 15f, 5f, 15f, 1f, archerSpawnRate);
+            archerNoticeRange = CustomOption.Create(272, cs(Archer.color, "Archer") + ": Notify Range", "impostor", 10f, 10f, 30f, 2.5f, archerSpawnRate);
+            archerAimAssistDuration = CustomOption.Create(273, cs(Archer.color, "Archer") + ": Aim Duration", "impostor", 10f, 3f, 10f, 1f, archerSpawnRate);
 
             // Plumber options
             plumberSpawnRate = CustomOption.Create(280, cs(Plumber.color, "Plumber"), "impostor", rates, null, true);
@@ -634,10 +623,9 @@ namespace LasMonjas
 
             // Poisoner options
             poisonerSpawnRate = CustomOption.Create(450, cs(Poisoner.color, "Poisoner"), "neutral", rates, null, true);
-            poisonerDuration = CustomOption.Create(451, cs(Poisoner.color, "Poisoner") + ": Time to Poison", "neutral", 5f, 3f, 5f, 1f, poisonerSpawnRate);
-            poisonerInfectRange = CustomOption.Create(452, cs(Poisoner.color, "Poisoner") + ": Poison Infect Range", "neutral", 2f, 0.5f, 2f, 0.25f, poisonerSpawnRate);
-            poisonerInfectDuration = CustomOption.Create(453, cs(Poisoner.color, "Poisoner") + ": Time to fully Poison", "neutral", 20f, 15f, 30f, 1f, poisonerSpawnRate);
-            poisonerCanSabotage = CustomOption.Create(454, cs(Poisoner.color, "Poisoner") + ": Can Sabotage", "neutral", true, poisonerSpawnRate);
+            poisonerInfectRange = CustomOption.Create(451, cs(Poisoner.color, "Poisoner") + ": Poison Infect Range", "neutral", 2f, 0.5f, 2f, 0.25f, poisonerSpawnRate);
+            poisonerInfectDuration = CustomOption.Create(452, cs(Poisoner.color, "Poisoner") + ": Time to fully Poison", "neutral", 20f, 15f, 30f, 1f, poisonerSpawnRate);
+            poisonerCanSabotage = CustomOption.Create(453, cs(Poisoner.color, "Poisoner") + ": Can Sabotage", "neutral", true, poisonerSpawnRate);
 
             // Puppeteer options
             puppeteerSpawnRate = CustomOption.Create(460, cs(Puppeteer.color, "Puppeteer"), "neutral", rates, null, true);
@@ -673,8 +661,6 @@ namespace LasMonjas
             detectiveCooldown = CustomOption.Create(532, cs(Detective.color, "Detective") + ": Cooldown", "crewmate", 15f, 10f, 20f, 1f, detectiveSpawnRate);
             detectiveShowFootPrintDuration = CustomOption.Create(533, cs(Detective.color, "Detective") + ": Show Footprints Duration", "crewmate", 10f, 10f, 15f, 1f, detectiveSpawnRate); 
             detectiveAnonymousFootprints = CustomOption.Create(534, cs(Detective.color, "Detective") + ": Anonymous Footprints", "crewmate", false, detectiveSpawnRate);
-            detectiveFootprintIntervall = CustomOption.Create(535, cs(Detective.color, "Detective") + ": Footprints Interval", "crewmate", 0.5f, 0.25f, 2f, 0.25f, detectiveSpawnRate);
-            detectiveFootprintDuration = CustomOption.Create(536, cs(Detective.color, "Detective") + ": Footprints Duration", "crewmate", 15f, 10f, 20f, 1f, detectiveSpawnRate);
 
             // Forensic options
             forensicSpawnRate = CustomOption.Create(540, cs(Forensic.color, "Forensic"), "crewmate", rates, null, true);
@@ -689,7 +675,6 @@ namespace LasMonjas
             timeTravelerCooldown = CustomOption.Create(551, cs(TimeTraveler.color, "Time Traveler") + ": Cooldown", "crewmate", 30f, 20f, 40f, 2.5f, timeTravelerSpawnRate);
             timeTravelerShieldDuration = CustomOption.Create(552, cs(TimeTraveler.color, "Time Traveler") + ": Shield Duration", "crewmate", 10f, 5f, 15f, 1f, timeTravelerSpawnRate);
             timeTravelerRewindTime = CustomOption.Create(553, cs(TimeTraveler.color, "Time Traveler") + ": Rewind Duration", "crewmate", 10f, 10f, 15f, 1f, timeTravelerSpawnRate);
-            timeTravelerReviveDuringRewind = CustomOption.Create(554, cs(TimeTraveler.color, "Time Traveler") + ": Revive player during Rewind", "crewmate", true, timeTravelerSpawnRate);
 
             // Squire options
             squireSpawnRate = CustomOption.Create(560, cs(Squire.color, "Squire"), "crewmate", rates, null, true);
@@ -709,6 +694,7 @@ namespace LasMonjas
             fortuneTellerNumberOfSee = CustomOption.Create(583, cs(FortuneTeller.color, "Fortune Teller") + ": Reveal Number", "crewmate", 3f, 1f, 3f, 1f, fortuneTellerSpawnRate);
             fortuneTellerKindOfInfo = CustomOption.Create(584, cs(FortuneTeller.color, "Fortune Teller") + ": Revealed Information", "crewmate", new string[] { "Good / Bad", "Rol Name" }, fortuneTellerSpawnRate);
             fortuneTellerPlayersWithNotification = CustomOption.Create(585, cs(FortuneTeller.color, "Fortune Teller") + ": Show Notification to", "crewmate", new string[] { "Impostors", "Crewmates", "All", "Nobody" }, fortuneTellerSpawnRate);
+            fortuneTellerCanCallEmergency = CustomOption.Create(586, cs(FortuneTeller.color, "Fortune Teller") + ": Can use emergency button", "crewmate", false, fortuneTellerSpawnRate);
 
             // Hacker options
             hackerSpawnRate = CustomOption.Create(590, cs(Hacker.color, "Hacker"), "crewmate", rates, null, true);
@@ -727,9 +713,8 @@ namespace LasMonjas
             // Fink options
             finkSpawnRate = CustomOption.Create(610, cs(Fink.color, "Fink"), "crewmate", rates, null, true);
             finkLeftTasksForImpostors = CustomOption.Create(611, cs(Fink.color, "Fink") + ": Tasks remaining for being revealed to Impostors", "crewmate", 1f, 1f, 3f, 1f, finkSpawnRate);
-            finkIncludeTeamRenegade = CustomOption.Create(612, cs(Fink.color, "Fink") + ": Can reveal Renegade / Minion", "crewmate", true, finkSpawnRate);
-            finkCooldown = CustomOption.Create(613, cs(Fink.color, "Fink") + ": Cooldown", "crewmate", 20f, 20f, 30f, 1f, finkSpawnRate);
-            finkDuration = CustomOption.Create(614, cs(Fink.color, "Fink") + ": Hawkeye Duration", "crewmate", 5f, 3f, 5f, 1f, finkSpawnRate);
+            finkCooldown = CustomOption.Create(612, cs(Fink.color, "Fink") + ": Cooldown", "crewmate", 20f, 20f, 30f, 1f, finkSpawnRate);
+            finkDuration = CustomOption.Create(613, cs(Fink.color, "Fink") + ": Hawkeye Duration", "crewmate", 5f, 3f, 5f, 1f, finkSpawnRate);
 
             // Kid options
             kidSpawnRate = CustomOption.Create(620, cs(Kid.color, "Kid"), "crewmate", rates, null, true);
@@ -741,7 +726,6 @@ namespace LasMonjas
 
             // Spiritualist options
             spiritualistSpawnRate = CustomOption.Create(640, cs(Spiritualist.color, "Spiritualist"), "crewmate", rates, null, true);
-            spiritualistReviveTime = CustomOption.Create(641, cs(Spiritualist.color, "Spiritualist") + ": Revive Player Time", "crewmate", 10f, 10f, 15f, 1f, spiritualistSpawnRate);
 
             // Vigilant options
             vigilantSpawnRate = CustomOption.Create(650, cs(Vigilant.color, "Vigilant"), "crewmate", rates, null, true);

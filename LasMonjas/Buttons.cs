@@ -25,6 +25,7 @@ namespace LasMonjas
         private static CustomButton illusionistLightsOutButton;
         public static CustomButton manipulatorManipulateButton;
         public static CustomButton bombermanBombButton;
+        private static CustomButton bombButton;
         public static CustomButton chameleonInvisibleButton;
         public static CustomButton sorcererSpellButton;
         private static CustomButton medusaPetrifyButton;
@@ -380,6 +381,7 @@ namespace LasMonjas
             manipulatorManipulateButton.MaxTimer = Manipulator.cooldown;
             bombermanBombButton.MaxTimer = Bomberman.bombCooldown;
             bombermanBombButton.EffectDuration = Bomberman.bombDuration;
+            bombButton.MaxTimer = 10f;
             chameleonInvisibleButton.MaxTimer = Chameleon.cooldown;
             chameleonInvisibleButton.EffectDuration = Chameleon.duration;
             sorcererSpellButton.MaxTimer = Sorcerer.cooldown;
@@ -1443,6 +1445,29 @@ namespace LasMonjas
                 () => { bombermanBombButton.Timer = bombermanBombButton.MaxTimer; }
             );
 
+            // Bomb button only if there's Bomberman ingame
+            bombButton = new CustomButton(
+                () => {
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.FixBomb, Hazel.SendOption.Reliable, -1);
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    RPCProcedure.fixBomb();
+                    bombButton.Timer = bombButton.MaxTimer;
+                },
+                () => { return !PlayerControl.LocalPlayer.Data.IsDead && Bomberman.bomberman != null && PlayerControl.LocalPlayer != Bomberman.bomberman && Bomberman.activeBomb && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
+                () => {
+                    bool CanUse = false;
+                    if (Bomberman.bombObject != null && Vector2.Distance(PlayerControl.LocalPlayer.transform.position, Bomberman.bombObject.transform.position) < 0.5f) {
+                        CanUse = true;
+                    }
+                    return CanUse && PlayerControl.LocalPlayer.CanMove; },
+                () => { },
+                Bomberman.getBombDefuseButtonSprite(),
+                new Vector3(-0.05f, 3f, 0),
+                __instance,
+                null,
+                true
+            );
+            
             // Chameleon invisible
             chameleonInvisibleButton = new CustomButton(
                 () => {
@@ -1506,7 +1531,6 @@ namespace LasMonjas
                     sorcererSpellButton.Timer = sorcererSpellButton.MaxTimer;
                     sorcererSpellButton.isEffectActive = false;
                     Sorcerer.spellTarget = null;
-                    Sorcerer.cooldownAddition = Sorcerer.cooldownAdditionInitial;
                 },
                 Sorcerer.getSpellButtonSprite(),
                 new Vector3(-3f, -0.06f, 0),
@@ -1530,7 +1554,6 @@ namespace LasMonjas
                         Sorcerer.sorcerer.killTimer = GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
                     }
                     else if (attempt == MurderAttemptResult.PerformKill) {
-                        sorcererSpellButton.MaxTimer += Sorcerer.cooldownAddition;
                         sorcererSpellButton.Timer = sorcererSpellButton.MaxTimer;
                         Sorcerer.sorcerer.killTimer = GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
                     }
@@ -6971,11 +6994,11 @@ namespace LasMonjas
                 () => {
                     byte targetId = CaptureTheFlag.stealerPlayercurrentTarget.PlayerId;
                     byte sourceId = CaptureTheFlag.stealerPlayer.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.CapturetheFlagStealerKill, Hazel.SendOption.Reliable, -1);
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
                     killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.capturetheFlagStealerKill(targetId, sourceId);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     stealerPlayerKillButton.Timer = stealerPlayerKillButton.MaxTimer;
                     CaptureTheFlag.stealerPlayercurrentTarget = null;
                 },
@@ -9729,11 +9752,11 @@ namespace LasMonjas
                 () => {
                     byte targetId = KingOfTheHill.usurperPlayercurrentTarget.PlayerId;
                     byte sourceId = KingOfTheHill.usurperPlayer.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.KingoftheHillUsurperKill, Hazel.SendOption.Reliable, -1);
+                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     killWriter.Write(targetId);
                     killWriter.Write(sourceId);
                     AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.kingoftheHillUsurperKill(targetId, sourceId);
+                    RPCProcedure.gamemodeKills(targetId, sourceId);
                     usurperPlayerKillButton.Timer = usurperPlayerKillButton.MaxTimer;
                     KingOfTheHill.usurperPlayercurrentTarget = null;
                 },
@@ -14333,11 +14356,11 @@ namespace LasMonjas
                         return;
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.soloPlayer01.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.soloPlayer01.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.soloPlayer01.PlayerId);
 
                     soloPlayer01KillButton.Timer = soloPlayer01KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
@@ -14397,11 +14420,11 @@ namespace LasMonjas
                         return;
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.soloPlayer02.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.soloPlayer02.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.soloPlayer02.PlayerId);
 
                     soloPlayer02KillButton.Timer = soloPlayer02KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
@@ -14461,11 +14484,11 @@ namespace LasMonjas
                         return;
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.soloPlayer03.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.soloPlayer03.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.soloPlayer03.PlayerId);
 
                     soloPlayer03KillButton.Timer = soloPlayer03KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
@@ -14525,11 +14548,11 @@ namespace LasMonjas
                         return;
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.soloPlayer04.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.soloPlayer04.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.soloPlayer04.PlayerId);
 
                     soloPlayer04KillButton.Timer = soloPlayer04KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
@@ -14589,11 +14612,11 @@ namespace LasMonjas
                         return;
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.soloPlayer05.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.soloPlayer05.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.soloPlayer05.PlayerId);
 
                     soloPlayer05KillButton.Timer = soloPlayer05KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
@@ -14653,11 +14676,11 @@ namespace LasMonjas
                         return;
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.soloPlayer06.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.soloPlayer06.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.soloPlayer06.PlayerId);
 
                     soloPlayer06KillButton.Timer = soloPlayer06KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
@@ -14717,11 +14740,11 @@ namespace LasMonjas
                         return;
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.soloPlayer07.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.soloPlayer07.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.soloPlayer07.PlayerId);
 
                     soloPlayer07KillButton.Timer = soloPlayer07KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
@@ -14781,11 +14804,11 @@ namespace LasMonjas
                         return;
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.soloPlayer08.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.soloPlayer08.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.soloPlayer08.PlayerId);
 
                     soloPlayer08KillButton.Timer = soloPlayer08KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
@@ -14845,11 +14868,11 @@ namespace LasMonjas
                         return;
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.soloPlayer09.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.soloPlayer09.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.soloPlayer09.PlayerId);
 
                     soloPlayer09KillButton.Timer = soloPlayer09KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
@@ -14909,11 +14932,11 @@ namespace LasMonjas
                         return;
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.soloPlayer10.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.soloPlayer10.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.soloPlayer10.PlayerId);
 
                     soloPlayer10KillButton.Timer = soloPlayer10KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
@@ -14973,11 +14996,11 @@ namespace LasMonjas
                         return;
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.soloPlayer11.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.soloPlayer11.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.soloPlayer11.PlayerId);
 
                     soloPlayer11KillButton.Timer = soloPlayer11KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
@@ -15037,11 +15060,11 @@ namespace LasMonjas
                         return;
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.soloPlayer12.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.soloPlayer12.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.soloPlayer12.PlayerId);
 
                     soloPlayer12KillButton.Timer = soloPlayer12KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
@@ -15101,11 +15124,11 @@ namespace LasMonjas
                         return;
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.soloPlayer13.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.soloPlayer13.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.soloPlayer13.PlayerId);
 
                     soloPlayer13KillButton.Timer = soloPlayer13KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
@@ -15165,11 +15188,11 @@ namespace LasMonjas
                         return;
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.soloPlayer14.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.soloPlayer14.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.soloPlayer14.PlayerId);
 
                     soloPlayer14KillButton.Timer = soloPlayer14KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
@@ -15229,11 +15252,11 @@ namespace LasMonjas
                         return;
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.soloPlayer15.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.soloPlayer15.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.soloPlayer15.PlayerId);
 
                     soloPlayer15KillButton.Timer = soloPlayer15KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
@@ -15307,11 +15330,11 @@ namespace LasMonjas
                         }
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.limePlayer01.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.limePlayer01.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.limePlayer01.PlayerId);
 
                     limePlayer01KillButton.Timer = limePlayer01KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
@@ -15389,11 +15412,11 @@ namespace LasMonjas
                         }
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.limePlayer02.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.limePlayer02.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.limePlayer02.PlayerId);
 
                     limePlayer02KillButton.Timer = limePlayer02KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
@@ -15471,11 +15494,11 @@ namespace LasMonjas
                         }
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.limePlayer03.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.limePlayer03.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.limePlayer03.PlayerId);
 
                     limePlayer03KillButton.Timer = limePlayer03KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
@@ -15553,11 +15576,11 @@ namespace LasMonjas
                         }
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.limePlayer04.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.limePlayer04.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.limePlayer04.PlayerId);
 
                     limePlayer04KillButton.Timer = limePlayer04KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
@@ -15635,11 +15658,11 @@ namespace LasMonjas
                         }
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.limePlayer05.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.limePlayer05.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.limePlayer05.PlayerId);
 
                     limePlayer05KillButton.Timer = limePlayer05KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
@@ -15717,11 +15740,11 @@ namespace LasMonjas
                         }
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.limePlayer06.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.limePlayer06.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.limePlayer06.PlayerId);
 
                     limePlayer06KillButton.Timer = limePlayer06KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
@@ -15799,11 +15822,11 @@ namespace LasMonjas
                         }
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.limePlayer07.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.limePlayer07.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.limePlayer07.PlayerId);
 
                     limePlayer07KillButton.Timer = limePlayer07KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
@@ -15881,11 +15904,11 @@ namespace LasMonjas
                         }
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.pinkPlayer01.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.pinkPlayer01.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.pinkPlayer01.PlayerId);
 
                     pinkPlayer01KillButton.Timer = pinkPlayer01KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
@@ -15963,11 +15986,11 @@ namespace LasMonjas
                         }
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.pinkPlayer02.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.pinkPlayer02.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.pinkPlayer02.PlayerId);
 
                     pinkPlayer02KillButton.Timer = pinkPlayer02KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
@@ -16045,11 +16068,11 @@ namespace LasMonjas
                         }
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.pinkPlayer03.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.pinkPlayer03.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.pinkPlayer03.PlayerId);
 
                     pinkPlayer03KillButton.Timer = pinkPlayer03KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
@@ -16127,11 +16150,11 @@ namespace LasMonjas
                         }
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.pinkPlayer04.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.pinkPlayer04.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.pinkPlayer04.PlayerId);
 
                     pinkPlayer04KillButton.Timer = pinkPlayer04KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
@@ -16209,11 +16232,11 @@ namespace LasMonjas
                         }
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.pinkPlayer05.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.pinkPlayer05.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.pinkPlayer05.PlayerId);
 
                     pinkPlayer05KillButton.Timer = pinkPlayer05KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
@@ -16291,11 +16314,11 @@ namespace LasMonjas
                         }
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.pinkPlayer06.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.pinkPlayer06.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.pinkPlayer06.PlayerId);
 
                     pinkPlayer06KillButton.Timer = pinkPlayer06KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
@@ -16373,11 +16396,11 @@ namespace LasMonjas
                         }
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.pinkPlayer07.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.pinkPlayer07.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.pinkPlayer07.PlayerId);
 
                     pinkPlayer07KillButton.Timer = pinkPlayer07KillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);
@@ -16461,11 +16484,11 @@ namespace LasMonjas
                         }
                     }
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BattleRoyaleKills, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
                     writer.Write(target.PlayerId);
                     writer.Write(BattleRoyale.serialKiller.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.battleRoyaleKills(target.PlayerId, BattleRoyale.serialKiller.PlayerId);
+                    RPCProcedure.gamemodeKills(target.PlayerId, BattleRoyale.serialKiller.PlayerId);
 
                     serialKillerKillButton.Timer = serialKillerKillButton.MaxTimer;
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.royaleHitPlayer, false, 100f);

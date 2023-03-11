@@ -85,6 +85,8 @@ namespace LasMonjas
         public static int gameType = CustomOptionHolder.gameType.getSelection(); // 0 - Roles, 1 - Find a Role, 2 - CTF, 3 - PT, 4 - KOTH, 5 - HP, 6 - ZL, 7 - BR, 8 - MJ
         public static float gamemodeMatchDuration = CustomOptionHolder.gamemodeMatchDuration.getFloat();
         public static float gamemodeKillCooldown = CustomOptionHolder.gamemodeKillCooldown.getFloat();
+        public static bool gamemodeEnableFlashlight = CustomOptionHolder.gamemodeEnableFlashlight.getBool();
+        public static float gamemodeFlashlightRange = CustomOptionHolder.gamemodeFlashlightRange.getFloat();
         public static float gamemodeReviveTime = CustomOptionHolder.gamemodeReviveTime.getFloat();
         public static float gamemodeInvincibilityTime = CustomOptionHolder.gamemodeInvincibilityTimeAfterRevive.getFloat();
 
@@ -92,6 +94,8 @@ namespace LasMonjas
             gameType = CustomOptionHolder.gameType.getSelection();
             gamemodeMatchDuration = CustomOptionHolder.gamemodeMatchDuration.getFloat();
             gamemodeKillCooldown = CustomOptionHolder.gamemodeKillCooldown.getFloat();
+            gamemodeEnableFlashlight = CustomOptionHolder.gamemodeEnableFlashlight.getBool();
+            gamemodeFlashlightRange = CustomOptionHolder.gamemodeFlashlightRange.getFloat(); 
             gamemodeReviveTime = CustomOptionHolder.gamemodeReviveTime.getFloat();
             gamemodeInvincibilityTime = CustomOptionHolder.gamemodeInvincibilityTimeAfterRevive.getFloat(); 
 
@@ -489,13 +493,20 @@ namespace LasMonjas
         public static bool activeBomb = false;
         public static bool triggerBombExploded = false;
         public static int currentBombNumber = 0;
-
+        public static GameObject bombObject = null;
 
         private static Sprite bombButtonSprite;
         public static Sprite getBombButtonSprite() {
             if (bombButtonSprite) return bombButtonSprite;
             bombButtonSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.BombermanBombButton.png", 90f);
             return bombButtonSprite;
+        }
+
+        private static Sprite bombDefuseButtonSprite;
+        public static Sprite getBombDefuseButtonSprite() {
+            if (bombDefuseButtonSprite) return bombDefuseButtonSprite;
+            bombDefuseButtonSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.BombermanDefuseButton.png", 90f);
+            return bombDefuseButtonSprite;
         }
 
         public static void clearAndReload() {
@@ -506,6 +517,7 @@ namespace LasMonjas
             activeBomb = false;
             triggerBombExploded = false;
             currentBombNumber = 0;
+            bombObject = null;
         }
 
     }
@@ -580,8 +592,6 @@ namespace LasMonjas
         public static PlayerControl spellTarget;
         public static float cooldown = 30f;
         public static float spellDuration = 2f;
-        public static float cooldownAddition = 10f;
-        public static float cooldownAdditionInitial = 10f;
         public static float currentCooldownAddition = 0f;
         public static bool canCallEmergency = false;
 
@@ -605,8 +615,6 @@ namespace LasMonjas
             spelledPlayers = new List<PlayerControl>();
             currentTarget = spellTarget = null;
             cooldown = CustomOptionHolder.sorcererCooldown.getFloat();
-            cooldownAddition = CustomOptionHolder.sorcererAdditionalCooldown.getFloat();
-            cooldownAdditionInitial = cooldownAddition;
             currentCooldownAddition = CustomOptionHolder.sorcererCooldown.getFloat();
             spellDuration = CustomOptionHolder.sorcererSpellDuration.getFloat();
             canCallEmergency = CustomOptionHolder.sorcererCanCallEmergency.getBool();
@@ -687,7 +695,7 @@ namespace LasMonjas
 
         public static float cooldown = 30f;
 
-        public static float shotSize = 1f;
+        public static float shotSize = 2f;
         public static float shotRange = 20f;
         public static float noticeRange = 20f;
         public static float AimAssistDelay = 2f;
@@ -740,7 +748,7 @@ namespace LasMonjas
         public static void clearAndReload() {
             archer = null;
             cooldown = GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
-            shotSize = CustomOptionHolder.archerShotSize.getFloat();
+            shotSize = 2f;
             shotRange = CustomOptionHolder.archerShotRange.getFloat();
             noticeRange = CustomOptionHolder.archerNoticeRange.getFloat();
             AimAssistDelay = 2f;
@@ -1984,7 +1992,7 @@ namespace LasMonjas
             foreach (PoolablePlayer p in MapOptions.playerIcons.Values) {
                 if (p != null && p.gameObject != null) p.gameObject.SetActive(false);
             }
-            duration = CustomOptionHolder.poisonerDuration.getFloat();
+            duration = 3f;
             infectRange = CustomOptionHolder.poisonerInfectRange.getFloat();
             infectDuration = CustomOptionHolder.poisonerInfectDuration.getFloat();
             infectProgress = new Dictionary<byte, float>();
@@ -2429,8 +2437,8 @@ namespace LasMonjas
             cooldown = CustomOptionHolder.detectiveCooldown.getFloat();
             duration = CustomOptionHolder.detectiveShowFootPrintDuration.getFloat();
             anonymousFootprints = CustomOptionHolder.detectiveAnonymousFootprints.getBool();
-            footprintIntervall = CustomOptionHolder.detectiveFootprintIntervall.getFloat();
-            footprintDuration = CustomOptionHolder.detectiveFootprintDuration.getFloat();
+            footprintIntervall = 1f;
+            footprintDuration = 15f;
             timer = footprintIntervall;
             footprintcolor = 6;
             backUpduration = duration;
@@ -2491,7 +2499,7 @@ namespace LasMonjas
         public static PlayerControl timeTraveler;
         public static Color color = new Color32(0, 189, 255, byte.MaxValue);
 
-        public static bool reviveDuringRewind = false;
+        //public static bool reviveDuringRewind = false;
         public static float rewindTime = 3f;
         public static float shieldDuration = 3f;
         public static float cooldown = 30f;
@@ -2524,7 +2532,6 @@ namespace LasMonjas
             shieldDuration = CustomOptionHolder.timeTravelerShieldDuration.getFloat();
             cooldown = CustomOptionHolder.timeTravelerCooldown.getFloat();
             usedRewind = false;
-            reviveDuringRewind = CustomOptionHolder.timeTravelerReviveDuringRewind.getBool();
             usedShield = false;
             backUpduration = shieldDuration;
         }
@@ -2616,6 +2623,7 @@ namespace LasMonjas
         public static int numberOfFortunes;
         public static int timesUsedFortune;
         public static TMPro.TMP_Text fortuneTellerRevealButtonText;
+        public static bool canCallEmergency = false;
 
         private static Sprite buttonSprite;
         public static Sprite getButtonSprite() {
@@ -2636,6 +2644,7 @@ namespace LasMonjas
             numberOfFortunes = (int)CustomOptionHolder.fortuneTellerNumberOfSee.getFloat();
             currentTarget = null;
             revealTarget = null;
+            canCallEmergency = CustomOptionHolder.fortuneTellerCanCallEmergency.getBool();
         }
     }
 
@@ -2765,7 +2774,6 @@ namespace LasMonjas
 
         public static List<Arrow> localArrows = new List<Arrow>();
         public static int taskCountForImpostors = 1;
-        public static bool includeTeamRenegade = false;
         public static float cooldown = 30f;
         public static float duration = 10f;
         public static float finkTimer = 0f;
@@ -2788,7 +2796,6 @@ namespace LasMonjas
             }
             localArrows = new List<Arrow>();
             taskCountForImpostors = Mathf.RoundToInt(CustomOptionHolder.finkLeftTasksForImpostors.getFloat());
-            includeTeamRenegade = CustomOptionHolder.finkIncludeTeamRenegade.getBool();
             fink = null;
             finkTimer = 0f;
             cooldown = CustomOptionHolder.finkCooldown.getFloat();
@@ -2886,7 +2893,7 @@ namespace LasMonjas
         public static void clearAndReload() {
             spiritualist = null;
             usedRevive = false;
-            spiritualistReviveTime = CustomOptionHolder.spiritualistReviveTime.getFloat();
+            spiritualistReviveTime = 10f;
             isReviving = false;
             canRevive = false;
             localSpiritArrows = new List<Arrow>();
@@ -3745,7 +3752,6 @@ namespace LasMonjas
         public static bool policeCanSeeJewels = false;
         public static float policeCatchCooldown = 10f;
         public static float captureThiefTime = 3f;
-        public static float policeVision = 1f;
         public static int whoCanThiefsKill = 0;
 
         public static float currentJewelsStoled = 0;
@@ -3948,7 +3954,6 @@ namespace LasMonjas
             policeCanSeeJewels = CustomOptionHolder.thiefModePoliceCanSeeJewels.getBool();
             policeCatchCooldown = CustomOptionHolder.thiefModePoliceCatchCooldown.getFloat();
             captureThiefTime = CustomOptionHolder.thiefModecaptureThiefTime.getFloat();
-            policeVision = CustomOptionHolder.thiefModepolicevision.getFloat();
             whoCanThiefsKill = CustomOptionHolder.thiefModeWhoCanThiefsKill.getSelection();
             currentJewelsStoled = 0;
             triggerThiefWin = false;
@@ -4231,7 +4236,6 @@ namespace LasMonjas
         public static float timeforTransfer = 15;
         public static float transferCooldown = 10f;
         public static float savedtimeforTransfer = 15;
-        public static float notPotatoVision = 1f;
         public static bool resetTimeForTransfer = true;
         public static float increaseTimeIfNoReset = 5f; 
         public static bool firstPotatoTransfered = false;
@@ -4287,7 +4291,6 @@ namespace LasMonjas
 
             timeforTransfer = CustomOptionHolder.hotPotatoTransferLimit.getFloat() + 10f;
             transferCooldown = CustomOptionHolder.hotPotatoCooldown.getFloat();
-            notPotatoVision = CustomOptionHolder.hotPotatoNotPotatovision.getFloat();
             resetTimeForTransfer = CustomOptionHolder.hotPotatoResetTimeForTransfer.getBool();
             increaseTimeIfNoReset = CustomOptionHolder.hotPotatoIncreaseTimeIfNoReset.getFloat(); 
             notPotatoTeamAlerted = false;
@@ -4544,7 +4547,6 @@ namespace LasMonjas
         public static float infectCooldown = 10f;
         public static float infectTime = 3f;
         public static float timeForHeal = 20f;
-        public static float survivorsVision = 1f;
         public static float searchBoxTimer = 5f;
 
         public static bool triggerZombieWin = false;
@@ -4880,7 +4882,6 @@ namespace LasMonjas
             startZombies = CustomOptionHolder.zombieLaboratoryStartZombies.getFloat();
             infectCooldown = CustomOptionHolder.zombieLaboratoryInfectCooldown.getFloat();
             infectTime = CustomOptionHolder.zombieLaboratoryInfectTime.getFloat();
-            survivorsVision = CustomOptionHolder.zombieLaboratorySurvivorsVision.getFloat();
             searchBoxTimer = CustomOptionHolder.zombieLaboratorySearchBoxTimer.getFloat();
             zombieSenseiMapLaboratoryMode = CustomOptionHolder.activateSenseiMap.getBool();
             currentKeyItems = 0;
@@ -6304,6 +6305,7 @@ namespace LasMonjas
             HudManagerStartPatch.bigmonjaInvisibleButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
             if (bigMonjaPlayer != null) {
                 Helpers.alphaPlayer(false, bigMonjaPlayer.PlayerId);
+                MonjaFestival.bigMonjaPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
             }
         }
 
