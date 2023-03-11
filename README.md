@@ -4,7 +4,7 @@
 Las Monjas is a Spanish mod (available on English, Spanish, Chinese and Japanese) for Among Us made by fans for fans without being affiliated with Among Us or Innersloth Team, all rights reserved to them. This mod features the following:
 
   1. [60 roles](#roles)
-  2. [10 modifiers and 8 game mechanics](#modifiers)
+  2. [10 modifiers and 7 game mechanics](#modifiers)
   3. [1 custom map](https://youtu.be/9tDh9eYqAgk)
   4. [7 custom gamemodes](#gamemodes)
   5. [5 new colors](#settings)
@@ -28,7 +28,7 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
   2. Extract "Las Monjas modVersion.zip" files inside the "Among Us" folder (where the Among Us.exe file is) selecting replace if necessary.
   3. Open Among Us.exe, the first time takes a bit to load, don't worry.
   4. If there's a Submerged update avaiable, you can update it with the "Download/Update Submerged" cyan's button on the main menu.
-  5. The mod includes a file called [LasMonjasDownloader](https://github.com/KiraYamato94/LasMonjas/releases/download/3.0.0/LasMonjasDownloader.exe) which can be used to reinstall the mod from zero, keep in mind that this file deletes "BepInEx" and "dotnet" folders in order to install them again.
+  5. You can also use the file called [LasMonjasDownloader](https://github.com/KiraYamato94/LasMonjas/releases/download/3.0.0/LasMonjasDownloader.exe) which can be used to reinstall the mod from zero (useful also when a mod update requires manual installtion), keep in mind that this file deletes "BepInEx" and "dotnet" folders in order to install them again.
 
 -----------------------
 
@@ -36,6 +36,16 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
   
+**Version 3.1.3 (11st March 2023**
+- Custom hats and visors have the preview again.
+- On gamemodes, the neutral role will have the hide and seek impostor animation, also added a lobby option to activate the flashlight and its range for Police and Thieves, Hot Potato and Zombie Laboratory.
+- Time Traveler role can now use Vitals and hear Performer's music but can no longer revive people during the rewind.
+- Fortune Teller role now has a lobby option to enable or disable emergency button.
+- Added a sound for impostors when Fink is revealed to them and removed that it could reveal rebel roles.
+- Added a button to defuse Bomberman's bomb (lag free).
+- Readded custom region to prevent bugs with people who already had it added.
+- 12 new hats
+
 **Version 3.1.2 (3rd March 2023)**
 - Compatibilty patch for 2023.2.28
 - Added kill counter for killing roles to the game summary
@@ -384,13 +394,13 @@ Known 1.3.3 BETA issues:
 -----------------------
 
 # Custom Servers
-I recommend to play this mod only on custom servers (for example [Impostor](https://github.com/Impostor/Impostor), note that modded handshake is required to play the mod [Example Modded Handshake by js6pak](https://github.com/NuclearPowered/Reactor.Impostor)), if you own an Impostor server, make sure AntiCheat and BanIpFromGame are set to false in the config.json file. This mod adds three custom server regions to play with, Modded NA (MNA), Modded EU (MEU) and Modded Asia (MAS).
+I recommend to play this mod only on custom servers (for example [Impostor](https://github.com/Impostor/Impostor), note that modded handshake is required to play the mod [Example Modded Handshake by js6pak](https://github.com/NuclearPowered/Reactor.Impostor)), if you own an Impostor server, make sure AntiCheat and BanIpFromGame are set to false in the config.json file. This mod adds three custom server regions to play with, Modded NA (MNA), Modded EU (MEU) and Modded Asia (MAS) (thanks to miniduikboot and GD), and also has [Unify by Daemon](https://github.com/MoltenMods/Unify) implemented, which you can use to select the custom region to join a custom server by entering the IP or domain name and the port of the server.
 
 -----------------------
 
 # Settings
 This mod adds a custom lobby which I won't spoil to you, it also adds five colors (Lavender, Petrol, Mint, Olive and Ice), a button to zoom out / in the map if you're dead and have all tasks done, and five settings to the client option tab:
-- **Game Summary:** Activating this option will create a list containing which role and task progress the players had after the game ends.
+- **Game Summary:** Activating this option will create a list containing which role, task progress and kills the players had on game end.
 - **Activate Music:** Music pack containing 7 songs from Kevin MacLeod (1 for Lobby, 3 for Tasks and 3 for Meeting depending of how many players are alive)
 - **Ghost Can See Roles:** Only after being reported, ghosts will be able to see which role the players have.
 - ~~**Horse Mode:** Activate 2022 1st April Fools, remember to take of your skin if you activate Horse Mode. (Disabled since 3.0.4 update)~~
@@ -535,7 +545,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 **Additional Ability Notes:**
 - Can't place the bomb if he's too close to another player or a sabotage is happening.
 - The bomb will be placed right below where the Bomberman is at that moment.
-- Anyone can defuse the bomb by touching it except Bomberman.
+- Anyone can defuse the bomb, except Bomberman, via button use if the player is close to the bomb.
 - The Mechanic can use one of his repairs to defuse the bomb from anywhere.
 - While the Bomb is active, custom music will play and a custom message with the remaining time for defusing it will display to the players.
 - Bomb duration is fixed to 60 seconds for Skeld, MiraHQ, Dlesk and the custom map, 90 for Polus and Submerged, and 180 for Airship.
@@ -580,7 +590,6 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 |----------|-------------|
 | Impostors | Can cast Spells on a player |
 | Cooldown | Ability Cooldown | 
-| Additional Cooldown per Spell | Additional ability cooldown per spelled player | 
 | Spell Duration | Time needed near the player to cast the spell | 
 | Can use emergency button | His ability depends on calling meetings, define if he can or not use the button | 
 
@@ -627,14 +636,13 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 | Team and Options  | Description |
 |----------|-------------|
 | Impostors | Can make long distance kills |
-| Arrow Size | Arrow Width |
 | Arrow Range | Arrows Distance |
 | Notify Range | Distance to be notified about a shooted arrow |
 | Aim Duration | Arrows duration pointing towards player's position |
 
 **Additional Ability Notes:**
 - He can't make normal kills.
-- To use this role, he needs to pick a Bow (button use), put the mouse cursor towards the desired direction and pressing right click to shoot.
+- To use this role, he needs to pick a Bow (button use), move the mouse cursor towards the desired direction and pressing right click to shoot.
 - Bow is invisible to other players, but after shooting, a warning image will appear into the map for the players inside the Notify Range, and also a sound will be heard.
 - The warning image appears on the Archer's position if he miss the shoot or above the player's body if he doesn't miss the shoot.
 - Aim duration reveal player's direction but not how much distance they are from the Archer.
@@ -680,7 +688,6 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 - They have impostor vision but can't make sabotages.
 - He can't be in the same game as Bounty Hunter, Trapper, Yinyanger, Challenger, Ninja, Berserker, Yandere, Stranded and Monja.
 - If they can use vents and are inside them, Impostors will see the vents highlighted on green.
-- Fink can reveal them if the Reveal Rebel option is set to true.
 
 -----------------------
 
@@ -917,7 +924,6 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 | Team and Options  | Description |
 |----------|-------------|
 | Neutrals | Has to poison everyone to win |
-| Time to Poison | Time needed to make the poisoned player | 
 | Poison Infect Range | Poisoned player range to infect others | 
 | Time to fully Poison | Time needed for players to reach 100% after staying near to poisoned player | 
 | Can Sabotage | Define if he can or not sabotage |
@@ -1044,12 +1050,10 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 | Cooldown | Show footprints cooldown |
 | Duration | Show footprints duration |
 | Anonymous Footprints | This sets the footprints color to grey |
-| Footprint Interval | How often the footprints appear |
-| Footprint Duration | Time it takes the footprints to disappear |
 
 **Additional Ability Notes:**
 - He can only see footprints if he's alive.
-- Footprints won't spawn near vents.
+- Footprints won't spawn near vents, spawn each second and last for 15 seconds.
 
 -----------------------
 
@@ -1081,16 +1085,13 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 | Cooldown | Ability Cooldown |
 | Shield Duration | Time shield duration time ||
 | Rewind Time | Time the game goes back in time ||
-| Revive player during Rewind | Define if going back in time revive players |
 
 **Additional Ability Notes:**
 - Rewind and Shield button shared their cooldown.
 - Rewind button can be used only 1 time per game and only if there's no sabotages at the moment.
 - Shield button can be used whenever the player wants until a successfull use of the shield.
 - Trying to kill the Time Traveler while the shield is active will trigger the rewind time.
-- He can't use Vitals on Polus and Airship.
-- He doesn't hear the Performer's music.
-- His buttons enters cooldown after a Challenger's duel.
+- His buttons enters cooldown after a Challenger's duel or Seeker's minigame.
 
 -----------------------
 
@@ -1131,6 +1132,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 | Reveal Number | Times he can reveal players |  
 | Revealed Information | Reveals if the player is good or bad, or their role name |  
 | Show Notification to | Select who recieves the notification, impostors, crewmates, all or nobody |  
+| Can use emergency button | Define if he can make emergency meetings |  
 
 **Additional Ability Notes:**
 - Revealing a player will trigger a sound and the screen for that player and Fortune teller will turn blue based on the Show Notification option.
@@ -1175,15 +1177,13 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 | Team and Options  | Description |
 |----------|-------------|
 | Crewmates | Can reveal who the Impostors are after finishing all his tasks and zoom out his camera |
-| Tasks for being revealed to Impostors | When the Impostors will know who is the Fink |  
-| Can Reveal Renegade and Minion | Define if Renegade and Minion are revealed too |  
+| Tasks for being revealed to Impostors | When the Impostors will know who is the Fink | 
 | Cooldown | Spy cooldown |  
 | Hawk Eye Duration | Time the camera is zoomed out |  
 
 **Additional Ability Notes:**
 - Impostor's reveal arrow for Fink are red.
-- Renegade and Minion arrows for Fink are green.
-- Impostors and Renegade see the Fink with a maroon arrow.
+- Impostors hear a sound when the Fink is revealed to them and a maroon arrow spawns towards Fink's position.
 - While using Hawk Eye, he can't move and impostors will get a warning about his ability is in use.
 
 -----------------------
@@ -1217,14 +1217,12 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 | Team and Options  | Description |
 |----------|-------------|
 | Crewmates | Can revive another player at the cost of his own life |
-| Revive Player Time | Time needed for reviving the player |
 
 **Additional Ability Notes:**
 - Ghosts know who the Spiritualist is by looking at the player's name, it will be pink.
 - To revive someone, he has to stay near the corpse for the defined amount of time. This time resets if you move far away from the corpse.
 - If he's trying to revive someone and a meeting or body report is called, he will fail the revive and die instead.
 - If he manages to revive the player, Spiritualist's body will disappear and the revived player will be revealed to Impostors and Rebel with a pink arrow targeting him.
-- Time Traveler is the only role who can revive the Spiritualist if he rewind the time right after the Spiritualist revives someone.
 - The revived player spawns where his body was after a pink screen flash, if he was doing a tasks in ghost form it won't be canceled.
 - Reviving a Lover will also revive the other Lover, the same goes with the Bounty Hunter and his target.
 
@@ -1379,7 +1377,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 
 # Modifiers
 
-This mod also features some game mechanic modifiers, one of them being a [custom map](https://youtu.be/9tDh9eYqAgk), some of them aren't considered as a separate role, instead they're added as a player attribute which can be good or bad. To activate them, Modifiers option has to be On.
+This mod also features some game mechanic changes, one of them being a [custom map](https://youtu.be/9tDh9eYqAgk), and modifiers which aren't considered as a separate role, instead they're added as a player attribute which can be good or bad. To activate them, Modifiers option has to be On.
 
 | Global Setting  | Description |
 |----------|-------------|
@@ -1430,7 +1428,21 @@ This mod also features some game mechanic modifiers, one of them being a [custom
 
 # GameModes
 
-This mods adds seven gamemodes, which can be played on everymap including the custom one and Submerged. Mod roles won't spawn and map abilities (admin, sabotage, reports, emergency button...) can't be used on custom gamemodes.
+This mods adds seven gamemodes, which can be played on everymap including the custom one and Submerged. Mod roles won't spawn and map abilities (admin, sabotage, reports, emergency button...) can't be used. A few settings are shared between all the gamemodes:
+
+| Option  | Description |
+|----------|-------------|
+| Match Duration | From 3 to 7 minutes |
+| Kill Cooldown | Same kill cooldown |
+| Enable Flashlight | Available for Police and Thiefs, Hot Potato and Zombie Laboratory |
+| Flashlight Range | Flashlight vision range |
+| Revive Time | Everyone revives on his team's base after a setted amount of time |
+| Invincibility Time After Revive | Players can't use their abilities, vent or get killed during this time |
+
+**Additional Gamemode Notes:**
+- Revive Time value is calculated by subtracting Invincibility Time value from it, for example if Revive Time is 8 and Invincibility Time is 3, players will revive after 5 seconds but will be invincible for another 3 seconds after reviving.
+
+-----------------------
 
 ## CaptureTheFlag
 
@@ -1438,11 +1450,7 @@ Match between red and blue team where each team has to steal the enemy flag and 
 
 | Option  | Description |
 |----------|-------------|
-| Match Duration | From 3 to 5 minutes |
 | Score Number | Points needed to win, from 3 to 5 |
-| Kill Cooldown | Everyone can kill with the same cooldown |
-| Revive Time | Everyone revives on his team base after a setted amount of time |
-| Invincibility Time After Revive | Players can't use their abilities, vent or get killed during this time |
 
 **Additional Gamemode Notes:**
 - Each player name color will be the same as the team color.
@@ -1454,7 +1462,6 @@ Match between red and blue team where each team has to steal the enemy flag and 
 - There are custom messages for match duration, stolen flag and scored point, also the game score is always displayed.
 - Flags positions are marked by a team color corresponding arrow.
 - If the player who has the flag disconnects from the match, the flag goes back to its base.
-- Revive Time value is calculated by subtracting Invincibility Time value from it, for example if Revive Time is 8 and Invincibility Time is 3, players will revive after 5 seconds but will be invincible for another 3 seconds after reviving.
 
 -----------------------
 
@@ -1464,20 +1471,13 @@ Match between cyan (Police) and brown (Thieves) team. This gamemode adds a new m
 
 | Option  | Description |
 |----------|-------------|
-| Match Duration | From 5 to 7 and half minutes |
 | Jewel Number | Jewels needed for Thief team to win, from 8 to 15 |
-| Police Kill Cooldown | Police team kill cooldown |
 | Arrest Cooldown | Police ability to arrest a Thief |
 | Time to Arrest | Police needed time next to a Thief to arrest it |
 | Police Tase Cooldown | Police Taser players tase cooldown |
 | Police Tase Duration | Time a Thief will be tased |
 | Police Can See Jewels | Define if police team can see jewels on the map |
-| Police Vision Range | Define light range for Police |
-| Police Revive Time | Wait time for Police team to revive |
 | Who Can Thieves Kill | Define if Thief team can kill Tasers, All Police team or nobody |
-| Thieves Kill Cooldown | Thief team kill cooldown if they can kill |
-| Thieves Revive Time | Wait time for Thief team to revive |
-| Invincibility Time After Revive | Players can't use their abilities, vent or get killed during this time |
 
 **Additional Gamemode Notes:**
 - Police team always win on match time out and capturing all the Thieves.
@@ -1497,7 +1497,6 @@ Match between cyan (Police) and brown (Thieves) team. This gamemode adds a new m
 - There are custom messages for match duration, delivered jewel, captured Thief, released Thief and tased Thief, also the game score is always displayed.
 - If a Thief who has a Jewel disconnects from the match, the Jewel stays where that player was.
 - Also if a Thief disconnects, the required captured Thief updates too.
-- Revive Time value is calculated by subtracting Invincibility Time value from it, for example if Revive Time is 8 and Invincibility Time is 3, players will revive after 5 seconds but will be invincible for another 3 seconds after reviving.
 
 -----------------------
 
@@ -1507,13 +1506,9 @@ Match between green and yellow team. There's a total of 3 capturable zones in th
 
 | Option  | Description |
 |----------|-------------|
-| Match Duration | From 3 to 5 minutes |
 | Required Points | Points required to win, from 100 to 300 |
 | Capture Cooldown | King capture ability cooldown |
-| Kill Cooldown | Player's kill cooldown |
 | Kings can Kill | Define if Kings can also kill |
-| Revive Time | Everyone revives on his team base after a setted amount of time |
-| Invincibility Time After Revive | Players can't use their abilities, vent or get killed during this time |
 
 **Additional Gamemode Notes:**
 - Only the Kings can capture zones, the rest of the team have to protect him and the captured zones.
@@ -1528,7 +1523,6 @@ Match between green and yellow team. There's a total of 3 capturable zones in th
 - The Usurper always loses, he can kill everyone (but not close to a team's spawn) and if he kills a King he becomes one, making the old King the new Usurper. Also Usurper has two arrows pointing towards each King's position.
 - Each player name color will be the same as the team color.
 - There are custom messages for match duration, captured zone, a King died or a King disconnects, also the game score is always displayed.
-- Revive Time value is calculated by subtracting Invincibility Time value from it, for example if Revive Time is 8 and Invincibility Time is 3, players will revive after 5 seconds but will be invincible for another 3 seconds after reviving.
 
 -----------------------
 
@@ -1538,7 +1532,6 @@ A random player gets the Hot Potato role, that player has to give the hot potato
 
 | Option  | Description |
 |----------|-------------|
-| Match Duration | From 5 to 7 and half minutes |
 | Hot Potato Time Limit | Time before the Hot Potato explodes |
 | Hot Potato Cooldown | Give Hot Potato Cooldown |
 | Cold Potatoes Vision | Light range for Cold Potato players |
@@ -1563,17 +1556,12 @@ A random player gets the Zombie role, another player the Nurse role and the rest
 
 | Option  | Description |
 |----------|-------------|
-| Match Duration | From 5 to 7 and half minutes |
 | Initial Zombies | Initial spawned zombie players, from 1 to 5 |
 | Time needed to Infect | Time needed next to a player to infect it |
 | Infect Cooldown | Infect Button Cooldown |
 | Search Box Timer | Time needed to search inside a Box |
-| Survivors Vision Range | Survivor Team light range |
 | Time limit to use medkit | Nurse time limit to use medkit on a infected player |
 | Who Can Zombies Kill | Survivors only, all (including Nurse) or nobody |
-| Kill Cooldown | Kill Button cooldown |
-| Revive Time | Everyone revives on his team base after a setted amount of time |
-| Invincibility Time After Revive | Players can't use their abilities, vent or get killed during this time |
 
 **Additional Gamemode Notes:**
 - Only Zombies can use vents.
@@ -1587,7 +1575,6 @@ A random player gets the Zombie role, another player the Nurse role and the rest
 - If you're delivering a key item, you can't search boxes or kill and you'll lose it if you die or turn into a zombie, making the key item return to their original location.
 - If a Zombie disconnects from the game and was the only one, survivors will win. Also if the Nurse disconnects, zombie team will win.
 - There are custom messages for somebody gets infected, delivered a key item or someone turned into a zombie.
-- Revive Time value is calculated by subtracting Invincibility Time value from it, for example if Revive Time is 8 and Invincibility Time is 3, players will revive after 5 seconds but will be invincible for another 3 seconds after reviving.
 - Score message is always shown, telling how many key items had been delivered, how many survivors are alive, how many infected are and how many zombies are.
 
 -----------------------
@@ -1598,13 +1585,10 @@ On this gamemode everyone has a ranged kill button with the Archer's mechanic (u
 
 | Option  | Description |
 |----------|-------------|
-| Match Duration | From 3 to 5 minutes |
 | Match Type | All VS All, Team Battle or Score Battle |
 | Kill Cooldown | Kill Button Cooldown |
 | Fighter Lifes | Number of Lifes the players have |
 | Score Number | Total Score for winning on Score Battle |
-| Revive Time | Only on Score Battle, everyone revives on his team base after a setted amount of time |
-| Invincibility Time After Revive | Only on Score Battle, players can't use their abilities or get killed during this time |
 
 **Additional Gamemode Notes:**
 - Nobody can vent.
@@ -1617,20 +1601,12 @@ On this gamemode everyone has a ranged kill button with the Archer's mechanic (u
 - The ranged kill can't go across walls or other collision props like the Archer's impostor role and if you miss the shot it just enters cooldown. Also a straight line player color based will appear everytime you shoot to serve as guidance.
 - You will hear a sound if you hit someone or you get hit. Also there's a special bell sound when someone dies on All VS All or Team Battle.
 - Player's color ground splashes will appear when someone gets hit on All VS All, on Team and Score Battle they will be lime, pink or grey. It will stay there the entire match except for Score Battle, where it disappears after 5 seconds.
-- Revive Time value is calculated by subtracting Invincibility Time value from it, for example if Revive Time is 8 and Invincibility Time is 3, players will revive after 5 seconds but will be invincible for another 3 seconds after reviving.
 
 -----------------------
 
 ## MonjaFestival
 
 Match between green and cyan teams where each team has to look for Monjas around the map and deliver them to their base. When the time reaches 0, the team with more Monjas wins. On odd player number games a special role called Big Monja will appear.
-
-| Option  | Description |
-|----------|-------------|
-| Match Duration | From 3 to 5 minutes |
-| Kill Cooldown | Kill Button Cooldown |
-| Revive Time | Everyone revives on his team base after a setted amount of time |
-| Invincibility Time After Revive | Players can't use their abilities, vent or get killed during this time |
 
 **Additional Gamemode Notes:**
 - There are 6 Monjas spawns on the map where players can pick up Monjas, two of them have more Monjas to pick than the other four.
@@ -1714,6 +1690,3 @@ If you use something from Las Monjas on your mod, please credit me on your mod's
 [Twix](https://github.com/whichtwix/Modinstaller) - Downloader tool used to make Las Monjas Downloader
 
 -----------------------
-
-# Known Bugs
-- Custom hats and visor don't have the sprite on the wardrobe but work anyway
