@@ -36,6 +36,12 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
   
+**Version 3.1.4 (12nd March 2023)**
+- Fixed a bug with Performer's music when killed if the Performer was the Puppeteer morphed
+- Fixed the /myrole and /mymodifier meeting commands
+- Fixed bodies teleport from Challenger's duel
+- 1 new visor
+
 **Version 3.1.3 (11st March 2023**
 - Custom hats and visors have the preview again.
 - On gamemodes, the neutral role will have the hide and seek impostor animation, also added a lobby option to activate the flashlight and its range for Police and Thieves, Hot Potato and Zombie Laboratory.
@@ -399,11 +405,11 @@ I recommend to play this mod only on custom servers (for example [Impostor](http
 -----------------------
 
 # Settings
-This mod adds a custom lobby which I won't spoil to you, it also adds five colors (Lavender, Petrol, Mint, Olive and Ice), a button to zoom out / in the map if you're dead and have all tasks done, and five settings to the client option tab:
+This mod adds a custom lobby which I won't spoil to you, it also adds five colors (Lavender, Petrol, Mint, Olive and Ice), a button to zoom out / in the map if you're dead and have all tasks done, and four settings to the client option tab:
 - **Game Summary:** Activating this option will create a list containing which role, task progress and kills the players had on game end.
 - **Activate Music:** Music pack containing 7 songs from Kevin MacLeod (1 for Lobby, 3 for Tasks and 3 for Meeting depending of how many players are alive)
 - **Ghost Can See Roles:** Only after being reported, ghosts will be able to see which role the players have.
-- ~~**Horse Mode:** Activate 2022 1st April Fools, remember to take of your skin if you activate Horse Mode. (Disabled since 3.0.4 update)~~
+- ~~**Horse Mode:** Activate 2022 1st April Fools, remember to take of your skin if you activate Horse Mode.~~ (Disabled since 3.0.4 update)
 - **Monja Cursor:** Enable a bigger Nun cursor for the game.
 
 -----------------------
