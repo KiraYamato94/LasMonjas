@@ -205,7 +205,6 @@ namespace LasMonjas
         private static CustomButton thiefplayer09TakeDeliverJewelButton;
 
         // King of the hill buttons
-        private static CustomButton greenKingplayerKillButton;
         private static CustomButton greenKingplayerCaptureZoneButton;
         private static CustomButton greenplayer01KillButton;
         private static CustomButton greenplayer02KillButton;
@@ -213,7 +212,6 @@ namespace LasMonjas
         private static CustomButton greenplayer04KillButton;
         private static CustomButton greenplayer05KillButton;
         private static CustomButton greenplayer06KillButton;
-        private static CustomButton yellowKingplayerKillButton;
         private static CustomButton yellowKingplayerCaptureZoneButton;
         private static CustomButton yellowplayer01KillButton;
         private static CustomButton yellowplayer02KillButton;
@@ -631,7 +629,6 @@ namespace LasMonjas
 
             // King of the hill buttons
             greenKingplayerCaptureZoneButton.MaxTimer = KingOfTheHill.captureCooldown;
-            greenKingplayerKillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             greenplayer01KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             greenplayer02KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             greenplayer03KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
@@ -639,7 +636,6 @@ namespace LasMonjas
             greenplayer05KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             greenplayer06KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             yellowKingplayerCaptureZoneButton.MaxTimer = KingOfTheHill.captureCooldown;
-            yellowKingplayerKillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             yellowplayer01KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             yellowplayer02KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
             yellowplayer03KillButton.MaxTimer = LasMonjas.gamemodeKillCooldown;
@@ -9484,29 +9480,6 @@ namespace LasMonjas
                 KeyCode.Q
             );
 
-            // greenKingplayer Kill
-            greenKingplayerKillButton = new CustomButton(
-                () => {
-                    byte targetId = KingOfTheHill.greenKingplayercurrentTarget.PlayerId;
-                    byte sourceId = KingOfTheHill.greenKingplayer.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
-                    killWriter.Write(targetId);
-                    killWriter.Write(sourceId);
-                    AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.gamemodeKills(targetId, sourceId);
-                    greenKingplayerKillButton.Timer = greenKingplayerKillButton.MaxTimer;
-                    KingOfTheHill.greenKingplayercurrentTarget = null;
-                },
-                () => { return KingOfTheHill.greenKingplayer != null && KingOfTheHill.greenKingplayer == PlayerControl.LocalPlayer && KingOfTheHill.kingCanKill; },
-                () => { return KingOfTheHill.greenKingplayercurrentTarget && PlayerControl.LocalPlayer.CanMove && !KingOfTheHill.greenKingIsReviving && !PlayerControl.LocalPlayer.Data.IsDead;
-                },
-                () => { greenKingplayerKillButton.Timer = greenKingplayerKillButton.MaxTimer; },
-                __instance.KillButton.graphic.sprite,
-                new Vector3(0, 1f, 0),
-                __instance,
-                KeyCode.Q
-            );
-
             // yellowplayer01 Kill
             yellowplayer01KillButton = new CustomButton(
                 () => {
@@ -9717,30 +9690,6 @@ namespace LasMonjas
                     return KingOfTheHill.yellowplayer06currentTarget && PlayerControl.LocalPlayer.CanMove && !KingOfTheHill.yellowplayer06IsReviving && !PlayerControl.LocalPlayer.Data.IsDead;
                 },
                 () => { yellowplayer06KillButton.Timer = yellowplayer06KillButton.MaxTimer; },
-                __instance.KillButton.graphic.sprite,
-                new Vector3(0, 1f, 0),
-                __instance,
-                KeyCode.Q
-            );
-
-            // yellowKingplayer Kill
-            yellowKingplayerKillButton = new CustomButton(
-                () => {
-                    byte targetId = KingOfTheHill.yellowKingplayercurrentTarget.PlayerId;
-                    byte sourceId = KingOfTheHill.yellowKingplayer.PlayerId;
-                    MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamemodeKills, Hazel.SendOption.Reliable, -1);
-                    killWriter.Write(targetId);
-                    killWriter.Write(sourceId);
-                    AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                    RPCProcedure.gamemodeKills(targetId, sourceId);
-                    yellowKingplayerKillButton.Timer = yellowKingplayerKillButton.MaxTimer;
-                    KingOfTheHill.yellowKingplayercurrentTarget = null;
-                },
-                () => { return KingOfTheHill.yellowKingplayer != null && KingOfTheHill.yellowKingplayer == PlayerControl.LocalPlayer && KingOfTheHill.kingCanKill; },
-                () => {
-                    return KingOfTheHill.yellowKingplayercurrentTarget && PlayerControl.LocalPlayer.CanMove && !KingOfTheHill.yellowKingIsReviving && !PlayerControl.LocalPlayer.Data.IsDead;
-                },
-                () => { yellowKingplayerKillButton.Timer = yellowKingplayerKillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 new Vector3(0, 1f, 0),
                 __instance,

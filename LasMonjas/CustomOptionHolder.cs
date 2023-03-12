@@ -52,7 +52,6 @@ namespace LasMonjas
         // King of the hill
         public static CustomOption kingRequiredPoints;
         public static CustomOption kingCaptureCooldown;
-        public static CustomOption kingCanKill;
         // Hot Potato
         public static CustomOption hotPotatoTransferLimit;
         public static CustomOption hotPotatoCooldown;
@@ -460,7 +459,6 @@ namespace LasMonjas
             // King of the hill mode
             kingRequiredPoints = CustomOption.Create(51, cs(Squire.color, "King of the Hill") + ": Score Number", "gamemode", 200f, 100f, 300f, 10f, gamemodeIndividualSettings);
             kingCaptureCooldown = CustomOption.Create(52, cs(Squire.color, "King of the Hill") + ": Capture Cooldown", "gamemode", 10f, 5f, 15f, 1f, gamemodeIndividualSettings);
-            kingCanKill = CustomOption.Create(53, cs(Squire.color, "King of the Hill") + ": Kings can Kill", "gamemode", false, gamemodeIndividualSettings);
             // Hot Potato
             hotPotatoTransferLimit = CustomOption.Create(61, cs(Shy.color, "Hot Potato") + ": Time Limit for Transfer", "gamemode", 20f, 10f, 30f, 1f, gamemodeIndividualSettings);
             hotPotatoCooldown = CustomOption.Create(62, cs(Shy.color, "Hot Potato") + ": Transfer Cooldown", "gamemode", 5f, 5f, 10f, 1f, gamemodeIndividualSettings);

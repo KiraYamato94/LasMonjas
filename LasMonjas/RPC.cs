@@ -8161,85 +8161,85 @@ namespace LasMonjas
                 case 1:
                     MonjaFestival.greenPlayer01Items += 1;
                     MonjaFestival.greenmonja01DeliverCount.text = $"{MonjaFestival.greenPlayer01Items} / 3";
-                    monjaFestivalShowHands(MonjaFestival.greenPlayer01Items, MonjaFestival.handsGreen01);
+                    monjaFestivalShowHands(MonjaFestival.greenPlayer01Items, MonjaFestival.handsGreen01, true);
                     break;
                 // Green Monja 02
                 case 2:
                     MonjaFestival.greenPlayer02Items += 1;
                     MonjaFestival.greenmonja02DeliverCount.text = $"{MonjaFestival.greenPlayer02Items} / 3";
-                    monjaFestivalShowHands(MonjaFestival.greenPlayer02Items, MonjaFestival.handsGreen02);
+                    monjaFestivalShowHands(MonjaFestival.greenPlayer02Items, MonjaFestival.handsGreen02, true);
                     break;
                 // Green Monja 03
                 case 3:
                     MonjaFestival.greenPlayer03Items += 1;
                     MonjaFestival.greenmonja03DeliverCount.text = $"{MonjaFestival.greenPlayer03Items} / 3";
-                    monjaFestivalShowHands(MonjaFestival.greenPlayer03Items, MonjaFestival.handsGreen03);
+                    monjaFestivalShowHands(MonjaFestival.greenPlayer03Items, MonjaFestival.handsGreen03, true);
                     break;
                 // Green Monja 04
                 case 4:
                     MonjaFestival.greenPlayer04Items += 1;
                     MonjaFestival.greenmonja04DeliverCount.text = $"{MonjaFestival.greenPlayer04Items} / 3";
-                    monjaFestivalShowHands(MonjaFestival.greenPlayer04Items, MonjaFestival.handsGreen04);
+                    monjaFestivalShowHands(MonjaFestival.greenPlayer04Items, MonjaFestival.handsGreen04, true);
                     break;
                 // Green Monja 05
                 case 5:
                     MonjaFestival.greenPlayer05Items += 1;
                     MonjaFestival.greenmonja05DeliverCount.text = $"{MonjaFestival.greenPlayer05Items} / 3";
-                    monjaFestivalShowHands(MonjaFestival.greenPlayer05Items, MonjaFestival.handsGreen05);
+                    monjaFestivalShowHands(MonjaFestival.greenPlayer05Items, MonjaFestival.handsGreen05, true);
                     break;
                 // Green Monja 06
                 case 6:
                     MonjaFestival.greenPlayer06Items += 1;
                     MonjaFestival.greenmonja06DeliverCount.text = $"{MonjaFestival.greenPlayer06Items} / 3";
-                    monjaFestivalShowHands(MonjaFestival.greenPlayer06Items, MonjaFestival.handsGreen06);
+                    monjaFestivalShowHands(MonjaFestival.greenPlayer06Items, MonjaFestival.handsGreen06, true);
                     break;
                 // Green Monja 07
                 case 7:
                     MonjaFestival.greenPlayer07Items += 1;
                     MonjaFestival.greenmonja07DeliverCount.text = $"{MonjaFestival.greenPlayer07Items} / 3";
-                    monjaFestivalShowHands(MonjaFestival.greenPlayer07Items, MonjaFestival.handsGreen07);
+                    monjaFestivalShowHands(MonjaFestival.greenPlayer07Items, MonjaFestival.handsGreen07, true);
                     break;
                 // Cyan Monja 01
                 case 8:
                     MonjaFestival.cyanPlayer01Items += 1;
                     MonjaFestival.cyanPlayer01DeliverCount.text = $"{MonjaFestival.cyanPlayer01Items} / 3";
-                    monjaFestivalShowHands(MonjaFestival.cyanPlayer01Items, MonjaFestival.handsCyan01);
+                    monjaFestivalShowHands(MonjaFestival.cyanPlayer01Items, MonjaFestival.handsCyan01, false);
                     break;
                 // Cyan Monja 02
                 case 9:
                     MonjaFestival.cyanPlayer02Items += 1;
                     MonjaFestival.cyanPlayer02DeliverCount.text = $"{MonjaFestival.cyanPlayer02Items} / 3";
-                    monjaFestivalShowHands(MonjaFestival.cyanPlayer02Items, MonjaFestival.handsCyan02);
+                    monjaFestivalShowHands(MonjaFestival.cyanPlayer02Items, MonjaFestival.handsCyan02, false);
                     break;
                 // Cyan Monja 03
                 case 10:
                     MonjaFestival.cyanPlayer03Items += 1;
                     MonjaFestival.cyanPlayer03DeliverCount.text = $"{MonjaFestival.cyanPlayer03Items} / 3";
-                    monjaFestivalShowHands(MonjaFestival.cyanPlayer03Items, MonjaFestival.handsCyan03);
+                    monjaFestivalShowHands(MonjaFestival.cyanPlayer03Items, MonjaFestival.handsCyan03, false);
                     break;
                 // Cyan Monja 04
                 case 11:
                     MonjaFestival.cyanPlayer04Items += 1;
                     MonjaFestival.cyanPlayer04DeliverCount.text = $"{MonjaFestival.cyanPlayer04Items} / 3";
-                    monjaFestivalShowHands(MonjaFestival.cyanPlayer04Items, MonjaFestival.handsCyan04);
+                    monjaFestivalShowHands(MonjaFestival.cyanPlayer04Items, MonjaFestival.handsCyan04, false);
                     break;
                 // Cyan Monja 05
                 case 12:
                     MonjaFestival.cyanPlayer05Items += 1;
                     MonjaFestival.cyanPlayer05DeliverCount.text = $"{MonjaFestival.cyanPlayer05Items} / 3";
-                    monjaFestivalShowHands(MonjaFestival.cyanPlayer05Items, MonjaFestival.handsCyan05);
+                    monjaFestivalShowHands(MonjaFestival.cyanPlayer05Items, MonjaFestival.handsCyan05, false);
                     break;
                 // Cyan Monja 06
                 case 13:
                     MonjaFestival.cyanPlayer06Items += 1;
                     MonjaFestival.cyanPlayer06DeliverCount.text = $"{MonjaFestival.cyanPlayer06Items} / 3";
-                    monjaFestivalShowHands(MonjaFestival.cyanPlayer06Items, MonjaFestival.handsCyan06);
+                    monjaFestivalShowHands(MonjaFestival.cyanPlayer06Items, MonjaFestival.handsCyan06, false);
                     break;
                 // Cyan Monja 07
                 case 14:
                     MonjaFestival.cyanPlayer07Items += 1;
                     MonjaFestival.cyanPlayer07DeliverCount.text = $"{MonjaFestival.cyanPlayer07Items} / 3";
-                    monjaFestivalShowHands(MonjaFestival.cyanPlayer07Items, MonjaFestival.handsCyan07);
+                    monjaFestivalShowHands(MonjaFestival.cyanPlayer07Items, MonjaFestival.handsCyan07, false);
                     break;
                 // Big Monja
                 case 15:
@@ -8251,85 +8251,85 @@ namespace LasMonjas
                 case 21:
                     MonjaFestival.greenPlayer01Items -= 1;
                     MonjaFestival.greenmonja01DeliverCount.text = $"{MonjaFestival.greenPlayer01Items} / 3";
-                    monjaFestivalShowHands(MonjaFestival.greenPlayer01Items, MonjaFestival.handsGreen01);
+                    monjaFestivalShowHands(MonjaFestival.greenPlayer01Items, MonjaFestival.handsGreen01, true);
                     break;
                 // Green Monja 02 deliver
                 case 22:
                     MonjaFestival.greenPlayer02Items -= 1;
                     MonjaFestival.greenmonja02DeliverCount.text = $"{MonjaFestival.greenPlayer02Items} / 3";
-                    monjaFestivalShowHands(MonjaFestival.greenPlayer02Items, MonjaFestival.handsGreen02);
+                    monjaFestivalShowHands(MonjaFestival.greenPlayer02Items, MonjaFestival.handsGreen02, true);
                     break;
                 // Green Monja 03 deliver
                 case 23:
                     MonjaFestival.greenPlayer03Items -= 1;
                     MonjaFestival.greenmonja03DeliverCount.text = $"{MonjaFestival.greenPlayer03Items} / 3";
-                    monjaFestivalShowHands(MonjaFestival.greenPlayer03Items, MonjaFestival.handsGreen03);
+                    monjaFestivalShowHands(MonjaFestival.greenPlayer03Items, MonjaFestival.handsGreen03, true);
                     break;
                 // Green Monja 04 deliver
                 case 24:
                     MonjaFestival.greenPlayer04Items -= 1;
                     MonjaFestival.greenmonja04DeliverCount.text = $"{MonjaFestival.greenPlayer04Items} / 3";
-                    monjaFestivalShowHands(MonjaFestival.greenPlayer04Items, MonjaFestival.handsGreen04);
+                    monjaFestivalShowHands(MonjaFestival.greenPlayer04Items, MonjaFestival.handsGreen04, true);
                     break;
                 // Green Monja 05 deliver
                 case 25:
                     MonjaFestival.greenPlayer05Items -= 1;
                     MonjaFestival.greenmonja05DeliverCount.text = $"{MonjaFestival.greenPlayer05Items} / 3";
-                    monjaFestivalShowHands(MonjaFestival.greenPlayer05Items, MonjaFestival.handsGreen05);
+                    monjaFestivalShowHands(MonjaFestival.greenPlayer05Items, MonjaFestival.handsGreen05, true);
                     break;
                 // Green Monja 06 deliver
                 case 26:
                     MonjaFestival.greenPlayer06Items -= 1;
                     MonjaFestival.greenmonja06DeliverCount.text = $"{MonjaFestival.greenPlayer06Items} / 3";
-                    monjaFestivalShowHands(MonjaFestival.greenPlayer06Items, MonjaFestival.handsGreen06);
+                    monjaFestivalShowHands(MonjaFestival.greenPlayer06Items, MonjaFestival.handsGreen06, true);
                     break;
                 // Green Monja 07 deliver
                 case 27:
                     MonjaFestival.greenPlayer07Items -= 1;
                     MonjaFestival.greenmonja07DeliverCount.text = $"{MonjaFestival.greenPlayer07Items} / 3";
-                    monjaFestivalShowHands(MonjaFestival.greenPlayer07Items, MonjaFestival.handsGreen07);
+                    monjaFestivalShowHands(MonjaFestival.greenPlayer07Items, MonjaFestival.handsGreen07, true);
                     break;
                 // Cyan Monja 01 deliver
                 case 28:
                     MonjaFestival.cyanPlayer01Items -= 1;
                     MonjaFestival.cyanPlayer01DeliverCount.text = $"{MonjaFestival.cyanPlayer01Items} / 3";
-                    monjaFestivalShowHands(MonjaFestival.cyanPlayer01Items, MonjaFestival.handsCyan01);
+                    monjaFestivalShowHands(MonjaFestival.cyanPlayer01Items, MonjaFestival.handsCyan01, false);
                     break;
                 // Cyan Monja 02 deliver
                 case 29:
                     MonjaFestival.cyanPlayer02Items -= 1;
                     MonjaFestival.cyanPlayer02DeliverCount.text = $"{MonjaFestival.cyanPlayer02Items} / 3";
-                    monjaFestivalShowHands(MonjaFestival.cyanPlayer02Items, MonjaFestival.handsCyan02);
+                    monjaFestivalShowHands(MonjaFestival.cyanPlayer02Items, MonjaFestival.handsCyan02, false);
                     break;
                 // Cyan Monja 03 deliver
                 case 30:
                     MonjaFestival.cyanPlayer03Items -= 1;
                     MonjaFestival.cyanPlayer03DeliverCount.text = $"{MonjaFestival.cyanPlayer03Items} / 3";
-                    monjaFestivalShowHands(MonjaFestival.cyanPlayer03Items, MonjaFestival.handsCyan03);
+                    monjaFestivalShowHands(MonjaFestival.cyanPlayer03Items, MonjaFestival.handsCyan03, false);
                     break;
                 // Cyan Monja 04 deliver
                 case 31:
                     MonjaFestival.cyanPlayer04Items -= 1;
                     MonjaFestival.cyanPlayer04DeliverCount.text = $"{MonjaFestival.cyanPlayer04Items} / 3";
-                    monjaFestivalShowHands(MonjaFestival.cyanPlayer04Items, MonjaFestival.handsCyan04);
+                    monjaFestivalShowHands(MonjaFestival.cyanPlayer04Items, MonjaFestival.handsCyan04, false);
                     break;
                 // Cyan Monja 05 deliver
                 case 32:
                     MonjaFestival.cyanPlayer05Items -= 1;
                     MonjaFestival.cyanPlayer05DeliverCount.text = $"{MonjaFestival.cyanPlayer05Items} / 3";
-                    monjaFestivalShowHands(MonjaFestival.cyanPlayer05Items, MonjaFestival.handsCyan05);
+                    monjaFestivalShowHands(MonjaFestival.cyanPlayer05Items, MonjaFestival.handsCyan05, false);
                     break;
                 // Cyan Monja 06 deliver
                 case 33:
                     MonjaFestival.cyanPlayer06Items -= 1;
                     MonjaFestival.cyanPlayer06DeliverCount.text = $"{MonjaFestival.cyanPlayer06Items} / 3";
-                    monjaFestivalShowHands(MonjaFestival.cyanPlayer06Items, MonjaFestival.handsCyan06);
+                    monjaFestivalShowHands(MonjaFestival.cyanPlayer06Items, MonjaFestival.handsCyan06, false);
                     break;
                 // Cyan Monja 07 deliver
                 case 34:
                     MonjaFestival.cyanPlayer07Items -= 1;
                     MonjaFestival.cyanPlayer07DeliverCount.text = $"{MonjaFestival.cyanPlayer07Items} / 3";
-                    monjaFestivalShowHands(MonjaFestival.cyanPlayer07Items, MonjaFestival.handsCyan07);
+                    monjaFestivalShowHands(MonjaFestival.cyanPlayer07Items, MonjaFestival.handsCyan07, false);
                     break;
                 // Big Monja
                 case 35:
@@ -8339,20 +8339,37 @@ namespace LasMonjas
             }
         }
 
-        public static void monjaFestivalShowHands(int itemNumber, GameObject playerHand) {
-            switch (itemNumber) {
-                case 0:
-                    playerHand.GetComponent<SpriteRenderer>().sprite = null;
-                    break;
-                case 1:
-                    playerHand.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                    break;
-                case 2:
-                    playerHand.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                    break;
-                case 3:
-                    playerHand.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
-                    break;
+        public static void monjaFestivalShowHands(int itemNumber, GameObject playerHand, bool greenTeam) {
+            if (greenTeam) {
+                switch (itemNumber) {
+                    case 0:
+                        playerHand.GetComponent<SpriteRenderer>().sprite = null;
+                        break;
+                    case 1:
+                        playerHand.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                        break;
+                    case 2:
+                        playerHand.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                        break;
+                    case 3:
+                        playerHand.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
+                        break;
+                }
+            } else {
+                switch (itemNumber) {
+                    case 0:
+                        playerHand.GetComponent<SpriteRenderer>().sprite = null;
+                        break;
+                    case 1:
+                        playerHand.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickOneCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                        break;
+                    case 2:
+                        playerHand.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickTwoCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                        break;
+                    case 3:
+                        playerHand.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeCyanMonja.GetComponent<SpriteRenderer>().sprite;
+                        break;
+                }
             }
         }
 

@@ -217,6 +217,7 @@ namespace LasMonjas
             target.RawSetVisor(visorId, colorId);
             target.RawSetHat(hatId, colorId);
             target.RawSetName(hidePlayerName(PlayerControl.LocalPlayer, target) ? "" : playerName);
+            target.RawSetPet(petId, colorId);
 
             SkinViewData nextSkin = DestroyableSingleton<HatManager>.Instance.GetSkinById(skinId).viewData.viewData;
             PlayerPhysics playerPhysics = target.MyPhysics;

@@ -4053,7 +4053,6 @@ namespace LasMonjas
 
         public static float requiredPoints = 150;
         public static float captureCooldown = 10f;
-        public static bool kingCanKill = false;
 
         public static GameObject greenflag = null;
         public static float currentGreenTeamPoints = 0;
@@ -4162,7 +4161,6 @@ namespace LasMonjas
 
             requiredPoints = CustomOptionHolder.kingRequiredPoints.getFloat();
             captureCooldown = CustomOptionHolder.kingCaptureCooldown.getFloat();
-            kingCanKill = CustomOptionHolder.kingCanKill.getBool();
 
             greenflag = null;
             currentGreenTeamPoints = 0;
