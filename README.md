@@ -36,13 +36,18 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
   
+**Version 3.1.5 (12nd March 2023)**
+- Fixed Gambler role.
+- Fixed a bug with admin table that could make players see double player icon on rooms.
+- Kings can no longer kill on On King of the Hill gamemode.
+
 **Version 3.1.4 (12nd March 2023)**
 - Fixed a bug with Performer's music when killed if the Performer was the Puppeteer morphed
 - Fixed the /myrole and /mymodifier meeting commands
 - Fixed bodies teleport from Challenger's duel
 - 1 new visor
 
-**Version 3.1.3 (11st March 2023**
+**Version 3.1.3 (11st March 2023)**
 - Custom hats and visors have the preview again.
 - On gamemodes, the neutral role will have the hide and seek impostor animation, also added a lobby option to activate the flashlight and its range for Police and Thieves, Hot Potato and Zombie Laboratory.
 - Time Traveler role can now use Vitals and hear Performer's music but can no longer revive people during the rewind.
