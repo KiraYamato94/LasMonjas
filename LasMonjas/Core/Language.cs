@@ -100,7 +100,6 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(Coward.color, "Police and Thieves") + ": Who Can Thieves Kill", // 28
                         "- " + CustomOptionHolder.cs(Squire.color, "King of the Hill") + ": Score Number",
                         "- " + CustomOptionHolder.cs(Squire.color, "King of the Hill") + ": Capture Cooldown",
-                        "- " + CustomOptionHolder.cs(Squire.color, "King of the Hill") + ": Kings can Kill",
                         "- " + CustomOptionHolder.cs(Shy.color, "Hot Potato") + ": Hot Potato Time Limit for Transfer",
                         "- " + CustomOptionHolder.cs(Shy.color, "Hot Potato") + ": Hot Potato Transfer Cooldown",
                         "- " + CustomOptionHolder.cs(Shy.color, "Hot Potato") + ": Reset Hot Potato timer after Transfer",
@@ -110,7 +109,7 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(Hunter.color, "Zombie Laboratory") + ": Infect Cooldown",
                         "- " + CustomOptionHolder.cs(Hunter.color, "Zombie Laboratory") + ": Search Box Timer",
                         "- " + CustomOptionHolder.cs(Hunter.color, "Zombie Laboratory") + ": Time to use Medkit",
-                        "- " + CustomOptionHolder.cs(Sleuth.color, "Battle Royale") + ": Match Type", // 41
+                        "- " + CustomOptionHolder.cs(Sleuth.color, "Battle Royale") + ": Match Type", // 40
                         "- " + CustomOptionHolder.cs(Sleuth.color, "Battle Royale") + ": Shoot Cooldown",
                         "- " + CustomOptionHolder.cs(Sleuth.color, "Battle Royale") + ": Fighter Lifes",
                         "- " + CustomOptionHolder.cs(Sleuth.color, "Battle Royale") + ": Score Number",
@@ -214,7 +213,7 @@ namespace LasMonjas.Core
                         CustomOptionHolder.cs(Sheriff.color, "Sheriff"),
                         "- " + CustomOptionHolder.cs(Sheriff.color, "Sheriff") + ": Can Kill Neutrals",
                         CustomOptionHolder.cs(Detective.color, "Detective"),
-                        "- " + CustomOptionHolder.cs(Detective.color, "Detective") + ": Show Footprints", // 145
+                        "- " + CustomOptionHolder.cs(Detective.color, "Detective") + ": Show Footprints", // 144
                         "- " + CustomOptionHolder.cs(Detective.color, "Detective") + ": Cooldown",
                         "- " + CustomOptionHolder.cs(Detective.color, "Detective") + ": Show Footprints Duration",
                         "- " + CustomOptionHolder.cs(Detective.color, "Detective") + ": Anonymous Footprints",
@@ -229,7 +228,7 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(TimeTraveler.color, "Time Traveler") + ": Shield Duration",
                         "- " + CustomOptionHolder.cs(TimeTraveler.color, "Time Traveler") + ": Rewind Duration",
                         CustomOptionHolder.cs(Squire.color, "Squire"),
-                        "- " + CustomOptionHolder.cs(Squire.color, "Squire") + ": Show Shielded Player to", // 160
+                        "- " + CustomOptionHolder.cs(Squire.color, "Squire") + ": Show Shielded Player to", // 159
                         "- " + CustomOptionHolder.cs(Squire.color, "Squire") + ": Play murder attempt sound if shielded",
                         "- " + CustomOptionHolder.cs(Squire.color, "Squire") + ": Can shield again after meeting",
                         CustomOptionHolder.cs(Cheater.color, "Cheater"),
@@ -239,8 +238,8 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(FortuneTeller.color, "Fortune Teller") + ": Cooldown",
                         "- " + CustomOptionHolder.cs(FortuneTeller.color, "Fortune Teller") + ": Reveal Time",
                         "- " + CustomOptionHolder.cs(FortuneTeller.color, "Fortune Teller") + ": Reveal Number",
-                        "- " + CustomOptionHolder.cs(FortuneTeller.color, "Fortune Teller") + ": Revealed Information", // 170
-                        "- " + CustomOptionHolder.cs(FortuneTeller.color, "Fortune Teller") + ": Show Notification to", // 171
+                        "- " + CustomOptionHolder.cs(FortuneTeller.color, "Fortune Teller") + ": Revealed Information", // 169
+                        "- " + CustomOptionHolder.cs(FortuneTeller.color, "Fortune Teller") + ": Show Notification to", // 170
                         "- " + CustomOptionHolder.cs(FortuneTeller.color, "Fortune Teller") + ": Can use emergency button",
                         CustomOptionHolder.cs(Hacker.color, "Hacker"),
                         "- " + CustomOptionHolder.cs(Hacker.color, "Hacker") + ": Cooldown",
@@ -325,19 +324,19 @@ namespace LasMonjas.Core
                             case 28:
                                 CustomOption.options[o].selections = new string[] { "Taser", "All", "Nobody" };
                                 break;
-                            case 41:
+                            case 40:
                                 CustomOption.options[o].selections = new string[] { "All vs All", "Team Battle", "Score Battle" };
                                 break;
-                            case 145:
+                            case 144:
                                 CustomOption.options[o].selections = new string[] { "Button Use", "Always" };
                                 break;
-                            case 160:
+                            case 159:
                                 CustomOption.options[o].selections = new string[] { "Squire", "Both", "All" };
                                 break;
-                            case 170:
+                            case 169:
                                 CustomOption.options[o].selections = new string[] { "Good / Bad", "Role Name" };
                                 break;
-                            case 171:
+                            case 170:
                                 CustomOption.options[o].selections = new string[] { "Impostors", "Crewmates", "All", "Nobody" };
                                 break;
                         }
@@ -884,7 +883,6 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(Coward.color, "Polis y Cacos") + ": Ladrones pueden matar",
                         "- " + CustomOptionHolder.cs(Squire.color, "Rey de la Colina") + ": Puntuacion Necesaria",
                         "- " + CustomOptionHolder.cs(Squire.color, "Rey de la Colina") + ": Tiempo de Captura",
-                        "- " + CustomOptionHolder.cs(Squire.color, "Rey de la Colina") + ": Los Reyes pueden matar",
                         "- " + CustomOptionHolder.cs(Shy.color, "Patata Caliente") + ": Tiempo limite para transferir Patata",
                         "- " + CustomOptionHolder.cs(Shy.color, "Patata Caliente") + ": Recarga de transferir Patata",
                         "- " + CustomOptionHolder.cs(Shy.color, "Patata Caliente") + ": Reiniciar tiempo al transferir Patata",
@@ -1109,19 +1107,19 @@ namespace LasMonjas.Core
                             case 28:
                                 CustomOption.options[o].selections = new string[] { "Taser", "Todos", "Nadie" };
                                 break;
-                            case 41:
+                            case 40:
                                 CustomOption.options[o].selections = new string[] { "Individual", "Por Equipos", "Por Puntuacion" };
                                 break;
-                            case 145:
+                            case 144:
                                 CustomOption.options[o].selections = new string[] { "Uso de Boton", "Siempre" };
                                 break;
-                            case 160:
+                            case 159:
                                 CustomOption.options[o].selections = new string[] { "Defensor", "Ambos", "Todos" };
                                 break;
-                            case 170:
+                            case 169:
                                 CustomOption.options[o].selections = new string[] { "Bueno / Malo", "Nombre Rol" };
                                 break;
-                            case 171:
+                            case 170:
                                 CustomOption.options[o].selections = new string[] { "Impostores", "Tripulantes", "Todos", "Nadie" };
                                 break;
                         }
@@ -1668,7 +1666,6 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(Coward.color, "警察と泥棒") + ": 泥棒は誰を殺すことができますか",
                         "- " + CustomOptionHolder.cs(Squire.color, "キングオブザヒル") + ": スコア番号",
                         "- " + CustomOptionHolder.cs(Squire.color, "キングオブザヒル") + ": クールダウンのキャプチャ",
-                        "- " + CustomOptionHolder.cs(Squire.color, "キングオブザヒル") + ": 王は Kill 可能",
                         "- " + CustomOptionHolder.cs(Shy.color, "焼き芋") + ": ホットポテトの転送時間制限",
                         "- " + CustomOptionHolder.cs(Shy.color, "焼き芋") + ": ホットポテトの転送クールダウン",
                         "- " + CustomOptionHolder.cs(Shy.color, "焼き芋") + ": 転送後のホットポテトの時間のリセット",
@@ -1893,19 +1890,19 @@ namespace LasMonjas.Core
                             case 28:
                                 CustomOption.options[o].selections = new string[] { "テーザー", "全て", "誰でもない" };
                                 break;
-                            case 41:
+                            case 40:
                                 CustomOption.options[o].selections = new string[] { "全て vs 全て", "チームバトル", "スコアバトル" };
                                 break;
-                            case 145:
+                            case 144:
                                 CustomOption.options[o].selections = new string[] { "ボタンの使用", "常に" };
                                 break;
-                            case 160:
+                            case 159:
                                 CustomOption.options[o].selections = new string[] { "スクワイア", " 双方", "全て" };
                                 break;
-                            case 170:
+                            case 160:
                                 CustomOption.options[o].selections = new string[] { " 善い/悪い", "ロール名" };
                                 break;
-                            case 171:
+                            case 170:
                                 CustomOption.options[o].selections = new string[] { "詐欺師", "クルー", "全て", "誰でもない" };
                                 break;
                         }
@@ -2452,7 +2449,6 @@ namespace LasMonjas.Core
                         "- " + CustomOptionHolder.cs(Coward.color, "警察抓小偷") + ": 小偷可以击杀",
                         "- " + CustomOptionHolder.cs(Squire.color, "山丘之王") + ": 分数",
                         "- " + CustomOptionHolder.cs(Squire.color, "山丘之王") + ": 占点冷却",
-                        "- " + CustomOptionHolder.cs(Squire.color, "山丘之王") + ": 国王可以击杀",
                         "- " + CustomOptionHolder.cs(Shy.color, "烫手山芋") + ": 烫手山芋爆炸倒计时",
                         "- " + CustomOptionHolder.cs(Shy.color, "烫手山芋") + ": 烫手山芋传递冷却",
                         "- " + CustomOptionHolder.cs(Shy.color, "烫手山芋") + ": 传递烫手山芋会重置爆炸时间",
@@ -2677,19 +2673,19 @@ namespace LasMonjas.Core
                             case 28:
                                 CustomOption.options[o].selections = new string[] { "辅警", "警察阵营", "关闭" };
                                 break;
-                            case 41:
+                            case 40:
                                 CustomOption.options[o].selections = new string[] { "死斗", "团队死斗", "团队积分赛" };
                                 break;
-                            case 145:
+                            case 144:
                                 CustomOption.options[o].selections = new string[] { "主动技能", "持续生效" };
                                 break;
-                            case 160:
+                            case 159:
                                 CustomOption.options[o].selections = new string[] { "卫兵", "卫兵与被保护玩家", "所有玩家" };
                                 break;
-                            case 170:
+                            case 169:
                                 CustomOption.options[o].selections = new string[] { "好人/坏人", "职业" };
                                 break;
-                            case 171:
+                            case 170:
                                 CustomOption.options[o].selections = new string[] { "内鬼", "船员", "所有人", "没有人" };
                                 break;
                         }

@@ -557,7 +557,7 @@ namespace LasMonjas.Core
             int roleSettingsLines = defaultSettingsLines + 41;
             int detailedSettingsP1 = roleSettingsLines + 25;
             int detailedSettingsP2 = detailedSettingsP1 + 28;
-            int detailedSettingsP3 = detailedSettingsP2 + 25;
+            int detailedSettingsP3 = detailedSettingsP2 + 24;
             int detailedSettingsP4 = detailedSettingsP3 + 45;
             int detailedSettingsP5 = detailedSettingsP4 + 40;
             int detailedSettingsP6 = detailedSettingsP5 + 26;
@@ -613,13 +613,13 @@ namespace LasMonjas.Core
                     gapfour = 10;
                     indexfour = hudString.TakeWhile(c => (gapfour -= (c == '\n' ? 1 : 0)) > 0).Count();
                     hudString = hudString.Insert(indexfour, "\n");
-                    gapfour = 14;
+                    gapfour = 13;
                     indexfour = hudString.TakeWhile(c => (gapfour -= (c == '\n' ? 1 : 0)) > 0).Count();
                     hudString = hudString.Insert(indexfour, "\n");
-                    gapfour = 19;
+                    gapfour = 18;
                     indexfour = hudString.TakeWhile(c => (gapfour -= (c == '\n' ? 1 : 0)) > 0).Count();
                     hudString = hudString.Insert(indexfour, "\n");
-                    gapfour = 25;
+                    gapfour = 24;
                     indexfour = hudString.TakeWhile(c => (gapfour -= (c == '\n' ? 1 : 0)) > 0).Count();
                     hudString = hudString.Insert(indexfour, "\n");
                     break;
