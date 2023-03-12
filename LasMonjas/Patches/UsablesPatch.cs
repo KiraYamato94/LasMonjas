@@ -502,7 +502,6 @@ namespace LasMonjas.Patches
     [HarmonyPatch]
     class AdminPanelPatch
     {
-        //static Dictionary<SystemTypes, List<Color>> players = new Dictionary<SystemTypes, List<Color>>();
         static Dictionary<SystemTypes, List<Color>> players = new Dictionary<SystemTypes, System.Collections.Generic.List<Color>>();
 
         [HarmonyPatch(typeof(MapCountOverlay), nameof(MapCountOverlay.Update))]
@@ -562,26 +561,28 @@ namespace LasMonjas.Patches
                         PlainShipRoom plainShipRoom = ShipStatus.Instance.FastRooms[counterArea.RoomType];
 
                         if (plainShipRoom != null && plainShipRoom.roomArea) {
+                            HashSet<int> hashSet = new HashSet<int>(); 
                             int num = plainShipRoom.roomArea.OverlapCollider(__instance.filter, __instance.buffer);
-                            int num2 = num;
+                            int num2 = 0;
                             for (int j = 0; j < num; j++) {
                                 Collider2D collider2D = __instance.buffer[j];
-                                if (!(collider2D.tag == "DeadBody")) {
-                                    PlayerControl component = collider2D.GetComponent<PlayerControl>();
-                                    if (!component || component.Data == null || component.Data.Disconnected || component.Data.IsDead) {
-                                        num2--;
-                                    }
-                                    else if (component?.cosmetics.currentBodySprite.BodySprite.material != null) {
-                                        Color color = component.cosmetics.currentBodySprite.BodySprite.material.GetColor("_BodyColor");
-                                        roomColors.Add(color);
+                                if (collider2D.CompareTag("DeadBody") && __instance.includeDeadBodies) {
+                                    num2++;
+                                    DeadBody bodyComponent = collider2D.GetComponent<DeadBody>();
+                                    if (bodyComponent) {
+                                        GameData.PlayerInfo playerInfo = GameData.Instance.GetPlayerById(bodyComponent.ParentId);
+                                        if (playerInfo != null) {
+                                            var color = Palette.PlayerColors[playerInfo.DefaultOutfit.ColorId];
+                                            roomColors.Add(color);
+                                        }
                                     }
                                 }
                                 else {
-                                    DeadBody component = collider2D.GetComponent<DeadBody>();
-                                    if (component) {
-                                        GameData.PlayerInfo playerInfo = GameData.Instance.GetPlayerById(component.ParentId);
-                                        if (playerInfo != null) {
-                                            var color = Palette.PlayerColors[playerInfo.DefaultOutfit.ColorId];
+                                    PlayerControl component = collider2D.GetComponent<PlayerControl>();
+                                    if (component && component.Data != null && !component.Data.Disconnected && !component.Data.IsDead && (__instance.showLivePlayerPosition || !component.AmOwner) && hashSet.Add((int)component.PlayerId)) {
+                                        num2++;
+                                        if (component?.cosmetics?.currentBodySprite?.BodySprite?.material != null) {
+                                            Color color = component.cosmetics.currentBodySprite.BodySprite.material.GetColor("_BodyColor");
                                             if (Painter.painterTimer > 0) {
                                                 color = Palette.PlayerColors[Detective.footprintcolor];
                                             }
