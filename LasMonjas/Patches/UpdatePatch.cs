@@ -1431,34 +1431,33 @@ namespace LasMonjas.Patches {
             switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                 case 0:
                     emerButton = GameObject.Find("EmergencyConsole");
+                    body.transform.position = emerButton.transform.position + new Vector3(2.02f, 0f, -0.5f); 
                     break;
                 case 1:
                     emerButton = GameObject.Find("EmergencyConsole");
+                    body.transform.position = emerButton.transform.position + new Vector3(1.5f, 0f, -0.5f);
                     break;
                 case 2:
                     emerButton = GameObject.Find("EmergencyButton");
+                    body.transform.position = emerButton.transform.position + new Vector3(2.4f, 0f, -0.5f);
                     break;
                 case 3:
                     emerButton = GameObject.Find("EmergencyConsole");
+                    body.transform.position = emerButton.transform.position + new Vector3(-2.02f, 0f, -0.5f); 
                     break;
                 case 4:
                     emerButton = GameObject.Find("task_emergency");
+                    body.transform.position = emerButton.transform.position + new Vector3(-2.875f, 0f, -0.5f);
                     break;
                 case 5:
-                    emerButton = GameObject.Find("console-mr-callmeeting");
+                    //emerButton = GameObject.Find("console-mr-callmeeting");
+                    if (body.transform.position.y > 0) {
+                        body.transform.position = new Vector3(5f, 19.5f, -5);
+                    }
+                    else {
+                        body.transform.position = new Vector3(1.35f, -28.25f, -5);
+                    }
                     break;
-            }
-
-            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
-                if (body.transform.position.y > 0) {
-                    body.transform.position = new Vector3(5f, 19.5f, -5);
-                }
-                else {
-                    body.transform.position = new Vector3(1.35f, -28.25f, -5);
-                }
-            }
-            else {
-                body.transform.position = emerButton.transform.position + new Vector3(0.75f, 0f, -0.5f);
             }
         }
 

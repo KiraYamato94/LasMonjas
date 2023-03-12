@@ -684,15 +684,16 @@ namespace LasMonjas.Patches {
                 if (Modifiers.performerDuration > 0 && Modifiers.performer.Data.IsDead && !Modifiers.performerReported && (PlayerControl.LocalPlayer != Modifiers.performer && PlayerControl.LocalPlayer != Spiritualist.spiritualist)) {
                     if (Modifiers.performerLocalPerformerArrows.Count == 0) Modifiers.performerLocalPerformerArrows.Add(new Arrow(Modifiers.color));
                     if (Modifiers.performerLocalPerformerArrows.Count != 0 && Modifiers.performerLocalPerformerArrows[0] != null) {
-                        Modifiers.performerLocalPerformerArrows[0].arrow.SetActive(true);
                         var bodyPerformer = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == Modifiers.performer.PlayerId);
-                        Modifiers.performerLocalPerformerArrows[0].Update(bodyPerformer.transform.position);
+                        if (bodyPerformer != null) {
+                            Modifiers.performerLocalPerformerArrows[0].arrow.SetActive(true);
+                            Modifiers.performerLocalPerformerArrows[0].Update(bodyPerformer.transform.position);
+                        }
                     }
                 }
                 else {
                     if (Modifiers.performerLocalPerformerArrows.Count != 0) {
                         Modifiers.performerLocalPerformerArrows[0].arrow.SetActive(false);
-
                     }
                 }
 
@@ -2443,7 +2444,7 @@ namespace LasMonjas.Patches {
                     if (Modifiers.performer != null && target == Modifiers.performer) {
                         Modifiers.performerDuration = CustomOptionHolder.performerDuration.getFloat();
                         // Ace Attorney Music Stop and play theater music
-                        if (PlayerControl.LocalPlayer != Spiritualist.spiritualist && PlayerControl.LocalPlayer != TimeTraveler.timeTraveler) {
+                        if (PlayerControl.LocalPlayer != Spiritualist.spiritualist) {
                             if (!Monja.awakened) {
                                 RPCProcedure.changeMusic(7);
                                 SoundManager.Instance.PlaySound(CustomMain.customAssets.performerMusic, false, 5f);
