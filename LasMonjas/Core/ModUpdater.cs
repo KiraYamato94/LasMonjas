@@ -38,12 +38,14 @@ namespace LasMonjas.Core
         {
             public string Content;
             public string Tag;
+            public string TimeString;
             public JObject Request;
             public Version Version => Version.Parse(Tag);
 
             public UpdateData(JObject data) {
                 Tag = data["tag_name"]?.ToString().TrimStart('v');
                 Content = data["body"]?.ToString();
+                TimeString = DateTime.FromBinary(((Il2CppSystem.DateTime)data["published_at"]).ToBinaryRaw()).ToString(); 
                 Request = data;
             }
 
@@ -96,7 +98,7 @@ namespace LasMonjas.Core
             }));
 
             var text = button.transform.GetChild(0).GetComponent<TMP_Text>();
-            string t = "Update";
+            string t = "Update\nLas Monjas";
             if (LMJUpdate == null && SubmergedUpdate != null) t = SubmergedCompatibility.Loaded ? $"Update\nSubmerged" : $"Download\nSubmerged";
 
             StartCoroutine(Effects.Lerp(0.1f, (System.Action<float>)(p => text.SetText(t))));
@@ -137,7 +139,7 @@ namespace LasMonjas.Core
 
         private static int announcementNumber = 501;
         [HideFromIl2Cpp]
-        public IEnumerator CoShowAnnouncement(string announcement) {
+        public IEnumerator CoShowAnnouncement(string announcement, string date = "") {
             var popUp = Instantiate(FindObjectOfType<AnnouncementPopUp>(true));
             popUp.gameObject.SetActive(true);
             yield return popUp.Init(true);
@@ -151,6 +153,7 @@ namespace LasMonjas.Core
             announcementS.Number = announcementNumber++;
             announcementS.SubTitle = "";
             announcementS.PinState = true;
+            announcementS.Date = date == "" ? DateTime.Today.ToString() : date;
 
             DataManager.Player.Announcements.allAnnouncements.Insert(0, announcementS);
             popUp.CreateAnnouncementList();

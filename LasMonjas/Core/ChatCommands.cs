@@ -584,12 +584,12 @@ namespace LasMonjas.Core
                     if (MeetingHud.Instance != null && gameType <= 1) {
                         List<RoleInfo> infos = RoleInfo.getRoleInfoForPlayer(PlayerControl.LocalPlayer);
                         RoleInfo roleInfo = infos.Where(info => !info.isModifier).FirstOrDefault();
-                        if (text.ToLower().StartsWith("/myrole") || text.ToLower().StartsWith("/m")) {
+                        if (text.ToLower().StartsWith("/myrole")) {
                             if (roleInfo == null) {
                                 infoText = Language.helpersTexts[3];
                             }
                             else {
-                                switch (subText.ToLower()) {
+                                switch (roleInfo.roleId.ToString().ToLower()) { 
                                     // Impostor roles
                                     case "mimic":
                                     case "imitador":
