@@ -45,6 +45,7 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "lotty", VisorName = "Confetti"},
             new AuthorData {AuthorName = "lotty", VisorName = "Kek Smile"},
             new AuthorData {AuthorName = "lotty", VisorName = "Golf Club"},
+            new AuthorData {AuthorName = "Xeno<33", VisorName = "Wand"},
         };
 
         internal static Dictionary<int, AuthorData> IdToData = new Dictionary<int, AuthorData>();

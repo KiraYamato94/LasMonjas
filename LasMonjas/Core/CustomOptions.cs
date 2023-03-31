@@ -463,7 +463,7 @@ namespace LasMonjas.Core
     public class AmongUsClientOnPlayerJoinedPatch
     {
         public static void Postfix() {
-            if (PlayerControl.LocalPlayer != null) {
+            if (PlayerControl.LocalPlayer != null && AmongUsClient.Instance.AmHost) {
                 CustomOption.ShareOptionSelections();
             }
         }
