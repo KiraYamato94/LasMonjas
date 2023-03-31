@@ -36,6 +36,11 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
   
+**Version 3.1.6 (31st March 2023)**
+- Compatibility patch for Among Us 2023.3.28
+- Remember button no longer appears on Hide n Seek 
+- 18 new hats and 1 new visor
+
 **Version 3.1.5 (12nd March 2023)**
 - Fixed Gambler role.
 - Fixed a bug with admin table that could make players see double player icon on rooms.
