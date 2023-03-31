@@ -5998,7 +5998,7 @@ namespace LasMonjas
 
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.mimicPuppeteerTransform, false, 100f);
                 },
-                () => { return gameType == 1 && !whoAmIFoundRole && !PlayerControl.LocalPlayer.Data.IsDead; },
+                () => { return gameType == 1 && !whoAmIFoundRole && !PlayerControl.LocalPlayer.Data.IsDead && GameOptionsManager.Instance.currentGameOptions.GameMode != GameModes.HideNSeek; },
                 () => {
                     bool CanUse = false;
                     if (whoAmIModeGlobalItems.Count != 0) {
