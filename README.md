@@ -36,6 +36,10 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
   
+**Version 3.1.7 (31st May 2023)**
+- Manual update to be able to play on Modded NA custom server again
+- 1 new visor
+  
 **Version 3.1.6 (31st March 2023)**
 - Compatibility patch for Among Us 2023.3.28
 - Remember button no longer appears on Hide n Seek 
