@@ -95,15 +95,17 @@ namespace LasMonjas.Objects {
         public void convertToVent() {
             gameObject.SetActive(false);
             vent.gameObject.SetActive(true);
+            vent.gameObject.GetComponent<SpriteRenderer>().sprite = getHatAnimationSprite(0);
             return;
         }
 
         public static void convertToVents() {
             foreach (var hat in AllHats) {
                 hat.convertToVent();
+
             }
             connectVents();
-            hatsConvertedToVents = true;
+            hatsConvertedToVents = true;            
             return;
         }
 
