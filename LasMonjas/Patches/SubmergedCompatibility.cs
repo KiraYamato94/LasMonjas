@@ -5,7 +5,6 @@ using System.Reflection;
 using BepInEx;
 using BepInEx.Unity.IL2CPP;
 using HarmonyLib;
-using Il2CppInterop;
 using Il2CppInterop.Runtime;
 using Il2CppInterop.Runtime.Injection;
 using UnityEngine;
@@ -18,10 +17,10 @@ namespace LasMonjas.Patches
         {
             public const string ElevatorMover = "ElevatorMover";
         }
-        
+
         public const string SUBMERGED_GUID = "Submerged";
         public const ShipStatus.MapType SUBMERGED_MAP_TYPE = (ShipStatus.MapType) 5;
-        
+
         public static SemanticVersioning.Version Version { get; private set; }
         public static bool Loaded { get; private set; }
         public static bool LoadedExternally { get; private set; }
@@ -36,7 +35,7 @@ namespace LasMonjas.Patches
             get
             {
                 if (!Loaded) return null;
-                
+
                 if (_submarineStatus is null || _submarineStatus.WasCollected || !_submarineStatus || _submarineStatus == null)
                 {
                     if (ShipStatus.Instance is null || ShipStatus.Instance.WasCollected || !ShipStatus.Instance || ShipStatus.Instance == null)
@@ -73,10 +72,10 @@ namespace LasMonjas.Patches
 
         private static Type SubmarineStatusType;
         private static MethodInfo CalculateLightRadiusMethod;
-        
+
         private static Type TaskIsEmergencyPatchType;
         private static FieldInfo DisableO2MaskCheckField;
-        
+
         public static void Initialize()
         {
             Loaded = IL2CPPChainloader.Instance.Plugins.TryGetValue(SUBMERGED_GUID, out PluginInfo plugin);
@@ -98,9 +97,9 @@ namespace LasMonjas.Patches
 
             SubmarineStatusType = Types.First(t => t.Name == "SubmarineStatus");
             CalculateLightRadiusMethod = AccessTools.Method(SubmarineStatusType, "CalculateLightRadius");
-            
-            TaskIsEmergencyPatchType = Types.First(t => t.Name == "PlayerTask_TaskIsEmergency_Patch");
-            DisableO2MaskCheckField = AccessTools.Field(TaskIsEmergencyPatchType, "DisableO2MaskCheck");
+
+            TaskIsEmergencyPatchType = Types.First(t => t.Name == "PlayerTaskTaskIsEmergencyPatch");
+            DisableO2MaskCheckField = AccessTools.Field(TaskIsEmergencyPatchType, "disableO2MaskCheck");
         }
 
         public static MonoBehaviour AddSubmergedComponent(this GameObject obj, string typeName)

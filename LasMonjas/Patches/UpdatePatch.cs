@@ -762,6 +762,7 @@ namespace LasMonjas.Patches {
                         // Set grey painting while comms sabotage
                         foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
                             player.setLook("", 6, "", "", "", "");
+                            if (player.cosmetics.currentPet) player.cosmetics.currentPet.gameObject.SetActive(false);
                         }
                         isHappeningAnonymousComms = true;
                     }
@@ -1152,44 +1153,8 @@ namespace LasMonjas.Patches {
                 // If the yanged victim is disconnected or dead reset the yanged use so a new target can be selectet
                 Yinyanger.resetYanged();
             }
-
-            if (Yinyanger.yinyedplayer != null && Yinyanger.yangyedplayer != null && !Yinyanger.colision) {
-                if (Vector2.Distance(Yinyanger.yinyedplayer.transform.position, Yinyanger.yangyedplayer.transform.position) < 0.5f && !Seeker.isMinigaming) {
-                    yinYang();
-                }
-            }
         }
-        public static void yinYang() {
-            new YinYang(1, Yinyanger.yinyedplayer);
-            new YinYang(1, Yinyanger.yangyedplayer);
-            Yinyanger.colision = true;
-            HudManager.Instance.StartCoroutine(Effects.Lerp(1, new Action<float>((p) => {
-                if (Yinyanger.yinyanger == PlayerControl.LocalPlayer || Yinyanger.yinyedplayer == PlayerControl.LocalPlayer || Yinyanger.yangyedplayer == PlayerControl.LocalPlayer) {
-                    SoundManager.Instance.PlaySound(CustomMain.customAssets.yinyangerYinyangColisionClip, false, 100f);
-                }
-                Yinyanger.yinyedplayer.moveable = false;
-                Yinyanger.yinyedplayer.NetTransform.Halt();
-                Yinyanger.yangyedplayer.moveable = false;
-                Yinyanger.yangyedplayer.NetTransform.Halt();
-
-                Yinyanger.yinedPlayer = Yinyanger.yinyedplayer;
-                Yinyanger.yanedPlayer = Yinyanger.yangyedplayer;
-                if (p == 1f) {
-
-                    RPCProcedure.uncheckedMurderPlayer(Yinyanger.yinyanger.PlayerId, Yinyanger.yinedPlayer.PlayerId, 0);
-
-                    RPCProcedure.uncheckedMurderPlayer(Yinyanger.yinyanger.PlayerId, Yinyanger.yanedPlayer.PlayerId, 0);
-
-                    Yinyanger.yinyedplayer.moveable = true;
-                    Yinyanger.yangyedplayer.moveable = true;
-
-                    Yinyanger.resetYined();
-                    Yinyanger.resetYanged();
-                    Yinyanger.colision = false;
-                }
-            })));
-            return;
-        }
+        
         static void challengerUpdate() {
 
             if (Challenger.challenger == null || !Challenger.isDueling) {
@@ -1199,6 +1164,7 @@ namespace LasMonjas.Patches {
             // Set grey painting while dueling
             foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
                 player.setLook("", 6, "", "", "", "");
+                if (player.cosmetics.currentPet) player.cosmetics.currentPet.gameObject.SetActive(false);
             }
 
             // 30 sec duel duration
@@ -1409,6 +1375,7 @@ namespace LasMonjas.Patches {
                     foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
                         if (player == null) continue;
                         player.setDefaultLook();
+                        if (player.cosmetics.currentPet) player.cosmetics.currentPet.gameObject.SetActive(true);
                     }
 
                     timeTravelerRewindTimeButton.Timer = timeTravelerRewindTimeButton.MaxTimer;
@@ -1504,6 +1471,7 @@ namespace LasMonjas.Patches {
             // Set grey painting while dueling
             foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
                 player.setLook("", 6, "", "", "", "");
+                if (player.cosmetics.currentPet) player.cosmetics.currentPet.gameObject.SetActive(false);
             }
 
             // 20 sec duel duration
@@ -1670,6 +1638,7 @@ namespace LasMonjas.Patches {
                     foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
                         if (player == null) continue;
                         player.setDefaultLook();
+                        if (player.cosmetics.currentPet) player.cosmetics.currentPet.gameObject.SetActive(true);
                     }
 
                     timeTravelerRewindTimeButton.Timer = timeTravelerRewindTimeButton.MaxTimer;

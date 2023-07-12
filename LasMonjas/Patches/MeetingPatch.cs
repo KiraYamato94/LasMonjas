@@ -6,6 +6,7 @@ using System;
 using UnityEngine;
 using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using AmongUs.GameOptions;
+using AmongUs.QuickChat;
 
 namespace LasMonjas.Patches {
     [HarmonyPatch]
@@ -265,7 +266,7 @@ namespace LasMonjas.Patches {
             foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
                 foreach (RoleInfo roleInfo in RoleInfo.allRoleInfos) {
                     // Not gambled roles
-                    if (/* Special roles */ roleInfo.roleId == RoleId.Lover || roleInfo.roleId == RoleId.Kid || (roleInfo == RoleInfo.vigilantMira && GameOptionsManager.Instance.currentGameOptions.MapId != 1) || (roleInfo == RoleInfo.vigilant && GameOptionsManager.Instance.currentGameOptions.MapId == 1)
+                    if (/* Special roles*/ roleInfo.roleId == RoleId.Lover || roleInfo.roleId == RoleId.Kid || (roleInfo == RoleInfo.vigilantMira && GameOptionsManager.Instance.currentGameOptions.MapId != 1) || (roleInfo == RoleInfo.vigilant && GameOptionsManager.Instance.currentGameOptions.MapId == 1)
                         /* Impostor roles*/ || roleInfo.roleId == RoleId.Mimic || roleInfo.roleId == RoleId.Painter || roleInfo.roleId == RoleId.Demon || roleInfo.roleId == RoleId.Janitor || roleInfo.roleId == RoleId.Illusionist || roleInfo.roleId == RoleId.Manipulator || roleInfo.roleId == RoleId.Bomberman || roleInfo.roleId == RoleId.Chameleon || roleInfo.roleId == RoleId.Gambler || roleInfo.roleId == RoleId.Sorcerer || roleInfo.roleId == RoleId.Medusa || roleInfo.roleId == RoleId.Hypnotist || roleInfo.roleId == RoleId.Archer || roleInfo.roleId == RoleId.Plumber || roleInfo.roleId == RoleId.Librarian || roleInfo.roleId == RoleId.Impostor
                         /* Modifiers*/ || roleInfo.roleId == RoleId.BigChungus)
                         continue;
@@ -579,6 +580,17 @@ namespace LasMonjas.Patches {
                     return false;
                 }
                 return true; 
+            }
+        }
+
+        [HarmonyPatch(typeof(QuickChatMenu), nameof(QuickChatMenu.Open))]
+        public class BlockQuickChatAbility
+        {
+            public static bool Prefix(QuickChatMenu __instance) {
+                if (Librarian.librarian != null && Librarian.targetLibrary != null && Librarian.targetLibrary == PlayerControl.LocalPlayer) {
+                    return false;
+                }
+                return true;
             }
         }
     }

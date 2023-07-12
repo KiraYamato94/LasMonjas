@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using PowerTools;
 using LasMonjas.Core;
 using AmongUs.GameOptions;
+using static UnityEngine.GraphicsBuffer;
 
 namespace LasMonjas.Patches
 {
@@ -759,6 +760,7 @@ namespace LasMonjas.Patches
                             }
                             foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
                                 player.setLook("", 11, "", "", "", "");
+                                if (player.cosmetics.currentPet) player.cosmetics.currentPet.gameObject.SetActive(false);
                             }
                             return false;
                         }
@@ -770,6 +772,7 @@ namespace LasMonjas.Patches
                         }
                         foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
                             player.setDefaultLook();
+                            if (player.cosmetics.currentPet) player.cosmetics.currentPet.gameObject.SetActive(true);
                         }
                         canNightOverlay = true;
                         removeNightOverlay = false;

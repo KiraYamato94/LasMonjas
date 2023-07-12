@@ -8,10 +8,10 @@ namespace LasMonjas.Patches
     [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.Start))]
     public class MainMenuPatch
     {
-        private static Color discordButtonColor = new Color32(140, 25, 255, byte.MaxValue);
-        private static Color discordButtonColorOnHover = new Color32(191, 128, 255, byte.MaxValue);
+        private static Color discordButtonColor = new Color32(191, 128, 255, byte.MaxValue);
+        private static Color discordButtonColorOnHover = new Color32(211, 166, 255, byte.MaxValue);
 
-        private static void Prefix(MainMenuManager __instance) {
+        private static void Postfix(MainMenuManager __instance) {
             // Check the music option after loading main menu screen, so when you join the Lobby it starts playing if enabled
             MapOptions.checkMusic();
 
@@ -20,13 +20,14 @@ namespace LasMonjas.Patches
 
             var discordButton = UnityEngine.Object.Instantiate(exitButton, exitButton.transform.parent);
             discordButton.name = "LMJDiscordButton";
-            discordButton.transform.position = new Vector3(exitButton.transform.position.x, exitButton.transform.position.y + 0.6f, exitButton.transform.position.z);
+            discordButton.GetComponent<AspectPosition>().enabled = false;
+            discordButton.transform.position = new Vector3(exitButton.transform.position.x + 2.08f, exitButton.transform.position.y + 0.22f, exitButton.transform.position.z);
 
-            SpriteRenderer discordButtonSprite = discordButton.GetComponent<SpriteRenderer>();
+            SpriteRenderer discordButtonSprite = discordButton.transform.GetChild(2).GetComponent<SpriteRenderer>();
 
-            var discordButtonText = discordButton.transform.GetChild(0).GetComponent<TMPro.TMP_Text>();
+            var discordButtonText = discordButton.transform.GetChild(2).transform.GetChild(0).GetComponent<TMPro.TMP_Text>();
             __instance.StartCoroutine(Effects.Lerp(0.1f, new System.Action<float>((p) => {
-                discordButtonText.SetText("Las Monjas\nDiscord");
+                discordButtonText.SetText("Las Monjas Discord");
             })));
 
             discordButtonSprite.color = discordButtonText.color = discordButtonColor;
@@ -53,17 +54,17 @@ namespace LasMonjas.Patches
         }
     }*/
 
-    /*[HarmonyPatch(typeof(AnnouncementPopUp), nameof(AnnouncementPopUp.UpdateAnnounceText))]
+    [HarmonyPatch(typeof(AnnouncementPopUp), nameof(AnnouncementPopUp.UpdateAnnouncementText))]
     public static class Announcement
     {
         public static ModUpdateBehaviour.UpdateData updateData = null;
         public static bool Prefix(AnnouncementPopUp __instance) {
             if (ModUpdateBehaviour.showPopUp || updateData == null) return true;
 
-            var text = __instance.AnnounceTextMeshPro;
+            var text = __instance.AnnouncementBodyText;
             text.text = $"<size=150%><color=#CC00FFFF>Las Monjas </color> {(updateData.Tag)}\n{(updateData.Content)}";
 
             return false;
         }
-    }*/
+    }
 }

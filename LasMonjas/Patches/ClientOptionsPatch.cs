@@ -112,7 +112,7 @@ namespace LasMonjas.Patches
                 if (__instance.transform.parent && __instance.transform.parent == HudManager.Instance.transform)
                 {
                     popUp.transform.SetParent(HudManager.Instance.transform);
-                    popUp.transform.localPosition = new Vector3(0, 0, -800f);
+                    popUp.transform.localPosition = new Vector3(0, 0, -920f);
                 }
                 else
                 {

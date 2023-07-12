@@ -507,7 +507,8 @@ namespace LasMonjas.Patches {
                     }
                 }
             }
-            else if (PlayerControl.LocalPlayer == Fink.fink && numberOfTasks == 0 && !Challenger.isDueling && !Seeker.isMinigaming && !isHappeningAnonymousComms) {
+            
+            if (PlayerControl.LocalPlayer == Fink.fink && numberOfTasks == 0 && !Challenger.isDueling && !Seeker.isMinigaming && !isHappeningAnonymousComms) {
                 int arrowIndex = 0;
                 foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
                     bool arrowForImp = p.Data.Role.IsImpostor;
@@ -4771,8 +4772,10 @@ namespace LasMonjas.Patches {
             switch (task.TaskType) {
                 case TaskTypes.FixComms:
                     isHappeningAnonymousComms = false;
-                    foreach (PlayerControl player in PlayerControl.AllPlayerControls)
+                    foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
                         player.setDefaultLook();
+                        if (player.cosmetics.currentPet) player.cosmetics.currentPet.gameObject.SetActive(true);
+                    }
                     break;
                 case TaskTypes.ResetReactor:
                     HudManager.Instance.PlayerCam.shakeAmount = 0f;

@@ -267,7 +267,7 @@ namespace LasMonjas.Patches
         {
             public static bool Prefix(ref bool __result) {
                 __result = false;
-                if (!PlayerControl.LocalPlayer.Data.IsDead && gamemodeEnableFlashlight && (gameType == 3 || gameType == 5 || gameType == 6)) {
+                if ((GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek && GameOptionsManager.Instance.currentHideNSeekGameOptions.useFlashlight) || (gamemodeEnableFlashlight && (gameType == 3 || gameType == 5 || gameType == 6))) {
                     __result = true;
                 }
 
@@ -281,7 +281,7 @@ namespace LasMonjas.Patches
             public static bool Prefix(PlayerControl __instance) {
                 if (__instance == null || PlayerControl.LocalPlayer == null || gameType < 2 || !gamemodeEnableFlashlight) return true;
 
-                bool hasFlashlight = !PlayerControl.LocalPlayer.Data.IsDead && (gameType == 3 || gameType == 5 || gameType == 6);
+                bool hasFlashlight = (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek && GameOptionsManager.Instance.currentHideNSeekGameOptions.useFlashlight) || (gameType == 3 || gameType == 5 || gameType == 6);
                 __instance.SetFlashlightInputMethod();                
                 __instance.lightSource.SetupLightingForGameplay(hasFlashlight, gamemodeFlashlightRange, __instance.TargetFlashlight.transform);
 

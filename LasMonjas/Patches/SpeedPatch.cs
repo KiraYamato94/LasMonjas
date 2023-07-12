@@ -10,7 +10,7 @@ namespace LasMonjas.Patches
         [HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.FixedUpdate))]
         [HarmonyPostfix]
         public static void PostfixPhysics(PlayerPhysics __instance) {
-            if (GameOptionsManager.Instance.currentGameMode == GameModes.Normal) {
+            if (GameOptionsManager.Instance.currentGameMode == GameModes.Normal && AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started) {
                 if (__instance.AmOwner && GameData.Instance && __instance.myPlayer.CanMove && Janitor.janitor != null && __instance.myPlayer.PlayerId == Janitor.janitor.PlayerId && Janitor.dragginBody)
                     __instance.body.velocity *= 0.80f;
                 else if (__instance.AmOwner && GameData.Instance && __instance.myPlayer.CanMove && TaskMaster.taskMaster != null && __instance.myPlayer.PlayerId == TaskMaster.taskMaster.PlayerId && !Challenger.isDueling && !Seeker.isMinigaming && !LasMonjas.isHappeningAnonymousComms && TaskMaster.taskTimer > 0)
@@ -31,7 +31,7 @@ namespace LasMonjas.Patches
         [HarmonyPatch(typeof(CustomNetworkTransform), nameof(CustomNetworkTransform.FixedUpdate))]
         [HarmonyPostfix]
         public static void PostfixNetwork(CustomNetworkTransform __instance) {
-            if (GameOptionsManager.Instance.currentGameMode == GameModes.Normal) {
+            if (GameOptionsManager.Instance.currentGameMode == GameModes.Normal && AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started) {
 
                 if (!__instance.AmOwner && __instance.interpolateMovement != 0.0f && Janitor.janitor != null && __instance.gameObject.GetComponent<PlayerControl>().PlayerId == Janitor.janitor.PlayerId && Janitor.dragginBody)
                     __instance.body.velocity *= 0.80f;
