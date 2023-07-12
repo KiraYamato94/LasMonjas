@@ -2,13 +2,14 @@
 using HarmonyLib;
 using UnityEngine;
 using System.Linq;
+using PowerTools;
+using System;
 
 namespace LasMonjas.Core
 {
-    class CustomVisors
+    class CustomVisors : VisorData
     {
-        public static Material MagicShader;
-
+        public static Material MagicShader = new Material(Shader.Find("Unlit/PlayerShader"));
         public struct AuthorData
         {
             public string AuthorName;
@@ -46,65 +47,42 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "lotty", VisorName = "Kek Smile"},
             new AuthorData {AuthorName = "lotty", VisorName = "Golf Club"},
             new AuthorData {AuthorName = "Xeno<33", VisorName = "Wand"},
+            new AuthorData {AuthorName = "Nyxx", VisorName = "Sunglasses"},
         };
 
-        internal static Dictionary<int, AuthorData> IdToData = new Dictionary<int, AuthorData>();
+        public static bool _customVisorLoaded = false;
 
-        private static bool _customVisorLoaded = false;
+        static readonly List<VisorData> visorData = new();
+
+        public static readonly List<CustomVisors> customVisorData = new();
+
         [HarmonyPatch(typeof(HatManager), nameof(HatManager.GetVisorById))]
-        public static class AddCustomVisors
+        class AddCustomVisors
         {
-
             public static void Postfix(HatManager __instance) {
+                if (_customVisorLoaded) return;
+                _customVisorLoaded = true;
+                var AllVisors = __instance.allVisors.ToList();
 
-                if (!_customVisorLoaded) {
-                    var allVisors = __instance.allVisors.ToList();
-
-                    foreach (var data in authorDatas) {
-                        VisorID++;
-
-                        if (data.altShader) {
-                            allVisors.Add(CreateVisor(GetSprite(data.VisorName), data.AuthorName, true));
-                        }
-                        else {
-                            allVisors.Add(CreateVisor(GetSprite(data.VisorName), data.AuthorName, false));
-                        }
-
-                        IdToData.Add(HatManager.Instance.allVisors.Count + VisorID, data);
-
-                        _customVisorLoaded = true;
+                foreach (var data in authorDatas) {
+                    VisorViewData vvd = new VisorViewData();
+                    vvd.IdleFrame = GetSprite(data.VisorName);
+                    if (data.altShader) {
+                        vvd.AltShader = MagicShader;
                     }
-                    _customVisorLoaded = true;
-                    __instance.allVisors = allVisors.ToArray();
+                    var plate = new CustomVisors(vvd);
+                    plate.name = $"{data.VisorName} (by {data.AuthorName})";
+                    plate.ProductId = "lmj_" + plate.name.Replace(' ', '_');
+                    plate.BundleId = "lmj_" + plate.name.Replace(' ', '_');
+                    plate.displayOrder = 99;
+                    plate.ChipOffset = new Vector2(0f, 0.2f);
+                    plate.Free = true;
+                    plate.SpritePreview = vvd.IdleFrame;
+                    visorData.Add(plate);
+                    customVisorData.Add(plate);
                 }
-            }
-
-            public static int VisorID = 0;
-            /// <summary>
-            /// Creates hat based on specified values
-            /// </summary>
-            /// <param name="sprite"></param>
-            /// <param name="author"></param>
-            /// <returns>VisorData</returns>
-            private static VisorData CreateVisor(Sprite sprite, string author, bool altshader) {
-                //Borrowed from Other Roles to get hats alt shaders to work
-                if (MagicShader == null) {
-                    Material visorShader = DestroyableSingleton<HatManager>.Instance.PlayerMaterial;
-                    MagicShader = visorShader;
-                }
-
-                VisorData newVisor = ScriptableObject.CreateInstance<VisorData>();
-                newVisor.viewData.viewData = ScriptableObject.CreateInstance<VisorViewData>();
-                newVisor.name = $"{sprite.name} (by {author})";
-                newVisor.viewData.viewData.IdleFrame = sprite;
-                newVisor.ProductId = "visor_" + sprite.name.Replace(' ', '_');
-                newVisor.BundleId = "visor_" + sprite.name.Replace(' ', '_');
-                newVisor.displayOrder = 99 + VisorID;
-                newVisor.Free = true;
-                newVisor.ChipOffset = new Vector2(0f, 0.2f);
-                if (altshader == true) { newVisor.viewData.viewData.AltShader = MagicShader; }
-
-                return newVisor;
+                AllVisors.AddRange(visorData);
+                __instance.allVisors = AllVisors.ToArray();                
             }
         }
 
@@ -125,5 +103,105 @@ namespace LasMonjas.Core
 
         public static Sprite GetSprite(string name)
                 => AssetLoader.LoadVisorsAsset(name).Cast<GameObject>().GetComponent<SpriteRenderer>().sprite;
+
+        public VisorViewData visorViewData;
+        public CustomVisors(VisorViewData hvd) {
+            visorViewData = hvd;
+        }
+
+        static Dictionary<string, VisorViewData> cache = new();
+        static VisorViewData getbycache(string id) {
+            if (!cache.ContainsKey(id)) {
+                cache[id] = customVisorData.FirstOrDefault(x => x.ProductId == id).visorViewData;
+            }
+            return cache[id];
+        }
+
+        [HarmonyPatch(typeof(CosmeticsCache), nameof(CosmeticsCache.GetVisor))]
+        class CosmeticsCacheGetVisorPatch
+        {
+            public static bool Prefix(CosmeticsCache __instance, string id, ref VisorViewData __result) {
+                if (!id.StartsWith("lmj_")) return true;
+                __result = getbycache(id);
+                if (__result == null)
+                    __result = __instance.visors["visor_EmptyVisor"].GetAsset();
+                return false;
+            }
+        }
+
+        [HarmonyPatch(typeof(VisorLayer), nameof(VisorLayer.UpdateMaterial))]
+        class VisorLayerUpdateMaterialPatch
+        {
+            public static bool Prefix(VisorLayer __instance) {
+                if (__instance.currentVisor == null || !__instance.currentVisor.ProductId.StartsWith("lmj_")) return true;
+                VisorViewData asset = getbycache(__instance.currentVisor.ProductId);                
+                if (asset.AltShader) {
+                    __instance.Image.sharedMaterial = asset.AltShader;
+                }
+                else {
+                    __instance.Image.sharedMaterial = DestroyableSingleton<HatManager>.Instance.DefaultShader;
+                }
+                PlayerMaterial.SetColors(__instance.matProperties.ColorId, __instance.Image);
+                switch (__instance.matProperties.MaskType) {
+                    case PlayerMaterial.MaskType.SimpleUI:
+                    case PlayerMaterial.MaskType.ScrollingUI:
+                        __instance.Image.maskInteraction = (SpriteMaskInteraction)1;
+                        break;
+                    case PlayerMaterial.MaskType.Exile:
+                        __instance.Image.maskInteraction = (SpriteMaskInteraction)2;
+                        break;
+                    default:
+                        __instance.Image.maskInteraction = (SpriteMaskInteraction)0;
+                        break;
+                }
+                return false;
+            }
+        }
+
+        [HarmonyPatch(typeof(VisorLayer), nameof(VisorLayer.SetFlipX))]
+        class VisorLayerSetFlipXPatch
+        {
+            public static bool Prefix(VisorLayer __instance, bool flipX) {
+                if (__instance.currentVisor == null || !__instance.currentVisor.ProductId.StartsWith("lmj_")) return true;
+                __instance.Image.flipX = flipX;
+                VisorViewData asset = getbycache(__instance.currentVisor.ProdId);
+                if (flipX && asset.LeftIdleFrame) {
+                    __instance.Image.sprite = asset.LeftIdleFrame;
+                }
+                else {
+                    __instance.Image.sprite = asset.IdleFrame;
+                }
+                return false;
+            }
+        }
+
+        [HarmonyPatch(typeof(VisorLayer), nameof(VisorLayer.SetVisor), new Type[] { typeof(VisorData), typeof(VisorViewData), typeof(int) })]
+        class VisorLayerSetVisorPositionPatch
+        {
+            public static bool Prefix(VisorLayer __instance, VisorData data, VisorViewData visorView, int colorId) {
+                if (!data.ProductId.StartsWith("lmj_")) return true;
+                __instance.currentVisor = data;
+                if (data.BehindHats) {
+                    __instance.transform.SetLocalZ(__instance.ZIndexSpacing * -1.5f);
+                }
+                else {
+                    __instance.transform.SetLocalZ(__instance.ZIndexSpacing * -3f);
+                }
+                __instance.SetFlipX(__instance.Image.flipX);
+                __instance.SetMaterialColor(colorId);
+                return false;
+            }
+        }
+
+        [HarmonyPatch(typeof(VisorLayer), nameof(VisorLayer.SetVisor), new Type[] { typeof(VisorData), typeof(int) })]
+        class VisorLayerSetVisorPatch
+        {
+            public static bool Prefix(VisorLayer __instance, VisorData data, int colorId) {
+                if (!data.ProductId.StartsWith("lmj_")) return true;
+                __instance.currentVisor = data;
+                __instance.SetVisor(__instance.currentVisor, getbycache(data.ProdId), colorId);
+                return false;
+            }
+        }
     }
 }

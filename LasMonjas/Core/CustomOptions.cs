@@ -8,6 +8,7 @@ using Hazel;
 using System.Reflection;
 using System.Text;
 using AmongUs.GameOptions;
+using Reactor.Utilities.Extensions;
 
 namespace LasMonjas.Core
 {
@@ -530,11 +531,12 @@ namespace LasMonjas.Core
     class GameOptionsDataPatch
     {
         private static IEnumerable<MethodBase> TargetMethods() {
-            return typeof(GameOptionsData).GetMethods().Where(x => x.ReturnType == typeof(string) && x.GetParameters().Length == 1 && x.GetParameters()[0].ParameterType == typeof(int));
+            return typeof(GameOptionsData).GetMethods(typeof(string), typeof(int));
         }
 
         private static void Postfix(ref string __result) {
             if (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return;
+            
             StringBuilder sb = new StringBuilder(__result);
             foreach (CustomOption option in CustomOption.options) {
                 if (option.parent == null) {
@@ -672,7 +674,7 @@ namespace LasMonjas.Core
     public class HudManagerUpdate
     {
         public static float
-            MinX,/*-5.3F*/
+            MinX,//-5.3F
             OriginalY = 2.9F,
             MinY = 2.9F;
 

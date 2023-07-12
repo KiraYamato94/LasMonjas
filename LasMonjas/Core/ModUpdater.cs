@@ -84,22 +84,26 @@ namespace LasMonjas.Core
             if (!template) return;
 
             var button = Instantiate(template, null);
+
+            button.GetComponent<AspectPosition>().enabled = false;
+            button.transform.position = new Vector3(template.transform.position.x + 2.08f, template.transform.position.y + 0.62f, template.transform.position.z);
+
             var buttonTransform = button.transform;
             var pos = buttonTransform.localPosition;
             pos.y += 1.2f;
             buttonTransform.localPosition = pos;
 
             PassiveButton passiveButton = button.GetComponent<PassiveButton>();
-            SpriteRenderer buttonSprite = button.GetComponent<SpriteRenderer>();
+            SpriteRenderer buttonSprite = button.transform.GetChild(2).GetComponent<SpriteRenderer>();
             passiveButton.OnClick = new Button.ButtonClickedEvent();
             passiveButton.OnClick.AddListener((Action)(() => {
                 this.StartCoroutine(CoUpdate());
                 button.SetActive(false);
             }));
 
-            var text = button.transform.GetChild(0).GetComponent<TMP_Text>();
-            string t = "Update\nLas Monjas";
-            if (LMJUpdate == null && SubmergedUpdate != null) t = SubmergedCompatibility.Loaded ? $"Update\nSubmerged" : $"Download\nSubmerged";
+            var text = button.transform.GetChild(2).transform.GetChild(0).GetComponent<TMP_Text>();
+            string t = "Update Las Monjas";
+            if (LMJUpdate == null && SubmergedUpdate != null) t = SubmergedCompatibility.Loaded ? $"Update Submerged" : $"Download Submerged";
 
             StartCoroutine(Effects.Lerp(0.1f, (System.Action<float>)(p => text.SetText(t))));
 

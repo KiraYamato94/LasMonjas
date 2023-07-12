@@ -2,12 +2,16 @@
 using HarmonyLib;
 using UnityEngine;
 using System.Linq;
+using PowerTools;
+using static Il2CppSystem.Globalization.CultureInfo;
+using Innersloth.Assets;
+using System;
 
 namespace LasMonjas.Core
 {
-    class CustomNamePlates
-    {
+    public class CustomNamePlates : NamePlateData
 
+    {
         public struct AuthorData
         {
             public string AuthorName;
@@ -45,54 +49,117 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "AD", NamePlateName = "Jailed"},
         };
 
-        internal static Dictionary<int, AuthorData> IdToData = new Dictionary<int, AuthorData>();
+        public static bool _customNamePlatesLoaded = false;
 
-        private static bool _customNamePlatesLoaded = false;
+        static readonly List<NamePlateData> namePlateData = new();
+
+        public static readonly List<CustomNamePlates> customPlateData = new();
+
         [HarmonyPatch(typeof(HatManager), nameof(HatManager.GetNamePlateById))]
-        public static class AddCustomNamePlates
+        class AddCustomNameplates
         {
-
             public static void Postfix(HatManager __instance) {
-                if (!_customNamePlatesLoaded) {
-                    var allPlates = __instance.allNamePlates.ToList();
+                if (_customNamePlatesLoaded) return;
+                _customNamePlatesLoaded = true;
+                var AllPlates = __instance.allNamePlates.ToList();
 
-                    foreach (var data in authorDatas) {
-                        NamePlateID++;
+                foreach (var data in authorDatas) {
 
-                        allPlates.Add(CreateNamePlate(GetSprite(data.NamePlateName), data.AuthorName));
+                    TempPlateViewData tpvd = new() {
+                        Image = GetSprite(data.NamePlateName)
+                    };
+                    var plate = new CustomNamePlates();
+                    plate.tpvd = tpvd;
+                    plate.name = $"{data.NamePlateName} (by { data.AuthorName})";
+                    plate.ProductId = "lmj_" + plate.name.Replace(' ', '_');
+                    plate.BundleId = "lmj_" + plate.name.Replace(' ', '_');
+                    plate.displayOrder = 99;
+                    plate.ChipOffset = new Vector2(0f, 0.2f);
+                    plate.Free = true;
+                    plate.SpritePreview = tpvd.Image;
+                    namePlateData.Add(plate);
+                    customPlateData.Add(plate);
 
-                        IdToData.Add(HatManager.Instance.allNamePlates.Count + NamePlateID, data);
+                }
+                AllPlates.AddRange(namePlateData);
+                __instance.allNamePlates = AllPlates.ToArray();               
+            }
+        }       
 
-                        _customNamePlatesLoaded = true;
-                    }
-                    _customNamePlatesLoaded = true;
-                    __instance.allNamePlates = allPlates.ToArray();
+        public static Sprite GetSprite(string name)
+                => AssetLoader.LoadNamePlateAsset(name).Cast<GameObject>().GetComponent<SpriteRenderer>().sprite;
+        
+        public TempPlateViewData tpvd;
+        public class TempPlateViewData
+        {
+            public Sprite Image;
+            public NamePlateViewData Create {
+                get {
+                    return new() {
+                        Image = Image
+                    };
                 }
             }
+        };
 
-            public static Sprite GetSprite(string name)
-                => AssetLoader.LoadNamePlateAsset(name).Cast<GameObject>().GetComponent<SpriteRenderer>().sprite;
+        static Dictionary<string, NamePlateViewData> cache = new();
+        static NamePlateViewData getbycache(string id) {
+            if (!cache.ContainsKey(id) || cache[id] == null) {
+                CustomNamePlates cpd = customPlateData.FirstOrDefault(x => x.ProductId == id);
+                if (cpd != null) {
+                    cache[id] = cpd.tpvd.Create;
+                }
+                else {
+                    cache[id] = DestroyableSingleton<HatManager>.Instance.GetNamePlateById(id)?.CreateAddressableAsset()?.GetAsset();
+                }
+            }
+            return cache[id];
+        }
 
-            public static int NamePlateID = 0;
-            /// <summary>
-            /// Creates hat based on specified values
-            /// </summary>
-            /// <param name="sprite"></param>
-            /// <param name="author"></param>
-            /// <returns>NamePlateData</returns>
-            private static NamePlateData CreateNamePlate(Sprite sprite, string author) {
+        [HarmonyPatch(typeof(CosmeticsCache), nameof(CosmeticsCache.GetNameplate))]
+        class CosmeticsCacheGetPlatePatch
+        {
+            public static bool Prefix(CosmeticsCache __instance, string id, ref NamePlateViewData __result) {
+                if (!id.StartsWith("lmj_")) return true;
+                __result = getbycache(id);
+                if (__result == null)
+                    __result = __instance.nameplates["nameplate_NoPlate"].GetAsset();
+                return false;
+            }
+        }
 
-                NamePlateData newPlate = ScriptableObject.CreateInstance<NamePlateData>();
-                newPlate.viewData.viewData = ScriptableObject.CreateInstance<NamePlateViewData>();
-                newPlate.name = $"{sprite.name} (by {author})";
-                newPlate.viewData.viewData.Image = sprite;
-                newPlate.ProductId = "nameplate_" + sprite.name.Replace(' ', '_');
-                newPlate.BundleId = "nameplate_" + sprite.name.Replace(' ', '_');
-                newPlate.displayOrder = 99 + NamePlateID;
-                newPlate.Free = true;
-                newPlate.ChipOffset = new Vector2(0f, 0.2f);
+        [HarmonyPatch(typeof(NameplatesTab), nameof(NameplatesTab.OnEnable))]
+        class NameplatesTabOnEnablePatch
+        {
+            static void makecoro(NameplatesTab __instance, NameplateChip chip) {
+                __instance.StartCoroutine(AddressableAssetExtensions.CoLoadAssetAsync<NamePlateViewData>(__instance, DestroyableSingleton<HatManager>.Instance.GetNamePlateById(chip.ProductId).ViewDataRef, (Action<NamePlateViewData>)delegate (NamePlateViewData viewData)
+                {
+                    chip.image.sprite = viewData?.Image;
+                }));
+            }
+            public static void Postfix(NameplatesTab __instance) {
+                __instance.StopAllCoroutines();
+                foreach (NameplateChip chip in __instance.scroller.Inner.GetComponentsInChildren<NameplateChip>()) {
+                    if (chip.ProductId.StartsWith("lmj_")) {
+                        NamePlateViewData npvd = getbycache(chip.ProductId);
+                        chip.image.sprite = npvd.Image;
+                    }
+                    else {
+                        makecoro(__instance, chip);
+                    }
+                }
+            }
+        }
 
-                return newPlate;
+        [HarmonyPatch(typeof(PlayerVoteArea), nameof(PlayerVoteArea.PreviewNameplate))]
+        class VisorLayerUpdateMaterialPatch
+        {
+            public static void Postfix(PlayerVoteArea __instance, string plateID) {
+                if (!plateID.StartsWith("lmj_")) return;
+                NamePlateViewData npvd = getbycache(plateID);
+                if (npvd != null) {
+                    __instance.Background.sprite = npvd.Image;
+                }
             }
         }
     }
