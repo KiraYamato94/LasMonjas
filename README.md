@@ -35,7 +35,12 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 # Changelog
 <details>
   <summary>Click to show</summary>
-  
+
+**Version 3.2.0 (12nd July 2023)**
+- Compatibility patch for Among Us 2023.7.11
+- Monja Festival: fixed that Big Monja couldn't pick up dropped monjitas if she was carrying 3 or more already
+- Yinyanger: Yinyang now triggers via button use
+
 **Version 3.1.7 (31st May 2023)**
 - Manual update to be able to play on Modded NA custom server again
 - 1 new visor
