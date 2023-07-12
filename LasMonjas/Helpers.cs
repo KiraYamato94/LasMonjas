@@ -218,32 +218,7 @@ namespace LasMonjas
             target.RawSetHat(hatId, colorId);
             target.RawSetName(hidePlayerName(PlayerControl.LocalPlayer, target) ? "" : playerName);
             target.RawSetPet(petId, colorId);
-
-            SkinViewData nextSkin = DestroyableSingleton<HatManager>.Instance.GetSkinById(skinId).viewData.viewData;
-            PlayerPhysics playerPhysics = target.MyPhysics;
-            AnimationClip clip = null;
-            var spriteAnim = playerPhysics.myPlayer.cosmetics.skin.animator;
-            var currentPhysicsAnim = playerPhysics.Animations.Animator;
-            if (currentPhysicsAnim == playerPhysics.Animations.group.RunAnim) clip = nextSkin.RunAnim;
-            else if (currentPhysicsAnim == playerPhysics.Animations.group.SpawnAnim) clip = nextSkin.SpawnAnim;
-            else if (currentPhysicsAnim == playerPhysics.Animations.group.EnterVentAnim) clip = nextSkin.EnterVentAnim;
-            else if (currentPhysicsAnim == playerPhysics.Animations.group.ExitVentAnim) clip = nextSkin.ExitVentAnim;
-            else if (currentPhysicsAnim == playerPhysics.Animations.group.IdleAnim) clip = nextSkin.IdleAnim;
-            else clip = nextSkin.IdleAnim;
-
-            float progress = playerPhysics.Animations.Animator.GetNormalisedTime();
-            playerPhysics.myPlayer.cosmetics.skin.skin = nextSkin;
-            playerPhysics.myPlayer.cosmetics.skin.UpdateMaterial();
-            spriteAnim.Play(clip, 1f);
-            spriteAnim.m_animator.Play("a", 0, progress % 1);
-            spriteAnim.m_animator.Update(0f);
-
-            if (target.cosmetics.currentPet) UnityEngine.Object.Destroy(target.cosmetics.currentPet.gameObject);
-            target.cosmetics.currentPet = UnityEngine.Object.Instantiate<PetBehaviour>(DestroyableSingleton<HatManager>.Instance.GetPetById(petId).viewData.viewData);
-            target.cosmetics.currentPet.transform.position = target.transform.position;
-            target.cosmetics.currentPet.Source = target;
-            target.cosmetics.currentPet.Visible = target.Visible;
-            target.SetPlayerMaterialColors(target.cosmetics.currentPet.rend);
+            target.RawSetSkin(skinId, colorId);            
         }
 
         public static bool roleCanUseVents(this PlayerControl player) {
@@ -503,16 +478,16 @@ namespace LasMonjas
 
         public static void enableCursor(string mode) {
             if (mode == "start") {
-                Sprite sprite = Helpers.loadSpriteFromResources("LasMonjas.Images.Cursor.png", 115f);
-                Cursor.SetCursor(sprite.texture, Vector2.zero, CursorMode.Auto);
+                Texture2D sprite = Helpers.loadTextureFromResources("LasMonjas.Images.Cursor.png");
+                Cursor.SetCursor(sprite, Vector2.zero, CursorMode.Auto);
                 return;
             }
             if (LasMonjasPlugin.MonjaCursor.Value) {
                 Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
             }
             else {
-                Sprite sprite = Helpers.loadSpriteFromResources("LasMonjas.Images.Cursor.png", 115f);
-                Cursor.SetCursor(sprite.texture, Vector2.zero, CursorMode.Auto);
+                Texture2D sprite = Helpers.loadTextureFromResources("LasMonjas.Images.Cursor.png");
+                Cursor.SetCursor(sprite, Vector2.zero, CursorMode.Auto);
             }
         }
 
@@ -530,7 +505,7 @@ namespace LasMonjas
                 HudManagerStartPatch.zoomOutButton.Sprite = zoomOutStatus ? Helpers.loadSpriteFromResources("LasMonjas.Images.PlusButton.png", 75f) : Helpers.loadSpriteFromResources("LasMonjas.Images.MinusButton.png", 150f);
                 HudManagerStartPatch.zoomOutButton.PositionOffset = zoomOutStatus ? new Vector3(0f, 3f, 0) : new Vector3(0.4f, 2.8f, 0);
             }
-            ResolutionManager.ResolutionChanged.Invoke((float)Screen.width / Screen.height); // This will move button positions to the correct position.
+            ResolutionManager.ResolutionChanged.Invoke((float)Screen.width / Screen.height, Screen.width, Screen.height, false); // This will move button positions to the correct position.
         }
 
         public static AudioClip GetIntroSound(RoleTypes roleType) {

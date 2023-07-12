@@ -1015,10 +1015,6 @@ namespace LasMonjas
 
         public static bool colision = false;
 
-        public static PlayerControl yinedPlayer;
-
-        public static PlayerControl yanedPlayer;
-
         public static TMPro.TMP_Text yinedButtonText;
 
         public static TMPro.TMP_Text yanedButtonText;
@@ -1038,6 +1034,13 @@ namespace LasMonjas
             return buttonSpriteYing;
         }
 
+        private static Sprite buttonSpriteYinYang;
+        public static Sprite getYinYangButtonSprite() {
+            if (buttonSpriteYinYang) return buttonSpriteYinYang;
+            buttonSpriteYinYang = Helpers.loadSpriteFromResources("LasMonjas.Images.YinyangerYinYangButton.png", 90f);
+            return buttonSpriteYinYang;
+        }
+
         public static void clearAndReload() {
             yinyanger = null;
             cooldown = CustomOptionHolder.yinyangerCooldown.getFloat();
@@ -1047,19 +1050,15 @@ namespace LasMonjas
             usedYined = false;
             usedYanged = false;
             colision = false;
-            yinedPlayer = null;
-            yanedPlayer = null;
         }
         public static void resetYined() {
             yinyedplayer = null;
             usedYined = false;
-            yinedPlayer = null;
             yinedButtonText.text = "";
         }
         public static void resetYanged() {
             yangyedplayer = null;
             usedYanged = false;
-            yanedPlayer = null;
             yanedButtonText.text = "";
         }
     }

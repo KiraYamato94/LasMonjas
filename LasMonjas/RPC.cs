@@ -302,6 +302,7 @@ namespace LasMonjas
         MineKill,
         ActivateTrap,
         YinyangerSetYinyang,
+        YinyangerYinYang,
         ChallengerSetRival,
         ChallengerPerformDuel,
         ChallengerSelectAttack,
@@ -2128,6 +2129,35 @@ namespace LasMonjas
                     }
                 }
             }
+        }
+
+        public static void yinyangerYinYang() {
+            new YinYang(1, Yinyanger.yinyedplayer);
+            new YinYang(1, Yinyanger.yangyedplayer);
+            Yinyanger.colision = true;
+            Yinyanger.yinyedplayer.moveable = false;
+            Yinyanger.yinyedplayer.NetTransform.Halt();
+            Yinyanger.yangyedplayer.moveable = false;
+            Yinyanger.yangyedplayer.NetTransform.Halt(); 
+
+            HudManager.Instance.StartCoroutine(Effects.Lerp(1, new Action<float>((p) => {
+                if (Yinyanger.yinyanger == PlayerControl.LocalPlayer || Yinyanger.yinyedplayer == PlayerControl.LocalPlayer || Yinyanger.yangyedplayer == PlayerControl.LocalPlayer) {
+                    SoundManager.Instance.PlaySound(CustomMain.customAssets.yinyangerYinyangColisionClip, false, 100f);
+                }               
+                if (p == 1f) {
+
+                    uncheckedMurderPlayer(Yinyanger.yinyanger.PlayerId, Yinyanger.yinyedplayer.PlayerId, 0);
+
+                    uncheckedMurderPlayer(Yinyanger.yinyanger.PlayerId, Yinyanger.yangyedplayer.PlayerId, 0);
+
+                    Yinyanger.yinyedplayer.moveable = true;
+                    Yinyanger.yangyedplayer.moveable = true;
+
+                    Yinyanger.resetYined();
+                    Yinyanger.resetYanged();
+                    Yinyanger.colision = false;
+                }
+            })));
         }
 
         public static void challengerSetRival(byte targetId, byte resetRival) {
@@ -4566,23 +4596,23 @@ namespace LasMonjas
                                     Monja.ritualObject.transform.position = new Vector3(-6.35f, 14f, -0.5f);
                                     break;
                             }
-                            GameObject keyitem01 = GameObject.Instantiate(CustomMain.customAssets.keyItem01, PlayerControl.LocalPlayer.transform.parent);
+                            GameObject keyitem01 = GameObject.Instantiate(CustomMain.customAssets.monjaOneSprite, PlayerControl.LocalPlayer.transform.parent);
                             keyitem01.transform.position = Monja.itemListPositions[0];
                             keyitem01.name = "item01";
                             Monja.item01 = keyitem01;
-                            GameObject keyitem02 = GameObject.Instantiate(CustomMain.customAssets.keyItem02, PlayerControl.LocalPlayer.transform.parent);
+                            GameObject keyitem02 = GameObject.Instantiate(CustomMain.customAssets.monjaTwoSprite, PlayerControl.LocalPlayer.transform.parent);
                             keyitem02.transform.position = Monja.itemListPositions[1];
                             keyitem02.name = "item02";
                             Monja.item02 = keyitem02;
-                            GameObject keyitem03 = GameObject.Instantiate(CustomMain.customAssets.keyItem03, PlayerControl.LocalPlayer.transform.parent);
+                            GameObject keyitem03 = GameObject.Instantiate(CustomMain.customAssets.monjaThreeSprite, PlayerControl.LocalPlayer.transform.parent);
                             keyitem03.transform.position = Monja.itemListPositions[2];
                             keyitem03.name = "item03";
                             Monja.item03 = keyitem03;
-                            GameObject keyitem04 = GameObject.Instantiate(CustomMain.customAssets.keyItem04, PlayerControl.LocalPlayer.transform.parent);
+                            GameObject keyitem04 = GameObject.Instantiate(CustomMain.customAssets.monjaFourSprite, PlayerControl.LocalPlayer.transform.parent);
                             keyitem04.transform.position = Monja.itemListPositions[3];
                             keyitem04.name = "item04";
                             Monja.item04 = keyitem04;
-                            GameObject keyitem05 = GameObject.Instantiate(CustomMain.customAssets.keyItem05, PlayerControl.LocalPlayer.transform.parent);
+                            GameObject keyitem05 = GameObject.Instantiate(CustomMain.customAssets.monjaFiveSprite, PlayerControl.LocalPlayer.transform.parent);
                             keyitem05.transform.position = Monja.itemListPositions[4];
                             keyitem05.name = "item05";
                             Monja.item05 = keyitem05;
@@ -8588,6 +8618,9 @@ namespace LasMonjas
                     byte yinedId = reader.ReadByte();
                     byte yinflag = reader.ReadByte();
                     RPCProcedure.yinyangerSetYinyang(yinedId, yinflag);
+                    break;
+                case (byte)CustomRPC.YinyangerYinYang:
+                    RPCProcedure.yinyangerYinYang();
                     break;
                 case (byte)CustomRPC.ChallengerPerformDuel:
                     RPCProcedure.challengerPerformDuel();

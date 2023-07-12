@@ -47,6 +47,7 @@ namespace LasMonjas
         private static CustomButton yinyangerYinButton;
         private static CustomButton yinyangerYangButton;
         private static CustomButton yinyangerKillButton;
+        private static CustomButton yinyangerYinYangButton;
         private static CustomButton challengerChallengeButton;
         private static CustomButton challengerKillButton;
         public static CustomButton challengerRockButton;
@@ -404,6 +405,7 @@ namespace LasMonjas
             yinyangerYinButton.MaxTimer = Yinyanger.cooldown;
             yinyangerYangButton.MaxTimer = Yinyanger.cooldown;
             yinyangerKillButton.MaxTimer = GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
+            yinyangerYinYangButton.MaxTimer = Yinyanger.cooldown;
             challengerChallengeButton.MaxTimer = Challenger.cooldown;
             challengerChallengeButton.EffectDuration = Challenger.duration;
             challengerKillButton.MaxTimer = GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
@@ -1458,7 +1460,7 @@ namespace LasMonjas
                     return CanUse && PlayerControl.LocalPlayer.CanMove; },
                 () => { },
                 Bomberman.getBombDefuseButtonSprite(),
-                new Vector3(-0.05f, 3f, 0),
+                new Vector3(-1f, 2f, 0),
                 __instance,
                 null,
                 true
@@ -2494,6 +2496,55 @@ namespace LasMonjas
                 () => { yinyangerKillButton.Timer = yinyangerKillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 new Vector3(0, 1f, 0),
+                __instance,
+                KeyCode.Q
+            );
+            
+            // Yinyanger YinYang
+            yinyangerYinYangButton = new CustomButton(
+                () => {
+                    if (Jinx.jinxedList.Any(p => p.Data.PlayerId == Yinyanger.yinyanger.Data.PlayerId)) {
+                        MessageWriter writerKiller = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetJinxed, Hazel.SendOption.Reliable, -1);
+                        writerKiller.Write(Yinyanger.yinyanger.PlayerId);
+                        writerKiller.Write((byte)0);
+                        AmongUsClient.Instance.FinishRpcImmediately(writerKiller);
+                        RPCProcedure.setJinxed(Yinyanger.yinyanger.PlayerId, 0);
+
+                        SoundManager.Instance.PlaySound(CustomMain.customAssets.jinxQuack, false, 5f);
+
+                        yinyangerYinYangButton.Timer = yinyangerYinYangButton.MaxTimer;
+                        return;
+                    }
+
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.YinyangerYinYang, Hazel.SendOption.Reliable, -1);
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    RPCProcedure.yinyangerYinYang();
+
+                    yinyangerYinYangButton.Timer = yinyangerYinYangButton.MaxTimer;
+                },
+                () => {
+                    int currentAlivePlayers = 0;
+                    foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                        if (!player.Data.IsDead) {
+                            currentAlivePlayers += 1;
+                        }
+                    }
+                    return currentAlivePlayers > 2 && Yinyanger.yinyanger == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead;
+                },
+                () => {
+                    bool canUse = false;
+                    if (Yinyanger.yinyedplayer != null && Yinyanger.yangyedplayer != null) {
+                        if (Vector2.Distance(Yinyanger.yinyedplayer.transform.position, Yinyanger.yangyedplayer.transform.position) < 1.5f && !Yinyanger.yinyanger.Data.IsDead && !Yinyanger.yinyedplayer.Data.IsDead && !Yinyanger.yangyedplayer.Data.IsDead) {
+                            canUse = true;
+                        }
+                    }                    
+                    return canUse && !Yinyanger.colision && PlayerControl.LocalPlayer.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
+                },
+                () => {
+                    yinyangerYinYangButton.Timer = yinyangerYinYangButton.MaxTimer;
+                },
+                Yinyanger.getYinYangButtonSprite(),
+                new Vector3(0f, 1f, 0),
                 __instance,
                 KeyCode.Q
             );
@@ -3629,7 +3680,7 @@ namespace LasMonjas
                         poisonerButton.HasEffect = true;
                     }
                 },
-                () => { return Poisoner.poisoner != null && Poisoner.poisoner == PlayerControl.LocalPlayer /*&& !PlayerControl.LocalPlayer.Data.IsDead*/; },
+                () => { return Poisoner.poisoner != null && Poisoner.poisoner == PlayerControl.LocalPlayer; },
                 () => {
                     // current % shown on player icons
                     foreach (KeyValuePair<byte, PoolablePlayer> player in MapOptions.playerIcons) {
@@ -4071,7 +4122,7 @@ namespace LasMonjas
                 () => { return Seeker.seekerSelectedHiding == 0 && PlayerControl.LocalPlayer.CanMove && Seeker.isMinigaming && !Seeker.timeOutMinigame; },
                 () => { },
                 Seeker.getSearchCuloButtonSprite(),
-                new Vector3(-6.3f, -0.06f, 0f),
+                new Vector3(-5.2f, -0.06f, 0f),
                 __instance,
                 null,
                 false
@@ -4089,7 +4140,7 @@ namespace LasMonjas
                 () => { return Seeker.seekerSelectedHiding == 0 && PlayerControl.LocalPlayer.CanMove && Seeker.isMinigaming && !Seeker.timeOutMinigame; },
                 () => { },
                 Seeker.getSearchDioButtonSprite(),
-                new Vector3(-5.2f, -0.06f, 0f),
+                new Vector3(-6.3f, -0.06f, 0f),
                 __instance,
                 null,
                 false
@@ -4125,7 +4176,7 @@ namespace LasMonjas
                 () => { return Seeker.hidedPlayerOneSelectedHiding == 0 && PlayerControl.LocalPlayer.CanMove && Seeker.isMinigaming && !Seeker.timeOutMinigame; },
                 () => { },
                 Seeker.getCuloButtonSprite(),
-                new Vector3(-6.3f, -0.06f, 0f),
+                new Vector3(-5.2f, -0.06f, 0f),
                 __instance,
                 null,
                 false
@@ -4143,7 +4194,7 @@ namespace LasMonjas
                 () => { return Seeker.hidedPlayerOneSelectedHiding == 0 && PlayerControl.LocalPlayer.CanMove && Seeker.isMinigaming && !Seeker.timeOutMinigame; },
                 () => { },
                 Seeker.getDioButtonSprite(),
-                new Vector3(-5.2f, -0.06f, 0f),
+                new Vector3(-6.3f, -0.06f, 0f),
                 __instance,
                 null,
                 false
@@ -4179,7 +4230,7 @@ namespace LasMonjas
                 () => { return Seeker.hidedPlayerTwoSelectedHiding == 0 && PlayerControl.LocalPlayer.CanMove && Seeker.isMinigaming && !Seeker.timeOutMinigame; },
                 () => { },
                 Seeker.getCuloButtonSprite(),
-                new Vector3(-6.3f, -0.06f, 0f),
+                new Vector3(-5.2f, -0.06f, 0f),
                 __instance,
                 null,
                 false
@@ -4197,7 +4248,7 @@ namespace LasMonjas
                 () => { return Seeker.hidedPlayerTwoSelectedHiding == 0 && PlayerControl.LocalPlayer.CanMove && Seeker.isMinigaming && !Seeker.timeOutMinigame; },
                 () => { },
                 Seeker.getDioButtonSprite(),
-                new Vector3(-5.2f, -0.06f, 0f),
+                new Vector3(-6.3f, -0.06f, 0f),
                 __instance,
                 null,
                 false
@@ -4233,7 +4284,7 @@ namespace LasMonjas
                 () => { return Seeker.hidedPlayerThreeSelectedHiding == 0 && PlayerControl.LocalPlayer.CanMove && Seeker.isMinigaming && !Seeker.timeOutMinigame; },
                 () => { },
                 Seeker.getCuloButtonSprite(),
-                new Vector3(-6.3f, -0.06f, 0f),
+                new Vector3(-5.2f, -0.06f, 0f),
                 __instance,
                 null,
                 false
@@ -4251,7 +4302,7 @@ namespace LasMonjas
                 () => { return Seeker.hidedPlayerThreeSelectedHiding == 0 && PlayerControl.LocalPlayer.CanMove && Seeker.isMinigaming && !Seeker.timeOutMinigame; },
                 () => { },
                 Seeker.getDioButtonSprite(),
-                new Vector3(-5.2f, -0.06f, 0f),
+                new Vector3(-6.3f, -0.06f, 0f),
                 __instance,
                 null,
                 false
@@ -5965,7 +6016,7 @@ namespace LasMonjas
             zoomOutButton = new CustomButton(
                 () => { Helpers.toggleZoom();
                 },
-                () => { if (PlayerControl.LocalPlayer == null || !PlayerControl.LocalPlayer.Data.IsDead /*|| PlayerControl.LocalPlayer.Data.Role.IsImpostor*/ || TimeTraveler.isRewinding || (gameType >= 2 && gameType != 5)) return false;
+                () => { if (PlayerControl.LocalPlayer == null || !PlayerControl.LocalPlayer.Data.IsDead || TimeTraveler.isRewinding || (gameType >= 2 && gameType != 5)) return false;
                     var (playerCompleted, playerTotal) = TasksHandler.taskInfo(PlayerControl.LocalPlayer.Data);
                     int numberOfLeftTasks = playerTotal - playerCompleted;
                     return numberOfLeftTasks <= 0;
@@ -19450,7 +19501,7 @@ namespace LasMonjas
                                 MonjaFestival.bigMonjaPlayercurrentSpawn = spawn;
                                 CanUse = true;
                                 if (spawn.name.StartsWith("littleMonja")) {
-                                    CanUse = MonjaFestival.bigMonjaPlayerItems < 3;
+                                    CanUse = MonjaFestival.bigMonjaPlayerItems < 10;
                                     MonjaFestival.bigMonjaPlayerfoundspawn = 8;
                                 }
                                 else {
