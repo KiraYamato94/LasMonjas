@@ -36,6 +36,9 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
 
+**Version 3.2.1 (16 July 2023)**
+- Hotfix for custom hats/visors adaptive color
+
 **Version 3.2.0 (12nd July 2023)**
 - Compatibility patch for Among Us 2023.7.11
 - Monja Festival: fixed that Big Monja couldn't pick up dropped monjitas if she was carrying 3 or more already
