@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Linq;
 using PowerTools;
 using static Il2CppSystem.Globalization.CultureInfo;
+using UnityEngine.AddressableAssets;
 
 // Adapted from https://github.com/xxomega77xx/HatPack
 
@@ -11,6 +12,7 @@ namespace LasMonjas.Core
 {
     class CustomHats
     {
+        public static Material MagicShader = new Material(Shader.Find("Unlit/PlayerShader"));
         public struct AuthorData
         {
             public string AuthorName;
@@ -183,6 +185,7 @@ namespace LasMonjas.Core
 
         internal static Dictionary<int, AuthorData> IdToData = new Dictionary<int, AuthorData>();
         public static Dictionary<string, Sprite> hatViewDatas = new Dictionary<string, Sprite>();
+        public static Dictionary<string, HatViewData> CustomHatViewDatas = new Dictionary<string, HatViewData>();
 
         private static bool _customHatsLoaded = false;
         [HarmonyPatch(typeof(HatManager), nameof(HatManager.GetHatById))]
@@ -257,7 +260,11 @@ namespace LasMonjas.Core
             /// <param name="altshader"></param>
             /// <returns>HatData</returns>
             private static HatData CreateHat(Sprite sprite, string author, Sprite climb = null, Sprite floor = null, Sprite leftimage = null, bool bounce = false, bool altshader = false) {
-				             
+
+                var viewData = ScriptableObject.CreateInstance<HatViewData>();
+                if (altshader) {
+                    viewData.AltShader = MagicShader;
+                }
                 HatData newHat = ScriptableObject.CreateInstance<HatData>();
                 newHat.name = $"{sprite.name} (by {author})";
                 newHat.SpritePreview = sprite;
@@ -265,16 +272,15 @@ namespace LasMonjas.Core
                 newHat.BundleId = "hat_" + sprite.name.Replace(' ', '_');
                 newHat.displayOrder = 99 + HatID;
                 newHat.InFront = true;
-                newHat.NoBounce = bounce;                
+                newHat.NoBounce = bounce;
                 newHat.Free = true;
                 newHat.ChipOffset = new Vector2(-0.1f, 0.4f);
 
-                if (hatViewDatas.ContainsKey(newHat.ProductId)) {
-                    newHat.SpritePreview = hatViewDatas[newHat.ProductId];
-                }
-                else {
-                    hatViewDatas.Add(newHat.ProductId, sprite);
-                }
+                hatViewDatas.Add(newHat.ProductId, sprite);
+                CustomHatViewDatas.Add(newHat.name, viewData);
+                var assetRef = new AssetReference(viewData.Pointer);
+                newHat.ViewDataRef = assetRef;
+                newHat.CreateAddressableAsset();
 
                 return newHat;
             }
@@ -303,7 +309,7 @@ namespace LasMonjas.Core
         {
             public static bool Prefix(HatParent __instance, int color) {
                 if (!hatViewDatas.ContainsKey(__instance.Hat.ProductId)) return true;
-                __instance.UnloadAsset();
+                __instance.hatDataAsset = null;
                 __instance.PopulateFromHatViewData();
                 __instance.SetMaterialColor(color);
                 return false;
@@ -346,6 +352,76 @@ namespace LasMonjas.Core
             public static bool Prefix(HatParent __instance) {
                 if (!hatViewDatas.ContainsKey(__instance.Hat.ProductId)) return true;
                 __instance.FrontLayer.sprite = null;
+                return false;
+            }
+        }
+
+        // This patch is taken from TOR https://github.com/TheOtherRolesAU/TheOtherRoles/blob/main/TheOtherRoles/Modules/CustomHats.cs, Licensed under GPLv3
+        [HarmonyPatch(typeof(HatParent), nameof(HatParent.UpdateMaterial))]
+        public class UpdateMaterialPatch
+        {
+            public static bool Prefix(HatParent __instance) {
+                HatViewData asset;
+                try {
+                    HatViewData vanillaAsset = __instance.hatDataAsset.GetAsset();
+                    return true;
+                }
+                catch {
+                    try {
+                        asset = CustomHatViewDatas[__instance.Hat.name];
+                    }
+                    catch {
+                        return false;
+                    }
+                }
+                if (asset.AltShader) {
+                    __instance.FrontLayer.sharedMaterial = asset.AltShader;
+                    if (__instance.BackLayer) {
+                        __instance.BackLayer.sharedMaterial = asset.AltShader;
+                    }
+                }
+                else {
+                    __instance.FrontLayer.sharedMaterial = DestroyableSingleton<HatManager>.Instance.DefaultShader;
+                    if (__instance.BackLayer) {
+                        __instance.BackLayer.sharedMaterial = DestroyableSingleton<HatManager>.Instance.DefaultShader;
+                    }
+                }
+                int colorId = __instance.matProperties.ColorId;
+                PlayerMaterial.SetColors(colorId, __instance.FrontLayer);
+                if (__instance.BackLayer) {
+                    PlayerMaterial.SetColors(colorId, __instance.BackLayer);
+                }
+                __instance.FrontLayer.material.SetInt(PlayerMaterial.MaskLayer, __instance.matProperties.MaskLayer);
+                if (__instance.BackLayer) {
+                    __instance.BackLayer.material.SetInt(PlayerMaterial.MaskLayer, __instance.matProperties.MaskLayer);
+                }
+                PlayerMaterial.MaskType maskType = __instance.matProperties.MaskType;
+                if (maskType == PlayerMaterial.MaskType.ScrollingUI) {
+                    if (__instance.FrontLayer) {
+                        __instance.FrontLayer.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+                    }
+                    if (__instance.BackLayer) {
+                        __instance.BackLayer.maskInteraction = SpriteMaskInteraction.VisibleInsideMask;
+                        return false;
+                    }
+                }
+                else if (maskType == PlayerMaterial.MaskType.Exile) {
+                    if (__instance.FrontLayer) {
+                        __instance.FrontLayer.maskInteraction = SpriteMaskInteraction.VisibleOutsideMask;
+                    }
+                    if (__instance.BackLayer) {
+                        __instance.BackLayer.maskInteraction = SpriteMaskInteraction.VisibleOutsideMask;
+                        return false;
+                    }
+                }
+                else {
+                    if (__instance.FrontLayer) {
+                        __instance.FrontLayer.maskInteraction = SpriteMaskInteraction.None;
+                    }
+                    if (__instance.BackLayer) {
+                        __instance.BackLayer.maskInteraction = SpriteMaskInteraction.None;
+                    }
+                }
                 return false;
             }
         }

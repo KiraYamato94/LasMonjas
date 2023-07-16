@@ -4,6 +4,7 @@ using UnityEngine;
 using System.Linq;
 using PowerTools;
 using System;
+using UnityEngine.AddressableAssets;
 
 namespace LasMonjas.Core
 {
@@ -80,6 +81,9 @@ namespace LasMonjas.Core
                     plate.SpritePreview = vvd.IdleFrame;
                     visorData.Add(plate);
                     customVisorData.Add(plate);
+                    var assetRef = new AssetReference(vvd.Pointer);
+                    plate.ViewDataRef = assetRef;
+                    plate.CreateAddressableAsset();
                 }
                 AllVisors.AddRange(visorData);
                 __instance.allVisors = AllVisors.ToArray();                
