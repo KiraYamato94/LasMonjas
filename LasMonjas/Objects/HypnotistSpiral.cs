@@ -49,7 +49,7 @@ namespace LasMonjas.Objects
             spriteRenderer.color = color;
 
             // Only render the trap for the Hypnotist
-            var playerIsHypnotist = PlayerControl.LocalPlayer == Hypnotist.hypnotist;
+            var playerIsHypnotist = PlayerInCache.LocalPlayer.PlayerControl == Hypnotist.hypnotist;
             if (playerIsHypnotist) {
                 hypnotistSpiral.gameObject.SetActive(true);
                 hypnotistSpiral.gameObject.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
@@ -76,7 +76,7 @@ namespace LasMonjas.Objects
 
                 HudManager.Instance.StartCoroutine(Effects.Lerp(1800, new Action<float>((p) => {
 
-                    var player = PlayerControl.LocalPlayer;
+                    var player = PlayerInCache.LocalPlayer.PlayerControl;
 
                     if (Vector2.Distance(player.transform.position, hypnotistSpiral.hypnotistSpiral.transform.position) < 0.5f && !hypnotistSpiral.touched && !player.Data.IsDead && !player.Data.Role.IsImpostor && hypnotistSpiral.isActive) {
                         hypnotistSpiral.touched = true;
@@ -98,9 +98,9 @@ namespace LasMonjas.Objects
                         if (MapBehaviour.Instance) {
                             MapBehaviour.Instance.Close();
                         }
-                        new CustomMessage(Language.statusRolesTexts[1], Hypnotist.spiralDuration, -1, 1.3f, 4);
+                        new CustomMessage(Language.statusRolesTexts[1], Hypnotist.spiralDuration, 1.3f, 4);
                         PlayerControl target = Helpers.playerById(player.PlayerId);
-                        MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ActivateSpiralTrap, Hazel.SendOption.Reliable, -1);
+                        MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ActivateSpiralTrap, Hazel.SendOption.Reliable, -1);
                         killWriter.Write(player.PlayerId);
                         AmongUsClient.Instance.FinishRpcImmediately(killWriter);
                         RPCProcedure.activateSpiralTrap(target.PlayerId);

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Hazel;
 using LasMonjas.Patches;
+using LasMonjas.Core;
 
 namespace LasMonjas.Objects
 {
@@ -50,7 +51,7 @@ namespace LasMonjas.Objects
 
                 if (timer <= 0f) {
                     if (Bomberman.activeBomb == true && localBombNumber == Bomberman.currentBombNumber) { 
-                        MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.BombermanWin, Hazel.SendOption.Reliable, -1);
+                        MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.BombermanWin, Hazel.SendOption.Reliable, -1);
                         AmongUsClient.Instance.FinishRpcImmediately(writermusic);
                         RPCProcedure.bombermanWin(); 
                     }

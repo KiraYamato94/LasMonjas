@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Hazel;
 using LasMonjas.Patches;
+using LasMonjas.Core;
 
 namespace LasMonjas.Objects
 {
@@ -42,20 +43,20 @@ namespace LasMonjas.Objects
             spriteRenderer.sprite = getTrapSprite();
             spriteRenderer.color = color;
 
-            var playerIsTrapper = PlayerControl.LocalPlayer == Trapper.trapper;
+            var playerIsTrapper = PlayerInCache.LocalPlayer.PlayerControl == Trapper.trapper;
             trap.SetActive(playerIsTrapper);
 
             traps.Add(this);
 
             HudManager.Instance.StartCoroutine(Effects.Lerp(duration, new Action<float>((p) => {
 
-                var player = PlayerControl.LocalPlayer;
+                var player = PlayerInCache.LocalPlayer.PlayerControl;
                 if (Vector2.Distance(player.transform.position, trap.transform.position) < 0.3f && !touched && player != Trapper.trapper && !player.Data.IsDead) {
                     touched = true;
                     trap.SetActive(true);
-                    if (player == PlayerControl.LocalPlayer) {
+                    if (player == PlayerInCache.LocalPlayer.PlayerControl) {
                         PlayerControl target = Helpers.playerById(player.PlayerId);
-                        MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ActivateTrap, Hazel.SendOption.Reliable, -1);
+                        MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ActivateTrap, Hazel.SendOption.Reliable, -1);
                         killWriter.Write(player.PlayerId);
                         AmongUsClient.Instance.FinishRpcImmediately(killWriter);
                         RPCProcedure.activateTrap(target.PlayerId);

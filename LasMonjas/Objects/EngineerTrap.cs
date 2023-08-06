@@ -72,7 +72,7 @@ namespace LasMonjas.Objects
             spriteRenderer.color = color;
 
             // Only render the trap for the Engineer
-            var playerIsEngineer = PlayerControl.LocalPlayer == Engineer.engineer;
+            var playerIsEngineer = PlayerInCache.LocalPlayer.PlayerControl == Engineer.engineer;
             if (playerIsEngineer) {
                 engineerTrap.gameObject.SetActive(true);
                 engineerTrap.gameObject.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 0.5f);
@@ -92,7 +92,7 @@ namespace LasMonjas.Objects
             foreach (EngineerTrap engineerTrap in engineerTraps) {
                 engineerTrap.engineerTrap.gameObject.SetActive(true);
                 if (engineerTrap.myTrapType == 3) {
-                    if (Engineer.engineer != null && PlayerControl.LocalPlayer == Engineer.engineer) {
+                    if (Engineer.engineer != null && PlayerInCache.LocalPlayer.PlayerControl == Engineer.engineer) {
                         engineerTrap.engineerTrap.gameObject.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
                     }
                     else {
@@ -116,7 +116,7 @@ namespace LasMonjas.Objects
 
                 HudManager.Instance.StartCoroutine(Effects.Lerp(engineerTrap.myTrapDuration, new Action<float>((p) => {
 
-                    var player = PlayerControl.LocalPlayer;
+                    var player = PlayerInCache.LocalPlayer.PlayerControl;
 
                     if (Vector2.Distance(player.transform.position, engineerTrap.engineerTrap.transform.position) < 0.5f && !engineerTrap.touched && !player.Data.IsDead && engineerTrap.isActive) {
                         engineerTrap.touched = true;
@@ -140,11 +140,11 @@ namespace LasMonjas.Objects
                                 MapBehaviour.Instance.Close();
                             }
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.treasureHunterPlaceTreasure, false, 100f);
-                            new CustomMessage(Language.statusRolesTexts[0], 5, -1, 1f, 10);
+                            new CustomMessage(Language.statusRolesTexts[0], 5, 1f, 10);
                         }
 
                         PlayerControl target = Helpers.playerById(player.PlayerId);
-                        MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ActivateEngineerTrap, Hazel.SendOption.Reliable, -1);
+                        MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ActivateEngineerTrap, Hazel.SendOption.Reliable, -1);
                         killWriter.Write(player.PlayerId);
                         killWriter.Write(engineerTrap.myTrapType);
                         AmongUsClient.Instance.FinishRpcImmediately(killWriter);

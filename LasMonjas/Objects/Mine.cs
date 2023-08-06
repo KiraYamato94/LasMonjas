@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Hazel;
 using LasMonjas.Patches;
+using LasMonjas.Core;
 
 namespace LasMonjas.Objects
 {
@@ -42,21 +43,21 @@ namespace LasMonjas.Objects
             spriteRenderer.sprite = getMineSprite();
             spriteRenderer.color = color;
 
-            var playerIsTrapper = PlayerControl.LocalPlayer == Trapper.trapper;
+            var playerIsTrapper = PlayerInCache.LocalPlayer.PlayerControl == Trapper.trapper;
             mine.SetActive(playerIsTrapper);
 
             mines.Add(this);
 
             HudManager.Instance.StartCoroutine(Effects.Lerp(duration, new Action<float>((p) => {
 
-                var player = PlayerControl.LocalPlayer;
+                var player = PlayerInCache.LocalPlayer.PlayerControl;
 
                 if (Vector2.Distance(player.transform.position, mine.transform.position) < 0.3f && !touched && player != Trapper.trapper && !player.Data.IsDead) {
                     touched = true;
                     mine.SetActive(true);
-                    if (player == PlayerControl.LocalPlayer) {
+                    if (player == PlayerInCache.LocalPlayer.PlayerControl) {
                         PlayerControl target = Helpers.playerById(player.PlayerId);
-                        MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MineKill, Hazel.SendOption.Reliable, -1);
+                        MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.MineKill, Hazel.SendOption.Reliable, -1);
                         killWriter.Write(target.PlayerId);
                         AmongUsClient.Instance.FinishRpcImmediately(killWriter);
                         RPCProcedure.mineKill(target.PlayerId);

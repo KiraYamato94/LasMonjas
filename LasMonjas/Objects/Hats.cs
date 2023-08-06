@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using LasMonjas.Patches;
+using LasMonjas.Core;
 
 namespace LasMonjas.Objects {
 
@@ -44,9 +45,9 @@ namespace LasMonjas.Objects {
                 position = new Vector3(p.x, p.y, -0.5f);
             }
             else {
-                position = new Vector3(p.x, p.y, PlayerControl.LocalPlayer.transform.position.z + 1f);
+                position = new Vector3(p.x, p.y, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z + 1f);
             }
-            position += (Vector3)PlayerControl.LocalPlayer.Collider.offset; 
+            position += (Vector3)PlayerInCache.LocalPlayer.PlayerControl.Collider.offset; 
 
             gameObject.transform.position = position;
             var hatRenderer = gameObject.AddComponent<SpriteRenderer>();
@@ -75,7 +76,7 @@ namespace LasMonjas.Objects {
             vent.name = "Hat_" + vent.Id;
 
 
-            var playerIsIllusionist = PlayerControl.LocalPlayer == Illusionist.illusionist;
+            var playerIsIllusionist = PlayerInCache.LocalPlayer.PlayerControl == Illusionist.illusionist;
             gameObject.SetActive(playerIsIllusionist);
 
             AllHats.Add(this);
@@ -87,7 +88,7 @@ namespace LasMonjas.Objects {
         public static void UpdateStates() {
             if (hatsConvertedToVents == true) return;
             foreach (var hat in AllHats) {
-                var playerIsIllusionist = PlayerControl.LocalPlayer == Illusionist.illusionist;
+                var playerIsIllusionist = PlayerInCache.LocalPlayer.PlayerControl == Illusionist.illusionist;
                 hat.gameObject.SetActive(playerIsIllusionist);
             }
         }

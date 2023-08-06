@@ -4,6 +4,7 @@ using UnityEngine;
 using static LasMonjas.LasMonjas;
 using Hazel;
 using LasMonjas.Patches;
+using LasMonjas.Core;
 
 namespace LasMonjas.Objects
 {
@@ -450,17 +451,17 @@ namespace LasMonjas.Objects
             spriteRenderer.sprite = getTreasureSprite();
             spriteRenderer.color = color;
 
-            var playerIsTreasureHunter = PlayerControl.LocalPlayer == TreasureHunter.treasureHunter;
+            var playerIsTreasureHunter = PlayerInCache.LocalPlayer.PlayerControl == TreasureHunter.treasureHunter;
             treasure.SetActive(playerIsTreasureHunter);
 
             treasures.Add(this);
 
             HudManager.Instance.StartCoroutine(Effects.Lerp(chestDuration, new Action<float>((p) => {
 
-                var player = PlayerControl.LocalPlayer;
+                var player = PlayerInCache.LocalPlayer.PlayerControl;
                 if (!touchedPlayer && Vector2.Distance(player.transform.position, treasure.transform.position) < 0.5f && player == TreasureHunter.treasureHunter && !player.Data.IsDead) {
                     touchedPlayer = true;
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.CollectedTreasure, Hazel.SendOption.Reliable, -1);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.CollectedTreasure, Hazel.SendOption.Reliable, -1);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.collectedTreasure();
                     treasure.SetActive(false);

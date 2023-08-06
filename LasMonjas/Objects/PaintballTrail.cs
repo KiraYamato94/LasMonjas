@@ -1,3 +1,4 @@
+using LasMonjas.Core;
 using LasMonjas.Patches;
 using System;
 using System.Collections.Generic;
@@ -43,13 +44,13 @@ namespace LasMonjas.Objects {
 
             spriteRenderer = paint.AddComponent<SpriteRenderer>();
             spriteRenderer.sprite = sp[index];
-            spriteRenderer.material = DestroyableSingleton<HatManager>.Instance.PlayerMaterial;
+            spriteRenderer.material = FastDestroyableSingleton<HatManager>.Instance.PlayerMaterial;
             paintedPlayer.SetPlayerMaterialColors(spriteRenderer);
 
             paint.SetActive(true);
             paintballtrail.Add(this);
 
-            DestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(10f, new Action<float>((p) => {
+            FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(10f, new Action<float>((p) => {
             Color c = color;
             if (Painter.painterTimer > 0 || Challenger.isDueling || Seeker.isMinigaming) c = Palette.PlayerColors[6];
             if (spriteRenderer) spriteRenderer.color = new Color(c.r, c.g, c.b, Mathf.Clamp01(1 - p));
