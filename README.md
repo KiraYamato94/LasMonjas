@@ -36,6 +36,15 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
 
+**Version 3.3.0 (6th August 2023)**
+- Submerged compatibility update
+- Fixed adaptive color for custom cosmetics (again)
+- Added Credits button to main menu (Thanks to TOR)
+- Fixed an issue on Police and Thiefs were you could arrest a dead player
+- Fixed an issue on Hot Potato where the timer could go negative (again)
+- On Battle Royale, fixed Serial Killer revive lifes with less than 11 players, and you can see when other player shots now (direction not accurated)
+- Monja Festival is now playable on Submerged, where the neutral role has two bases (one on each floor)
+  
 **Version 3.2.1 (16 July 2023)**
 - Hotfix for custom hats/visors adaptive color
 
