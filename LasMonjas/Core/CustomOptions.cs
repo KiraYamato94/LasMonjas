@@ -99,7 +99,7 @@ namespace LasMonjas.Core
             return (float)selections[selection];
         }
 
-        public void updateSelection(int newSelection) { 
+        public void updateSelection(int newSelection) {
             selection = Mathf.Clamp((newSelection + selections.Length) % selections.Length, 0, selections.Length - 1);
             if (optionBehaviour != null && optionBehaviour is StringOption stringOption) {
                 stringOption.oldValue = stringOption.Value = selection;
@@ -202,7 +202,7 @@ namespace LasMonjas.Core
 
             var lasMonjasModifiers = UnityEngine.Object.Instantiate(gameSettings, gameSettings.transform.parent);
             var lasMonjasModifiersMenu = lasMonjasModifiers.transform.FindChild("GameGroup").FindChild("SliderInner").GetComponent<GameOptionsMenu>();
-            lasMonjasModifiers.name = "LasMonjasModifiers"; 
+            lasMonjasModifiers.name = "LasMonjasModifiers";
 
             var roleTab = GameObject.Find("RoleTab");
             var gameTab = GameObject.Find("GameTab");
@@ -215,7 +215,7 @@ namespace LasMonjas.Core
             var lasMonjasGamemodeTab = UnityEngine.Object.Instantiate(roleTab, roleTab.transform.parent);
             var lasMonjasGamemodeTabHighlight = lasMonjasGamemodeTab.transform.FindChild("Hat Button").FindChild("Tab Background").GetComponent<SpriteRenderer>();
             lasMonjasGamemodeTab.transform.FindChild("Hat Button").FindChild("Icon").GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("LasMonjas.Images.TabIconGamemodes.png", 100f);
-            lasMonjasGamemodeTab.name = "LasMonjasGamemodesTab"; 
+            lasMonjasGamemodeTab.name = "LasMonjasGamemodesTab";
 
             var lasMonjasImpostorTab = UnityEngine.Object.Instantiate(roleTab, roleTab.transform.parent);
             var lasMonjasImpostorTabHighlight = lasMonjasImpostorTab.transform.FindChild("Hat Button").FindChild("Tab Background").GetComponent<SpriteRenderer>();
@@ -536,7 +536,7 @@ namespace LasMonjas.Core
 
         private static void Postfix(ref string __result) {
             if (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return;
-            
+
             StringBuilder sb = new StringBuilder(__result);
             foreach (CustomOption option in CustomOption.options) {
                 if (option.parent == null) {
@@ -593,7 +593,7 @@ namespace LasMonjas.Core
                     hudString = hudString.Insert(index, "\n");
                     gap = 34;
                     index = hudString.TakeWhile(c => (gap -= (c == '\n' ? 1 : 0)) > 0).Count();
-                    hudString = hudString.Insert(index + 1, "\n"); 
+                    hudString = hudString.Insert(index + 1, "\n");
                     break;
                 case 2:
                     hudString = hudString.Substring(end2 + 1, end3 - end2);
@@ -605,7 +605,7 @@ namespace LasMonjas.Core
                     hudString = hudString.Substring(end3 + 1, end4 - end3);
                     int gapthree = 0;
                     int indexthree = hudString.TakeWhile(c => (gapthree -= (c == '\n' ? 1 : 0)) > 0).Count();
-                    hudString = hudString.Insert(indexthree, "\n"); 
+                    hudString = hudString.Insert(indexthree, "\n");
                     break;
                 case 4:
                     hudString = hudString.Substring(end4 + 1, end5 - end4);

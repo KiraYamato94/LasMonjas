@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using HarmonyLib;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using AmongUs.Data.Legacy;
 
 namespace LasMonjas.Core {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,26 +9,47 @@ namespace LasMonjas.Core {
     {
         public static List<CustomButton> buttons = new List<CustomButton>();
         public ActionButton actionButton;
+        public GameObject actionButtonGameObject;
+        public SpriteRenderer actionButtonRenderer;
+        public Material actionButtonMat;
+        public TextMeshPro actionButtonLabelText;
         public Vector3 PositionOffset;
         public float MaxTimer = float.MaxValue;
         public float Timer = 0f;
         private Action OnClick;
         private Action OnMeetingEnds;
-        private Func<bool> HasButton;
-        private Func<bool> CouldUse;
+        public Func<bool> HasButton;
+        public Func<bool> CouldUse;
         private Action OnEffectEnds;
         public bool HasEffect;
         public bool isEffectActive = false;
         public bool showButtonText = false;
         public float EffectDuration;
         public Sprite Sprite;
-        private HudManager hudManager;
-        private bool mirror;
-        private KeyCode? hotkey;
+        public HudManager hudManager;
+        public bool mirror;
+        public KeyCode? hotkey;
         private string buttonText;
+        private static readonly int Desat = Shader.PropertyToID("_Desat");
 
-        public CustomButton(Action OnClick, Func<bool> HasButton, Func<bool> CouldUse, Action OnMeetingEnds, Sprite Sprite, Vector3 PositionOffset, HudManager hudManager, KeyCode? hotkey, bool HasEffect, float EffectDuration, Action OnEffectEnds, bool mirror = false, string buttonText = "")
+        public static class ButtonPositions
         {
+            public static readonly Vector3 lowerRowRight = new Vector3(-2f, -0.06f, 0);
+            public static readonly Vector3 lowerRowCenter = new Vector3(-3f, -0.06f, 0);
+            public static readonly Vector3 lowerRowLeft = new Vector3(-4f, -0.06f, 0);
+            public static readonly Vector3 upperRowRight = new Vector3(0f, 1f, 0f);
+            public static readonly Vector3 upperRowCenter = new Vector3(-1f, 1f, 0f);
+            public static readonly Vector3 upperRowLeft = new Vector3(-2f, 1f, 0f);
+            public static readonly Vector3 upperRowFarLeft = new Vector3(-3f, 1f, 0f);
+            public static readonly Vector3 topRowRight = new Vector3(0f, 2f, 0f);
+            public static readonly Vector3 topRowCenter = new Vector3(-1f, 2f, 0f);
+
+            //                                                    TopRowCenter/Defuse   TopRowRight/Nun
+            //              UpperFarLeft        UpperLeft          UpperCenter/Vent    UpperRight/Kill
+            //  LowerLeft   LowerCenter    LowerRight/Sabotage         Report               Use
+        }
+
+        public CustomButton(Action OnClick, Func<bool> HasButton, Func<bool> CouldUse, Action OnMeetingEnds, Sprite Sprite, Vector3 PositionOffset, HudManager hudManager, KeyCode? hotkey, bool HasEffect, float EffectDuration, Action OnEffectEnds, bool mirror = false, string buttonText = "") {
             this.hudManager = hudManager;
             this.OnClick = OnClick;
             this.HasButton = HasButton;
@@ -44,8 +66,12 @@ namespace LasMonjas.Core {
             Timer = 16.2f;
             buttons.Add(this);
             actionButton = UnityEngine.Object.Instantiate(hudManager.KillButton, hudManager.KillButton.transform.parent);
+            actionButtonGameObject = actionButton.gameObject;
+            actionButtonRenderer = actionButton.graphic;
+            actionButtonMat = actionButtonRenderer.material;
+            actionButtonLabelText = actionButton.buttonLabelText;
             PassiveButton button = actionButton.GetComponent<PassiveButton>();
-            this.showButtonText = (actionButton.graphic.sprite == Sprite || buttonText != "");
+            showButtonText = actionButtonRenderer.sprite == Sprite || buttonText != "";
             button.OnClick = new Button.ButtonClickedEvent();
             button.OnClick.AddListener((UnityEngine.Events.UnityAction)onClickEvent);
 
@@ -108,7 +134,7 @@ namespace LasMonjas.Core {
             {
                 try
                 {
-                    if (PlayerControl.LocalPlayer == RoleThief.rolethief || PlayerControl.LocalPlayer == RPCProcedure.oldRoleThief)
+                    if (PlayerInCache.LocalPlayer.PlayerControl == RoleThief.rolethief || PlayerInCache.LocalPlayer.PlayerControl == RPCProcedure.oldRoleThief)
                     buttons[i].Timer = buttons[i].MaxTimer;
                     buttons[i].isEffectActive = false;
                     buttons[i].Update();
@@ -122,44 +148,53 @@ namespace LasMonjas.Core {
 
         public void setActive(bool isActive) {
             if (isActive) {
-                actionButton.gameObject.SetActive(true);
-                actionButton.graphic.enabled = true;
-            } else {
-                actionButton.gameObject.SetActive(false);
-                actionButton.graphic.enabled = false;
+                actionButtonGameObject.SetActive(true);
+                actionButtonRenderer.enabled = true;
+            }
+            else {
+                actionButtonGameObject.SetActive(false);
+                actionButtonRenderer.enabled = false;
             }
         }
 
         private void Update()
         {
-            if (PlayerControl.LocalPlayer.Data == null || MeetingHud.Instance || ExileController.Instance || !HasButton()) {
+            var localPlayer = PlayerInCache.LocalPlayer;
+            var moveable = localPlayer.PlayerControl.moveable; 
+            
+            if (localPlayer.Data == null || MeetingHud.Instance || ExileController.Instance || !HasButton()) {
                 setActive(false);
                 return;
             }
             setActive(hudManager.UseButton.isActiveAndEnabled || hudManager.PetButton.isActiveAndEnabled);
 
-            actionButton.graphic.sprite = Sprite;
+            actionButtonRenderer.sprite = Sprite;
             if (showButtonText && buttonText != ""){
                 actionButton.OverrideText(buttonText);
             }
-            actionButton.buttonLabelText.enabled = showButtonText; 
+            actionButtonLabelText.enabled = showButtonText;
             if (hudManager.UseButton != null) {
                 Vector3 pos = hudManager.UseButton.transform.localPosition;
-                if (mirror) pos = new Vector3(-pos.x, pos.y, pos.z);
+                if (mirror) {
+                    float aspect = Camera.main.aspect;
+                    float safeOrthographicSize = CameraSafeArea.GetSafeOrthographicSize(Camera.main);
+                    float xpos = 0.05f - safeOrthographicSize * aspect * 1.70f;
+                    pos = new Vector3(xpos, pos.y, pos.z);
+                }
                 actionButton.transform.localPosition = pos + PositionOffset;
             }
             if (CouldUse()) {
                 actionButton.graphic.color = actionButton.buttonLabelText.color = Palette.EnabledColor;
-                actionButton.graphic.material.SetFloat("_Desat", 0f);
+                actionButton.graphic.material.SetFloat(Desat, 0f);
             } else {
                 actionButton.graphic.color = actionButton.buttonLabelText.color = Palette.DisabledClear;
-                actionButton.graphic.material.SetFloat("_Desat", 1f);
+                actionButton.graphic.material.SetFloat(Desat, 1f);
             }
 
             if (Timer >= 0) {
                 if (HasEffect && isEffectActive)
                     Timer -= Time.deltaTime;
-                else if (!PlayerControl.LocalPlayer.inVent && PlayerControl.LocalPlayer.moveable)
+                else if (!localPlayer.PlayerControl.inVent && moveable)
                     Timer -= Time.deltaTime;
             }
             

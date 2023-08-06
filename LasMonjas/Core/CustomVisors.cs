@@ -2,7 +2,6 @@
 using HarmonyLib;
 using UnityEngine;
 using System.Linq;
-using PowerTools;
 using System;
 using UnityEngine.AddressableAssets;
 
@@ -143,7 +142,7 @@ namespace LasMonjas.Core
                     __instance.Image.sharedMaterial = asset.AltShader;
                 }
                 else {
-                    __instance.Image.sharedMaterial = DestroyableSingleton<HatManager>.Instance.DefaultShader;
+                    __instance.Image.sharedMaterial = FastDestroyableSingleton<HatManager>.Instance.DefaultShader;
                 }
                 PlayerMaterial.SetColors(__instance.matProperties.ColorId, __instance.Image);
                 switch (__instance.matProperties.MaskType) {

@@ -2,9 +2,9 @@
 using HarmonyLib;
 using UnityEngine;
 using System.Linq;
-using PowerTools;
-using static Il2CppSystem.Globalization.CultureInfo;
+using static Rewired.Controller;
 using UnityEngine.AddressableAssets;
+using PowerTools;
 
 // Adapted from https://github.com/xxomega77xx/HatPack
 
@@ -12,7 +12,8 @@ namespace LasMonjas.Core
 {
     class CustomHats
     {
-        public static Material MagicShader = new Material(Shader.Find("Unlit/PlayerShader"));
+        public static Material MagicShader;
+
         public struct AuthorData
         {
             public string AuthorName;
@@ -22,6 +23,10 @@ namespace LasMonjas.Core
             public string LeftImageName;
             public bool NoBounce;
             public bool altShader;
+        }
+        public class HatExtension
+        {
+            public string author { get; set; }            
         }
 
         public static List<AuthorData> authorDatas = new List<AuthorData>()
@@ -170,7 +175,7 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "Xeno<33", HatName = "Funny Ghost", NoBounce = true},
             new AuthorData {AuthorName = "Xeno<33", HatName = "Mushrooms", NoBounce = false},
             new AuthorData {AuthorName = "Xeno<33", HatName = "Pink Flower", NoBounce = true},
-            new AuthorData {AuthorName = "Xeno<33", HatName = "Purple Animatronic", NoBounce = true},            
+            new AuthorData {AuthorName = "Xeno<33", HatName = "Purple Animatronic", NoBounce = true},
             new AuthorData {AuthorName = "Xeno<33", HatName = "Watermelon", NoBounce = true, altShader = true},
             new AuthorData {AuthorName = "Xeno<33", HatName = "Pet Cat", NoBounce = true, altShader = true},
             new AuthorData {AuthorName = "Xeno<33", HatName = "Ganso", NoBounce = true, altShader = true},
@@ -184,22 +189,21 @@ namespace LasMonjas.Core
         };
 
         internal static Dictionary<int, AuthorData> IdToData = new Dictionary<int, AuthorData>();
-        public static Dictionary<string, Sprite> hatViewDatas = new Dictionary<string, Sprite>();
+        public static Dictionary<string, HatExtension> CustomHatRegistry = new Dictionary<string, HatExtension>();
         public static Dictionary<string, HatViewData> CustomHatViewDatas = new Dictionary<string, HatViewData>();
 
         private static bool _customHatsLoaded = false;
         [HarmonyPatch(typeof(HatManager), nameof(HatManager.GetHatById))]
-        [HarmonyPriority(Priority.First)]
         public static class AddCustomHats
         {
-            public static void Prefix(HatManager __instance) {
+            public static void Postfix(HatManager __instance) {
 
                 if (!_customHatsLoaded) {
                     var allHats = __instance.allHats.ToList();
 
                     foreach (var data in authorDatas) {
                         HatID++;
-                        
+
                         if (data.FloorHatName != null && data.ClimbHatName != null && data.LeftImageName != null) {
                             if (data.NoBounce) {
                                 if (data.altShader == true) {
@@ -236,7 +240,7 @@ namespace LasMonjas.Core
                                     allHats.Add(CreateHat(GetSprite(data.HatName), data.AuthorName, null, null, null, false, false));
                                 }
                             }
-                            
+
                         }
                         IdToData.Add(HatManager.Instance.allHats.Count + HatID, data);
 
@@ -260,28 +264,32 @@ namespace LasMonjas.Core
             /// <param name="altshader"></param>
             /// <returns>HatData</returns>
             private static HatData CreateHat(Sprite sprite, string author, Sprite climb = null, Sprite floor = null, Sprite leftimage = null, bool bounce = false, bool altshader = false) {
-
-                var viewData = ScriptableObject.CreateInstance<HatViewData>();
-                if (altshader) {
-                    viewData.AltShader = MagicShader;
+                //Borrowed from Other Roles to get hats alt shaders to work
+                if (MagicShader == null) {
+                    Material hatShader = FastDestroyableSingleton<HatManager>.Instance.PlayerMaterial;
+                    MagicShader = hatShader;
                 }
+
+                var viewdata = ScriptableObject.CreateInstance<HatViewData>();
+                viewdata.MainImage = sprite;
+                viewdata.FloorImage = viewdata.MainImage;                
+                
                 HatData newHat = ScriptableObject.CreateInstance<HatData>();
                 newHat.name = $"{sprite.name} (by {author})";
-                newHat.SpritePreview = sprite;
                 newHat.ProductId = "hat_" + sprite.name.Replace(' ', '_');
-                newHat.BundleId = "hat_" + sprite.name.Replace(' ', '_');
                 newHat.displayOrder = 99 + HatID;
                 newHat.InFront = true;
-                newHat.NoBounce = bounce;
+                newHat.NoBounce = bounce;                
                 newHat.Free = true;
                 newHat.ChipOffset = new Vector2(-0.1f, 0.4f);
+                if (altshader == true) { viewdata.AltShader = MagicShader; }
+                HatExtension extend = new HatExtension(); 
+                CustomHatRegistry.Add(newHat.name, extend);
+                CustomHatViewDatas.Add(newHat.name, viewdata);
+                var assetRef = new AssetReference(viewdata.Pointer);
 
-                hatViewDatas.Add(newHat.ProductId, sprite);
-                CustomHatViewDatas.Add(newHat.name, viewData);
-                var assetRef = new AssetReference(viewData.Pointer);
                 newHat.ViewDataRef = assetRef;
                 newHat.CreateAddressableAsset();
-
                 return newHat;
             }
         }
@@ -303,60 +311,30 @@ namespace LasMonjas.Core
         public static Sprite GetSprite(string name)
                 => AssetLoader.LoadHatAsset(name).Cast<GameObject>().GetComponent<SpriteRenderer>().sprite;
 
-        // The following classes are taken from Town of Us Reactivated, https://github.com/eDonnes124/Town-Of-Us-R/blob/master/source/Patches/CustomHats/Patches/HatLoad.cs, Licensed under GPLv3
+
+        [HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.HandleAnimation))]
+        private static class PlayerPhysicsHandleAnimationPatch
+        {
+            private static void Postfix(PlayerPhysics __instance) {
+                if (!CustomHatViewDatas.ContainsKey(__instance.myPlayer.cosmetics.hat.Hat.name)) return;
+                AnimationClip currentAnimation = __instance.Animations.Animator.GetCurrentAnimation();
+                if (currentAnimation == __instance.Animations.group.ClimbUpAnim || currentAnimation == __instance.Animations.group.ClimbDownAnim) return;
+                HatParent hp = __instance.myPlayer.cosmetics.hat;
+                if (hp == null || hp.Hat == null) return;                
+            }
+        }
+
         [HarmonyPatch(typeof(HatParent), nameof(HatParent.SetHat), typeof(int))]
-        public static class SetHatPatch
+        public class SetHatPatch
         {
             public static bool Prefix(HatParent __instance, int color) {
-                if (!hatViewDatas.ContainsKey(__instance.Hat.ProductId)) return true;
+                if (!CustomHatRegistry.ContainsKey(__instance.Hat.name)) return true;
                 __instance.hatDataAsset = null;
                 __instance.PopulateFromHatViewData();
                 __instance.SetMaterialColor(color);
                 return false;
             }
         }
-
-        [HarmonyPatch(typeof(HatParent), nameof(HatParent.PopulateFromHatViewData))]
-        public static class PopulateHatPatch
-        {
-            public static bool Prefix(HatParent __instance) {
-                if (!hatViewDatas.ContainsKey(__instance.Hat.ProductId)) return true;
-                __instance.UpdateMaterial();
-                Sprite hat = hatViewDatas[__instance.Hat.ProductId];
-
-                SpriteAnimNodeSync spriteAnimNodeSync = __instance.SpriteSyncNode ?? __instance.GetComponent<SpriteAnimNodeSync>();
-                if ((bool)(Object)spriteAnimNodeSync)
-                    spriteAnimNodeSync.NodeId = __instance.Hat.NoBounce ? 1 : 0;
-                if (__instance.Hat.InFront) {
-                    __instance.BackLayer.enabled = false;
-                    __instance.FrontLayer.enabled = true;
-                    __instance.FrontLayer.sprite = hat;
-                }
-                else {
-                    __instance.BackLayer.enabled = true;
-                    __instance.FrontLayer.enabled = false;
-                    __instance.FrontLayer.sprite = null;
-                    __instance.BackLayer.sprite = hat;
-                }
-                if (!__instance.options.Initialized || !__instance.HideHat())
-                    return false;
-                __instance.FrontLayer.enabled = false;
-                __instance.BackLayer.enabled = false;
-                return false;
-            }
-        }
-
-        [HarmonyPatch(typeof(HatParent), nameof(HatParent.SetClimbAnim))]
-        public static class ClimbHatPatch
-        {
-            public static bool Prefix(HatParent __instance) {
-                if (!hatViewDatas.ContainsKey(__instance.Hat.ProductId)) return true;
-                __instance.FrontLayer.sprite = null;
-                return false;
-            }
-        }
-
-        // This patch is taken from TOR https://github.com/TheOtherRolesAU/TheOtherRoles/blob/main/TheOtherRoles/Modules/CustomHats.cs, Licensed under GPLv3
         [HarmonyPatch(typeof(HatParent), nameof(HatParent.UpdateMaterial))]
         public class UpdateMaterialPatch
         {
@@ -421,6 +399,109 @@ namespace LasMonjas.Core
                     if (__instance.BackLayer) {
                         __instance.BackLayer.maskInteraction = SpriteMaskInteraction.None;
                     }
+                }
+                return false;
+            }
+        }
+        [HarmonyPatch(typeof(HatParent), nameof(HatParent.SetFloorAnim))]
+        public class HatParentSetFloorAnimPatch
+        {
+            public static bool Prefix(HatParent __instance) {
+                try {
+                    HatViewData vanillaAsset = __instance.hatDataAsset.GetAsset();
+                    return true;
+                }
+                catch { }
+                HatViewData hatViewData = CustomHatViewDatas[__instance.Hat.name];
+                __instance.BackLayer.enabled = false;
+                __instance.FrontLayer.enabled = true;
+                __instance.FrontLayer.sprite = hatViewData.FloorImage;
+                return false;
+            }
+        }
+
+        [HarmonyPatch(typeof(HatParent), nameof(HatParent.SetIdleAnim))]
+        public class HatParentSetIdleAnimPatch
+        {
+            public static bool Prefix(HatParent __instance, int colorId) {
+                if (!__instance.Hat) return false;
+                if (!CustomHatRegistry.ContainsKey(__instance.Hat.name))
+                    return true;
+                HatViewData hatViewData = CustomHatViewDatas[__instance.Hat.name];
+                __instance.hatDataAsset = null;
+                __instance.PopulateFromHatViewData();
+                __instance.SetMaterialColor(colorId);
+                return false;
+            }
+        }
+
+        [HarmonyPatch(typeof(HatParent), nameof(HatParent.SetClimbAnim))]
+        public class HatParentSetClimbAnimPatch
+        {
+            public static bool Prefix(HatParent __instance) {
+                try {
+                    HatViewData vanillaAsset = __instance.hatDataAsset.GetAsset();
+                    return true;
+                }
+                catch { }
+
+                HatViewData hatViewData = CustomHatViewDatas[__instance.Hat.name];
+                if (!__instance.options.ShowForClimb) {
+                    return false;
+                }
+                __instance.BackLayer.enabled = false;
+                __instance.FrontLayer.enabled = true;
+                __instance.FrontLayer.sprite = hatViewData.ClimbImage;
+                return false;
+            }
+        }
+
+
+        [HarmonyPatch(typeof(HatParent), nameof(HatParent.PopulateFromHatViewData))]
+        public class PopulateFromHatViewDataPatch
+        {
+            public static bool Prefix(HatParent __instance) {
+                try {
+                    HatViewData vanillaAsset = __instance.hatDataAsset.GetAsset();
+                    return true;
+                }
+                catch {
+                    if (__instance.Hat && !CustomHatViewDatas.ContainsKey(__instance.Hat.name))
+                        return true;
+                }
+
+
+                HatViewData asset = CustomHatViewDatas[__instance.Hat.name];
+
+                if (!asset) {
+                    return true;
+                }
+                __instance.UpdateMaterial();
+
+                SpriteAnimNodeSync spriteAnimNodeSync = __instance.SpriteSyncNode ?? __instance.GetComponent<SpriteAnimNodeSync>();
+                if (spriteAnimNodeSync) {
+                    spriteAnimNodeSync.NodeId = (__instance.Hat.NoBounce ? 1 : 0);
+                }
+                if (__instance.Hat.InFront) {
+                    __instance.BackLayer.enabled = false;
+                    __instance.FrontLayer.enabled = true;
+                    __instance.FrontLayer.sprite = asset.MainImage;
+                }
+                else if (asset.BackImage) {
+                    __instance.BackLayer.enabled = true;
+                    __instance.FrontLayer.enabled = true;
+                    __instance.BackLayer.sprite = asset.BackImage;
+                    __instance.FrontLayer.sprite = asset.MainImage;
+                }
+                else {
+                    __instance.BackLayer.enabled = true;
+                    __instance.FrontLayer.enabled = false;
+                    __instance.FrontLayer.sprite = null;
+                    __instance.BackLayer.sprite = asset.MainImage;
+                }
+                if (__instance.options.Initialized && __instance.HideHat()) {
+                    __instance.FrontLayer.enabled = false;
+                    __instance.BackLayer.enabled = false;
                 }
                 return false;
             }

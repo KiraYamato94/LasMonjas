@@ -2,10 +2,9 @@
 using HarmonyLib;
 using UnityEngine;
 using System.Linq;
-using PowerTools;
-using static Il2CppSystem.Globalization.CultureInfo;
 using Innersloth.Assets;
 using System;
+using UnityEngine.AddressableAssets;
 
 namespace LasMonjas.Core
 {
@@ -110,7 +109,7 @@ namespace LasMonjas.Core
                     cache[id] = cpd.tpvd.Create;
                 }
                 else {
-                    cache[id] = DestroyableSingleton<HatManager>.Instance.GetNamePlateById(id)?.CreateAddressableAsset()?.GetAsset();
+                    cache[id] = FastDestroyableSingleton<HatManager>.Instance.GetNamePlateById(id)?.CreateAddressableAsset()?.GetAsset();
                 }
             }
             return cache[id];
@@ -132,7 +131,7 @@ namespace LasMonjas.Core
         class NameplatesTabOnEnablePatch
         {
             static void makecoro(NameplatesTab __instance, NameplateChip chip) {
-                __instance.StartCoroutine(AddressableAssetExtensions.CoLoadAssetAsync<NamePlateViewData>(__instance, DestroyableSingleton<HatManager>.Instance.GetNamePlateById(chip.ProductId).ViewDataRef, (Action<NamePlateViewData>)delegate (NamePlateViewData viewData)
+                __instance.StartCoroutine(AddressableAssetExtensions.CoLoadAssetAsync<NamePlateViewData>(__instance, FastDestroyableSingleton<HatManager>.Instance.GetNamePlateById(chip.ProductId).ViewDataRef, (Action<NamePlateViewData>)delegate (NamePlateViewData viewData)
                 {
                     chip.image.sprite = viewData?.Image;
                 }));

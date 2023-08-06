@@ -19,7 +19,7 @@ namespace LasMonjas.Core
         public static void LoadAssets() {
 
             // Custom Bundle Assets
-            var resourceStreamBundle = allulCustomBundle.GetManifestResourceStream("LasMonjas.Images.MyAssets.allulcustombundle");
+            var resourceStreamBundle = allulCustomBundle.GetManifestResourceStream("LasMonjas.Images.AllulAssets.allulcustombundle");
             var assetBundleBundle = AssetBundle.LoadFromMemory(resourceStreamBundle.ReadFully());
 
             CustomMain.customAssets.mimicPuppeteerTransform = assetBundleBundle.LoadAsset<AudioClip>("mimicPuppeteer_Confuse.ogg").DontUnload();
@@ -184,7 +184,7 @@ namespace LasMonjas.Core
             CustomMain.customAssets.floorAllulMonja = assetBundleBundle.LoadAsset<GameObject>("MonjaFestival_AllulMonja.prefab").DontUnload();
 
             // Custom Lobby Assets
-            var resourceStreamLobby = allulCustomLobby.GetManifestResourceStream("LasMonjas.Images.MyAssets.allulcustomlobby");
+            var resourceStreamLobby = allulCustomLobby.GetManifestResourceStream("LasMonjas.Images.AllulAssets.allulcustomlobby");
             var assetBundleLobby = AssetBundle.LoadFromMemory(resourceStreamLobby.ReadFully());
 
             CustomMain.customAssets.customLobby = assetBundleLobby.LoadAsset<GameObject>("allul_customLobby.prefab").DontDestroy();
@@ -192,7 +192,7 @@ namespace LasMonjas.Core
             CustomMain.customAssets.allulbanner = assetBundleLobby.LoadAsset<GameObject>("Allulbanner.prefab").DontDestroy();
 
             // Custom Map Assets
-            var resourceStreamMap = allulCustomMap.GetManifestResourceStream("LasMonjas.Images.MyAssets.allulcustommap");
+            var resourceStreamMap = allulCustomMap.GetManifestResourceStream("LasMonjas.Images.AllulAssets.allulcustommap");
             var assetBundleMap = AssetBundle.LoadFromMemory(resourceStreamMap.ReadFully());
 
             CustomMain.customAssets.customMap = assetBundleMap.LoadAsset<GameObject>("HalconUI.prefab").DontUnload();
@@ -200,7 +200,7 @@ namespace LasMonjas.Core
             CustomMain.customAssets.customComms = assetBundleMap.LoadAsset<GameObject>("new_comms.prefab").DontUnload();
 
             // Custom Music Assets
-            var resourceStream = allulCustomMusic.GetManifestResourceStream("LasMonjas.Images.MyAssets.allulcustommusic");
+            var resourceStream = allulCustomMusic.GetManifestResourceStream("LasMonjas.Images.AllulAssets.allulcustommusic");
             var assetBundleMusic = AssetBundle.LoadFromMemory(resourceStream.ReadFully());
 
             CustomMain.customAssets.lobbyMusic = assetBundleMusic.LoadAsset<AudioClip>("Lobby_Hyperfun.mp3").DontUnload();
@@ -221,7 +221,7 @@ namespace LasMonjas.Core
             CustomMain.customAssets.performerMusic = assetBundleMusic.LoadAsset<AudioClip>("PerformerTheme_Spazzmatica Polka.mp3").DontUnload();
 
             // Custom Gamemode Music Assets
-            var resourceGamemodeMusicStream = allulCustomGamemodeMusic.GetManifestResourceStream("LasMonjas.Images.MyAssets.allulcustomgamemodemusic");
+            var resourceGamemodeMusicStream = allulCustomGamemodeMusic.GetManifestResourceStream("LasMonjas.Images.AllulAssets.allulcustomgamemodemusic");
             var assetBundleGamemodeMusic = AssetBundle.LoadFromMemory(resourceGamemodeMusicStream.ReadFully());
 
             CustomMain.customAssets.captureTheFlagMusic = assetBundleGamemodeMusic.LoadAsset<AudioClip>("CaptureTheFlagMusic_BeachfrontCelebration.mp3").DontUnload();
@@ -233,15 +233,15 @@ namespace LasMonjas.Core
             CustomMain.customAssets.monjaFestivalMusic = assetBundleGamemodeMusic.LoadAsset<AudioClip>("MonjaFestival_Adventures_in_Adventureland.mp3").DontUnload();
 
             // Custom Bundle Hat Assets
-            byte[] bundleHatRead = Assembly.GetCallingAssembly().GetManifestResourceStream("LasMonjas.Images.MyAssets.allulcustomhats").ReadFully();
+            byte[] bundleHatRead = Assembly.GetCallingAssembly().GetManifestResourceStream("LasMonjas.Images.AllulAssets.allulcustomhats").ReadFully();
             AssetBundleHats = AssetBundle.LoadFromMemory(bundleHatRead);
 
             // Custom Bundle Nameplates Assets
-            byte[] bundleNamePlateRead = Assembly.GetCallingAssembly().GetManifestResourceStream("LasMonjas.Images.MyAssets.allulcustomnameplates").ReadFully();
+            byte[] bundleNamePlateRead = Assembly.GetCallingAssembly().GetManifestResourceStream("LasMonjas.Images.AllulAssets.allulcustomnameplates").ReadFully();
             AssetBundleNamePlates = AssetBundle.LoadFromMemory(bundleNamePlateRead);
 
             // Custom Bundle Visors Assets
-            byte[] bundleVisorsRead = Assembly.GetCallingAssembly().GetManifestResourceStream("LasMonjas.Images.MyAssets.allulcustomvisors").ReadFully();
+            byte[] bundleVisorsRead = Assembly.GetCallingAssembly().GetManifestResourceStream("LasMonjas.Images.AllulAssets.allulcustomvisors").ReadFully();
             AssetBundleVisors = AssetBundle.LoadFromMemory(bundleVisorsRead);
 
             assetBundleBundle.Unload(false);
