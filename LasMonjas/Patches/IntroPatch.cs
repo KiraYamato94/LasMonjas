@@ -17,8 +17,8 @@ namespace LasMonjas.Patches
 
             Helpers.activateSenseiMap();
 
-            GameObject allulfitti = GameObject.Instantiate(CustomMain.customAssets.allulfitti, PlayerControl.LocalPlayer.transform.parent);
-            GameObject allulbanner = GameObject.Instantiate(CustomMain.customAssets.allulbanner, PlayerControl.LocalPlayer.transform.parent);
+            GameObject allulfitti = GameObject.Instantiate(CustomMain.customAssets.allulfitti, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+            GameObject allulbanner = GameObject.Instantiate(CustomMain.customAssets.allulbanner, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
             switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                 case 0:
                     if (activatedSensei) {
@@ -54,9 +54,9 @@ namespace LasMonjas.Patches
 
             // Generate alive player icons for Pyromaniac and Poisoner
             int playerCounter = 0;
-            if (PlayerControl.LocalPlayer != null && HudManager.Instance != null && gameType <= 1) {
+            if (PlayerInCache.LocalPlayer.PlayerControl != null && HudManager.Instance != null && gameType <= 1) {
                 Vector3 bottomLeft = new Vector3(-HudManager.Instance.UseButton.transform.parent.localPosition.x, HudManager.Instance.UseButton.transform.parent.localPosition.y, HudManager.Instance.UseButton.transform.parent.localPosition.z);
-                foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
+                foreach (PlayerControl p in PlayerInCache.AllPlayers) {
                     GameData.PlayerInfo data = p.Data;
                     PoolablePlayer player = UnityEngine.Object.Instantiate<PoolablePlayer>(__instance.PlayerPrefab, HudManager.Instance.transform);
                     p.SetPlayerMaterialColors(player.cosmetics.currentBodySprite.BodySprite);
@@ -67,7 +67,7 @@ namespace LasMonjas.Patches
                     player.SetFlipX(true);
                     MapOptions.playerIcons[p.PlayerId] = player;
 
-                    if (PlayerControl.LocalPlayer == Pyromaniac.pyromaniac && p != Pyromaniac.pyromaniac || PlayerControl.LocalPlayer == Poisoner.poisoner && p != Poisoner.poisoner) {
+                    if (PlayerInCache.LocalPlayer.PlayerControl == Pyromaniac.pyromaniac && p != Pyromaniac.pyromaniac || PlayerInCache.LocalPlayer.PlayerControl == Poisoner.poisoner && p != Poisoner.poisoner) {
                         player.transform.localPosition = bottomLeft + new Vector3(-0.25f, -0.25f, 0) + Vector3.right * playerCounter++ * 0.35f;
                         player.transform.localScale = Vector3.one * 0.2f;
                         player.setSemiTransparent(true);
@@ -102,10 +102,10 @@ namespace LasMonjas.Patches
                     // KOTH
                     whichgamemodeHUD = 3;
                     break;
-                /*case 5:
+                case 5:
                     // HP
                     whichgamemodeHUD = 4;
-                    break;*/
+                    break;
                 case 6:
                     // ZL
                     whichgamemodeHUD = 5;
@@ -125,19 +125,19 @@ namespace LasMonjas.Patches
                     case 0:
                     case 1:
                         // Intro solo teams (rebels and neutrals)
-                        if (PlayerControl.LocalPlayer == Joker.joker || PlayerControl.LocalPlayer == RoleThief.rolethief || PlayerControl.LocalPlayer == Pyromaniac.pyromaniac || PlayerControl.LocalPlayer == TreasureHunter.treasureHunter || PlayerControl.LocalPlayer == Devourer.devourer || PlayerControl.LocalPlayer == Poisoner.poisoner || PlayerControl.LocalPlayer == Puppeteer.puppeteer || PlayerControl.LocalPlayer == Exiler.exiler || PlayerControl.LocalPlayer == Amnesiac.amnesiac || PlayerControl.LocalPlayer == Seeker.seeker) {
+                        if (Helpers.isNeutral(PlayerInCache.LocalPlayer.PlayerControl)) {
                             var soloTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                            soloTeam.Add(PlayerControl.LocalPlayer);
+                            soloTeam.Add(PlayerInCache.LocalPlayer.PlayerControl);
                             yourTeam = soloTeam;
-                            PlayerControl.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Engineer);
+                            PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Engineer);
                         }
 
-                        if (PlayerControl.LocalPlayer == Renegade.renegade || PlayerControl.LocalPlayer == BountyHunter.bountyhunter || PlayerControl.LocalPlayer == Trapper.trapper || PlayerControl.LocalPlayer == Yinyanger.yinyanger || PlayerControl.LocalPlayer == Challenger.challenger || PlayerControl.LocalPlayer == Ninja.ninja || PlayerControl.LocalPlayer == Berserker.berserker || PlayerControl.LocalPlayer == Yandere.yandere || PlayerControl.LocalPlayer == Stranded.stranded || PlayerControl.LocalPlayer == Monja.monja) {
+                        if (Helpers.isRebel(PlayerInCache.LocalPlayer.PlayerControl)) {
                             var soloTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                            soloTeam.Add(PlayerControl.LocalPlayer);
+                            soloTeam.Add(PlayerInCache.LocalPlayer.PlayerControl);
                             yourTeam = soloTeam;
-                            PlayerControl.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Shapeshifter);
-                        }
+                            PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Shapeshifter);
+                        }                        
 
                         if (MapOptions.activateMusic) {
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.tasksCalmMusic, true, 25f);
@@ -146,105 +146,58 @@ namespace LasMonjas.Patches
                     case 2:
                         // CTF
                         SoundManager.Instance.PlaySound(CustomMain.customAssets.captureTheFlagMusic, true, 25f);
-                        // Intro capture the flag teams
-                        var redTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                        if (PlayerControl.LocalPlayer == CaptureTheFlag.redplayer01 || PlayerControl.LocalPlayer == CaptureTheFlag.redplayer02 || PlayerControl.LocalPlayer == CaptureTheFlag.redplayer03 || PlayerControl.LocalPlayer == CaptureTheFlag.redplayer04 || PlayerControl.LocalPlayer == CaptureTheFlag.redplayer05 || PlayerControl.LocalPlayer == CaptureTheFlag.redplayer06 || PlayerControl.LocalPlayer == CaptureTheFlag.redplayer07) {
-                            redTeam.Add(PlayerControl.LocalPlayer);
-                            yourTeam = redTeam;
-                            PlayerControl.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
-                        }
-                        var blueTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                        if (PlayerControl.LocalPlayer == CaptureTheFlag.blueplayer01 || PlayerControl.LocalPlayer == CaptureTheFlag.blueplayer02 || PlayerControl.LocalPlayer == CaptureTheFlag.blueplayer03 || PlayerControl.LocalPlayer == CaptureTheFlag.blueplayer04 || PlayerControl.LocalPlayer == CaptureTheFlag.blueplayer05 || PlayerControl.LocalPlayer == CaptureTheFlag.blueplayer06 || PlayerControl.LocalPlayer == CaptureTheFlag.blueplayer07) {
-                            blueTeam.Add(PlayerControl.LocalPlayer);
-                            yourTeam = blueTeam;
-                            PlayerControl.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
-                        }
-                        if (PlayerControl.LocalPlayer == CaptureTheFlag.stealerPlayer) {
+                        // Intro capture the flag teams                        
+                        if (PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.stealerPlayer) {
                             var greyTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                            greyTeam.Add(PlayerControl.LocalPlayer);
+                            greyTeam.Add(PlayerInCache.LocalPlayer.PlayerControl);
                             yourTeam = greyTeam;
-                            PlayerControl.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Shapeshifter);
+                            PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Shapeshifter);
+                        } else {
+                            PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
                         }
                         break;
                     case 3:
                         // PT
                         SoundManager.Instance.PlaySound(CustomMain.customAssets.policeAndThiefMusic, true, 25f);
                         // Intro police and thiefs teams
-                        var thiefTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                        if (PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer01 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer02 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer03 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer04 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer05 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer06 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer07 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer08 || PlayerControl.LocalPlayer == PoliceAndThief.thiefplayer09) {
-                            thiefTeam.Add(PlayerControl.LocalPlayer);
-                            yourTeam = thiefTeam;
-                            PlayerControl.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Impostor);
-                        }
-                        var policeTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                        if (PlayerControl.LocalPlayer == PoliceAndThief.policeplayer01 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer02 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer03 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer04 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer05 || PlayerControl.LocalPlayer == PoliceAndThief.policeplayer06) {
-                            policeTeam.Add(PlayerControl.LocalPlayer);
-                            yourTeam = policeTeam;
-                            PlayerControl.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
-                        }
+                        PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);                        
                         break;
                     case 4:
                         // KOTH
                         SoundManager.Instance.PlaySound(CustomMain.customAssets.kingOfTheHillMusic, true, 25f);
-                        // Intro king of the hill teams
-                        var greenTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                        if (PlayerControl.LocalPlayer == KingOfTheHill.greenKingplayer || PlayerControl.LocalPlayer == KingOfTheHill.greenplayer01 || PlayerControl.LocalPlayer == KingOfTheHill.greenplayer02 || PlayerControl.LocalPlayer == KingOfTheHill.greenplayer03 || PlayerControl.LocalPlayer == KingOfTheHill.greenplayer04 || PlayerControl.LocalPlayer == KingOfTheHill.greenplayer05 || PlayerControl.LocalPlayer == KingOfTheHill.greenplayer06) {
-                            greenTeam.Add(PlayerControl.LocalPlayer);
-                            yourTeam = greenTeam;
-                            PlayerControl.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
-                        }
-                        var yellowTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                        if (PlayerControl.LocalPlayer == KingOfTheHill.yellowKingplayer || PlayerControl.LocalPlayer == KingOfTheHill.yellowplayer01 || PlayerControl.LocalPlayer == KingOfTheHill.yellowplayer02 || PlayerControl.LocalPlayer == KingOfTheHill.yellowplayer03 || PlayerControl.LocalPlayer == KingOfTheHill.yellowplayer04 || PlayerControl.LocalPlayer == KingOfTheHill.yellowplayer05 || PlayerControl.LocalPlayer == KingOfTheHill.yellowplayer06) {
-                            yellowTeam.Add(PlayerControl.LocalPlayer);
-                            yourTeam = yellowTeam;
-                            PlayerControl.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
-                        }
-                        if (PlayerControl.LocalPlayer == KingOfTheHill.usurperPlayer) {
+                        // Intro king of the hill teams                        
+                        if (PlayerInCache.LocalPlayer.PlayerControl == KingOfTheHill.usurperPlayer) {
                             var greyTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                            greyTeam.Add(PlayerControl.LocalPlayer);
+                            greyTeam.Add(PlayerInCache.LocalPlayer.PlayerControl);
                             yourTeam = greyTeam;
-                            PlayerControl.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Shapeshifter);
+                            PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Shapeshifter);
+                        }
+                        else {
+                            PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
                         }
                         break;
                     case 5:
                         // HP
                         SoundManager.Instance.PlaySound(CustomMain.customAssets.hotPotatoMusic, true, 25f);
                         // Intro hot potato teams
-                        if (PlayerControl.LocalPlayer == HotPotato.hotPotatoPlayer) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl == HotPotato.hotPotatoPlayer) {
                             var greyTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                            greyTeam.Add(PlayerControl.LocalPlayer);
+                            greyTeam.Add(PlayerInCache.LocalPlayer.PlayerControl);
                             yourTeam = greyTeam;
-                            PlayerControl.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Impostor);
-                        }
-
-                        var notPotatoTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                        if (PlayerControl.LocalPlayer == HotPotato.notPotato01 || PlayerControl.LocalPlayer == HotPotato.notPotato02 || PlayerControl.LocalPlayer == HotPotato.notPotato03 || PlayerControl.LocalPlayer == HotPotato.notPotato04 || PlayerControl.LocalPlayer == HotPotato.notPotato05 || PlayerControl.LocalPlayer == HotPotato.notPotato06 || PlayerControl.LocalPlayer == HotPotato.notPotato07 || PlayerControl.LocalPlayer == HotPotato.notPotato08 || PlayerControl.LocalPlayer == HotPotato.notPotato09 || PlayerControl.LocalPlayer == HotPotato.notPotato10 || PlayerControl.LocalPlayer == HotPotato.notPotato11 || PlayerControl.LocalPlayer == HotPotato.notPotato12 || PlayerControl.LocalPlayer == HotPotato.notPotato13 || PlayerControl.LocalPlayer == HotPotato.notPotato14) {
-                            notPotatoTeam.Add(PlayerControl.LocalPlayer);
-                            yourTeam = notPotatoTeam;
-                            PlayerControl.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
+                            PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Impostor);
+                        } else {
+                            PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
                         }
                         break;
                     case 6:
                         // ZL
                         SoundManager.Instance.PlaySound(CustomMain.customAssets.zombieLaboratoryMusic, true, 25f);
-                        // Intro zombie teams
-                        if (PlayerControl.LocalPlayer == ZombieLaboratory.zombiePlayer01 || PlayerControl.LocalPlayer == ZombieLaboratory.zombiePlayer02 || PlayerControl.LocalPlayer == ZombieLaboratory.zombiePlayer03 || PlayerControl.LocalPlayer == ZombieLaboratory.zombiePlayer04 || PlayerControl.LocalPlayer == ZombieLaboratory.zombiePlayer05) {
-                            var greyTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                            greyTeam.Add(PlayerControl.LocalPlayer);
-                            yourTeam = greyTeam;
-                            PlayerControl.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Impostor);
+                        // Intro zombie teams                        
+                        if (PlayerInCache.LocalPlayer.PlayerControl == ZombieLaboratory.nursePlayer) {                            
+                            PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Scientist);
                         }
-
-                        var survivorTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                        if (PlayerControl.LocalPlayer == ZombieLaboratory.survivorPlayer01 || PlayerControl.LocalPlayer == ZombieLaboratory.survivorPlayer02 || PlayerControl.LocalPlayer == ZombieLaboratory.survivorPlayer03 || PlayerControl.LocalPlayer == ZombieLaboratory.survivorPlayer04 || PlayerControl.LocalPlayer == ZombieLaboratory.survivorPlayer05 || PlayerControl.LocalPlayer == ZombieLaboratory.survivorPlayer06 || PlayerControl.LocalPlayer == ZombieLaboratory.survivorPlayer07 || PlayerControl.LocalPlayer == ZombieLaboratory.survivorPlayer08 || PlayerControl.LocalPlayer == ZombieLaboratory.survivorPlayer09 || PlayerControl.LocalPlayer == ZombieLaboratory.survivorPlayer10 || PlayerControl.LocalPlayer == ZombieLaboratory.survivorPlayer11 || PlayerControl.LocalPlayer == ZombieLaboratory.survivorPlayer12 || PlayerControl.LocalPlayer == ZombieLaboratory.survivorPlayer13) {
-                            survivorTeam.Add(PlayerControl.LocalPlayer);
-                            yourTeam = survivorTeam;
-                            PlayerControl.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
-                        }
-                        if (PlayerControl.LocalPlayer == ZombieLaboratory.nursePlayer) {
-                            survivorTeam.Add(PlayerControl.LocalPlayer);
-                            yourTeam = survivorTeam;
-                            PlayerControl.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Scientist);
+                        else {
+                            PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
                         }
                         break;
                     case 7:
@@ -252,54 +205,31 @@ namespace LasMonjas.Patches
                         SoundManager.Instance.PlaySound(CustomMain.customAssets.battleRoyaleMusic, true, 25f);
                         // Intro Battle Royale
                         if (BattleRoyale.matchType == 0) {
-                            var soloTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                            if (PlayerControl.LocalPlayer == BattleRoyale.soloPlayer01 || PlayerControl.LocalPlayer == BattleRoyale.soloPlayer02 || PlayerControl.LocalPlayer == BattleRoyale.soloPlayer03 || PlayerControl.LocalPlayer == BattleRoyale.soloPlayer04 || PlayerControl.LocalPlayer == BattleRoyale.soloPlayer05 || PlayerControl.LocalPlayer == BattleRoyale.soloPlayer06 || PlayerControl.LocalPlayer == BattleRoyale.soloPlayer07 || PlayerControl.LocalPlayer == BattleRoyale.soloPlayer08 || PlayerControl.LocalPlayer == BattleRoyale.soloPlayer09 || PlayerControl.LocalPlayer == BattleRoyale.soloPlayer10 || PlayerControl.LocalPlayer == BattleRoyale.soloPlayer11 || PlayerControl.LocalPlayer == BattleRoyale.soloPlayer12 || PlayerControl.LocalPlayer == BattleRoyale.soloPlayer13 || PlayerControl.LocalPlayer == BattleRoyale.soloPlayer14 || PlayerControl.LocalPlayer == BattleRoyale.soloPlayer15) {
-                                soloTeam.Add(PlayerControl.LocalPlayer);
-                                yourTeam = soloTeam;
-                                PlayerControl.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
-                            }
+                            PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
                         }
                         else {
-                            var limeTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                            if (PlayerControl.LocalPlayer == BattleRoyale.limePlayer01 || PlayerControl.LocalPlayer == BattleRoyale.limePlayer02 || PlayerControl.LocalPlayer == BattleRoyale.limePlayer03 || PlayerControl.LocalPlayer == BattleRoyale.limePlayer04 || PlayerControl.LocalPlayer == BattleRoyale.limePlayer05 || PlayerControl.LocalPlayer == BattleRoyale.limePlayer06 || PlayerControl.LocalPlayer == BattleRoyale.limePlayer07) {
-                                limeTeam.Add(PlayerControl.LocalPlayer);
-                                yourTeam = limeTeam;
-                                PlayerControl.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
-                            }
-                            var pinkTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                            if (PlayerControl.LocalPlayer == BattleRoyale.pinkPlayer01 || PlayerControl.LocalPlayer == BattleRoyale.pinkPlayer02 || PlayerControl.LocalPlayer == BattleRoyale.pinkPlayer03 || PlayerControl.LocalPlayer == BattleRoyale.pinkPlayer04 || PlayerControl.LocalPlayer == BattleRoyale.pinkPlayer05 || PlayerControl.LocalPlayer == BattleRoyale.pinkPlayer06 || PlayerControl.LocalPlayer == BattleRoyale.pinkPlayer07) {
-                                pinkTeam.Add(PlayerControl.LocalPlayer);
-                                yourTeam = pinkTeam;
-                                PlayerControl.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
-                            }
-                            if (PlayerControl.LocalPlayer == BattleRoyale.serialKiller) {
+                            if (PlayerInCache.LocalPlayer.PlayerControl == BattleRoyale.serialKiller) {
                                 var greyTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                                greyTeam.Add(PlayerControl.LocalPlayer);
+                                greyTeam.Add(PlayerInCache.LocalPlayer.PlayerControl);
                                 yourTeam = greyTeam;
-                                PlayerControl.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Shapeshifter);
+                                PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Shapeshifter);
+                            }
+                            else {
+                                PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
                             }
                         }
                         break;
                     case 8:
                         // MF
-                        SoundManager.Instance.PlaySound(CustomMain.customAssets.monjaFestivalMusic, true, 25f);
-                        var greenMonjaTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                        if (PlayerControl.LocalPlayer == MonjaFestival.greenPlayer01 || PlayerControl.LocalPlayer == MonjaFestival.greenPlayer02 || PlayerControl.LocalPlayer == MonjaFestival.greenPlayer03 || PlayerControl.LocalPlayer == MonjaFestival.greenPlayer04 || PlayerControl.LocalPlayer == MonjaFestival.greenPlayer05 || PlayerControl.LocalPlayer == MonjaFestival.greenPlayer06 || PlayerControl.LocalPlayer == MonjaFestival.greenPlayer07) {
-                            greenMonjaTeam.Add(PlayerControl.LocalPlayer);
-                            yourTeam = greenMonjaTeam;
-                            PlayerControl.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
-                        }
-                        var cyanTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                        if (PlayerControl.LocalPlayer == MonjaFestival.cyanPlayer01 || PlayerControl.LocalPlayer == MonjaFestival.cyanPlayer02 || PlayerControl.LocalPlayer == MonjaFestival.cyanPlayer03 || PlayerControl.LocalPlayer == MonjaFestival.cyanPlayer04 || PlayerControl.LocalPlayer == MonjaFestival.cyanPlayer05 || PlayerControl.LocalPlayer == MonjaFestival.cyanPlayer06 || PlayerControl.LocalPlayer == MonjaFestival.cyanPlayer07) {
-                            cyanTeam.Add(PlayerControl.LocalPlayer);
-                            yourTeam = cyanTeam;
-                            PlayerControl.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
-                        }
-                        if (PlayerControl.LocalPlayer == MonjaFestival.bigMonjaPlayer) {
+                        SoundManager.Instance.PlaySound(CustomMain.customAssets.monjaFestivalMusic, true, 25f);                        
+                        if (PlayerInCache.LocalPlayer.PlayerControl == MonjaFestival.bigMonjaPlayer) {
                             var greyTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                            greyTeam.Add(PlayerControl.LocalPlayer);
+                            greyTeam.Add(PlayerInCache.LocalPlayer.PlayerControl);
                             yourTeam = greyTeam;
-                            PlayerControl.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Shapeshifter);
+                            PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Shapeshifter);
+                        }
+                        else {
+                            PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
                         }
                         break;
                 }
@@ -308,7 +238,7 @@ namespace LasMonjas.Patches
 
         public static void setupIntroTeam(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam) {
 
-            List<RoleInfo> infos = RoleInfo.getRoleInfoForPlayer(PlayerControl.LocalPlayer);
+            List<RoleInfo> infos = RoleInfo.getRoleInfoForPlayer(PlayerInCache.LocalPlayer.PlayerControl);
             RoleInfo roleInfo = infos.Where(info => info.roleId != RoleId.Lover).FirstOrDefault();
             if (roleInfo == null) return;
             if (GameOptionsManager.Instance.currentGameMode == GameModes.Normal) {
@@ -386,7 +316,7 @@ namespace LasMonjas.Patches
         {
             public static void Postfix(IntroCutscene __instance) {
 
-                List<RoleInfo> infos = RoleInfo.getRoleInfoForPlayer(PlayerControl.LocalPlayer);
+                List<RoleInfo> infos = RoleInfo.getRoleInfoForPlayer(PlayerInCache.LocalPlayer.PlayerControl);
                 RoleInfo roleInfo = infos.Where(info => info.roleId != RoleId.Lover).FirstOrDefault();
 
                 Color color = new Color(__instance.YouAreText.color.r, __instance.YouAreText.color.g, __instance.YouAreText.color.b, 0f);
@@ -399,9 +329,9 @@ namespace LasMonjas.Patches
                     }
 
                     if (infos.Any(info => info.roleId == RoleId.Lover)) {
-                        PlayerControl otherLover = PlayerControl.LocalPlayer == Modifiers.lover1 ? Modifiers.lover2 : Modifiers.lover1;
-                        __instance.RoleBlurbText.text = PlayerControl.LocalPlayer.Data.Role.IsImpostor ? "<color=#FF00D1FF>Lover</color><color=#FF0000FF>stor</color>" : "<color=#FF00D1FF>Lover</color>";
-                        __instance.RoleBlurbText.color = PlayerControl.LocalPlayer.Data.Role.IsImpostor ? Color.white : Modifiers.loverscolor;
+                        PlayerControl otherLover = PlayerInCache.LocalPlayer.PlayerControl == Modifiers.lover1 ? Modifiers.lover2 : Modifiers.lover1;
+                        __instance.RoleBlurbText.text = PlayerInCache.LocalPlayer.Data.Role.IsImpostor ? "<color=#FF00D1FF>Lover</color><color=#FF0000FF>stor</color>" : "<color=#FF00D1FF>Lover</color>";
+                        __instance.RoleBlurbText.color = PlayerInCache.LocalPlayer.Data.Role.IsImpostor ? Color.white : Modifiers.loverscolor;
                         __instance.ImpostorText.text = Helpers.cs(Modifiers.loverscolor, $"{Language.introTexts[0]} + {otherLover?.Data?.PlayerName ?? ""} ♥");
                         __instance.ImpostorText.gameObject.SetActive(true);
                         __instance.BackgroundBar.material.color = Modifiers.loverscolor;
@@ -414,7 +344,7 @@ namespace LasMonjas.Patches
                 })));
 
                 // Create the doorlog access from anywhere to the Vigilant on MiraHQ
-                if (Vigilant.vigilantMira != null && GameOptionsManager.Instance.currentGameOptions.MapId == 1 && Vigilant.vigilantMira == PlayerControl.LocalPlayer && !Vigilant.createdDoorLog) {
+                if (Vigilant.vigilantMira != null && GameOptionsManager.Instance.currentGameOptions.MapId == 1 && Vigilant.vigilantMira == PlayerInCache.LocalPlayer.PlayerControl && !Vigilant.createdDoorLog) {
                     GameObject vigilantDoorLog = GameObject.Find("SurvLogConsole");
                     Vigilant.doorLog = GameObject.Instantiate(vigilantDoorLog, Vigilant.vigilantMira.transform);
                     Vigilant.doorLog.name = "VigilantDoorLog";
@@ -425,12 +355,12 @@ namespace LasMonjas.Patches
                 }
 
                 // Create the duel arena if there's a Challenger
-                if (Challenger.challenger != null && PlayerControl.LocalPlayer != null && !createdduelarena) {
-                    GameObject duelArena = GameObject.Instantiate(CustomMain.customAssets.challengerDuelArena, PlayerControl.LocalPlayer.transform.parent);
+                if (Challenger.challenger != null && PlayerInCache.LocalPlayer.PlayerControl != null && !createdduelarena) {
+                    GameObject duelArena = GameObject.Instantiate(CustomMain.customAssets.challengerDuelArena, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                     duelArena.name = "duelArena";
                     duelArena.transform.position = new Vector3(40, 0f, 1f);
                     if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) { // Create another duel arena on submerged lower floor
-                        GameObject lowerduelArena = GameObject.Instantiate(CustomMain.customAssets.challengerDuelArena, PlayerControl.LocalPlayer.transform.parent);
+                        GameObject lowerduelArena = GameObject.Instantiate(CustomMain.customAssets.challengerDuelArena, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                         lowerduelArena.name = "lowerduelArena";
                         lowerduelArena.transform.position = new Vector3(40, -48.119f, 1f);
                     }
@@ -438,8 +368,8 @@ namespace LasMonjas.Patches
                 }
 
                 // Create the seaker arena if there's a Seeker
-                if (Seeker.seeker != null && PlayerControl.LocalPlayer != null && !createdseekerarena) {
-                    GameObject seekerArena = GameObject.Instantiate(CustomMain.customAssets.seekerArena, PlayerControl.LocalPlayer.transform.parent);
+                if (Seeker.seeker != null && PlayerInCache.LocalPlayer.PlayerControl != null && !createdseekerarena) {
+                    GameObject seekerArena = GameObject.Instantiate(CustomMain.customAssets.seekerArena, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                     seekerArena.name = "seekerArena";
                     seekerArena.transform.position = new Vector3(-40, 0f, 1f);
                     Seeker.minigameArenaHideOnePointOne = seekerArena.transform.GetChild(0).transform.GetChild(0).gameObject;
@@ -455,7 +385,7 @@ namespace LasMonjas.Patches
                     Seeker.minigameArenaHideThreePointTwo = seekerArena.transform.GetChild(2).transform.GetChild(1).gameObject;
                     Seeker.minigameArenaHideThreePointThree = seekerArena.transform.GetChild(2).transform.GetChild(2).gameObject; 
                     if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) { // Create another duel arena on submerged lower floor
-                        GameObject lowerseekerArena = GameObject.Instantiate(CustomMain.customAssets.seekerArena, PlayerControl.LocalPlayer.transform.parent);
+                        GameObject lowerseekerArena = GameObject.Instantiate(CustomMain.customAssets.seekerArena, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                         lowerseekerArena.name = "lowerseekerArena";
                         lowerseekerArena.transform.position = new Vector3(-40, -48.119f, 1f);
                         Seeker.lowerminigameArenaHideOnePointOne = lowerseekerArena.transform.GetChild(0).transform.GetChild(0).gameObject;
@@ -475,13 +405,13 @@ namespace LasMonjas.Patches
                 }
 
                 // Submerged remove Chameleon special vent
-                if (Chameleon.chameleon != null && PlayerControl.LocalPlayer == Chameleon.chameleon && GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                if (Chameleon.chameleon != null && PlayerInCache.LocalPlayer.PlayerControl == Chameleon.chameleon && GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                     GameObject vent = GameObject.Find("LowerCentralVent");
                     vent.GetComponent<BoxCollider2D>().enabled = false;
                 }
 
                 // Make object list for Hypnotist for traps
-                if (Hypnotist.hypnotist != null && PlayerControl.LocalPlayer == Hypnotist.hypnotist) {
+                if (Hypnotist.hypnotist != null && PlayerInCache.LocalPlayer.PlayerControl == Hypnotist.hypnotist) {
                     switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                         case 0:
                             GameObject skeldMedScanner = GameObject.Find("MedScanner");
@@ -534,8 +464,8 @@ namespace LasMonjas.Patches
                 Helpers.activateSenseiMap();               
 
                 // Create the jail if there's a Jailer
-                if (Jailer.jailer != null && PlayerControl.LocalPlayer != null && !createdjail) {
-                    GameObject cell = GameObject.Instantiate(CustomMain.customAssets.cell, PlayerControl.LocalPlayer.transform.parent);
+                if (Jailer.jailer != null && PlayerInCache.LocalPlayer.PlayerControl != null && !createdjail) {
+                    GameObject cell = GameObject.Instantiate(CustomMain.customAssets.cell, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                     cell.name = "cell";
                     cell.gameObject.layer = 9;
                     cell.transform.GetChild(0).gameObject.layer = 9;
@@ -564,7 +494,7 @@ namespace LasMonjas.Patches
                         case 5:
                             cell.transform.position = new Vector3(-15.25f, 28.4f, 0.5f);
                             // Create another jail on submerged lower floor
-                            GameObject celltwo = GameObject.Instantiate(CustomMain.customAssets.cell, PlayerControl.LocalPlayer.transform.parent);
+                            GameObject celltwo = GameObject.Instantiate(CustomMain.customAssets.cell, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                             celltwo.name = "cell_lower";
                             celltwo.transform.position = new Vector3(-1.15f, -21f, -0.01f);
                             celltwo.gameObject.layer = 9;
@@ -575,20 +505,20 @@ namespace LasMonjas.Patches
                 }
 
                 // Create susBoxes for Stranded
-                if (Stranded.stranded != null && Stranded.stranded == PlayerControl.LocalPlayer && !createdStrandedBoxes) {
-                    GameObject ammoBox01 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerControl.LocalPlayer.transform.parent);
+                if (Stranded.stranded != null && Stranded.stranded == PlayerInCache.LocalPlayer.PlayerControl && !createdStrandedBoxes) {
+                    GameObject ammoBox01 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                     ammoBox01.transform.position = Stranded.susBoxPositions[0];
                     ammoBox01.name = "ammoBox";
-                    GameObject ammoBox02 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerControl.LocalPlayer.transform.parent);
+                    GameObject ammoBox02 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                     ammoBox02.transform.position = Stranded.susBoxPositions[1];
                     ammoBox02.name = "ammoBox";
-                    GameObject ammoBox03 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerControl.LocalPlayer.transform.parent);
+                    GameObject ammoBox03 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                     ammoBox03.transform.position = Stranded.susBoxPositions[2];
                     ammoBox03.name = "ammoBox";
-                    GameObject ventBox = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerControl.LocalPlayer.transform.parent);
+                    GameObject ventBox = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                     ventBox.transform.position = Stranded.susBoxPositions[3];
                     ventBox.name = "ventBox";
-                    GameObject invisibleBox = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerControl.LocalPlayer.transform.parent);
+                    GameObject invisibleBox = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                     invisibleBox.transform.position = Stranded.susBoxPositions[4];
                     invisibleBox.name = "invisibleBox";
                     Stranded.groundItems.Add(ammoBox01);
@@ -598,7 +528,7 @@ namespace LasMonjas.Patches
                     Stranded.groundItems.Add(invisibleBox);
                     // Nothing boxes
                     for (int i = 0; i < Stranded.susBoxPositions.Count - 5; i++) {
-                        GameObject nothingBox = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerControl.LocalPlayer.transform.parent);
+                        GameObject nothingBox = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                         nothingBox.transform.position = Stranded.susBoxPositions[i + 5];
                         nothingBox.name = "nothingBox";
                         Stranded.groundItems.Add(nothingBox);
@@ -608,10 +538,10 @@ namespace LasMonjas.Patches
 
                 // Create items for Monja
                 if (Monja.monja != null && !createdMonjaItems) {
-                    GameObject monjaRitual = GameObject.Instantiate(CustomMain.customAssets.monjaRitual, PlayerControl.LocalPlayer.transform.parent);
+                    GameObject monjaRitual = GameObject.Instantiate(CustomMain.customAssets.monjaRitual, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                     Monja.ritualObject = monjaRitual;
                     Monja.ritualObject.layer = 9;
-                    GameObject monjaSprite = GameObject.Instantiate(CustomMain.customAssets.monjaSprite, PlayerControl.LocalPlayer.transform.parent);
+                    GameObject monjaSprite = GameObject.Instantiate(CustomMain.customAssets.monjaSprite, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                     Monja.monjaSprite = monjaSprite;
                     Monja.monjaSprite.transform.parent = Monja.monja.transform;
                     Monja.monjaSprite.transform.position = new Vector3 (0 ,0, -1);
@@ -642,23 +572,23 @@ namespace LasMonjas.Patches
                             Monja.ritualObject.transform.position = new Vector3(-6.35f, 13.85f, -0.005f);
                             break;
                     }
-                    GameObject keyitem01 = GameObject.Instantiate(CustomMain.customAssets.monjaOneSprite, PlayerControl.LocalPlayer.transform.parent);
+                    GameObject keyitem01 = GameObject.Instantiate(CustomMain.customAssets.monjaOneSprite, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                     keyitem01.transform.position = Monja.itemListPositions[0];
                     keyitem01.name = "item01";
                     Monja.item01 = keyitem01;
-                    GameObject keyitem02 = GameObject.Instantiate(CustomMain.customAssets.monjaTwoSprite, PlayerControl.LocalPlayer.transform.parent);
+                    GameObject keyitem02 = GameObject.Instantiate(CustomMain.customAssets.monjaTwoSprite, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                     keyitem02.transform.position = Monja.itemListPositions[1];
                     keyitem02.name = "item02";
                     Monja.item02 = keyitem02;
-                    GameObject keyitem03 = GameObject.Instantiate(CustomMain.customAssets.monjaThreeSprite, PlayerControl.LocalPlayer.transform.parent);
+                    GameObject keyitem03 = GameObject.Instantiate(CustomMain.customAssets.monjaThreeSprite, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                     keyitem03.transform.position = Monja.itemListPositions[2];
                     keyitem03.name = "item03";
                     Monja.item03 = keyitem03;
-                    GameObject keyitem04 = GameObject.Instantiate(CustomMain.customAssets.monjaFourSprite, PlayerControl.LocalPlayer.transform.parent);
+                    GameObject keyitem04 = GameObject.Instantiate(CustomMain.customAssets.monjaFourSprite, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                     keyitem04.transform.position = Monja.itemListPositions[3];
                     keyitem04.name = "item04";
                     Monja.item04 = keyitem04;
-                    GameObject keyitem05 = GameObject.Instantiate(CustomMain.customAssets.monjaFiveSprite, PlayerControl.LocalPlayer.transform.parent);
+                    GameObject keyitem05 = GameObject.Instantiate(CustomMain.customAssets.monjaFiveSprite, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                     keyitem05.transform.position = Monja.itemListPositions[4];
                     keyitem05.name = "item05";
                     Monja.item05 = keyitem05;
@@ -667,7 +597,7 @@ namespace LasMonjas.Patches
                     Monja.objectList.Add(keyitem03);
                     Monja.objectList.Add(keyitem04);
                     Monja.objectList.Add(keyitem05);
-                    if (Monja.monja != PlayerControl.LocalPlayer) {
+                    if (Monja.monja != PlayerInCache.LocalPlayer.PlayerControl) {
                         foreach (GameObject keyItem in Monja.objectList) {
                             keyItem.SetActive(false);
                         }
@@ -682,7 +612,7 @@ namespace LasMonjas.Patches
                         string[] crewRoleNames = new string[25] { "captainRole", "mechanicRole", "sheriffRole", "detectiveRole", "forensicRole", "timetravelerRole", "squireRole", "cheaterRole", "fortunetellerRole", "hackerRole", "sleuthRole", "finkRole", "kidRole", "welderRole", "spiritualistRole", "vigilantRole", "hunterRole", "jinxRole", "cowardRole", "batRole", "necromancerRole", "engineerRole", "shyRole", "taskmasterRole", "jailerRole" };
                         // Crew boxes
                         for (int i = 0; i < ZombieLaboratory.susBoxPositions.Count - 35; i++) {
-                            GameObject whoAmICrewBox = GameObject.Instantiate(CustomMain.customAssets.susBoxThreeColor, PlayerControl.LocalPlayer.transform.parent);
+                            GameObject whoAmICrewBox = GameObject.Instantiate(CustomMain.customAssets.susBoxThreeColor, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                             whoAmICrewBox.transform.position = ZombieLaboratory.susBoxPositions[i];
                             whoAmICrewBox.name = crewRoleNames[i];
                             whoAmIModeCrewItems.Add(whoAmICrewBox);
@@ -692,7 +622,7 @@ namespace LasMonjas.Patches
                         string[] impostorRoleNames = new string[15] { "mimicRole", "painterRole", "demonRole", "janitorRole", "illusionistRole", "manipulatorRole", "bombermanRole", "chameleonRole", "gamblerRole", "sorcererRole", "medusaRole", "hypnotistRole", "archerRole", "plumberRole", "librarianRole" };
                         // Impostor boxes
                         for (int i = 0; i < ZombieLaboratory.susBoxPositions.Count - 45; i++) {
-                            GameObject whoAmIImpostorBox = GameObject.Instantiate(CustomMain.customAssets.susBoxRed, PlayerControl.LocalPlayer.transform.parent);
+                            GameObject whoAmIImpostorBox = GameObject.Instantiate(CustomMain.customAssets.susBoxRed, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                             whoAmIImpostorBox.transform.position = ZombieLaboratory.susBoxPositions[i + 25];
                             whoAmIImpostorBox.name = impostorRoleNames[i];
                             whoAmIModeImpostorItems.Add(whoAmIImpostorBox);
@@ -702,7 +632,7 @@ namespace LasMonjas.Patches
                         string[] rebelsRoleNames = new string[9] { "renegadeRole", "trapperRole", "yinyangerRole", "challengerRole", "ninjaRole", "berserkerRole", "yandereRole", "strandedRole", "monjaRole" };
                         // Rebel boxes
                         for (int i = 0; i < ZombieLaboratory.susBoxPositions.Count - 51; i++) {
-                            GameObject whoAmIRebelBox = GameObject.Instantiate(CustomMain.customAssets.susBoxThreeColor, PlayerControl.LocalPlayer.transform.parent);
+                            GameObject whoAmIRebelBox = GameObject.Instantiate(CustomMain.customAssets.susBoxThreeColor, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                             whoAmIRebelBox.transform.position = ZombieLaboratory.susBoxPositions[i + 40];
                             whoAmIRebelBox.name = rebelsRoleNames[i];
                             whoAmIModeRebelsItems.Add(whoAmIRebelBox);
@@ -712,7 +642,7 @@ namespace LasMonjas.Patches
                         string[] neutralsRoleNames = new string[8] { "jokerRole", "pyromaniacRole", "treasurehunterRole", "devourerRole", "poisonerRole", "puppeteerRole", "exilerRole", "seekerRole" };
                         // Neutral boxes
                         for (int i = 0; i < ZombieLaboratory.susBoxPositions.Count - 52; i++) {
-                            GameObject whoAmINeutralBox = GameObject.Instantiate(CustomMain.customAssets.susBoxThreeColor, PlayerControl.LocalPlayer.transform.parent);
+                            GameObject whoAmINeutralBox = GameObject.Instantiate(CustomMain.customAssets.susBoxThreeColor, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                             whoAmINeutralBox.transform.position = ZombieLaboratory.susBoxPositions[i + 50];
                             whoAmINeutralBox.name = neutralsRoleNames[i];
                             whoAmIModeNeutralsItems.Add(whoAmINeutralBox);
@@ -722,7 +652,7 @@ namespace LasMonjas.Patches
                             }
                         }
 
-                        if (PlayerControl.LocalPlayer.Data.Role.IsImpostor) {
+                        if (PlayerInCache.LocalPlayer.Data.Role.IsImpostor) {
                             foreach (GameObject item in whoAmIModeCrewItems) {
                                 item.transform.position = new Vector3(100, 100, 0);
                             }
@@ -742,3449 +672,44 @@ namespace LasMonjas.Patches
                     }
 
                     if (gameType >= 2) {
-                        switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
-                            // Skeld / Custom Skeld
-                            case 0:
-                                switch (gameType) {
-                                    case 2:
-                                        // CTF:
-                                        if (activatedSensei) {
-                                            if (CaptureTheFlag.stealerPlayer != null) {
-                                                CaptureTheFlag.stealerPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                                CaptureTheFlag.stealerPlayer.transform.position = new Vector3(-3.65f, 5f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(CaptureTheFlag.stealerPlayer);
-                                            }
-
-                                            foreach (PlayerControl player in CaptureTheFlag.redteamFlag) {
-                                                player.transform.position = new Vector3(-17.5f, -1.15f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                            }
-
-                                            foreach (PlayerControl player in CaptureTheFlag.blueteamFlag) {
-                                                player.transform.position = new Vector3(7.7f, -0.95f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                            }
-
-                                            if (PlayerControl.LocalPlayer != null && !createdcapturetheflag) {
-                                                GameObject redflag = GameObject.Instantiate(CustomMain.customAssets.redflag, PlayerControl.LocalPlayer.transform.parent);
-                                                redflag.name = "redflag";
-                                                redflag.transform.position = new Vector3(-17.5f, -1.35f, 0.5f);
-                                                CaptureTheFlag.redflag = redflag;
-                                                GameObject redflagbase = GameObject.Instantiate(CustomMain.customAssets.redflagbase, PlayerControl.LocalPlayer.transform.parent);
-                                                redflagbase.name = "redflagbase";
-                                                redflagbase.transform.position = new Vector3(-17.5f, -1.4f, 1f);
-                                                CaptureTheFlag.redflagbase = redflagbase;
-                                                GameObject blueflag = GameObject.Instantiate(CustomMain.customAssets.blueflag, PlayerControl.LocalPlayer.transform.parent);
-                                                blueflag.name = "blueflag";
-                                                blueflag.transform.position = new Vector3(7.7f, -1.15f, 0.5f);
-                                                CaptureTheFlag.blueflag = blueflag;
-                                                GameObject blueflagbase = GameObject.Instantiate(CustomMain.customAssets.blueflagbase, PlayerControl.LocalPlayer.transform.parent);
-                                                blueflagbase.name = "blueflagbase";
-                                                blueflagbase.transform.position = new Vector3(7.7f, -1.2f, 1f);
-                                                CaptureTheFlag.blueflagbase = blueflagbase;
-                                                CaptureTheFlag.stealerSpawns.Add(redflagbase);
-                                                CaptureTheFlag.stealerSpawns.Add(blueflagbase);
-                                                createdcapturetheflag = true;
-                                            }
-                                        }
-                                        else {
-                                            if (CaptureTheFlag.stealerPlayer != null) {
-                                                CaptureTheFlag.stealerPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                                CaptureTheFlag.stealerPlayer.transform.position = new Vector3(6.35f, -7.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(CaptureTheFlag.stealerPlayer);
-                                            }
-
-                                            foreach (PlayerControl player in CaptureTheFlag.redteamFlag) {
-                                                player.transform.position = new Vector3(-20.5f, -5.15f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-
-                                            }
-                                            foreach (PlayerControl player in CaptureTheFlag.blueteamFlag) {
-                                                player.transform.position = new Vector3(16.5f, -4.45f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                            }
-
-                                            if (PlayerControl.LocalPlayer != null && !createdcapturetheflag) {
-                                                GameObject redflag = GameObject.Instantiate(CustomMain.customAssets.redflag, PlayerControl.LocalPlayer.transform.parent);
-                                                redflag.name = "redflag";
-                                                redflag.transform.position = new Vector3(-20.5f, -5.35f, 0.5f);
-                                                CaptureTheFlag.redflag = redflag;
-                                                GameObject redflagbase = GameObject.Instantiate(CustomMain.customAssets.redflagbase, PlayerControl.LocalPlayer.transform.parent);
-                                                redflagbase.name = "redflagbase";
-                                                redflagbase.transform.position = new Vector3(-20.5f, -5.4f, 1f);
-                                                CaptureTheFlag.redflagbase = redflagbase;
-                                                GameObject blueflag = GameObject.Instantiate(CustomMain.customAssets.blueflag, PlayerControl.LocalPlayer.transform.parent);
-                                                blueflag.name = "blueflag";
-                                                blueflag.transform.position = new Vector3(16.5f, -4.65f, 0.5f);
-                                                CaptureTheFlag.blueflag = blueflag;
-                                                GameObject blueflagbase = GameObject.Instantiate(CustomMain.customAssets.blueflagbase, PlayerControl.LocalPlayer.transform.parent);
-                                                blueflagbase.name = "blueflagbase";
-                                                blueflagbase.transform.position = new Vector3(16.5f, -4.7f, 1f);
-                                                CaptureTheFlag.blueflagbase = blueflagbase;
-                                                CaptureTheFlag.stealerSpawns.Add(redflagbase);
-                                                CaptureTheFlag.stealerSpawns.Add(blueflagbase);
-                                                createdcapturetheflag = true;
-                                            }
-                                        }
-                                        break;
-                                    case 3:
-                                        // PT:
-                                        if (activatedSensei) {
-                                            foreach (PlayerControl player in PoliceAndThief.policeTeam) {
-                                                player.transform.position = new Vector3(-12f, 5f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                            }
-
-                                            foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
-                                                player.transform.position = new Vector3(13.75f, -0.2f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                                if (player == PlayerControl.LocalPlayer) {
-                                                    // Add Arrows pointing the release and deliver point
-                                                    if (PoliceAndThief.localThiefReleaseArrow.Count == 0) {
-                                                        PoliceAndThief.localThiefReleaseArrow.Add(new Arrow(Palette.PlayerColors[10]));
-                                                        PoliceAndThief.localThiefReleaseArrow[0].arrow.SetActive(true);
-                                                    }
-                                                    if (PoliceAndThief.localThiefDeliverArrow.Count == 0) {
-                                                        PoliceAndThief.localThiefDeliverArrow.Add(new Arrow(Palette.PlayerColors[16]));
-                                                        PoliceAndThief.localThiefDeliverArrow[0].arrow.SetActive(true);
-                                                    }
-                                                }
-                                            }
-                                            if (PlayerControl.LocalPlayer != null && !createdpoliceandthief) {
-                                                GameObject cell = GameObject.Instantiate(CustomMain.customAssets.cell, PlayerControl.LocalPlayer.transform.parent);
-                                                cell.name = "cell";
-                                                cell.transform.position = new Vector3(-12f, 7.2f, 0.5f);
-                                                cell.gameObject.layer = 9;
-                                                cell.transform.GetChild(0).gameObject.layer = 9;
-                                                PoliceAndThief.cell = cell;
-                                                GameObject cellbutton = GameObject.Instantiate(CustomMain.customAssets.freethiefbutton, PlayerControl.LocalPlayer.transform.parent);
-                                                cellbutton.name = "cellbutton";
-                                                cellbutton.transform.position = new Vector3(-12f, 4.7f, 0.5f);
-                                                PoliceAndThief.cellbutton = cellbutton;
-                                                GameObject jewelbutton = GameObject.Instantiate(CustomMain.customAssets.jewelbutton, PlayerControl.LocalPlayer.transform.parent);
-                                                jewelbutton.name = "jewelbutton";
-                                                jewelbutton.transform.position = new Vector3(13.75f, -0.42f, 0.5f);
-                                                PoliceAndThief.jewelbutton = jewelbutton;
-                                                GameObject thiefspaceship = GameObject.Instantiate(CustomMain.customAssets.thiefspaceship, PlayerControl.LocalPlayer.transform.parent);
-                                                thiefspaceship.name = "thiefspaceship";
-                                                thiefspaceship.transform.position = new Vector3(17f, 0f, 0.6f);
-                                                createdpoliceandthief = true;
-
-                                                // Spawn jewels
-                                                GameObject jewel01 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel01.transform.position = new Vector3(6.95f, 4.95f, 1f);
-                                                jewel01.name = "jewel01";
-                                                PoliceAndThief.jewel01 = jewel01;
-                                                GameObject jewel02 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel02.transform.position = new Vector3(-3.75f, 5.35f, 1f);
-                                                jewel02.name = "jewel02";
-                                                PoliceAndThief.jewel02 = jewel02;
-                                                GameObject jewel03 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel03.transform.position = new Vector3(-7.7f, 11.3f, 1f);
-                                                jewel03.name = "jewel03";
-                                                PoliceAndThief.jewel03 = jewel03;
-                                                GameObject jewel04 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel04.transform.position = new Vector3(-19.65f, 5.3f, 1f);
-                                                jewel04.name = "jewel04";
-                                                PoliceAndThief.jewel04 = jewel04;
-                                                GameObject jewel05 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel05.transform.position = new Vector3(-19.65f, -8, 1f);
-                                                jewel05.name = "jewel05";
-                                                PoliceAndThief.jewel05 = jewel05;
-                                                GameObject jewel06 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel06.transform.position = new Vector3(-5.45f, -13f, 1f);
-                                                jewel06.name = "jewel06";
-                                                PoliceAndThief.jewel06 = jewel06;
-                                                GameObject jewel07 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel07.transform.position = new Vector3(-7.65f, -4.2f, 1f);
-                                                jewel07.name = "jewel07";
-                                                PoliceAndThief.jewel07 = jewel07;
-                                                GameObject jewel08 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel08.transform.position = new Vector3(2f, -6.75f, 1f);
-                                                jewel08.name = "jewel08";
-                                                PoliceAndThief.jewel08 = jewel08;
-                                                GameObject jewel09 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel09.transform.position = new Vector3(8.9f, 1.45f, 1f);
-                                                jewel09.name = "jewel09";
-                                                PoliceAndThief.jewel09 = jewel09;
-                                                GameObject jewel10 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel10.transform.position = new Vector3(4.6f, -2.25f, 1f);
-                                                jewel10.name = "jewel10";
-                                                PoliceAndThief.jewel10 = jewel10;
-                                                GameObject jewel11 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel11.transform.position = new Vector3(-5.05f, -0.88f, 1f);
-                                                jewel11.name = "jewel11";
-                                                PoliceAndThief.jewel11 = jewel11;
-                                                GameObject jewel12 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel12.transform.position = new Vector3(-8.25f, -0.45f, 1f);
-                                                jewel12.name = "jewel12";
-                                                PoliceAndThief.jewel12 = jewel12;
-                                                GameObject jewel13 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel13.transform.position = new Vector3(-19.75f, -1.55f, 1f);
-                                                jewel13.name = "jewel13";
-                                                PoliceAndThief.jewel13 = jewel13;
-                                                GameObject jewel14 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel14.transform.position = new Vector3(-12.1f, -13.15f, 1f);
-                                                jewel14.name = "jewel14";
-                                                PoliceAndThief.jewel14 = jewel14;
-                                                GameObject jewel15 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel15.transform.position = new Vector3(7.15f, -14.45f, 1f);
-                                                jewel15.name = "jewel15";
-                                                PoliceAndThief.jewel15 = jewel15;
-                                                PoliceAndThief.thiefTreasures.Add(jewel01);
-                                                PoliceAndThief.thiefTreasures.Add(jewel02);
-                                                PoliceAndThief.thiefTreasures.Add(jewel03);
-                                                PoliceAndThief.thiefTreasures.Add(jewel04);
-                                                PoliceAndThief.thiefTreasures.Add(jewel05);
-                                                PoliceAndThief.thiefTreasures.Add(jewel06);
-                                                PoliceAndThief.thiefTreasures.Add(jewel07);
-                                                PoliceAndThief.thiefTreasures.Add(jewel08);
-                                                PoliceAndThief.thiefTreasures.Add(jewel09);
-                                                PoliceAndThief.thiefTreasures.Add(jewel10);
-                                                PoliceAndThief.thiefTreasures.Add(jewel11);
-                                                PoliceAndThief.thiefTreasures.Add(jewel12);
-                                                PoliceAndThief.thiefTreasures.Add(jewel13);
-                                                PoliceAndThief.thiefTreasures.Add(jewel14);
-                                                PoliceAndThief.thiefTreasures.Add(jewel15);
-                                            }
-                                        }
-                                        else {
-                                            foreach (PlayerControl player in PoliceAndThief.policeTeam) {
-                                                player.transform.position = new Vector3(-10.2f, 1.18f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                            }
-                                            foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
-                                                player.transform.position = new Vector3(-1.31f, -16.25f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                                if (player == PlayerControl.LocalPlayer) {
-                                                    // Add Arrows pointing the release and deliver point
-                                                    if (PoliceAndThief.localThiefReleaseArrow.Count == 0) {
-                                                        PoliceAndThief.localThiefReleaseArrow.Add(new Arrow(Palette.PlayerColors[10]));
-                                                        PoliceAndThief.localThiefReleaseArrow[0].arrow.SetActive(true);
-                                                    }
-                                                    if (PoliceAndThief.localThiefDeliverArrow.Count == 0) {
-                                                        PoliceAndThief.localThiefDeliverArrow.Add(new Arrow(Palette.PlayerColors[16]));
-                                                        PoliceAndThief.localThiefDeliverArrow[0].arrow.SetActive(true);
-                                                    }
-                                                }
-                                            }
-                                            if (PlayerControl.LocalPlayer != null && !createdpoliceandthief) {
-                                                GameObject cell = GameObject.Instantiate(CustomMain.customAssets.cell, PlayerControl.LocalPlayer.transform.parent);
-                                                cell.name = "cell";
-                                                cell.transform.position = new Vector3(-10.25f, 3.38f, 0.5f);
-                                                cell.gameObject.layer = 9;
-                                                cell.transform.GetChild(0).gameObject.layer = 9;
-                                                PoliceAndThief.cell = cell;
-                                                GameObject cellbutton = GameObject.Instantiate(CustomMain.customAssets.freethiefbutton, PlayerControl.LocalPlayer.transform.parent);
-                                                cellbutton.name = "cellbutton";
-                                                cellbutton.transform.position = new Vector3(-10.2f, 0.93f, 0.5f);
-                                                PoliceAndThief.cellbutton = cellbutton;
-                                                GameObject jewelbutton = GameObject.Instantiate(CustomMain.customAssets.jewelbutton, PlayerControl.LocalPlayer.transform.parent);
-                                                jewelbutton.name = "jewelbutton";
-                                                jewelbutton.transform.position = new Vector3(0.20f, -17.15f, 0.5f);
-                                                PoliceAndThief.jewelbutton = jewelbutton;
-                                                GameObject thiefspaceship = GameObject.Instantiate(CustomMain.customAssets.thiefspaceship, PlayerControl.LocalPlayer.transform.parent);
-                                                thiefspaceship.name = "thiefspaceship";
-                                                thiefspaceship.transform.position = new Vector3(1.765f, -19.16f, 0.6f);
-                                                GameObject thiefspaceshiphatch = GameObject.Instantiate(CustomMain.customAssets.thiefspaceshiphatch, PlayerControl.LocalPlayer.transform.parent);
-                                                thiefspaceshiphatch.name = "thiefspaceshiphatch";
-                                                thiefspaceshiphatch.transform.position = new Vector3(1.765f, -19.16f, 0.6f);
-                                                createdpoliceandthief = true;
-
-                                                // Spawn jewels
-                                                GameObject jewel01 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel01.transform.position = new Vector3(-18.65f, -9.9f, 1f);
-                                                jewel01.name = "jewel01";
-                                                PoliceAndThief.jewel01 = jewel01;
-                                                GameObject jewel02 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel02.transform.position = new Vector3(-21.5f, -2, 1f);
-                                                jewel02.name = "jewel02";
-                                                PoliceAndThief.jewel02 = jewel02;
-                                                GameObject jewel03 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel03.transform.position = new Vector3(-5.9f, -8.25f, 1f);
-                                                jewel03.name = "jewel03";
-                                                PoliceAndThief.jewel03 = jewel03;
-                                                GameObject jewel04 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel04.transform.position = new Vector3(4.5f, -7.5f, 1f);
-                                                jewel04.name = "jewel04";
-                                                PoliceAndThief.jewel04 = jewel04;
-                                                GameObject jewel05 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel05.transform.position = new Vector3(7.85f, -14.45f, 1f);
-                                                jewel05.name = "jewel05";
-                                                PoliceAndThief.jewel05 = jewel05;
-                                                GameObject jewel06 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel06.transform.position = new Vector3(6.65f, -4.8f, 1f);
-                                                jewel06.name = "jewel06";
-                                                PoliceAndThief.jewel06 = jewel06;
-                                                GameObject jewel07 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel07.transform.position = new Vector3(10.5f, 2.15f, 1f);
-                                                jewel07.name = "jewel07";
-                                                PoliceAndThief.jewel07 = jewel07;
-                                                GameObject jewel08 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel08.transform.position = new Vector3(-5.5f, 3.5f, 1f);
-                                                jewel08.name = "jewel08";
-                                                PoliceAndThief.jewel08 = jewel08;
-                                                GameObject jewel09 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel09.transform.position = new Vector3(-19, -1.2f, 1f);
-                                                jewel09.name = "jewel09";
-                                                PoliceAndThief.jewel09 = jewel09;
-                                                GameObject jewel10 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel10.transform.position = new Vector3(-21.5f, -8.35f, 1f);
-                                                jewel10.name = "jewel10";
-                                                PoliceAndThief.jewel10 = jewel10;
-                                                GameObject jewel11 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel11.transform.position = new Vector3(-12.5f, -3.75f, 1f);
-                                                jewel11.name = "jewel11";
-                                                PoliceAndThief.jewel11 = jewel11;
-                                                GameObject jewel12 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel12.transform.position = new Vector3(-5.9f, -5.25f, 1f);
-                                                jewel12.name = "jewel12";
-                                                PoliceAndThief.jewel12 = jewel12;
-                                                GameObject jewel13 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel13.transform.position = new Vector3(2.65f, -16.5f, 1f);
-                                                jewel13.name = "jewel13";
-                                                PoliceAndThief.jewel13 = jewel13;
-                                                GameObject jewel14 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel14.transform.position = new Vector3(16.75f, -4.75f, 1f);
-                                                jewel14.name = "jewel14";
-                                                PoliceAndThief.jewel14 = jewel14;
-                                                GameObject jewel15 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                                jewel15.transform.position = new Vector3(3.8f, 3.5f, 1f);
-                                                jewel15.name = "jewel15";
-                                                PoliceAndThief.jewel15 = jewel15;
-                                                PoliceAndThief.thiefTreasures.Add(jewel01);
-                                                PoliceAndThief.thiefTreasures.Add(jewel02);
-                                                PoliceAndThief.thiefTreasures.Add(jewel03);
-                                                PoliceAndThief.thiefTreasures.Add(jewel04);
-                                                PoliceAndThief.thiefTreasures.Add(jewel05);
-                                                PoliceAndThief.thiefTreasures.Add(jewel06);
-                                                PoliceAndThief.thiefTreasures.Add(jewel07);
-                                                PoliceAndThief.thiefTreasures.Add(jewel08);
-                                                PoliceAndThief.thiefTreasures.Add(jewel09);
-                                                PoliceAndThief.thiefTreasures.Add(jewel10);
-                                                PoliceAndThief.thiefTreasures.Add(jewel11);
-                                                PoliceAndThief.thiefTreasures.Add(jewel12);
-                                                PoliceAndThief.thiefTreasures.Add(jewel13);
-                                                PoliceAndThief.thiefTreasures.Add(jewel14);
-                                                PoliceAndThief.thiefTreasures.Add(jewel15);
-                                            }
-                                        }
-                                        break;
-                                    case 4:
-                                        // KOTH:
-                                        if (activatedSensei) {
-                                            if (KingOfTheHill.usurperPlayer != null) {
-                                                KingOfTheHill.usurperPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                                KingOfTheHill.usurperPlayer.transform.position = new Vector3(-6.8f, 10.75f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(KingOfTheHill.usurperPlayer);
-                                            }
-
-                                            foreach (PlayerControl player in KingOfTheHill.greenTeam) {
-                                                player.transform.position = new Vector3(-16.4f, -10.25f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                            }
-
-                                            foreach (PlayerControl player in KingOfTheHill.yellowTeam) {
-                                                player.transform.position = new Vector3(7f, -14.15f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                            }
-
-                                            if (PlayerControl.LocalPlayer != null && !createdkingofthehill) {
-                                                GameObject greenteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
-                                                greenteamfloor.name = "greenteamfloor";
-                                                greenteamfloor.transform.position = new Vector3(-16.4f, -10.5f, 0.5f);
-                                                GameObject yellowteamfloor = GameObject.Instantiate(CustomMain.customAssets.yellowfloor, PlayerControl.LocalPlayer.transform.parent);
-                                                yellowteamfloor.name = "yellowteamfloor";
-                                                yellowteamfloor.transform.position = new Vector3(7f, -14.4f, 0.5f);
-                                                GameObject greenkingaura = GameObject.Instantiate(CustomMain.customAssets.greenaura, KingOfTheHill.greenKingplayer.transform);
-                                                greenkingaura.name = "greenkingaura";
-                                                greenkingaura.transform.position = new Vector3(KingOfTheHill.greenKingplayer.transform.position.x, KingOfTheHill.greenKingplayer.transform.position.y, 0.4f);
-                                                KingOfTheHill.greenkingaura = greenkingaura;
-                                                GameObject yellowkingaura = GameObject.Instantiate(CustomMain.customAssets.yellowaura, KingOfTheHill.yellowKingplayer.transform);
-                                                yellowkingaura.name = "yellowkingaura";
-                                                yellowkingaura.transform.position = new Vector3(KingOfTheHill.yellowKingplayer.transform.position.x, KingOfTheHill.yellowKingplayer.transform.position.y, 0.4f);
-                                                KingOfTheHill.yellowkingaura = yellowkingaura;
-                                                GameObject flagzoneone = GameObject.Instantiate(CustomMain.customAssets.whiteflag, PlayerControl.LocalPlayer.transform.parent);
-                                                flagzoneone.name = "flagzoneone";
-                                                flagzoneone.transform.position = new Vector3(7.85f, -1.5f, 0.4f);
-                                                KingOfTheHill.flagzoneone = flagzoneone;
-                                                GameObject zoneone = GameObject.Instantiate(CustomMain.customAssets.whitebase, PlayerControl.LocalPlayer.transform.parent);
-                                                zoneone.name = "zoneone";
-                                                zoneone.transform.position = new Vector3(7.85f, -1.5f, 0.5f);
-                                                KingOfTheHill.zoneone = zoneone;
-                                                GameObject flagzonetwo = GameObject.Instantiate(CustomMain.customAssets.whiteflag, PlayerControl.LocalPlayer.transform.parent);
-                                                flagzonetwo.name = "flagzonetwo";
-                                                flagzonetwo.transform.position = new Vector3(-6.35f, -1.1f, 0.4f);
-                                                KingOfTheHill.flagzonetwo = flagzonetwo;
-                                                GameObject zonetwo = GameObject.Instantiate(CustomMain.customAssets.whitebase, PlayerControl.LocalPlayer.transform.parent);
-                                                zonetwo.name = "zonetwo";
-                                                zonetwo.transform.position = new Vector3(-6.35f, -1.1f, 0.5f);
-                                                KingOfTheHill.zonetwo = zonetwo;
-                                                GameObject flagzonethree = GameObject.Instantiate(CustomMain.customAssets.whiteflag, PlayerControl.LocalPlayer.transform.parent);
-                                                flagzonethree.name = "flagzonethree";
-                                                flagzonethree.transform.position = new Vector3(-12.15f, 7.35f, 0.4f);
-                                                KingOfTheHill.flagzonethree = flagzonethree;
-                                                GameObject zonethree = GameObject.Instantiate(CustomMain.customAssets.whitebase, PlayerControl.LocalPlayer.transform.parent);
-                                                zonethree.name = "zonethree";
-                                                zonethree.transform.position = new Vector3(-12.15f, 7.35f, 0.5f);
-                                                KingOfTheHill.zonethree = zonethree;
-                                                KingOfTheHill.kingZones.Add(zoneone);
-                                                KingOfTheHill.kingZones.Add(zonetwo);
-                                                KingOfTheHill.kingZones.Add(zonethree);
-                                                KingOfTheHill.usurperSpawns.Add(greenteamfloor);
-                                                KingOfTheHill.usurperSpawns.Add(yellowteamfloor);
-                                                createdkingofthehill = true;
-                                            }
-                                        }
-                                        else {
-                                            if (KingOfTheHill.usurperPlayer != null) {
-                                                KingOfTheHill.usurperPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                                KingOfTheHill.usurperPlayer.transform.position = new Vector3(-1f, 5.35f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(KingOfTheHill.usurperPlayer);
-                                            }
-
-                                            foreach (PlayerControl player in KingOfTheHill.greenTeam) {
-                                                player.transform.position = new Vector3(-7f, -8.25f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                            }
-
-                                            foreach (PlayerControl player in KingOfTheHill.yellowTeam) {
-                                                player.transform.position = new Vector3(6.25f, -3.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                            }
-
-                                            if (PlayerControl.LocalPlayer != null && !createdkingofthehill) {
-                                                GameObject greenteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
-                                                greenteamfloor.name = "greenteamfloor";
-                                                greenteamfloor.transform.position = new Vector3(-7f, -8.5f, 0.5f);
-                                                GameObject yellowteamfloor = GameObject.Instantiate(CustomMain.customAssets.yellowfloor, PlayerControl.LocalPlayer.transform.parent);
-                                                yellowteamfloor.name = "yellowteamfloor";
-                                                yellowteamfloor.transform.position = new Vector3(6.25f, -3.75f, 0.5f);
-                                                GameObject greenkingaura = GameObject.Instantiate(CustomMain.customAssets.greenaura, KingOfTheHill.greenKingplayer.transform);
-                                                greenkingaura.name = "greenkingaura";
-                                                greenkingaura.transform.position = new Vector3(KingOfTheHill.greenKingplayer.transform.position.x, KingOfTheHill.greenKingplayer.transform.position.y, 0.4f);
-                                                KingOfTheHill.greenkingaura = greenkingaura;
-                                                GameObject yellowkingaura = GameObject.Instantiate(CustomMain.customAssets.yellowaura, KingOfTheHill.yellowKingplayer.transform);
-                                                yellowkingaura.name = "yellowkingaura";
-                                                yellowkingaura.transform.position = new Vector3(KingOfTheHill.yellowKingplayer.transform.position.x, KingOfTheHill.yellowKingplayer.transform.position.y, 0.4f);
-                                                KingOfTheHill.yellowkingaura = yellowkingaura;
-                                                GameObject flagzoneone = GameObject.Instantiate(CustomMain.customAssets.whiteflag, PlayerControl.LocalPlayer.transform.parent);
-                                                flagzoneone.name = "flagzoneone";
-                                                flagzoneone.transform.position = new Vector3(-9.1f, -2.25f, 0.4f);
-                                                KingOfTheHill.flagzoneone = flagzoneone;
-                                                GameObject zoneone = GameObject.Instantiate(CustomMain.customAssets.whitebase, PlayerControl.LocalPlayer.transform.parent);
-                                                zoneone.name = "zoneone";
-                                                zoneone.transform.position = new Vector3(-9.1f, -2.25f, 0.5f);
-                                                KingOfTheHill.zoneone = zoneone;
-                                                GameObject flagzonetwo = GameObject.Instantiate(CustomMain.customAssets.whiteflag, PlayerControl.LocalPlayer.transform.parent);
-                                                flagzonetwo.name = "flagzonetwo";
-                                                flagzonetwo.transform.position = new Vector3(4.5f, -7.5f, 0.4f);
-                                                KingOfTheHill.flagzonetwo = flagzonetwo;
-                                                GameObject zonetwo = GameObject.Instantiate(CustomMain.customAssets.whitebase, PlayerControl.LocalPlayer.transform.parent);
-                                                zonetwo.name = "zonetwo";
-                                                zonetwo.transform.position = new Vector3(4.5f, -7.5f, 0.5f);
-                                                KingOfTheHill.zonetwo = zonetwo;
-                                                GameObject flagzonethree = GameObject.Instantiate(CustomMain.customAssets.whiteflag, PlayerControl.LocalPlayer.transform.parent);
-                                                flagzonethree.name = "flagzonethree";
-                                                flagzonethree.transform.position = new Vector3(3.25f, -15.5f, 0.4f);
-                                                KingOfTheHill.flagzonethree = flagzonethree;
-                                                GameObject zonethree = GameObject.Instantiate(CustomMain.customAssets.whitebase, PlayerControl.LocalPlayer.transform.parent);
-                                                zonethree.name = "zonethree";
-                                                zonethree.transform.position = new Vector3(3.25f, -15.5f, 0.5f);
-                                                KingOfTheHill.zonethree = zonethree;
-                                                KingOfTheHill.kingZones.Add(zoneone);
-                                                KingOfTheHill.kingZones.Add(zonetwo);
-                                                KingOfTheHill.kingZones.Add(zonethree);
-                                                KingOfTheHill.usurperSpawns.Add(greenteamfloor);
-                                                KingOfTheHill.usurperSpawns.Add(yellowteamfloor);
-                                                createdkingofthehill = true;
-                                            }
-                                        }
-                                        break;
-                                    case 5:
-                                        // HP:
-                                        if (activatedSensei) {
-                                            HotPotato.hotPotatoPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                            HotPotato.hotPotatoPlayer.transform.position = new Vector3(-6.5f, -2.25f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(HotPotato.hotPotatoPlayer);
-
-                                            foreach (PlayerControl player in HotPotato.notPotatoTeam) {
-                                                player.transform.position = new Vector3(12.5f, -0.25f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                            }
-
-                                            if (PlayerControl.LocalPlayer != null && !createdhotpotato) {
-                                                GameObject hotpotato = GameObject.Instantiate(CustomMain.customAssets.hotPotato, HotPotato.hotPotatoPlayer.transform);
-                                                hotpotato.name = "hotpotato";
-                                                hotpotato.transform.position = HotPotato.hotPotatoPlayer.transform.position + new Vector3(0, 0.5f, -0.25f);
-                                                HotPotato.hotPotato = hotpotato;
-                                                createdhotpotato = true;
-                                            }
-                                        }
-                                        else {
-                                            HotPotato.hotPotatoPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                            HotPotato.hotPotatoPlayer.transform.position = new Vector3(-0.75f, -7f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(HotPotato.hotPotatoPlayer);
-
-                                            foreach (PlayerControl player in HotPotato.notPotatoTeam) {
-                                                player.transform.position = new Vector3(6.25f, -3.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                            }
-
-                                            if (PlayerControl.LocalPlayer != null && !createdhotpotato) {
-                                                GameObject hotpotato = GameObject.Instantiate(CustomMain.customAssets.hotPotato, HotPotato.hotPotatoPlayer.transform);
-                                                hotpotato.name = "hotpotato";
-                                                hotpotato.transform.position = HotPotato.hotPotatoPlayer.transform.position + new Vector3(0, 0.5f, -0.25f);
-                                                HotPotato.hotPotato = hotpotato;
-                                                createdhotpotato = true;
-                                            }
-                                        }
-                                        break;
-                                    case 6:
-                                        // ZL:
-                                        if (activatedSensei) {
-                                            foreach (PlayerControl player in ZombieLaboratory.zombieTeam) {
-                                                player.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                                player.transform.position = new Vector3(-4.85f, 6, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                            }
-
-                                            foreach (PlayerControl player in ZombieLaboratory.survivorTeam) {
-                                                if (player == PlayerControl.LocalPlayer && PlayerControl.LocalPlayer != ZombieLaboratory.nursePlayer) {
-                                                    player.transform.position = new Vector3(4.75f, -8.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                                    Helpers.clearAllTasks(player);
-                                                    // Add Arrows pointing the deliver point
-                                                    if (ZombieLaboratory.localSurvivorsDeliverArrow.Count == 0) {
-                                                        ZombieLaboratory.localSurvivorsDeliverArrow.Add(new Arrow(Palette.PlayerColors[3]));
-                                                        ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(true);
-                                                    }
-                                                }
-                                            }
-
-                                            if (PlayerControl.LocalPlayer == ZombieLaboratory.nursePlayer) {
-                                                ZombieLaboratory.nursePlayer.transform.position = new Vector3(-12f, 7.15f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(ZombieLaboratory.nursePlayer);
-                                                GameObject mapMedKit = GameObject.Instantiate(CustomMain.customAssets.mapMedKit, PlayerControl.LocalPlayer.transform.parent);
-                                                mapMedKit.name = "mapMedKit";
-                                                mapMedKit.transform.position = new Vector3(-6.5f, -0.85f, -0.1f);
-                                                GameObject mapMedKittwo = GameObject.Instantiate(CustomMain.customAssets.mapMedKit, PlayerControl.LocalPlayer.transform.parent);
-                                                mapMedKittwo.name = "mapMedKittwo";
-                                                mapMedKittwo.transform.position = new Vector3(-18.85f, 2f, -0.1f);
-                                                GameObject mapMedKitthree = GameObject.Instantiate(CustomMain.customAssets.mapMedKit, PlayerControl.LocalPlayer.transform.parent);
-                                                mapMedKitthree.name = "mapMedKitthree";
-                                                mapMedKitthree.transform.position = new Vector3(-5.75f, 11.75f, -0.1f);
-                                                ZombieLaboratory.nurseMedkits.Add(mapMedKit);
-                                                ZombieLaboratory.nurseMedkits.Add(mapMedKittwo);
-                                                ZombieLaboratory.nurseMedkits.Add(mapMedKitthree);
-                                                // Add Arrows pointing the medkit only for nurse
-                                                if (ZombieLaboratory.localNurseArrows.Count == 0 && ZombieLaboratory.localNurseArrows.Count < 3) {
-                                                    ZombieLaboratory.localNurseArrows.Add(new Arrow(Shy.color));
-                                                    ZombieLaboratory.localNurseArrows.Add(new Arrow(Shy.color));
-                                                    ZombieLaboratory.localNurseArrows.Add(new Arrow(Shy.color));
-                                                }
-                                                ZombieLaboratory.localNurseArrows[0].arrow.SetActive(true);
-                                                ZombieLaboratory.localNurseArrows[1].arrow.SetActive(true);
-                                                ZombieLaboratory.localNurseArrows[2].arrow.SetActive(true);
-                                            }
-
-                                            if (PlayerControl.LocalPlayer != null && !createdzombielaboratory) {
-                                                GameObject laboratory = GameObject.Instantiate(CustomMain.customAssets.laboratory, PlayerControl.LocalPlayer.transform.parent);
-                                                laboratory.name = "laboratory";
-                                                laboratory.transform.position = new Vector3(-12f, 7.2f, 0.5f);
-                                                laboratory.gameObject.layer = 9;
-                                                laboratory.transform.GetChild(0).gameObject.layer = 9;
-                                                ZombieLaboratory.laboratory = laboratory;
-                                                ZombieLaboratory.laboratoryEnterButton = laboratory.transform.GetChild(1).gameObject;
-                                                ZombieLaboratory.laboratoryExitButton = laboratory.transform.GetChild(2).gameObject;
-                                                ZombieLaboratory.laboratoryCreateCureButton = laboratory.transform.GetChild(3).gameObject;
-                                                ZombieLaboratory.laboratoryPutKeyItemButton = laboratory.transform.GetChild(4).gameObject;
-                                                ZombieLaboratory.laboratoryExitLeftButton = laboratory.transform.GetChild(5).gameObject;
-                                                ZombieLaboratory.laboratoryExitRightButton = laboratory.transform.GetChild(6).gameObject;
-                                                ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratoryEnterButton);
-                                                ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratoryExitButton);
-                                                ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratoryExitLeftButton);
-                                                ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratoryExitRightButton);
-
-                                                GameObject nurseMedKit = GameObject.Instantiate(CustomMain.customAssets.nurseMedKit, PlayerControl.LocalPlayer.transform.parent);
-                                                nurseMedKit.name = "nurseMedKit";
-                                                nurseMedKit.transform.parent = ZombieLaboratory.nursePlayer.transform;
-                                                nurseMedKit.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
-                                                ZombieLaboratory.laboratoryNurseMedKit = nurseMedKit;
-                                                ZombieLaboratory.laboratoryNurseMedKit.SetActive(false);
-                                                ZombieLaboratory.laboratoryEntrances.Add(ZombieLaboratory.laboratoryEnterButton);
-                                                createdzombielaboratory = true;
-                                            }
-                                        }
-                                        else {
-                                            foreach (PlayerControl player in ZombieLaboratory.zombieTeam) {
-                                                player.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                                player.transform.position = new Vector3(-17.25f, -13.25f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                            }
-
-                                            foreach (PlayerControl player in ZombieLaboratory.survivorTeam) {
-                                                if (player == PlayerControl.LocalPlayer && PlayerControl.LocalPlayer != ZombieLaboratory.nursePlayer) {
-                                                    player.transform.position = new Vector3(11.75f, -4.75f, PlayerControl.LocalPlayer.transform.position.z);
-                                                    Helpers.clearAllTasks(player);
-                                                    // Add Arrows pointing the deliver point
-                                                    if (ZombieLaboratory.localSurvivorsDeliverArrow.Count == 0) {
-                                                        ZombieLaboratory.localSurvivorsDeliverArrow.Add(new Arrow(Palette.PlayerColors[3]));
-                                                        ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(true);
-                                                    }
-                                                }
-                                            }
-
-                                            if (PlayerControl.LocalPlayer == ZombieLaboratory.nursePlayer) {
-                                                ZombieLaboratory.nursePlayer.transform.position = new Vector3(-10.2f, 3.6f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(ZombieLaboratory.nursePlayer);
-                                                GameObject mapMedKit = GameObject.Instantiate(CustomMain.customAssets.mapMedKit, PlayerControl.LocalPlayer.transform.parent);
-                                                mapMedKit.name = "mapMedKit";
-                                                mapMedKit.transform.position = new Vector3(-7.25f, -5f, -0.1f);
-                                                GameObject mapMedKittwo = GameObject.Instantiate(CustomMain.customAssets.mapMedKit, PlayerControl.LocalPlayer.transform.parent);
-                                                mapMedKittwo.name = "mapMedKittwo";
-                                                mapMedKittwo.transform.position = new Vector3(3.75f, 3.5f, -0.1f);
-                                                GameObject mapMedKitthree = GameObject.Instantiate(CustomMain.customAssets.mapMedKit, PlayerControl.LocalPlayer.transform.parent);
-                                                mapMedKitthree.name = "mapMedKitthree";
-                                                mapMedKitthree.transform.position = new Vector3(-13.75f, -3.75f, -0.1f);
-                                                ZombieLaboratory.nurseMedkits.Add(mapMedKit);
-                                                ZombieLaboratory.nurseMedkits.Add(mapMedKittwo);
-                                                ZombieLaboratory.nurseMedkits.Add(mapMedKitthree);
-                                                // Add Arrows pointing the medkit only for nurse
-                                                if (ZombieLaboratory.localNurseArrows.Count == 0 && ZombieLaboratory.localNurseArrows.Count < 3) {
-                                                    ZombieLaboratory.localNurseArrows.Add(new Arrow(Shy.color));
-                                                    ZombieLaboratory.localNurseArrows.Add(new Arrow(Shy.color));
-                                                    ZombieLaboratory.localNurseArrows.Add(new Arrow(Shy.color));
-                                                }
-                                                ZombieLaboratory.localNurseArrows[0].arrow.SetActive(true);
-                                                ZombieLaboratory.localNurseArrows[1].arrow.SetActive(true);
-                                                ZombieLaboratory.localNurseArrows[2].arrow.SetActive(true);
-                                            }
-
-                                            if (PlayerControl.LocalPlayer != null && !createdzombielaboratory) {
-                                                GameObject laboratory = GameObject.Instantiate(CustomMain.customAssets.laboratory, PlayerControl.LocalPlayer.transform.parent);
-                                                laboratory.name = "laboratory";
-                                                laboratory.transform.position = new Vector3(-10.25f, 3.38f, 0.5f);
-                                                laboratory.gameObject.layer = 9;
-                                                laboratory.transform.GetChild(0).gameObject.layer = 9;
-                                                ZombieLaboratory.laboratory = laboratory;
-                                                ZombieLaboratory.laboratoryEnterButton = laboratory.transform.GetChild(1).gameObject;
-                                                ZombieLaboratory.laboratoryExitButton = laboratory.transform.GetChild(2).gameObject;
-                                                ZombieLaboratory.laboratoryCreateCureButton = laboratory.transform.GetChild(3).gameObject;
-                                                ZombieLaboratory.laboratoryPutKeyItemButton = laboratory.transform.GetChild(4).gameObject;
-                                                ZombieLaboratory.laboratoryExitLeftButton = laboratory.transform.GetChild(5).gameObject;
-                                                ZombieLaboratory.laboratoryExitRightButton = laboratory.transform.GetChild(6).gameObject;
-                                                ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratoryEnterButton);
-                                                ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratoryExitButton);
-                                                ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratoryExitLeftButton);
-                                                ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratoryExitRightButton);
-
-                                                GameObject nurseMedKit = GameObject.Instantiate(CustomMain.customAssets.nurseMedKit, PlayerControl.LocalPlayer.transform.parent);
-                                                nurseMedKit.name = "nurseMedKit";
-                                                nurseMedKit.transform.parent = ZombieLaboratory.nursePlayer.transform;
-                                                nurseMedKit.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
-                                                ZombieLaboratory.laboratoryNurseMedKit = nurseMedKit;
-                                                ZombieLaboratory.laboratoryNurseMedKit.SetActive(false);
-                                                ZombieLaboratory.laboratoryEntrances.Add(ZombieLaboratory.laboratoryEnterButton);
-                                                createdzombielaboratory = true;
-                                            }
-                                        }
-                                        break;
-                                    case 7:
-                                        // BR:
-                                        if (activatedSensei) {
-
-                                            if (BattleRoyale.matchType == 0) {
-                                                foreach (PlayerControl soloPlayer in BattleRoyale.soloPlayerTeam) {
-                                                    soloPlayer.transform.position = new Vector3(BattleRoyale.soloPlayersSpawnPositions[howmanyBattleRoyaleplayers].x, BattleRoyale.soloPlayersSpawnPositions[howmanyBattleRoyaleplayers].y, PlayerControl.LocalPlayer.transform.position.z);
-                                                    Helpers.clearAllTasks(soloPlayer);
-                                                    howmanyBattleRoyaleplayers += 1;
-                                                }
-                                            }
-                                            else {
-                                                if (BattleRoyale.serialKiller != null) {
-                                                    BattleRoyale.serialKiller.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                                    BattleRoyale.serialKiller.transform.position = new Vector3(-3.65f, 5f, PlayerControl.LocalPlayer.transform.position.z);
-                                                    Helpers.clearAllTasks(BattleRoyale.serialKiller);
-                                                }
-
-                                                foreach (PlayerControl player in BattleRoyale.limeTeam) {
-                                                    player.transform.position = new Vector3(-17.5f, -1.15f, PlayerControl.LocalPlayer.transform.position.z);
-                                                    Helpers.clearAllTasks(player);
-                                                }
-
-                                                foreach (PlayerControl player in BattleRoyale.pinkTeam) {
-                                                    player.transform.position = new Vector3(7.7f, -0.95f, PlayerControl.LocalPlayer.transform.position.z);
-                                                    Helpers.clearAllTasks(player);
-                                                }
-                                            }
-
-                                            if (PlayerControl.LocalPlayer != null && !createdbattleroyale) {
-                                                if (BattleRoyale.matchType != 0) {
-                                                    GameObject limeteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
-                                                    limeteamfloor.name = "limeteamfloor";
-                                                    limeteamfloor.transform.position = new Vector3(-17.5f, -1.15f, 0.5f);
-                                                    GameObject pinkteamfloor = GameObject.Instantiate(CustomMain.customAssets.redfloor, PlayerControl.LocalPlayer.transform.parent);
-                                                    pinkteamfloor.name = "pinkteamfloor";
-                                                    pinkteamfloor.transform.position = new Vector3(7.7f, -0.95f, 0.5f);
-                                                    BattleRoyale.serialKillerSpawns.Add(limeteamfloor);
-                                                    BattleRoyale.serialKillerSpawns.Add(pinkteamfloor);
-                                                }
-                                                createdbattleroyale = true;
-                                            }
-                                        }
-                                        else {
-
-                                            if (BattleRoyale.matchType == 0) {
-                                                foreach (PlayerControl soloPlayer in BattleRoyale.soloPlayerTeam) {
-                                                    soloPlayer.transform.position = new Vector3(BattleRoyale.soloPlayersSpawnPositions[howmanyBattleRoyaleplayers].x, BattleRoyale.soloPlayersSpawnPositions[howmanyBattleRoyaleplayers].y, PlayerControl.LocalPlayer.transform.position.z);
-                                                    Helpers.clearAllTasks(soloPlayer);
-                                                    howmanyBattleRoyaleplayers += 1;
-                                                }
-                                            }
-                                            else {
-
-                                                if (BattleRoyale.serialKiller != null) {
-                                                    BattleRoyale.serialKiller.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                                    BattleRoyale.serialKiller.transform.position = new Vector3(6.35f, -7.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                                    Helpers.clearAllTasks(BattleRoyale.serialKiller);
-                                                }
-
-                                                foreach (PlayerControl player in BattleRoyale.limeTeam) {
-                                                    player.transform.position = new Vector3(-17f, -5.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                                    Helpers.clearAllTasks(player);
-                                                }
-                                                foreach (PlayerControl player in BattleRoyale.pinkTeam) {
-                                                    player.transform.position = new Vector3(12f, -4.75f, PlayerControl.LocalPlayer.transform.position.z);
-                                                    Helpers.clearAllTasks(player);
-                                                }
-                                            }
-
-                                            if (PlayerControl.LocalPlayer != null && !createdbattleroyale) {
-                                                if (BattleRoyale.matchType != 0) {
-                                                    GameObject limeteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
-                                                    limeteamfloor.name = "limeteamfloor";
-                                                    limeteamfloor.transform.position = new Vector3(-17f, -5.5f, 0.5f);
-                                                    GameObject pinkteamfloor = GameObject.Instantiate(CustomMain.customAssets.redfloor, PlayerControl.LocalPlayer.transform.parent);
-                                                    pinkteamfloor.name = "pinkteamfloor";
-                                                    pinkteamfloor.transform.position = new Vector3(12f, -4.75f, 0.5f);
-                                                    BattleRoyale.serialKillerSpawns.Add(limeteamfloor);
-                                                    BattleRoyale.serialKillerSpawns.Add(pinkteamfloor);
-                                                }
-                                                createdbattleroyale = true;
-                                            }
-                                        }
-                                        break;
-                                    case 8:
-                                        // MF:
-                                        if (activatedSensei) {
-                                            if (MonjaFestival.bigMonjaPlayer != null) {
-                                                MonjaFestival.bigMonjaPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                                MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-12f, 7f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(MonjaFestival.bigMonjaPlayer);
-                                            }
-
-                                            foreach (PlayerControl player in MonjaFestival.greenTeam) {
-                                                player.transform.position = new Vector3(-10.5f, -10, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                            }
-
-                                            foreach (PlayerControl player in MonjaFestival.cyanTeam) {
-                                                player.transform.position = new Vector3(7.4f, -5f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                            }
-
-                                            if (PlayerControl.LocalPlayer != null && !createdmonjafestival) {
-                                                GameObject bigSpawnOne = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                                bigSpawnOne.name = "bigSpawnOne";
-                                                bigSpawnOne.transform.position = new Vector3(-6.2f, -1.4f, 1f);
-                                                MonjaFestival.bigSpawnOne = bigSpawnOne;
-                                                MonjaFestival.bigSpawnOneCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.bigSpawnOne.transform);
-                                                MonjaFestival.bigSpawnOneCount.text = $"{MonjaFestival.bigSpawnOnePoints} / 30";
-                                                MonjaFestival.bigSpawnOneCount.enableWordWrapping = false;
-                                                MonjaFestival.bigSpawnOneCount.transform.localScale = Vector3.one * 0.5f;
-                                                MonjaFestival.bigSpawnOneCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                                GameObject bigSpawnTwo = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                                bigSpawnTwo.name = "bigSpawnTwo";
-                                                bigSpawnTwo.transform.position = new Vector3(-0.5f, 3f, 1f);
-                                                MonjaFestival.bigSpawnTwo = bigSpawnTwo;
-                                                MonjaFestival.bigSpawnTwoCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.bigSpawnTwo.transform);
-                                                MonjaFestival.bigSpawnTwoCount.text = $"{MonjaFestival.bigSpawnTwoPoints} / 30";
-                                                MonjaFestival.bigSpawnTwoCount.enableWordWrapping = false;
-                                                MonjaFestival.bigSpawnTwoCount.transform.localScale = Vector3.one * 0.5f;
-                                                MonjaFestival.bigSpawnTwoCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                                GameObject littleSpawnOne = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                                littleSpawnOne.name = "littleSpawnOne";
-                                                littleSpawnOne.transform.position = new Vector3(-6.75f, 10.5f, 0.5f);
-                                                MonjaFestival.littleSpawnOne = littleSpawnOne;
-                                                MonjaFestival.littleSpawnOneCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnOne.transform);
-                                                MonjaFestival.littleSpawnOneCount.text = $"{MonjaFestival.littleSpawnOnePoints} / 10";
-                                                MonjaFestival.littleSpawnOneCount.enableWordWrapping = false;
-                                                MonjaFestival.littleSpawnOneCount.transform.localScale = Vector3.one * 0.5f;
-                                                MonjaFestival.littleSpawnOneCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                                GameObject littleSpawnTwo = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                                littleSpawnTwo.name = "littleSpawnTwo";
-                                                littleSpawnTwo.transform.position = new Vector3(-17.5f, -1.5f, 0.5f);
-                                                MonjaFestival.littleSpawnTwo = littleSpawnTwo;
-                                                MonjaFestival.littleSpawnTwoCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnTwo.transform);
-                                                MonjaFestival.littleSpawnTwoCount.text = $"{MonjaFestival.littleSpawnTwoPoints} / 10";
-                                                MonjaFestival.littleSpawnTwoCount.enableWordWrapping = false;
-                                                MonjaFestival.littleSpawnTwoCount.transform.localScale = Vector3.one * 0.5f;
-                                                MonjaFestival.littleSpawnTwoCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                                GameObject littleSpawnThree = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                                littleSpawnThree.name = "littleSpawnThree";
-                                                littleSpawnThree.transform.position = new Vector3(4.5f, -14f, 0.5f);
-                                                MonjaFestival.littleSpawnThree = littleSpawnThree;
-                                                MonjaFestival.littleSpawnThreeCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnThree.transform);
-                                                MonjaFestival.littleSpawnThreeCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
-                                                MonjaFestival.littleSpawnThreeCount.enableWordWrapping = false;
-                                                MonjaFestival.littleSpawnThreeCount.transform.localScale = Vector3.one * 0.5f;
-                                                MonjaFestival.littleSpawnThreeCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                                GameObject littleSpawnFour = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                                littleSpawnFour.name = "littleSpawnFour";
-                                                littleSpawnFour.transform.position = new Vector3(-11.5f, -4f, 0.5f);
-                                                MonjaFestival.littleSpawnFour = littleSpawnFour;
-                                                MonjaFestival.littleSpawnFourCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnFour.transform);
-                                                MonjaFestival.littleSpawnFourCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
-                                                MonjaFestival.littleSpawnFourCount.enableWordWrapping = false;
-                                                MonjaFestival.littleSpawnFourCount.transform.localScale = Vector3.one * 0.5f;
-                                                MonjaFestival.littleSpawnFourCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                                GameObject greenBase = GameObject.Instantiate(CustomMain.customAssets.greenBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
-                                                greenBase.name = "greenBase";
-                                                greenBase.transform.position = new Vector3(-10.5f, -10, 0.5f);
-                                                MonjaFestival.greenTeamBase = greenBase;
-                                                GameObject cyanBase = GameObject.Instantiate(CustomMain.customAssets.cyanBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
-                                                cyanBase.name = "cyanBase";
-                                                cyanBase.transform.position = new Vector3(7.4f, -5f, 0.5f);
-                                                MonjaFestival.cyanTeamBase = cyanBase;
-
-                                                GameObject allulMonja = GameObject.Instantiate(CustomMain.customAssets.floorAllulMonja, PlayerControl.LocalPlayer.transform.parent);
-                                                allulMonja.transform.position = new Vector3(-3.65f, 5f, 0.5f);
-                                                allulMonja.name = "allulMonja";
-                                                MonjaFestival.allulMonja = allulMonja;
-                                                Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.allulMonjaReload());
-
-                                                if (MonjaFestival.bigMonjaPlayer != null) {
-                                                    GameObject greyBase = GameObject.Instantiate(CustomMain.customAssets.greyBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
-                                                    greyBase.name = "greyBase";
-                                                    greyBase.transform.position = new Vector3(-12f, 7f, 0.5f);
-                                                    MonjaFestival.bigMonjaBase = greyBase;
-                                                    MonjaFestival.bigMonjaSpawns.Add(greyBase);
-                                                }
-                                                MonjaFestival.bigMonjaSpawns.Add(bigSpawnOne);
-                                                MonjaFestival.bigMonjaSpawns.Add(bigSpawnTwo);
-                                                MonjaFestival.bigMonjaSpawns.Add(littleSpawnOne);
-                                                MonjaFestival.bigMonjaSpawns.Add(littleSpawnTwo);
-                                                MonjaFestival.bigMonjaSpawns.Add(littleSpawnThree);
-                                                MonjaFestival.bigMonjaSpawns.Add(littleSpawnFour);
-                                                MonjaFestival.bigMonjaSpawns.Add(greenBase);
-                                                MonjaFestival.bigMonjaSpawns.Add(cyanBase);
-                                                MonjaFestival.bigMonjaSpawns.Add(allulMonja);
-                                                createdmonjafestival = true;
-                                            }
-                                        }
-                                        else {
-                                            if (MonjaFestival.bigMonjaPlayer != null) {
-                                                MonjaFestival.bigMonjaPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                                MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(4.5f, -7.25f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(MonjaFestival.bigMonjaPlayer);
-                                            }
-
-                                            foreach (PlayerControl player in MonjaFestival.greenTeam) {
-                                                player.transform.position = new Vector3(-9f, -2.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                            }
-
-                                            foreach (PlayerControl player in MonjaFestival.cyanTeam) {
-                                                player.transform.position = new Vector3(5f, -15.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                            }
-
-                                            if (PlayerControl.LocalPlayer != null && !createdmonjafestival) {
-                                                GameObject bigSpawnOne = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                                bigSpawnOne.name = "bigSpawnOne";
-                                                bigSpawnOne.transform.position = new Vector3(9.5f, 0.9f, 1f);
-                                                MonjaFestival.bigSpawnOne = bigSpawnOne;
-                                                MonjaFestival.bigSpawnOneCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.bigSpawnOne.transform);
-                                                MonjaFestival.bigSpawnOneCount.text = $"{MonjaFestival.bigSpawnOnePoints} / 30";
-                                                MonjaFestival.bigSpawnOneCount.enableWordWrapping = false;
-                                                MonjaFestival.bigSpawnOneCount.transform.localScale = Vector3.one * 0.5f;
-                                                MonjaFestival.bigSpawnOneCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                                GameObject bigSpawnTwo = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                                bigSpawnTwo.name = "bigSpawnTwo";
-                                                bigSpawnTwo.transform.position = new Vector3(-17.15f, -13.25f, 1f);
-                                                MonjaFestival.bigSpawnTwo = bigSpawnTwo;
-                                                MonjaFestival.bigSpawnTwoCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.bigSpawnTwo.transform);
-                                                MonjaFestival.bigSpawnTwoCount.text = $"{MonjaFestival.bigSpawnTwoPoints} / 30";
-                                                MonjaFestival.bigSpawnTwoCount.enableWordWrapping = false;
-                                                MonjaFestival.bigSpawnTwoCount.transform.localScale = Vector3.one * 0.5f;
-                                                MonjaFestival.bigSpawnTwoCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                                GameObject littleSpawnOne = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                                littleSpawnOne.name = "littleSpawnOne";
-                                                littleSpawnOne.transform.position = new Vector3(-20.5f, -5.5f, 0.5f);
-                                                MonjaFestival.littleSpawnOne = littleSpawnOne;
-                                                MonjaFestival.littleSpawnOneCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnOne.transform);
-                                                MonjaFestival.littleSpawnOneCount.text = $"{MonjaFestival.littleSpawnOnePoints} / 10";
-                                                MonjaFestival.littleSpawnOneCount.enableWordWrapping = false;
-                                                MonjaFestival.littleSpawnOneCount.transform.localScale = Vector3.one * 0.5f;
-                                                MonjaFestival.littleSpawnOneCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                                GameObject littleSpawnTwo = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                                littleSpawnTwo.name = "littleSpawnTwo";
-                                                littleSpawnTwo.transform.position = new Vector3(-0.75f, 5.25f, 0.5f);
-                                                MonjaFestival.littleSpawnTwo = littleSpawnTwo;
-                                                MonjaFestival.littleSpawnTwoCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnTwo.transform);
-                                                MonjaFestival.littleSpawnTwoCount.text = $"{MonjaFestival.littleSpawnTwoPoints} / 10";
-                                                MonjaFestival.littleSpawnTwoCount.enableWordWrapping = false;
-                                                MonjaFestival.littleSpawnTwoCount.transform.localScale = Vector3.one * 0.5f;
-                                                MonjaFestival.littleSpawnTwoCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                                GameObject littleSpawnThree = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                                littleSpawnThree.name = "littleSpawnThree";
-                                                littleSpawnThree.transform.position = new Vector3(-2.15f, -9.75f, 0.5f);
-                                                MonjaFestival.littleSpawnThree = littleSpawnThree;
-                                                MonjaFestival.littleSpawnThreeCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnThree.transform);
-                                                MonjaFestival.littleSpawnThreeCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
-                                                MonjaFestival.littleSpawnThreeCount.enableWordWrapping = false;
-                                                MonjaFestival.littleSpawnThreeCount.transform.localScale = Vector3.one * 0.5f;
-                                                MonjaFestival.littleSpawnThreeCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                                GameObject littleSpawnFour = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                                littleSpawnFour.name = "littleSpawnFour";
-                                                littleSpawnFour.transform.position = new Vector3(16.5f, -4.7f, 0.5f);
-                                                MonjaFestival.littleSpawnFour = littleSpawnFour;
-                                                MonjaFestival.littleSpawnFourCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnFour.transform);
-                                                MonjaFestival.littleSpawnFourCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
-                                                MonjaFestival.littleSpawnFourCount.enableWordWrapping = false;
-                                                MonjaFestival.littleSpawnFourCount.transform.localScale = Vector3.one * 0.5f;
-                                                MonjaFestival.littleSpawnFourCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                                GameObject greenBase = GameObject.Instantiate(CustomMain.customAssets.greenBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
-                                                greenBase.name = "greenBase";
-                                                greenBase.transform.position = new Vector3(-9f, -2.5f, 0.5f);
-                                                MonjaFestival.greenTeamBase = greenBase;
-                                                GameObject cyanBase = GameObject.Instantiate(CustomMain.customAssets.cyanBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
-                                                cyanBase.name = "cyanBase";
-                                                cyanBase.transform.position = new Vector3(5f, -15.5f, 0.5f);
-                                                MonjaFestival.cyanTeamBase = cyanBase;
-
-                                                GameObject allulMonja = GameObject.Instantiate(CustomMain.customAssets.floorAllulMonja, PlayerControl.LocalPlayer.transform.parent);
-                                                allulMonja.transform.position = new Vector3(-9.8f, -8.9f, 0.5f);
-                                                allulMonja.name = "allulMonja";
-                                                MonjaFestival.allulMonja = allulMonja;
-                                                Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.allulMonjaReload());
-
-                                                if (MonjaFestival.bigMonjaPlayer != null) {
-                                                    GameObject greyBase = GameObject.Instantiate(CustomMain.customAssets.greyBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
-                                                    greyBase.name = "greyBase";
-                                                    greyBase.transform.position = new Vector3(4.5f, -7.25f, 0.5f);
-                                                    MonjaFestival.bigMonjaBase = greyBase;
-                                                    MonjaFestival.bigMonjaSpawns.Add(greyBase);
-                                                }
-                                                MonjaFestival.bigMonjaSpawns.Add(bigSpawnOne);
-                                                MonjaFestival.bigMonjaSpawns.Add(bigSpawnTwo);
-                                                MonjaFestival.bigMonjaSpawns.Add(littleSpawnOne);
-                                                MonjaFestival.bigMonjaSpawns.Add(littleSpawnTwo);
-                                                MonjaFestival.bigMonjaSpawns.Add(littleSpawnThree);
-                                                MonjaFestival.bigMonjaSpawns.Add(littleSpawnFour);
-                                                MonjaFestival.bigMonjaSpawns.Add(greenBase);
-                                                MonjaFestival.bigMonjaSpawns.Add(cyanBase);
-                                                MonjaFestival.bigMonjaSpawns.Add(allulMonja);
-
-                                                GameObject skeldBigYVent = GameObject.Find("AdminVent");
-                                                skeldBigYVent.transform.position = new Vector3(2.25f, -15.25f, skeldBigYVent.transform.position.z);
-                                                createdmonjafestival = true;
-                                            }
-                                        }
-                                        break;
-                                }
-                                // Remove camera use and admin table on Skeld / Custom Skeld
-                                GameObject cameraStand = GameObject.Find("SurvConsole");
-                                cameraStand.GetComponent<PolygonCollider2D>().enabled = false;
-                                GameObject admin = GameObject.Find("MapRoomConsole");
-                                admin.GetComponent<CircleCollider2D>().enabled = false;
-                                break;
-                            // MiraHQ
-                            case 1:
-                                switch (gameType) {
-                                    case 2:
-                                        // CTF:
-                                        if (CaptureTheFlag.stealerPlayer != null) {
-                                            CaptureTheFlag.stealerPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                            CaptureTheFlag.stealerPlayer.transform.position = new Vector3(17.75f, 24f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(CaptureTheFlag.stealerPlayer);
-                                        }
-
-                                        foreach (PlayerControl player in CaptureTheFlag.redteamFlag) {
-                                            player.transform.position = new Vector3(2.53f, 10.75f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        foreach (PlayerControl player in CaptureTheFlag.blueteamFlag) {
-                                            player.transform.position = new Vector3(23.25f, 5.25f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdcapturetheflag) {
-                                            GameObject redflag = GameObject.Instantiate(CustomMain.customAssets.redflag, PlayerControl.LocalPlayer.transform.parent);
-                                            redflag.name = "redflag";
-                                            redflag.transform.position = new Vector3(2.525f, 10.55f, 0.5f);
-                                            CaptureTheFlag.redflag = redflag;
-                                            GameObject redflagbase = GameObject.Instantiate(CustomMain.customAssets.redflagbase, PlayerControl.LocalPlayer.transform.parent);
-                                            redflagbase.name = "redflagbase";
-                                            redflagbase.transform.position = new Vector3(2.53f, 10.5f, 1f);
-                                            CaptureTheFlag.redflagbase = redflagbase;
-                                            GameObject blueflag = GameObject.Instantiate(CustomMain.customAssets.blueflag, PlayerControl.LocalPlayer.transform.parent);
-                                            blueflag.name = "blueflag";
-                                            blueflag.transform.position = new Vector3(23.25f, 5.05f, 0.5f);
-                                            CaptureTheFlag.blueflag = blueflag;
-                                            GameObject blueflagbase = GameObject.Instantiate(CustomMain.customAssets.blueflagbase, PlayerControl.LocalPlayer.transform.parent);
-                                            blueflagbase.name = "blueflagbase";
-                                            blueflagbase.transform.position = new Vector3(23.25f, 5f, 1f);
-                                            CaptureTheFlag.blueflagbase = blueflagbase;
-                                            CaptureTheFlag.stealerSpawns.Add(redflagbase);
-                                            CaptureTheFlag.stealerSpawns.Add(blueflagbase);
-                                            createdcapturetheflag = true;
-                                        }
-                                        break;
-                                    case 3:
-                                        // PT:
-                                        foreach (PlayerControl player in PoliceAndThief.policeTeam) {
-                                            player.transform.position = new Vector3(1.8f, -1f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
-                                            player.transform.position = new Vector3(17.75f, 11.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                            if (player == PlayerControl.LocalPlayer) {
-                                                // Add Arrows pointing the release and deliver point
-                                                if (PoliceAndThief.localThiefReleaseArrow.Count == 0) {
-                                                    PoliceAndThief.localThiefReleaseArrow.Add(new Arrow(Palette.PlayerColors[10]));
-                                                    PoliceAndThief.localThiefReleaseArrow[0].arrow.SetActive(true);
-                                                }
-                                                if (PoliceAndThief.localThiefDeliverArrow.Count == 0) {
-                                                    PoliceAndThief.localThiefDeliverArrow.Add(new Arrow(Palette.PlayerColors[16]));
-                                                    PoliceAndThief.localThiefDeliverArrow[0].arrow.SetActive(true);
-                                                }
-                                            }
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdpoliceandthief) {
-                                            GameObject cell = GameObject.Instantiate(CustomMain.customAssets.cell, PlayerControl.LocalPlayer.transform.parent);
-                                            cell.name = "cell";
-                                            cell.transform.position = new Vector3(1.75f, 1.125f, 0.5f);
-                                            cell.gameObject.layer = 9;
-                                            cell.transform.GetChild(0).gameObject.layer = 9;
-                                            PoliceAndThief.cell = cell;
-                                            GameObject cellbutton = GameObject.Instantiate(CustomMain.customAssets.freethiefbutton, PlayerControl.LocalPlayer.transform.parent);
-                                            cellbutton.name = "cellbutton";
-                                            cellbutton.transform.position = new Vector3(1.8f, -1.25f, 0.5f);
-                                            PoliceAndThief.cellbutton = cellbutton;
-                                            GameObject jewelbutton = GameObject.Instantiate(CustomMain.customAssets.jewelbutton, PlayerControl.LocalPlayer.transform.parent);
-                                            jewelbutton.name = "jewelbutton";
-                                            jewelbutton.transform.position = new Vector3(18.5f, 13.85f, 0.5f);
-                                            PoliceAndThief.jewelbutton = jewelbutton;
-                                            GameObject thiefspaceship = GameObject.Instantiate(CustomMain.customAssets.thiefspaceship, PlayerControl.LocalPlayer.transform.parent);
-                                            thiefspaceship.name = "thiefspaceship";
-                                            thiefspaceship.transform.position = new Vector3(21.4f, 14.2f, 0.6f);
-                                            createdpoliceandthief = true;
-
-                                            // Spawn jewels
-                                            GameObject jewel01 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel01.transform.position = new Vector3(-4.5f, 2.5f, 1f);
-                                            jewel01.name = "jewel01";
-                                            PoliceAndThief.jewel01 = jewel01;
-                                            GameObject jewel02 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel02.transform.position = new Vector3(6.25f, 14f, 1f);
-                                            jewel02.name = "jewel02";
-                                            PoliceAndThief.jewel02 = jewel02;
-                                            GameObject jewel03 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel03.transform.position = new Vector3(9.15f, 4.75f, 1f);
-                                            jewel03.name = "jewel03";
-                                            PoliceAndThief.jewel03 = jewel03;
-                                            GameObject jewel04 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel04.transform.position = new Vector3(14.75f, 20.5f, 1f);
-                                            jewel04.name = "jewel04";
-                                            PoliceAndThief.jewel04 = jewel04;
-                                            GameObject jewel05 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel05.transform.position = new Vector3(19.5f, 17.5f, 1f);
-                                            jewel05.name = "jewel05";
-                                            PoliceAndThief.jewel05 = jewel05;
-                                            GameObject jewel06 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel06.transform.position = new Vector3(21, 24.1f, 1f);
-                                            jewel06.name = "jewel06";
-                                            PoliceAndThief.jewel06 = jewel06;
-                                            GameObject jewel07 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel07.transform.position = new Vector3(19.5f, 4.75f, 1f);
-                                            jewel07.name = "jewel07";
-                                            PoliceAndThief.jewel07 = jewel07;
-                                            GameObject jewel08 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel08.transform.position = new Vector3(28.25f, 0, 1f);
-                                            jewel08.name = "jewel08";
-                                            PoliceAndThief.jewel08 = jewel08;
-                                            GameObject jewel09 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel09.transform.position = new Vector3(2.45f, 11.25f, 1f);
-                                            jewel09.name = "jewel09";
-                                            PoliceAndThief.jewel09 = jewel09;
-                                            GameObject jewel10 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel10.transform.position = new Vector3(4.4f, 1.75f, 1f);
-                                            jewel10.name = "jewel10";
-                                            PoliceAndThief.jewel10 = jewel10;
-                                            GameObject jewel11 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel11.transform.position = new Vector3(9.25f, 13f, 1f);
-                                            jewel11.name = "jewel11";
-                                            PoliceAndThief.jewel11 = jewel11;
-                                            GameObject jewel12 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel12.transform.position = new Vector3(13.75f, 23.5f, 1f);
-                                            jewel12.name = "jewel12";
-                                            PoliceAndThief.jewel12 = jewel12;
-                                            GameObject jewel13 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel13.transform.position = new Vector3(16, 4, 1f);
-                                            jewel13.name = "jewel13";
-                                            PoliceAndThief.jewel13 = jewel13;
-                                            GameObject jewel14 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel14.transform.position = new Vector3(15.35f, -0.9f, 1f);
-                                            jewel14.name = "jewel14";
-                                            PoliceAndThief.jewel14 = jewel14;
-                                            GameObject jewel15 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel15.transform.position = new Vector3(19.5f, -1.75f, 1f);
-                                            jewel15.name = "jewel15";
-                                            PoliceAndThief.jewel15 = jewel15;
-                                            PoliceAndThief.thiefTreasures.Add(jewel01);
-                                            PoliceAndThief.thiefTreasures.Add(jewel02);
-                                            PoliceAndThief.thiefTreasures.Add(jewel03);
-                                            PoliceAndThief.thiefTreasures.Add(jewel04);
-                                            PoliceAndThief.thiefTreasures.Add(jewel05);
-                                            PoliceAndThief.thiefTreasures.Add(jewel06);
-                                            PoliceAndThief.thiefTreasures.Add(jewel07);
-                                            PoliceAndThief.thiefTreasures.Add(jewel08);
-                                            PoliceAndThief.thiefTreasures.Add(jewel09);
-                                            PoliceAndThief.thiefTreasures.Add(jewel10);
-                                            PoliceAndThief.thiefTreasures.Add(jewel11);
-                                            PoliceAndThief.thiefTreasures.Add(jewel12);
-                                            PoliceAndThief.thiefTreasures.Add(jewel13);
-                                            PoliceAndThief.thiefTreasures.Add(jewel14);
-                                            PoliceAndThief.thiefTreasures.Add(jewel15);
-                                        }
-                                        break;
-                                    case 4:
-                                        // KOTH:
-                                        if (KingOfTheHill.usurperPlayer != null) {
-                                            KingOfTheHill.usurperPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                            KingOfTheHill.usurperPlayer.transform.position = new Vector3(2.5f, 11f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(KingOfTheHill.usurperPlayer);
-                                        }
-
-                                        foreach (PlayerControl player in KingOfTheHill.greenTeam) {
-                                            player.transform.position = new Vector3(-4.45f, 1.75f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        foreach (PlayerControl player in KingOfTheHill.yellowTeam) {
-                                            player.transform.position = new Vector3(19.5f, 4.7f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdkingofthehill) {
-                                            GameObject greenteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
-                                            greenteamfloor.name = "greenteamfloor";
-                                            greenteamfloor.transform.position = new Vector3(-4.45f, 1.5f, 0.5f);
-                                            GameObject yellowteamfloor = GameObject.Instantiate(CustomMain.customAssets.yellowfloor, PlayerControl.LocalPlayer.transform.parent);
-                                            yellowteamfloor.name = "yellowteamfloor";
-                                            yellowteamfloor.transform.position = new Vector3(19.5f, 4.45f, 0.5f);
-                                            GameObject greenkingaura = GameObject.Instantiate(CustomMain.customAssets.greenaura, KingOfTheHill.greenKingplayer.transform);
-                                            greenkingaura.name = "greenkingaura";
-                                            greenkingaura.transform.position = new Vector3(KingOfTheHill.greenKingplayer.transform.position.x, KingOfTheHill.greenKingplayer.transform.position.y, 0.4f);
-                                            KingOfTheHill.greenkingaura = greenkingaura;
-                                            GameObject yellowkingaura = GameObject.Instantiate(CustomMain.customAssets.yellowaura, KingOfTheHill.yellowKingplayer.transform);
-                                            yellowkingaura.name = "yellowkingaura";
-                                            yellowkingaura.transform.position = new Vector3(KingOfTheHill.yellowKingplayer.transform.position.x, KingOfTheHill.yellowKingplayer.transform.position.y, 0.4f);
-                                            KingOfTheHill.yellowkingaura = yellowkingaura;
-                                            GameObject flagzoneone = GameObject.Instantiate(CustomMain.customAssets.whiteflag, PlayerControl.LocalPlayer.transform.parent);
-                                            flagzoneone.name = "flagzoneone";
-                                            flagzoneone.transform.position = new Vector3(15.25f, 4f, 0.4f);
-                                            KingOfTheHill.flagzoneone = flagzoneone;
-                                            GameObject zoneone = GameObject.Instantiate(CustomMain.customAssets.whitebase, PlayerControl.LocalPlayer.transform.parent);
-                                            zoneone.name = "zoneone";
-                                            zoneone.transform.position = new Vector3(15.25f, 4f, 0.5f);
-                                            KingOfTheHill.zoneone = zoneone;
-                                            GameObject flagzonetwo = GameObject.Instantiate(CustomMain.customAssets.whiteflag, PlayerControl.LocalPlayer.transform.parent);
-                                            flagzonetwo.name = "flagzonetwo";
-                                            flagzonetwo.transform.position = new Vector3(17.85f, 19.5f, 0.4f);
-                                            KingOfTheHill.flagzonetwo = flagzonetwo;
-                                            GameObject zonetwo = GameObject.Instantiate(CustomMain.customAssets.whitebase, PlayerControl.LocalPlayer.transform.parent);
-                                            zonetwo.name = "zonetwo";
-                                            zonetwo.transform.position = new Vector3(17.85f, 19.5f, 0.5f);
-                                            KingOfTheHill.zonetwo = zonetwo;
-                                            GameObject flagzonethree = GameObject.Instantiate(CustomMain.customAssets.whiteflag, PlayerControl.LocalPlayer.transform.parent);
-                                            flagzonethree.name = "flagzonethree";
-                                            flagzonethree.transform.position = new Vector3(6.15f, 12.5f, 0.4f);
-                                            KingOfTheHill.flagzonethree = flagzonethree;
-                                            GameObject zonethree = GameObject.Instantiate(CustomMain.customAssets.whitebase, PlayerControl.LocalPlayer.transform.parent);
-                                            zonethree.name = "zonethree";
-                                            zonethree.transform.position = new Vector3(6.15f, 12.5f, 0.5f);
-                                            KingOfTheHill.zonethree = zonethree;
-                                            KingOfTheHill.kingZones.Add(zoneone);
-                                            KingOfTheHill.kingZones.Add(zonetwo);
-                                            KingOfTheHill.kingZones.Add(zonethree);
-                                            KingOfTheHill.usurperSpawns.Add(greenteamfloor);
-                                            KingOfTheHill.usurperSpawns.Add(yellowteamfloor);
-                                            createdkingofthehill = true;
-                                        }
-                                        break;
-                                    case 5:
-                                        // HP:
-                                        HotPotato.hotPotatoPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                        HotPotato.hotPotatoPlayer.transform.position = new Vector3(6.15f, 6.25f, PlayerControl.LocalPlayer.transform.position.z);
-                                        Helpers.clearAllTasks(HotPotato.hotPotatoPlayer);
-
-                                        foreach (PlayerControl player in HotPotato.notPotatoTeam) {
-                                            player.transform.position = new Vector3(17.75f, 11.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdhotpotato) {
-                                            GameObject hotpotato = GameObject.Instantiate(CustomMain.customAssets.hotPotato, HotPotato.hotPotatoPlayer.transform);
-                                            hotpotato.name = "hotpotato";
-                                            hotpotato.transform.position = HotPotato.hotPotatoPlayer.transform.position + new Vector3(0, 0.5f, -0.25f);
-                                            HotPotato.hotPotato = hotpotato;
-                                            createdhotpotato = true;
-                                        }
-                                        break;
-                                    case 6:
-                                        // ZL:
-                                        foreach (PlayerControl player in ZombieLaboratory.zombieTeam) {
-                                            player.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                            player.transform.position = new Vector3(18.5f, -1.85f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        foreach (PlayerControl player in ZombieLaboratory.survivorTeam) {
-                                            if (player == PlayerControl.LocalPlayer && PlayerControl.LocalPlayer != ZombieLaboratory.nursePlayer) {
-                                                player.transform.position = new Vector3(6.1f, 5.75f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                                // Add Arrows pointing the deliver point
-                                                if (ZombieLaboratory.localSurvivorsDeliverArrow.Count == 0) {
-                                                    ZombieLaboratory.localSurvivorsDeliverArrow.Add(new Arrow(Palette.PlayerColors[3]));
-                                                    ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(true);
-                                                }
-                                            }
-                                        }
-
-                                        if (PlayerControl.LocalPlayer == ZombieLaboratory.nursePlayer) {
-                                            ZombieLaboratory.nursePlayer.transform.position = new Vector3(1.8f, 1.25f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(ZombieLaboratory.nursePlayer);
-                                            GameObject mapMedKit = GameObject.Instantiate(CustomMain.customAssets.mapMedKit, PlayerControl.LocalPlayer.transform.parent);
-                                            mapMedKit.name = "mapMedKit";
-                                            mapMedKit.transform.position = new Vector3(16.25f, 0.25f, -0.1f);
-                                            GameObject mapMedKittwo = GameObject.Instantiate(CustomMain.customAssets.mapMedKit, PlayerControl.LocalPlayer.transform.parent);
-                                            mapMedKittwo.name = "mapMedKittwo";
-                                            mapMedKittwo.transform.position = new Vector3(8.5f, 13.75f, -0.1f);
-                                            GameObject mapMedKitthree = GameObject.Instantiate(CustomMain.customAssets.mapMedKit, PlayerControl.LocalPlayer.transform.parent);
-                                            mapMedKitthree.name = "mapMedKitthree";
-                                            mapMedKitthree.transform.position = new Vector3(-4.5f, 3.5f, -0.1f);
-                                            ZombieLaboratory.nurseMedkits.Add(mapMedKit);
-                                            ZombieLaboratory.nurseMedkits.Add(mapMedKittwo);
-                                            ZombieLaboratory.nurseMedkits.Add(mapMedKitthree);
-                                            // Add Arrows pointing the medkit only for nurse
-                                            if (ZombieLaboratory.localNurseArrows.Count == 0 && ZombieLaboratory.localNurseArrows.Count < 3) {
-                                                ZombieLaboratory.localNurseArrows.Add(new Arrow(Shy.color));
-                                                ZombieLaboratory.localNurseArrows.Add(new Arrow(Shy.color));
-                                                ZombieLaboratory.localNurseArrows.Add(new Arrow(Shy.color));
-                                            }
-                                            ZombieLaboratory.localNurseArrows[0].arrow.SetActive(true);
-                                            ZombieLaboratory.localNurseArrows[1].arrow.SetActive(true);
-                                            ZombieLaboratory.localNurseArrows[2].arrow.SetActive(true);
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdzombielaboratory) {
-                                            GameObject laboratory = GameObject.Instantiate(CustomMain.customAssets.laboratory, PlayerControl.LocalPlayer.transform.parent);
-                                            laboratory.name = "laboratory";
-                                            laboratory.transform.position = new Vector3(1.75f, 1.125f, 0.5f);
-                                            laboratory.gameObject.layer = 9;
-                                            laboratory.transform.GetChild(0).gameObject.layer = 9;
-                                            ZombieLaboratory.laboratory = laboratory;
-                                            ZombieLaboratory.laboratoryEnterButton = laboratory.transform.GetChild(1).gameObject;
-                                            ZombieLaboratory.laboratoryExitButton = laboratory.transform.GetChild(2).gameObject;
-                                            ZombieLaboratory.laboratoryCreateCureButton = laboratory.transform.GetChild(3).gameObject;
-                                            ZombieLaboratory.laboratoryPutKeyItemButton = laboratory.transform.GetChild(4).gameObject;
-                                            ZombieLaboratory.laboratoryExitLeftButton = laboratory.transform.GetChild(5).gameObject;
-                                            ZombieLaboratory.laboratoryExitRightButton = laboratory.transform.GetChild(6).gameObject;
-                                            ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratoryEnterButton);
-                                            ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratoryExitButton);
-                                            ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratoryExitLeftButton);
-                                            ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratoryExitRightButton);
-
-                                            GameObject nurseMedKit = GameObject.Instantiate(CustomMain.customAssets.nurseMedKit, PlayerControl.LocalPlayer.transform.parent);
-                                            nurseMedKit.name = "nurseMedKit";
-                                            nurseMedKit.transform.parent = ZombieLaboratory.nursePlayer.transform;
-                                            nurseMedKit.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
-                                            ZombieLaboratory.laboratoryNurseMedKit = nurseMedKit;
-                                            ZombieLaboratory.laboratoryNurseMedKit.SetActive(false);
-                                            ZombieLaboratory.laboratoryEntrances.Add(ZombieLaboratory.laboratoryEnterButton);
-                                            createdzombielaboratory = true;
-                                        }
-                                        break;
-                                    case 7:
-                                        // BR:
-                                        if (BattleRoyale.matchType == 0) {
-                                            foreach (PlayerControl soloPlayer in BattleRoyale.soloPlayerTeam) {
-                                                soloPlayer.transform.position = new Vector3(BattleRoyale.soloPlayersSpawnPositions[howmanyBattleRoyaleplayers].x, BattleRoyale.soloPlayersSpawnPositions[howmanyBattleRoyaleplayers].y, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(soloPlayer);
-                                                howmanyBattleRoyaleplayers += 1;
-                                            }
-                                        }
-                                        else {
-                                            if (BattleRoyale.serialKiller != null) {
-                                                BattleRoyale.serialKiller.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                                BattleRoyale.serialKiller.transform.position = new Vector3(16.25f, 24.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(BattleRoyale.serialKiller);
-                                            }
-
-                                            foreach (PlayerControl player in BattleRoyale.limeTeam) {
-                                                player.transform.position = new Vector3(6.15f, 13.25f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                            }
-
-                                            foreach (PlayerControl player in BattleRoyale.pinkTeam) {
-                                                player.transform.position = new Vector3(22.25f, 3f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                            }
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdbattleroyale) {
-                                            if (BattleRoyale.matchType != 0) {
-                                                GameObject limeteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
-                                                limeteamfloor.name = "limeteamfloor";
-                                                limeteamfloor.transform.position = new Vector3(6.15f, 13.25f, 0.5f);
-                                                GameObject pinkteamfloor = GameObject.Instantiate(CustomMain.customAssets.redfloor, PlayerControl.LocalPlayer.transform.parent);
-                                                pinkteamfloor.name = "pinkteamfloor";
-                                                pinkteamfloor.transform.position = new Vector3(22.25f, 3f, 0.5f);
-                                                BattleRoyale.serialKillerSpawns.Add(limeteamfloor);
-                                                BattleRoyale.serialKillerSpawns.Add(pinkteamfloor);
-                                            }
-                                            createdbattleroyale = true;
-                                        }
-                                        break;
-                                    case 8:
-                                        // MF:
-                                        if (MonjaFestival.bigMonjaPlayer != null) {
-                                            MonjaFestival.bigMonjaPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                            MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-4.45f, 2f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(MonjaFestival.bigMonjaPlayer);
-                                        }
-
-                                        foreach (PlayerControl player in MonjaFestival.greenTeam) {
-                                            player.transform.position = new Vector3(23f, 4.75f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        foreach (PlayerControl player in MonjaFestival.cyanTeam) {
-                                            player.transform.position = new Vector3(8.5f, 13f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdmonjafestival) {
-                                            GameObject bigSpawnOne = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                            bigSpawnOne.name = "bigSpawnOne";
-                                            bigSpawnOne.transform.position = new Vector3(15.25f, 4f, 1f);
-                                            MonjaFestival.bigSpawnOne = bigSpawnOne;
-                                            MonjaFestival.bigSpawnOneCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.bigSpawnOne.transform);
-                                            MonjaFestival.bigSpawnOneCount.text = $"{MonjaFestival.bigSpawnOnePoints} / 30";
-                                            MonjaFestival.bigSpawnOneCount.enableWordWrapping = false;
-                                            MonjaFestival.bigSpawnOneCount.transform.localScale = Vector3.one * 0.5f;
-                                            MonjaFestival.bigSpawnOneCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                            GameObject bigSpawnTwo = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                            bigSpawnTwo.name = "bigSpawnTwo";
-                                            bigSpawnTwo.transform.position = new Vector3(17.85f, 23.25f, 1f);
-                                            MonjaFestival.bigSpawnTwo = bigSpawnTwo;
-                                            MonjaFestival.bigSpawnTwoCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.bigSpawnTwo.transform);
-                                            MonjaFestival.bigSpawnTwoCount.text = $"{MonjaFestival.bigSpawnTwoPoints} / 30";
-                                            MonjaFestival.bigSpawnTwoCount.enableWordWrapping = false;
-                                            MonjaFestival.bigSpawnTwoCount.transform.localScale = Vector3.one * 0.5f;
-                                            MonjaFestival.bigSpawnTwoCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                            GameObject littleSpawnOne = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                            littleSpawnOne.name = "littleSpawnOne";
-                                            littleSpawnOne.transform.position = new Vector3(19.5f, 4.55f, 0.5f);
-                                            MonjaFestival.littleSpawnOne = littleSpawnOne;
-                                            MonjaFestival.littleSpawnOneCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnOne.transform);
-                                            MonjaFestival.littleSpawnOneCount.text = $"{MonjaFestival.littleSpawnOnePoints} / 10";
-                                            MonjaFestival.littleSpawnOneCount.enableWordWrapping = false;
-                                            MonjaFestival.littleSpawnOneCount.transform.localScale = Vector3.one * 0.5f;
-                                            MonjaFestival.littleSpawnOneCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                            GameObject littleSpawnTwo = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                            littleSpawnTwo.name = "littleSpawnTwo";
-                                            littleSpawnTwo.transform.position = new Vector3(15f, 19.25f, 0.5f);
-                                            MonjaFestival.littleSpawnTwo = littleSpawnTwo;
-                                            MonjaFestival.littleSpawnTwoCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnTwo.transform);
-                                            MonjaFestival.littleSpawnTwoCount.text = $"{MonjaFestival.littleSpawnTwoPoints} / 10";
-                                            MonjaFestival.littleSpawnTwoCount.enableWordWrapping = false;
-                                            MonjaFestival.littleSpawnTwoCount.transform.localScale = Vector3.one * 0.5f;
-                                            MonjaFestival.littleSpawnTwoCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                            GameObject littleSpawnThree = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                            littleSpawnThree.name = "littleSpawnThree";
-                                            littleSpawnThree.transform.position = new Vector3(14.5f, 0.25f, 0.5f);
-                                            MonjaFestival.littleSpawnThree = littleSpawnThree;
-                                            MonjaFestival.littleSpawnThreeCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnThree.transform);
-                                            MonjaFestival.littleSpawnThreeCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
-                                            MonjaFestival.littleSpawnThreeCount.enableWordWrapping = false;
-                                            MonjaFestival.littleSpawnThreeCount.transform.localScale = Vector3.one * 0.5f;
-                                            MonjaFestival.littleSpawnThreeCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                            GameObject littleSpawnFour = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                            littleSpawnFour.name = "littleSpawnFour";
-                                            littleSpawnFour.transform.position = new Vector3(2.35f, 11.15f, 0.5f);
-                                            MonjaFestival.littleSpawnFour = littleSpawnFour;
-                                            MonjaFestival.littleSpawnFourCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnFour.transform);
-                                            MonjaFestival.littleSpawnFourCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
-                                            MonjaFestival.littleSpawnFourCount.enableWordWrapping = false;
-                                            MonjaFestival.littleSpawnFourCount.transform.localScale = Vector3.one * 0.5f;
-                                            MonjaFestival.littleSpawnFourCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                            GameObject greenBase = GameObject.Instantiate(CustomMain.customAssets.greenBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
-                                            greenBase.name = "greenBase";
-                                            greenBase.transform.position = new Vector3(23f, 4.75f, 0.5f);
-                                            MonjaFestival.greenTeamBase = greenBase;
-                                            GameObject cyanBase = GameObject.Instantiate(CustomMain.customAssets.cyanBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
-                                            cyanBase.name = "cyanBase";
-                                            cyanBase.transform.position = new Vector3(8.5f, 13f, 0.5f);
-                                            MonjaFestival.cyanTeamBase = cyanBase;
-
-                                            GameObject allulMonja = GameObject.Instantiate(CustomMain.customAssets.floorAllulMonja, PlayerControl.LocalPlayer.transform.parent);
-                                            allulMonja.transform.position = new Vector3(9.2f, 5f, 0.5f);
-                                            allulMonja.name = "allulMonja";
-                                            MonjaFestival.allulMonja = allulMonja;
-                                            Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.allulMonjaReload());
-
-                                            if (MonjaFestival.bigMonjaPlayer != null) {
-                                                GameObject greyBase = GameObject.Instantiate(CustomMain.customAssets.greyBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
-                                                greyBase.name = "greyBase";
-                                                greyBase.transform.position = new Vector3(-4.45f, 2f, 0.5f);
-                                                MonjaFestival.bigMonjaBase = greyBase;
-                                                MonjaFestival.bigMonjaSpawns.Add(greyBase);
-                                            }
-                                            MonjaFestival.bigMonjaSpawns.Add(bigSpawnOne);
-                                            MonjaFestival.bigMonjaSpawns.Add(bigSpawnTwo);
-                                            MonjaFestival.bigMonjaSpawns.Add(littleSpawnOne);
-                                            MonjaFestival.bigMonjaSpawns.Add(littleSpawnTwo);
-                                            MonjaFestival.bigMonjaSpawns.Add(littleSpawnThree);
-                                            MonjaFestival.bigMonjaSpawns.Add(littleSpawnFour);
-                                            MonjaFestival.bigMonjaSpawns.Add(greenBase);
-                                            MonjaFestival.bigMonjaSpawns.Add(cyanBase);
-                                            MonjaFestival.bigMonjaSpawns.Add(allulMonja);
-                                            createdmonjafestival = true;
-                                        }
-                                        break;
-                                }
-                                // Remove Doorlog use, Decontamination doors and admin table on MiraHQ
-                                GameObject DoorLog = GameObject.Find("SurvLogConsole");
-                                DoorLog.GetComponent<BoxCollider2D>().enabled = false;
-                                GameObject deconUpperDoor = GameObject.Find("UpperDoor");
-                                deconUpperDoor.SetActive(false);
-                                GameObject deconLowerDoor = GameObject.Find("LowerDoor");
-                                deconLowerDoor.SetActive(false);
-                                GameObject deconUpperDoorPanelTop = GameObject.Find("DeconDoorPanel-Top");
-                                deconUpperDoorPanelTop.SetActive(false);
-                                GameObject deconUpperDoorPanelHigh = GameObject.Find("DeconDoorPanel-High");
-                                deconUpperDoorPanelHigh.SetActive(false);
-                                GameObject deconUpperDoorPanelBottom = GameObject.Find("DeconDoorPanel-Bottom");
-                                deconUpperDoorPanelBottom.SetActive(false);
-                                GameObject deconUpperDoorPanelLow = GameObject.Find("DeconDoorPanel-Low");
-                                deconUpperDoorPanelLow.SetActive(false);
-                                GameObject miraAdmin = GameObject.Find("AdminMapConsole");
-                                miraAdmin.GetComponent<CircleCollider2D>().enabled = false;
-                                break;
-                            // Polus
+                        switch (gameType) {
                             case 2:
-                                switch (gameType) {
-                                    case 2:
-                                        // CTF:
-                                        if (CaptureTheFlag.stealerPlayer != null) {
-                                            CaptureTheFlag.stealerPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                            CaptureTheFlag.stealerPlayer.transform.position = new Vector3(31.75f, -13f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(CaptureTheFlag.stealerPlayer);
-                                        }
-
-                                        foreach (PlayerControl player in CaptureTheFlag.redteamFlag) {
-                                            player.transform.position = new Vector3(36.4f, -21.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        foreach (PlayerControl player in CaptureTheFlag.blueteamFlag) {
-                                            player.transform.position = new Vector3(5.4f, -9.45f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdcapturetheflag) {
-                                            GameObject redflag = GameObject.Instantiate(CustomMain.customAssets.redflag, PlayerControl.LocalPlayer.transform.parent);
-                                            redflag.name = "redflag";
-                                            redflag.transform.position = new Vector3(36.4f, -21.7f, 0.5f);
-                                            CaptureTheFlag.redflag = redflag;
-                                            GameObject redflagbase = GameObject.Instantiate(CustomMain.customAssets.redflagbase, PlayerControl.LocalPlayer.transform.parent);
-                                            redflagbase.name = "redflagbase";
-                                            redflagbase.transform.position = new Vector3(36.4f, -21.75f, 1f);
-                                            CaptureTheFlag.redflagbase = redflagbase;
-                                            GameObject blueflag = GameObject.Instantiate(CustomMain.customAssets.blueflag, PlayerControl.LocalPlayer.transform.parent);
-                                            blueflag.name = "blueflag";
-                                            blueflag.transform.position = new Vector3(5.4f, -9.65f, 0.5f);
-                                            CaptureTheFlag.blueflag = blueflag;
-                                            GameObject blueflagbase = GameObject.Instantiate(CustomMain.customAssets.blueflagbase, PlayerControl.LocalPlayer.transform.parent);
-                                            blueflagbase.name = "blueflagbase";
-                                            blueflagbase.transform.position = new Vector3(5.4f, -9.7f, 1f);
-                                            CaptureTheFlag.blueflagbase = blueflagbase;
-                                            CaptureTheFlag.stealerSpawns.Add(redflagbase);
-                                            CaptureTheFlag.stealerSpawns.Add(blueflagbase);
-                                            createdcapturetheflag = true;
-                                        }
-                                        break;
-                                    case 3:
-                                        // PT:
-                                        foreach (PlayerControl player in PoliceAndThief.policeTeam) {
-                                            player.transform.position = new Vector3(8.18f, -7.4f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
-                                            player.transform.position = new Vector3(30f, -15.75f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                            if (player == PlayerControl.LocalPlayer) {
-                                                // Add Arrows pointing the release and deliver point
-                                                if (PoliceAndThief.localThiefReleaseArrow.Count == 0) {
-                                                    PoliceAndThief.localThiefReleaseArrow.Add(new Arrow(Palette.PlayerColors[10]));
-                                                    PoliceAndThief.localThiefReleaseArrow[0].arrow.SetActive(true);
-                                                }
-                                                if (PoliceAndThief.localThiefDeliverArrow.Count == 0) {
-                                                    PoliceAndThief.localThiefDeliverArrow.Add(new Arrow(Palette.PlayerColors[16]));
-                                                    PoliceAndThief.localThiefDeliverArrow[0].arrow.SetActive(true);
-                                                }
-                                            }
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdpoliceandthief) {
-                                            GameObject cell = GameObject.Instantiate(CustomMain.customAssets.cell, PlayerControl.LocalPlayer.transform.parent);
-                                            cell.name = "cell";
-                                            cell.transform.position = new Vector3(8.25f, -5.15f, 0.5f);
-                                            cell.gameObject.layer = 9;
-                                            cell.transform.GetChild(0).gameObject.layer = 9;
-                                            PoliceAndThief.cell = cell;
-                                            GameObject cellbutton = GameObject.Instantiate(CustomMain.customAssets.freethiefbutton, PlayerControl.LocalPlayer.transform.parent);
-                                            cellbutton.name = "cellbutton";
-                                            cellbutton.transform.position = new Vector3(8.2f, -7.5f, 0.5f);
-                                            PoliceAndThief.cellbutton = cellbutton;
-                                            GameObject jewelbutton = GameObject.Instantiate(CustomMain.customAssets.jewelbutton, PlayerControl.LocalPlayer.transform.parent);
-                                            jewelbutton.name = "jewelbutton";
-                                            jewelbutton.transform.position = new Vector3(32.25f, -15.9f, 0.5f);
-                                            PoliceAndThief.jewelbutton = jewelbutton;
-                                            GameObject thiefspaceship = GameObject.Instantiate(CustomMain.customAssets.thiefspaceship, PlayerControl.LocalPlayer.transform.parent);
-                                            thiefspaceship.name = "thiefspaceship";
-                                            thiefspaceship.transform.position = new Vector3(35.35f, -15.55f, 0.8f);
-                                            createdpoliceandthief = true;
-
-                                            // Spawn jewels
-                                            GameObject jewel01 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel01.transform.position = new Vector3(16.7f, -2.65f, 0.75f);
-                                            jewel01.name = "jewel01";
-                                            PoliceAndThief.jewel01 = jewel01;
-                                            GameObject jewel02 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel02.transform.position = new Vector3(25.35f, -7.35f, 0.75f);
-                                            jewel02.name = "jewel02";
-                                            PoliceAndThief.jewel02 = jewel02;
-                                            GameObject jewel03 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel03.transform.position = new Vector3(34.9f, -9.75f, 0.75f);
-                                            jewel03.name = "jewel03";
-                                            PoliceAndThief.jewel03 = jewel03;
-                                            GameObject jewel04 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel04.transform.position = new Vector3(36.5f, -21.75f, 0.75f);
-                                            jewel04.name = "jewel04";
-                                            PoliceAndThief.jewel04 = jewel04;
-                                            GameObject jewel05 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel05.transform.position = new Vector3(17.25f, -17.5f, 0.75f);
-                                            jewel05.name = "jewel05";
-                                            PoliceAndThief.jewel05 = jewel05;
-                                            GameObject jewel06 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel06.transform.position = new Vector3(10.9f, -20.5f, -0.75f);
-                                            jewel06.name = "jewel06";
-                                            PoliceAndThief.jewel06 = jewel06;
-                                            GameObject jewel07 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel07.transform.position = new Vector3(1.5f, -20.25f, 0.75f);
-                                            jewel07.name = "jewel07";
-                                            PoliceAndThief.jewel07 = jewel07;
-                                            GameObject jewel08 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel08.transform.position = new Vector3(3f, -12f, 0.75f);
-                                            jewel08.name = "jewel08";
-                                            PoliceAndThief.jewel08 = jewel08;
-                                            GameObject jewel09 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel09.transform.position = new Vector3(30f, -7.35f, 0.75f);
-                                            jewel09.name = "jewel09";
-                                            PoliceAndThief.jewel09 = jewel09;
-                                            GameObject jewel10 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel10.transform.position = new Vector3(40.25f, -8f, 0.75f);
-                                            jewel10.name = "jewel10";
-                                            PoliceAndThief.jewel10 = jewel10;
-                                            GameObject jewel11 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel11.transform.position = new Vector3(26f, -17.15f, 0.75f);
-                                            jewel11.name = "jewel11";
-                                            PoliceAndThief.jewel11 = jewel11;
-                                            GameObject jewel12 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel12.transform.position = new Vector3(22f, -25.25f, 0.75f);
-                                            jewel12.name = "jewel12";
-                                            PoliceAndThief.jewel12 = jewel12;
-                                            GameObject jewel13 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel13.transform.position = new Vector3(20.65f, -12f, 0.75f);
-                                            jewel13.name = "jewel13";
-                                            PoliceAndThief.jewel13 = jewel13;
-                                            GameObject jewel14 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel14.transform.position = new Vector3(9.75f, -12.25f, 0.75f);
-                                            jewel14.name = "jewel14";
-                                            PoliceAndThief.jewel14 = jewel14;
-                                            GameObject jewel15 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel15.transform.position = new Vector3(2.25f, -24f, 0.75f);
-                                            jewel15.name = "jewel15";
-                                            PoliceAndThief.jewel15 = jewel15;
-                                            PoliceAndThief.thiefTreasures.Add(jewel01);
-                                            PoliceAndThief.thiefTreasures.Add(jewel02);
-                                            PoliceAndThief.thiefTreasures.Add(jewel03);
-                                            PoliceAndThief.thiefTreasures.Add(jewel04);
-                                            PoliceAndThief.thiefTreasures.Add(jewel05);
-                                            PoliceAndThief.thiefTreasures.Add(jewel06);
-                                            PoliceAndThief.thiefTreasures.Add(jewel07);
-                                            PoliceAndThief.thiefTreasures.Add(jewel08);
-                                            PoliceAndThief.thiefTreasures.Add(jewel09);
-                                            PoliceAndThief.thiefTreasures.Add(jewel10);
-                                            PoliceAndThief.thiefTreasures.Add(jewel11);
-                                            PoliceAndThief.thiefTreasures.Add(jewel12);
-                                            PoliceAndThief.thiefTreasures.Add(jewel13);
-                                            PoliceAndThief.thiefTreasures.Add(jewel14);
-                                            PoliceAndThief.thiefTreasures.Add(jewel15);
-                                        }
-                                        break;
-                                    case 4:
-                                        // KOTH:
-                                        if (KingOfTheHill.usurperPlayer != null) {
-                                            KingOfTheHill.usurperPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                            KingOfTheHill.usurperPlayer.transform.position = new Vector3(20.5f, -12f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(KingOfTheHill.usurperPlayer);
-                                        }
-
-                                        foreach (PlayerControl player in KingOfTheHill.greenTeam) {
-                                            player.transform.position = new Vector3(2.25f, -23.75f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        foreach (PlayerControl player in KingOfTheHill.yellowTeam) {
-                                            player.transform.position = new Vector3(36.35f, -6.15f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdkingofthehill) {
-                                            GameObject greenteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
-                                            greenteamfloor.name = "greenteamfloor";
-                                            greenteamfloor.transform.position = new Vector3(2.25f, -24f, 0.5f);
-                                            GameObject yellowteamfloor = GameObject.Instantiate(CustomMain.customAssets.yellowfloor, PlayerControl.LocalPlayer.transform.parent);
-                                            yellowteamfloor.name = "yellowteamfloor";
-                                            yellowteamfloor.transform.position = new Vector3(36.35f, -6.4f, 0.5f);
-                                            GameObject greenkingaura = GameObject.Instantiate(CustomMain.customAssets.greenaura, KingOfTheHill.greenKingplayer.transform);
-                                            greenkingaura.name = "greenkingaura";
-                                            greenkingaura.transform.position = new Vector3(KingOfTheHill.greenKingplayer.transform.position.x, KingOfTheHill.greenKingplayer.transform.position.y, 0.4f);
-                                            KingOfTheHill.greenkingaura = greenkingaura;
-                                            GameObject yellowkingaura = GameObject.Instantiate(CustomMain.customAssets.yellowaura, KingOfTheHill.yellowKingplayer.transform);
-                                            yellowkingaura.name = "yellowkingaura";
-                                            yellowkingaura.transform.position = new Vector3(KingOfTheHill.yellowKingplayer.transform.position.x, KingOfTheHill.yellowKingplayer.transform.position.y, 0.4f);
-                                            KingOfTheHill.yellowkingaura = yellowkingaura;
-                                            GameObject flagzoneone = GameObject.Instantiate(CustomMain.customAssets.whiteflag, PlayerControl.LocalPlayer.transform.parent);
-                                            flagzoneone.name = "flagzoneone";
-                                            flagzoneone.transform.position = new Vector3(15f, -13.5f, 0.4f);
-                                            KingOfTheHill.flagzoneone = flagzoneone;
-                                            GameObject zoneone = GameObject.Instantiate(CustomMain.customAssets.whitebase, PlayerControl.LocalPlayer.transform.parent);
-                                            zoneone.name = "zoneone";
-                                            zoneone.transform.position = new Vector3(15f, -13.5f, 0.5f);
-                                            KingOfTheHill.zoneone = zoneone;
-                                            GameObject flagzonetwo = GameObject.Instantiate(CustomMain.customAssets.whiteflag, PlayerControl.LocalPlayer.transform.parent);
-                                            flagzonetwo.name = "flagzonetwo";
-                                            flagzonetwo.transform.position = new Vector3(20.75f, -22.75f, 0.4f);
-                                            KingOfTheHill.flagzonetwo = flagzonetwo;
-                                            GameObject zonetwo = GameObject.Instantiate(CustomMain.customAssets.whitebase, PlayerControl.LocalPlayer.transform.parent);
-                                            zonetwo.name = "zonetwo";
-                                            zonetwo.transform.position = new Vector3(20.75f, -22.75f, 0.5f);
-                                            KingOfTheHill.zonetwo = zonetwo;
-                                            GameObject flagzonethree = GameObject.Instantiate(CustomMain.customAssets.whiteflag, PlayerControl.LocalPlayer.transform.parent);
-                                            flagzonethree.name = "flagzonethree";
-                                            flagzonethree.transform.position = new Vector3(16.65f, -1.5f, 0.4f);
-                                            KingOfTheHill.flagzonethree = flagzonethree;
-                                            GameObject zonethree = GameObject.Instantiate(CustomMain.customAssets.whitebase, PlayerControl.LocalPlayer.transform.parent);
-                                            zonethree.name = "zonethree";
-                                            zonethree.transform.position = new Vector3(16.65f, -1.5f, 0.5f);
-                                            KingOfTheHill.zonethree = zonethree;
-                                            KingOfTheHill.kingZones.Add(zoneone);
-                                            KingOfTheHill.kingZones.Add(zonetwo);
-                                            KingOfTheHill.kingZones.Add(zonethree);
-                                            KingOfTheHill.usurperSpawns.Add(greenteamfloor);
-                                            KingOfTheHill.usurperSpawns.Add(yellowteamfloor);
-                                            createdkingofthehill = true;
-                                        }
-                                        break;
-                                    case 5:
-                                        // HP:
-                                        HotPotato.hotPotatoPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                        HotPotato.hotPotatoPlayer.transform.position = new Vector3(20.5f, -11.75f, PlayerControl.LocalPlayer.transform.position.z);
-                                        Helpers.clearAllTasks(HotPotato.hotPotatoPlayer);
-
-                                        foreach (PlayerControl player in HotPotato.notPotatoTeam) {
-                                            player.transform.position = new Vector3(12.25f, -16f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdhotpotato) {
-                                            GameObject hotpotato = GameObject.Instantiate(CustomMain.customAssets.hotPotato, HotPotato.hotPotatoPlayer.transform);
-                                            hotpotato.name = "hotpotato";
-                                            hotpotato.transform.position = HotPotato.hotPotatoPlayer.transform.position + new Vector3(0, 0.5f, -0.25f);
-                                            HotPotato.hotPotato = hotpotato;
-                                            createdhotpotato = true;
-                                        }
-                                        break;
-                                    case 6:
-                                        // ZL:
-                                        foreach (PlayerControl player in ZombieLaboratory.zombieTeam) {
-                                            player.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                            player.transform.position = new Vector3(17.15f, -17.15f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        foreach (PlayerControl player in ZombieLaboratory.survivorTeam) {
-                                            if (player == PlayerControl.LocalPlayer && PlayerControl.LocalPlayer != ZombieLaboratory.nursePlayer) {
-                                                player.transform.position = new Vector3(40.4f, -6.8f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                                // Add Arrows pointing the deliver point
-                                                if (ZombieLaboratory.localSurvivorsDeliverArrow.Count == 0) {
-                                                    ZombieLaboratory.localSurvivorsDeliverArrow.Add(new Arrow(Palette.PlayerColors[3]));
-                                                    ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(true);
-                                                }
-                                            }
-                                        }
-
-                                        if (PlayerControl.LocalPlayer == ZombieLaboratory.nursePlayer) {
-                                            ZombieLaboratory.nursePlayer.transform.position = new Vector3(16.65f, -2.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(ZombieLaboratory.nursePlayer);
-                                            GameObject mapMedKit = GameObject.Instantiate(CustomMain.customAssets.mapMedKit, PlayerControl.LocalPlayer.transform.parent);
-                                            mapMedKit.name = "mapMedKit";
-                                            mapMedKit.transform.position = new Vector3(20.75f, -12f, -0.1f);
-                                            GameObject mapMedKittwo = GameObject.Instantiate(CustomMain.customAssets.mapMedKit, PlayerControl.LocalPlayer.transform.parent);
-                                            mapMedKittwo.name = "mapMedKittwo";
-                                            mapMedKittwo.transform.position = new Vector3(3.5f, -11.75f, -0.1f);
-                                            GameObject mapMedKitthree = GameObject.Instantiate(CustomMain.customAssets.mapMedKit, PlayerControl.LocalPlayer.transform.parent);
-                                            mapMedKitthree.name = "mapMedKitthree";
-                                            mapMedKitthree.transform.position = new Vector3(31.5f, -7.5f, -0.1f);
-                                            ZombieLaboratory.nurseMedkits.Add(mapMedKit);
-                                            ZombieLaboratory.nurseMedkits.Add(mapMedKittwo);
-                                            ZombieLaboratory.nurseMedkits.Add(mapMedKitthree);
-                                            // Add Arrows pointing the medkit only for nurse
-                                            if (ZombieLaboratory.localNurseArrows.Count == 0 && ZombieLaboratory.localNurseArrows.Count < 3) {
-                                                ZombieLaboratory.localNurseArrows.Add(new Arrow(Shy.color));
-                                                ZombieLaboratory.localNurseArrows.Add(new Arrow(Shy.color));
-                                                ZombieLaboratory.localNurseArrows.Add(new Arrow(Shy.color));
-                                            }
-                                            ZombieLaboratory.localNurseArrows[0].arrow.SetActive(true);
-                                            ZombieLaboratory.localNurseArrows[1].arrow.SetActive(true);
-                                            ZombieLaboratory.localNurseArrows[2].arrow.SetActive(true);
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdzombielaboratory) {
-                                            GameObject laboratory = GameObject.Instantiate(CustomMain.customAssets.laboratory, PlayerControl.LocalPlayer.transform.parent);
-                                            laboratory.name = "laboratory";
-                                            laboratory.transform.position = new Vector3(16.68f, -2.52f, 0.5f);
-                                            laboratory.gameObject.layer = 9;
-                                            laboratory.transform.GetChild(0).gameObject.layer = 9;
-                                            ZombieLaboratory.laboratory = laboratory;
-                                            ZombieLaboratory.laboratoryEnterButton = laboratory.transform.GetChild(1).gameObject;
-                                            ZombieLaboratory.laboratoryExitButton = laboratory.transform.GetChild(2).gameObject;
-                                            ZombieLaboratory.laboratoryCreateCureButton = laboratory.transform.GetChild(3).gameObject;
-                                            ZombieLaboratory.laboratoryPutKeyItemButton = laboratory.transform.GetChild(4).gameObject;
-                                            ZombieLaboratory.laboratoryExitLeftButton = laboratory.transform.GetChild(5).gameObject;
-                                            ZombieLaboratory.laboratoryExitRightButton = laboratory.transform.GetChild(6).gameObject;
-                                            ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratoryEnterButton);
-                                            ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratoryExitButton);
-                                            ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratoryExitLeftButton);
-                                            ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratoryExitRightButton);
-
-                                            GameObject nurseMedKit = GameObject.Instantiate(CustomMain.customAssets.nurseMedKit, PlayerControl.LocalPlayer.transform.parent);
-                                            nurseMedKit.name = "nurseMedKit";
-                                            nurseMedKit.transform.parent = ZombieLaboratory.nursePlayer.transform;
-                                            nurseMedKit.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
-                                            ZombieLaboratory.laboratoryNurseMedKit = nurseMedKit;
-                                            ZombieLaboratory.laboratoryNurseMedKit.SetActive(false);
-                                            ZombieLaboratory.laboratoryEntrances.Add(ZombieLaboratory.laboratoryEnterButton);
-                                            createdzombielaboratory = true;
-                                        }
-                                        break;
-                                    case 7:
-                                        // BR:
-                                        if (BattleRoyale.matchType == 0) {
-                                            foreach (PlayerControl soloPlayer in BattleRoyale.soloPlayerTeam) {
-                                                soloPlayer.transform.position = new Vector3(BattleRoyale.soloPlayersSpawnPositions[howmanyBattleRoyaleplayers].x, BattleRoyale.soloPlayersSpawnPositions[howmanyBattleRoyaleplayers].y, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(soloPlayer);
-                                                howmanyBattleRoyaleplayers += 1;
-                                            }
-                                        }
-                                        else {
-                                            if (BattleRoyale.serialKiller != null) {
-                                                BattleRoyale.serialKiller.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                                BattleRoyale.serialKiller.transform.position = new Vector3(22.3f, -19.15f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(BattleRoyale.serialKiller);
-                                            }
-
-                                            foreach (PlayerControl player in BattleRoyale.limeTeam) {
-                                                player.transform.position = new Vector3(2.35f, -23.75f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                            }
-                                            foreach (PlayerControl player in BattleRoyale.pinkTeam) {
-                                                player.transform.position = new Vector3(36.35f, -8f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                            }
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdbattleroyale) {
-                                            if (BattleRoyale.matchType != 0) {
-                                                GameObject limeteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
-                                                limeteamfloor.name = "limeteamfloor";
-                                                limeteamfloor.transform.position = new Vector3(2.35f, -23.75f, 0.5f);
-                                                GameObject pinkteamfloor = GameObject.Instantiate(CustomMain.customAssets.redfloor, PlayerControl.LocalPlayer.transform.parent);
-                                                pinkteamfloor.name = "pinkteamfloor";
-                                                pinkteamfloor.transform.position = new Vector3(36.35f, -8f, 0.5f);
-                                                BattleRoyale.serialKillerSpawns.Add(limeteamfloor);
-                                                BattleRoyale.serialKillerSpawns.Add(pinkteamfloor);
-                                            }
-                                            createdbattleroyale = true;
-                                        }
-                                        break;
-                                    case 8:
-                                        // MF:
-                                        if (MonjaFestival.bigMonjaPlayer != null) {
-                                            MonjaFestival.bigMonjaPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                            MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(21.75f, -25.15f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(MonjaFestival.bigMonjaPlayer);
-                                        }
-
-                                        foreach (PlayerControl player in MonjaFestival.greenTeam) {
-                                            player.transform.position = new Vector3(31.5f, -7.75f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        foreach (PlayerControl player in MonjaFestival.cyanTeam) {
-                                            player.transform.position = new Vector3(2.35f, -23.75f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-                                        if (PlayerControl.LocalPlayer != null && !createdmonjafestival) {
-                                            GameObject bigSpawnOne = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                            bigSpawnOne.name = "bigSpawnOne";
-                                            bigSpawnOne.transform.position = new Vector3(26.2f, -17f, 1f);
-                                            MonjaFestival.bigSpawnOne = bigSpawnOne;
-                                            MonjaFestival.bigSpawnOneCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.bigSpawnOne.transform);
-                                            MonjaFestival.bigSpawnOneCount.text = $"{MonjaFestival.bigSpawnOnePoints} / 30";
-                                            MonjaFestival.bigSpawnOneCount.enableWordWrapping = false;
-                                            MonjaFestival.bigSpawnOneCount.transform.localScale = Vector3.one * 0.5f;
-                                            MonjaFestival.bigSpawnOneCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                            GameObject bigSpawnTwo = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                            bigSpawnTwo.name = "bigSpawnTwo";
-                                            bigSpawnTwo.transform.position = new Vector3(7.45f, -9.5f, 1f);
-                                            MonjaFestival.bigSpawnTwo = bigSpawnTwo;
-                                            MonjaFestival.bigSpawnTwoCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.bigSpawnTwo.transform);
-                                            MonjaFestival.bigSpawnTwoCount.text = $"{MonjaFestival.bigSpawnTwoPoints} / 30";
-                                            MonjaFestival.bigSpawnTwoCount.enableWordWrapping = false;
-                                            MonjaFestival.bigSpawnTwoCount.transform.localScale = Vector3.one * 0.5f;
-                                            MonjaFestival.bigSpawnTwoCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                            GameObject littleSpawnOne = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                            littleSpawnOne.name = "littleSpawnOne";
-                                            littleSpawnOne.transform.position = new Vector3(36.5f, -21.5f, 0.5f);
-                                            MonjaFestival.littleSpawnOne = littleSpawnOne;
-                                            MonjaFestival.littleSpawnOneCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnOne.transform);
-                                            MonjaFestival.littleSpawnOneCount.text = $"{MonjaFestival.littleSpawnOnePoints} / 10";
-                                            MonjaFestival.littleSpawnOneCount.enableWordWrapping = false;
-                                            MonjaFestival.littleSpawnOneCount.transform.localScale = Vector3.one * 0.5f;
-                                            MonjaFestival.littleSpawnOneCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                            GameObject littleSpawnTwo = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                            littleSpawnTwo.name = "littleSpawnTwo";
-                                            littleSpawnTwo.transform.position = new Vector3(1.35f, -17f, 0.5f);
-                                            MonjaFestival.littleSpawnTwo = littleSpawnTwo;
-                                            MonjaFestival.littleSpawnTwoCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnTwo.transform);
-                                            MonjaFestival.littleSpawnTwoCount.text = $"{MonjaFestival.littleSpawnTwoPoints} / 10";
-                                            MonjaFestival.littleSpawnTwoCount.enableWordWrapping = false;
-                                            MonjaFestival.littleSpawnTwoCount.transform.localScale = Vector3.one * 0.5f;
-                                            MonjaFestival.littleSpawnTwoCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                            GameObject littleSpawnThree = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                            littleSpawnThree.name = "littleSpawnThree";
-                                            littleSpawnThree.transform.position = new Vector3(19.75f, -11.5f, 0.5f);
-                                            MonjaFestival.littleSpawnThree = littleSpawnThree;
-                                            MonjaFestival.littleSpawnThreeCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnThree.transform);
-                                            MonjaFestival.littleSpawnThreeCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
-                                            MonjaFestival.littleSpawnThreeCount.enableWordWrapping = false;
-                                            MonjaFestival.littleSpawnThreeCount.transform.localScale = Vector3.one * 0.5f;
-                                            MonjaFestival.littleSpawnThreeCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                            GameObject littleSpawnFour = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                            littleSpawnFour.name = "littleSpawnFour";
-                                            littleSpawnFour.transform.position = new Vector3(20.75f, -21.35f, 0.5f);
-                                            MonjaFestival.littleSpawnFour = littleSpawnFour;
-                                            MonjaFestival.littleSpawnFourCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnFour.transform);
-                                            MonjaFestival.littleSpawnFourCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
-                                            MonjaFestival.littleSpawnFourCount.enableWordWrapping = false;
-                                            MonjaFestival.littleSpawnFourCount.transform.localScale = Vector3.one * 0.5f;
-                                            MonjaFestival.littleSpawnFourCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                            GameObject greenBase = GameObject.Instantiate(CustomMain.customAssets.greenBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
-                                            greenBase.name = "greenBase";
-                                            greenBase.transform.position = new Vector3(31.5f, -7.75f, 0.5f);
-                                            MonjaFestival.greenTeamBase = greenBase;
-                                            GameObject cyanBase = GameObject.Instantiate(CustomMain.customAssets.cyanBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
-                                            cyanBase.name = "cyanBase";
-                                            cyanBase.transform.position = new Vector3(2.35f, -23.75f, 0.5f);
-                                            MonjaFestival.cyanTeamBase = cyanBase;
-
-                                            GameObject allulMonja = GameObject.Instantiate(CustomMain.customAssets.floorAllulMonja, PlayerControl.LocalPlayer.transform.parent);
-                                            allulMonja.transform.position = new Vector3(4.65f, -4.5f, 0.5f);
-                                            allulMonja.name = "allulMonja";
-                                            MonjaFestival.allulMonja = allulMonja;
-                                            Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.allulMonjaReload());
-
-                                            if (MonjaFestival.bigMonjaPlayer != null) {
-                                                GameObject greyBase = GameObject.Instantiate(CustomMain.customAssets.greyBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
-                                                greyBase.name = "greyBase";
-                                                greyBase.transform.position = new Vector3(21.75f, -25.15f, 0.5f);
-                                                MonjaFestival.bigMonjaBase = greyBase;
-                                                MonjaFestival.bigMonjaSpawns.Add(greyBase);
-                                            }
-                                            MonjaFestival.bigMonjaSpawns.Add(bigSpawnOne);
-                                            MonjaFestival.bigMonjaSpawns.Add(bigSpawnTwo);
-                                            MonjaFestival.bigMonjaSpawns.Add(littleSpawnOne);
-                                            MonjaFestival.bigMonjaSpawns.Add(littleSpawnTwo);
-                                            MonjaFestival.bigMonjaSpawns.Add(littleSpawnThree);
-                                            MonjaFestival.bigMonjaSpawns.Add(littleSpawnFour);
-                                            MonjaFestival.bigMonjaSpawns.Add(greenBase);
-                                            MonjaFestival.bigMonjaSpawns.Add(cyanBase);
-                                            MonjaFestival.bigMonjaSpawns.Add(allulMonja);
-                                            createdmonjafestival = true;
-                                        }
-                                        break;
-                                }
-                                // Remove Decon doors, camera use, vitals, admin tables on Polus
-                                GameObject lowerdecon = GameObject.Find("LowerDecon");
-                                lowerdecon.SetActive(false);
-                                GameObject upperdecon = GameObject.Find("UpperDecon");
-                                upperdecon.SetActive(false);
-                                GameObject survCameras = GameObject.Find("Surv_Panel");
-                                survCameras.GetComponent<BoxCollider2D>().enabled = false;
-                                GameObject vitals = GameObject.Find("panel_vitals");
-                                vitals.GetComponent<BoxCollider2D>().enabled = false;
-                                GameObject adminone = GameObject.Find("panel_map");
-                                adminone.GetComponent<BoxCollider2D>().enabled = false;
-                                GameObject admintwo = GameObject.Find("panel_map (1)");
-                                admintwo.GetComponent<BoxCollider2D>().enabled = false;
-                                GameObject ramp = GameObject.Find("ramp");
-                                ramp.transform.position = new Vector3(ramp.transform.position.x, ramp.transform.position.y, 0.75f);
+                                // CTF:
+                                Helpers.CreateCTF();
                                 break;
-                            // Dleks
                             case 3:
-                                switch (gameType) {
-                                    case 2:
-                                        // CTF:
-                                        if (CaptureTheFlag.stealerPlayer != null) {
-                                            CaptureTheFlag.stealerPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                            CaptureTheFlag.stealerPlayer.transform.position = new Vector3(-6.35f, -7.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(CaptureTheFlag.stealerPlayer);
-                                        }
-
-                                        foreach (PlayerControl player in CaptureTheFlag.redteamFlag) {
-                                            player.transform.position = new Vector3(20.5f, -5.15f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        foreach (PlayerControl player in CaptureTheFlag.blueteamFlag) {
-                                            player.transform.position = new Vector3(-16.5f, -4.45f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdcapturetheflag) {
-                                            GameObject redflag = GameObject.Instantiate(CustomMain.customAssets.redflag, PlayerControl.LocalPlayer.transform.parent);
-                                            redflag.name = "redflag";
-                                            redflag.transform.position = new Vector3(20.5f, -5.35f, 0.5f);
-                                            CaptureTheFlag.redflag = redflag;
-                                            GameObject redflagbase = GameObject.Instantiate(CustomMain.customAssets.redflagbase, PlayerControl.LocalPlayer.transform.parent);
-                                            redflagbase.name = "redflagbase";
-                                            redflagbase.transform.position = new Vector3(20.5f, -5.4f, 1f);
-                                            CaptureTheFlag.redflagbase = redflagbase;
-                                            GameObject blueflag = GameObject.Instantiate(CustomMain.customAssets.blueflag, PlayerControl.LocalPlayer.transform.parent);
-                                            blueflag.name = "blueflag";
-                                            blueflag.transform.position = new Vector3(-16.5f, -4.65f, 0.5f);
-                                            CaptureTheFlag.blueflag = blueflag;
-                                            GameObject blueflagbase = GameObject.Instantiate(CustomMain.customAssets.blueflagbase, PlayerControl.LocalPlayer.transform.parent);
-                                            blueflagbase.name = "blueflagbase";
-                                            blueflagbase.transform.position = new Vector3(-16.5f, -4.7f, 1f);
-                                            CaptureTheFlag.blueflagbase = blueflagbase;
-                                            CaptureTheFlag.stealerSpawns.Add(redflagbase);
-                                            CaptureTheFlag.stealerSpawns.Add(blueflagbase);
-                                            createdcapturetheflag = true;
-                                        }
-                                        break;
-                                    case 3:
-                                        // PT:
-                                        foreach (PlayerControl player in PoliceAndThief.policeTeam) {
-                                            player.transform.position = new Vector3(10.2f, 1.18f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
-                                            player.transform.position = new Vector3(1.31f, -16.25f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                            if (player == PlayerControl.LocalPlayer) {
-                                                // Add Arrows pointing the release and deliver point
-                                                if (PoliceAndThief.localThiefReleaseArrow.Count == 0) {
-                                                    PoliceAndThief.localThiefReleaseArrow.Add(new Arrow(Palette.PlayerColors[10]));
-                                                    PoliceAndThief.localThiefReleaseArrow[0].arrow.SetActive(true);
-                                                }
-                                                if (PoliceAndThief.localThiefDeliverArrow.Count == 0) {
-                                                    PoliceAndThief.localThiefDeliverArrow.Add(new Arrow(Palette.PlayerColors[16]));
-                                                    PoliceAndThief.localThiefDeliverArrow[0].arrow.SetActive(true);
-                                                }
-                                            }
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdpoliceandthief) {
-                                            GameObject cell = GameObject.Instantiate(CustomMain.customAssets.cell, PlayerControl.LocalPlayer.transform.parent);
-                                            cell.name = "cell";
-                                            cell.transform.position = new Vector3(10.25f, 3.38f, 0.5f);
-                                            cell.gameObject.layer = 9;
-                                            cell.transform.GetChild(0).gameObject.layer = 9;
-                                            PoliceAndThief.cell = cell;
-                                            GameObject cellbutton = GameObject.Instantiate(CustomMain.customAssets.freethiefbutton, PlayerControl.LocalPlayer.transform.parent);
-                                            cellbutton.name = "cellbutton";
-                                            cellbutton.transform.position = new Vector3(10.2f, 0.93f, 0.5f);
-                                            PoliceAndThief.cellbutton = cellbutton;
-                                            GameObject jewelbutton = GameObject.Instantiate(CustomMain.customAssets.jewelbutton, PlayerControl.LocalPlayer.transform.parent);
-                                            jewelbutton.name = "jewelbutton";
-                                            jewelbutton.transform.position = new Vector3(-0.20f, -17.15f, 0.5f);
-                                            PoliceAndThief.jewelbutton = jewelbutton;
-                                            GameObject thiefspaceship = GameObject.Instantiate(CustomMain.customAssets.thiefspaceship, PlayerControl.LocalPlayer.transform.parent);
-                                            thiefspaceship.name = "thiefspaceship";
-                                            thiefspaceship.transform.position = new Vector3(1.345f, -19.16f, 0.6f);
-                                            GameObject thiefspaceshiphatch = GameObject.Instantiate(CustomMain.customAssets.thiefspaceshiphatch, PlayerControl.LocalPlayer.transform.parent);
-                                            thiefspaceshiphatch.name = "thiefspaceshiphatch";
-                                            thiefspaceshiphatch.transform.position = new Vector3(1.345f, -19.16f, 0.6f);
-                                            createdpoliceandthief = true;
-
-                                            // Spawn jewels
-                                            GameObject jewel01 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel01.transform.position = new Vector3(18.65f, -9.9f, 1f);
-                                            jewel01.name = "jewel01";
-                                            PoliceAndThief.jewel01 = jewel01;
-                                            GameObject jewel02 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel02.transform.position = new Vector3(21.5f, -2, 1f);
-                                            jewel02.name = "jewel02";
-                                            PoliceAndThief.jewel02 = jewel02;
-                                            GameObject jewel03 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel03.transform.position = new Vector3(5.9f, -8.25f, 1f);
-                                            jewel03.name = "jewel03";
-                                            PoliceAndThief.jewel03 = jewel03;
-                                            GameObject jewel04 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel04.transform.position = new Vector3(-4.5f, -7.5f, 1f);
-                                            jewel04.name = "jewel04";
-                                            PoliceAndThief.jewel04 = jewel04;
-                                            GameObject jewel05 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel05.transform.position = new Vector3(-7.85f, -14.45f, 1f);
-                                            jewel05.name = "jewel05";
-                                            PoliceAndThief.jewel05 = jewel05;
-                                            GameObject jewel06 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel06.transform.position = new Vector3(-6.65f, -4.8f, 1f);
-                                            jewel06.name = "jewel06";
-                                            PoliceAndThief.jewel06 = jewel06;
-                                            GameObject jewel07 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel07.transform.position = new Vector3(-10.5f, 2.15f, 1f);
-                                            jewel07.name = "jewel07";
-                                            PoliceAndThief.jewel07 = jewel07;
-                                            GameObject jewel08 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel08.transform.position = new Vector3(5.5f, 3.5f, 1f);
-                                            jewel08.name = "jewel08";
-                                            PoliceAndThief.jewel08 = jewel08;
-                                            GameObject jewel09 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel09.transform.position = new Vector3(19, -1.2f, 1f);
-                                            jewel09.name = "jewel09";
-                                            PoliceAndThief.jewel09 = jewel09;
-                                            GameObject jewel10 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel10.transform.position = new Vector3(21.5f, -8.35f, 1f);
-                                            jewel10.name = "jewel10";
-                                            PoliceAndThief.jewel10 = jewel10;
-                                            GameObject jewel11 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel11.transform.position = new Vector3(12.5f, -3.75f, 1f);
-                                            jewel11.name = "jewel11";
-                                            PoliceAndThief.jewel11 = jewel11;
-                                            GameObject jewel12 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel12.transform.position = new Vector3(5.9f, -5.25f, 1f);
-                                            jewel12.name = "jewel12";
-                                            PoliceAndThief.jewel12 = jewel12;
-                                            GameObject jewel13 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel13.transform.position = new Vector3(-2.65f, -16.5f, 1f);
-                                            jewel13.name = "jewel13";
-                                            PoliceAndThief.jewel13 = jewel13;
-                                            GameObject jewel14 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel14.transform.position = new Vector3(-16.75f, -4.75f, 1f);
-                                            jewel14.name = "jewel14";
-                                            PoliceAndThief.jewel14 = jewel14;
-                                            GameObject jewel15 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel15.transform.position = new Vector3(-3.8f, 3.5f, 1f);
-                                            jewel15.name = "jewel15";
-                                            PoliceAndThief.jewel15 = jewel15;
-                                            PoliceAndThief.thiefTreasures.Add(jewel01);
-                                            PoliceAndThief.thiefTreasures.Add(jewel02);
-                                            PoliceAndThief.thiefTreasures.Add(jewel03);
-                                            PoliceAndThief.thiefTreasures.Add(jewel04);
-                                            PoliceAndThief.thiefTreasures.Add(jewel05);
-                                            PoliceAndThief.thiefTreasures.Add(jewel06);
-                                            PoliceAndThief.thiefTreasures.Add(jewel07);
-                                            PoliceAndThief.thiefTreasures.Add(jewel08);
-                                            PoliceAndThief.thiefTreasures.Add(jewel09);
-                                            PoliceAndThief.thiefTreasures.Add(jewel10);
-                                            PoliceAndThief.thiefTreasures.Add(jewel11);
-                                            PoliceAndThief.thiefTreasures.Add(jewel12);
-                                            PoliceAndThief.thiefTreasures.Add(jewel13);
-                                            PoliceAndThief.thiefTreasures.Add(jewel14);
-                                            PoliceAndThief.thiefTreasures.Add(jewel15);
-                                        }
-                                        break;
-                                    case 4:
-                                        // KOTH:
-                                        if (KingOfTheHill.usurperPlayer != null) {
-                                            KingOfTheHill.usurperPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                            KingOfTheHill.usurperPlayer.transform.position = new Vector3(1f, 5.35f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(KingOfTheHill.usurperPlayer);
-                                        }
-
-                                        foreach (PlayerControl player in KingOfTheHill.greenTeam) {
-                                            player.transform.position = new Vector3(7f, -8.25f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        foreach (PlayerControl player in KingOfTheHill.yellowTeam) {
-                                            player.transform.position = new Vector3(-6.25f, -3.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdkingofthehill) {
-                                            GameObject greenteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
-                                            greenteamfloor.name = "greenteamfloor";
-                                            greenteamfloor.transform.position = new Vector3(7f, -8.5f, 0.5f);
-                                            GameObject yellowteamfloor = GameObject.Instantiate(CustomMain.customAssets.yellowfloor, PlayerControl.LocalPlayer.transform.parent);
-                                            yellowteamfloor.name = "yellowteamfloor";
-                                            yellowteamfloor.transform.position = new Vector3(-6.25f, -3.75f, 0.5f);
-                                            GameObject greenkingaura = GameObject.Instantiate(CustomMain.customAssets.greenaura, KingOfTheHill.greenKingplayer.transform);
-                                            greenkingaura.name = "greenkingaura";
-                                            greenkingaura.transform.position = new Vector3(KingOfTheHill.greenKingplayer.transform.position.x, KingOfTheHill.greenKingplayer.transform.position.y, 0.4f);
-                                            KingOfTheHill.greenkingaura = greenkingaura;
-                                            GameObject yellowkingaura = GameObject.Instantiate(CustomMain.customAssets.yellowaura, KingOfTheHill.yellowKingplayer.transform);
-                                            yellowkingaura.name = "yellowkingaura";
-                                            yellowkingaura.transform.position = new Vector3(KingOfTheHill.yellowKingplayer.transform.position.x, KingOfTheHill.yellowKingplayer.transform.position.y, 0.4f);
-                                            KingOfTheHill.yellowkingaura = yellowkingaura;
-                                            GameObject flagzoneone = GameObject.Instantiate(CustomMain.customAssets.whiteflag, PlayerControl.LocalPlayer.transform.parent);
-                                            flagzoneone.name = "flagzoneone";
-                                            flagzoneone.transform.position = new Vector3(9.1f, -2.25f, 0.4f);
-                                            KingOfTheHill.flagzoneone = flagzoneone;
-                                            GameObject zoneone = GameObject.Instantiate(CustomMain.customAssets.whitebase, PlayerControl.LocalPlayer.transform.parent);
-                                            zoneone.name = "zoneone";
-                                            zoneone.transform.position = new Vector3(9.1f, -2.25f, 0.5f);
-                                            KingOfTheHill.zoneone = zoneone;
-                                            GameObject flagzonetwo = GameObject.Instantiate(CustomMain.customAssets.whiteflag, PlayerControl.LocalPlayer.transform.parent);
-                                            flagzonetwo.name = "flagzonetwo";
-                                            flagzonetwo.transform.position = new Vector3(-4.5f, -7.5f, 0.4f);
-                                            KingOfTheHill.flagzonetwo = flagzonetwo;
-                                            GameObject zonetwo = GameObject.Instantiate(CustomMain.customAssets.whitebase, PlayerControl.LocalPlayer.transform.parent);
-                                            zonetwo.name = "zonetwo";
-                                            zonetwo.transform.position = new Vector3(-4.5f, -7.5f, 0.5f);
-                                            KingOfTheHill.zonetwo = zonetwo;
-                                            GameObject flagzonethree = GameObject.Instantiate(CustomMain.customAssets.whiteflag, PlayerControl.LocalPlayer.transform.parent);
-                                            flagzonethree.name = "flagzonethree";
-                                            flagzonethree.transform.position = new Vector3(-3.25f, -15.5f, 0.4f);
-                                            KingOfTheHill.flagzonethree = flagzonethree;
-                                            GameObject zonethree = GameObject.Instantiate(CustomMain.customAssets.whitebase, PlayerControl.LocalPlayer.transform.parent);
-                                            zonethree.name = "zonethree";
-                                            zonethree.transform.position = new Vector3(-3.25f, -15.5f, 0.5f);
-                                            KingOfTheHill.zonethree = zonethree;
-                                            KingOfTheHill.kingZones.Add(zoneone);
-                                            KingOfTheHill.kingZones.Add(zonetwo);
-                                            KingOfTheHill.kingZones.Add(zonethree);
-                                            KingOfTheHill.usurperSpawns.Add(greenteamfloor);
-                                            KingOfTheHill.usurperSpawns.Add(yellowteamfloor);
-                                            createdkingofthehill = true;
-                                        }
-                                        break;
-                                    case 5:
-                                        // HP:
-                                        HotPotato.hotPotatoPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                        HotPotato.hotPotatoPlayer.transform.position = new Vector3(0.75f, -7f, PlayerControl.LocalPlayer.transform.position.z);
-                                        Helpers.clearAllTasks(HotPotato.hotPotatoPlayer);
-
-                                        foreach (PlayerControl player in HotPotato.notPotatoTeam) {
-                                            player.transform.position = new Vector3(-6.25f, -3.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdhotpotato) {
-                                            GameObject hotpotato = GameObject.Instantiate(CustomMain.customAssets.hotPotato, HotPotato.hotPotatoPlayer.transform);
-                                            hotpotato.name = "hotpotato";
-                                            hotpotato.transform.position = HotPotato.hotPotatoPlayer.transform.position + new Vector3(0, 0.5f, -0.25f);
-                                            HotPotato.hotPotato = hotpotato;
-                                            createdhotpotato = true;
-                                        }
-                                        break;
-                                    case 6:
-                                        // ZL:
-                                        foreach (PlayerControl player in ZombieLaboratory.zombieTeam) {
-                                            player.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                            player.transform.position = new Vector3(17.25f, -13.25f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        foreach (PlayerControl player in ZombieLaboratory.survivorTeam) {
-                                            if (player == PlayerControl.LocalPlayer && PlayerControl.LocalPlayer != ZombieLaboratory.nursePlayer) {
-                                                player.transform.position = new Vector3(-11.75f, -4.75f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                                // Add Arrows pointing the deliver point
-                                                if (ZombieLaboratory.localSurvivorsDeliverArrow.Count == 0) {
-                                                    ZombieLaboratory.localSurvivorsDeliverArrow.Add(new Arrow(Palette.PlayerColors[3]));
-                                                    ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(true);
-                                                }
-                                            }
-                                        }
-
-                                        if (PlayerControl.LocalPlayer == ZombieLaboratory.nursePlayer) {
-                                            ZombieLaboratory.nursePlayer.transform.position = new Vector3(10.2f, 3.6f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(ZombieLaboratory.nursePlayer);
-                                            GameObject mapMedKit = GameObject.Instantiate(CustomMain.customAssets.mapMedKit, PlayerControl.LocalPlayer.transform.parent);
-                                            mapMedKit.name = "mapMedKit";
-                                            mapMedKit.transform.position = new Vector3(7.25f, -5f, -0.1f);
-                                            GameObject mapMedKittwo = GameObject.Instantiate(CustomMain.customAssets.mapMedKit, PlayerControl.LocalPlayer.transform.parent);
-                                            mapMedKittwo.name = "mapMedKittwo";
-                                            mapMedKittwo.transform.position = new Vector3(-3.75f, 3.5f, -0.1f);
-                                            GameObject mapMedKitthree = GameObject.Instantiate(CustomMain.customAssets.mapMedKit, PlayerControl.LocalPlayer.transform.parent);
-                                            mapMedKitthree.name = "mapMedKitthree";
-                                            mapMedKitthree.transform.position = new Vector3(13.75f, -3.75f, -0.1f);
-                                            ZombieLaboratory.nurseMedkits.Add(mapMedKit);
-                                            ZombieLaboratory.nurseMedkits.Add(mapMedKittwo);
-                                            ZombieLaboratory.nurseMedkits.Add(mapMedKitthree);
-                                            // Add Arrows pointing the medkit only for nurse
-                                            if (ZombieLaboratory.localNurseArrows.Count == 0 && ZombieLaboratory.localNurseArrows.Count < 3) {
-                                                ZombieLaboratory.localNurseArrows.Add(new Arrow(Shy.color));
-                                                ZombieLaboratory.localNurseArrows.Add(new Arrow(Shy.color));
-                                                ZombieLaboratory.localNurseArrows.Add(new Arrow(Shy.color));
-                                            }
-                                            ZombieLaboratory.localNurseArrows[0].arrow.SetActive(true);
-                                            ZombieLaboratory.localNurseArrows[1].arrow.SetActive(true);
-                                            ZombieLaboratory.localNurseArrows[2].arrow.SetActive(true);
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdzombielaboratory) {
-                                            GameObject laboratory = GameObject.Instantiate(CustomMain.customAssets.laboratory, PlayerControl.LocalPlayer.transform.parent);
-                                            laboratory.name = "laboratory";
-                                            laboratory.transform.position = new Vector3(10.25f, 3.38f, 0.5f);
-                                            laboratory.gameObject.layer = 9;
-                                            laboratory.transform.GetChild(0).gameObject.layer = 9;
-                                            ZombieLaboratory.laboratory = laboratory;
-                                            ZombieLaboratory.laboratoryEnterButton = laboratory.transform.GetChild(1).gameObject;
-                                            ZombieLaboratory.laboratoryExitButton = laboratory.transform.GetChild(2).gameObject;
-                                            ZombieLaboratory.laboratoryCreateCureButton = laboratory.transform.GetChild(3).gameObject;
-                                            ZombieLaboratory.laboratoryPutKeyItemButton = laboratory.transform.GetChild(4).gameObject;
-                                            ZombieLaboratory.laboratoryExitLeftButton = laboratory.transform.GetChild(5).gameObject;
-                                            ZombieLaboratory.laboratoryExitRightButton = laboratory.transform.GetChild(6).gameObject;
-                                            ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratoryEnterButton);
-                                            ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratoryExitButton);
-                                            ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratoryExitLeftButton);
-                                            ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratoryExitRightButton);
-
-                                            GameObject nurseMedKit = GameObject.Instantiate(CustomMain.customAssets.nurseMedKit, PlayerControl.LocalPlayer.transform.parent);
-                                            nurseMedKit.name = "nurseMedKit";
-                                            nurseMedKit.transform.parent = ZombieLaboratory.nursePlayer.transform;
-                                            nurseMedKit.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
-                                            ZombieLaboratory.laboratoryNurseMedKit = nurseMedKit;
-                                            ZombieLaboratory.laboratoryNurseMedKit.SetActive(false);
-                                            ZombieLaboratory.laboratoryEntrances.Add(ZombieLaboratory.laboratoryEnterButton);
-                                            createdzombielaboratory = true;
-                                        }
-                                        break;
-                                    case 7:
-                                        // BR:
-                                        if (BattleRoyale.matchType == 0) {
-                                            foreach (PlayerControl soloPlayer in BattleRoyale.soloPlayerTeam) {
-                                                soloPlayer.transform.position = new Vector3(BattleRoyale.soloPlayersSpawnPositions[howmanyBattleRoyaleplayers].x, BattleRoyale.soloPlayersSpawnPositions[howmanyBattleRoyaleplayers].y, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(soloPlayer);
-                                                howmanyBattleRoyaleplayers += 1;
-                                            }
-                                        }
-                                        else {
-
-                                            if (BattleRoyale.serialKiller != null) {
-                                                BattleRoyale.serialKiller.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                                BattleRoyale.serialKiller.transform.position = new Vector3(-6.35f, -7.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(BattleRoyale.serialKiller);
-                                            }
-
-                                            foreach (PlayerControl player in BattleRoyale.limeTeam) {
-                                                player.transform.position = new Vector3(17f, -5.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                            }
-
-                                            foreach (PlayerControl player in BattleRoyale.pinkTeam) {
-                                                player.transform.position = new Vector3(-12f, -4.75f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                            }
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdbattleroyale) {
-                                            if (BattleRoyale.matchType != 0) {
-                                                GameObject limeteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
-                                                limeteamfloor.name = "limeteamfloor";
-                                                limeteamfloor.transform.position = new Vector3(17f, -5.5f, 0.5f);
-                                                GameObject pinkteamfloor = GameObject.Instantiate(CustomMain.customAssets.redfloor, PlayerControl.LocalPlayer.transform.parent);
-                                                pinkteamfloor.name = "pinkteamfloor";
-                                                pinkteamfloor.transform.position = new Vector3(-12f, -4.75f, 0.5f);
-                                                BattleRoyale.serialKillerSpawns.Add(limeteamfloor);
-                                                BattleRoyale.serialKillerSpawns.Add(pinkteamfloor);
-                                            }
-                                            createdbattleroyale = true;
-                                        }
-                                        break;
-                                    case 8:
-                                        // MF:
-                                        if (MonjaFestival.bigMonjaPlayer != null) {
-                                            MonjaFestival.bigMonjaPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                            MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-4.5f, -7.25f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(MonjaFestival.bigMonjaPlayer);
-                                        }
-
-                                        foreach (PlayerControl player in MonjaFestival.greenTeam) {
-                                            player.transform.position = new Vector3(9f, -2.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        foreach (PlayerControl player in MonjaFestival.cyanTeam) {
-                                            player.transform.position = new Vector3(-5f, -15.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdmonjafestival) {
-                                            GameObject bigSpawnOne = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                            bigSpawnOne.name = "bigSpawnOne";
-                                            bigSpawnOne.transform.position = new Vector3(-9.5f, 0.9f, 1f);
-                                            MonjaFestival.bigSpawnOne = bigSpawnOne;
-                                            MonjaFestival.bigSpawnOneCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.bigSpawnOne.transform);
-                                            MonjaFestival.bigSpawnOneCount.text = $"{MonjaFestival.bigSpawnOnePoints} / 30";
-                                            MonjaFestival.bigSpawnOneCount.enableWordWrapping = false;
-                                            MonjaFestival.bigSpawnOneCount.transform.localScale = Vector3.one * 0.5f;
-                                            MonjaFestival.bigSpawnOneCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                            GameObject bigSpawnTwo = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                            bigSpawnTwo.name = "bigSpawnTwo";
-                                            bigSpawnTwo.transform.position = new Vector3(17.15f, -13.25f, 1f);
-                                            MonjaFestival.bigSpawnTwo = bigSpawnTwo;
-                                            MonjaFestival.bigSpawnTwoCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.bigSpawnTwo.transform);
-                                            MonjaFestival.bigSpawnTwoCount.text = $"{MonjaFestival.bigSpawnTwoPoints} / 30";
-                                            MonjaFestival.bigSpawnTwoCount.enableWordWrapping = false;
-                                            MonjaFestival.bigSpawnTwoCount.transform.localScale = Vector3.one * 0.5f;
-                                            MonjaFestival.bigSpawnTwoCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                            GameObject littleSpawnOne = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                            littleSpawnOne.name = "littleSpawnOne";
-                                            littleSpawnOne.transform.position = new Vector3(20.5f, -5.5f, 0.5f);
-                                            MonjaFestival.littleSpawnOne = littleSpawnOne;
-                                            MonjaFestival.littleSpawnOneCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnOne.transform);
-                                            MonjaFestival.littleSpawnOneCount.text = $"{MonjaFestival.littleSpawnOnePoints} / 10";
-                                            MonjaFestival.littleSpawnOneCount.enableWordWrapping = false;
-                                            MonjaFestival.littleSpawnOneCount.transform.localScale = Vector3.one * 0.5f;
-                                            MonjaFestival.littleSpawnOneCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                            GameObject littleSpawnTwo = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                            littleSpawnTwo.name = "littleSpawnTwo";
-                                            littleSpawnTwo.transform.position = new Vector3(0.75f, 5.25f, 0.5f);
-                                            MonjaFestival.littleSpawnTwo = littleSpawnTwo;
-                                            MonjaFestival.littleSpawnTwoCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnTwo.transform);
-                                            MonjaFestival.littleSpawnTwoCount.text = $"{MonjaFestival.littleSpawnTwoPoints} / 10";
-                                            MonjaFestival.littleSpawnTwoCount.enableWordWrapping = false;
-                                            MonjaFestival.littleSpawnTwoCount.transform.localScale = Vector3.one * 0.5f;
-                                            MonjaFestival.littleSpawnTwoCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                            GameObject littleSpawnThree = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                            littleSpawnThree.name = "littleSpawnThree";
-                                            littleSpawnThree.transform.position = new Vector3(2.15f, -9.75f, 0.5f);
-                                            MonjaFestival.littleSpawnThree = littleSpawnThree;
-                                            MonjaFestival.littleSpawnThreeCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnThree.transform);
-                                            MonjaFestival.littleSpawnThreeCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
-                                            MonjaFestival.littleSpawnThreeCount.enableWordWrapping = false;
-                                            MonjaFestival.littleSpawnThreeCount.transform.localScale = Vector3.one * 0.5f;
-                                            MonjaFestival.littleSpawnThreeCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                            GameObject littleSpawnFour = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                            littleSpawnFour.name = "littleSpawnFour";
-                                            littleSpawnFour.transform.position = new Vector3(-16.5f, -4.7f, 0.5f);
-                                            MonjaFestival.littleSpawnFour = littleSpawnFour;
-                                            MonjaFestival.littleSpawnFourCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnFour.transform);
-                                            MonjaFestival.littleSpawnFourCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
-                                            MonjaFestival.littleSpawnFourCount.enableWordWrapping = false;
-                                            MonjaFestival.littleSpawnFourCount.transform.localScale = Vector3.one * 0.5f;
-                                            MonjaFestival.littleSpawnFourCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                            GameObject greenBase = GameObject.Instantiate(CustomMain.customAssets.greenBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
-                                            greenBase.name = "greenBase";
-                                            greenBase.transform.position = new Vector3(9f, -2.5f, 0.5f);
-                                            MonjaFestival.greenTeamBase = greenBase;
-                                            GameObject cyanBase = GameObject.Instantiate(CustomMain.customAssets.cyanBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
-                                            cyanBase.name = "cyanBase";
-                                            cyanBase.transform.position = new Vector3(-5f, -15.5f, 0.5f);
-                                            MonjaFestival.cyanTeamBase = cyanBase;
-
-                                            GameObject allulMonja = GameObject.Instantiate(CustomMain.customAssets.floorAllulMonja, PlayerControl.LocalPlayer.transform.parent);
-                                            allulMonja.transform.position = new Vector3(9.8f, -8.9f, 0.5f);
-                                            allulMonja.name = "allulMonja";
-                                            MonjaFestival.allulMonja = allulMonja;
-                                            Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.allulMonjaReload());
-
-                                            if (MonjaFestival.bigMonjaPlayer != null) {
-                                                GameObject greyBase = GameObject.Instantiate(CustomMain.customAssets.greyBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
-                                                greyBase.name = "greyBase";
-                                                greyBase.transform.position = new Vector3(-4.5f, -7.25f, 0.5f);
-                                                MonjaFestival.bigMonjaBase = greyBase;
-                                                MonjaFestival.bigMonjaSpawns.Add(greyBase);
-                                            }
-                                            MonjaFestival.bigMonjaSpawns.Add(bigSpawnOne);
-                                            MonjaFestival.bigMonjaSpawns.Add(bigSpawnTwo);
-                                            MonjaFestival.bigMonjaSpawns.Add(littleSpawnOne);
-                                            MonjaFestival.bigMonjaSpawns.Add(littleSpawnTwo);
-                                            MonjaFestival.bigMonjaSpawns.Add(littleSpawnThree);
-                                            MonjaFestival.bigMonjaSpawns.Add(littleSpawnFour);
-                                            MonjaFestival.bigMonjaSpawns.Add(greenBase);
-                                            MonjaFestival.bigMonjaSpawns.Add(cyanBase);
-                                            MonjaFestival.bigMonjaSpawns.Add(allulMonja);
-
-                                            GameObject skeldBigYVent = GameObject.Find("AdminVent");
-                                            skeldBigYVent.transform.position = new Vector3(-2.25f, -15.25f, skeldBigYVent.transform.position.z);
-                                            createdmonjafestival = true;
-                                        }
-                                        break;
-                                }
-                                // Remove camera use and admin table on Dleks
-                                GameObject dlekscameraStand = GameObject.Find("SurvConsole");
-                                dlekscameraStand.GetComponent<PolygonCollider2D>().enabled = false;
-                                GameObject dleksadmin = GameObject.Find("MapRoomConsole");
-                                dleksadmin.GetComponent<CircleCollider2D>().enabled = false;
+                                // PAT:
+                                Helpers.CreatePAT();
                                 break;
-                            // Airship
                             case 4:
-                                switch (gameType) {
-                                    case 2:
-                                        // CTF:
-                                        if (CaptureTheFlag.stealerPlayer != null) {
-                                            CaptureTheFlag.stealerPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                            CaptureTheFlag.stealerPlayer.transform.position = new Vector3(10.25f, -15.35f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(CaptureTheFlag.stealerPlayer);
-                                        }
-
-                                        foreach (PlayerControl player in CaptureTheFlag.redteamFlag) {
-                                            player.transform.position = new Vector3(-17.5f, -1f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        foreach (PlayerControl player in CaptureTheFlag.blueteamFlag) {
-                                            player.transform.position = new Vector3(33.6f, 1.45f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdcapturetheflag) {
-                                            GameObject redflag = GameObject.Instantiate(CustomMain.customAssets.redflag, PlayerControl.LocalPlayer.transform.parent);
-                                            redflag.name = "redflag";
-                                            redflag.transform.position = new Vector3(-17.5f, -1.2f, 0.5f);
-                                            CaptureTheFlag.redflag = redflag;
-                                            GameObject redflagbase = GameObject.Instantiate(CustomMain.customAssets.redflagbase, PlayerControl.LocalPlayer.transform.parent);
-                                            redflagbase.name = "redflagbase";
-                                            redflagbase.transform.position = new Vector3(-17.5f, -1.25f, 1f);
-                                            CaptureTheFlag.redflagbase = redflagbase;
-                                            GameObject blueflag = GameObject.Instantiate(CustomMain.customAssets.blueflag, PlayerControl.LocalPlayer.transform.parent);
-                                            blueflag.name = "blueflag";
-                                            blueflag.transform.position = new Vector3(33.6f, 1.25f, 0.5f);
-                                            CaptureTheFlag.blueflag = blueflag;
-                                            GameObject blueflagbase = GameObject.Instantiate(CustomMain.customAssets.blueflagbase, PlayerControl.LocalPlayer.transform.parent);
-                                            blueflagbase.name = "blueflagbase";
-                                            blueflagbase.transform.position = new Vector3(33.6f, 1.2f, 1f);
-                                            CaptureTheFlag.blueflagbase = blueflagbase;
-                                            CaptureTheFlag.stealerSpawns.Add(redflagbase);
-                                            CaptureTheFlag.stealerSpawns.Add(blueflagbase);
-                                            createdcapturetheflag = true;
-                                        }
-                                        break;
-                                    case 3:
-                                        // PT:
-                                        foreach (PlayerControl player in PoliceAndThief.policeTeam) {
-                                            player.transform.position = new Vector3(-18.5f, 0.75f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
-                                            player.transform.position = new Vector3(7.15f, -14.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                            if (player == PlayerControl.LocalPlayer) {
-                                                // Add Arrows pointing the release and deliver point
-                                                if (PoliceAndThief.localThiefReleaseArrow.Count == 0) {
-                                                    PoliceAndThief.localThiefReleaseArrow.Add(new Arrow(Palette.PlayerColors[10]));
-                                                    PoliceAndThief.localThiefReleaseArrow[0].arrow.SetActive(true);
-                                                }
-                                                if (PoliceAndThief.localThiefDeliverArrow.Count == 0) {
-                                                    PoliceAndThief.localThiefDeliverArrow.Add(new Arrow(Palette.PlayerColors[16]));
-                                                    PoliceAndThief.localThiefDeliverArrow[0].arrow.SetActive(true);
-                                                }
-                                            }
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdpoliceandthief) {
-                                            GameObject cell = GameObject.Instantiate(CustomMain.customAssets.cell, PlayerControl.LocalPlayer.transform.parent);
-                                            cell.name = "cell";
-                                            cell.transform.position = new Vector3(-18.45f, 3.55f, 0.5f);
-                                            cell.gameObject.layer = 9;
-                                            cell.transform.GetChild(0).gameObject.layer = 9;
-                                            PoliceAndThief.cell = cell;
-                                            GameObject cellbutton = GameObject.Instantiate(CustomMain.customAssets.freethiefbutton, PlayerControl.LocalPlayer.transform.parent);
-                                            cellbutton.name = "cellbutton";
-                                            cellbutton.transform.position = new Vector3(-18.5f, 0.5f, 0.5f);
-                                            PoliceAndThief.cellbutton = cellbutton;
-                                            GameObject jewelbutton = GameObject.Instantiate(CustomMain.customAssets.jewelbutton, PlayerControl.LocalPlayer.transform.parent);
-                                            jewelbutton.name = "jewelbutton";
-                                            jewelbutton.transform.position = new Vector3(10.275f, -16.3f, -0.01f);
-                                            PoliceAndThief.jewelbutton = jewelbutton;
-                                            GameObject thiefspaceship = GameObject.Instantiate(CustomMain.customAssets.thiefspaceship, PlayerControl.LocalPlayer.transform.parent);
-                                            thiefspaceship.name = "thiefspaceship";
-                                            thiefspaceship.transform.position = new Vector3(13.5f, -16f, 0.6f);
-                                            createdpoliceandthief = true;
-
-                                            // Spawn jewels
-                                            GameObject jewel01 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel01.transform.position = new Vector3(-23.5f, -1.5f, 1f);
-                                            jewel01.name = "jewel01";
-                                            PoliceAndThief.jewel01 = jewel01;
-                                            GameObject jewel02 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel02.transform.position = new Vector3(-14.15f, -4.85f, 1f);
-                                            jewel02.name = "jewel02";
-                                            PoliceAndThief.jewel02 = jewel02;
-                                            GameObject jewel03 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel03.transform.position = new Vector3(-13.9f, -16.25f, 1f);
-                                            jewel03.name = "jewel03";
-                                            PoliceAndThief.jewel03 = jewel03;
-                                            GameObject jewel04 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel04.transform.position = new Vector3(-0.85f, -2.5f, 1f);
-                                            jewel04.name = "jewel04";
-                                            PoliceAndThief.jewel04 = jewel04;
-                                            GameObject jewel05 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel05.transform.position = new Vector3(-5, 8.5f, 1f);
-                                            jewel05.name = "jewel05";
-                                            PoliceAndThief.jewel05 = jewel05;
-                                            GameObject jewel06 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel06.transform.position = new Vector3(19.3f, -4.15f, 1f);
-                                            jewel06.name = "jewel06";
-                                            PoliceAndThief.jewel06 = jewel06;
-                                            GameObject jewel07 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel07.transform.position = new Vector3(19.85f, 8, 1f);
-                                            jewel07.name = "jewel07";
-                                            PoliceAndThief.jewel07 = jewel07;
-                                            GameObject jewel08 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel08.transform.position = new Vector3(28.85f, -1.75f, 1f);
-                                            jewel08.name = "jewel08";
-                                            PoliceAndThief.jewel08 = jewel08;
-                                            GameObject jewel09 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel09.transform.position = new Vector3(-14.5f, -8.5f, 1f);
-                                            jewel09.name = "jewel09";
-                                            PoliceAndThief.jewel09 = jewel09;
-                                            GameObject jewel10 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel10.transform.position = new Vector3(6.3f, -2.75f, 1f);
-                                            jewel10.name = "jewel10";
-                                            PoliceAndThief.jewel10 = jewel10;
-                                            GameObject jewel11 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel11.transform.position = new Vector3(20.75f, 2.5f, 1f);
-                                            jewel11.name = "jewel11";
-                                            PoliceAndThief.jewel11 = jewel11;
-                                            GameObject jewel12 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel12.transform.position = new Vector3(29.25f, 7, 1f);
-                                            jewel12.name = "jewel12";
-                                            PoliceAndThief.jewel12 = jewel12;
-                                            GameObject jewel13 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel13.transform.position = new Vector3(37.5f, -3.5f, 1f);
-                                            jewel13.name = "jewel13";
-                                            PoliceAndThief.jewel13 = jewel13;
-                                            GameObject jewel14 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel14.transform.position = new Vector3(25.2f, -8.75f, 1f);
-                                            jewel14.name = "jewel14";
-                                            PoliceAndThief.jewel14 = jewel14;
-                                            GameObject jewel15 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel15.transform.position = new Vector3(16.3f, -11, 1f);
-                                            jewel15.name = "jewel15";
-                                            PoliceAndThief.jewel15 = jewel15;
-                                            PoliceAndThief.thiefTreasures.Add(jewel01);
-                                            PoliceAndThief.thiefTreasures.Add(jewel02);
-                                            PoliceAndThief.thiefTreasures.Add(jewel03);
-                                            PoliceAndThief.thiefTreasures.Add(jewel04);
-                                            PoliceAndThief.thiefTreasures.Add(jewel05);
-                                            PoliceAndThief.thiefTreasures.Add(jewel06);
-                                            PoliceAndThief.thiefTreasures.Add(jewel07);
-                                            PoliceAndThief.thiefTreasures.Add(jewel08);
-                                            PoliceAndThief.thiefTreasures.Add(jewel09);
-                                            PoliceAndThief.thiefTreasures.Add(jewel10);
-                                            PoliceAndThief.thiefTreasures.Add(jewel11);
-                                            PoliceAndThief.thiefTreasures.Add(jewel12);
-                                            PoliceAndThief.thiefTreasures.Add(jewel13);
-                                            PoliceAndThief.thiefTreasures.Add(jewel14);
-                                            PoliceAndThief.thiefTreasures.Add(jewel15);
-                                        }
-                                        break;
-                                    case 4:
-                                        // KOTH:
-                                        if (KingOfTheHill.usurperPlayer != null) {
-                                            KingOfTheHill.usurperPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                            KingOfTheHill.usurperPlayer.transform.position = new Vector3(12.25f, 2f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(KingOfTheHill.usurperPlayer);
-                                        }
-
-                                        foreach (PlayerControl player in KingOfTheHill.greenTeam) {
-                                            player.transform.position = new Vector3(-13.9f, -14.45f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        foreach (PlayerControl player in KingOfTheHill.yellowTeam) {
-                                            player.transform.position = new Vector3(37.35f, -3.25f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdkingofthehill) {
-                                            GameObject greenteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
-                                            greenteamfloor.name = "greenteamfloor";
-                                            greenteamfloor.transform.position = new Vector3(-13.9f, -14.7f, 0.5f);
-                                            GameObject yellowteamfloor = GameObject.Instantiate(CustomMain.customAssets.yellowfloor, PlayerControl.LocalPlayer.transform.parent);
-                                            yellowteamfloor.name = "yellowteamfloor";
-                                            yellowteamfloor.transform.position = new Vector3(37.35f, -3.5f, 0.5f);
-                                            GameObject greenkingaura = GameObject.Instantiate(CustomMain.customAssets.greenaura, KingOfTheHill.greenKingplayer.transform);
-                                            greenkingaura.name = "greenkingaura";
-                                            greenkingaura.transform.position = new Vector3(KingOfTheHill.greenKingplayer.transform.position.x, KingOfTheHill.greenKingplayer.transform.position.y, 0.4f);
-                                            KingOfTheHill.greenkingaura = greenkingaura;
-                                            GameObject yellowkingaura = GameObject.Instantiate(CustomMain.customAssets.yellowaura, KingOfTheHill.yellowKingplayer.transform);
-                                            yellowkingaura.name = "yellowkingaura";
-                                            yellowkingaura.transform.position = new Vector3(KingOfTheHill.yellowKingplayer.transform.position.x, KingOfTheHill.yellowKingplayer.transform.position.y, 0.4f);
-                                            KingOfTheHill.yellowkingaura = yellowkingaura;
-                                            GameObject flagzoneone = GameObject.Instantiate(CustomMain.customAssets.whiteflag, PlayerControl.LocalPlayer.transform.parent);
-                                            flagzoneone.name = "flagzoneone";
-                                            flagzoneone.transform.position = new Vector3(-8.75f, 5.1f, 0.4f);
-                                            KingOfTheHill.flagzoneone = flagzoneone;
-                                            GameObject zoneone = GameObject.Instantiate(CustomMain.customAssets.whitebase, PlayerControl.LocalPlayer.transform.parent);
-                                            zoneone.name = "zoneone";
-                                            zoneone.transform.position = new Vector3(-8.75f, 5.1f, 0.5f);
-                                            KingOfTheHill.zoneone = zoneone;
-                                            GameObject flagzonetwo = GameObject.Instantiate(CustomMain.customAssets.whiteflag, PlayerControl.LocalPlayer.transform.parent);
-                                            flagzonetwo.name = "flagzonetwo";
-                                            flagzonetwo.transform.position = new Vector3(19.9f, 11.25f, 0.4f);
-                                            KingOfTheHill.flagzonetwo = flagzonetwo;
-                                            GameObject zonetwo = GameObject.Instantiate(CustomMain.customAssets.whitebase, PlayerControl.LocalPlayer.transform.parent);
-                                            zonetwo.name = "zonetwo";
-                                            zonetwo.transform.position = new Vector3(19.9f, 11.25f, 0.5f);
-                                            KingOfTheHill.zonetwo = zonetwo;
-                                            GameObject flagzonethree = GameObject.Instantiate(CustomMain.customAssets.whiteflag, PlayerControl.LocalPlayer.transform.parent);
-                                            flagzonethree.name = "flagzonethree";
-                                            flagzonethree.transform.position = new Vector3(16.3f, -8.6f, 0.4f);
-                                            KingOfTheHill.flagzonethree = flagzonethree;
-                                            GameObject zonethree = GameObject.Instantiate(CustomMain.customAssets.whitebase, PlayerControl.LocalPlayer.transform.parent);
-                                            zonethree.name = "zonethree";
-                                            zonethree.transform.position = new Vector3(16.3f, -8.6f, 0.5f);
-                                            KingOfTheHill.zonethree = zonethree;
-                                            KingOfTheHill.kingZones.Add(zoneone);
-                                            KingOfTheHill.kingZones.Add(zonetwo);
-                                            KingOfTheHill.kingZones.Add(zonethree);
-                                            KingOfTheHill.usurperSpawns.Add(greenteamfloor);
-                                            KingOfTheHill.usurperSpawns.Add(yellowteamfloor);
-                                            createdkingofthehill = true;
-                                        }
-                                        break;
-                                    case 5:
-                                        // HP:
-                                        HotPotato.hotPotatoPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                        HotPotato.hotPotatoPlayer.transform.position = new Vector3(12.25f, 2f, PlayerControl.LocalPlayer.transform.position.z);
-                                        Helpers.clearAllTasks(HotPotato.hotPotatoPlayer);
-
-                                        foreach (PlayerControl player in HotPotato.notPotatoTeam) {
-                                            player.transform.position = new Vector3(6.25f, 2.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdhotpotato) {
-                                            GameObject hotpotato = GameObject.Instantiate(CustomMain.customAssets.hotPotato, HotPotato.hotPotatoPlayer.transform);
-                                            hotpotato.name = "hotpotato";
-                                            hotpotato.transform.position = HotPotato.hotPotatoPlayer.transform.position + new Vector3(0, 0.5f, -0.25f);
-                                            HotPotato.hotPotato = hotpotato;
-                                            createdhotpotato = true;
-                                        }
-                                        break;
-                                    case 6:
-                                        // ZL:
-                                        foreach (PlayerControl player in ZombieLaboratory.zombieTeam) {
-                                            player.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                            player.transform.position = new Vector3(32.35f, 7.25f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        foreach (PlayerControl player in ZombieLaboratory.survivorTeam) {
-                                            if (player == PlayerControl.LocalPlayer && PlayerControl.LocalPlayer != ZombieLaboratory.nursePlayer) {
-                                                player.transform.position = new Vector3(25.25f, -8.65f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                                // Add Arrows pointing the deliver point
-                                                if (ZombieLaboratory.localSurvivorsDeliverArrow.Count == 0) {
-                                                    ZombieLaboratory.localSurvivorsDeliverArrow.Add(new Arrow(Palette.PlayerColors[3]));
-                                                    ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(true);
-                                                }
-                                            }
-                                        }
-
-                                        if (PlayerControl.LocalPlayer == ZombieLaboratory.nursePlayer) {
-                                            ZombieLaboratory.nursePlayer.transform.position = new Vector3(-18.5f, 2.9f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(ZombieLaboratory.nursePlayer);
-                                            ZombieLaboratory.nursePlayerInsideLaboratory = false;
-                                            GameObject mapMedKit = GameObject.Instantiate(CustomMain.customAssets.mapMedKit, PlayerControl.LocalPlayer.transform.parent);
-                                            mapMedKit.name = "mapMedKit";
-                                            mapMedKit.transform.position = new Vector3(-12f, 2.5f, -0.1f);
-                                            GameObject mapMedKittwo = GameObject.Instantiate(CustomMain.customAssets.mapMedKit, PlayerControl.LocalPlayer.transform.parent);
-                                            mapMedKittwo.name = "mapMedKittwo";
-                                            mapMedKittwo.transform.position = new Vector3(-13.5f, -9.75f, -0.1f);
-                                            GameObject mapMedKitthree = GameObject.Instantiate(CustomMain.customAssets.mapMedKit, PlayerControl.LocalPlayer.transform.parent);
-                                            mapMedKitthree.name = "mapMedKitthree";
-                                            mapMedKitthree.transform.position = new Vector3(-8.85f, 7.5f, -0.1f);
-                                            ZombieLaboratory.nurseMedkits.Add(mapMedKit);
-                                            ZombieLaboratory.nurseMedkits.Add(mapMedKittwo);
-                                            ZombieLaboratory.nurseMedkits.Add(mapMedKitthree);
-                                            // Add Arrows pointing the medkit only for nurse
-                                            if (ZombieLaboratory.localNurseArrows.Count == 0 && ZombieLaboratory.localNurseArrows.Count < 3) {
-                                                ZombieLaboratory.localNurseArrows.Add(new Arrow(Shy.color));
-                                                ZombieLaboratory.localNurseArrows.Add(new Arrow(Shy.color));
-                                                ZombieLaboratory.localNurseArrows.Add(new Arrow(Shy.color));
-                                            }
-                                            ZombieLaboratory.localNurseArrows[0].arrow.SetActive(true);
-                                            ZombieLaboratory.localNurseArrows[1].arrow.SetActive(true);
-                                            ZombieLaboratory.localNurseArrows[2].arrow.SetActive(true);
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdzombielaboratory) {
-                                            GameObject laboratory = GameObject.Instantiate(CustomMain.customAssets.laboratory, PlayerControl.LocalPlayer.transform.parent);
-                                            laboratory.name = "laboratory";
-                                            laboratory.transform.position = new Vector3(-18.45f, 3f, 0.5f);
-                                            laboratory.gameObject.layer = 9;
-                                            laboratory.transform.GetChild(0).gameObject.layer = 9;
-                                            ZombieLaboratory.laboratory = laboratory;
-                                            ZombieLaboratory.laboratoryEnterButton = laboratory.transform.GetChild(1).gameObject;
-                                            ZombieLaboratory.laboratoryExitButton = laboratory.transform.GetChild(2).gameObject;
-                                            ZombieLaboratory.laboratoryCreateCureButton = laboratory.transform.GetChild(3).gameObject;
-                                            ZombieLaboratory.laboratoryPutKeyItemButton = laboratory.transform.GetChild(4).gameObject;
-                                            ZombieLaboratory.laboratoryExitLeftButton = laboratory.transform.GetChild(5).gameObject;
-                                            ZombieLaboratory.laboratoryExitRightButton = laboratory.transform.GetChild(6).gameObject;
-                                            ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratoryEnterButton);
-                                            ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratoryExitButton);
-                                            ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratoryExitLeftButton);
-                                            ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratoryExitRightButton);
-
-                                            GameObject nurseMedKit = GameObject.Instantiate(CustomMain.customAssets.nurseMedKit, PlayerControl.LocalPlayer.transform.parent);
-                                            nurseMedKit.name = "nurseMedKit";
-                                            nurseMedKit.transform.parent = ZombieLaboratory.nursePlayer.transform;
-                                            nurseMedKit.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
-                                            ZombieLaboratory.laboratoryNurseMedKit = nurseMedKit;
-                                            ZombieLaboratory.laboratoryNurseMedKit.SetActive(false);
-                                            ZombieLaboratory.laboratoryEntrances.Add(ZombieLaboratory.laboratoryEnterButton);
-                                            createdzombielaboratory = true;
-                                        }
-                                        break;
-                                    case 7:
-                                        // BR:
-                                        if (BattleRoyale.matchType == 0) {
-                                            foreach (PlayerControl soloPlayer in BattleRoyale.soloPlayerTeam) {
-                                                soloPlayer.transform.position = new Vector3(-0.5f, -1, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(soloPlayer);
-                                            }
-                                        }
-                                        else {
-
-                                            if (BattleRoyale.serialKiller != null) {
-                                                BattleRoyale.serialKiller.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                                BattleRoyale.serialKiller.transform.position = new Vector3(12.25f, 2f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(BattleRoyale.serialKiller);
-                                            }
-
-                                            foreach (PlayerControl player in BattleRoyale.limeTeam) {
-                                                player.transform.position = new Vector3(-13.9f, -14.45f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                            }
-                                            foreach (PlayerControl player in BattleRoyale.pinkTeam) {
-                                                player.transform.position = new Vector3(37.35f, -3.25f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                            }
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdbattleroyale) {
-                                            if (BattleRoyale.matchType != 0) {
-                                                GameObject limeteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
-                                                limeteamfloor.name = "limeteamfloor";
-                                                limeteamfloor.transform.position = new Vector3(-13.9f, -14.45f, 0.5f);
-                                                GameObject pinkteamfloor = GameObject.Instantiate(CustomMain.customAssets.redfloor, PlayerControl.LocalPlayer.transform.parent);
-                                                pinkteamfloor.name = "pinkteamfloor";
-                                                pinkteamfloor.transform.position = new Vector3(37.35f, -3.25f, 0.5f);
-                                                BattleRoyale.serialKillerSpawns.Add(limeteamfloor);
-                                                BattleRoyale.serialKillerSpawns.Add(pinkteamfloor);
-                                            }
-                                            createdbattleroyale = true;
-                                        }
-                                        break;
-                                    case 8:
-                                        // MF:
-                                        if (MonjaFestival.bigMonjaPlayer != null) {
-                                            MonjaFestival.bigMonjaPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                            MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(6.35f, 2.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(MonjaFestival.bigMonjaPlayer);
-                                        }
-
-                                        foreach (PlayerControl player in MonjaFestival.greenTeam) {
-                                            player.transform.position = new Vector3(-10.15f, -6.75f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        foreach (PlayerControl player in MonjaFestival.cyanTeam) {
-                                            player.transform.position = new Vector3(38.25f, 0f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdmonjafestival) {
-                                            GameObject bigSpawnOne = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                            bigSpawnOne.name = "bigSpawnOne";
-                                            bigSpawnOne.transform.position = new Vector3(-8.75f, 12.35f, 1f);
-                                            MonjaFestival.bigSpawnOne = bigSpawnOne;
-                                            MonjaFestival.bigSpawnOneCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.bigSpawnOne.transform);
-                                            MonjaFestival.bigSpawnOneCount.text = $"{MonjaFestival.bigSpawnOnePoints} / 30";
-                                            MonjaFestival.bigSpawnOneCount.enableWordWrapping = false;
-                                            MonjaFestival.bigSpawnOneCount.transform.localScale = Vector3.one * 0.5f;
-                                            MonjaFestival.bigSpawnOneCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                            GameObject bigSpawnTwo = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                            bigSpawnTwo.name = "bigSpawnTwo";
-                                            bigSpawnTwo.transform.position = new Vector3(16.25f, -8.85f, 1f);
-                                            MonjaFestival.bigSpawnTwo = bigSpawnTwo;
-                                            MonjaFestival.bigSpawnTwoCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.bigSpawnTwo.transform);
-                                            MonjaFestival.bigSpawnTwoCount.text = $"{MonjaFestival.bigSpawnTwoPoints} / 30";
-                                            MonjaFestival.bigSpawnTwoCount.enableWordWrapping = false;
-                                            MonjaFestival.bigSpawnTwoCount.transform.localScale = Vector3.one * 0.5f;
-                                            MonjaFestival.bigSpawnTwoCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                            GameObject littleSpawnOne = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                            littleSpawnOne.name = "littleSpawnOne";
-                                            littleSpawnOne.transform.position = new Vector3(-23.5f, -1.35f, 0.5f);
-                                            MonjaFestival.littleSpawnOne = littleSpawnOne;
-                                            MonjaFestival.littleSpawnOneCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnOne.transform);
-                                            MonjaFestival.littleSpawnOneCount.text = $"{MonjaFestival.littleSpawnOnePoints} / 10";
-                                            MonjaFestival.littleSpawnOneCount.enableWordWrapping = false;
-                                            MonjaFestival.littleSpawnOneCount.transform.localScale = Vector3.one * 0.5f;
-                                            MonjaFestival.littleSpawnOneCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                            GameObject littleSpawnTwo = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                            littleSpawnTwo.name = "littleSpawnTwo";
-                                            littleSpawnTwo.transform.position = new Vector3(7f, -12.5f, 0.5f);
-                                            MonjaFestival.littleSpawnTwo = littleSpawnTwo;
-                                            MonjaFestival.littleSpawnTwoCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnTwo.transform);
-                                            MonjaFestival.littleSpawnTwoCount.text = $"{MonjaFestival.littleSpawnTwoPoints} / 10";
-                                            MonjaFestival.littleSpawnTwoCount.enableWordWrapping = false;
-                                            MonjaFestival.littleSpawnTwoCount.transform.localScale = Vector3.one * 0.5f;
-                                            MonjaFestival.littleSpawnTwoCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                            GameObject littleSpawnThree = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                            littleSpawnThree.name = "littleSpawnThree";
-                                            littleSpawnThree.transform.position = new Vector3(20f, 7.75f, 0.5f);
-                                            MonjaFestival.littleSpawnThree = littleSpawnThree;
-                                            MonjaFestival.littleSpawnThreeCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnThree.transform);
-                                            MonjaFestival.littleSpawnThreeCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
-                                            MonjaFestival.littleSpawnThreeCount.enableWordWrapping = false;
-                                            MonjaFestival.littleSpawnThreeCount.transform.localScale = Vector3.one * 0.5f;
-                                            MonjaFestival.littleSpawnThreeCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                            GameObject littleSpawnFour = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerControl.LocalPlayer.transform.parent);
-                                            littleSpawnFour.name = "littleSpawnFour";
-                                            littleSpawnFour.transform.position = new Vector3(15.45f, 0f, 0.5f);
-                                            MonjaFestival.littleSpawnFour = littleSpawnFour;
-                                            MonjaFestival.littleSpawnFourCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnFour.transform);
-                                            MonjaFestival.littleSpawnFourCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
-                                            MonjaFestival.littleSpawnFourCount.enableWordWrapping = false;
-                                            MonjaFestival.littleSpawnFourCount.transform.localScale = Vector3.one * 0.5f;
-                                            MonjaFestival.littleSpawnFourCount.transform.localPosition += new Vector3(0f, 0.75f, 0);
-
-                                            GameObject greenBase = GameObject.Instantiate(CustomMain.customAssets.greenBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
-                                            greenBase.name = "greenBase";
-                                            greenBase.transform.position = new Vector3(-10.15f, -6.75f, 0.5f);
-                                            MonjaFestival.greenTeamBase = greenBase;
-                                            GameObject cyanBase = GameObject.Instantiate(CustomMain.customAssets.cyanBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
-                                            cyanBase.name = "cyanBase";
-                                            cyanBase.transform.position = new Vector3(38.25f, 0f, 0.5f);
-                                            MonjaFestival.cyanTeamBase = cyanBase;
-
-                                            GameObject allulMonja = GameObject.Instantiate(CustomMain.customAssets.floorAllulMonja, PlayerControl.LocalPlayer.transform.parent);
-                                            allulMonja.transform.position = new Vector3(20.75f, 2.5f, 0.5f);
-                                            allulMonja.name = "allulMonja";
-                                            MonjaFestival.allulMonja = allulMonja;
-                                            Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.allulMonjaReload());
-
-                                            if (MonjaFestival.bigMonjaPlayer != null) {
-                                                GameObject greyBase = GameObject.Instantiate(CustomMain.customAssets.greyBaseEmpty, PlayerControl.LocalPlayer.transform.parent);
-                                                greyBase.name = "greyBase";
-                                                greyBase.transform.position = new Vector3(6.35f, 2.5f, 0.5f);
-                                                MonjaFestival.bigMonjaBase = greyBase;
-                                                MonjaFestival.bigMonjaSpawns.Add(greyBase);
-                                            }
-                                            MonjaFestival.bigMonjaSpawns.Add(bigSpawnOne);
-                                            MonjaFestival.bigMonjaSpawns.Add(bigSpawnTwo);
-                                            MonjaFestival.bigMonjaSpawns.Add(littleSpawnOne);
-                                            MonjaFestival.bigMonjaSpawns.Add(littleSpawnTwo);
-                                            MonjaFestival.bigMonjaSpawns.Add(littleSpawnThree);
-                                            MonjaFestival.bigMonjaSpawns.Add(littleSpawnFour);
-                                            MonjaFestival.bigMonjaSpawns.Add(greenBase);
-                                            MonjaFestival.bigMonjaSpawns.Add(cyanBase);
-                                            MonjaFestival.bigMonjaSpawns.Add(allulMonja);
-
-                                            createdmonjafestival = true;
-                                        }
-                                        break;
-                                }
-                                // Remove camera use, admin table, vitals, electrical doors on Airship
-                                GameObject cameras = GameObject.Find("task_cams");
-                                cameras.GetComponent<BoxCollider2D>().enabled = false;
-                                GameObject airshipadmin = GameObject.Find("panel_cockpit_map");
-                                airshipadmin.GetComponent<BoxCollider2D>().enabled = false;
-                                GameObject airshipvitals = GameObject.Find("panel_vitals");
-                                airshipvitals.GetComponent<CircleCollider2D>().enabled = false;
-
-                                Helpers.GetStaticDoor("TopLeftVert").SetOpen(true);
-                                Helpers.GetStaticDoor("TopLeftHort").SetOpen(true);
-                                Helpers.GetStaticDoor("BottomHort").SetOpen(true);
-                                Helpers.GetStaticDoor("TopCenterHort").SetOpen(true);
-                                Helpers.GetStaticDoor("LeftVert").SetOpen(true);
-                                Helpers.GetStaticDoor("RightVert").SetOpen(true);
-                                Helpers.GetStaticDoor("TopRightVert").SetOpen(true);
-                                Helpers.GetStaticDoor("TopRightHort").SetOpen(true);
-                                Helpers.GetStaticDoor("BottomRightHort").SetOpen(true);
-                                Helpers.GetStaticDoor("BottomRightVert").SetOpen(true);
-                                Helpers.GetStaticDoor("LeftDoorTop").SetOpen(true);
-                                Helpers.GetStaticDoor("LeftDoorBottom").SetOpen(true);
-
-                                GameObject laddermeeting = GameObject.Find("ladder_meeting");
-                                laddermeeting.SetActive(false);
-                                GameObject platform = GameObject.Find("Platform");
-                                platform.SetActive(false);
-                                GameObject platformleft = GameObject.Find("PlatformLeft");
-                                platformleft.SetActive(false);
-                                GameObject platformright = GameObject.Find("PlatformRight");
-                                platformright.SetActive(false);
-                                GameObject recordsadmin = GameObject.Find("records_admin_map");
-                                recordsadmin.GetComponent<BoxCollider2D>().enabled = false;
+                                // KOTH:
+                                Helpers.CreateKOTH();
                                 break;
-                            // Submerged
                             case 5:
-                                switch (gameType) {
-                                    case 2:
-                                        // CTF:
-                                        if (CaptureTheFlag.stealerPlayer != null) {
-                                            CaptureTheFlag.stealerPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                            CaptureTheFlag.stealerPlayer.transform.position = new Vector3(1f, 10f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(CaptureTheFlag.stealerPlayer);
-                                        }
-
-                                        foreach (PlayerControl player in CaptureTheFlag.redteamFlag) {
-                                            player.transform.position = new Vector3(-8.35f, 28.25f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        foreach (PlayerControl player in CaptureTheFlag.blueteamFlag) {
-                                            player.transform.position = new Vector3(12.5f, -31.25f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdcapturetheflag) {
-                                            GameObject redflag = GameObject.Instantiate(CustomMain.customAssets.redflag, PlayerControl.LocalPlayer.transform.parent);
-                                            redflag.name = "redflag";
-                                            redflag.transform.position = new Vector3(-8.35f, 28.05f, 0.03f);
-                                            CaptureTheFlag.redflag = redflag;
-                                            GameObject redflagbase = GameObject.Instantiate(CustomMain.customAssets.redflagbase, PlayerControl.LocalPlayer.transform.parent);
-                                            redflagbase.name = "redflagbase";
-                                            redflagbase.transform.position = new Vector3(-8.35f, 28, 0.031f);
-                                            CaptureTheFlag.redflagbase = redflagbase;
-                                            GameObject blueflag = GameObject.Instantiate(CustomMain.customAssets.blueflag, PlayerControl.LocalPlayer.transform.parent);
-                                            blueflag.name = "blueflag";
-                                            blueflag.transform.position = new Vector3(12.5f, -31.45f, -0.011f);
-                                            CaptureTheFlag.blueflag = blueflag;
-                                            GameObject blueflagbase = GameObject.Instantiate(CustomMain.customAssets.blueflagbase, PlayerControl.LocalPlayer.transform.parent);
-                                            blueflagbase.name = "blueflagbase";
-                                            blueflagbase.transform.position = new Vector3(12.5f, -31.5f, -0.01f);
-                                            CaptureTheFlag.blueflagbase = blueflagbase;
-
-                                            GameObject redteamfloor = GameObject.Instantiate(CustomMain.customAssets.redfloor, PlayerControl.LocalPlayer.transform.parent);
-                                            redteamfloor.name = "redteamfloor";
-                                            redteamfloor.transform.position = new Vector3(-14f, -27.5f, -0.01f);
-                                            GameObject blueteamfloor = GameObject.Instantiate(CustomMain.customAssets.bluefloor, PlayerControl.LocalPlayer.transform.parent);
-                                            blueteamfloor.name = "blueteamfloor";
-                                            blueteamfloor.transform.position = new Vector3(14.25f, 24.25f, 0.03f);
-
-                                            CaptureTheFlag.stealerSpawns.Add(redflagbase);
-                                            CaptureTheFlag.stealerSpawns.Add(blueflagbase);
-                                            createdcapturetheflag = true;
-                                        }
-                                        break;
-                                    case 3:
-                                        // PT:
-                                        foreach (PlayerControl player in PoliceAndThief.policeTeam) {
-                                            player.transform.position = new Vector3(-8.45f, 27f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
-                                            player.transform.position = new Vector3(1f, 10f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                            if (player == PlayerControl.LocalPlayer) {
-                                                // Add Arrows pointing the release and deliver point
-                                                if (PoliceAndThief.localThiefReleaseArrow.Count == 0) {
-                                                    PoliceAndThief.localThiefReleaseArrow.Add(new Arrow(Palette.PlayerColors[10]));
-                                                    PoliceAndThief.localThiefReleaseArrow[0].arrow.SetActive(true);
-                                                    PoliceAndThief.localThiefReleaseArrow.Add(new Arrow(Palette.PlayerColors[10]));
-                                                    PoliceAndThief.localThiefReleaseArrow[1].arrow.SetActive(true);
-                                                }
-                                                if (PoliceAndThief.localThiefDeliverArrow.Count == 0) {
-                                                    PoliceAndThief.localThiefDeliverArrow.Add(new Arrow(Palette.PlayerColors[16]));
-                                                    PoliceAndThief.localThiefDeliverArrow[0].arrow.SetActive(true);
-                                                    PoliceAndThief.localThiefDeliverArrow.Add(new Arrow(Palette.PlayerColors[16]));
-                                                    PoliceAndThief.localThiefDeliverArrow[1].arrow.SetActive(true);
-                                                }
-                                            }
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdpoliceandthief) {
-                                            GameObject cell = GameObject.Instantiate(CustomMain.customAssets.cell, PlayerControl.LocalPlayer.transform.parent);
-                                            cell.name = "cell";
-                                            cell.transform.position = new Vector3(-5.9f, 31.85f, 0.5f);
-                                            cell.gameObject.layer = 9;
-                                            cell.transform.GetChild(0).gameObject.layer = 9;
-                                            PoliceAndThief.cell = cell;
-                                            GameObject cellbutton = GameObject.Instantiate(CustomMain.customAssets.freethiefbutton, PlayerControl.LocalPlayer.transform.parent);
-                                            cellbutton.name = "cellbutton";
-                                            cellbutton.transform.position = new Vector3(-6f, 28.5f, 0.03f);
-                                            PoliceAndThief.cellbutton = cellbutton;
-                                            GameObject jewelbutton = GameObject.Instantiate(CustomMain.customAssets.jewelbutton, PlayerControl.LocalPlayer.transform.parent);
-                                            jewelbutton.name = "jewelbutton";
-                                            jewelbutton.transform.position = new Vector3(1f, 10f, 0.03f);
-                                            PoliceAndThief.jewelbutton = jewelbutton;
-                                            GameObject thiefspaceship = GameObject.Instantiate(CustomMain.customAssets.thiefspaceship, PlayerControl.LocalPlayer.transform.parent);
-                                            thiefspaceship.name = "thiefspaceship";
-                                            thiefspaceship.transform.position = new Vector3(-2.75f, 9f, 0.031f);
-                                            thiefspaceship.transform.localScale = new Vector3(-1f, 1f, 1f);
-
-                                            GameObject celltwo = GameObject.Instantiate(CustomMain.customAssets.cell, PlayerControl.LocalPlayer.transform.parent);
-                                            celltwo.name = "celltwo";
-                                            celltwo.transform.position = new Vector3(-14.1f, -39f, -0.01f);
-                                            celltwo.gameObject.layer = 9;
-                                            celltwo.transform.GetChild(0).gameObject.layer = 9;
-                                            PoliceAndThief.celltwo = celltwo;
-                                            GameObject cellbuttontwo = GameObject.Instantiate(CustomMain.customAssets.freethiefbutton, PlayerControl.LocalPlayer.transform.parent);
-                                            cellbuttontwo.name = "cellbuttontwo";
-                                            cellbuttontwo.transform.position = new Vector3(-11f, -39.35f, -0.01f);
-                                            PoliceAndThief.cellbuttontwo = cellbuttontwo;
-                                            GameObject jewelbuttontwo = GameObject.Instantiate(CustomMain.customAssets.jewelbutton, PlayerControl.LocalPlayer.transform.parent);
-                                            jewelbuttontwo.name = "jewelbuttontwo";
-                                            jewelbuttontwo.transform.position = new Vector3(13f, -32.5f, -0.01f);
-                                            PoliceAndThief.jewelbuttontwo = jewelbuttontwo;
-                                            GameObject thiefspaceshiptwo = GameObject.Instantiate(CustomMain.customAssets.thiefspaceship, PlayerControl.LocalPlayer.transform.parent);
-                                            thiefspaceshiptwo.name = "thiefspaceshiptwo";
-                                            thiefspaceshiptwo.transform.position = new Vector3(14.5f, -35f, -0.011f);
-
-                                            createdpoliceandthief = true;
-
-                                            // Spawn jewels
-                                            GameObject jewel01 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel01.transform.position = new Vector3(-15f, 17.5f, -1f);
-                                            jewel01.name = "jewel01";
-                                            PoliceAndThief.jewel01 = jewel01;
-                                            GameObject jewel02 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel02.transform.position = new Vector3(8f, 32f, -1f);
-                                            jewel02.name = "jewel02";
-                                            PoliceAndThief.jewel02 = jewel02;
-                                            GameObject jewel03 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel03.transform.position = new Vector3(-6.75f, 10f, -1f);
-                                            jewel03.name = "jewel03";
-                                            PoliceAndThief.jewel03 = jewel03;
-                                            GameObject jewel04 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel04.transform.position = new Vector3(5.15f, 8f, -1f);
-                                            jewel04.name = "jewel04";
-                                            PoliceAndThief.jewel04 = jewel04;
-                                            GameObject jewel05 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel05.transform.position = new Vector3(5f, -33.5f, -1f);
-                                            jewel05.name = "jewel05";
-                                            PoliceAndThief.jewel05 = jewel05;
-                                            GameObject jewel06 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel06.transform.position = new Vector3(-4.15f, -33.5f, -1f);
-                                            jewel06.name = "jewel06";
-                                            PoliceAndThief.jewel06 = jewel06;
-                                            GameObject jewel07 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel07.transform.position = new Vector3(-14f, -27.75f, -1f);
-                                            jewel07.name = "jewel07";
-                                            PoliceAndThief.jewel07 = jewel07;
-                                            GameObject jewel08 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel08.transform.position = new Vector3(7.8f, -23.75f, -1f);
-                                            jewel08.name = "jewel08";
-                                            PoliceAndThief.jewel08 = jewel08;
-                                            GameObject jewel09 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel09.transform.position = new Vector3(-6.75f, -42.75f, -1f);
-                                            jewel09.name = "jewel09";
-                                            PoliceAndThief.jewel09 = jewel09;
-                                            GameObject jewel10 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel10.transform.position = new Vector3(13f, -25.25f, -1f);
-                                            jewel10.name = "jewel10";
-                                            PoliceAndThief.jewel10 = jewel10;
-                                            GameObject jewel11 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel11.transform.position = new Vector3(-14f, -34.25f, -1f);
-                                            jewel11.name = "jewel11";
-                                            PoliceAndThief.jewel11 = jewel11;
-                                            GameObject jewel12 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel12.transform.position = new Vector3(0f, -33.5f, -1f);
-                                            jewel12.name = "jewel12";
-                                            PoliceAndThief.jewel12 = jewel12;
-                                            GameObject jewel13 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel13.transform.position = new Vector3(-6.5f, 14f, -1f);
-                                            jewel13.name = "jewel13";
-                                            PoliceAndThief.jewel13 = jewel13;
-                                            GameObject jewel14 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel14.transform.position = new Vector3(14.25f, 24.5f, -1f);
-                                            jewel14.name = "jewel14";
-                                            PoliceAndThief.jewel14 = jewel14;
-                                            GameObject jewel15 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerControl.LocalPlayer.transform.parent);
-                                            jewel15.transform.position = new Vector3(-12.25f, 31f, -1f);
-                                            jewel15.name = "jewel15";
-                                            PoliceAndThief.jewel15 = jewel15;
-                                            PoliceAndThief.thiefTreasures.Add(jewel01);
-                                            PoliceAndThief.thiefTreasures.Add(jewel02);
-                                            PoliceAndThief.thiefTreasures.Add(jewel03);
-                                            PoliceAndThief.thiefTreasures.Add(jewel04);
-                                            PoliceAndThief.thiefTreasures.Add(jewel05);
-                                            PoliceAndThief.thiefTreasures.Add(jewel06);
-                                            PoliceAndThief.thiefTreasures.Add(jewel07);
-                                            PoliceAndThief.thiefTreasures.Add(jewel08);
-                                            PoliceAndThief.thiefTreasures.Add(jewel09);
-                                            PoliceAndThief.thiefTreasures.Add(jewel10);
-                                            PoliceAndThief.thiefTreasures.Add(jewel11);
-                                            PoliceAndThief.thiefTreasures.Add(jewel12);
-                                            PoliceAndThief.thiefTreasures.Add(jewel13);
-                                            PoliceAndThief.thiefTreasures.Add(jewel14);
-                                            PoliceAndThief.thiefTreasures.Add(jewel15);
-                                        }
-                                        break;
-                                    case 4:
-                                        // KOTH:
-                                        if (KingOfTheHill.usurperPlayer != null) {
-                                            KingOfTheHill.usurperPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                            KingOfTheHill.usurperPlayer.transform.position = new Vector3(5.75f, 31.25f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(KingOfTheHill.usurperPlayer);
-                                        }
-
-                                        foreach (PlayerControl player in KingOfTheHill.greenTeam) {
-                                            player.transform.position = new Vector3(-12.25f, 18.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        foreach (PlayerControl player in KingOfTheHill.yellowTeam) {
-                                            player.transform.position = new Vector3(-8.5f, -39.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdkingofthehill) {
-                                            GameObject greenteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
-                                            greenteamfloor.name = "greenteamfloor";
-                                            greenteamfloor.transform.position = new Vector3(-12.25f, 18.25f, 0.03f);
-                                            GameObject greenteamfloortwo = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
-                                            greenteamfloortwo.name = "greenteamfloortwo";
-                                            greenteamfloortwo.transform.position = new Vector3(-14.5f, -34.35f, -0.01f);
-                                            GameObject yellowteamfloor = GameObject.Instantiate(CustomMain.customAssets.yellowfloor, PlayerControl.LocalPlayer.transform.parent);
-                                            yellowteamfloor.name = "yellowteamfloor";
-                                            yellowteamfloor.transform.position = new Vector3(-8.5f, -39.5f, -0.01f);
-                                            GameObject yellowteamfloortwo = GameObject.Instantiate(CustomMain.customAssets.yellowfloor, PlayerControl.LocalPlayer.transform.parent);
-                                            yellowteamfloortwo.name = "yellowteamfloortwo";
-                                            yellowteamfloortwo.transform.position = new Vector3(0f, 33.5f, 0.03f);
-                                            GameObject greenkingaura = GameObject.Instantiate(CustomMain.customAssets.greenaura, KingOfTheHill.greenKingplayer.transform);
-                                            greenkingaura.name = "greenkingaura";
-                                            greenkingaura.transform.position = new Vector3(KingOfTheHill.greenKingplayer.transform.position.x, KingOfTheHill.greenKingplayer.transform.position.y, -0.5f);
-                                            KingOfTheHill.greenkingaura = greenkingaura;
-                                            GameObject yellowkingaura = GameObject.Instantiate(CustomMain.customAssets.yellowaura, KingOfTheHill.yellowKingplayer.transform);
-                                            yellowkingaura.name = "yellowkingaura";
-                                            yellowkingaura.transform.position = new Vector3(KingOfTheHill.yellowKingplayer.transform.position.x, KingOfTheHill.yellowKingplayer.transform.position.y, -0.5f);
-                                            KingOfTheHill.yellowkingaura = yellowkingaura;
-                                            GameObject flagzoneone = GameObject.Instantiate(CustomMain.customAssets.whiteflag, PlayerControl.LocalPlayer.transform.parent);
-                                            flagzoneone.name = "flagzoneone";
-                                            flagzoneone.transform.position = new Vector3(1f, 10f, 0.029f);
-                                            KingOfTheHill.flagzoneone = flagzoneone;
-                                            GameObject zoneone = GameObject.Instantiate(CustomMain.customAssets.whitebase, PlayerControl.LocalPlayer.transform.parent);
-                                            zoneone.name = "zoneone";
-                                            zoneone.transform.position = new Vector3(1f, 10f, 0.03f);
-                                            KingOfTheHill.zoneone = zoneone;
-                                            GameObject flagzonetwo = GameObject.Instantiate(CustomMain.customAssets.whiteflag, PlayerControl.LocalPlayer.transform.parent);
-                                            flagzonetwo.name = "flagzonetwo";
-                                            flagzonetwo.transform.position = new Vector3(2.5f, -35.5f, -0.01f);
-                                            KingOfTheHill.flagzonetwo = flagzonetwo;
-                                            GameObject zonetwo = GameObject.Instantiate(CustomMain.customAssets.whitebase, PlayerControl.LocalPlayer.transform.parent);
-                                            zonetwo.name = "zonetwo";
-                                            zonetwo.transform.position = new Vector3(2.5f, -35.5f, -0.011f);
-                                            KingOfTheHill.zonetwo = zonetwo;
-                                            GameObject flagzonethree = GameObject.Instantiate(CustomMain.customAssets.whiteflag, PlayerControl.LocalPlayer.transform.parent);
-                                            flagzonethree.name = "flagzonethree";
-                                            flagzonethree.transform.position = new Vector3(10f, -31.5f, -0.01f);
-                                            KingOfTheHill.flagzonethree = flagzonethree;
-                                            GameObject zonethree = GameObject.Instantiate(CustomMain.customAssets.whitebase, PlayerControl.LocalPlayer.transform.parent);
-                                            zonethree.name = "zonethree";
-                                            zonethree.transform.position = new Vector3(10f, -31.5f, -0.011f);
-                                            KingOfTheHill.zonethree = zonethree;
-                                            KingOfTheHill.kingZones.Add(zoneone);
-                                            KingOfTheHill.kingZones.Add(zonetwo);
-                                            KingOfTheHill.kingZones.Add(zonethree);
-                                            KingOfTheHill.usurperSpawns.Add(greenteamfloor);
-                                            KingOfTheHill.usurperSpawns.Add(yellowteamfloor);
-                                            KingOfTheHill.usurperSpawns.Add(greenteamfloortwo);
-                                            KingOfTheHill.usurperSpawns.Add(yellowteamfloortwo);
-                                            createdkingofthehill = true;
-                                        }
-                                        break;
-                                    case 5:
-                                        // HP:
-                                        HotPotato.hotPotatoPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                        HotPotato.hotPotatoPlayer.transform.position = new Vector3(-4.25f, -33.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                        Helpers.clearAllTasks(HotPotato.hotPotatoPlayer);
-
-                                        foreach (PlayerControl player in HotPotato.notPotatoTeam) {
-                                            player.transform.position = new Vector3(13f, -25.25f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdhotpotato) {
-                                            GameObject hotpotato = GameObject.Instantiate(CustomMain.customAssets.hotPotato, HotPotato.hotPotatoPlayer.transform);
-                                            hotpotato.name = "hotpotato";
-                                            hotpotato.transform.position = HotPotato.hotPotatoPlayer.transform.position + new Vector3(0, 0.5f, -0.25f);
-                                            HotPotato.hotPotato = hotpotato;
-                                            createdhotpotato = true;
-                                        }
-                                        break;
-                                    case 6:
-                                        // ZL:
-                                        foreach (PlayerControl player in ZombieLaboratory.zombieTeam) {
-                                            player.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                            player.transform.position = new Vector3(1f, 10f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(player);
-                                        }
-
-                                        foreach (PlayerControl player in ZombieLaboratory.survivorTeam) {
-                                            if (player == PlayerControl.LocalPlayer && PlayerControl.LocalPlayer != ZombieLaboratory.nursePlayer) {
-                                                player.transform.position = new Vector3(5.5f, 31.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                                // Add Arrows pointing the deliver point
-                                                if (ZombieLaboratory.localSurvivorsDeliverArrow.Count == 0) {
-                                                    ZombieLaboratory.localSurvivorsDeliverArrow.Add(new Arrow(Palette.PlayerColors[3]));
-                                                    ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(true);
-                                                    ZombieLaboratory.localSurvivorsDeliverArrow.Add(new Arrow(Palette.PlayerColors[3]));
-                                                    ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(true);
-                                                }
-                                            }
-                                        }
-
-                                        if (PlayerControl.LocalPlayer == ZombieLaboratory.nursePlayer) {
-                                            ZombieLaboratory.nursePlayer.transform.position = new Vector3(-6f, 31.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                            Helpers.clearAllTasks(ZombieLaboratory.nursePlayer);
-                                            ZombieLaboratory.nursePlayerInsideLaboratory = false;
-                                            GameObject mapMedKit = GameObject.Instantiate(CustomMain.customAssets.mapMedKit, PlayerControl.LocalPlayer.transform.parent);
-                                            mapMedKit.name = "mapMedKit";
-                                            mapMedKit.transform.position = new Vector3(0f, 32f, -1f);
-                                            GameObject mapMedKittwo = GameObject.Instantiate(CustomMain.customAssets.mapMedKit, PlayerControl.LocalPlayer.transform.parent);
-                                            mapMedKittwo.name = "mapMedKittwo";
-                                            mapMedKittwo.transform.position = new Vector3(6f, -34f, -1f);
-                                            GameObject mapMedKitthree = GameObject.Instantiate(CustomMain.customAssets.mapMedKit, PlayerControl.LocalPlayer.transform.parent);
-                                            mapMedKitthree.name = "mapMedKitthree";
-                                            mapMedKitthree.transform.position = new Vector3(-11.25f, -27.75f, -1f);
-                                            ZombieLaboratory.nurseMedkits.Add(mapMedKit);
-                                            ZombieLaboratory.nurseMedkits.Add(mapMedKittwo);
-                                            ZombieLaboratory.nurseMedkits.Add(mapMedKitthree);
-                                            // Add Arrows pointing the medkit only for nurse
-                                            if (ZombieLaboratory.localNurseArrows.Count == 0 && ZombieLaboratory.localNurseArrows.Count < 3) {
-                                                ZombieLaboratory.localNurseArrows.Add(new Arrow(Shy.color));
-                                                ZombieLaboratory.localNurseArrows.Add(new Arrow(Shy.color));
-                                                ZombieLaboratory.localNurseArrows.Add(new Arrow(Shy.color));
-                                            }
-                                            ZombieLaboratory.localNurseArrows[0].arrow.SetActive(true);
-                                            ZombieLaboratory.localNurseArrows[1].arrow.SetActive(true);
-                                            ZombieLaboratory.localNurseArrows[2].arrow.SetActive(true);
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdzombielaboratory) {
-                                            GameObject laboratory = GameObject.Instantiate(CustomMain.customAssets.laboratory, PlayerControl.LocalPlayer.transform.parent);
-                                            laboratory.name = "laboratory";
-                                            laboratory.transform.position = new Vector3(-5.9f, 31.85f, 0.5f);
-                                            laboratory.gameObject.layer = 9;
-                                            laboratory.transform.GetChild(0).gameObject.layer = 9;
-                                            ZombieLaboratory.laboratory = laboratory;
-                                            ZombieLaboratory.laboratoryEnterButton = laboratory.transform.GetChild(1).gameObject;
-                                            ZombieLaboratory.laboratoryEnterButton.transform.position = new Vector3(-5.45f, 29.4f, -1.5f);
-                                            ZombieLaboratory.laboratoryExitButton = laboratory.transform.GetChild(2).gameObject;
-                                            ZombieLaboratory.laboratoryCreateCureButton = laboratory.transform.GetChild(3).gameObject;
-                                            ZombieLaboratory.laboratoryPutKeyItemButton = laboratory.transform.GetChild(4).gameObject;
-                                            ZombieLaboratory.laboratoryExitLeftButton = laboratory.transform.GetChild(5).gameObject;
-                                            ZombieLaboratory.laboratoryExitRightButton = laboratory.transform.GetChild(6).gameObject;
-                                            ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratoryEnterButton);
-                                            ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratoryExitButton);
-                                            ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratoryExitLeftButton);
-                                            ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratoryExitRightButton);
-
-                                            GameObject laboratorytwo = GameObject.Instantiate(CustomMain.customAssets.laboratory, PlayerControl.LocalPlayer.transform.parent);
-                                            laboratorytwo.name = "laboratorytwo";
-                                            laboratorytwo.transform.position = new Vector3(-14.1f, -39f, -0.01f);
-                                            laboratorytwo.gameObject.layer = 9;
-                                            laboratorytwo.transform.GetChild(0).gameObject.layer = 9;
-                                            ZombieLaboratory.laboratorytwo = laboratorytwo;
-                                            ZombieLaboratory.laboratorytwoEnterButton = laboratorytwo.transform.GetChild(1).gameObject;
-                                            ZombieLaboratory.laboratorytwoEnterButton.transform.position = new Vector3(-10.08f, -39.5f, -0.11f);
-                                            ZombieLaboratory.laboratorytwoExitButton = laboratorytwo.transform.GetChild(2).gameObject;
-                                            ZombieLaboratory.laboratorytwoCreateCureButton = laboratorytwo.transform.GetChild(3).gameObject;
-                                            ZombieLaboratory.laboratorytwoPutKeyItemButton = laboratorytwo.transform.GetChild(4).gameObject;
-                                            ZombieLaboratory.laboratorytwoExitLeftButton = laboratorytwo.transform.GetChild(5).gameObject;
-                                            ZombieLaboratory.laboratorytwoExitRightButton = laboratorytwo.transform.GetChild(6).gameObject;
-                                            ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratorytwoEnterButton);
-                                            ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratorytwoExitButton);
-                                            ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratorytwoExitLeftButton);
-                                            ZombieLaboratory.nurseExits.Add(ZombieLaboratory.laboratorytwoExitRightButton);
-
-                                            GameObject nurseMedKit = GameObject.Instantiate(CustomMain.customAssets.nurseMedKit, PlayerControl.LocalPlayer.transform.parent);
-                                            nurseMedKit.name = "nurseMedKit";
-                                            nurseMedKit.transform.parent = ZombieLaboratory.nursePlayer.transform;
-                                            nurseMedKit.transform.localPosition = new Vector3(0f, 0.7f, -0.5f);
-                                            ZombieLaboratory.laboratoryNurseMedKit = nurseMedKit;
-                                            ZombieLaboratory.laboratoryNurseMedKit.SetActive(false);
-                                            ZombieLaboratory.laboratoryEntrances.Add(ZombieLaboratory.laboratoryEnterButton);
-                                            ZombieLaboratory.laboratoryEntrances.Add(ZombieLaboratory.laboratorytwoEnterButton);
-                                            createdzombielaboratory = true;
-                                        }
-                                        break;
-                                    case 7:
-                                        // BR:
-                                        if (BattleRoyale.matchType == 0) {
-                                            foreach (PlayerControl soloPlayer in BattleRoyale.soloPlayerTeam) {
-                                                soloPlayer.transform.position = new Vector3(3.75f, -26.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(soloPlayer);
-                                            }
-                                        }
-                                        else {
-
-                                            if (BattleRoyale.serialKiller != null) {
-                                                BattleRoyale.serialKiller.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                                BattleRoyale.serialKiller.transform.position = new Vector3(5.75f, 31.25f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(BattleRoyale.serialKiller);
-                                            }
-
-                                            foreach (PlayerControl player in BattleRoyale.limeTeam) {
-                                                player.transform.position = new Vector3(-12.25f, 18.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                            }
-
-                                            foreach (PlayerControl player in BattleRoyale.pinkTeam) {
-                                                player.transform.position = new Vector3(-8.5f, -39.5f, PlayerControl.LocalPlayer.transform.position.z);
-                                                Helpers.clearAllTasks(player);
-                                            }
-                                        }
-
-                                        if (PlayerControl.LocalPlayer != null && !createdbattleroyale) {
-                                            if (BattleRoyale.matchType != 0) {
-                                                GameObject limeteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
-                                                limeteamfloor.name = "limeteamfloor";
-                                                limeteamfloor.transform.position = new Vector3(-12.25f, 18.5f, 0.03f);
-                                                GameObject limeteamfloortwo = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerControl.LocalPlayer.transform.parent);
-                                                limeteamfloortwo.name = "limeteamfloortwo";
-                                                limeteamfloortwo.transform.position = new Vector3(-14.5f, -34.35f, -0.01f);
-                                                GameObject pinkteamfloor = GameObject.Instantiate(CustomMain.customAssets.redfloor, PlayerControl.LocalPlayer.transform.parent);
-                                                pinkteamfloor.name = "pinkteamfloor";
-                                                pinkteamfloor.transform.position = new Vector3(-8.5f, -39.5f, -0.01f);
-                                                GameObject pinkteamfloortwo = GameObject.Instantiate(CustomMain.customAssets.redfloor, PlayerControl.LocalPlayer.transform.parent);
-                                                pinkteamfloortwo.name = "pinkteamfloortwo";
-                                                pinkteamfloortwo.transform.position = new Vector3(0f, 33.5f, 0.03f);
-                                                BattleRoyale.serialKillerSpawns.Add(limeteamfloor);
-                                                BattleRoyale.serialKillerSpawns.Add(pinkteamfloor);
-                                                BattleRoyale.serialKillerSpawns.Add(limeteamfloortwo);
-                                                BattleRoyale.serialKillerSpawns.Add(pinkteamfloortwo);
-                                            }
-                                            createdbattleroyale = true;
-                                        }
-                                        break;
-                                    case 8:
-                                        // MF:
-
-                                        break;
-                                }
-                                // Remove camera use, admin table, vitals, on Submerged
-                                GameObject upperCentralVent = GameObject.Find("UpperCentralVent");
-                                upperCentralVent.GetComponent<CircleCollider2D>().enabled = false;
-                                upperCentralVent.GetComponent<PolygonCollider2D>().enabled = false;
-                                GameObject lowerCentralVent = GameObject.Find("LowerCentralVent");
-                                lowerCentralVent.GetComponent<BoxCollider2D>().enabled = false;
-                                GameObject securityCams = GameObject.Find("SecurityConsole");
-                                securityCams.GetComponent<PolygonCollider2D>().enabled = false;
-                                GameObject submergedvitals = GameObject.Find("panel_vitals(Clone)");
-                                submergedvitals.GetComponent<CircleCollider2D>().enabled = false;
-                                GameObject submergedadminone = GameObject.Find("console-adm-admintable");
-                                submergedadminone.GetComponent<CircleCollider2D>().enabled = false;
-                                GameObject submergedadmintwo = GameObject.Find("console-adm-admintable (1)");
-                                submergedadmintwo.GetComponent<CircleCollider2D>().enabled = false;
-                                GameObject deconVLower = GameObject.Find("DeconDoorVLower");
-                                deconVLower.SetActive(false);
-                                GameObject deconVUpper = GameObject.Find("DeconDoorVUpper");
-                                deconVUpper.SetActive(false);
-                                GameObject deconHLower = GameObject.Find("DeconDoorHLower");
-                                deconHLower.SetActive(false);
-                                GameObject deconHUpper = GameObject.Find("DeconDoorHUpper");
-                                deconHUpper.SetActive(false);
-                                GameObject camsone = GameObject.Find("Submerged(Clone)/Cameras/LowerDeck/Electrical/FixConsole");
-                                camsone.GetComponent<PolygonCollider2D>().enabled = false;
-                                GameObject camstwo = GameObject.Find("Submerged(Clone)/Cameras/LowerDeck/Lobby/FixConsole");
-                                camstwo.GetComponent<BoxCollider2D>().enabled = false;
-                                camstwo.GetComponent<CircleCollider2D>().enabled = false;
-                                GameObject camsthree = GameObject.Find("Submerged(Clone)/Cameras/UpperDeck/Comms/FixConsole");
-                                camsthree.GetComponent<PolygonCollider2D>().enabled = false;
-                                GameObject camsfour = GameObject.Find("Submerged(Clone)/Cameras/UpperDeck/Lobby/FixConsole");
-                                camsfour.GetComponent<BoxCollider2D>().enabled = false;
-                                camsfour.GetComponent<CircleCollider2D>().enabled = false;
-                                GameObject camsfive = GameObject.Find("Submerged(Clone)/Cameras/UpperDeck/WestHallway/FixConsole");
-                                camsfive.GetComponent<BoxCollider2D>().enabled = false;
-                                camsfive.GetComponent<CircleCollider2D>().enabled = false;
-                                GameObject camssix = GameObject.Find("Submerged(Clone)/Cameras/UpperDeck/YHallway/FixConsole");
-                                camssix.GetComponent<BoxCollider2D>().enabled = false;
-                                camssix.GetComponent<CircleCollider2D>().enabled = false;
-                                GameObject camsseven = GameObject.Find("Submerged(Clone)/Cameras/LowerDeck/WestHallway/FixConsole");
-                                camsseven.GetComponent<BoxCollider2D>().enabled = false;
+                                // HP:
+                                Helpers.CreateHP();
+                                break;
+                            case 6:
+                                // ZL:
+                                Helpers.CreateZL();
+                                break;
+                            case 7:
+                                // BR:
+                                Helpers.CreateBR();
+                                break;
+                            case 8:
+                                // MF:
+                                Helpers.CreateMF();
                                 break;
                         }
+                        Helpers.RemoveObjectsOnGamemodes(GameOptionsManager.Instance.currentGameOptions.MapId);
                     }
 
                     switch (whichgamemodeHUD) {
                         // Capture The Flag
                         case 1:
-                            new CustomMessage(Language.introTexts[1], LasMonjas.gamemodeMatchDuration, -1, -1.3f, 15);
-                            new CustomMessage(CaptureTheFlag.flagpointCounter, LasMonjas.gamemodeMatchDuration, -1, 1.9f, 17);
+                            new CustomMessage(Language.introTexts[1], LasMonjas.gamemodeMatchDuration, -1.3f, 15);
+                            new CustomMessage(CaptureTheFlag.flagpointCounter, LasMonjas.gamemodeMatchDuration, 1.9f, 17);
                             // Add Arrows pointing the flags
                             if (CaptureTheFlag.localRedFlagArrow.Count == 0) CaptureTheFlag.localRedFlagArrow.Add(new Arrow(Color.red));
                             CaptureTheFlag.localRedFlagArrow[0].arrow.SetActive(true);
@@ -4195,21 +720,21 @@ namespace LasMonjas.Patches
                         case 2:
                             if (!PoliceAndThief.policeCanSeeJewels) {
                                 foreach (PlayerControl police in PoliceAndThief.policeTeam) {
-                                    if (police == PlayerControl.LocalPlayer) {
+                                    if (police == PlayerInCache.LocalPlayer.PlayerControl) {
                                         foreach (GameObject jewel in PoliceAndThief.thiefTreasures) {
                                             jewel.SetActive(false);
                                         }
                                     }
                                 }
                             }
-                            new CustomMessage(Language.introTexts[1], LasMonjas.gamemodeMatchDuration, -1, -1.3f, 15);
+                            new CustomMessage(Language.introTexts[1], LasMonjas.gamemodeMatchDuration, -1.3f, 15);
                             PoliceAndThief.thiefpointCounter = Language.introTexts[3] + "<color=#00F7FFFF>" + PoliceAndThief.currentJewelsStoled + " / " + PoliceAndThief.requiredJewels + "</color> | " + Language.introTexts[4] + "<color=#928B55FF>" + PoliceAndThief.currentThiefsCaptured + " / " + PoliceAndThief.thiefTeam.Count + "</color>";
-                            new CustomMessage(PoliceAndThief.thiefpointCounter, LasMonjas.gamemodeMatchDuration, -1, 1.9f, 17);
+                            new CustomMessage(PoliceAndThief.thiefpointCounter, LasMonjas.gamemodeMatchDuration, 1.9f, 17);
                             break;
                         // King Of The Hill
                         case 3:
-                            new CustomMessage(Language.introTexts[1], LasMonjas.gamemodeMatchDuration, -1, -1.3f, 15);
-                            new CustomMessage(KingOfTheHill.kingpointCounter, LasMonjas.gamemodeMatchDuration, -1, 1.9f, 17);
+                            new CustomMessage(Language.introTexts[1], LasMonjas.gamemodeMatchDuration, -1.3f, 15);
+                            new CustomMessage(KingOfTheHill.kingpointCounter, LasMonjas.gamemodeMatchDuration, 1.9f, 17);
                             // Add Arrows pointing the zones
                             if (KingOfTheHill.localArrows.Count == 0 && KingOfTheHill.localArrows.Count < 4) {
                                 KingOfTheHill.localArrows.Add(new Arrow(KingOfTheHill.zoneonecolor));
@@ -4222,13 +747,13 @@ namespace LasMonjas.Patches
                             KingOfTheHill.localArrows[0].arrow.SetActive(true);
                             KingOfTheHill.localArrows[1].arrow.SetActive(true);
                             KingOfTheHill.localArrows[2].arrow.SetActive(true);
-                            if (PlayerControl.LocalPlayer == KingOfTheHill.greenKingplayer || PlayerControl.LocalPlayer == KingOfTheHill.yellowKingplayer) {
+                            if (PlayerInCache.LocalPlayer.PlayerControl == KingOfTheHill.greenKingplayer || PlayerInCache.LocalPlayer.PlayerControl == KingOfTheHill.yellowKingplayer) {
                                 KingOfTheHill.localArrows[3].arrow.SetActive(false);
                             }
                             else {
                                 KingOfTheHill.localArrows[3].arrow.SetActive(true);
                             }
-                            if (KingOfTheHill.usurperPlayer != null && PlayerControl.LocalPlayer == KingOfTheHill.usurperPlayer) {
+                            if (KingOfTheHill.usurperPlayer != null && PlayerInCache.LocalPlayer.PlayerControl == KingOfTheHill.usurperPlayer) {
                                 KingOfTheHill.localArrows[3].arrow.SetActive(false);
                                 KingOfTheHill.localArrows[4].arrow.SetActive(true);
                                 KingOfTheHill.localArrows[5].arrow.SetActive(true);
@@ -4239,46 +764,50 @@ namespace LasMonjas.Patches
                             }
                             break;
                         // Hot Potato
-                        //case 4:
-                            //break;
+                        case 4:
+                            new CustomMessage(Language.introTexts[5], LasMonjas.gamemodeMatchDuration, -1f, 18);
+                            new CustomMessage(Language.introTexts[1], LasMonjas.gamemodeMatchDuration, -1.3f, 15);
+                            HotPotato.hotpotatopointCounter = Language.introTexts[5] + "<color=#808080FF>" + HotPotato.hotPotatoPlayer.name + "</color> | " + Language.introTexts[6] + "<color=#00F7FFFF>" + HotPotato.notPotatoTeam.Count + "</color>";
+                            new CustomMessage(HotPotato.hotpotatopointCounter, LasMonjas.gamemodeMatchDuration, 1.9f, 17); 
+                            break;
                         // Zombie Laboratory
                         case 5:
                             // Spawn key items
-                            GameObject keyitem01 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerControl.LocalPlayer.transform.parent);
+                            GameObject keyitem01 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                             keyitem01.transform.position = ZombieLaboratory.susBoxPositions[0];
                             keyitem01.name = "keyItem01";
                             ZombieLaboratory.laboratoryKeyItem01 = keyitem01;
-                            GameObject keyitem02 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerControl.LocalPlayer.transform.parent);
+                            GameObject keyitem02 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                             keyitem02.transform.position = ZombieLaboratory.susBoxPositions[1];
                             keyitem02.name = "keyItem02";
                             ZombieLaboratory.laboratoryKeyItem02 = keyitem02;
-                            GameObject keyitem03 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerControl.LocalPlayer.transform.parent);
+                            GameObject keyitem03 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                             keyitem03.transform.position = ZombieLaboratory.susBoxPositions[2];
                             keyitem03.name = "keyItem03";
                             ZombieLaboratory.laboratoryKeyItem03 = keyitem03;
-                            GameObject keyitem04 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerControl.LocalPlayer.transform.parent);
+                            GameObject keyitem04 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                             keyitem04.transform.position = ZombieLaboratory.susBoxPositions[3];
                             keyitem04.name = "keyItem04";
                             ZombieLaboratory.laboratoryKeyItem04 = keyitem04;
-                            GameObject keyitem05 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerControl.LocalPlayer.transform.parent);
+                            GameObject keyitem05 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                             keyitem05.transform.position = ZombieLaboratory.susBoxPositions[4];
                             keyitem05.name = "keyItem05";
                             ZombieLaboratory.laboratoryKeyItem05 = keyitem05;
-                            GameObject keyitem06 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerControl.LocalPlayer.transform.parent);
+                            GameObject keyitem06 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                             keyitem06.transform.position = ZombieLaboratory.susBoxPositions[5];
                             keyitem06.name = "keyItem06";
                             ZombieLaboratory.laboratoryKeyItem06 = keyitem06;
                             // Ammoboxes
-                            GameObject ammoBox01 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerControl.LocalPlayer.transform.parent);
+                            GameObject ammoBox01 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                             ammoBox01.transform.position = ZombieLaboratory.susBoxPositions[6];
                             ammoBox01.name = "ammoBox";
-                            GameObject ammoBox02 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerControl.LocalPlayer.transform.parent);
+                            GameObject ammoBox02 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                             ammoBox02.transform.position = ZombieLaboratory.susBoxPositions[7];
                             ammoBox02.name = "ammoBox";
-                            GameObject ammoBox03 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerControl.LocalPlayer.transform.parent);
+                            GameObject ammoBox03 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                             ammoBox03.transform.position = ZombieLaboratory.susBoxPositions[8];
                             ammoBox03.name = "ammoBox";
-                            GameObject ammoBox04 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerControl.LocalPlayer.transform.parent);
+                            GameObject ammoBox04 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                             ammoBox04.transform.position = ZombieLaboratory.susBoxPositions[9];
                             ammoBox04.name = "ammoBox";
                             ZombieLaboratory.groundItems.Add(keyitem01);
@@ -4293,18 +822,18 @@ namespace LasMonjas.Patches
                             ZombieLaboratory.groundItems.Add(ammoBox04);
                             // Nothing boxes
                             for (int i = 0; i < ZombieLaboratory.susBoxPositions.Count - 10; i++) {
-                                GameObject nothingBox = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerControl.LocalPlayer.transform.parent);
+                                GameObject nothingBox = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                                 nothingBox.transform.position = ZombieLaboratory.susBoxPositions[i + 10];
                                 nothingBox.name = "nothingBox";
                                 ZombieLaboratory.groundItems.Add(nothingBox);
                             }
-                            new CustomMessage(Language.introTexts[1], LasMonjas.gamemodeMatchDuration, -1, -1.3f, 15);
+                            new CustomMessage(Language.introTexts[1], LasMonjas.gamemodeMatchDuration, -1.3f, 15);
                             ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
-                            new CustomMessage(ZombieLaboratory.zombieLaboratoryCounter, LasMonjas.gamemodeMatchDuration, -1, 1.9f, 17);
+                            new CustomMessage(ZombieLaboratory.zombieLaboratoryCounter, LasMonjas.gamemodeMatchDuration, 1.9f, 17);
                             break;
                         // Battle Royale
                         case 6:
-                            new CustomMessage(Language.introTexts[1], LasMonjas.gamemodeMatchDuration, -1, -1.3f, 15);
+                            new CustomMessage(Language.introTexts[1], LasMonjas.gamemodeMatchDuration, -1.3f, 15);
                             switch (BattleRoyale.matchType) {
                                 case 0:
                                     BattleRoyale.battleRoyalepointCounter = Language.introTexts[11] + "<color=#009F57FF>" + BattleRoyale.soloPlayerTeam.Count + "</color>";
@@ -4326,42 +855,47 @@ namespace LasMonjas.Patches
                                     }
                                     break;
                             }
-                            new CustomMessage(BattleRoyale.battleRoyalepointCounter, LasMonjas.gamemodeMatchDuration, -1, 1.9f, 17);
+                            new CustomMessage(BattleRoyale.battleRoyalepointCounter, LasMonjas.gamemodeMatchDuration, 1.9f, 17);
                             break;
                         // Monja Festival
                         case 7:
-                            new CustomMessage(Language.introTexts[1], LasMonjas.gamemodeMatchDuration, -1, -1.3f, 15);
+                            new CustomMessage(Language.introTexts[1], LasMonjas.gamemodeMatchDuration, -1.3f, 15);
                             if (MonjaFestival.bigMonjaPlayer != null) {
                                 MonjaFestival.monjaFestivalCounter = "<color=#00FF00FF>" + Language.introTexts[17] + MonjaFestival.greenPoints + "</color> | " + "<color=#00F7FFFF>" + Language.introTexts[18] + MonjaFestival.cyanPoints + "</color> | " + "<color=#808080FF>" + Language.introTexts[19] + MonjaFestival.bigMonjaPoints + "</color>";
                             }
                             else {
                                 MonjaFestival.monjaFestivalCounter = "<color=#00FF00FF>" + Language.introTexts[17] + MonjaFestival.greenPoints + "</color> | " + "<color=#00F7FFFF>" + Language.introTexts[18] + MonjaFestival.cyanPoints + "</color>";
                             }
-                            new CustomMessage(MonjaFestival.monjaFestivalCounter, LasMonjas.gamemodeMatchDuration, -1, 1.9f, 17);
+                            new CustomMessage(MonjaFestival.monjaFestivalCounter, LasMonjas.gamemodeMatchDuration, 1.9f, 17);
                             if (MonjaFestival.localArrows.Count == 0) {
                                 MonjaFestival.localArrows.Add(new Arrow(Color.green));
                                 MonjaFestival.localArrows.Add(new Arrow(Color.cyan));
                                 MonjaFestival.localArrows.Add(new Arrow(Color.grey));
+                                MonjaFestival.localArrows.Add(new Arrow(Color.grey));
                                 MonjaFestival.localArrows[0].arrow.SetActive(false);
                                 MonjaFestival.localArrows[1].arrow.SetActive(false);
                                 MonjaFestival.localArrows[2].arrow.SetActive(false);
+                                MonjaFestival.localArrows[3].arrow.SetActive(false);
 
-                                if (PlayerControl.LocalPlayer == MonjaFestival.bigMonjaPlayer) {
+                                if (PlayerInCache.LocalPlayer.PlayerControl == MonjaFestival.bigMonjaPlayer) {
                                     MonjaFestival.localArrows[2].arrow.SetActive(true);
+                                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                                        MonjaFestival.localArrows[3].arrow.SetActive(true);
+                                    }
                                 }
 
                                 foreach (PlayerControl player in MonjaFestival.greenTeam) {
-                                    if (player == PlayerControl.LocalPlayer)
+                                    if (player == PlayerInCache.LocalPlayer.PlayerControl)
                                         MonjaFestival.localArrows[0].arrow.SetActive(true);
                                 }
                                 foreach (PlayerControl player in MonjaFestival.cyanTeam) {
-                                    if (player == PlayerControl.LocalPlayer)
+                                    if (player == PlayerInCache.LocalPlayer.PlayerControl)
                                         MonjaFestival.localArrows[1].arrow.SetActive(true);
                                 }
                             }
-                            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                            foreach (PlayerControl player in PlayerInCache.AllPlayers) {
                                 if (player != null) {
-                                    GameObject hands = GameObject.Instantiate(CustomMain.customAssets.pickOneGreenMonja, PlayerControl.LocalPlayer.transform.parent);
+                                    GameObject hands = GameObject.Instantiate(CustomMain.customAssets.pickOneGreenMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                                     hands.GetComponent<SpriteRenderer>().sprite = null;
                                     hands.transform.position = new Vector3(player.transform.position.x, player.transform.position.y - 0.1f, -0.5f);
                                     hands.transform.parent = player.transform;
@@ -4445,7 +979,7 @@ namespace LasMonjas.Patches
             bool removeSwipeCard = CustomOptionHolder.removeSwipeCard.getBool();
 
             if (removeSwipeCard && removedSwipe == false && GameOptionsManager.Instance.currentGameOptions.MapId != 1 && GameOptionsManager.Instance.currentGameOptions.MapId != 4) {
-                foreach (PlayerControl myplayer in PlayerControl.AllPlayerControls) {
+                foreach (PlayerControl myplayer in PlayerInCache.AllPlayers) {
                     if (myplayer != Joker.joker && myplayer != RoleThief.rolethief && myplayer != Pyromaniac.pyromaniac && myplayer != TreasureHunter.treasureHunter && myplayer != Devourer.devourer && myplayer != Poisoner.poisoner && myplayer != Puppeteer.puppeteer && myplayer != Exiler.exiler && myplayer != Amnesiac.amnesiac && myplayer != Seeker.seeker && myplayer != Renegade.renegade && myplayer != Minion.minion && myplayer != BountyHunter.bountyhunter && myplayer != Trapper.trapper && myplayer != Yinyanger.yinyanger && myplayer != Challenger.challenger && myplayer != Ninja.ninja && myplayer != Berserker.berserker && myplayer != Yandere.yandere && myplayer != Stranded.stranded && myplayer != Monja.monja && !myplayer.Data.Role.IsImpostor) {
                         var toRemove = new List<PlayerTask>();
                         foreach (PlayerTask task in myplayer.myTasks)

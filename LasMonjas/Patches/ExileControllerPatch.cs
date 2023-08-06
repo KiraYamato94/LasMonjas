@@ -7,7 +7,6 @@ using LasMonjas.Objects;
 using System;
 using UnityEngine;
 using LasMonjas.Core;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using static LasMonjas.GameHistory;
 
 namespace LasMonjas.Patches {
@@ -27,7 +26,7 @@ namespace LasMonjas.Patches {
                 foreach (PlayerControl target in Sorcerer.spelledPlayers) {
                     if (target != null && !target.Data.IsDead && Helpers.checkMurderAttempt(Sorcerer.sorcerer, target, true) == MurderAttemptResult.PerformKill)
                     {
-                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.UncheckedExilePlayer, Hazel.SendOption.Reliable, -1);
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.UncheckedExilePlayer, Hazel.SendOption.Reliable, -1);
                         writer.Write(target.PlayerId);
                         AmongUsClient.Instance.FinishRpcImmediately(writer);
                         RPCProcedure.uncheckedExilePlayer(target.PlayerId);
@@ -98,6 +97,11 @@ namespace LasMonjas.Patches {
             if (Puppeteer.puppeteer != null) {
                 Puppeteer.Reset();
             }
+
+            // Run a postfix on submerged exile cutscene
+            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                ExileControllerWrapUpPatch.WrapUpPostfix(ExileControllerBeginPatch.lastExiled);
+            }
         }
     }
 
@@ -118,16 +122,7 @@ namespace LasMonjas.Patches {
             }
         }
 
-        // Rune the postfix function on exiling Submerged cutscene
-        /*[HarmonyPatch(typeof(UnityEngine.Object), nameof(UnityEngine.Object.Destroy), new Type[] { typeof(GameObject) })]
-        public static void Prefix(GameObject obj) {
-            if (GameOptionsManager.Instance.currentGameOptions.MapId != 5) return;
-            if (obj.name.Contains("ExileCutscene")) {
-                WrapUpPostfix(ExileControllerBeginPatch.lastExiled);
-            }
-        }*/
-
-        static void WrapUpPostfix(GameData.PlayerInfo exiled) {
+        public static void WrapUpPostfix(GameData.PlayerInfo exiled) {
             // Kid win condition if exiled
             if (exiled != null && Kid.kid != null && Kid.kid.PlayerId == exiled.PlayerId) {
                 Kid.triggerKidLose = true;
@@ -143,7 +138,7 @@ namespace LasMonjas.Patches {
 
             // Librarian reset target
             if (Librarian.librarian != null && Librarian.targetLibrary != null) {
-                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ResetSilenced, Hazel.SendOption.Reliable, -1);
+                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ResetSilenced, Hazel.SendOption.Reliable, -1);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
                 RPCProcedure.resetSilenced();
             }
@@ -168,11 +163,11 @@ namespace LasMonjas.Patches {
             }
 
             // Pyromaniac deactivate dead players icons
-            if (Pyromaniac.pyromaniac != null && Pyromaniac.pyromaniac == PlayerControl.LocalPlayer) {
+            if (Pyromaniac.pyromaniac != null && Pyromaniac.pyromaniac == PlayerInCache.LocalPlayer.PlayerControl) {
                 int visibleCounter = 0;
                 Vector3 bottomLeft = new Vector3(-HudManager.Instance.UseButton.transform.parent.localPosition.x, HudManager.Instance.UseButton.transform.parent.localPosition.y, HudManager.Instance.UseButton.transform.parent.localPosition.z);
                 bottomLeft += new Vector3(-0.25f, -0.25f, 0);
-                foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
+                foreach (PlayerControl p in PlayerInCache.AllPlayers) {
                     if (!MapOptions.playerIcons.ContainsKey(p.PlayerId)) continue;
                     if (p.Data.IsDead || p.Data.Disconnected) {
                         MapOptions.playerIcons[p.PlayerId].gameObject.SetActive(false);
@@ -185,11 +180,11 @@ namespace LasMonjas.Patches {
             }
 
             // Poisoner deactivate dead poolable players
-            if (Poisoner.poisoner != null && Poisoner.poisoner == PlayerControl.LocalPlayer) {
+            if (Poisoner.poisoner != null && Poisoner.poisoner == PlayerInCache.LocalPlayer.PlayerControl) {
                 int visibleCounter = 0;
                 Vector3 bottomLeft = new Vector3(-HudManager.Instance.UseButton.transform.parent.localPosition.x, HudManager.Instance.UseButton.transform.parent.localPosition.y, HudManager.Instance.UseButton.transform.parent.localPosition.z);
                 bottomLeft += new Vector3(-0.25f, -0.25f, 0);
-                foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
+                foreach (PlayerControl p in PlayerInCache.AllPlayers) {
                     if (!MapOptions.playerIcons.ContainsKey(p.PlayerId)) continue;
                     if (p.Data.IsDead || p.Data.Disconnected) {
                         MapOptions.playerIcons[p.PlayerId].gameObject.SetActive(false);
@@ -216,7 +211,7 @@ namespace LasMonjas.Patches {
             }
 
             // Forensic spawn ghosts after meeting
-            if (Forensic.forensic != null && PlayerControl.LocalPlayer == Forensic.forensic) {
+            if (Forensic.forensic != null && PlayerInCache.LocalPlayer.PlayerControl == Forensic.forensic) {
                 if (Forensic.souls != null) {
                     foreach (SpriteRenderer sr in Forensic.souls) UnityEngine.Object.Destroy(sr.gameObject);
                     Forensic.souls = new List<SpriteRenderer>();
@@ -259,15 +254,15 @@ namespace LasMonjas.Patches {
             Sleuth.deadBodyPositions = new List<Vector3>();
 
             //Change Music based on alive player number if not on submerged
-            MessageWriter musicwriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
+            MessageWriter musicwriter = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
             musicwriter.Write(2);
             AmongUsClient.Instance.FinishRpcImmediately(musicwriter);
             RPCProcedure.changeMusic(2);
 
             // Show roles after meeting for dead players if the option is active
             if (MapOptions.ghostsSeeRoles && gameType <= 1) {
-                foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
-                    if (p == PlayerControl.LocalPlayer || PlayerControl.LocalPlayer.Data.IsDead) {
+                foreach (PlayerControl p in PlayerInCache.AllPlayers) {
+                    if (p == PlayerInCache.LocalPlayer.PlayerControl || PlayerInCache.LocalPlayer.Data.IsDead) {
                         Transform playerInfoTransform = p.cosmetics.nameText.transform.parent.FindChild("Info");
                         TMPro.TextMeshPro playerInfo = playerInfoTransform != null ? playerInfoTransform.GetComponent<TMPro.TextMeshPro>() : null;
                         if (playerInfo == null) {
@@ -280,7 +275,7 @@ namespace LasMonjas.Patches {
                         string roleNames = RoleInfo.GetRolesString(p, true);
 
                         string playerInfoText = "";
-                        if (PlayerControl.LocalPlayer.Data.IsDead) {
+                        if (PlayerInCache.LocalPlayer.Data.IsDead) {
                             playerInfoText = $"{roleNames}";
                         }
 
@@ -290,8 +285,8 @@ namespace LasMonjas.Patches {
                 }
             }
 
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                if (player == PlayerControl.LocalPlayer) {
+            foreach (PlayerControl player in PlayerInCache.AllPlayers) {
+                if (player == PlayerInCache.LocalPlayer.PlayerControl) {
                     HudManager.Instance.AbilityButton.Hide();
                     DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == player.PlayerId).FirstOrDefault();
                     if (deadPlayerEntry != null && player.Data.IsDead) {

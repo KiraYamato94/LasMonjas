@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using UnityEngine;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using AmongUs.GameOptions;
 using AmongUs.QuickChat;
+using LasMonjas.Core;
 
 namespace LasMonjas.Patches {
     [HarmonyPatch]
@@ -125,7 +125,7 @@ namespace LasMonjas.Patches {
                 }
 
 
-                __instance.TitleText.text = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.MeetingVotingResults, new Il2CppReferenceArray<Il2CppSystem.Object>(0));
+                __instance.TitleText.text = FastDestroyableSingleton<TranslationController>.Instance.GetString(StringNames.MeetingVotingResults, new Il2CppReferenceArray<Il2CppSystem.Object>(0));
                 int num = 0;
                 for (int i = 0; i < __instance.playerStates.Length; i++) {
                     PlayerVoteArea playerVoteArea = __instance.playerStates[i];
@@ -167,7 +167,7 @@ namespace LasMonjas.Patches {
             static void Postfix(MeetingHud __instance, [HarmonyArgument(0)]byte[] states, [HarmonyArgument(1)]GameData.PlayerInfo exiled, [HarmonyArgument(2)]bool tie)
             {
 
-                if (Captain.captain != null && Captain.captain == PlayerControl.LocalPlayer && Captain.specialVoteTargetPlayerId == byte.MaxValue) {
+                if (Captain.captain != null && Captain.captain == PlayerInCache.LocalPlayer.PlayerControl && Captain.specialVoteTargetPlayerId == byte.MaxValue) {
                     for (int i = 0; i < __instance.playerStates.Length; i++) {
                         PlayerVoteArea voteArea = __instance.playerStates[i];
                         Transform t = voteArea.transform.FindChild("SpecialVoteButton");
@@ -220,7 +220,7 @@ namespace LasMonjas.Patches {
                     }
 
                     if (firstPlayer != null && secondPlayer != null) {
-                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.CheaterCheat, Hazel.SendOption.Reliable, -1);
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.CheaterCheat, Hazel.SendOption.Reliable, -1);
                         writer.Write((byte)firstPlayer.TargetPlayerId);
                         writer.Write((byte)secondPlayer.TargetPlayerId);
                         AmongUsClient.Instance.FinishRpcImmediately(writer);
@@ -263,7 +263,7 @@ namespace LasMonjas.Patches {
             List<Transform> buttons = new List<Transform>();
             Transform selectedButton = null;
 
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+            foreach (PlayerControl player in PlayerInCache.AllPlayers) {
                 foreach (RoleInfo roleInfo in RoleInfo.allRoleInfos) {
                     // Not gambled roles
                     if (/* Special roles*/ roleInfo.roleId == RoleId.Lover || roleInfo.roleId == RoleId.Kid || (roleInfo == RoleInfo.vigilantMira && GameOptionsManager.Instance.currentGameOptions.MapId != 1) || (roleInfo == RoleInfo.vigilant && GameOptionsManager.Instance.currentGameOptions.MapId == 1)
@@ -293,7 +293,7 @@ namespace LasMonjas.Patches {
                     int copiedIndex = i;
 
                     button.GetComponent<PassiveButton>().OnClick.RemoveAllListeners();
-                    if (!PlayerControl.LocalPlayer.Data.IsDead) button.GetComponent<PassiveButton>().OnClick.AddListener((System.Action)(() => {
+                    if (!PlayerInCache.LocalPlayer.Data.IsDead) button.GetComponent<PassiveButton>().OnClick.AddListener((System.Action)(() => {
                         if (selectedButton != button) {
                             selectedButton = button;
                             buttons.ForEach(x => x.GetComponent<SpriteRenderer>().color = x == selectedButton ? Color.red : Color.white);
@@ -306,7 +306,7 @@ namespace LasMonjas.Patches {
                                 __instance.playerStates.ToList().ForEach(x => x.gameObject.SetActive(true));
                                 UnityEngine.Object.Destroy(container.gameObject);
 
-                                MessageWriter murderAttemptWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ShieldedMurderAttempt, Hazel.SendOption.Reliable, -1);
+                                MessageWriter murderAttemptWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ShieldedMurderAttempt, Hazel.SendOption.Reliable, -1);
                                 AmongUsClient.Instance.FinishRpcImmediately(murderAttemptWriter);
                                 RPCProcedure.shieldedMurderAttempt();
                                 return;
@@ -316,19 +316,19 @@ namespace LasMonjas.Patches {
                             if (mainRoleInfo == null) return;
 
 
-                            target = (mainRoleInfo == roleInfo) ? target : PlayerControl.LocalPlayer;
+                            target = (mainRoleInfo == roleInfo) ? target : PlayerInCache.LocalPlayer.PlayerControl;
 
                             // Reset the GUI
                             __instance.playerStates.ToList().ForEach(x => x.gameObject.SetActive(true));
                             UnityEngine.Object.Destroy(container.gameObject);
-                            if (Gambler.canShootMultipleTimes && Gambler.numberOfShots > 1 && target != PlayerControl.LocalPlayer)
+                            if (Gambler.canShootMultipleTimes && Gambler.numberOfShots > 1 && target != PlayerInCache.LocalPlayer.PlayerControl)
                                 __instance.playerStates.ToList().ForEach(x => { if (x.TargetPlayerId == target.PlayerId && x.transform.FindChild("ShootButton") != null) UnityEngine.Object.Destroy(x.transform.FindChild("ShootButton").gameObject); });
                             else
                                 __instance.playerStates.ToList().ForEach(x => { if (x.transform.FindChild("ShootButton") != null) UnityEngine.Object.Destroy(x.transform.FindChild("ShootButton").gameObject); });
 
 
                             // Shoot player and send chat info if activated
-                            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.GamblerShoot, Hazel.SendOption.Reliable, -1);
+                            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.GamblerShoot, Hazel.SendOption.Reliable, -1);
                             writer.Write(target.PlayerId);
                             AmongUsClient.Instance.FinishRpcImmediately(writer);
                             RPCProcedure.gamblerShoot(target.PlayerId);
@@ -347,11 +347,11 @@ namespace LasMonjas.Patches {
             if (__instance.playerStates[buttonTarget].AmDead) return;
 
             byte targetId = __instance.playerStates[buttonTarget].TargetPlayerId;
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.CaptainSpecialVote, Hazel.SendOption.Reliable, -1);
-            writer.Write(PlayerControl.LocalPlayer.PlayerId);
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.CaptainSpecialVote, Hazel.SendOption.Reliable, -1);
+            writer.Write(PlayerInCache.LocalPlayer.PlayerControl.PlayerId);
             writer.Write(targetId);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
-            RPCProcedure.captainSpecialVote(PlayerControl.LocalPlayer.PlayerId, targetId);
+            RPCProcedure.captainSpecialVote(PlayerInCache.LocalPlayer.PlayerControl.PlayerId, targetId);
 
             __instance.SkipVoteButton.gameObject.SetActive(false);
             for (int i = 0; i < __instance.playerStates.Length; i++) {
@@ -364,7 +364,7 @@ namespace LasMonjas.Patches {
             if (AmongUsClient.Instance.AmHost) {
                 PlayerControl target = Helpers.playerById(targetId);
                 if (target != null)
-                    MeetingHud.Instance.CmdCastVote(PlayerControl.LocalPlayer.PlayerId, target.PlayerId);
+                    MeetingHud.Instance.CmdCastVote(PlayerInCache.LocalPlayer.PlayerControl.PlayerId, target.PlayerId);
             }
         }
 
@@ -372,17 +372,17 @@ namespace LasMonjas.Patches {
         class PlayerVoteAreaSelectPatch {
             static bool Prefix(MeetingHud __instance) {
 
-                if (PlayerControl.LocalPlayer != null && PlayerControl.LocalPlayer == Captain.captain && Captain.specialVoteTargetPlayerId != byte.MaxValue)
+                if (PlayerInCache.LocalPlayer.PlayerControl != null && PlayerInCache.LocalPlayer.PlayerControl == Captain.captain && Captain.specialVoteTargetPlayerId != byte.MaxValue)
                     return false;
 
-                return !(PlayerControl.LocalPlayer != null && PlayerControl.LocalPlayer == Gambler.gambler && gamblerUI != null);
+                return !(PlayerInCache.LocalPlayer.PlayerControl != null && PlayerInCache.LocalPlayer.PlayerControl == Gambler.gambler && gamblerUI != null);
             }
         }
 
 
         static void populateButtonsPostfix(MeetingHud __instance) {
             // Add Cheater Buttons
-            if (Cheater.cheater != null && PlayerControl.LocalPlayer == Cheater.cheater && !Cheater.cheater.Data.IsDead) {
+            if (Cheater.cheater != null && PlayerInCache.LocalPlayer.PlayerControl == Cheater.cheater && !Cheater.cheater.Data.IsDead) {
                 selections = new bool[__instance.playerStates.Length];
                 renderers = new SpriteRenderer[__instance.playerStates.Length];
 
@@ -408,13 +408,6 @@ namespace LasMonjas.Patches {
                 }
             }
 
-            //Fix visor in Meetings 
-            foreach (PlayerVoteArea pva in __instance.playerStates) {
-                if(pva.PlayerIcon != null && pva.PlayerIcon.cosmetics.visor != null){
-                    pva.PlayerIcon.cosmetics.visor.transform.position += new Vector3(0, 0, -1f);
-                }
-            }
-
             // Add overlay for spelled players
             if (Sorcerer.sorcerer != null && Sorcerer.spelledPlayers != null) {
                 foreach (PlayerVoteArea pva in __instance.playerStates) {
@@ -429,10 +422,10 @@ namespace LasMonjas.Patches {
             }
 
             // Add Gambler Buttons
-            if (Gambler.gambler != null && PlayerControl.LocalPlayer == Gambler.gambler && !Gambler.gambler.Data.IsDead && Gambler.numberOfShots > 0) {
+            if (Gambler.gambler != null && PlayerInCache.LocalPlayer.PlayerControl == Gambler.gambler && !Gambler.gambler.Data.IsDead && Gambler.numberOfShots > 0) {
                 for (int i = 0; i < __instance.playerStates.Length; i++) {
                     PlayerVoteArea playerVoteArea = __instance.playerStates[i];
-                    if (playerVoteArea.AmDead || playerVoteArea.TargetPlayerId == PlayerControl.LocalPlayer.PlayerId) continue;
+                    if (playerVoteArea.AmDead || playerVoteArea.TargetPlayerId == PlayerInCache.LocalPlayer.PlayerControl.PlayerId) continue;
 
                     GameObject template = playerVoteArea.Buttons.transform.Find("CancelButton").gameObject;
                     GameObject targetBox = UnityEngine.Object.Instantiate(template, playerVoteArea.transform);
@@ -448,10 +441,10 @@ namespace LasMonjas.Patches {
             }
 
             // Add Captain Special Buttons
-            if (Captain.captain != null && PlayerControl.LocalPlayer == Captain.captain && !Captain.captain.Data.IsDead && !Captain.usedSpecialVote && Captain.canUseSpecialVote) {
+            if (Captain.captain != null && PlayerInCache.LocalPlayer.PlayerControl == Captain.captain && !Captain.captain.Data.IsDead && !Captain.usedSpecialVote && Captain.canUseSpecialVote) {
                 for (int i = 0; i < __instance.playerStates.Length; i++) {
                     PlayerVoteArea playerVoteArea = __instance.playerStates[i];
-                    if (playerVoteArea.AmDead || playerVoteArea.TargetPlayerId == PlayerControl.LocalPlayer.PlayerId) continue;
+                    if (playerVoteArea.AmDead || playerVoteArea.TargetPlayerId == PlayerInCache.LocalPlayer.PlayerControl.PlayerId) continue;
 
                     GameObject template = playerVoteArea.Buttons.transform.Find("CancelButton").gameObject;
                     GameObject targetBox = UnityEngine.Object.Instantiate(template, playerVoteArea.transform);
@@ -518,7 +511,7 @@ namespace LasMonjas.Patches {
                 }
 
                 // Monja reset item 
-                if (Monja.monja != null && Monja.isDeliveringItem && Monja.monja == PlayerControl.LocalPlayer) {
+                if (Monja.monja != null && Monja.isDeliveringItem && Monja.monja == PlayerInCache.LocalPlayer.PlayerControl) {
                     RPCProcedure.monjaRevertItemPosition(Monja.itemId);
                 }
 
@@ -545,7 +538,7 @@ namespace LasMonjas.Patches {
                 // Hypnotist reset camera rotation
                 if (Hypnotist.hypnotizedPlayers.Count != 0) {
                     foreach (PlayerControl hypnoPlayer in Hypnotist.hypnotizedPlayers) {
-                        if (hypnoPlayer == PlayerControl.LocalPlayer) {
+                        if (hypnoPlayer == PlayerInCache.LocalPlayer.PlayerControl) {
                             GameObject camera = GameObject.Find("Main Camera");
                             camera.transform.rotation = Quaternion.Euler(0, 0, 0);
                         }
@@ -576,7 +569,7 @@ namespace LasMonjas.Patches {
         public class BlockChatAbility
         {
             public static bool Prefix(TextBoxTMP __instance) {
-                if (Librarian.librarian != null && Librarian.targetLibrary != null && Librarian.targetLibrary == PlayerControl.LocalPlayer) {
+                if (Librarian.librarian != null && Librarian.targetLibrary != null && Librarian.targetLibrary == PlayerInCache.LocalPlayer.PlayerControl) {
                     return false;
                 }
                 return true; 
@@ -587,7 +580,7 @@ namespace LasMonjas.Patches {
         public class BlockQuickChatAbility
         {
             public static bool Prefix(QuickChatMenu __instance) {
-                if (Librarian.librarian != null && Librarian.targetLibrary != null && Librarian.targetLibrary == PlayerControl.LocalPlayer) {
+                if (Librarian.librarian != null && Librarian.targetLibrary != null && Librarian.targetLibrary == PlayerInCache.LocalPlayer.PlayerControl) {
                     return false;
                 }
                 return true;

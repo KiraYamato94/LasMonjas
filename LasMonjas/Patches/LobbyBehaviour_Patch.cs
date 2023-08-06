@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using AmongUs.GameOptions;
 using static LasMonjas.LasMonjas;
+using LasMonjas.Core;
 
 namespace LasMonjas.Patches
 {
@@ -122,19 +123,19 @@ namespace LasMonjas.Patches
                     if (howManyPlayers.Count < 7) {
                         NumImpostors = 1;
                     }
+                    customSkeldHS = 0;
+
+                    // Randomize at 50% custom skeld for H&S
                     if (GameOptionsManager.Instance.currentGameMode == GameModes.HideNSeek) {
                         SoundManager.Instance.StopSound(CustomMain.customAssets.lobbyMusic);
                         if (AmongUsClient.Instance.AmHost) {
                             customSkeldHS = rnd.Next(1, 101);
                         }
-                    }
-                    else {
-                        customSkeldHS = 0;
-                    }
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.RandomizeCustomSkeldOnHS, Hazel.SendOption.Reliable, -1);
-                    writer.Write(customSkeldHS);
-                    AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.randomizeCustomSkeldOnHS(customSkeldHS);
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.RandomizeCustomSkeldOnHS, Hazel.SendOption.Reliable, -1);
+                        writer.Write(customSkeldHS);
+                        AmongUsClient.Instance.FinishRpcImmediately(writer);
+                        RPCProcedure.randomizeCustomSkeldOnHS(customSkeldHS);
+                    }                    
                 }
             }
         }

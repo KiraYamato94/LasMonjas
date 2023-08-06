@@ -28,6 +28,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System;
 using UnityEngine.Events;
+using LasMonjas.Core;
 
 namespace LasMonjas.Patches {
     [HarmonyPatch(typeof(RegionMenu), nameof(RegionMenu.Open))]
@@ -37,7 +38,7 @@ namespace LasMonjas.Patches {
         private static TextBoxTMP portField;
 
         public static void Postfix(RegionMenu __instance) {
-            var template = DestroyableSingleton<JoinGameButton>.Instance;
+            var template = FastDestroyableSingleton<JoinGameButton>.Instance;
             var joinGameButtons = GameObject.FindObjectsOfType<JoinGameButton>();
             foreach (var t in joinGameButtons) {  
                 if (t.GameIdText != null && t.GameIdText.Background != null) {

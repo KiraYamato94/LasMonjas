@@ -136,7 +136,7 @@ namespace LasMonjas.Patches {
         public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)]ref EndGameResult endGameResult) {
             AdditionalTempData.clear();
 
-            foreach(var playerControl in PlayerControl.AllPlayerControls) {
+            foreach(var playerControl in PlayerInCache.AllPlayers) {
                 var roles = RoleInfo.getRoleInfoForPlayer(playerControl);
                 var (tasksCompleted, tasksTotal) = TasksHandler.taskInfo(playerControl.Data);
                 int? killCount = GameHistory.deadPlayers.FindAll(x => x.killerIfExisting != null && x.killerIfExisting.PlayerId == playerControl.PlayerId).Count;
@@ -242,7 +242,7 @@ namespace LasMonjas.Patches {
             // Bomb exploded
             else if (bombExploded) {
                 TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                foreach (PlayerControl imimpostor in PlayerControl.AllPlayerControls) {
+                foreach (PlayerControl imimpostor in PlayerInCache.AllPlayers) {
                     if (imimpostor.Data.Role.IsImpostor == true) {
                         WinningPlayerData wpd = new WinningPlayerData(imimpostor.Data);
                         TempData.winners.Add(wpd);
@@ -256,7 +256,7 @@ namespace LasMonjas.Patches {
                 // Double win for lovers with crewmates
                 if (!Modifiers.existingWithKiller()) {
                     TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                    foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
+                    foreach (PlayerControl p in PlayerInCache.AllPlayers) {
                         if (p == null) continue;
                         if (p == Modifiers.lover1 || p == Modifiers.lover2)
                             TempData.winners.Add(new WinningPlayerData(p.Data));
@@ -278,7 +278,7 @@ namespace LasMonjas.Patches {
             // TaskMaster crew win
             else if (taskMasterCrewWin) {
                 TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
+                foreach (PlayerControl p in PlayerInCache.AllPlayers) {
                     if (p == null) continue;
                     if (p != Joker.joker && p != RoleThief.rolethief && p != Pyromaniac.pyromaniac && p != TreasureHunter.treasureHunter && p != Devourer.devourer && p != Poisoner.poisoner && p != Puppeteer.puppeteer && p != Exiler.exiler && p != Amnesiac.amnesiac && p != Seeker.seeker && p != Renegade.renegade && p != Minion.minion && !Renegade.formerRenegades.Contains(p) && p != BountyHunter.bountyhunter && p != Trapper.trapper && p != Yinyanger.yinyanger && p != Challenger.challenger && p != Ninja.ninja && p != Berserker.berserker && p != Yandere.yandere && p != Stranded.stranded && p != Monja.monja && !p.Data.Role.IsImpostor)
                         TempData.winners.Add(new WinningPlayerData(p.Data));
@@ -451,7 +451,7 @@ namespace LasMonjas.Patches {
             // Draw
             else if (drawTeamWin) {
                 TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                foreach (PlayerControl player in PlayerInCache.AllPlayers) {
                     WinningPlayerData wpd = new WinningPlayerData(player.Data);
                     TempData.winners.Add(wpd);
                 }
@@ -500,7 +500,7 @@ namespace LasMonjas.Patches {
             // Draw
             else if (teamHillDraw) {
                 TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                foreach (PlayerControl player in PlayerInCache.AllPlayers) {
                     WinningPlayerData wpd = new WinningPlayerData(player.Data);
                     TempData.winners.Add(wpd);
                 }
@@ -576,7 +576,7 @@ namespace LasMonjas.Patches {
                     }
                 }
                 else {
-                    foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                    foreach (PlayerControl player in PlayerInCache.AllPlayers) {
                         if (!player.Data.IsDead) {
                             WinningPlayerData wpd = new WinningPlayerData(player.Data);
                             TempData.winners.Add(wpd);
@@ -613,7 +613,7 @@ namespace LasMonjas.Patches {
             // BattleRoyale Draw
             else if (battleRoyaleDraw) {
                 TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                foreach (PlayerControl player in PlayerInCache.AllPlayers) {
                     WinningPlayerData wpd = new WinningPlayerData(player.Data);
                     TempData.winners.Add(wpd);
                 }
@@ -648,7 +648,7 @@ namespace LasMonjas.Patches {
             // MonjaFestival Draw
             else if (monjaFestivalDraw) {
                 TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                foreach (PlayerControl player in PlayerInCache.AllPlayers) {
                     WinningPlayerData wpd = new WinningPlayerData(player.Data);
                     TempData.winners.Add(wpd);
                 }

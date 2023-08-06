@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using PowerTools;
 using LasMonjas.Core;
 using AmongUs.GameOptions;
-using static UnityEngine.GraphicsBuffer;
 
 namespace LasMonjas.Patches
 {
@@ -34,7 +33,7 @@ namespace LasMonjas.Patches
 
             var usableDistance = __instance.UsableDistance;
             if (__instance.name.StartsWith("Hat_")) {
-                if (Illusionist.illusionist != PlayerControl.LocalPlayer) {
+                if (Illusionist.illusionist != PlayerInCache.LocalPlayer.PlayerControl) {
                     // Only the Illusionist can use the Hats
                     canUse = false;
                     couldUse = false;
@@ -53,11 +52,28 @@ namespace LasMonjas.Patches
             }
 
             // Submerged check
-            else if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
-                if (!PlayerControl.LocalPlayer.Data.Role.IsImpostor && (__instance.name.StartsWith("LowerCentralVent") || __instance.name.StartsWith("UpperCentralVent"))) {
-                    canUse = couldUse = false;
-                    __result = num;
-                    return false;
+            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                // as submerged does, only change stuff for vents 9 and 14 of submerged. Code partially provided by AlexejheroYTB
+                if (SubmergedCompatibility.getInTransition()) {
+                    __result = float.MaxValue;
+                    return canUse = couldUse = false;
+                }
+                switch (__instance.Id) {
+                    case 9:  // Cannot enter vent 9 (Engine Room Exit Only Vent)!
+                        if (PlayerInCache.LocalPlayer.PlayerControl.inVent) break;
+                        __result = float.MaxValue;
+                        return canUse = couldUse = false;
+                    case 14: // Lower Central
+                        __result = float.MaxValue;
+                        couldUse = roleCouldUse && !pc.IsDead && (@object.CanMove || @object.inVent);
+                        canUse = couldUse;
+                        if (canUse) {
+                            Vector3 center = @object.Collider.bounds.center;
+                            Vector3 position = __instance.transform.position;
+                            __result = Vector2.Distance(center, position);
+                            canUse &= __result <= __instance.UsableDistance;
+                        }
+                        return false;
                 }
             }
 
@@ -91,28 +107,28 @@ namespace LasMonjas.Patches
         public static bool Prefix(Vent __instance) {
             bool canUse;
             bool couldUse;
-            __instance.CanUse(PlayerControl.LocalPlayer.Data, out canUse, out couldUse);
+            __instance.CanUse(PlayerInCache.LocalPlayer.Data, out canUse, out couldUse);
             bool canMoveInVents = true;
             if (!canUse) return false;
 
-            bool isEnter = !PlayerControl.LocalPlayer.inVent;
+            bool isEnter = !PlayerInCache.LocalPlayer.PlayerControl.inVent;
 
             if (__instance.name.StartsWith("Hat_")) {
                 __instance.SetButtons(isEnter && canMoveInVents);
-                MessageWriter writer = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.UseUncheckedVent, Hazel.SendOption.Reliable);
+                MessageWriter writer = AmongUsClient.Instance.StartRpc(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.UseUncheckedVent, Hazel.SendOption.Reliable);
                 writer.WritePacked(__instance.Id);
-                writer.Write(PlayerControl.LocalPlayer.PlayerId);
+                writer.Write(PlayerInCache.LocalPlayer.PlayerControl.PlayerId);
                 writer.Write(isEnter ? byte.MaxValue : (byte)0);
                 writer.EndMessage();
-                RPCProcedure.useUncheckedVent(__instance.Id, PlayerControl.LocalPlayer.PlayerId, isEnter ? byte.MaxValue : (byte)0);
+                RPCProcedure.useUncheckedVent(__instance.Id, PlayerInCache.LocalPlayer.PlayerControl.PlayerId, isEnter ? byte.MaxValue : (byte)0);
                 return false;
             }
 
             if (isEnter) {
-                PlayerControl.LocalPlayer.MyPhysics.RpcEnterVent(__instance.Id);
+                PlayerInCache.LocalPlayer.PlayerControl.MyPhysics.RpcEnterVent(__instance.Id);
             }
             else {
-                PlayerControl.LocalPlayer.MyPhysics.RpcExitVent(__instance.Id);
+                PlayerInCache.LocalPlayer.PlayerControl.MyPhysics.RpcExitVent(__instance.Id);
             }
             __instance.SetButtons(isEnter && canMoveInVents);
             return false;
@@ -142,7 +158,7 @@ namespace LasMonjas.Patches
         static Sprite defaultVentSprite = null;
         static void Postfix(VentButton __instance) {
             // Illusionist render special vent button
-            if (Illusionist.illusionist != null && Illusionist.illusionist == PlayerControl.LocalPlayer) {
+            if (Illusionist.illusionist != null && Illusionist.illusionist == PlayerInCache.LocalPlayer.PlayerControl) {
                 if (defaultVentSprite == null) defaultVentSprite = __instance.graphic.sprite;
                 bool isSpecialVent = __instance.currentTarget != null && __instance.currentTarget.gameObject != null && __instance.currentTarget.gameObject.name.StartsWith("Hat_");
                 __instance.graphic.sprite = isSpecialVent ? Illusionist.getIllusionistVentButtonSprite() : defaultVentSprite;
@@ -168,11 +184,11 @@ namespace LasMonjas.Patches
                     return false;
                 }
 
-                var truePosition = PlayerControl.LocalPlayer.GetTruePosition();
+                var truePosition = PlayerInCache.LocalPlayer.PlayerControl.GetTruePosition();
 
                 Vector2 vector = pc.GetTruePosition() - truePosition;
                 var magnitude = vector.magnitude;
-                if (pc != null && !hideVentAnim || hideVentAnim && magnitude < PlayerControl.LocalPlayer.lightSource.viewDistance &&
+                if (pc != null && !hideVentAnim || hideVentAnim && magnitude < PlayerInCache.LocalPlayer.PlayerControl.lightSource.viewDistance &&
                     !PhysicsHelpers.AnyNonTriggersBetween(truePosition, vector.normalized, magnitude,
                         ShipAndObjectsMask)) {
                     __instance.GetComponent<SpriteAnim>().Play(__instance.EnterVentAnim, 1f);
@@ -198,11 +214,11 @@ namespace LasMonjas.Patches
                     return false;
                 }
 
-                var truePosition = PlayerControl.LocalPlayer.GetTruePosition();
+                var truePosition = PlayerInCache.LocalPlayer.PlayerControl.GetTruePosition();
 
                 Vector2 vector = pc.GetTruePosition() - truePosition;
                 var magnitude = vector.magnitude;
-                if (pc != null && !hideVentAnim || hideVentAnim && magnitude < PlayerControl.LocalPlayer.lightSource.viewDistance &&
+                if (pc != null && !hideVentAnim || hideVentAnim && magnitude < PlayerInCache.LocalPlayer.PlayerControl.lightSource.viewDistance &&
                     !PhysicsHelpers.AnyNonTriggersBetween(truePosition, vector.normalized, magnitude,
                         ShipAndObjectsMask)) {
                     __instance.GetComponent<SpriteAnim>().Play(__instance.ExitVentAnim, 1f);
@@ -224,18 +240,18 @@ namespace LasMonjas.Patches
     class KillButtonDoClickPatch
     {
         public static bool Prefix(KillButton __instance) {
-            if (__instance.isActiveAndEnabled && __instance.currentTarget && !__instance.isCoolingDown && !PlayerControl.LocalPlayer.Data.IsDead && PlayerControl.LocalPlayer.CanMove) {
+            if (__instance.isActiveAndEnabled && __instance.currentTarget && !__instance.isCoolingDown && !PlayerInCache.LocalPlayer.Data.IsDead && PlayerInCache.LocalPlayer.PlayerControl.CanMove) {
                 // Use an unchecked kill command, to allow shorter kill cooldowns etc. without getting kicked
-                MurderAttemptResult res = Helpers.checkMurderAttemptAndKill(PlayerControl.LocalPlayer, __instance.currentTarget);
+                MurderAttemptResult res = Helpers.checkMurderAttemptAndKill(PlayerInCache.LocalPlayer.PlayerControl, __instance.currentTarget);
                 // Handle Jinx kill
                 if (res == MurderAttemptResult.JinxKill) {
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.jinxQuack, false, 5f);
-                    PlayerControl.LocalPlayer.killTimer = GameOptionsManager.Instance.currentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
-                    if (PlayerControl.LocalPlayer == Janitor.janitor)
+                    PlayerInCache.LocalPlayer.PlayerControl.killTimer = GameOptionsManager.Instance.currentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
+                    if (PlayerInCache.LocalPlayer.PlayerControl == Janitor.janitor)
                         Janitor.janitor.killTimer = HudManagerStartPatch.janitorCleanButton.Timer = HudManagerStartPatch.janitorCleanButton.MaxTimer;
-                    else if (PlayerControl.LocalPlayer == Manipulator.manipulator)
+                    else if (PlayerInCache.LocalPlayer.PlayerControl == Manipulator.manipulator)
                         Manipulator.manipulator.killTimer = HudManagerStartPatch.manipulatorManipulateButton.Timer = HudManagerStartPatch.manipulatorManipulateButton.MaxTimer;
-                    else if (PlayerControl.LocalPlayer == Sorcerer.sorcerer)
+                    else if (PlayerInCache.LocalPlayer.PlayerControl == Sorcerer.sorcerer)
                         Sorcerer.sorcerer.killTimer = HudManagerStartPatch.sorcererSpellButton.Timer = HudManagerStartPatch.sorcererSpellButton.MaxTimer;
                 }
                 __instance.SetTarget(null);
@@ -249,8 +265,8 @@ namespace LasMonjas.Patches
     {
         static void Postfix() {
             if (GameOptionsManager.Instance.currentGameMode == GameModes.Normal && gameType <= 1) {
-                foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                    if (player == PlayerControl.LocalPlayer) {
+                foreach (PlayerControl player in PlayerInCache.AllPlayers) {
+                    if (player == PlayerInCache.LocalPlayer.PlayerControl) {
                         HudManager.Instance.AbilityButton.Hide();
                         var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == player.PlayerId);
                         DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == player.PlayerId).FirstOrDefault();
@@ -276,17 +292,17 @@ namespace LasMonjas.Patches
             else {
 
                 // Block sabotage button if Bomberman bomb, lights out, duel or special condition 1vs1 is active
-                bool blockSabotage = (PlayerControl.LocalPlayer.Data.Role.IsImpostor || (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead) || (Poisoner.canSabotage && Poisoner.poisoner != null && Poisoner.poisoner == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead)) && (alivePlayers <= 2 || Bomberman.activeBomb || Challenger.isDueling || Seeker.isMinigaming || Illusionist.lightsOutTimer > 0);
+                bool blockSabotage = (PlayerInCache.LocalPlayer.Data.Role.IsImpostor || (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead) || (Poisoner.canSabotage && Poisoner.poisoner != null && Poisoner.poisoner == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead)) && (alivePlayers <= 2 || Bomberman.activeBomb || Challenger.isDueling || Seeker.isMinigaming || Illusionist.lightsOutTimer > 0);
                 if (blockSabotage) return false;
 
                 // Joker sabotage
-                if (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && !Seeker.isMinigaming && Illusionist.lightsOutTimer <= 0) {
+                if (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && !Seeker.isMinigaming && Illusionist.lightsOutTimer <= 0) {
                     MapBehaviour.Instance.ShowSabotageMap();
                     return false;
                 }
 
                 // Poisoner sabotage
-                if (Poisoner.canSabotage && Poisoner.poisoner != null && Poisoner.poisoner == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && !Seeker.isMinigaming && Illusionist.lightsOutTimer <= 0) {
+                if (Poisoner.canSabotage && Poisoner.poisoner != null && Poisoner.poisoner == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && !Seeker.isMinigaming && Illusionist.lightsOutTimer <= 0) {
                     MapBehaviour.Instance.ShowSabotageMap();
                     return false;
                 }
@@ -309,12 +325,12 @@ namespace LasMonjas.Patches
             else {
 
                 // Block sabotage button if Bomberman bomb, lights out, duel or special condition 1vs1 is active
-                bool blockSabotage = (PlayerControl.LocalPlayer.Data.Role.IsImpostor || (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead) || (Poisoner.canSabotage && Poisoner.poisoner != null && Poisoner.poisoner == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead)) && (alivePlayers <= 2 || Bomberman.activeBomb || Challenger.isDueling || Seeker.isMinigaming || Illusionist.lightsOutTimer > 0);
+                bool blockSabotage = (PlayerInCache.LocalPlayer.Data.Role.IsImpostor || (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead) || (Poisoner.canSabotage && Poisoner.poisoner != null && Poisoner.poisoner == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead)) && (alivePlayers <= 2 || Bomberman.activeBomb || Challenger.isDueling || Seeker.isMinigaming || Illusionist.lightsOutTimer > 0);
                 if (blockSabotage) {
                     HudManager.Instance.SabotageButton.SetDisabled();
                 }
 
-                if (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && !Seeker.isMinigaming && Illusionist.lightsOutTimer <= 0) {
+                if (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && !Seeker.isMinigaming && Illusionist.lightsOutTimer <= 0) {
                     if (MapBehaviour.Instance != null && !MapBehaviour.Instance.IsOpen && MeetingHud.Instance == null) {
                         HudManager.Instance.SabotageButton.Show();
                     }
@@ -323,7 +339,7 @@ namespace LasMonjas.Patches
                     }
                 }
 
-                if (Poisoner.canSabotage && Poisoner.poisoner != null && Poisoner.poisoner == PlayerControl.LocalPlayer && !PlayerControl.LocalPlayer.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && !Seeker.isMinigaming && Illusionist.lightsOutTimer <= 0) {
+                if (Poisoner.canSabotage && Poisoner.poisoner != null && Poisoner.poisoner == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && !Seeker.isMinigaming && Illusionist.lightsOutTimer <= 0) {
                     if (MapBehaviour.Instance != null && !MapBehaviour.Instance.IsOpen && MeetingHud.Instance == null) {
                         HudManager.Instance.SabotageButton.Show();
                     }
@@ -361,19 +377,19 @@ namespace LasMonjas.Patches
                 statusText = Language.usablesTexts[0];
             }
             // Deactivate emergency button for Cheater
-            if (Cheater.cheater != null && Cheater.cheater == PlayerControl.LocalPlayer && !Cheater.canCallEmergency) {
+            if (Cheater.cheater != null && Cheater.cheater == PlayerInCache.LocalPlayer.PlayerControl && !Cheater.canCallEmergency) {
                 roleCanCallEmergency = false;
                 statusText = Language.usablesTexts[1];
             }
 
             // Deactivate emergency button for Gambler
-            if (Gambler.gambler != null && Gambler.gambler == PlayerControl.LocalPlayer && !Gambler.canCallEmergency) {
+            if (Gambler.gambler != null && Gambler.gambler == PlayerInCache.LocalPlayer.PlayerControl && !Gambler.canCallEmergency) {
                 roleCanCallEmergency = false;
                 statusText = Language.usablesTexts[2];
             }
 
             // Deactivate emergency button for Sorcerer
-            if (Sorcerer.sorcerer != null && Sorcerer.sorcerer == PlayerControl.LocalPlayer && !Sorcerer.canCallEmergency) {
+            if (Sorcerer.sorcerer != null && Sorcerer.sorcerer == PlayerInCache.LocalPlayer.PlayerControl && !Sorcerer.canCallEmergency) {
                 roleCanCallEmergency = false;
                 statusText = Language.usablesTexts[3];
             }
@@ -397,7 +413,7 @@ namespace LasMonjas.Patches
             }
 
             // Deactivate emergency button for Gambler
-            if (FortuneTeller.fortuneTeller != null && FortuneTeller.fortuneTeller == PlayerControl.LocalPlayer && !FortuneTeller.canCallEmergency) {
+            if (FortuneTeller.fortuneTeller != null && FortuneTeller.fortuneTeller == PlayerInCache.LocalPlayer.PlayerControl && !FortuneTeller.canCallEmergency) {
                 roleCanCallEmergency = false;
                 statusText = Language.usablesTexts[7];
             }
@@ -447,7 +463,7 @@ namespace LasMonjas.Patches
 
             static void Postfix(VitalsMinigame __instance) {
 
-                if (Hacker.hacker != null && PlayerControl.LocalPlayer == Hacker.hacker) {
+                if (Hacker.hacker != null && PlayerInCache.LocalPlayer.PlayerControl == Hacker.hacker) {
                     hackerTexts = new List<TMPro.TextMeshPro>();
                     foreach (VitalsPanel panel in __instance.vitals) {
                         TMPro.TextMeshPro text = UnityEngine.Object.Instantiate(__instance.SabText, panel.transform);
@@ -476,7 +492,7 @@ namespace LasMonjas.Patches
             static void Postfix(VitalsMinigame __instance) {
                 // Hacker show time since death
 
-                if (Hacker.hacker != null && Hacker.hacker == PlayerControl.LocalPlayer && Hacker.hackerTimer > 0) {
+                if (Hacker.hacker != null && Hacker.hacker == PlayerInCache.LocalPlayer.PlayerControl && Hacker.hackerTimer > 0) {
                     for (int k = 0; k < __instance.vitals.Length; k++) {
                         VitalsPanel vitalsPanel = __instance.vitals[k];
                         GameData.PlayerInfo player = vitalsPanel.PlayerInfo;
@@ -537,7 +553,7 @@ namespace LasMonjas.Patches
                 __instance.timer = 0f;
                 players = new Dictionary<SystemTypes, List<Color>>();
                 bool commsActive = false;
-                foreach (PlayerTask task in PlayerControl.LocalPlayer.myTasks)
+                foreach (PlayerTask task in PlayerInCache.LocalPlayer.PlayerControl.myTasks)
                     if (task.TaskType == TaskTypes.FixComms) commsActive = true;
 
 
@@ -613,7 +629,7 @@ namespace LasMonjas.Patches
             private static Material newMat;
             static void Postfix(CounterArea __instance) {
                 // Hacker display saved colors on the admin panel
-                bool showHackerInfo = Hacker.hacker != null && Hacker.hacker == PlayerControl.LocalPlayer && Hacker.hackerTimer > 0;
+                bool showHackerInfo = Hacker.hacker != null && Hacker.hacker == PlayerInCache.LocalPlayer.PlayerControl && Hacker.hackerTimer > 0;
                 if (players.ContainsKey(__instance.RoomType)) {
                     List<Color> colors = players[__instance.RoomType];
 
@@ -726,7 +742,7 @@ namespace LasMonjas.Patches
                     timer = 0f;
                 }
 
-                if ((__instance.isStatic || update) && !PlayerTask.PlayerHasTaskOfType<IHudOverrideTask>(PlayerControl.LocalPlayer)) {
+                if ((__instance.isStatic || update) && !PlayerTask.PlayerHasTaskOfType<IHudOverrideTask>(PlayerInCache.LocalPlayer.PlayerControl)) {
                     __instance.isStatic = false;
                     for (int i = 0; i < __instance.ViewPorts.Length; i++) {
                         __instance.ViewPorts[i].sharedMaterial = __instance.DefaultMaterial;
@@ -737,7 +753,7 @@ namespace LasMonjas.Patches
                             __instance.ViewPorts[i].sharedMaterial = __instance.StaticMaterial;
                     }
                 }
-                else if (!__instance.isStatic && PlayerTask.PlayerHasTaskOfType<HudOverrideTask>(PlayerControl.LocalPlayer)) {
+                else if (!__instance.isStatic && PlayerTask.PlayerHasTaskOfType<HudOverrideTask>(PlayerInCache.LocalPlayer.PlayerControl)) {
                     __instance.isStatic = true;
                     for (int j = 0; j < __instance.ViewPorts.Length; j++) {
                         __instance.ViewPorts[j].sharedMaterial = __instance.StaticMaterial;
@@ -745,9 +761,9 @@ namespace LasMonjas.Patches
                     }
                 }
 
-                if (nightVision && !PlayerControl.LocalPlayer.Data.Role.IsImpostor) {
-                    if (Modifiers.lighter != null && PlayerControl.LocalPlayer == Modifiers.lighter) return false;
-                    foreach (PlayerTask task in PlayerControl.LocalPlayer.myTasks) {
+                if (nightVision && !PlayerInCache.LocalPlayer.Data.Role.IsImpostor) {
+                    if (Modifiers.lighter != null && PlayerInCache.LocalPlayer.PlayerControl == Modifiers.lighter) return false;
+                    foreach (PlayerTask task in PlayerInCache.LocalPlayer.PlayerControl.myTasks) {
                         isLightsOut = false;
                         if (task.TaskType == TaskTypes.FixLights) {
                             isLightsOut = true;
@@ -758,7 +774,7 @@ namespace LasMonjas.Patches
                                 canNightOverlay = false;
                                 removeNightOverlay = true;
                             }
-                            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                            foreach (PlayerControl player in PlayerInCache.AllPlayers) {
                                 player.setLook("", 11, "", "", "", "");
                                 if (player.cosmetics.currentPet) player.cosmetics.currentPet.gameObject.SetActive(false);
                             }
@@ -770,7 +786,7 @@ namespace LasMonjas.Patches
                         foreach (GameObject gameObjecttwo in nightOverlay) {
                             gameObjecttwo.GetComponent<SpriteRenderer>().sprite = null;
                         }
-                        foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                        foreach (PlayerControl player in PlayerInCache.AllPlayers) {
                             player.setDefaultLook();
                             if (player.cosmetics.currentPet) player.cosmetics.currentPet.gameObject.SetActive(true);
                         }
@@ -793,7 +809,7 @@ namespace LasMonjas.Patches
                     foreach (GameObject gameObjecttwo in nightOverlay) {
                         gameObjecttwo.GetComponent<SpriteRenderer>().sprite = null;
                     }
-                    foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                    foreach (PlayerControl player in PlayerInCache.AllPlayers) {
                         player.setDefaultLook();
                     }
                     canNightOverlay = true;
@@ -814,7 +830,7 @@ namespace LasMonjas.Patches
                     foreach (GameObject gameObjecttwo in nightOverlay) {
                         gameObjecttwo.GetComponent<SpriteRenderer>().sprite = null;
                     }
-                    foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                    foreach (PlayerControl player in PlayerInCache.AllPlayers) {
                         player.setDefaultLook();
                     }
                     canNightOverlay = true;
@@ -856,9 +872,9 @@ namespace LasMonjas.Patches
 
             public static bool Prefix(PlanetSurveillanceMinigame __instance) {
 
-                if (nightVision && !PlayerControl.LocalPlayer.Data.Role.IsImpostor) {
-                    if (Modifiers.lighter != null && PlayerControl.LocalPlayer == Modifiers.lighter) return false;
-                    foreach (PlayerTask task in PlayerControl.LocalPlayer.myTasks) {
+                if (nightVision && !PlayerInCache.LocalPlayer.Data.Role.IsImpostor) {
+                    if (Modifiers.lighter != null && PlayerInCache.LocalPlayer.PlayerControl == Modifiers.lighter) return false;
+                    foreach (PlayerTask task in PlayerInCache.LocalPlayer.PlayerControl.myTasks) {
                         isLightsOut = false;
                         if (task.TaskType == TaskTypes.FixLights) {
                             isLightsOut = true;
@@ -869,7 +885,7 @@ namespace LasMonjas.Patches
                                 canNightOverlay = false;
                                 removeNightOverlay = true;
                             }
-                            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                            foreach (PlayerControl player in PlayerInCache.AllPlayers) {
                                 player.setLook("", 11, "", "", "", "");
                             }
                             return false;
@@ -880,7 +896,7 @@ namespace LasMonjas.Patches
                         foreach (GameObject gameObjecttwo in nightOverlay) {
                             gameObjecttwo.GetComponent<SpriteRenderer>().sprite = null;
                         }
-                        foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                        foreach (PlayerControl player in PlayerInCache.AllPlayers) {
                             player.setDefaultLook();
                         }
                         canNightOverlay = true;
@@ -902,7 +918,7 @@ namespace LasMonjas.Patches
                     foreach (GameObject gameObjecttwo in nightOverlay) {
                         gameObjecttwo.GetComponent<SpriteRenderer>().sprite = null;
                     }
-                    foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                    foreach (PlayerControl player in PlayerInCache.AllPlayers) {
                         player.setDefaultLook();
                     }
                     canNightOverlay = true;
@@ -923,7 +939,7 @@ namespace LasMonjas.Patches
                     foreach (GameObject gameObjecttwo in nightOverlay) {
                         gameObjecttwo.GetComponent<SpriteRenderer>().sprite = null;
                     }
-                    foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                    foreach (PlayerControl player in PlayerInCache.AllPlayers) {
                         player.setDefaultLook();
                     }
                     canNightOverlay = true;

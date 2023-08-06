@@ -2,7 +2,7 @@ using HarmonyLib;
 using static LasMonjas.LasMonjas;
 using UnityEngine;
 using AmongUs.GameOptions;
-using static UnityEngine.ParticleSystem.PlaybackState;
+using LasMonjas.Core;
 
 namespace LasMonjas.Patches
 {
@@ -62,7 +62,7 @@ namespace LasMonjas.Patches
                     if (player == null || player.IsDead) // IsDead
                         __result = __instance.MaxLightRadius;
                     else {
-                        foreach (PlayerControl gamemodePlayer in PlayerControl.AllPlayerControls) {
+                        foreach (PlayerControl gamemodePlayer in PlayerInCache.AllPlayers) {
                             if (gamemodePlayer != null && gamemodePlayer.PlayerId == player.PlayerId) {
                                 float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
                                 __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius, unlerped) * GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.CrewLightMod);
@@ -74,8 +74,8 @@ namespace LasMonjas.Patches
                     if (player == null || player.IsDead) // IsDead
                         __result = __instance.MaxLightRadius;
                     else {
-                        foreach (PlayerControl gamemodePlayer in PlayerControl.AllPlayerControls) {
-                            if (gamemodePlayer != null && PoliceAndThief.policeplayer01 != null && gamemodePlayer == PoliceAndThief.policeplayer01 && PoliceAndThief.policeplayer01.PlayerId == player.PlayerId && PlayerControl.LocalPlayer == PoliceAndThief.policeplayer01) {
+                        foreach (PlayerControl gamemodePlayer in PlayerInCache.AllPlayers) {
+                            if (gamemodePlayer != null && PoliceAndThief.policeplayer01 != null && gamemodePlayer == PoliceAndThief.policeplayer01 && PoliceAndThief.policeplayer01.PlayerId == player.PlayerId && PlayerInCache.LocalPlayer.PlayerControl == PoliceAndThief.policeplayer01) {
                                 if (PoliceAndThief.policeplayer01lightTimer > 0f) {
                                     float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
                                     __result = Mathf.Lerp(__instance.MinLightRadius * (gamemodeFlashlightRange), __instance.MaxLightRadius * gamemodeFlashlightRange, unlerped);
@@ -86,7 +86,7 @@ namespace LasMonjas.Patches
                                 }
                                 return false;
                             }
-                            else if (gamemodePlayer != null && PoliceAndThief.policeplayer03 != null && gamemodePlayer == PoliceAndThief.policeplayer03 && PoliceAndThief.policeplayer03.PlayerId == player.PlayerId && PlayerControl.LocalPlayer == PoliceAndThief.policeplayer03) {
+                            else if (gamemodePlayer != null && PoliceAndThief.policeplayer03 != null && gamemodePlayer == PoliceAndThief.policeplayer03 && PoliceAndThief.policeplayer03.PlayerId == player.PlayerId && PlayerInCache.LocalPlayer.PlayerControl == PoliceAndThief.policeplayer03) {
                                 if (PoliceAndThief.policeplayer03lightTimer > 0f) {
                                     float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
                                     __result = Mathf.Lerp(__instance.MinLightRadius * (gamemodeFlashlightRange), __instance.MaxLightRadius * gamemodeFlashlightRange, unlerped);
@@ -97,7 +97,7 @@ namespace LasMonjas.Patches
                                 }
                                 return false;
                             }
-                            else if (gamemodePlayer != null && PoliceAndThief.policeplayer02 != null && gamemodePlayer == PoliceAndThief.policeplayer02 && PoliceAndThief.policeplayer02.PlayerId == player.PlayerId && PlayerControl.LocalPlayer == PoliceAndThief.policeplayer02) {
+                            else if (gamemodePlayer != null && PoliceAndThief.policeplayer02 != null && gamemodePlayer == PoliceAndThief.policeplayer02 && PoliceAndThief.policeplayer02.PlayerId == player.PlayerId && PlayerInCache.LocalPlayer.PlayerControl == PoliceAndThief.policeplayer02) {
                                 if (PoliceAndThief.policeplayer02lightTimer > 0f) {
                                     float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
                                     __result = Mathf.Lerp(__instance.MinLightRadius * (gamemodeFlashlightRange), __instance.MaxLightRadius * gamemodeFlashlightRange, unlerped);
@@ -108,7 +108,7 @@ namespace LasMonjas.Patches
                                 }
                                 return false;
                             }
-                            else if (gamemodePlayer != null && PoliceAndThief.policeplayer05 != null && gamemodePlayer == PoliceAndThief.policeplayer05 && PoliceAndThief.policeplayer05.PlayerId == player.PlayerId && PlayerControl.LocalPlayer == PoliceAndThief.policeplayer05) {
+                            else if (gamemodePlayer != null && PoliceAndThief.policeplayer05 != null && gamemodePlayer == PoliceAndThief.policeplayer05 && PoliceAndThief.policeplayer05.PlayerId == player.PlayerId && PlayerInCache.LocalPlayer.PlayerControl == PoliceAndThief.policeplayer05) {
                                 if (PoliceAndThief.policeplayer05lightTimer > 0f) {
                                     float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
                                     __result = Mathf.Lerp(__instance.MinLightRadius * (gamemodeFlashlightRange), __instance.MaxLightRadius * gamemodeFlashlightRange, unlerped);
@@ -119,7 +119,7 @@ namespace LasMonjas.Patches
                                 }
                                 return false;
                             }
-                            else if (gamemodePlayer != null && PoliceAndThief.policeplayer04 != null && gamemodePlayer == PoliceAndThief.policeplayer04 && PoliceAndThief.policeplayer04.PlayerId == player.PlayerId && PlayerControl.LocalPlayer == PoliceAndThief.policeplayer04) {
+                            else if (gamemodePlayer != null && PoliceAndThief.policeplayer04 != null && gamemodePlayer == PoliceAndThief.policeplayer04 && PoliceAndThief.policeplayer04.PlayerId == player.PlayerId && PlayerInCache.LocalPlayer.PlayerControl == PoliceAndThief.policeplayer04) {
                                 if (PoliceAndThief.policeplayer04lightTimer > 0f) {
                                     float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
                                     __result = Mathf.Lerp(__instance.MinLightRadius * (gamemodeFlashlightRange), __instance.MaxLightRadius * gamemodeFlashlightRange, unlerped);
@@ -130,7 +130,7 @@ namespace LasMonjas.Patches
                                 }
                                 return false;
                             }
-                            else if (gamemodePlayer != null && PoliceAndThief.policeplayer06 != null && gamemodePlayer == PoliceAndThief.policeplayer06 && PoliceAndThief.policeplayer06.PlayerId == player.PlayerId && PlayerControl.LocalPlayer == PoliceAndThief.policeplayer06) {
+                            else if (gamemodePlayer != null && PoliceAndThief.policeplayer06 != null && gamemodePlayer == PoliceAndThief.policeplayer06 && PoliceAndThief.policeplayer06.PlayerId == player.PlayerId && PlayerInCache.LocalPlayer.PlayerControl == PoliceAndThief.policeplayer06) {
                                 if (PoliceAndThief.policeplayer06lightTimer > 0f) {
                                     float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
                                     __result = Mathf.Lerp(__instance.MinLightRadius * (gamemodeFlashlightRange), __instance.MaxLightRadius * gamemodeFlashlightRange, unlerped);
@@ -152,8 +152,8 @@ namespace LasMonjas.Patches
                     if (player == null || player.IsDead) // IsDead
                         __result = __instance.MaxLightRadius;
                     else {
-                        foreach (PlayerControl gamemodePlayer in PlayerControl.AllPlayerControls) {
-                            if (gamemodePlayer != null && HotPotato.hotPotatoPlayer != null && gamemodePlayer == HotPotato.hotPotatoPlayer && HotPotato.hotPotatoPlayer.PlayerId == player.PlayerId && PlayerControl.LocalPlayer == HotPotato.hotPotatoPlayer) {
+                        foreach (PlayerControl gamemodePlayer in PlayerInCache.AllPlayers) {
+                            if (gamemodePlayer != null && HotPotato.hotPotatoPlayer != null && gamemodePlayer == HotPotato.hotPotatoPlayer && HotPotato.hotPotatoPlayer.PlayerId == player.PlayerId && PlayerInCache.LocalPlayer.PlayerControl == HotPotato.hotPotatoPlayer) {
                                 float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
                                 __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius * (gamemodeFlashlightRange / 2), unlerped) * GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.CrewLightMod);
                             }
@@ -169,8 +169,8 @@ namespace LasMonjas.Patches
                     if (player == null || player.IsDead) // IsDead
                         __result = __instance.MaxLightRadius;
                     else {
-                        foreach (PlayerControl gamemodePlayer in PlayerControl.AllPlayerControls) {
-                            if (gamemodePlayer != null && ZombieLaboratory.nursePlayer != null && gamemodePlayer == ZombieLaboratory.nursePlayer && ZombieLaboratory.nursePlayer.PlayerId == player.PlayerId && PlayerControl.LocalPlayer == ZombieLaboratory.nursePlayer && ZombieLaboratory.currentKeyItems >= 3) {
+                        foreach (PlayerControl gamemodePlayer in PlayerInCache.AllPlayers) {
+                            if (gamemodePlayer != null && ZombieLaboratory.nursePlayer != null && gamemodePlayer == ZombieLaboratory.nursePlayer && ZombieLaboratory.nursePlayer.PlayerId == player.PlayerId && PlayerInCache.LocalPlayer.PlayerControl == ZombieLaboratory.nursePlayer && ZombieLaboratory.currentKeyItems >= 3) {
                                 float unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
                                 __result = Mathf.Lerp(__instance.MinLightRadius * gamemodeFlashlightRange, __instance.MaxLightRadius * gamemodeFlashlightRange, unlerped);
                             }
@@ -279,7 +279,7 @@ namespace LasMonjas.Patches
         public static class AdjustLight
         {
             public static bool Prefix(PlayerControl __instance) {
-                if (__instance == null || PlayerControl.LocalPlayer == null || gameType < 2 || !gamemodeEnableFlashlight) return true;
+                if (__instance == null || PlayerInCache.LocalPlayer == null || gameType < 2 || !gamemodeEnableFlashlight) return true;
 
                 bool hasFlashlight = (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek && GameOptionsManager.Instance.currentHideNSeekGameOptions.useFlashlight) || (gameType == 3 || gameType == 5 || gameType == 6);
                 __instance.SetFlashlightInputMethod();                

@@ -6,6 +6,7 @@ using UnityEngine;
 using System;
 using static LasMonjas.LasMonjas;
 using AmongUs.GameOptions;
+using LasMonjas.Core;
 
 namespace LasMonjas.Patches
 {
@@ -13,7 +14,7 @@ namespace LasMonjas.Patches
     class RoleOptionsDataGetNumPerGamePatch
     {
         public static void Postfix(ref int __result) {
-            if (CustomOptionHolder.activateRoles.getBool()) __result = 0; // Deactivate Vanilla Roles if the mod roles are active
+            if (CustomOptionHolder.activateRoles.getBool() && GameOptionsManager.Instance.CurrentGameOptions.GameMode == GameModes.Normal) __result = 0; // Deactivate Vanilla Roles if the mod roles are active
         }
     }
 
@@ -24,7 +25,7 @@ namespace LasMonjas.Patches
         private static List<int> myGamemodeList = new List<int>();
 
         public static void Postfix() {
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ResetVaribles, Hazel.SendOption.Reliable, -1);
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ResetVaribles, Hazel.SendOption.Reliable, -1);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
             RPCProcedure.resetVariables();
 
@@ -41,11 +42,11 @@ namespace LasMonjas.Patches
 
         private static void getRoleAssignmentData() {
             // Get 3 player lists, one for crewmates/neutrals/rebels, one for impostor and a global one for gamemodes.
-            List<PlayerControl> crewmates = PlayerControl.AllPlayerControls.ToArray().ToList().OrderBy(x => Guid.NewGuid()).ToList();
+            List<PlayerControl> crewmates = PlayerControl.AllPlayerControls.ToArray().ToArray().ToList().OrderBy(x => Guid.NewGuid()).ToList();
             crewmates.RemoveAll(x => x.Data.Role.IsImpostor);
-            List<PlayerControl> impostors = PlayerControl.AllPlayerControls.ToArray().ToList().OrderBy(x => Guid.NewGuid()).ToList();
+            List<PlayerControl> impostors = PlayerControl.AllPlayerControls.ToArray().ToArray().ToList().OrderBy(x => Guid.NewGuid()).ToList();
             impostors.RemoveAll(x => !x.Data.Role.IsImpostor);
-            List<PlayerControl> modifiers = PlayerControl.AllPlayerControls.ToArray().ToList().OrderBy(x => Guid.NewGuid()).ToList();
+            List<PlayerControl> modifiers = PlayerControl.AllPlayerControls.ToArray().ToArray().ToList().OrderBy(x => Guid.NewGuid()).ToList();
 
             myGamemodeList.Clear();
             bool oddNumber = false;
@@ -181,11 +182,11 @@ namespace LasMonjas.Patches
                     break;
                 case 2:
                     // CTF
-                    if (Mathf.Ceil(PlayerControl.AllPlayerControls.Count) % 2 != 0) {
+                    if (Mathf.Ceil(PlayerInCache.AllPlayers.Count) % 2 != 0) {
                         oddNumber = true;
                         setRoleToRandomPlayer((byte)RoleId.StealerPlayer, modifiers);
                     }
-                    while (myGamemodeList.Count < (Mathf.Round(PlayerControl.AllPlayerControls.Count / 2))) {
+                    while (myGamemodeList.Count < (Mathf.Round(PlayerInCache.AllPlayers.Count / 2))) {
                         switch (playerNumber) {
                             case 1:
                                 setRoleToRandomPlayer((byte)RoleId.RedPlayer01, modifiers);
@@ -213,7 +214,7 @@ namespace LasMonjas.Patches
                         playerNumber += 1;
                     }
                     playerNumber = 9;
-                    while (!oddNumber && myGamemodeList.Count < PlayerControl.AllPlayerControls.Count || oddNumber && myGamemodeList.Count < PlayerControl.AllPlayerControls.Count - 1) {
+                    while (!oddNumber && myGamemodeList.Count < PlayerInCache.AllPlayers.Count || oddNumber && myGamemodeList.Count < PlayerInCache.AllPlayers.Count - 1) {
                         switch (playerNumber) {
                             case 9:
                                 setRoleToRandomPlayer((byte)RoleId.BluePlayer01, modifiers);
@@ -243,7 +244,7 @@ namespace LasMonjas.Patches
                     break;
                 case 3:
                     // PT
-                    while (myGamemodeList.Count < (Mathf.Round(PlayerControl.AllPlayerControls.Count / 2.39f))) {
+                    while (myGamemodeList.Count < (Mathf.Round(PlayerInCache.AllPlayers.Count / 2.39f))) {
                         switch (playerNumber) {
                             case 1:
                                 setRoleToRandomPlayer((byte)RoleId.PolicePlayer01, modifiers);
@@ -268,7 +269,7 @@ namespace LasMonjas.Patches
                         playerNumber += 1;
                     }
                     playerNumber = 7;
-                    while (myGamemodeList.Count < PlayerControl.AllPlayerControls.Count) {
+                    while (myGamemodeList.Count < PlayerInCache.AllPlayers.Count) {
                         switch (playerNumber) {
                             case 7:
                                 setRoleToRandomPlayer((byte)RoleId.ThiefPlayer01, modifiers);
@@ -304,11 +305,11 @@ namespace LasMonjas.Patches
                     break;
                 case 4:
                     // KOTH
-                    if (Mathf.Ceil(PlayerControl.AllPlayerControls.Count) % 2 != 0) {
+                    if (Mathf.Ceil(PlayerInCache.AllPlayers.Count) % 2 != 0) {
                         oddNumber = true;
                         setRoleToRandomPlayer((byte)RoleId.UsurperPlayer, modifiers);
                     }
-                    while (myGamemodeList.Count < (Mathf.Round(PlayerControl.AllPlayerControls.Count / 2))) {
+                    while (myGamemodeList.Count < (Mathf.Round(PlayerInCache.AllPlayers.Count / 2))) {
                         switch (playerNumber) {
                             case 1:
                                 setRoleToRandomPlayer((byte)RoleId.GreenKing, modifiers);
@@ -336,7 +337,7 @@ namespace LasMonjas.Patches
                         playerNumber += 1;
                     }
                     playerNumber = 9;
-                    while (!oddNumber && myGamemodeList.Count < PlayerControl.AllPlayerControls.Count || oddNumber && myGamemodeList.Count < PlayerControl.AllPlayerControls.Count - 1) {
+                    while (!oddNumber && myGamemodeList.Count < PlayerInCache.AllPlayers.Count || oddNumber && myGamemodeList.Count < PlayerInCache.AllPlayers.Count - 1) {
                         switch (playerNumber) {
                             case 9:
                                 setRoleToRandomPlayer((byte)RoleId.YellowKing, modifiers);
@@ -366,7 +367,7 @@ namespace LasMonjas.Patches
                     break;
                 case 5:
                     // HP
-                    while (myGamemodeList.Count < PlayerControl.AllPlayerControls.Count) {
+                    while (myGamemodeList.Count < PlayerInCache.AllPlayers.Count) {
                         switch (playerNumber) {
                             case 1:
                                 setRoleToRandomPlayer((byte)RoleId.HotPotato, modifiers);
@@ -420,7 +421,7 @@ namespace LasMonjas.Patches
                     break;
                 case 6:
                     // ZL
-                    while (myGamemodeList.Count < PlayerControl.AllPlayerControls.Count) {
+                    while (myGamemodeList.Count < PlayerInCache.AllPlayers.Count) {
                         switch (ZombieLaboratory.startZombies) {
                             case 1:
                                 switch (playerNumber) {
@@ -675,7 +676,7 @@ namespace LasMonjas.Patches
                 case 7:
                     // BR
                     if (BattleRoyale.matchType == 0) {
-                        while (myGamemodeList.Count < PlayerControl.AllPlayerControls.Count) {
+                        while (myGamemodeList.Count < PlayerInCache.AllPlayers.Count) {
                             switch (playerNumber) {
                                 case 1:
                                     setRoleToRandomPlayer((byte)RoleId.SoloPlayer01, modifiers);
@@ -729,11 +730,11 @@ namespace LasMonjas.Patches
                     }
                     else {
                         // Battle Royale Teams
-                        if (Mathf.Ceil(PlayerControl.AllPlayerControls.Count) % 2 != 0) {
+                        if (Mathf.Ceil(PlayerInCache.AllPlayers.Count) % 2 != 0) {
                             oddNumber = true;
                             setRoleToRandomPlayer((byte)RoleId.SerialKiller, modifiers);
                         }
-                        while (myGamemodeList.Count < (Mathf.Round(PlayerControl.AllPlayerControls.Count / 2))) {
+                        while (myGamemodeList.Count < (Mathf.Round(PlayerInCache.AllPlayers.Count / 2))) {
                             switch (playerNumber) {
                                 case 1:
                                     setRoleToRandomPlayer((byte)RoleId.LimePlayer01, modifiers);
@@ -761,7 +762,7 @@ namespace LasMonjas.Patches
                             playerNumber += 1;
                         }
                         playerNumber = 9;
-                        while (!oddNumber && myGamemodeList.Count < PlayerControl.AllPlayerControls.Count || oddNumber && myGamemodeList.Count < PlayerControl.AllPlayerControls.Count - 1) {
+                        while (!oddNumber && myGamemodeList.Count < PlayerInCache.AllPlayers.Count || oddNumber && myGamemodeList.Count < PlayerInCache.AllPlayers.Count - 1) {
                             switch (playerNumber) {
                                 case 9:
                                     setRoleToRandomPlayer((byte)RoleId.PinkPlayer01, modifiers);
@@ -792,11 +793,11 @@ namespace LasMonjas.Patches
                     break;
                 case 8:
                     // MF
-                    if (Mathf.Ceil(PlayerControl.AllPlayerControls.Count) % 2 != 0) {
+                    if (Mathf.Ceil(PlayerInCache.AllPlayers.Count) % 2 != 0) {
                         oddNumber = true;
                         setRoleToRandomPlayer((byte)RoleId.BigMonja, modifiers);
                     }
-                    while (myGamemodeList.Count < (Mathf.Round(PlayerControl.AllPlayerControls.Count / 2))) {
+                    while (myGamemodeList.Count < (Mathf.Round(PlayerInCache.AllPlayers.Count / 2))) {
                         switch (playerNumber) {
                             case 1:
                                 setRoleToRandomPlayer((byte)RoleId.GreenMonjaPlayer01, modifiers);
@@ -824,7 +825,7 @@ namespace LasMonjas.Patches
                         playerNumber += 1;
                     }
                     playerNumber = 9;
-                    while (!oddNumber && myGamemodeList.Count < PlayerControl.AllPlayerControls.Count || oddNumber && myGamemodeList.Count < PlayerControl.AllPlayerControls.Count - 1) {
+                    while (!oddNumber && myGamemodeList.Count < PlayerInCache.AllPlayers.Count || oddNumber && myGamemodeList.Count < PlayerInCache.AllPlayers.Count - 1) {
                         switch (playerNumber) {
                             case 9:
                                 setRoleToRandomPlayer((byte)RoleId.CyanPlayer01, modifiers);
@@ -908,7 +909,7 @@ namespace LasMonjas.Patches
             byte playerId = playerList[index].PlayerId;
             if (removePlayer) playerList.RemoveAt(index);
 
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetRole, Hazel.SendOption.Reliable, -1);
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.SetRole, Hazel.SendOption.Reliable, -1);
             writer.Write(roleId);
             writer.Write(playerId);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
@@ -975,7 +976,7 @@ namespace LasMonjas.Patches
             byte playerId = playerList[index].PlayerId;
             playerList.RemoveAt(index);
 
-            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.SetModifier, Hazel.SendOption.Reliable, -1);
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.SetModifier, Hazel.SendOption.Reliable, -1);
             writer.Write(modifierId);
             writer.Write(playerId);
             writer.Write(flag);

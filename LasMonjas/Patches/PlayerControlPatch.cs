@@ -18,7 +18,7 @@ namespace LasMonjas.Patches {
             PlayerControl result = null;
             float num = GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)];
             if (!ShipStatus.Instance) return result;
-            if (targetingPlayer == null) targetingPlayer = PlayerControl.LocalPlayer;
+            if (targetingPlayer == null) targetingPlayer = PlayerInCache.LocalPlayer.PlayerControl;
             if (targetingPlayer.Data.IsDead) return result;
 
             Vector2 truePosition = targetingPlayer.GetTruePosition();
@@ -51,15 +51,15 @@ namespace LasMonjas.Patches {
             target.cosmetics.currentBodySprite.BodySprite.material.SetColor("_OutlineColor", color);
         }
         static void setBasePlayerOutlines() {
-            foreach (PlayerControl target in PlayerControl.AllPlayerControls) {
+            foreach (PlayerControl target in PlayerInCache.AllPlayers) {
                 if (target == null || target.cosmetics.currentBodySprite.BodySprite == null) continue;
 
                 bool isTransformedMimic = target == Mimic.mimic && Mimic.transformTarget != null && Mimic.transformTimer > 0f;
                 bool isTransformedPuppeteer = target == Puppeteer.puppeteer && Puppeteer.transformTarget != null && Puppeteer.morphed;
                 bool hasVisibleShield = false;
                 if (Painter.painterTimer <= 0f && Squire.shielded != null && !Challenger.isDueling && !Seeker.isMinigaming && ((target == Squire.shielded && !isTransformedMimic) || (isTransformedMimic && Mimic.transformTarget == Squire.shielded) || (isTransformedPuppeteer && Puppeteer.transformTarget == Squire.shielded))) {
-                    hasVisibleShield = Squire.showShielded == 0 && PlayerControl.LocalPlayer == Squire.squire // Squire only
-                        || (Squire.showShielded == 1 && (PlayerControl.LocalPlayer == Squire.shielded || PlayerControl.LocalPlayer == Squire.squire)) // Shielded + Squire
+                    hasVisibleShield = Squire.showShielded == 0 && PlayerInCache.LocalPlayer.PlayerControl == Squire.squire // Squire only
+                        || (Squire.showShielded == 1 && (PlayerInCache.LocalPlayer.PlayerControl == Squire.shielded || PlayerInCache.LocalPlayer.PlayerControl == Squire.squire)) // Shielded + Squire
                         || (Squire.showShielded == 2); // Everyone
                 }
 
@@ -75,8 +75,8 @@ namespace LasMonjas.Patches {
         // Show player roles on meeting for dead players
         public static void ghostsSeePlayerRoles() {
             if (gameType <= 1) {
-                foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
-                    if (p == PlayerControl.LocalPlayer || PlayerControl.LocalPlayer.Data.IsDead) {
+                foreach (PlayerControl p in PlayerInCache.AllPlayers) {
+                    if (p == PlayerInCache.LocalPlayer.PlayerControl || PlayerInCache.LocalPlayer.Data.IsDead) {
 
                         PlayerVoteArea playerVoteArea = MeetingHud.Instance?.playerStates?.FirstOrDefault(x => x.TargetPlayerId == p.PlayerId);
                         Transform meetingInfoTransform = playerVoteArea != null ? playerVoteArea.NameText.transform.parent.FindChild("Info") : null;
@@ -98,7 +98,7 @@ namespace LasMonjas.Patches {
 
                         string playerInfoText = "";
                         string meetingInfoText = "";
-                        if (MapOptions.ghostsSeeRoles && PlayerControl.LocalPlayer.Data.IsDead) {
+                        if (MapOptions.ghostsSeeRoles && PlayerInCache.LocalPlayer.Data.IsDead) {
                             playerInfoText = $"{roleNames}";
                             meetingInfoText = playerInfoText;
                         }
@@ -109,7 +109,7 @@ namespace LasMonjas.Patches {
             }
         }
         static void ventColorUpdate() {
-            if (PlayerControl.LocalPlayer.Data.Role.IsImpostor && ShipStatus.Instance?.AllVents != null) {
+            if (PlayerInCache.LocalPlayer.Data.Role.IsImpostor && ShipStatus.Instance?.AllVents != null) {
                 foreach (Vent vent in ShipStatus.Instance.AllVents) {
                     try {
                         if (vent?.myRend?.material != null) {
@@ -127,7 +127,7 @@ namespace LasMonjas.Patches {
             }
         }
         static void impostorSetTarget() {
-            if (!PlayerControl.LocalPlayer.Data.Role.IsImpostor || Archer.archer != null && PlayerControl.LocalPlayer == Archer.archer || Demon.demon != null && PlayerControl.LocalPlayer == Demon.demon || !PlayerControl.LocalPlayer.CanMove || PlayerControl.LocalPlayer.Data.IsDead || gameType >= 2) { // !isImpostor || !canMove || isDead
+            if (!PlayerInCache.LocalPlayer.Data.Role.IsImpostor || Archer.archer != null && PlayerInCache.LocalPlayer.PlayerControl == Archer.archer || Demon.demon != null && PlayerInCache.LocalPlayer.PlayerControl == Demon.demon || !PlayerInCache.LocalPlayer.PlayerControl.CanMove || PlayerInCache.LocalPlayer.Data.IsDead || gameType >= 2) { // !isImpostor || !canMove || isDead
                 HudManager.Instance.KillButton.SetTarget(null);
                 return;
             }
@@ -138,7 +138,7 @@ namespace LasMonjas.Patches {
             HudManager.Instance.KillButton.SetTarget(target);
         }
         static void mimicSetTarget() {
-            if (Mimic.mimic == null || Mimic.mimic != PlayerControl.LocalPlayer) return;
+            if (Mimic.mimic == null || Mimic.mimic != PlayerInCache.LocalPlayer.PlayerControl) return;
             Mimic.currentTarget = setTarget();
             setPlayerOutline(Mimic.currentTarget, Mimic.color);
         }
@@ -167,7 +167,7 @@ namespace LasMonjas.Patches {
                 Mimic.resetMimic();
         }
         static void demonSetTarget() {
-            if (Demon.demon == null || Demon.demon != PlayerControl.LocalPlayer) return;
+            if (Demon.demon == null || Demon.demon != PlayerInCache.LocalPlayer.PlayerControl) return;
 
             PlayerControl target = null;
             target = setTarget(true, true);
@@ -185,7 +185,7 @@ namespace LasMonjas.Patches {
             setPlayerOutline(Demon.currentTarget, Demon.color);
         }
         static void manipulatorSetTarget() {
-            if (Manipulator.manipulator == null || Manipulator.manipulator != PlayerControl.LocalPlayer) return;
+            if (Manipulator.manipulator == null || Manipulator.manipulator != PlayerInCache.LocalPlayer.PlayerControl) return;
             if (Manipulator.manipulatedVictim != null && (Manipulator.manipulatedVictim.Data.Disconnected || Manipulator.manipulatedVictim.Data.IsDead)) {
                 // If the manipulated victim is disconnected or dead reset the manipulate so a new manipulate can be applied
                 Manipulator.resetManipulate();
@@ -200,7 +200,7 @@ namespace LasMonjas.Patches {
             }
         }
         static void sorcererSetTarget() {
-            if (Sorcerer.sorcerer == null || Sorcerer.sorcerer != PlayerControl.LocalPlayer) return;
+            if (Sorcerer.sorcerer == null || Sorcerer.sorcerer != PlayerInCache.LocalPlayer.PlayerControl) return;
             List<PlayerControl> untargetables;
             if (Sorcerer.spellTarget != null)
                 untargetables = PlayerControl.AllPlayerControls.ToArray().Where(x => x.PlayerId != Sorcerer.spellTarget.PlayerId).ToList(); // Don't switch the target from the the one you're currently casting a spell on
@@ -211,7 +211,7 @@ namespace LasMonjas.Patches {
             setPlayerOutline(Sorcerer.currentTarget, Sorcerer.color);
         }
         static void medusaSetTarget() {
-            if (Medusa.medusa == null || Medusa.medusa != PlayerControl.LocalPlayer) return;
+            if (Medusa.medusa == null || Medusa.medusa != PlayerInCache.LocalPlayer.PlayerControl) return;
             PlayerControl target = null;
 
             target = setTarget(true, false);
@@ -219,56 +219,56 @@ namespace LasMonjas.Patches {
             setPlayerOutline(Medusa.currentTarget, Medusa.color);
         }
         static void librarianSetTarget() {
-            if (Librarian.librarian == null || Librarian.librarian != PlayerControl.LocalPlayer) return;
+            if (Librarian.librarian == null || Librarian.librarian != PlayerInCache.LocalPlayer.PlayerControl) return;
             Librarian.currentTarget = setTarget(true, false);
             setPlayerOutline(Librarian.currentTarget, Librarian.color);
         }
         static void renegadeSetTarget() {
-            if (Renegade.renegade == null || Renegade.renegade != PlayerControl.LocalPlayer) return;
+            if (Renegade.renegade == null || Renegade.renegade != PlayerInCache.LocalPlayer.PlayerControl) return;
             var untargetablePlayers = new List<PlayerControl>();
             if (Minion.minion != null) untargetablePlayers.Add(Minion.minion);
             Renegade.currentTarget = setTarget(untargetablePlayers: untargetablePlayers);
             setPlayerOutline(Renegade.currentTarget, Palette.ImpostorRed);
         }
         static void minionSetTarget() {
-            if (Minion.minion == null || Minion.minion != PlayerControl.LocalPlayer) return;
+            if (Minion.minion == null || Minion.minion != PlayerInCache.LocalPlayer.PlayerControl) return;
             var untargetablePlayers = new List<PlayerControl>();
             if (Renegade.renegade != null) untargetablePlayers.Add(Renegade.renegade);
             Minion.currentTarget = setTarget(untargetablePlayers: untargetablePlayers);
             setPlayerOutline(Minion.currentTarget, Palette.ImpostorRed);
         }
         static void bountyHunterSetTarget() {
-            if (BountyHunter.bountyhunter == null || BountyHunter.bountyhunter != PlayerControl.LocalPlayer) return;
+            if (BountyHunter.bountyhunter == null || BountyHunter.bountyhunter != PlayerInCache.LocalPlayer.PlayerControl) return;
             BountyHunter.currentTarget = setTarget();
             setPlayerOutline(BountyHunter.currentTarget, BountyHunter.color);
         }
         static void trapperSetTarget() {
-            if (Trapper.trapper == null || Trapper.trapper != PlayerControl.LocalPlayer) return;
+            if (Trapper.trapper == null || Trapper.trapper != PlayerInCache.LocalPlayer.PlayerControl) return;
             Trapper.currentTarget = setTarget();
             setPlayerOutline(Trapper.currentTarget, Trapper.color);
         }
         static void yinyangerSetTarget() {
-            if (Yinyanger.yinyanger == null || Yinyanger.yinyanger != PlayerControl.LocalPlayer) return;
+            if (Yinyanger.yinyanger == null || Yinyanger.yinyanger != PlayerInCache.LocalPlayer.PlayerControl) return;
             Yinyanger.currentTarget = setTarget();
             setPlayerOutline(Yinyanger.currentTarget, Yinyanger.color);
         }
         static void challengerSetTarget() {
-            if (Challenger.challenger == null || Challenger.challenger != PlayerControl.LocalPlayer) return;
+            if (Challenger.challenger == null || Challenger.challenger != PlayerInCache.LocalPlayer.PlayerControl) return;
             Challenger.currentTarget = setTarget();
             setPlayerOutline(Challenger.currentTarget, Challenger.color);
         }
         static void ninjaSetTarget() {
-            if (Ninja.ninja == null || Ninja.ninja != PlayerControl.LocalPlayer) return;
+            if (Ninja.ninja == null || Ninja.ninja != PlayerInCache.LocalPlayer.PlayerControl) return;
             Ninja.currentTarget = setTarget();
             setPlayerOutline(Ninja.currentTarget, Ninja.color);
         }
         static void berserkerSetTarget() {
-            if (Berserker.berserker == null || Berserker.berserker != PlayerControl.LocalPlayer) return;
+            if (Berserker.berserker == null || Berserker.berserker != PlayerInCache.LocalPlayer.PlayerControl) return;
             Berserker.currentTarget = setTarget();
             setPlayerOutline(Berserker.currentTarget, Berserker.color);
         }
         static void yandereSetTarget() {
-            if (Yandere.yandere == null || Yandere.yandere != PlayerControl.LocalPlayer) return;
+            if (Yandere.yandere == null || Yandere.yandere != PlayerInCache.LocalPlayer.PlayerControl) return;
             if (Yandere.target == null) return;
 
             if (!Yandere.rampageMode) {
@@ -280,73 +280,73 @@ namespace LasMonjas.Patches {
             setPlayerOutline(Yandere.currentTarget, Yandere.color);
         }
         static void strandedSetTarget() {
-            if (Stranded.stranded == null || Stranded.stranded != PlayerControl.LocalPlayer) return;
+            if (Stranded.stranded == null || Stranded.stranded != PlayerInCache.LocalPlayer.PlayerControl) return;
             Stranded.currentTarget = setTarget();
             setPlayerOutline(Stranded.currentTarget, Stranded.color);
         }
         static void monjaSetTarget() {
-            if (Monja.monja == null || Monja.monja != PlayerControl.LocalPlayer) return;
+            if (Monja.monja == null || Monja.monja != PlayerInCache.LocalPlayer.PlayerControl) return;
             Monja.currentTarget = setTarget();
             setPlayerOutline(Monja.currentTarget, Monja.color);
         }
         static void roleThiefSetTarget() {
-            if (RoleThief.rolethief == null || RoleThief.rolethief != PlayerControl.LocalPlayer) return;
+            if (RoleThief.rolethief == null || RoleThief.rolethief != PlayerInCache.LocalPlayer.PlayerControl) return;
             RoleThief.currentTarget = setTarget();
             setPlayerOutline(RoleThief.currentTarget, RoleThief.color);
         }
         public static void pyromaniacSetTarget() {
-            if (Pyromaniac.pyromaniac == null || Pyromaniac.pyromaniac != PlayerControl.LocalPlayer) return;
+            if (Pyromaniac.pyromaniac == null || Pyromaniac.pyromaniac != PlayerInCache.LocalPlayer.PlayerControl) return;
             List<PlayerControl> untargetables;
             if (Pyromaniac.sprayTarget != null)
-                untargetables = PlayerControl.AllPlayerControls.ToArray().Where(x => x.PlayerId != Pyromaniac.sprayTarget.PlayerId).ToList();
+                untargetables = PlayerControl.AllPlayerControls.ToArray().ToArray().Where(x => x.PlayerId != Pyromaniac.sprayTarget.PlayerId).ToList();
             else
                 untargetables = Pyromaniac.sprayedPlayers;
             Pyromaniac.currentTarget = setTarget(untargetablePlayers: untargetables);
             if (Pyromaniac.currentTarget != null) setPlayerOutline(Pyromaniac.currentTarget, Pyromaniac.color);
         }
         public static void poisonerSetTarget() {
-            if (Poisoner.poisoner == null || Poisoner.poisoner != PlayerControl.LocalPlayer) return;
+            if (Poisoner.poisoner == null || Poisoner.poisoner != PlayerInCache.LocalPlayer.PlayerControl) return;
             List<PlayerControl> untargetables;
             if (Poisoner.poisonTarget != null)
-                untargetables = PlayerControl.AllPlayerControls.ToArray().Where(x => x.PlayerId != Poisoner.poisonTarget.PlayerId).ToList();
+                untargetables = PlayerControl.AllPlayerControls.ToArray().ToArray().Where(x => x.PlayerId != Poisoner.poisonTarget.PlayerId).ToList();
             else
                 untargetables = Poisoner.poisonedPlayers;
             Poisoner.currentTarget = setTarget(untargetablePlayers: untargetables);
             if (Poisoner.currentTarget != null) setPlayerOutline(Poisoner.currentTarget, Poisoner.color);
         }
         static void puppeteerSetTarget() {
-            if (Puppeteer.puppeteer == null || Puppeteer.puppeteer != PlayerControl.LocalPlayer) return;
+            if (Puppeteer.puppeteer == null || Puppeteer.puppeteer != PlayerInCache.LocalPlayer.PlayerControl) return;
             Puppeteer.currentTarget = setTarget();
             setPlayerOutline(Puppeteer.currentTarget, Puppeteer.color);
         }
         static void seekerSetTarget() {
-            if (Seeker.seeker == null || Seeker.seeker != PlayerControl.LocalPlayer) return;
+            if (Seeker.seeker == null || Seeker.seeker != PlayerInCache.LocalPlayer.PlayerControl) return;
             Seeker.currentTarget = setTarget();
             setPlayerOutline(Seeker.currentTarget, Seeker.color);
         }
         static void sheriffSetTarget() {
-            if (Sheriff.sheriff == null || Sheriff.sheriff != PlayerControl.LocalPlayer) return;
+            if (Sheriff.sheriff == null || Sheriff.sheriff != PlayerInCache.LocalPlayer.PlayerControl) return;
             Sheriff.currentTarget = setTarget();
             setPlayerOutline(Sheriff.currentTarget, Sheriff.color);
         }
         static void detectiveUpdateFootPrints() {
-            if (Detective.detective == null || Detective.detective != PlayerControl.LocalPlayer) return;
+            if (Detective.detective == null || Detective.detective != PlayerInCache.LocalPlayer.PlayerControl) return;
 
             Detective.timer -= Time.fixedDeltaTime;
             if (Detective.timer <= 0f) {
                 Detective.timer = Detective.footprintIntervall;
-                foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                    if (player != null && player != PlayerControl.LocalPlayer && !player.Data.IsDead && !player.inVent && !PlayerControl.LocalPlayer.Data.IsDead) {
+                foreach (PlayerControl player in PlayerInCache.AllPlayers) {
+                    if (player != null && player != PlayerInCache.LocalPlayer.PlayerControl && !player.Data.IsDead && !player.inVent && !PlayerInCache.LocalPlayer.Data.IsDead) {
                         new Footprint(Detective.footprintDuration, Detective.anonymousFootprints, player);
                     }
                 }
             }
         }
         public static void forensicSetTarget() {
-            if (Forensic.forensic == null || Forensic.forensic != PlayerControl.LocalPlayer || Forensic.forensic.Data.IsDead || Forensic.deadBodies == null || ShipStatus.Instance?.AllVents == null) return;
+            if (Forensic.forensic == null || Forensic.forensic != PlayerInCache.LocalPlayer.PlayerControl || Forensic.forensic.Data.IsDead || Forensic.deadBodies == null || ShipStatus.Instance?.AllVents == null) return;
 
             DeadPlayer target = null;
-            Vector2 truePosition = PlayerControl.LocalPlayer.GetTruePosition();
+            Vector2 truePosition = PlayerInCache.LocalPlayer.PlayerControl.GetTruePosition();
             float closestDistance = float.MaxValue;
             float usableDistance = ShipStatus.Instance.AllVents.FirstOrDefault().UsableDistance;
             foreach ((DeadPlayer dp, Vector3 ps) in Forensic.deadBodies) {
@@ -364,13 +364,13 @@ namespace LasMonjas.Patches {
                     // Set position
                     var next = localPlayerPositions[0];
                     // Exit current vent if necessary
-                    if (PlayerControl.LocalPlayer.inVent) {
+                    if (PlayerInCache.LocalPlayer.PlayerControl.inVent) {
                         foreach (Vent vent in ShipStatus.Instance.AllVents) {
                             bool canUse;
                             bool couldUse;
-                            vent.CanUse(PlayerControl.LocalPlayer.Data, out canUse, out couldUse);
+                            vent.CanUse(PlayerInCache.LocalPlayer.Data, out canUse, out couldUse);
                             if (canUse) {
-                                PlayerControl.LocalPlayer.MyPhysics.RpcExitVent(vent.Id);
+                                PlayerInCache.LocalPlayer.PlayerControl.MyPhysics.RpcExitVent(vent.Id);
                                 vent.SetButtons(false);
                             }
                         }
@@ -381,15 +381,15 @@ namespace LasMonjas.Patches {
                         localPlayerPositions.RemoveAt(0);
 
                         if (localPlayerPositions.Count > 1) localPlayerPositions.RemoveAt(0); // Skip every second position to rewind twice as fast, but never skip the last position
-                        if (PlayerControl.LocalPlayer.transform.position.y > 0) {
-                            PlayerControl.LocalPlayer.transform.position = new Vector3(5f, 19.5f, PlayerControl.LocalPlayer.transform.position.z);
+                        if (PlayerInCache.LocalPlayer.PlayerControl.transform.position.y > 0) {
+                            PlayerInCache.LocalPlayer.PlayerControl.transform.position = new Vector3(5f, 19.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                         }
                         else {
-                            PlayerControl.LocalPlayer.transform.position = new Vector3(1.35f, -28.25f, PlayerControl.LocalPlayer.transform.position.z);
+                            PlayerInCache.LocalPlayer.PlayerControl.transform.position = new Vector3(1.35f, -28.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                         }
                     }
                     else {
-                        PlayerControl.LocalPlayer.transform.position = next.Item1;
+                        PlayerInCache.LocalPlayer.PlayerControl.transform.position = next.Item1;
 
                         localPlayerPositions.RemoveAt(0);
 
@@ -398,49 +398,49 @@ namespace LasMonjas.Patches {
                 }
                 else {
                     TimeTraveler.isRewinding = false;
-                    PlayerControl.LocalPlayer.moveable = true;
+                    PlayerInCache.LocalPlayer.PlayerControl.moveable = true;
                 }
             }
             else {
                 while (localPlayerPositions.Count >= Mathf.Round(TimeTraveler.rewindTime / Time.fixedDeltaTime)) localPlayerPositions.RemoveAt(localPlayerPositions.Count - 1);
-                localPlayerPositions.Insert(0, new Tuple<Vector3, DateTime>(PlayerControl.LocalPlayer.transform.position, DateTime.UtcNow)); // CanMove = CanMove
+                localPlayerPositions.Insert(0, new Tuple<Vector3, DateTime>(PlayerInCache.LocalPlayer.PlayerControl.transform.position, DateTime.UtcNow)); // CanMove = CanMove
             }
         }
         static void squireSetTarget() {
-            if (Squire.squire == null || Squire.squire != PlayerControl.LocalPlayer) return;
+            if (Squire.squire == null || Squire.squire != PlayerInCache.LocalPlayer.PlayerControl) return;
             Squire.currentTarget = setTarget();
             if (!Squire.usedShield) setPlayerOutline(Squire.currentTarget, Squire.color);
         }
         static void fortuneTellerSetTarget() {
-            if (FortuneTeller.fortuneTeller == null || FortuneTeller.fortuneTeller != PlayerControl.LocalPlayer) return;
+            if (FortuneTeller.fortuneTeller == null || FortuneTeller.fortuneTeller != PlayerInCache.LocalPlayer.PlayerControl) return;
             FortuneTeller.currentTarget = setTarget();
             setPlayerOutline(FortuneTeller.currentTarget, FortuneTeller.color);
             if (FortuneTeller.currentTarget != null && FortuneTeller.revealedPlayers.Any(p => p.Data.PlayerId == FortuneTeller.currentTarget.Data.PlayerId)) FortuneTeller.currentTarget = null; // Remove target if already revealed
         }
         public static void hackerUpdate() {
-            if (Hacker.hacker == null || PlayerControl.LocalPlayer != Hacker.hacker || Hacker.hacker.Data.IsDead) return;
+            if (Hacker.hacker == null || PlayerInCache.LocalPlayer.PlayerControl != Hacker.hacker || Hacker.hacker.Data.IsDead) return;
             var (playerCompleted, _) = TasksHandler.taskInfo(Hacker.hacker.Data);
             if (playerCompleted == Hacker.rechargedTasks) {
-                MessageWriter usedRechargeWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.HackerAbilityUses, Hazel.SendOption.Reliable, -1);
+                MessageWriter usedRechargeWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.HackerAbilityUses, Hazel.SendOption.Reliable, -1);
                 usedRechargeWriter.Write(2);
                 AmongUsClient.Instance.FinishRpcImmediately(usedRechargeWriter);
                 RPCProcedure.hackerAbilityUses(2);
             }
         }
         static void sleuthSetTarget() {
-            if (Sleuth.sleuth == null || Sleuth.sleuth != PlayerControl.LocalPlayer) return;
+            if (Sleuth.sleuth == null || Sleuth.sleuth != PlayerInCache.LocalPlayer.PlayerControl) return;
             Sleuth.currentTarget = setTarget();
             if (!Sleuth.usedLocate) setPlayerOutline(Sleuth.currentTarget, Sleuth.color);
         }
         static void sleuthUpdate() {
             // Handle player locate
             if (Sleuth.arrow?.arrow != null) {
-                if (Sleuth.sleuth == null || PlayerControl.LocalPlayer != Sleuth.sleuth || Challenger.isDueling || Seeker.isMinigaming || isHappeningAnonymousComms) {
+                if (Sleuth.sleuth == null || PlayerInCache.LocalPlayer.PlayerControl != Sleuth.sleuth || Challenger.isDueling || Seeker.isMinigaming || isHappeningAnonymousComms) {
                     Sleuth.arrow.arrow.SetActive(false);
                     return;
                 }
 
-                if (Sleuth.sleuth != null && Sleuth.located != null && PlayerControl.LocalPlayer == Sleuth.sleuth && !Sleuth.sleuth.Data.IsDead) {
+                if (Sleuth.sleuth != null && Sleuth.located != null && PlayerInCache.LocalPlayer.PlayerControl == Sleuth.sleuth && !Sleuth.sleuth.Data.IsDead) {
                     Sleuth.timeUntilUpdate -= Time.fixedDeltaTime;
 
                     if (Sleuth.timeUntilUpdate <= 0f) {
@@ -465,7 +465,7 @@ namespace LasMonjas.Patches {
             }
 
             // Handle corpses locate
-            if (Sleuth.sleuth != null && Sleuth.sleuth == PlayerControl.LocalPlayer && Sleuth.corpsesPathfindTimer >= 0f && !Sleuth.sleuth.Data.IsDead) {
+            if (Sleuth.sleuth != null && Sleuth.sleuth == PlayerInCache.LocalPlayer.PlayerControl && Sleuth.corpsesPathfindTimer >= 0f && !Sleuth.sleuth.Data.IsDead) {
                 bool arrowsCountChanged = Sleuth.localArrows.Count != Sleuth.deadBodyPositions.Count();
                 int index = 0;
 
@@ -496,7 +496,7 @@ namespace LasMonjas.Patches {
             var (playerCompleted, playerTotal) = TasksHandler.taskInfo(Fink.fink.Data);
             int numberOfTasks = playerTotal - playerCompleted;
             if (numberOfTasks <= Fink.taskCountForImpostors) {
-                if (numberOfTasks <= Fink.taskCountForImpostors && PlayerControl.LocalPlayer.Data.Role.IsImpostor) {
+                if (numberOfTasks <= Fink.taskCountForImpostors && PlayerInCache.LocalPlayer.Data.Role.IsImpostor) {
                     if (Fink.localArrows.Count == 0) {
                         Fink.localArrows.Add(new Arrow(Fink.color));
                         SoundManager.Instance.PlaySound(CustomMain.customAssets.bountyExilerTarget, false, 5f);
@@ -508,9 +508,9 @@ namespace LasMonjas.Patches {
                 }
             }
             
-            if (PlayerControl.LocalPlayer == Fink.fink && numberOfTasks == 0 && !Challenger.isDueling && !Seeker.isMinigaming && !isHappeningAnonymousComms) {
+            if (PlayerInCache.LocalPlayer.PlayerControl == Fink.fink && numberOfTasks == 0 && !Challenger.isDueling && !Seeker.isMinigaming && !isHappeningAnonymousComms) {
                 int arrowIndex = 0;
-                foreach (PlayerControl p in PlayerControl.AllPlayerControls) {
+                foreach (PlayerControl p in PlayerInCache.AllPlayers) {
                     bool arrowForImp = p.Data.Role.IsImpostor;
 
                     if (!p.Data.IsDead && arrowForImp) {
@@ -527,10 +527,10 @@ namespace LasMonjas.Patches {
             }
         }
         public static void welderSetTarget() {
-            if (Welder.welder == null || Welder.welder != PlayerControl.LocalPlayer || ShipStatus.Instance == null || ShipStatus.Instance.AllVents == null) return;
+            if (Welder.welder == null || Welder.welder != PlayerInCache.LocalPlayer.PlayerControl || ShipStatus.Instance == null || ShipStatus.Instance.AllVents == null) return;
 
             Vent target = null;
-            Vector2 truePosition = PlayerControl.LocalPlayer.GetTruePosition();
+            Vector2 truePosition = PlayerInCache.LocalPlayer.PlayerControl.GetTruePosition();
             float closestDistance = float.MaxValue;
             for (int i = 0; i < ShipStatus.Instance.AllVents.Length; i++) {
                 Vent vent = ShipStatus.Instance.AllVents[i];
@@ -545,7 +545,7 @@ namespace LasMonjas.Patches {
         }
         static void spiritualistAndNecromancerUpdate() {
             if (Spiritualist.revivedPlayer != null) {
-                if (!Spiritualist.revivedPlayer.Data.IsDead && (PlayerControl.LocalPlayer.Data.Role.IsImpostor || PlayerControl.LocalPlayer == Renegade.renegade || PlayerControl.LocalPlayer == Minion.minion || PlayerControl.LocalPlayer == BountyHunter.bountyhunter || PlayerControl.LocalPlayer == Trapper.trapper || PlayerControl.LocalPlayer == Yinyanger.yinyanger || PlayerControl.LocalPlayer == Challenger.challenger || PlayerControl.LocalPlayer == Ninja.ninja || PlayerControl.LocalPlayer == Berserker.berserker || PlayerControl.LocalPlayer == Yandere.yandere || PlayerControl.LocalPlayer == Stranded.stranded || PlayerControl.LocalPlayer == Monja.monja)) {
+                if (!Spiritualist.revivedPlayer.Data.IsDead && (PlayerInCache.LocalPlayer.Data.Role.IsImpostor || PlayerInCache.LocalPlayer.PlayerControl == Renegade.renegade || PlayerInCache.LocalPlayer.PlayerControl == Minion.minion || PlayerInCache.LocalPlayer.PlayerControl == BountyHunter.bountyhunter || PlayerInCache.LocalPlayer.PlayerControl == Trapper.trapper || PlayerInCache.LocalPlayer.PlayerControl == Yinyanger.yinyanger || PlayerInCache.LocalPlayer.PlayerControl == Challenger.challenger || PlayerInCache.LocalPlayer.PlayerControl == Ninja.ninja || PlayerInCache.LocalPlayer.PlayerControl == Berserker.berserker || PlayerInCache.LocalPlayer.PlayerControl == Yandere.yandere || PlayerInCache.LocalPlayer.PlayerControl == Stranded.stranded || PlayerInCache.LocalPlayer.PlayerControl == Monja.monja)) {
                     if (Spiritualist.localSpiritArrows.Count == 0) Spiritualist.localSpiritArrows.Add(new Arrow(Spiritualist.color));
                     if (Spiritualist.localSpiritArrows.Count != 0 && Spiritualist.localSpiritArrows[0] != null) {
                         Spiritualist.localSpiritArrows[0].arrow.SetActive(true);
@@ -559,7 +559,7 @@ namespace LasMonjas.Patches {
                 }
             }
             if (Necromancer.revivedPlayer != null) {
-                if (!Necromancer.revivedPlayer.Data.IsDead && (PlayerControl.LocalPlayer.Data.Role.IsImpostor || PlayerControl.LocalPlayer == Renegade.renegade || PlayerControl.LocalPlayer == Minion.minion || PlayerControl.LocalPlayer == BountyHunter.bountyhunter || PlayerControl.LocalPlayer == Trapper.trapper || PlayerControl.LocalPlayer == Yinyanger.yinyanger || PlayerControl.LocalPlayer == Challenger.challenger || PlayerControl.LocalPlayer == Ninja.ninja || PlayerControl.LocalPlayer == Berserker.berserker || PlayerControl.LocalPlayer == Yandere.yandere || PlayerControl.LocalPlayer == Stranded.stranded || PlayerControl.LocalPlayer == Monja.monja)) {
+                if (!Necromancer.revivedPlayer.Data.IsDead && (PlayerInCache.LocalPlayer.Data.Role.IsImpostor || PlayerInCache.LocalPlayer.PlayerControl == Renegade.renegade || PlayerInCache.LocalPlayer.PlayerControl == Minion.minion || PlayerInCache.LocalPlayer.PlayerControl == BountyHunter.bountyhunter || PlayerInCache.LocalPlayer.PlayerControl == Trapper.trapper || PlayerInCache.LocalPlayer.PlayerControl == Yinyanger.yinyanger || PlayerInCache.LocalPlayer.PlayerControl == Challenger.challenger || PlayerInCache.LocalPlayer.PlayerControl == Ninja.ninja || PlayerInCache.LocalPlayer.PlayerControl == Berserker.berserker || PlayerInCache.LocalPlayer.PlayerControl == Yandere.yandere || PlayerInCache.LocalPlayer.PlayerControl == Stranded.stranded || PlayerInCache.LocalPlayer.PlayerControl == Monja.monja)) {
                     if (Necromancer.localNecromancerArrows.Count == 0) Necromancer.localNecromancerArrows.Add(new Arrow(Color.green));
                     if (Necromancer.localNecromancerArrows.Count != 0 && Necromancer.localNecromancerArrows[0] != null) {
                         Necromancer.localNecromancerArrows[0].arrow.SetActive(true);
@@ -574,22 +574,22 @@ namespace LasMonjas.Patches {
             }
         }
         public static void vigilantUpdate() {
-            if (Vigilant.vigilant == null || PlayerControl.LocalPlayer != Vigilant.vigilant || Vigilant.vigilant.Data.IsDead) return;
+            if (Vigilant.vigilant == null || PlayerInCache.LocalPlayer.PlayerControl != Vigilant.vigilant || Vigilant.vigilant.Data.IsDead) return;
             var (playerCompleted, _) = TasksHandler.taskInfo(Vigilant.vigilant.Data);
             if (playerCompleted == Vigilant.rechargedTasks) {
-                MessageWriter usedRechargeWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.VigilantAbilityUses, Hazel.SendOption.Reliable, -1);
+                MessageWriter usedRechargeWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.VigilantAbilityUses, Hazel.SendOption.Reliable, -1);
                 usedRechargeWriter.Write(2);
                 AmongUsClient.Instance.FinishRpcImmediately(usedRechargeWriter);
                 RPCProcedure.vigilantAbilityUses(2);
             }
         }
         static void hunterSetTarget() {
-            if (Hunter.hunter == null || Hunter.hunter != PlayerControl.LocalPlayer) return;
+            if (Hunter.hunter == null || Hunter.hunter != PlayerInCache.LocalPlayer.PlayerControl) return;
             Hunter.currentTarget = setTarget();
             if (!Hunter.usedHunted) setPlayerOutline(Hunter.currentTarget, Hunter.color);
         }
         static void jinxSetTarget() {
-            if (Jinx.jinx == null || Jinx.jinx != PlayerControl.LocalPlayer) return;
+            if (Jinx.jinx == null || Jinx.jinx != PlayerInCache.LocalPlayer.PlayerControl) return;
             Jinx.target = setTarget();
             setPlayerOutline(Jinx.target, Jinx.color);
             if (Jinx.target != null && Jinx.jinxedList.Any(p => p.Data.PlayerId == Jinx.target.Data.PlayerId)) Jinx.target = null; // Remove target if already Jinxed and didn't trigger the jinx
@@ -600,7 +600,7 @@ namespace LasMonjas.Patches {
                 return;
 
             // Handle closest player locate
-            if (Shy.shy == PlayerControl.LocalPlayer && !Shy.shy.Data.IsDead) {
+            if (Shy.shy == PlayerInCache.LocalPlayer.PlayerControl && !Shy.shy.Data.IsDead) {
                 if (Shy.timer >= 0f) {
 
                     PlayerControl result = null;
@@ -642,12 +642,12 @@ namespace LasMonjas.Patches {
             }
         }
         static void jailerSetTarget() {
-            if (Jailer.jailer == null || Jailer.jailer != PlayerControl.LocalPlayer) return;
+            if (Jailer.jailer == null || Jailer.jailer != PlayerInCache.LocalPlayer.PlayerControl) return;
             Jailer.currentTarget = setTarget();
             if (!Jailer.usedJail) setPlayerOutline(Jailer.currentTarget, Jailer.color);
         }
         static void theChosenOneUpdate() {
-            if (Modifiers.theChosenOne == null || Modifiers.theChosenOne != PlayerControl.LocalPlayer) return;
+            if (Modifiers.theChosenOne == null || Modifiers.theChosenOne != PlayerInCache.LocalPlayer.PlayerControl) return;
 
             // TheChosenOne report
             if (Modifiers.theChosenOne.Data.IsDead && !Modifiers.chosenOneReported) {
@@ -659,7 +659,7 @@ namespace LasMonjas.Patches {
                     if (!Monja.awakened) {
                         // Bomberman bomb reset when report the chosen one
                         if (Bomberman.bomberman != null && Bomberman.activeBomb == true) {
-                            MessageWriter bombwriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.FixBomb, Hazel.SendOption.Reliable, -1);
+                            MessageWriter bombwriter = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.FixBomb, Hazel.SendOption.Reliable, -1);
                             AmongUsClient.Instance.FinishRpcImmediately(bombwriter);
                             RPCProcedure.fixBomb();
                         }
@@ -667,12 +667,12 @@ namespace LasMonjas.Patches {
                         Helpers.handleDemonBiteOnBodyReport(); // Manually call Demon handling, since the CmdReportDeadBody Prefix won't be called
                         RPCProcedure.uncheckedCmdReportDeadBody(deadPlayer.killerIfExisting.PlayerId, Modifiers.theChosenOne.PlayerId);
 
-                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.UncheckedCmdReportDeadBody, Hazel.SendOption.Reliable, -1);
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.UncheckedCmdReportDeadBody, Hazel.SendOption.Reliable, -1);
                         writer.Write(deadPlayer.killerIfExisting.PlayerId);
                         writer.Write(Modifiers.theChosenOne.PlayerId);
                         AmongUsClient.Instance.FinishRpcImmediately(writer);
 
-                        MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
+                        MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
                         writermusic.Write(1);
                         AmongUsClient.Instance.FinishRpcImmediately(writermusic);
                         RPCProcedure.changeMusic(1);
@@ -682,7 +682,7 @@ namespace LasMonjas.Patches {
         }
         static void performerUpdate() {
             if (Modifiers.performer != null) {
-                if (Modifiers.performerDuration > 0 && Modifiers.performer.Data.IsDead && !Modifiers.performerReported && (PlayerControl.LocalPlayer != Modifiers.performer && PlayerControl.LocalPlayer != Spiritualist.spiritualist)) {
+                if (Modifiers.performerDuration > 0 && Modifiers.performer.Data.IsDead && !Modifiers.performerReported && (PlayerInCache.LocalPlayer.PlayerControl != Modifiers.performer && PlayerInCache.LocalPlayer.PlayerControl != Spiritualist.spiritualist)) {
                     if (Modifiers.performerLocalPerformerArrows.Count == 0) Modifiers.performerLocalPerformerArrows.Add(new Arrow(Modifiers.color));
                     if (Modifiers.performerLocalPerformerArrows.Count != 0 && Modifiers.performerLocalPerformerArrows[0] != null) {
                         var bodyPerformer = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == Modifiers.performer.PlayerId);
@@ -699,7 +699,7 @@ namespace LasMonjas.Patches {
                 }
 
                 // Upon performer duration, stop the music and play bomb music if there's a bomb or normal task music
-                if (Modifiers.performer.Data.IsDead && Modifiers.performerDuration <= 0 && !Modifiers.performerMusicStop && !Modifiers.performerReported && (PlayerControl.LocalPlayer != Spiritualist.spiritualist)) {
+                if (Modifiers.performer.Data.IsDead && Modifiers.performerDuration <= 0 && !Modifiers.performerMusicStop && !Modifiers.performerReported && (PlayerInCache.LocalPlayer.PlayerControl != Spiritualist.spiritualist)) {
                     Modifiers.performerMusicStop = true;
                     SoundManager.Instance.StopSound(CustomMain.customAssets.performerMusic);
                     if (Bomberman.activeBomb) {
@@ -812,31 +812,31 @@ namespace LasMonjas.Patches {
                 untargetableBluePlayers.Remove(CaptureTheFlag.stealerPlayer);
             }
 
-            if (CaptureTheFlag.redplayer01 != null && CaptureTheFlag.redplayer01 == PlayerControl.LocalPlayer) {
+            if (CaptureTheFlag.redplayer01 != null && CaptureTheFlag.redplayer01 == PlayerInCache.LocalPlayer.PlayerControl) {
                 CaptureTheFlag.redplayer01currentTarget = setTarget(untargetablePlayers: untargetableRedPlayers);
                 setPlayerOutline(CaptureTheFlag.redplayer01currentTarget, Palette.ImpostorRed);
             }
-            if (CaptureTheFlag.redplayer02 != null && CaptureTheFlag.redplayer02 == PlayerControl.LocalPlayer) {
+            if (CaptureTheFlag.redplayer02 != null && CaptureTheFlag.redplayer02 == PlayerInCache.LocalPlayer.PlayerControl) {
                 CaptureTheFlag.redplayer02currentTarget = setTarget(untargetablePlayers: untargetableRedPlayers);
                 setPlayerOutline(CaptureTheFlag.redplayer02currentTarget, Palette.ImpostorRed);
             }
-            if (CaptureTheFlag.redplayer03 != null && CaptureTheFlag.redplayer03 == PlayerControl.LocalPlayer) {
+            if (CaptureTheFlag.redplayer03 != null && CaptureTheFlag.redplayer03 == PlayerInCache.LocalPlayer.PlayerControl) {
                 CaptureTheFlag.redplayer03currentTarget = setTarget(untargetablePlayers: untargetableRedPlayers);
                 setPlayerOutline(CaptureTheFlag.redplayer03currentTarget, Palette.ImpostorRed);
             }
-            if (CaptureTheFlag.redplayer04 != null && CaptureTheFlag.redplayer04 == PlayerControl.LocalPlayer) {
+            if (CaptureTheFlag.redplayer04 != null && CaptureTheFlag.redplayer04 == PlayerInCache.LocalPlayer.PlayerControl) {
                 CaptureTheFlag.redplayer04currentTarget = setTarget(untargetablePlayers: untargetableRedPlayers);
                 setPlayerOutline(CaptureTheFlag.redplayer04currentTarget, Palette.ImpostorRed);
             }
-            if (CaptureTheFlag.redplayer05 != null && CaptureTheFlag.redplayer05 == PlayerControl.LocalPlayer) {
+            if (CaptureTheFlag.redplayer05 != null && CaptureTheFlag.redplayer05 == PlayerInCache.LocalPlayer.PlayerControl) {
                 CaptureTheFlag.redplayer05currentTarget = setTarget(untargetablePlayers: untargetableRedPlayers);
                 setPlayerOutline(CaptureTheFlag.redplayer05currentTarget, Palette.ImpostorRed);
             }
-            if (CaptureTheFlag.redplayer06 != null && CaptureTheFlag.redplayer06 == PlayerControl.LocalPlayer) {
+            if (CaptureTheFlag.redplayer06 != null && CaptureTheFlag.redplayer06 == PlayerInCache.LocalPlayer.PlayerControl) {
                 CaptureTheFlag.redplayer06currentTarget = setTarget(untargetablePlayers: untargetableRedPlayers);
                 setPlayerOutline(CaptureTheFlag.redplayer06currentTarget, Palette.ImpostorRed);
             }
-            if (CaptureTheFlag.redplayer07 != null && CaptureTheFlag.redplayer07 == PlayerControl.LocalPlayer) {
+            if (CaptureTheFlag.redplayer07 != null && CaptureTheFlag.redplayer07 == PlayerInCache.LocalPlayer.PlayerControl) {
                 CaptureTheFlag.redplayer07currentTarget = setTarget(untargetablePlayers: untargetableRedPlayers);
                 setPlayerOutline(CaptureTheFlag.redplayer07currentTarget, Palette.ImpostorRed);
             }
@@ -899,35 +899,35 @@ namespace LasMonjas.Patches {
                 untargetableAllPlayers.Remove(CaptureTheFlag.redplayer07);
             }
 
-            if (CaptureTheFlag.blueplayer01 != null && CaptureTheFlag.blueplayer01 == PlayerControl.LocalPlayer) {
+            if (CaptureTheFlag.blueplayer01 != null && CaptureTheFlag.blueplayer01 == PlayerInCache.LocalPlayer.PlayerControl) {
                 CaptureTheFlag.blueplayer01currentTarget = setTarget(untargetablePlayers: untargetableBluePlayers);
                 setPlayerOutline(CaptureTheFlag.blueplayer01currentTarget, Color.blue);
             }
-            if (CaptureTheFlag.blueplayer02 != null && CaptureTheFlag.blueplayer02 == PlayerControl.LocalPlayer) {
+            if (CaptureTheFlag.blueplayer02 != null && CaptureTheFlag.blueplayer02 == PlayerInCache.LocalPlayer.PlayerControl) {
                 CaptureTheFlag.blueplayer02currentTarget = setTarget(untargetablePlayers: untargetableBluePlayers);
                 setPlayerOutline(CaptureTheFlag.blueplayer02currentTarget, Color.blue);
             }
-            if (CaptureTheFlag.blueplayer03 != null && CaptureTheFlag.blueplayer03 == PlayerControl.LocalPlayer) {
+            if (CaptureTheFlag.blueplayer03 != null && CaptureTheFlag.blueplayer03 == PlayerInCache.LocalPlayer.PlayerControl) {
                 CaptureTheFlag.blueplayer03currentTarget = setTarget(untargetablePlayers: untargetableBluePlayers);
                 setPlayerOutline(CaptureTheFlag.blueplayer03currentTarget, Color.blue);
             }
-            if (CaptureTheFlag.blueplayer04 != null && CaptureTheFlag.blueplayer04 == PlayerControl.LocalPlayer) {
+            if (CaptureTheFlag.blueplayer04 != null && CaptureTheFlag.blueplayer04 == PlayerInCache.LocalPlayer.PlayerControl) {
                 CaptureTheFlag.blueplayer04currentTarget = setTarget(untargetablePlayers: untargetableBluePlayers);
                 setPlayerOutline(CaptureTheFlag.blueplayer04currentTarget, Color.blue);
             }
-            if (CaptureTheFlag.blueplayer05 != null && CaptureTheFlag.blueplayer05 == PlayerControl.LocalPlayer) {
+            if (CaptureTheFlag.blueplayer05 != null && CaptureTheFlag.blueplayer05 == PlayerInCache.LocalPlayer.PlayerControl) {
                 CaptureTheFlag.blueplayer05currentTarget = setTarget(untargetablePlayers: untargetableBluePlayers);
                 setPlayerOutline(CaptureTheFlag.blueplayer05currentTarget, Color.blue);
             }
-            if (CaptureTheFlag.blueplayer06 != null && CaptureTheFlag.blueplayer06 == PlayerControl.LocalPlayer) {
+            if (CaptureTheFlag.blueplayer06 != null && CaptureTheFlag.blueplayer06 == PlayerInCache.LocalPlayer.PlayerControl) {
                 CaptureTheFlag.blueplayer06currentTarget = setTarget(untargetablePlayers: untargetableBluePlayers);
                 setPlayerOutline(CaptureTheFlag.blueplayer06currentTarget, Color.blue);
             }
-            if (CaptureTheFlag.blueplayer07 != null && CaptureTheFlag.blueplayer07 == PlayerControl.LocalPlayer) {
+            if (CaptureTheFlag.blueplayer07 != null && CaptureTheFlag.blueplayer07 == PlayerInCache.LocalPlayer.PlayerControl) {
                 CaptureTheFlag.blueplayer07currentTarget = setTarget(untargetablePlayers: untargetableBluePlayers);
                 setPlayerOutline(CaptureTheFlag.blueplayer07currentTarget, Color.blue);
             }
-            if (CaptureTheFlag.stealerPlayer != null && CaptureTheFlag.stealerPlayer == PlayerControl.LocalPlayer) {
+            if (CaptureTheFlag.stealerPlayer != null && CaptureTheFlag.stealerPlayer == PlayerInCache.LocalPlayer.PlayerControl) {
                 CaptureTheFlag.stealerPlayercurrentTarget = setTarget(untargetablePlayers: untargetableAllPlayers);
                 setPlayerOutline(CaptureTheFlag.stealerPlayercurrentTarget, Color.grey);
             }
@@ -999,27 +999,27 @@ namespace LasMonjas.Patches {
                 untargetablePolice.Remove(PoliceAndThief.thiefplayer09);
             }
 
-            if (PoliceAndThief.policeplayer01 != null && PoliceAndThief.policeplayer01 == PlayerControl.LocalPlayer) {
+            if (PoliceAndThief.policeplayer01 != null && PoliceAndThief.policeplayer01 == PlayerInCache.LocalPlayer.PlayerControl) {
                 PoliceAndThief.policeplayer01currentTarget = setTarget(untargetablePlayers: untargetablePolice);
                 setPlayerOutline(PoliceAndThief.policeplayer01currentTarget, Cheater.color);
             }
-            if (PoliceAndThief.policeplayer02 != null && PoliceAndThief.policeplayer02 == PlayerControl.LocalPlayer) {
+            if (PoliceAndThief.policeplayer02 != null && PoliceAndThief.policeplayer02 == PlayerInCache.LocalPlayer.PlayerControl) {
                 PoliceAndThief.policeplayer02currentTarget = setTarget(untargetablePlayers: untargetablePolice);
                 setPlayerOutline(PoliceAndThief.policeplayer02currentTarget, Cheater.color);
             }
-            if (PoliceAndThief.policeplayer03 != null && PoliceAndThief.policeplayer03 == PlayerControl.LocalPlayer) {
+            if (PoliceAndThief.policeplayer03 != null && PoliceAndThief.policeplayer03 == PlayerInCache.LocalPlayer.PlayerControl) {
                 PoliceAndThief.policeplayer03currentTarget = setTarget(untargetablePlayers: untargetablePolice);
                 setPlayerOutline(PoliceAndThief.policeplayer03currentTarget, Cheater.color);
             }
-            if (PoliceAndThief.policeplayer04 != null && PoliceAndThief.policeplayer04 == PlayerControl.LocalPlayer) {
+            if (PoliceAndThief.policeplayer04 != null && PoliceAndThief.policeplayer04 == PlayerInCache.LocalPlayer.PlayerControl) {
                 PoliceAndThief.policeplayer04currentTarget = setTarget(untargetablePlayers: untargetablePolice);
                 setPlayerOutline(PoliceAndThief.policeplayer04currentTarget, Cheater.color);
             }
-            if (PoliceAndThief.policeplayer05 != null && PoliceAndThief.policeplayer05 == PlayerControl.LocalPlayer) {
+            if (PoliceAndThief.policeplayer05 != null && PoliceAndThief.policeplayer05 == PlayerInCache.LocalPlayer.PlayerControl) {
                 PoliceAndThief.policeplayer05currentTarget = setTarget(untargetablePlayers: untargetablePolice);
                 setPlayerOutline(PoliceAndThief.policeplayer05currentTarget, Cheater.color);
             }
-            if (PoliceAndThief.policeplayer06 != null && PoliceAndThief.policeplayer06 == PlayerControl.LocalPlayer) {
+            if (PoliceAndThief.policeplayer06 != null && PoliceAndThief.policeplayer06 == PlayerInCache.LocalPlayer.PlayerControl) {
                 PoliceAndThief.policeplayer06currentTarget = setTarget(untargetablePlayers: untargetablePolice);
                 setPlayerOutline(PoliceAndThief.policeplayer06currentTarget, Cheater.color);
             }
@@ -1067,39 +1067,39 @@ namespace LasMonjas.Patches {
                 untargetableThiefs.Remove(PoliceAndThief.policeplayer06);
             }
 
-            if (PoliceAndThief.thiefplayer01 != null && PoliceAndThief.thiefplayer01 == PlayerControl.LocalPlayer) {
+            if (PoliceAndThief.thiefplayer01 != null && PoliceAndThief.thiefplayer01 == PlayerInCache.LocalPlayer.PlayerControl) {
                 PoliceAndThief.thiefplayer01currentTarget = setTarget(untargetablePlayers: untargetableThiefs);
                 setPlayerOutline(PoliceAndThief.thiefplayer01currentTarget, Mechanic.color);
             }
-            if (PoliceAndThief.thiefplayer02 != null && PoliceAndThief.thiefplayer02 == PlayerControl.LocalPlayer) {
+            if (PoliceAndThief.thiefplayer02 != null && PoliceAndThief.thiefplayer02 == PlayerInCache.LocalPlayer.PlayerControl) {
                 PoliceAndThief.thiefplayer02currentTarget = setTarget(untargetablePlayers: untargetableThiefs);
                 setPlayerOutline(PoliceAndThief.thiefplayer02currentTarget, Mechanic.color);
             }
-            if (PoliceAndThief.thiefplayer03 != null && PoliceAndThief.thiefplayer03 == PlayerControl.LocalPlayer) {
+            if (PoliceAndThief.thiefplayer03 != null && PoliceAndThief.thiefplayer03 == PlayerInCache.LocalPlayer.PlayerControl) {
                 PoliceAndThief.thiefplayer03currentTarget = setTarget(untargetablePlayers: untargetableThiefs);
                 setPlayerOutline(PoliceAndThief.thiefplayer03currentTarget, Mechanic.color);
             }
-            if (PoliceAndThief.thiefplayer04 != null && PoliceAndThief.thiefplayer04 == PlayerControl.LocalPlayer) {
+            if (PoliceAndThief.thiefplayer04 != null && PoliceAndThief.thiefplayer04 == PlayerInCache.LocalPlayer.PlayerControl) {
                 PoliceAndThief.thiefplayer04currentTarget = setTarget(untargetablePlayers: untargetableThiefs);
                 setPlayerOutline(PoliceAndThief.thiefplayer04currentTarget, Mechanic.color);
             }
-            if (PoliceAndThief.thiefplayer05 != null && PoliceAndThief.thiefplayer05 == PlayerControl.LocalPlayer) {
+            if (PoliceAndThief.thiefplayer05 != null && PoliceAndThief.thiefplayer05 == PlayerInCache.LocalPlayer.PlayerControl) {
                 PoliceAndThief.thiefplayer05currentTarget = setTarget(untargetablePlayers: untargetableThiefs);
                 setPlayerOutline(PoliceAndThief.thiefplayer05currentTarget, Mechanic.color);
             }
-            if (PoliceAndThief.thiefplayer06 != null && PoliceAndThief.thiefplayer06 == PlayerControl.LocalPlayer) {
+            if (PoliceAndThief.thiefplayer06 != null && PoliceAndThief.thiefplayer06 == PlayerInCache.LocalPlayer.PlayerControl) {
                 PoliceAndThief.thiefplayer06currentTarget = setTarget(untargetablePlayers: untargetableThiefs);
                 setPlayerOutline(PoliceAndThief.thiefplayer06currentTarget, Mechanic.color);
             }
-            if (PoliceAndThief.thiefplayer07 != null && PoliceAndThief.thiefplayer07 == PlayerControl.LocalPlayer) {
+            if (PoliceAndThief.thiefplayer07 != null && PoliceAndThief.thiefplayer07 == PlayerInCache.LocalPlayer.PlayerControl) {
                 PoliceAndThief.thiefplayer07currentTarget = setTarget(untargetablePlayers: untargetableThiefs);
                 setPlayerOutline(PoliceAndThief.thiefplayer07currentTarget, Mechanic.color);
             }
-            if (PoliceAndThief.thiefplayer08 != null && PoliceAndThief.thiefplayer08 == PlayerControl.LocalPlayer) {
+            if (PoliceAndThief.thiefplayer08 != null && PoliceAndThief.thiefplayer08 == PlayerInCache.LocalPlayer.PlayerControl) {
                 PoliceAndThief.thiefplayer08currentTarget = setTarget(untargetablePlayers: untargetableThiefs);
                 setPlayerOutline(PoliceAndThief.thiefplayer08currentTarget, Mechanic.color);
             }
-            if (PoliceAndThief.thiefplayer09 != null && PoliceAndThief.thiefplayer09 == PlayerControl.LocalPlayer) {
+            if (PoliceAndThief.thiefplayer09 != null && PoliceAndThief.thiefplayer09 == PlayerInCache.LocalPlayer.PlayerControl) {
                 PoliceAndThief.thiefplayer09currentTarget = setTarget(untargetablePlayers: untargetableThiefs);
                 setPlayerOutline(PoliceAndThief.thiefplayer09currentTarget, Mechanic.color);
             }
@@ -1188,31 +1188,31 @@ namespace LasMonjas.Patches {
                 untargetableYellowPlayers.Remove(KingOfTheHill.usurperPlayer);
             }
 
-            if (KingOfTheHill.greenKingplayer != null && KingOfTheHill.greenKingplayer == PlayerControl.LocalPlayer) {
+            if (KingOfTheHill.greenKingplayer != null && KingOfTheHill.greenKingplayer == PlayerInCache.LocalPlayer.PlayerControl) {
                 KingOfTheHill.greenKingplayercurrentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
                 setPlayerOutline(KingOfTheHill.greenKingplayercurrentTarget, Color.green);
             }
-            if (KingOfTheHill.greenplayer01 != null && KingOfTheHill.greenplayer01 == PlayerControl.LocalPlayer) {
+            if (KingOfTheHill.greenplayer01 != null && KingOfTheHill.greenplayer01 == PlayerInCache.LocalPlayer.PlayerControl) {
                 KingOfTheHill.greenplayer01currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
                 setPlayerOutline(KingOfTheHill.greenplayer01currentTarget, Color.green);
             }
-            if (KingOfTheHill.greenplayer02 != null && KingOfTheHill.greenplayer02 == PlayerControl.LocalPlayer) {
+            if (KingOfTheHill.greenplayer02 != null && KingOfTheHill.greenplayer02 == PlayerInCache.LocalPlayer.PlayerControl) {
                 KingOfTheHill.greenplayer02currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
                 setPlayerOutline(KingOfTheHill.greenplayer02currentTarget, Color.green);
             }
-            if (KingOfTheHill.greenplayer03 != null && KingOfTheHill.greenplayer03 == PlayerControl.LocalPlayer) {
+            if (KingOfTheHill.greenplayer03 != null && KingOfTheHill.greenplayer03 == PlayerInCache.LocalPlayer.PlayerControl) {
                 KingOfTheHill.greenplayer03currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
                 setPlayerOutline(KingOfTheHill.greenplayer03currentTarget, Color.green);
             }
-            if (KingOfTheHill.greenplayer04 != null && KingOfTheHill.greenplayer04 == PlayerControl.LocalPlayer) {
+            if (KingOfTheHill.greenplayer04 != null && KingOfTheHill.greenplayer04 == PlayerInCache.LocalPlayer.PlayerControl) {
                 KingOfTheHill.greenplayer04currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
                 setPlayerOutline(KingOfTheHill.greenplayer04currentTarget, Color.green);
             }
-            if (KingOfTheHill.greenplayer05 != null && KingOfTheHill.greenplayer05 == PlayerControl.LocalPlayer) {
+            if (KingOfTheHill.greenplayer05 != null && KingOfTheHill.greenplayer05 == PlayerInCache.LocalPlayer.PlayerControl) {
                 KingOfTheHill.greenplayer05currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
                 setPlayerOutline(KingOfTheHill.greenplayer05currentTarget, Color.green);
             }
-            if (KingOfTheHill.greenplayer06 != null && KingOfTheHill.greenplayer06 == PlayerControl.LocalPlayer) {
+            if (KingOfTheHill.greenplayer06 != null && KingOfTheHill.greenplayer06 == PlayerInCache.LocalPlayer.PlayerControl) {
                 KingOfTheHill.greenplayer06currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
                 setPlayerOutline(KingOfTheHill.greenplayer06currentTarget, Color.green);
             }
@@ -1275,36 +1275,36 @@ namespace LasMonjas.Patches {
                 untargetableAllPlayers.Remove(KingOfTheHill.greenKingplayer);
             }
 
-            if (KingOfTheHill.yellowKingplayer != null && KingOfTheHill.yellowKingplayer == PlayerControl.LocalPlayer) {
+            if (KingOfTheHill.yellowKingplayer != null && KingOfTheHill.yellowKingplayer == PlayerInCache.LocalPlayer.PlayerControl) {
                 KingOfTheHill.yellowKingplayercurrentTarget = setTarget(untargetablePlayers: untargetableYellowPlayers);
                 setPlayerOutline(KingOfTheHill.yellowKingplayercurrentTarget, Color.yellow);
             }
-            if (KingOfTheHill.yellowplayer01 != null && KingOfTheHill.yellowplayer01 == PlayerControl.LocalPlayer) {
+            if (KingOfTheHill.yellowplayer01 != null && KingOfTheHill.yellowplayer01 == PlayerInCache.LocalPlayer.PlayerControl) {
                 KingOfTheHill.yellowplayer01currentTarget = setTarget(untargetablePlayers: untargetableYellowPlayers);
                 setPlayerOutline(KingOfTheHill.yellowplayer01currentTarget, Color.yellow);
             }
-            if (KingOfTheHill.yellowplayer02 != null && KingOfTheHill.yellowplayer02 == PlayerControl.LocalPlayer) {
+            if (KingOfTheHill.yellowplayer02 != null && KingOfTheHill.yellowplayer02 == PlayerInCache.LocalPlayer.PlayerControl) {
                 KingOfTheHill.yellowplayer02currentTarget = setTarget(untargetablePlayers: untargetableYellowPlayers);
                 setPlayerOutline(KingOfTheHill.yellowplayer02currentTarget, Color.yellow);
             }
-            if (KingOfTheHill.yellowplayer03 != null && KingOfTheHill.yellowplayer03 == PlayerControl.LocalPlayer) {
+            if (KingOfTheHill.yellowplayer03 != null && KingOfTheHill.yellowplayer03 == PlayerInCache.LocalPlayer.PlayerControl) {
                 KingOfTheHill.yellowplayer03currentTarget = setTarget(untargetablePlayers: untargetableYellowPlayers);
                 setPlayerOutline(KingOfTheHill.yellowplayer03currentTarget, Color.yellow);
             }
-            if (KingOfTheHill.yellowplayer04 != null && KingOfTheHill.yellowplayer04 == PlayerControl.LocalPlayer) {
+            if (KingOfTheHill.yellowplayer04 != null && KingOfTheHill.yellowplayer04 == PlayerInCache.LocalPlayer.PlayerControl) {
                 KingOfTheHill.yellowplayer04currentTarget = setTarget(untargetablePlayers: untargetableYellowPlayers);
                 setPlayerOutline(KingOfTheHill.yellowplayer04currentTarget, Color.yellow);
             }
-            if (KingOfTheHill.yellowplayer05 != null && KingOfTheHill.yellowplayer05 == PlayerControl.LocalPlayer) {
+            if (KingOfTheHill.yellowplayer05 != null && KingOfTheHill.yellowplayer05 == PlayerInCache.LocalPlayer.PlayerControl) {
                 KingOfTheHill.yellowplayer05currentTarget = setTarget(untargetablePlayers: untargetableYellowPlayers);
                 setPlayerOutline(KingOfTheHill.yellowplayer05currentTarget, Color.yellow);
             }
-            if (KingOfTheHill.yellowplayer06 != null && KingOfTheHill.yellowplayer06 == PlayerControl.LocalPlayer) {
+            if (KingOfTheHill.yellowplayer06 != null && KingOfTheHill.yellowplayer06 == PlayerInCache.LocalPlayer.PlayerControl) {
                 KingOfTheHill.yellowplayer06currentTarget = setTarget(untargetablePlayers: untargetableYellowPlayers);
                 setPlayerOutline(KingOfTheHill.yellowplayer06currentTarget, Color.yellow);
             }
 
-            if (KingOfTheHill.usurperPlayer != null && KingOfTheHill.usurperPlayer == PlayerControl.LocalPlayer) {
+            if (KingOfTheHill.usurperPlayer != null && KingOfTheHill.usurperPlayer == PlayerInCache.LocalPlayer.PlayerControl) {
                 KingOfTheHill.usurperPlayercurrentTarget = setTarget(untargetablePlayers: untargetableAllPlayers);
                 setPlayerOutline(KingOfTheHill.usurperPlayercurrentTarget, Color.grey);
             }
@@ -1315,7 +1315,7 @@ namespace LasMonjas.Patches {
             if (gameType != 5)
                 return;
 
-            if (HotPotato.hotPotatoPlayer != null && HotPotato.hotPotatoPlayer == PlayerControl.LocalPlayer) {
+            if (HotPotato.hotPotatoPlayer != null && HotPotato.hotPotatoPlayer == PlayerInCache.LocalPlayer.PlayerControl) {
                 HotPotato.hotPotatoPlayerCurrentTarget = setTarget();
                 setPlayerOutline(HotPotato.hotPotatoPlayerCurrentTarget, Color.grey);
             }
@@ -1423,59 +1423,59 @@ namespace LasMonjas.Patches {
                 untargetableZombiePlayers.Remove(ZombieLaboratory.survivorPlayer13);
             }
 
-            if (ZombieLaboratory.nursePlayer != null && ZombieLaboratory.nursePlayer == PlayerControl.LocalPlayer) {
+            if (ZombieLaboratory.nursePlayer != null && ZombieLaboratory.nursePlayer == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.nursePlayercurrentTarget = setTarget();
                 setPlayerOutline(ZombieLaboratory.nursePlayercurrentTarget, Shy.color);
             }
-            if (ZombieLaboratory.survivorPlayer01 != null && ZombieLaboratory.survivorPlayer01 == PlayerControl.LocalPlayer) {
+            if (ZombieLaboratory.survivorPlayer01 != null && ZombieLaboratory.survivorPlayer01 == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.survivorPlayer01currentTarget = setTarget(untargetablePlayers: untargetableSurvivorsPlayers);
                 setPlayerOutline(ZombieLaboratory.survivorPlayer01currentTarget, Color.cyan);
             }
-            if (ZombieLaboratory.survivorPlayer02 != null && ZombieLaboratory.survivorPlayer02 == PlayerControl.LocalPlayer) {
+            if (ZombieLaboratory.survivorPlayer02 != null && ZombieLaboratory.survivorPlayer02 == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.survivorPlayer02currentTarget = setTarget(untargetablePlayers: untargetableSurvivorsPlayers);
                 setPlayerOutline(ZombieLaboratory.survivorPlayer02currentTarget, Color.cyan);
             }
-            if (ZombieLaboratory.survivorPlayer03 != null && ZombieLaboratory.survivorPlayer03 == PlayerControl.LocalPlayer) {
+            if (ZombieLaboratory.survivorPlayer03 != null && ZombieLaboratory.survivorPlayer03 == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.survivorPlayer03currentTarget = setTarget(untargetablePlayers: untargetableSurvivorsPlayers);
                 setPlayerOutline(ZombieLaboratory.survivorPlayer03currentTarget, Color.cyan);
             }
-            if (ZombieLaboratory.survivorPlayer04 != null && ZombieLaboratory.survivorPlayer04 == PlayerControl.LocalPlayer) {
+            if (ZombieLaboratory.survivorPlayer04 != null && ZombieLaboratory.survivorPlayer04 == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.survivorPlayer04currentTarget = setTarget(untargetablePlayers: untargetableSurvivorsPlayers);
                 setPlayerOutline(ZombieLaboratory.survivorPlayer04currentTarget, Color.cyan);
             }
-            if (ZombieLaboratory.survivorPlayer05 != null && ZombieLaboratory.survivorPlayer05 == PlayerControl.LocalPlayer) {
+            if (ZombieLaboratory.survivorPlayer05 != null && ZombieLaboratory.survivorPlayer05 == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.survivorPlayer05currentTarget = setTarget(untargetablePlayers: untargetableSurvivorsPlayers);
                 setPlayerOutline(ZombieLaboratory.survivorPlayer05currentTarget, Color.cyan);
             }
-            if (ZombieLaboratory.survivorPlayer06 != null && ZombieLaboratory.survivorPlayer06 == PlayerControl.LocalPlayer) {
+            if (ZombieLaboratory.survivorPlayer06 != null && ZombieLaboratory.survivorPlayer06 == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.survivorPlayer06currentTarget = setTarget(untargetablePlayers: untargetableSurvivorsPlayers);
                 setPlayerOutline(ZombieLaboratory.survivorPlayer06currentTarget, Color.cyan);
             }
-            if (ZombieLaboratory.survivorPlayer07 != null && ZombieLaboratory.survivorPlayer07 == PlayerControl.LocalPlayer) {
+            if (ZombieLaboratory.survivorPlayer07 != null && ZombieLaboratory.survivorPlayer07 == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.survivorPlayer07currentTarget = setTarget(untargetablePlayers: untargetableSurvivorsPlayers);
                 setPlayerOutline(ZombieLaboratory.survivorPlayer07currentTarget, Color.cyan);
             }
-            if (ZombieLaboratory.survivorPlayer08 != null && ZombieLaboratory.survivorPlayer08 == PlayerControl.LocalPlayer) {
+            if (ZombieLaboratory.survivorPlayer08 != null && ZombieLaboratory.survivorPlayer08 == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.survivorPlayer08currentTarget = setTarget(untargetablePlayers: untargetableSurvivorsPlayers);
                 setPlayerOutline(ZombieLaboratory.survivorPlayer08currentTarget, Color.cyan);
             }
-            if (ZombieLaboratory.survivorPlayer09 != null && ZombieLaboratory.survivorPlayer09 == PlayerControl.LocalPlayer) {
+            if (ZombieLaboratory.survivorPlayer09 != null && ZombieLaboratory.survivorPlayer09 == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.survivorPlayer09currentTarget = setTarget(untargetablePlayers: untargetableSurvivorsPlayers);
                 setPlayerOutline(ZombieLaboratory.survivorPlayer09currentTarget, Color.cyan);
             }
-            if (ZombieLaboratory.survivorPlayer10 != null && ZombieLaboratory.survivorPlayer10 == PlayerControl.LocalPlayer) {
+            if (ZombieLaboratory.survivorPlayer10 != null && ZombieLaboratory.survivorPlayer10 == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.survivorPlayer10currentTarget = setTarget(untargetablePlayers: untargetableSurvivorsPlayers);
                 setPlayerOutline(ZombieLaboratory.survivorPlayer10currentTarget, Color.cyan);
             }
-            if (ZombieLaboratory.survivorPlayer11 != null && ZombieLaboratory.survivorPlayer11 == PlayerControl.LocalPlayer) {
+            if (ZombieLaboratory.survivorPlayer11 != null && ZombieLaboratory.survivorPlayer11 == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.survivorPlayer11currentTarget = setTarget(untargetablePlayers: untargetableSurvivorsPlayers);
                 setPlayerOutline(ZombieLaboratory.survivorPlayer11currentTarget, Color.cyan);
             }
-            if (ZombieLaboratory.survivorPlayer12 != null && ZombieLaboratory.survivorPlayer12 == PlayerControl.LocalPlayer) {
+            if (ZombieLaboratory.survivorPlayer12 != null && ZombieLaboratory.survivorPlayer12 == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.survivorPlayer12currentTarget = setTarget(untargetablePlayers: untargetableSurvivorsPlayers);
                 setPlayerOutline(ZombieLaboratory.survivorPlayer12currentTarget, Color.cyan);
             }
-            if (ZombieLaboratory.survivorPlayer13 != null && ZombieLaboratory.survivorPlayer13 == PlayerControl.LocalPlayer) {
+            if (ZombieLaboratory.survivorPlayer13 != null && ZombieLaboratory.survivorPlayer13 == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.survivorPlayer13currentTarget = setTarget(untargetablePlayers: untargetableSurvivorsPlayers);
                 setPlayerOutline(ZombieLaboratory.survivorPlayer13currentTarget, Color.cyan);
             }
@@ -1566,59 +1566,59 @@ namespace LasMonjas.Patches {
                 untargetableSurvivorsPlayers.Remove(ZombieLaboratory.zombiePlayer14);
             }
 
-            if (ZombieLaboratory.zombiePlayer01 != null && ZombieLaboratory.zombiePlayer01 == PlayerControl.LocalPlayer) {
+            if (ZombieLaboratory.zombiePlayer01 != null && ZombieLaboratory.zombiePlayer01 == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.zombiePlayer01currentTarget = setTarget(untargetablePlayers: untargetableZombiePlayers);
                 setPlayerOutline(ZombieLaboratory.zombiePlayer01currentTarget, Sheriff.color);
             }
-            if (ZombieLaboratory.zombiePlayer02 != null && ZombieLaboratory.zombiePlayer02 == PlayerControl.LocalPlayer) {
+            if (ZombieLaboratory.zombiePlayer02 != null && ZombieLaboratory.zombiePlayer02 == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.zombiePlayer02currentTarget = setTarget(untargetablePlayers: untargetableZombiePlayers);
                 setPlayerOutline(ZombieLaboratory.zombiePlayer02currentTarget, Sheriff.color);
             }
-            if (ZombieLaboratory.zombiePlayer03 != null && ZombieLaboratory.zombiePlayer03 == PlayerControl.LocalPlayer) {
+            if (ZombieLaboratory.zombiePlayer03 != null && ZombieLaboratory.zombiePlayer03 == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.zombiePlayer03currentTarget = setTarget(untargetablePlayers: untargetableZombiePlayers);
                 setPlayerOutline(ZombieLaboratory.zombiePlayer03currentTarget, Sheriff.color);
             }
-            if (ZombieLaboratory.zombiePlayer04 != null && ZombieLaboratory.zombiePlayer04 == PlayerControl.LocalPlayer) {
+            if (ZombieLaboratory.zombiePlayer04 != null && ZombieLaboratory.zombiePlayer04 == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.zombiePlayer04currentTarget = setTarget(untargetablePlayers: untargetableZombiePlayers);
                 setPlayerOutline(ZombieLaboratory.zombiePlayer04currentTarget, Sheriff.color);
             }
-            if (ZombieLaboratory.zombiePlayer05 != null && ZombieLaboratory.zombiePlayer05 == PlayerControl.LocalPlayer) {
+            if (ZombieLaboratory.zombiePlayer05 != null && ZombieLaboratory.zombiePlayer05 == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.zombiePlayer05currentTarget = setTarget(untargetablePlayers: untargetableZombiePlayers);
                 setPlayerOutline(ZombieLaboratory.zombiePlayer05currentTarget, Sheriff.color);
             }
-            if (ZombieLaboratory.zombiePlayer06 != null && ZombieLaboratory.zombiePlayer06 == PlayerControl.LocalPlayer) {
+            if (ZombieLaboratory.zombiePlayer06 != null && ZombieLaboratory.zombiePlayer06 == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.zombiePlayer06currentTarget = setTarget(untargetablePlayers: untargetableZombiePlayers);
                 setPlayerOutline(ZombieLaboratory.zombiePlayer06currentTarget, Sheriff.color);
             }
-            if (ZombieLaboratory.zombiePlayer07 != null && ZombieLaboratory.zombiePlayer07 == PlayerControl.LocalPlayer) {
+            if (ZombieLaboratory.zombiePlayer07 != null && ZombieLaboratory.zombiePlayer07 == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.zombiePlayer07currentTarget = setTarget(untargetablePlayers: untargetableZombiePlayers);
                 setPlayerOutline(ZombieLaboratory.zombiePlayer07currentTarget, Sheriff.color);
             }
-            if (ZombieLaboratory.zombiePlayer08 != null && ZombieLaboratory.zombiePlayer08 == PlayerControl.LocalPlayer) {
+            if (ZombieLaboratory.zombiePlayer08 != null && ZombieLaboratory.zombiePlayer08 == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.zombiePlayer08currentTarget = setTarget(untargetablePlayers: untargetableZombiePlayers);
                 setPlayerOutline(ZombieLaboratory.zombiePlayer08currentTarget, Sheriff.color);
             }
-            if (ZombieLaboratory.zombiePlayer09 != null && ZombieLaboratory.zombiePlayer09 == PlayerControl.LocalPlayer) {
+            if (ZombieLaboratory.zombiePlayer09 != null && ZombieLaboratory.zombiePlayer09 == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.zombiePlayer09currentTarget = setTarget(untargetablePlayers: untargetableZombiePlayers);
                 setPlayerOutline(ZombieLaboratory.zombiePlayer09currentTarget, Sheriff.color);
             }
-            if (ZombieLaboratory.zombiePlayer10 != null && ZombieLaboratory.zombiePlayer10 == PlayerControl.LocalPlayer) {
+            if (ZombieLaboratory.zombiePlayer10 != null && ZombieLaboratory.zombiePlayer10 == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.zombiePlayer10currentTarget = setTarget(untargetablePlayers: untargetableZombiePlayers);
                 setPlayerOutline(ZombieLaboratory.zombiePlayer10currentTarget, Sheriff.color);
             }
-            if (ZombieLaboratory.zombiePlayer11 != null && ZombieLaboratory.zombiePlayer11 == PlayerControl.LocalPlayer) {
+            if (ZombieLaboratory.zombiePlayer11 != null && ZombieLaboratory.zombiePlayer11 == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.zombiePlayer11currentTarget = setTarget(untargetablePlayers: untargetableZombiePlayers);
                 setPlayerOutline(ZombieLaboratory.zombiePlayer11currentTarget, Sheriff.color);
             }
-            if (ZombieLaboratory.zombiePlayer12 != null && ZombieLaboratory.zombiePlayer12 == PlayerControl.LocalPlayer) {
+            if (ZombieLaboratory.zombiePlayer12 != null && ZombieLaboratory.zombiePlayer12 == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.zombiePlayer12currentTarget = setTarget(untargetablePlayers: untargetableZombiePlayers);
                 setPlayerOutline(ZombieLaboratory.zombiePlayer12currentTarget, Sheriff.color);
             }
-            if (ZombieLaboratory.zombiePlayer13 != null && ZombieLaboratory.zombiePlayer13 == PlayerControl.LocalPlayer) {
+            if (ZombieLaboratory.zombiePlayer13 != null && ZombieLaboratory.zombiePlayer13 == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.zombiePlayer13currentTarget = setTarget(untargetablePlayers: untargetableZombiePlayers);
                 setPlayerOutline(ZombieLaboratory.zombiePlayer13currentTarget, Sheriff.color);
             }
-            if (ZombieLaboratory.zombiePlayer14 != null && ZombieLaboratory.zombiePlayer14 == PlayerControl.LocalPlayer) {
+            if (ZombieLaboratory.zombiePlayer14 != null && ZombieLaboratory.zombiePlayer14 == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.zombiePlayer14currentTarget = setTarget(untargetablePlayers: untargetableZombiePlayers);
                 setPlayerOutline(ZombieLaboratory.zombiePlayer14currentTarget, Sheriff.color);
             }
@@ -1708,31 +1708,31 @@ namespace LasMonjas.Patches {
                 untargetableCyanPlayers.Remove(MonjaFestival.bigMonjaPlayer);
             }
 
-            if (MonjaFestival.greenPlayer01 != null && MonjaFestival.greenPlayer01 == PlayerControl.LocalPlayer) {
+            if (MonjaFestival.greenPlayer01 != null && MonjaFestival.greenPlayer01 == PlayerInCache.LocalPlayer.PlayerControl) {
                 MonjaFestival.greenPlayer01currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
                 setPlayerOutline(MonjaFestival.greenPlayer01currentTarget, Color.green);
             }
-            if (MonjaFestival.greenPlayer02 != null && MonjaFestival.greenPlayer02 == PlayerControl.LocalPlayer) {
+            if (MonjaFestival.greenPlayer02 != null && MonjaFestival.greenPlayer02 == PlayerInCache.LocalPlayer.PlayerControl) {
                 MonjaFestival.greenPlayer02currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
                 setPlayerOutline(MonjaFestival.greenPlayer02currentTarget, Color.green);
             }
-            if (MonjaFestival.greenPlayer03 != null && MonjaFestival.greenPlayer03 == PlayerControl.LocalPlayer) {
+            if (MonjaFestival.greenPlayer03 != null && MonjaFestival.greenPlayer03 == PlayerInCache.LocalPlayer.PlayerControl) {
                 MonjaFestival.greenPlayer03currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
                 setPlayerOutline(MonjaFestival.greenPlayer03currentTarget, Color.green);
             }
-            if (MonjaFestival.greenPlayer04 != null && MonjaFestival.greenPlayer04 == PlayerControl.LocalPlayer) {
+            if (MonjaFestival.greenPlayer04 != null && MonjaFestival.greenPlayer04 == PlayerInCache.LocalPlayer.PlayerControl) {
                 MonjaFestival.greenPlayer04currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
                 setPlayerOutline(MonjaFestival.greenPlayer04currentTarget, Color.green);
             }
-            if (MonjaFestival.greenPlayer05 != null && MonjaFestival.greenPlayer05 == PlayerControl.LocalPlayer) {
+            if (MonjaFestival.greenPlayer05 != null && MonjaFestival.greenPlayer05 == PlayerInCache.LocalPlayer.PlayerControl) {
                 MonjaFestival.greenPlayer05currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
                 setPlayerOutline(MonjaFestival.greenPlayer05currentTarget, Color.green);
             }
-            if (MonjaFestival.greenPlayer06 != null && MonjaFestival.greenPlayer06 == PlayerControl.LocalPlayer) {
+            if (MonjaFestival.greenPlayer06 != null && MonjaFestival.greenPlayer06 == PlayerInCache.LocalPlayer.PlayerControl) {
                 MonjaFestival.greenPlayer06currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
                 setPlayerOutline(MonjaFestival.greenPlayer06currentTarget, Color.green);
             }
-            if (MonjaFestival.greenPlayer07 != null && MonjaFestival.greenPlayer07 == PlayerControl.LocalPlayer) {
+            if (MonjaFestival.greenPlayer07 != null && MonjaFestival.greenPlayer07 == PlayerInCache.LocalPlayer.PlayerControl) {
                 MonjaFestival.greenPlayer07currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
                 setPlayerOutline(MonjaFestival.greenPlayer07currentTarget, Color.green);
             }
@@ -1795,36 +1795,36 @@ namespace LasMonjas.Patches {
                 untargetableAllPlayers.Remove(MonjaFestival.greenPlayer07);
             }
 
-            if (MonjaFestival.cyanPlayer01 != null && MonjaFestival.cyanPlayer01 == PlayerControl.LocalPlayer) {
+            if (MonjaFestival.cyanPlayer01 != null && MonjaFestival.cyanPlayer01 == PlayerInCache.LocalPlayer.PlayerControl) {
                 MonjaFestival.cyanPlayer01currentTarget = setTarget(untargetablePlayers: untargetableCyanPlayers);
                 setPlayerOutline(MonjaFestival.cyanPlayer01currentTarget, Color.cyan);
             }
-            if (MonjaFestival.cyanPlayer02 != null && MonjaFestival.cyanPlayer02 == PlayerControl.LocalPlayer) {
+            if (MonjaFestival.cyanPlayer02 != null && MonjaFestival.cyanPlayer02 == PlayerInCache.LocalPlayer.PlayerControl) {
                 MonjaFestival.cyanPlayer02currentTarget = setTarget(untargetablePlayers: untargetableCyanPlayers);
                 setPlayerOutline(MonjaFestival.cyanPlayer02currentTarget, Color.cyan);
             }
-            if (MonjaFestival.cyanPlayer03 != null && MonjaFestival.cyanPlayer03 == PlayerControl.LocalPlayer) {
+            if (MonjaFestival.cyanPlayer03 != null && MonjaFestival.cyanPlayer03 == PlayerInCache.LocalPlayer.PlayerControl) {
                 MonjaFestival.cyanPlayer03currentTarget = setTarget(untargetablePlayers: untargetableCyanPlayers);
                 setPlayerOutline(MonjaFestival.cyanPlayer03currentTarget, Color.cyan);
             }
-            if (MonjaFestival.cyanPlayer04 != null && MonjaFestival.cyanPlayer04 == PlayerControl.LocalPlayer) {
+            if (MonjaFestival.cyanPlayer04 != null && MonjaFestival.cyanPlayer04 == PlayerInCache.LocalPlayer.PlayerControl) {
                 MonjaFestival.cyanPlayer04currentTarget = setTarget(untargetablePlayers: untargetableCyanPlayers);
                 setPlayerOutline(MonjaFestival.cyanPlayer04currentTarget, Color.cyan);
             }
-            if (MonjaFestival.cyanPlayer05 != null && MonjaFestival.cyanPlayer05 == PlayerControl.LocalPlayer) {
+            if (MonjaFestival.cyanPlayer05 != null && MonjaFestival.cyanPlayer05 == PlayerInCache.LocalPlayer.PlayerControl) {
                 MonjaFestival.cyanPlayer05currentTarget = setTarget(untargetablePlayers: untargetableCyanPlayers);
                 setPlayerOutline(MonjaFestival.cyanPlayer05currentTarget, Color.cyan);
             }
-            if (MonjaFestival.cyanPlayer06 != null && MonjaFestival.cyanPlayer06 == PlayerControl.LocalPlayer) {
+            if (MonjaFestival.cyanPlayer06 != null && MonjaFestival.cyanPlayer06 == PlayerInCache.LocalPlayer.PlayerControl) {
                 MonjaFestival.cyanPlayer06currentTarget = setTarget(untargetablePlayers: untargetableCyanPlayers);
                 setPlayerOutline(MonjaFestival.cyanPlayer06currentTarget, Color.cyan);
             }
-            if (MonjaFestival.cyanPlayer07 != null && MonjaFestival.cyanPlayer07 == PlayerControl.LocalPlayer) {
+            if (MonjaFestival.cyanPlayer07 != null && MonjaFestival.cyanPlayer07 == PlayerInCache.LocalPlayer.PlayerControl) {
                 MonjaFestival.cyanPlayer07currentTarget = setTarget(untargetablePlayers: untargetableCyanPlayers);
                 setPlayerOutline(MonjaFestival.cyanPlayer07currentTarget, Color.cyan);
             }
 
-            if (MonjaFestival.bigMonjaPlayer != null && MonjaFestival.bigMonjaPlayer == PlayerControl.LocalPlayer) {
+            if (MonjaFestival.bigMonjaPlayer != null && MonjaFestival.bigMonjaPlayer == PlayerInCache.LocalPlayer.PlayerControl) {
                 MonjaFestival.bigMonjaPlayercurrentTarget = setTarget(untargetablePlayers: untargetableAllPlayers);
                 setPlayerOutline(MonjaFestival.bigMonjaPlayercurrentTarget, Color.grey);
             }
@@ -1833,7 +1833,7 @@ namespace LasMonjas.Patches {
         public static void Postfix(PlayerControl __instance) {
             if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started || GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return;
 
-            if (PlayerControl.LocalPlayer == __instance) {
+            if (PlayerInCache.LocalPlayer.PlayerControl == __instance) {
                 // Update player outlines
                 setBasePlayerOutlines();
 
@@ -2001,14 +2001,14 @@ namespace LasMonjas.Patches {
         public static void Prefix(PlayerControl __instance) {
             // Bomberman bomb reset when report body
             if (Bomberman.bomberman != null && Bomberman.activeBomb == true) {
-                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.FixBomb, Hazel.SendOption.Reliable, -1);
+                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.FixBomb, Hazel.SendOption.Reliable, -1);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
                 RPCProcedure.fixBomb();
             }
 
             //If music option is enabled and the player who used emergency button was not a bitten player
-            if (PlayerControl.LocalPlayer != Demon.bitten || Demon.bitten == null) {
-                MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
+            if (PlayerInCache.LocalPlayer.PlayerControl != Demon.bitten || Demon.bitten == null) {
+                MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
                 writermusic.Write(1);
                 AmongUsClient.Instance.FinishRpcImmediately(writermusic);
                 RPCProcedure.changeMusic(1);
@@ -2019,14 +2019,14 @@ namespace LasMonjas.Patches {
 
             // Murder the Spiritualist if someone reports a body or call emergency while trying to revive another player
             if (Spiritualist.spiritualist != null && Spiritualist.isReviving && Spiritualist.canRevive) {
-                MessageWriter murderSpiritualist = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.MurderSpiritualistIfReportWhileReviving, Hazel.SendOption.Reliable, -1);
+                MessageWriter murderSpiritualist = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.MurderSpiritualistIfReportWhileReviving, Hazel.SendOption.Reliable, -1);
                 AmongUsClient.Instance.FinishRpcImmediately(murderSpiritualist);
                 RPCProcedure.murderSpiritualistIfReportWhileReviving();
             }
 
             // Performer isreported
             if (Modifiers.performer != null && Modifiers.performer.Data.IsDead && !Modifiers.performerReported) {
-                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PerformerIsReported, Hazel.SendOption.Reliable, -1);
+                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.PerformerIsReported, Hazel.SendOption.Reliable, -1);
                 writer.Write(0);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
                 RPCProcedure.performerIsReported(0);
@@ -2034,12 +2034,12 @@ namespace LasMonjas.Patches {
         }
     }
 
-    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.LocalPlayer.CmdReportDeadBody))]
+    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerInCache.LocalPlayer.PlayerControl.CmdReportDeadBody))]
     class BodyReportPatch
     {
         static void Postfix(PlayerControl __instance, [HarmonyArgument(0)] GameData.PlayerInfo target) {
             // Forensic report
-            bool isForensicReport = Forensic.forensic != null && Forensic.forensic == PlayerControl.LocalPlayer && __instance.PlayerId == Forensic.forensic.PlayerId;
+            bool isForensicReport = Forensic.forensic != null && Forensic.forensic == PlayerInCache.LocalPlayer.PlayerControl && __instance.PlayerId == Forensic.forensic.PlayerId;
             if (isForensicReport) {
                 DeadPlayer deadPlayer = deadPlayers?.Where(x => x.player?.PlayerId == target?.PlayerId)?.FirstOrDefault();
 
@@ -2110,11 +2110,11 @@ namespace LasMonjas.Patches {
                     }
 
                     if (!string.IsNullOrWhiteSpace(msg)) {
-                        if (AmongUsClient.Instance.AmClient && DestroyableSingleton<HudManager>.Instance) {
-                            DestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, msg);
+                        if (AmongUsClient.Instance.AmClient && FastDestroyableSingleton<HudManager>.Instance) {
+                            FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerInCache.LocalPlayer.PlayerControl, msg);
                         }
                         if (msg.IndexOf("who", StringComparison.OrdinalIgnoreCase) >= 0) {
-                            DestroyableSingleton<Assets.CoreScripts.Telemetry>.Instance.SendWho();
+                            FastDestroyableSingleton<Assets.CoreScripts.Telemetry>.Instance.SendWho();
                         }
                     }
                 }
@@ -2148,7 +2148,7 @@ namespace LasMonjas.Patches {
             switch (gameType) {
                 case 0:
                 case 1:
-                    if (PlayerControl.LocalPlayer == target && GameOptionsManager.Instance.currentGameMode == GameModes.Normal) {
+                    if (PlayerInCache.LocalPlayer.PlayerControl == target && GameOptionsManager.Instance.currentGameMode == GameModes.Normal) {
                         HudManager.Instance.StartCoroutine(Effects.Lerp(0.2f, new Action<float>((p) => { // Delayed action
                             if (p == 1f) {
                                 if (HauntMenuMinigame.Instance) {
@@ -2201,7 +2201,7 @@ namespace LasMonjas.Patches {
                     }
 
                     // Janitor Button Sync
-                    if (Janitor.janitor != null && PlayerControl.LocalPlayer == Janitor.janitor && __instance == Janitor.janitor && HudManagerStartPatch.janitorCleanButton != null)
+                    if (Janitor.janitor != null && PlayerInCache.LocalPlayer.PlayerControl == Janitor.janitor && __instance == Janitor.janitor && HudManagerStartPatch.janitorCleanButton != null)
                         HudManagerStartPatch.janitorCleanButton.Timer = Janitor.janitor.killTimer;
 
                     if (Janitor.janitor != null && target == Janitor.janitor && Janitor.dragginBody) {
@@ -2209,7 +2209,7 @@ namespace LasMonjas.Patches {
                     }
 
                     // Manipulator Button Sync
-                    if (Manipulator.manipulator != null && PlayerControl.LocalPlayer == Manipulator.manipulator && __instance == Manipulator.manipulator && HudManagerStartPatch.manipulatorManipulateButton != null) {
+                    if (Manipulator.manipulator != null && PlayerInCache.LocalPlayer.PlayerControl == Manipulator.manipulator && __instance == Manipulator.manipulator && HudManagerStartPatch.manipulatorManipulateButton != null) {
                         if (Manipulator.manipulator.killTimer > HudManagerStartPatch.manipulatorManipulateButton.Timer) {
                             HudManagerStartPatch.manipulatorManipulateButton.Timer = Manipulator.manipulator.killTimer;
                         }
@@ -2221,7 +2221,7 @@ namespace LasMonjas.Patches {
                     }
 
                     // Sorcerer Button Sync
-                    if (Sorcerer.sorcerer != null && PlayerControl.LocalPlayer == Sorcerer.sorcerer && __instance == Sorcerer.sorcerer && HudManagerStartPatch.sorcererSpellButton != null)
+                    if (Sorcerer.sorcerer != null && PlayerInCache.LocalPlayer.PlayerControl == Sorcerer.sorcerer && __instance == Sorcerer.sorcerer && HudManagerStartPatch.sorcererSpellButton != null)
                         HudManagerStartPatch.sorcererSpellButton.Timer = HudManagerStartPatch.sorcererSpellButton.MaxTimer;
 
                     // Archer dead
@@ -2283,7 +2283,7 @@ namespace LasMonjas.Patches {
                         Yandere.rampageMode = true;
                         Yandere.yandereTargetButtonText.text = Language.statusRolesTexts[2];
                         Yandere.yandereKillButtonText.text = Language.statusRolesTexts[3];
-                        if (PlayerControl.LocalPlayer == Yandere.yandere) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl == Yandere.yandere) {
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.hunterTarget, false, 100f);
                         }
                     }
@@ -2301,7 +2301,7 @@ namespace LasMonjas.Patches {
                     }
 
                     // Devourer play sound when someone dies
-                    if (Devourer.devourer != null && Devourer.devourer == PlayerControl.LocalPlayer && !Devourer.devourer.Data.IsDead) {
+                    if (Devourer.devourer != null && Devourer.devourer == PlayerInCache.LocalPlayer.PlayerControl && !Devourer.devourer.Data.IsDead) {
                         SoundManager.Instance.PlaySound(CustomMain.customAssets.devourerDingClip, false, 100f);
                     }
 
@@ -2355,14 +2355,14 @@ namespace LasMonjas.Patches {
                         Puppeteer.puppeteerText.text = $"{Puppeteer.counter}/{Puppeteer.numberOfKills}";
 
                         __instance.SetKillTimer(0f);
-                        if (PlayerControl.LocalPlayer == __instance) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl == __instance) {
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.puppeteerClip, false, 75f);
                         }
 
-                        if (PlayerControl.LocalPlayer != Puppeteer.puppeteer) return;
+                        if (PlayerInCache.LocalPlayer.PlayerControl != Puppeteer.puppeteer) return;
 
                         if (Puppeteer.counter >= Puppeteer.numberOfKills) {
-                            MessageWriter winWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.PuppeteerWin, Hazel.SendOption.Reliable, -1);
+                            MessageWriter winWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.PuppeteerWin, Hazel.SendOption.Reliable, -1);
                             AmongUsClient.Instance.FinishRpcImmediately(winWriter);
                             RPCProcedure.puppeteerWin();
                         }
@@ -2445,7 +2445,7 @@ namespace LasMonjas.Patches {
                     if (Modifiers.performer != null && target == Modifiers.performer) {
                         Modifiers.performerDuration = CustomOptionHolder.performerDuration.getFloat();
                         // Ace Attorney Music Stop and play theater music
-                        if (PlayerControl.LocalPlayer != Spiritualist.spiritualist) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl != Spiritualist.spiritualist) {
                             if (!Monja.awakened) {
                                 RPCProcedure.changeMusic(7);
                                 SoundManager.Instance.PlaySound(CustomMain.customAssets.performerMusic, false, 5f);
@@ -2457,7 +2457,7 @@ namespace LasMonjas.Patches {
 
                     // Paintball trigger on death
                     if (Modifiers.paintball != null && target == Modifiers.paintball) {
-                        if (PlayerControl.LocalPlayer == __instance) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl == __instance) {
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.paintballDeath, false, 100f);
                         }
                         Modifiers.active = new Dictionary<byte, float>();
@@ -2468,7 +2468,7 @@ namespace LasMonjas.Patches {
 
                     // Electrician discharge trigger on death
                     if (Modifiers.electrician != null && target == Modifiers.electrician) {
-                        if (PlayerControl.LocalPlayer == __instance) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl == __instance) {
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.policeTaser, false, 100f);
                         }
                         new Tased(Modifiers.electricianDuration, __instance);
@@ -2476,7 +2476,7 @@ namespace LasMonjas.Patches {
 
                     // Check alive players for disable sabotage button if game result in 1vs1 special condition (impostor + rebel / impostor + captain / rebel + captain)
                     alivePlayers = 0;
-                    foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                    foreach (PlayerControl player in PlayerInCache.AllPlayers) {
                         if (!player.Data.IsDead) {
                             alivePlayers += 1;
                         }
@@ -3158,8 +3158,8 @@ namespace LasMonjas.Patches {
                                 if (!KingOfTheHill.greenteamAlerted) {
                                     KingOfTheHill.greenteamAlerted = true;
                                     foreach (PlayerControl greenplayer in KingOfTheHill.greenTeam) {
-                                        if (greenplayer == PlayerControl.LocalPlayer && greenplayer != null) {
-                                            new CustomMessage(Language.statusKingOfTheHillTexts[4], 5, -1, 1f, 16);
+                                        if (greenplayer == PlayerInCache.LocalPlayer.PlayerControl && greenplayer != null) {
+                                            new CustomMessage(Language.statusKingOfTheHillTexts[4], 5, 1f, 16);
                                         }
                                     }
                                 }
@@ -3301,8 +3301,8 @@ namespace LasMonjas.Patches {
                                 if (!KingOfTheHill.yellowteamAlerted) {
                                     KingOfTheHill.yellowteamAlerted = true;
                                     foreach (PlayerControl yellowplayer in KingOfTheHill.yellowTeam) {
-                                        if (yellowplayer == PlayerControl.LocalPlayer && yellowplayer != null) {
-                                            new CustomMessage(Language.statusKingOfTheHillTexts[4], 5, -1, 1f, 16);
+                                        if (yellowplayer == PlayerInCache.LocalPlayer.PlayerControl && yellowplayer != null) {
+                                            new CustomMessage(Language.statusKingOfTheHillTexts[4], 5, 1f, 16);
                                         }
                                     }
                                 }
@@ -3560,7 +3560,7 @@ namespace LasMonjas.Patches {
                                     }
                                 })));
 
-                                new CustomMessage("<color=#808080FF>" + HotPotato.hotPotatoPlayer.name + "</color>" + Language.statusHotPotatoTexts[0], 5, -1, 1f, 16);
+                                new CustomMessage("<color=#808080FF>" + HotPotato.hotPotatoPlayer.name + "</color>" + Language.statusHotPotatoTexts[0], 5, 1f, 16);
                                 HotPotato.hotpotatopointCounter = Language.introTexts[5] + "<color=#808080FF>" + HotPotato.hotPotatoPlayer.name + "</color> | " + Language.introTexts[6] + "<color=#00F7FFFF>" + notPotatosAlives + "</color>";
                             }
                         })));
@@ -4021,7 +4021,12 @@ namespace LasMonjas.Patches {
                             HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
                                 if (p == 1f && BattleRoyale.serialKiller != null) {
                                     BattleRoyale.serialKillerIsReviving = false;
-                                    BattleRoyale.serialKillerLifes = BattleRoyale.fighterLifes * 3;
+                                    if (PlayerInCache.AllPlayers.Count >= 11) {
+                                        BattleRoyale.serialKillerLifes = BattleRoyale.fighterLifes * 3;
+                                    }
+                                    else {
+                                        BattleRoyale.serialKillerLifes = BattleRoyale.fighterLifes * 2;
+                                    }
                                     Helpers.alphaPlayer(false, BattleRoyale.serialKiller.PlayerId);
                                     BattleRoyale.serialKiller.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
                                 }
@@ -4033,27 +4038,27 @@ namespace LasMonjas.Patches {
                                         // Skeld
                                         case 0:
                                             if (activatedSensei) {
-                                                BattleRoyale.serialKiller.transform.position = new Vector3(-3.65f, 5f, PlayerControl.LocalPlayer.transform.position.z);
+                                                BattleRoyale.serialKiller.transform.position = new Vector3(-3.65f, 5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                                             }
                                             else {
-                                                BattleRoyale.serialKiller.transform.position = new Vector3(6.35f, -7.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                                BattleRoyale.serialKiller.transform.position = new Vector3(6.35f, -7.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                                             }
                                             break;
                                         // MiraHQ
                                         case 1:
-                                            BattleRoyale.serialKiller.transform.position = new Vector3(16.25f, 24.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                            BattleRoyale.serialKiller.transform.position = new Vector3(16.25f, 24.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                                             break;
                                         // Polus
                                         case 2:
-                                            BattleRoyale.serialKiller.transform.position = new Vector3(22.3f, -19.15f, PlayerControl.LocalPlayer.transform.position.z);
+                                            BattleRoyale.serialKiller.transform.position = new Vector3(22.3f, -19.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                                             break;
                                         // Dleks
                                         case 3:
-                                            BattleRoyale.serialKiller.transform.position = new Vector3(-6.35f, -7.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                            BattleRoyale.serialKiller.transform.position = new Vector3(-6.35f, -7.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                                             break;
                                         // Airship
                                         case 4:
-                                            BattleRoyale.serialKiller.transform.position = new Vector3(12.25f, 2f, PlayerControl.LocalPlayer.transform.position.z);
+                                            BattleRoyale.serialKiller.transform.position = new Vector3(12.25f, 2f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                                             break;
                                         // Submerged
                                         case 5:
@@ -4301,7 +4306,8 @@ namespace LasMonjas.Patches {
                         MonjaFestival.bigMonjaIsReviving = true;
                         AngleStep = AngleStep / MonjaFestival.bigMonjaPlayerItems;
                         for (int i = 0; i < MonjaFestival.bigMonjaPlayerItems; i++) {
-                            GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreyMonja, PlayerControl.LocalPlayer.transform.parent);
+                            GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreyMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                            littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
                             littleMonja.transform.position = new Vector3(MonjaFestival.bigMonjaPlayer.transform.position.x + Offset, MonjaFestival.bigMonjaPlayer.transform.position.y + Offset, 0.5f);
                             littleMonja.transform.RotateAround(MonjaFestival.bigMonjaPlayer.transform.position, Vector3.forward, AngleStep * i);
                             littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
@@ -4326,35 +4332,35 @@ namespace LasMonjas.Patches {
                                     // Skeld
                                     case 0:
                                         if (activatedSensei) {
-                                            MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-12f, 7f, PlayerControl.LocalPlayer.transform.position.z);
+                                            MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-12f, 7f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                                         }
                                         else {
-                                            MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(4.5f, -7.25f, PlayerControl.LocalPlayer.transform.position.z);
+                                            MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(4.5f, -7.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                                         }
                                         break;
                                     // MiraHQ
                                     case 1:
-                                        MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-4.45f, 2f, PlayerControl.LocalPlayer.transform.position.z);
+                                        MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-4.45f, 2f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                                         break;
                                     // Polus
                                     case 2:
-                                        MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(21.75f, -25.15f, PlayerControl.LocalPlayer.transform.position.z);
+                                        MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(21.75f, -25.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                                         break;
                                     // Dleks
                                     case 3:
-                                        MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-4.5f, -7.25f, PlayerControl.LocalPlayer.transform.position.z);
+                                        MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-4.5f, -7.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                                         break;
                                     // Airship
                                     case 4:
-                                        MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(6.35f, 2.5f, PlayerControl.LocalPlayer.transform.position.z);
+                                        MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(6.35f, 2.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                                         break;
                                     // Submerged
                                     case 5:
                                         if (MonjaFestival.bigMonjaPlayer.transform.position.y > 0) {
-                                            MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(5.75f, 31.25f, MonjaFestival.bigMonjaPlayer.transform.position.z);
+                                            MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-12.2f, 19.15f, MonjaFestival.bigMonjaPlayer.transform.position.z);
                                         }
                                         else {
-                                            MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-4.25f, -33.5f, MonjaFestival.bigMonjaPlayer.transform.position.z);
+                                            MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(7.15f, -20.5f, MonjaFestival.bigMonjaPlayer.transform.position.z);
                                         }
                                         break;
                                 }
@@ -4373,7 +4379,8 @@ namespace LasMonjas.Patches {
                                 MonjaFestival.greenPlayer01IsReviving = true;
                                 AngleStep = AngleStep / MonjaFestival.greenPlayer01Items;
                                 for (int i = 0; i < MonjaFestival.greenPlayer01Items; i++) {
-                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreenMonja, PlayerControl.LocalPlayer.transform.parent);
+                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreenMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                                    littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
                                     littleMonja.transform.position = new Vector3(MonjaFestival.greenPlayer01.transform.position.x + Offset, MonjaFestival.greenPlayer01.transform.position.y + Offset, 0.5f);
                                     littleMonja.transform.RotateAround(MonjaFestival.greenPlayer01.transform.position, Vector3.forward, AngleStep * i);
                                     littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
@@ -4388,7 +4395,8 @@ namespace LasMonjas.Patches {
                                 MonjaFestival.greenPlayer02IsReviving = true;
                                 AngleStep = AngleStep / MonjaFestival.greenPlayer02Items;
                                 for (int i = 0; i < MonjaFestival.greenPlayer02Items; i++) {
-                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreenMonja, PlayerControl.LocalPlayer.transform.parent);
+                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreenMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                                    littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
                                     littleMonja.transform.position = new Vector3(MonjaFestival.greenPlayer02.transform.position.x + Offset, MonjaFestival.greenPlayer02.transform.position.y + Offset, 0.5f);
                                     littleMonja.transform.RotateAround(MonjaFestival.greenPlayer02.transform.position, Vector3.forward, AngleStep * i);
                                     littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
@@ -4403,7 +4411,8 @@ namespace LasMonjas.Patches {
                                 MonjaFestival.greenPlayer03IsReviving = true;
                                 AngleStep = AngleStep / MonjaFestival.greenPlayer03Items;
                                 for (int i = 0; i < MonjaFestival.greenPlayer03Items; i++) {
-                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreenMonja, PlayerControl.LocalPlayer.transform.parent);
+                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreenMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                                    littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
                                     littleMonja.transform.position = new Vector3(MonjaFestival.greenPlayer03.transform.position.x + Offset, MonjaFestival.greenPlayer03.transform.position.y + Offset, 0.5f);
                                     littleMonja.transform.RotateAround(MonjaFestival.greenPlayer03.transform.position, Vector3.forward, AngleStep * i);
                                     littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
@@ -4418,7 +4427,8 @@ namespace LasMonjas.Patches {
                                 MonjaFestival.greenPlayer04IsReviving = true;
                                 AngleStep = AngleStep / MonjaFestival.greenPlayer04Items;
                                 for (int i = 0; i < MonjaFestival.greenPlayer04Items; i++) {
-                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreenMonja, PlayerControl.LocalPlayer.transform.parent);
+                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreenMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                                    littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
                                     littleMonja.transform.position = new Vector3(MonjaFestival.greenPlayer04.transform.position.x + Offset, MonjaFestival.greenPlayer04.transform.position.y + Offset, 0.5f);
                                     littleMonja.transform.RotateAround(MonjaFestival.greenPlayer04.transform.position, Vector3.forward, AngleStep * i);
                                     littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
@@ -4433,7 +4443,8 @@ namespace LasMonjas.Patches {
                                 MonjaFestival.greenPlayer05IsReviving = true;
                                 AngleStep = AngleStep / MonjaFestival.greenPlayer05Items;
                                 for (int i = 0; i < MonjaFestival.greenPlayer05Items; i++) {
-                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreenMonja, PlayerControl.LocalPlayer.transform.parent);
+                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreenMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                                    littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
                                     littleMonja.transform.position = new Vector3(MonjaFestival.greenPlayer05.transform.position.x + Offset, MonjaFestival.greenPlayer05.transform.position.y + Offset, 0.5f);
                                     littleMonja.transform.RotateAround(MonjaFestival.greenPlayer05.transform.position, Vector3.forward, AngleStep * i);
                                     littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
@@ -4448,7 +4459,8 @@ namespace LasMonjas.Patches {
                                 MonjaFestival.greenPlayer06IsReviving = true;
                                 AngleStep = AngleStep / MonjaFestival.greenPlayer06Items;
                                 for (int i = 0; i < MonjaFestival.greenPlayer06Items; i++) {
-                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreenMonja, PlayerControl.LocalPlayer.transform.parent);
+                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreenMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                                    littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
                                     littleMonja.transform.position = new Vector3(MonjaFestival.greenPlayer06.transform.position.x + Offset, MonjaFestival.greenPlayer06.transform.position.y + Offset, 0.5f);
                                     littleMonja.transform.RotateAround(MonjaFestival.greenPlayer06.transform.position, Vector3.forward, AngleStep * i);
                                     littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
@@ -4463,7 +4475,8 @@ namespace LasMonjas.Patches {
                                 MonjaFestival.greenPlayer07IsReviving = true;
                                 AngleStep = AngleStep / MonjaFestival.greenPlayer07Items;
                                 for (int i = 0; i < MonjaFestival.greenPlayer07Items; i++) {
-                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreenMonja, PlayerControl.LocalPlayer.transform.parent);
+                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreenMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                                    littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
                                     littleMonja.transform.position = new Vector3(MonjaFestival.greenPlayer07.transform.position.x + Offset, MonjaFestival.greenPlayer07.transform.position.y + Offset, 0.5f);
                                     littleMonja.transform.RotateAround(MonjaFestival.greenPlayer07.transform.position, Vector3.forward, AngleStep * i);
                                     littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
@@ -4533,10 +4546,10 @@ namespace LasMonjas.Patches {
                                         // Submerged
                                         case 5:
                                             if (player.transform.position.y > 0) {
-                                                player.transform.position = new Vector3(-12.25f, 18.5f, player.transform.position.z);
+                                                player.transform.position = new Vector3(-1.8f, 12.25f, player.transform.position.z);
                                             }
                                             else {
-                                                player.transform.position = new Vector3(-14.5f, -34.35f, player.transform.position.z);
+                                                player.transform.position = new Vector3(-4.35f, -33.5f, player.transform.position.z);
                                             }
                                             break;
                                     }
@@ -4556,7 +4569,8 @@ namespace LasMonjas.Patches {
                                 MonjaFestival.cyanPlayer01IsReviving = true;
                                 AngleStep = AngleStep / MonjaFestival.cyanPlayer01Items;
                                 for (int i = 0; i < MonjaFestival.cyanPlayer01Items; i++) {
-                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorCyanMonja, PlayerControl.LocalPlayer.transform.parent);
+                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorCyanMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                                    littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
                                     littleMonja.transform.position = new Vector3(MonjaFestival.cyanPlayer01.transform.position.x + Offset, MonjaFestival.cyanPlayer01.transform.position.y + Offset, 0.5f);
                                     littleMonja.transform.RotateAround(MonjaFestival.cyanPlayer01.transform.position, Vector3.forward, AngleStep * i);
                                     littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
@@ -4571,7 +4585,8 @@ namespace LasMonjas.Patches {
                                 MonjaFestival.cyanPlayer02IsReviving = true;
                                 AngleStep = AngleStep / MonjaFestival.cyanPlayer02Items;
                                 for (int i = 0; i < MonjaFestival.cyanPlayer02Items; i++) {
-                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorCyanMonja, PlayerControl.LocalPlayer.transform.parent);
+                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorCyanMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                                    littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
                                     littleMonja.transform.position = new Vector3(MonjaFestival.cyanPlayer02.transform.position.x + Offset, MonjaFestival.cyanPlayer02.transform.position.y + Offset, 0.5f);
                                     littleMonja.transform.RotateAround(MonjaFestival.cyanPlayer02.transform.position, Vector3.forward, AngleStep * i);
                                     littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
@@ -4586,7 +4601,8 @@ namespace LasMonjas.Patches {
                                 MonjaFestival.cyanPlayer03IsReviving = true;
                                 AngleStep = AngleStep / MonjaFestival.cyanPlayer03Items;
                                 for (int i = 0; i < MonjaFestival.cyanPlayer03Items; i++) {
-                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorCyanMonja, PlayerControl.LocalPlayer.transform.parent);
+                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorCyanMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                                    littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
                                     littleMonja.transform.position = new Vector3(MonjaFestival.cyanPlayer03.transform.position.x + Offset, MonjaFestival.cyanPlayer03.transform.position.y + Offset, 0.5f);
                                     littleMonja.transform.RotateAround(MonjaFestival.cyanPlayer03.transform.position, Vector3.forward, AngleStep * i);
                                     littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
@@ -4601,7 +4617,8 @@ namespace LasMonjas.Patches {
                                 MonjaFestival.cyanPlayer04IsReviving = true;
                                 AngleStep = AngleStep / MonjaFestival.cyanPlayer04Items;
                                 for (int i = 0; i < MonjaFestival.cyanPlayer04Items; i++) {
-                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorCyanMonja, PlayerControl.LocalPlayer.transform.parent);
+                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorCyanMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                                    littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
                                     littleMonja.transform.position = new Vector3(MonjaFestival.cyanPlayer04.transform.position.x + Offset, MonjaFestival.cyanPlayer04.transform.position.y + Offset, 0.5f);
                                     littleMonja.transform.RotateAround(MonjaFestival.cyanPlayer04.transform.position, Vector3.forward, AngleStep * i);
                                     littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
@@ -4616,7 +4633,8 @@ namespace LasMonjas.Patches {
                                 MonjaFestival.cyanPlayer05IsReviving = true;
                                 AngleStep = AngleStep / MonjaFestival.cyanPlayer05Items;
                                 for (int i = 0; i < MonjaFestival.cyanPlayer05Items; i++) {
-                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorCyanMonja, PlayerControl.LocalPlayer.transform.parent);
+                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorCyanMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                                    littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
                                     littleMonja.transform.position = new Vector3(MonjaFestival.cyanPlayer05.transform.position.x + Offset, MonjaFestival.cyanPlayer05.transform.position.y + Offset, 0.5f);
                                     littleMonja.transform.RotateAround(MonjaFestival.cyanPlayer05.transform.position, Vector3.forward, AngleStep * i);
                                     littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
@@ -4631,7 +4649,8 @@ namespace LasMonjas.Patches {
                                 MonjaFestival.cyanPlayer06IsReviving = true;
                                 AngleStep = AngleStep / MonjaFestival.cyanPlayer06Items;
                                 for (int i = 0; i < MonjaFestival.cyanPlayer06Items; i++) {
-                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorCyanMonja, PlayerControl.LocalPlayer.transform.parent);
+                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorCyanMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                                    littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
                                     littleMonja.transform.position = new Vector3(MonjaFestival.cyanPlayer06.transform.position.x + Offset, MonjaFestival.cyanPlayer06.transform.position.y + Offset, 0.5f);
                                     littleMonja.transform.RotateAround(MonjaFestival.cyanPlayer06.transform.position, Vector3.forward, AngleStep * i);
                                     littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
@@ -4646,7 +4665,8 @@ namespace LasMonjas.Patches {
                                 MonjaFestival.cyanPlayer07IsReviving = true;
                                 AngleStep = AngleStep / MonjaFestival.cyanPlayer07Items;
                                 for (int i = 0; i < MonjaFestival.cyanPlayer07Items; i++) {
-                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorCyanMonja, PlayerControl.LocalPlayer.transform.parent);
+                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorCyanMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                                    littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
                                     littleMonja.transform.position = new Vector3(MonjaFestival.cyanPlayer07.transform.position.x + Offset, MonjaFestival.cyanPlayer07.transform.position.y + Offset, 0.5f);
                                     littleMonja.transform.RotateAround(MonjaFestival.cyanPlayer07.transform.position, Vector3.forward, AngleStep * i);
                                     littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
@@ -4717,10 +4737,10 @@ namespace LasMonjas.Patches {
                                         // Submerged
                                         case 5:
                                             if (player.transform.position.y > 0) {
-                                                player.transform.position = new Vector3(0f, 33.5f, player.transform.position.z);
+                                                player.transform.position = new Vector3(-10.25f, 10.15f, player.transform.position.z);
                                             }
                                             else {
-                                                player.transform.position = new Vector3(-8.5f, -39.5f, player.transform.position.z);
+                                                player.transform.position = new Vector3(2.65f, -35.65f, player.transform.position.z);
                                             }
                                             break;
                                     }
@@ -4772,7 +4792,7 @@ namespace LasMonjas.Patches {
             switch (task.TaskType) {
                 case TaskTypes.FixComms:
                     isHappeningAnonymousComms = false;
-                    foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                    foreach (PlayerControl player in PlayerInCache.AllPlayers) {
                         player.setDefaultLook();
                         if (player.cosmetics.currentPet) player.cosmetics.currentPet.gameObject.SetActive(true);
                     }
@@ -4790,7 +4810,7 @@ namespace LasMonjas.Patches {
                     HudManager.Instance.PlayerCam.shakePeriod = 0;
                     break;
                 case TaskTypes.RestoreOxy:
-                    foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+                    foreach (PlayerControl player in PlayerInCache.AllPlayers) {
                         player.MyPhysics.Speed = 2.5f;
                     }
                     break;
@@ -4831,7 +4851,7 @@ namespace LasMonjas.Patches {
 
             // Check alive players for disable sabotage button if game result in 1vs1 special condition (impostor + rebel / impostor + captain / rebel + captain)
             alivePlayers = 0;
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
+            foreach (PlayerControl player in PlayerInCache.AllPlayers) {
                 if (!player.Data.IsDead) {
                     alivePlayers += 1;
                 }
