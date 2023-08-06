@@ -5,6 +5,7 @@ using UnityEngine;
 using System.Linq;
 using Hazel;
 using AmongUs.GameOptions;
+using LasMonjas.Core;
 
 namespace LasMonjas
 {
@@ -85,7 +86,7 @@ namespace LasMonjas
         {
             private static void Postfix(GameData __instance, [HarmonyArgument(0)] PlayerControl pc, [HarmonyArgument(1)] uint taskId) {
 
-                if (TaskMaster.taskMaster != null && TaskMaster.taskMaster == PlayerControl.LocalPlayer && !TaskMaster.taskMaster.Data.IsDead) {
+                if (TaskMaster.taskMaster != null && TaskMaster.taskMaster == PlayerInCache.LocalPlayer.PlayerControl && !TaskMaster.taskMaster.Data.IsDead) {
 
                     var (playerCompleted, playerTotal) = taskInfo(TaskMaster.taskMaster.Data);
                     int numberOfLeftTasks = playerTotal - playerCompleted;
@@ -94,13 +95,13 @@ namespace LasMonjas
 
                         if (TaskMaster.clearedInitialTasks) {
 
-                            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.TaskMasterTriggerCrewWin, Hazel.SendOption.Reliable, -1);
+                            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.TaskMasterTriggerCrewWin, Hazel.SendOption.Reliable, -1);
                             AmongUsClient.Instance.FinishRpcImmediately(writer);
                             RPCProcedure.taskMasterTriggerCrewWin();
                         }
                         else {
                             byte[] taskTypeIds = GetTaskMasterTasks(TaskMaster.taskMaster);
-                            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.TaskMasterSetExtraTasks, Hazel.SendOption.Reliable, -1);
+                            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.TaskMasterSetExtraTasks, Hazel.SendOption.Reliable, -1);
                             writer.Write(TaskMaster.taskMaster.PlayerId);
                             writer.Write(taskTypeIds);
                             AmongUsClient.Instance.FinishRpcImmediately(writer);

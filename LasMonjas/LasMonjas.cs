@@ -293,7 +293,7 @@ namespace LasMonjas
 
         public static void resetPaint() {
             painterTimer = 0f;
-            foreach (PlayerControl p in PlayerControl.AllPlayerControls)
+            foreach (PlayerControl p in PlayerInCache.AllPlayers)
                 p.setDefaultLook();
         }
 
@@ -765,12 +765,12 @@ namespace LasMonjas
             float num = effectiveRange;
             Vector3 pos;
             float mouseAngle = mouseArcherAngle;
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                if (player.PlayerId == PlayerControl.LocalPlayer.PlayerId) continue;
+            foreach (PlayerControl player in PlayerInCache.AllPlayers) {
+                if (player.PlayerId == PlayerInCache.LocalPlayer.PlayerControl.PlayerId) continue;
 
                 if (player.Data.IsDead) continue;
 
-                pos = player.transform.position - PlayerControl.LocalPlayer.transform.position;
+                pos = player.transform.position - PlayerInCache.LocalPlayer.PlayerControl.transform.position;
                 pos = new Vector3(
                     pos.x * MathF.Cos(mouseAngle) + pos.y * MathF.Sin(mouseAngle),
                     pos.y * MathF.Cos(mouseAngle) - pos.x * MathF.Sin(mouseAngle));
@@ -1873,7 +1873,7 @@ namespace LasMonjas
         }
 
         public static bool sprayedEveryoneAlive() {
-            return PlayerControl.AllPlayerControls.ToArray().All(x => { return x == Pyromaniac.pyromaniac || x.Data.IsDead || x.Data.Disconnected || Pyromaniac.sprayedPlayers.Any(y => y.PlayerId == x.PlayerId); });
+            return PlayerInCache.AllPlayers.All(x => { return x.PlayerControl == Pyromaniac.pyromaniac || x.Data.IsDead || x.Data.Disconnected || Pyromaniac.sprayedPlayers.Any(y => y.PlayerId == x.PlayerId); });
         }
 
         public static void clearAndReload() {
@@ -1978,7 +1978,7 @@ namespace LasMonjas
         }
 
         public static bool poisonedEveryoneAlive() {
-            return PlayerControl.AllPlayerControls.ToArray().All(x => { return x == Poisoner.poisoner || x.Data.IsDead || x.Data.Disconnected || Poisoner.poisonedPlayers.Any(y => y.PlayerId == x.PlayerId); });
+            return PlayerInCache.AllPlayers.All(x => { return x.PlayerControl == Poisoner.poisoner || x.Data.IsDead || x.Data.Disconnected || Poisoner.poisonedPlayers.Any(y => y.PlayerId == x.PlayerId); });
         }
 
         public static void clearAndReload() {
@@ -3971,11 +3971,11 @@ namespace LasMonjas
                 mouseAngle = policeplayer04mouseAngle;
             }
             foreach (PlayerControl player in thiefTeam) {
-                if (player.PlayerId == PlayerControl.LocalPlayer.PlayerId) continue;
+                if (player.PlayerId == PlayerInCache.LocalPlayer.PlayerControl.PlayerId) continue;
 
                 if (player.Data.IsDead || player.inVent) continue;
 
-                pos = player.transform.position - PlayerControl.LocalPlayer.transform.position;
+                pos = player.transform.position - PlayerInCache.LocalPlayer.PlayerControl.transform.position;
                 pos = new Vector3(
                     pos.x * MathF.Cos(mouseAngle) + pos.y * MathF.Sin(mouseAngle),
                     pos.y * MathF.Cos(mouseAngle) - pos.x * MathF.Sin(mouseAngle));
@@ -5675,7 +5675,7 @@ namespace LasMonjas
             killCooldown = CustomOptionHolder.battleRoyaleKillCooldown.getFloat();
             battleRoyaleSenseiMapMode = CustomOptionHolder.activateSenseiMap.getBool();
             matchType = CustomOptionHolder.battleRoyaleMatchType.getSelection();
-            if (PlayerControl.AllPlayerControls.Count >= 11) {
+            if (PlayerInCache.AllPlayers.Count >= 11) {
                 serialKillerCooldown = killCooldown / 3;
                 serialKillerLifes = fighterLifes * 3;
             }
@@ -5885,11 +5885,11 @@ namespace LasMonjas
             Vector3 pos;
             float mouseAngle = playerMouse;
             foreach (PlayerControl player in soloPlayerTeam) {
-                if (player.PlayerId == PlayerControl.LocalPlayer.PlayerId) continue;
+                if (player.PlayerId == PlayerInCache.LocalPlayer.PlayerControl.PlayerId) continue;
 
                 if (player.Data.IsDead || player.inVent) continue;
 
-                pos = player.transform.position - PlayerControl.LocalPlayer.transform.position;
+                pos = player.transform.position - PlayerInCache.LocalPlayer.PlayerControl.transform.position;
                 pos = new Vector3(
                     pos.x * MathF.Cos(mouseAngle) + pos.y * MathF.Sin(mouseAngle),
                     pos.y * MathF.Cos(mouseAngle) - pos.x * MathF.Sin(mouseAngle));
@@ -5945,11 +5945,11 @@ namespace LasMonjas
             Vector3 pos;
             float mouseAngle = playerMouse;
             foreach (PlayerControl player in pinkTeam) {
-                if (player.PlayerId == PlayerControl.LocalPlayer.PlayerId) continue;
+                if (player.PlayerId == PlayerInCache.LocalPlayer.PlayerControl.PlayerId) continue;
 
                 if (player.Data.IsDead || player.inVent) continue;
 
-                pos = player.transform.position - PlayerControl.LocalPlayer.transform.position;
+                pos = player.transform.position - PlayerInCache.LocalPlayer.PlayerControl.transform.position;
                 pos = new Vector3(
                     pos.x * MathF.Cos(mouseAngle) + pos.y * MathF.Sin(mouseAngle),
                     pos.y * MathF.Cos(mouseAngle) - pos.x * MathF.Sin(mouseAngle));
@@ -5966,11 +5966,11 @@ namespace LasMonjas
                 }
             }
             foreach (PlayerControl player in serialKillerTeam) {
-                if (player.PlayerId == PlayerControl.LocalPlayer.PlayerId) continue;
+                if (player.PlayerId == PlayerInCache.LocalPlayer.PlayerControl.PlayerId) continue;
 
                 if (player.Data.IsDead || player.inVent) continue;
 
-                pos = player.transform.position - PlayerControl.LocalPlayer.transform.position;
+                pos = player.transform.position - PlayerInCache.LocalPlayer.PlayerControl.transform.position;
                 pos = new Vector3(
                     pos.x * MathF.Cos(mouseAngle) + pos.y * MathF.Sin(mouseAngle),
                     pos.y * MathF.Cos(mouseAngle) - pos.x * MathF.Sin(mouseAngle));
@@ -6026,11 +6026,11 @@ namespace LasMonjas
             Vector3 pos;
             float mouseAngle = playerMouse;
             foreach (PlayerControl player in limeTeam) {
-                if (player.PlayerId == PlayerControl.LocalPlayer.PlayerId) continue;
+                if (player.PlayerId == PlayerInCache.LocalPlayer.PlayerControl.PlayerId) continue;
 
                 if (player.Data.IsDead || player.inVent) continue;
 
-                pos = player.transform.position - PlayerControl.LocalPlayer.transform.position;
+                pos = player.transform.position - PlayerInCache.LocalPlayer.PlayerControl.transform.position;
                 pos = new Vector3(
                     pos.x * MathF.Cos(mouseAngle) + pos.y * MathF.Sin(mouseAngle),
                     pos.y * MathF.Cos(mouseAngle) - pos.x * MathF.Sin(mouseAngle));
@@ -6047,11 +6047,11 @@ namespace LasMonjas
                 }
             }
             foreach (PlayerControl player in serialKillerTeam) {
-                if (player.PlayerId == PlayerControl.LocalPlayer.PlayerId) continue;
+                if (player.PlayerId == PlayerInCache.LocalPlayer.PlayerControl.PlayerId) continue;
 
                 if (player.Data.IsDead || player.inVent) continue;
 
-                pos = player.transform.position - PlayerControl.LocalPlayer.transform.position;
+                pos = player.transform.position - PlayerInCache.LocalPlayer.PlayerControl.transform.position;
                 pos = new Vector3(
                     pos.x * MathF.Cos(mouseAngle) + pos.y * MathF.Sin(mouseAngle),
                     pos.y * MathF.Cos(mouseAngle) - pos.x * MathF.Sin(mouseAngle));
@@ -6074,12 +6074,12 @@ namespace LasMonjas
             float num = effectiveRange;
             Vector3 pos;
             float mouseAngle = serialKillermouseAngle;
-            foreach (PlayerControl player in PlayerControl.AllPlayerControls) {
-                if (player.PlayerId == PlayerControl.LocalPlayer.PlayerId) continue;
+            foreach (PlayerControl player in PlayerInCache.AllPlayers) {
+                if (player.PlayerId == PlayerInCache.LocalPlayer.PlayerControl.PlayerId) continue;
 
                 if (player.Data.IsDead) continue;
 
-                pos = player.transform.position - PlayerControl.LocalPlayer.transform.position;
+                pos = player.transform.position - PlayerInCache.LocalPlayer.PlayerControl.transform.position;
                 pos = new Vector3(
                     pos.x * MathF.Cos(mouseAngle) + pos.y * MathF.Sin(mouseAngle),
                     pos.y * MathF.Cos(mouseAngle) - pos.x * MathF.Sin(mouseAngle));
@@ -6221,6 +6221,7 @@ namespace LasMonjas
 
         public static List<PlayerControl> bigMonjaTeam = new List<PlayerControl>();
         public static GameObject bigMonjaBase = null;
+        public static GameObject bigMonjaBaseTwo = null;
         public static PlayerControl bigMonjaPlayer = null;
         public static bool bigMonjaIsReviving = false;
         public static int bigMonjaPlayerItems = 0;
@@ -6483,6 +6484,7 @@ namespace LasMonjas
             cyanPlayer07currentSpawn = null;
             cyanPlayer07foundspawn = 0;
             bigMonjaBase = null;
+            bigMonjaBaseTwo = null;
             bigMonjaPlayer = null;
             bigMonjaIsReviving = false;
             bigMonjaPlayerItems = 0;
@@ -6495,7 +6497,7 @@ namespace LasMonjas
 
             grabDeliverTime = 1f;
             monjaFestivalSenseiMapMode = CustomOptionHolder.activateSenseiMap.getBool();
-            if (PlayerControl.AllPlayerControls.Count >= 11) {
+            if (PlayerInCache.AllPlayers.Count >= 11) {
                 bigMonjaPlayerKillCooldown = LasMonjas.gamemodeKillCooldown / 3;
                 bigMonjaPlayerFindDeliverCooldown = grabDeliverTime / 3;
             }
@@ -6601,11 +6603,11 @@ namespace LasMonjas
                     allulMonjaPositions.Add(new Vector3(-4f, 1.5f, 0.4f));
                     break;
                 case 5:
-                    allulMonjaPositions.Add(new Vector3(-5.25f, -0.75f, 0.4f));
-                    allulMonjaPositions.Add(new Vector3(-4.5f, 1.25f, 0.4f));
-                    allulMonjaPositions.Add(new Vector3(-3.85f, 5.25f, 0.4f));
-                    allulMonjaPositions.Add(new Vector3(-20, -1.5f, 0.4f));
-                    allulMonjaPositions.Add(new Vector3(-16f, -1.5f, 0.4f));
+                    allulMonjaPositions.Add(new Vector3(-14.5f, -34.25f, -0.01f));
+                    allulMonjaPositions.Add(new Vector3(-6.45f, -42.75f, -0.01f));
+                    allulMonjaPositions.Add(new Vector3(-11.25f, 30.5f, 0.03f));
+                    allulMonjaPositions.Add(new Vector3(0, 33.75f, 0.03f));
+                    allulMonjaPositions.Add(new Vector3(14.25f, 24.85f, 0.03f));
                     break;
             }
             allulMonjaPositions.Shuffle();

@@ -1,4 +1,10 @@
-﻿using BepInEx;
+﻿global using Il2CppInterop.Runtime;
+global using Il2CppInterop.Runtime.Attributes;
+global using Il2CppInterop.Runtime.InteropTypes;
+global using Il2CppInterop.Runtime.InteropTypes.Arrays;
+global using Il2CppInterop.Runtime.Injection;
+
+using BepInEx;
 using BepInEx.Configuration;
 using HarmonyLib;
 using System.Linq;
@@ -9,7 +15,6 @@ using Reactor.Networking;
 using Reactor.Networking.Attributes;
 using AmongUs.Data;
 using AmongUs.GameOptions;
-using Il2CppInterop.Runtime.InteropTypes.Arrays;
 using System;
 
 namespace LasMonjas
@@ -22,7 +27,7 @@ namespace LasMonjas
     {
         public const string Id = "me.allul.lasmonjas";
 
-        public const string VersionString = "3.2.1";
+        public const string VersionString = "3.3.0";
 
         public static System.Version Version = System.Version.Parse(VersionString);
         internal static BepInEx.Logging.ManualLogSource Logger;
@@ -43,7 +48,7 @@ namespace LasMonjas
         
         public static IRegionInfo[] defaultRegions;
         public static void UpdateRegions() {
-            ServerManager serverManager = DestroyableSingleton<ServerManager>.Instance;
+            ServerManager serverManager = FastDestroyableSingleton<ServerManager>.Instance;
             var regions = new IRegionInfo[] {
                 new StaticHttpRegionInfo("Custom", StringNames.NoTranslation, IpCustom.Value, new Il2CppReferenceArray<ServerInfo>(new ServerInfo[1] { new ServerInfo("Custom", IpCustom.Value, PortCustom.Value, false) })).Cast<IRegionInfo>()
             };
@@ -78,8 +83,8 @@ namespace LasMonjas
 
             UpdateRegions(); 
             
-            GameOptionsData.RecommendedImpostors = GameOptionsData.MaxImpostors = Enumerable.Repeat(3, 16).ToArray(); // Max Imp = Recommended Imp = 3
-            GameOptionsData.MinPlayers = Enumerable.Repeat(4, 15).ToArray(); // Min Players = 4
+            //GameOptionsData.RecommendedImpostors = GameOptionsData.MaxImpostors = Enumerable.Repeat(3, 16).ToArray(); // Max Imp = Recommended Imp = 3
+            //GameOptionsData.MinPlayers = Enumerable.Repeat(4, 15).ToArray(); // Min Players = 4
 
             Instance = this;
             CustomOptionHolder.Load();
