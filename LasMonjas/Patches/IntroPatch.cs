@@ -7,6 +7,7 @@ using System.Linq;
 using LasMonjas.Objects;
 using LasMonjas.Core;
 using AmongUs.GameOptions;
+using TMPro;
 
 namespace LasMonjas.Patches
 {
@@ -86,39 +87,7 @@ namespace LasMonjas.Patches
     {
         public static void setupIntroTeamIcons(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam) {
 
-            SoundManager.Instance.StopSound(CustomMain.customAssets.lobbyMusic);
-
-            whichgamemodeHUD = 0;
-            switch (gameType) {
-                case 2:
-                    // CTF
-                    whichgamemodeHUD = 1;
-                    break;
-                case 3:
-                    // PT
-                    whichgamemodeHUD = 2;
-                    break;
-                case 4:
-                    // KOTH
-                    whichgamemodeHUD = 3;
-                    break;
-                case 5:
-                    // HP
-                    whichgamemodeHUD = 4;
-                    break;
-                case 6:
-                    // ZL
-                    whichgamemodeHUD = 5;
-                    break;
-                case 7:
-                    // BR
-                    whichgamemodeHUD = 6;
-                    break;
-                case 8:
-                    // MJ
-                    whichgamemodeHUD = 7;
-                    break;
-            }
+            SoundManager.Instance.StopSound(CustomMain.customAssets.lobbyMusic);            
 
             if (GameOptionsManager.Instance.currentGameMode == GameModes.Normal) {
                 switch (gameType) {
@@ -282,9 +251,9 @@ namespace LasMonjas.Patches
                     case 5:
                         // HP
                         __instance.ImpostorText.text = "";
-                        __instance.BackgroundBar.material.color = Shy.color;
+                        __instance.BackgroundBar.material.color = Locksmith.color;
                         __instance.TeamTitle.text = Language.teamNames[5];
-                        __instance.TeamTitle.color = Shy.color;
+                        __instance.TeamTitle.color = Locksmith.color;
                         break;
                     case 6:
                         // ZL
@@ -343,15 +312,35 @@ namespace LasMonjas.Patches
                     __instance.RoleBlurbText.color = color;
                 })));
 
-                // Create the doorlog access from anywhere to the Vigilant on MiraHQ
-                if (Vigilant.vigilantMira != null && GameOptionsManager.Instance.currentGameOptions.MapId == 1 && Vigilant.vigilantMira == PlayerInCache.LocalPlayer.PlayerControl && !Vigilant.createdDoorLog) {
-                    GameObject vigilantDoorLog = GameObject.Find("SurvLogConsole");
-                    Vigilant.doorLog = GameObject.Instantiate(vigilantDoorLog, Vigilant.vigilantMira.transform);
-                    Vigilant.doorLog.name = "VigilantDoorLog";
-                    Vigilant.doorLog.layer = 8; // Assign player layer to ignore collisions
-                    Vigilant.doorLog.GetComponent<SpriteRenderer>().enabled = false;
-                    Vigilant.doorLog.transform.localPosition = new Vector2(0, -0.5f);
-                    Vigilant.createdDoorLog = true;
+                // MiraHQ special roles
+                if (GameOptionsManager.Instance.currentGameOptions.MapId == 1) {
+
+                    // Create the doorlog access from anywhere to the Vigilant
+                    if (Vigilant.vigilantMira != null && Vigilant.vigilantMira == PlayerInCache.LocalPlayer.PlayerControl && !Vigilant.createdDoorLog) {
+                        GameObject vigilantDoorLog = GameObject.Find("SurvLogConsole");
+                        Vigilant.doorLog = GameObject.Instantiate(vigilantDoorLog, Vigilant.vigilantMira.transform);
+                        Vigilant.doorLog.name = "VigilantDoorLog";
+                        Vigilant.doorLog.layer = 8; // Assign player layer to ignore collisions
+                        Vigilant.doorLog.GetComponent<SpriteRenderer>().enabled = false;
+                        Vigilant.doorLog.transform.localPosition = new Vector2(0, -0.5f);
+                        Vigilant.createdDoorLog = true;
+                    }
+
+                    // Remove decon doors if locksmith spawns
+                    if (Locksmith.locksmith != null) {
+                        GameObject deconUpperDoor = GameObject.Find("UpperDoor");
+                        deconUpperDoor.SetActive(false);
+                        GameObject deconLowerDoor = GameObject.Find("LowerDoor");
+                        deconLowerDoor.SetActive(false);
+                        GameObject deconUpperDoorPanelTop = GameObject.Find("DeconDoorPanel-Top");
+                        deconUpperDoorPanelTop.SetActive(false);
+                        GameObject deconUpperDoorPanelHigh = GameObject.Find("DeconDoorPanel-High");
+                        deconUpperDoorPanelHigh.SetActive(false);
+                        GameObject deconUpperDoorPanelBottom = GameObject.Find("DeconDoorPanel-Bottom");
+                        deconUpperDoorPanelBottom.SetActive(false);
+                        GameObject deconUpperDoorPanelLow = GameObject.Find("DeconDoorPanel-Low");
+                        deconUpperDoorPanelLow.SetActive(false);
+                    }
                 }
 
                 // Create the duel arena if there's a Challenger
@@ -404,6 +393,34 @@ namespace LasMonjas.Patches
                     createdseekerarena = true;
                 }
 
+                // Create the Devourer arena if there's a Devourer
+                if (Devourer.devourer != null && PlayerInCache.LocalPlayer.PlayerControl != null && !createddevourerarena) {
+                    GameObject devourerArena = GameObject.Instantiate(CustomMain.customAssets.devourerArena, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                    devourerArena.name = "devourerArena";
+                    devourerArena.transform.position = new Vector3(-40, 0f, 1f);
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) { // Create another devourer arena on submerged lower floor
+                        GameObject lowerdevourerArena = GameObject.Instantiate(CustomMain.customAssets.devourerArena, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                        lowerdevourerArena.name = "lowerdevourerArena";
+                        lowerdevourerArena.transform.position = new Vector3(-40, -48.119f, 1f);
+                    }
+                    createddevourerarena = true;
+                }
+                
+                // Bomberman area
+                if (Bomberman.bomberman != null && PlayerInCache.LocalPlayer.PlayerControl == Bomberman.bomberman) {
+                    GameObject bombArea = GameObject.Instantiate(CustomMain.customAssets.bombermanArea, PlayerInCache.LocalPlayer.PlayerControl.transform);
+                    bombArea.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        bombArea.transform.localPosition = new Vector3(0, 0f, -0.5f);
+                    }
+                    else {
+                        bombArea.transform.localPosition = new Vector3(0, 0f, 1f);
+                    }
+                    bombArea.transform.localScale = new Vector3(3.5f, 3.5f, 3.5f);
+                    Bomberman.bombArea = bombArea;
+                    Bomberman.bombArea.SetActive(false);
+                }
+                
                 // Submerged remove Chameleon special vent
                 if (Chameleon.chameleon != null && PlayerInCache.LocalPlayer.PlayerControl == Chameleon.chameleon && GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                     GameObject vent = GameObject.Find("LowerCentralVent");
@@ -458,7 +475,7 @@ namespace LasMonjas.Patches
                 clearSwipeCardTask();
 
                 // Remove airship doors
-                removeAirshipDoors();
+                //removeAirshipDoors();
 
                 // Activate sensei map
                 Helpers.activateSenseiMap();               
@@ -609,7 +626,7 @@ namespace LasMonjas.Patches
 
                     if (gameType == 1 && !createdWhoAmI) {
                         // Create who Am I Mode
-                        string[] crewRoleNames = new string[25] { "captainRole", "mechanicRole", "sheriffRole", "detectiveRole", "forensicRole", "timetravelerRole", "squireRole", "cheaterRole", "fortunetellerRole", "hackerRole", "sleuthRole", "finkRole", "kidRole", "welderRole", "spiritualistRole", "vigilantRole", "hunterRole", "jinxRole", "cowardRole", "batRole", "necromancerRole", "engineerRole", "shyRole", "taskmasterRole", "jailerRole" };
+                        string[] crewRoleNames = new string[25] { "captainRole", "mechanicRole", "sheriffRole", "detectiveRole", "forensicRole", "timetravelerRole", "squireRole", "cheaterRole", "fortunetellerRole", "hackerRole", "sleuthRole", "finkRole", "kidRole", "welderRole", "spiritualistRole", "vigilantRole", "hunterRole", "jinxRole", "cowardRole", "batRole", "necromancerRole", "engineerRole", "locksmithRole", "taskmasterRole", "jailerRole" };
                         // Crew boxes
                         for (int i = 0; i < ZombieLaboratory.susBoxPositions.Count - 35; i++) {
                             GameObject whoAmICrewBox = GameObject.Instantiate(CustomMain.customAssets.susBoxThreeColor, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
@@ -672,280 +689,258 @@ namespace LasMonjas.Patches
                     }
 
                     if (gameType >= 2) {
+                        progress = GameObject.Find("ProgressTracker");
+                        progress.GetComponentInChildren<TextTranslatorTMP>().enabled = false;
+                        progress.GetComponentInChildren<TextMeshPro>().alignment = TextAlignmentOptions.Right;
                         switch (gameType) {
                             case 2:
                                 // CTF:
                                 Helpers.CreateCTF();
+                                progress.GetComponentInChildren<TextMeshPro>().text = Language.introTexts[1] + LasMonjas.gamemodeMatchDuration.ToString("F0");
+                                new CustomMessage(CaptureTheFlag.flagpointCounter, LasMonjas.gamemodeMatchDuration, new Vector2(-2.5f, 2.35f), 15);
+                                // Add Arrows pointing the flags
+                                if (CaptureTheFlag.localRedFlagArrow.Count == 0) CaptureTheFlag.localRedFlagArrow.Add(new Arrow(Color.red));
+                                CaptureTheFlag.localRedFlagArrow[0].arrow.SetActive(true);
+                                if (CaptureTheFlag.localBlueFlagArrow.Count == 0) CaptureTheFlag.localBlueFlagArrow.Add(new Arrow(Color.blue));
+                                CaptureTheFlag.localBlueFlagArrow[0].arrow.SetActive(true); 
                                 break;
                             case 3:
                                 // PAT:
                                 Helpers.CreatePAT();
+                                if (!PoliceAndThief.policeCanSeeJewels) {
+                                    foreach (PlayerControl police in PoliceAndThief.policeTeam) {
+                                        if (police == PlayerInCache.LocalPlayer.PlayerControl) {
+                                            foreach (GameObject jewel in PoliceAndThief.thiefTreasures) {
+                                                jewel.SetActive(false);
+                                            }
+                                        }
+                                    }
+                                }
+                                progress.GetComponentInChildren<TextMeshPro>().text = Language.introTexts[1] + LasMonjas.gamemodeMatchDuration.ToString("F0");
+                                PoliceAndThief.thiefpointCounter = Language.introTexts[3] + "<color=#00F7FFFF>" + PoliceAndThief.currentJewelsStoled + " / " + PoliceAndThief.requiredJewels + "</color> | " + Language.introTexts[4] + "<color=#928B55FF>" + PoliceAndThief.currentThiefsCaptured + " / " + PoliceAndThief.thiefTeam.Count + "</color>";
+                                new CustomMessage(PoliceAndThief.thiefpointCounter, LasMonjas.gamemodeMatchDuration, new Vector2(-2.5f, 2.35f), 15); 
                                 break;
                             case 4:
                                 // KOTH:
                                 Helpers.CreateKOTH();
+                                progress.GetComponentInChildren<TextMeshPro>().text = Language.introTexts[1] + LasMonjas.gamemodeMatchDuration.ToString("F0");
+                                new CustomMessage(KingOfTheHill.kingpointCounter, LasMonjas.gamemodeMatchDuration, new Vector2(-2.5f, 2.35f), 15);
+                                // Add Arrows pointing the zones
+                                if (KingOfTheHill.localArrows.Count == 0 && KingOfTheHill.localArrows.Count < 4) {
+                                    KingOfTheHill.localArrows.Add(new Arrow(KingOfTheHill.zoneonecolor));
+                                    KingOfTheHill.localArrows.Add(new Arrow(KingOfTheHill.zonetwocolor));
+                                    KingOfTheHill.localArrows.Add(new Arrow(KingOfTheHill.zonethreecolor));
+                                    KingOfTheHill.localArrows.Add(new Arrow(Color.cyan));
+                                    KingOfTheHill.localArrows.Add(new Arrow(Color.cyan));
+                                    KingOfTheHill.localArrows.Add(new Arrow(Color.cyan));
+                                }
+                                KingOfTheHill.localArrows[0].arrow.SetActive(true);
+                                KingOfTheHill.localArrows[1].arrow.SetActive(true);
+                                KingOfTheHill.localArrows[2].arrow.SetActive(true);
+                                if (PlayerInCache.LocalPlayer.PlayerControl == KingOfTheHill.greenKingplayer || PlayerInCache.LocalPlayer.PlayerControl == KingOfTheHill.yellowKingplayer) {
+                                    KingOfTheHill.localArrows[3].arrow.SetActive(false);
+                                }
+                                else {
+                                    KingOfTheHill.localArrows[3].arrow.SetActive(true);
+                                }
+                                if (KingOfTheHill.usurperPlayer != null && PlayerInCache.LocalPlayer.PlayerControl == KingOfTheHill.usurperPlayer) {
+                                    KingOfTheHill.localArrows[3].arrow.SetActive(false);
+                                    KingOfTheHill.localArrows[4].arrow.SetActive(true);
+                                    KingOfTheHill.localArrows[5].arrow.SetActive(true);
+                                }
+                                else {
+                                    KingOfTheHill.localArrows[4].arrow.SetActive(false);
+                                    KingOfTheHill.localArrows[5].arrow.SetActive(false);
+                                }
                                 break;
                             case 5:
                                 // HP:
-                                Helpers.CreateHP();
+                                Helpers.CreateHP();                                
+                                progress.GetComponentInChildren<TextMeshPro>().text = "<color=#FF8000FF>" + Language.introTexts[1] + "</color>" + gamemodeMatchDuration.ToString("F0") + " | <color=#FF8000FF>" + Language.introTexts[5] + "</color>" + HotPotato.timeforTransfer.ToString("F0");
+                                HotPotato.hotpotatopointCounter = Language.introTexts[5] + "<color=#808080FF>" + HotPotato.hotPotatoPlayer.name + "</color> | " + Language.introTexts[6] + "<color=#00F7FFFF>" + HotPotato.notPotatoTeam.Count + "</color>";
+                                new CustomMessage(HotPotato.hotpotatopointCounter, LasMonjas.gamemodeMatchDuration, new Vector2(-2.5f, 2.35f), 15);
                                 break;
                             case 6:
                                 // ZL:
                                 Helpers.CreateZL();
+                                // Spawn key items
+                                GameObject keyitem01 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                                keyitem01.transform.position = ZombieLaboratory.susBoxPositions[0];
+                                keyitem01.name = "keyItem01";
+                                ZombieLaboratory.laboratoryKeyItem01 = keyitem01;
+                                GameObject keyitem02 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                                keyitem02.transform.position = ZombieLaboratory.susBoxPositions[1];
+                                keyitem02.name = "keyItem02";
+                                ZombieLaboratory.laboratoryKeyItem02 = keyitem02;
+                                GameObject keyitem03 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                                keyitem03.transform.position = ZombieLaboratory.susBoxPositions[2];
+                                keyitem03.name = "keyItem03";
+                                ZombieLaboratory.laboratoryKeyItem03 = keyitem03;
+                                GameObject keyitem04 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                                keyitem04.transform.position = ZombieLaboratory.susBoxPositions[3];
+                                keyitem04.name = "keyItem04";
+                                ZombieLaboratory.laboratoryKeyItem04 = keyitem04;
+                                GameObject keyitem05 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                                keyitem05.transform.position = ZombieLaboratory.susBoxPositions[4];
+                                keyitem05.name = "keyItem05";
+                                ZombieLaboratory.laboratoryKeyItem05 = keyitem05;
+                                GameObject keyitem06 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                                keyitem06.transform.position = ZombieLaboratory.susBoxPositions[5];
+                                keyitem06.name = "keyItem06";
+                                ZombieLaboratory.laboratoryKeyItem06 = keyitem06;
+                                // Ammoboxes
+                                GameObject ammoBox01 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                                ammoBox01.transform.position = ZombieLaboratory.susBoxPositions[6];
+                                ammoBox01.name = "ammoBox";
+                                GameObject ammoBox02 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                                ammoBox02.transform.position = ZombieLaboratory.susBoxPositions[7];
+                                ammoBox02.name = "ammoBox";
+                                GameObject ammoBox03 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                                ammoBox03.transform.position = ZombieLaboratory.susBoxPositions[8];
+                                ammoBox03.name = "ammoBox";
+                                GameObject ammoBox04 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                                ammoBox04.transform.position = ZombieLaboratory.susBoxPositions[9];
+                                ammoBox04.name = "ammoBox";
+                                ZombieLaboratory.groundItems.Add(keyitem01);
+                                ZombieLaboratory.groundItems.Add(keyitem02);
+                                ZombieLaboratory.groundItems.Add(keyitem03);
+                                ZombieLaboratory.groundItems.Add(keyitem04);
+                                ZombieLaboratory.groundItems.Add(keyitem05);
+                                ZombieLaboratory.groundItems.Add(keyitem06);
+                                ZombieLaboratory.groundItems.Add(ammoBox01);
+                                ZombieLaboratory.groundItems.Add(ammoBox02);
+                                ZombieLaboratory.groundItems.Add(ammoBox03);
+                                ZombieLaboratory.groundItems.Add(ammoBox04);
+                                // Nothing boxes
+                                for (int i = 0; i < ZombieLaboratory.susBoxPositions.Count - 10; i++) {
+                                    GameObject nothingBox = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                                    nothingBox.transform.position = ZombieLaboratory.susBoxPositions[i + 10];
+                                    nothingBox.name = "nothingBox";
+                                    ZombieLaboratory.groundItems.Add(nothingBox);
+                                }
+                                progress.GetComponentInChildren<TextMeshPro>().text = Language.introTexts[1] + LasMonjas.gamemodeMatchDuration.ToString("F0");
+                                ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
+                                new CustomMessage(ZombieLaboratory.zombieLaboratoryCounter, LasMonjas.gamemodeMatchDuration, new Vector2(-2.5f, 2.35f), 15); 
                                 break;
                             case 7:
                                 // BR:
                                 Helpers.CreateBR();
+                                progress.GetComponentInChildren<TextMeshPro>().text = Language.introTexts[1] + LasMonjas.gamemodeMatchDuration.ToString("F0");
+                                switch (BattleRoyale.matchType) {
+                                    case 0:
+                                        BattleRoyale.battleRoyalepointCounter = Language.introTexts[11] + "<color=#009F57FF>" + BattleRoyale.soloPlayerTeam.Count + "</color>";
+                                        break;
+                                    case 1:
+                                        if (BattleRoyale.serialKiller != null) {
+                                            BattleRoyale.battleRoyalepointCounter = Language.introTexts[12] + "<color=#39FF14FF>" + BattleRoyale.limeTeam.Count + "</color> | " + Language.introTexts[13] + "<color=#F2BEFFFF>" + BattleRoyale.pinkTeam.Count + "</color> | " + Language.introTexts[14] + "<color=#808080FF>" + BattleRoyale.serialKillerTeam.Count + "</color>";
+                                        }
+                                        else {
+                                            BattleRoyale.battleRoyalepointCounter = Language.introTexts[12] + "<color=#39FF14FF>" + BattleRoyale.limeTeam.Count + "</color> | " + Language.introTexts[13] + "<color=#F2BEFFFF>" + BattleRoyale.pinkTeam.Count + "</color>";
+                                        }
+                                        break;
+                                    case 2:
+                                        if (BattleRoyale.serialKiller != null) {
+                                            BattleRoyale.battleRoyalepointCounter = Language.introTexts[15] + BattleRoyale.requiredScore + " | <color=#39FF14FF>" + Language.introTexts[12] + BattleRoyale.limePoints + "</color> | " + "<color=#F2BEFFFF>" + Language.introTexts[13] + BattleRoyale.pinkPoints + "</color> | " + "<color=#808080FF>" + Language.introTexts[16] + BattleRoyale.serialKillerPoints + "</color>";
+                                        }
+                                        else {
+                                            BattleRoyale.battleRoyalepointCounter = Language.introTexts[15] + BattleRoyale.requiredScore + " | <color=#39FF14FF>" + Language.introTexts[12] + BattleRoyale.limePoints + "</color> | " + "<color=#F2BEFFFF>" + Language.introTexts[13] + BattleRoyale.pinkPoints + "</color>";
+                                        }
+                                        break;
+                                }
+                                new CustomMessage(BattleRoyale.battleRoyalepointCounter, LasMonjas.gamemodeMatchDuration, new Vector2(-2.5f, 2.35f), 15);
                                 break;
                             case 8:
                                 // MF:
                                 Helpers.CreateMF();
+                                progress.GetComponentInChildren<TextMeshPro>().text = Language.introTexts[1] + LasMonjas.gamemodeMatchDuration.ToString("F0");
+                                if (MonjaFestival.bigMonjaPlayer != null) {
+                                    MonjaFestival.monjaFestivalCounter = "<color=#00FF00FF>" + Language.introTexts[17] + MonjaFestival.greenPoints + "</color> | " + "<color=#00F7FFFF>" + Language.introTexts[18] + MonjaFestival.cyanPoints + "</color> | " + "<color=#808080FF>" + Language.introTexts[19] + MonjaFestival.bigMonjaPoints + "</color>";
+                                }
+                                else {
+                                    MonjaFestival.monjaFestivalCounter = "<color=#00FF00FF>" + Language.introTexts[17] + MonjaFestival.greenPoints + "</color> | " + "<color=#00F7FFFF>" + Language.introTexts[18] + MonjaFestival.cyanPoints + "</color>";
+                                }
+                                new CustomMessage(MonjaFestival.monjaFestivalCounter, LasMonjas.gamemodeMatchDuration, new Vector2(-2.5f, 2.35f), 15);
+                                if (MonjaFestival.localArrows.Count == 0) {
+                                    MonjaFestival.localArrows.Add(new Arrow(Color.green));
+                                    MonjaFestival.localArrows.Add(new Arrow(Color.cyan));
+                                    MonjaFestival.localArrows.Add(new Arrow(Color.grey));
+                                    MonjaFestival.localArrows.Add(new Arrow(Color.grey));
+                                    MonjaFestival.localArrows[0].arrow.SetActive(false);
+                                    MonjaFestival.localArrows[1].arrow.SetActive(false);
+                                    MonjaFestival.localArrows[2].arrow.SetActive(false);
+                                    MonjaFestival.localArrows[3].arrow.SetActive(false);
+
+                                    if (PlayerInCache.LocalPlayer.PlayerControl == MonjaFestival.bigMonjaPlayer) {
+                                        MonjaFestival.localArrows[2].arrow.SetActive(true);
+                                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                                            MonjaFestival.localArrows[3].arrow.SetActive(true);
+                                        }
+                                    }
+
+                                    foreach (PlayerControl player in MonjaFestival.greenTeam) {
+                                        if (player == PlayerInCache.LocalPlayer.PlayerControl)
+                                            MonjaFestival.localArrows[0].arrow.SetActive(true);
+                                    }
+                                    foreach (PlayerControl player in MonjaFestival.cyanTeam) {
+                                        if (player == PlayerInCache.LocalPlayer.PlayerControl)
+                                            MonjaFestival.localArrows[1].arrow.SetActive(true);
+                                    }
+                                }
+                                foreach (PlayerControl player in PlayerInCache.AllPlayers) {
+                                    if (player != null) {
+                                        GameObject hands = GameObject.Instantiate(CustomMain.customAssets.pickOneGreenMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                                        hands.GetComponent<SpriteRenderer>().sprite = null;
+                                        hands.transform.position = new Vector3(player.transform.position.x, player.transform.position.y - 0.1f, -0.5f);
+                                        hands.transform.parent = player.transform;
+                                        hands.name = "hands" + player.name;
+                                    }
+                                }
+                                if (MonjaFestival.greenPlayer01 != null) {
+                                    MonjaFestival.handsGreen01 = GameObject.Find("hands" + MonjaFestival.greenPlayer01.name);
+                                }
+                                if (MonjaFestival.greenPlayer02 != null) {
+                                    MonjaFestival.handsGreen02 = GameObject.Find("hands" + MonjaFestival.greenPlayer02.name);
+                                }
+                                if (MonjaFestival.greenPlayer03 != null) {
+                                    MonjaFestival.handsGreen03 = GameObject.Find("hands" + MonjaFestival.greenPlayer03.name);
+                                }
+                                if (MonjaFestival.greenPlayer04 != null) {
+                                    MonjaFestival.handsGreen04 = GameObject.Find("hands" + MonjaFestival.greenPlayer04.name);
+                                }
+                                if (MonjaFestival.greenPlayer05 != null) {
+                                    MonjaFestival.handsGreen05 = GameObject.Find("hands" + MonjaFestival.greenPlayer05.name);
+                                }
+                                if (MonjaFestival.greenPlayer06 != null) {
+                                    MonjaFestival.handsGreen06 = GameObject.Find("hands" + MonjaFestival.greenPlayer06.name);
+                                }
+                                if (MonjaFestival.greenPlayer07 != null) {
+                                    MonjaFestival.handsGreen07 = GameObject.Find("hands" + MonjaFestival.greenPlayer07.name);
+                                }
+                                if (MonjaFestival.cyanPlayer01 != null) {
+                                    MonjaFestival.handsCyan01 = GameObject.Find("hands" + MonjaFestival.cyanPlayer01.name);
+                                }
+                                if (MonjaFestival.cyanPlayer02 != null) {
+                                    MonjaFestival.handsCyan02 = GameObject.Find("hands" + MonjaFestival.cyanPlayer02.name);
+                                }
+                                if (MonjaFestival.cyanPlayer03 != null) {
+                                    MonjaFestival.handsCyan03 = GameObject.Find("hands" + MonjaFestival.cyanPlayer03.name);
+                                }
+                                if (MonjaFestival.cyanPlayer04 != null) {
+                                    MonjaFestival.handsCyan04 = GameObject.Find("hands" + MonjaFestival.cyanPlayer04.name);
+                                }
+                                if (MonjaFestival.cyanPlayer05 != null) {
+                                    MonjaFestival.handsCyan05 = GameObject.Find("hands" + MonjaFestival.cyanPlayer05.name);
+                                }
+                                if (MonjaFestival.cyanPlayer06 != null) {
+                                    MonjaFestival.handsCyan06 = GameObject.Find("hands" + MonjaFestival.cyanPlayer06.name);
+                                }
+                                if (MonjaFestival.cyanPlayer07 != null) {
+                                    MonjaFestival.handsCyan07 = GameObject.Find("hands" + MonjaFestival.cyanPlayer07.name);
+                                }
                                 break;
                         }
                         Helpers.RemoveObjectsOnGamemodes(GameOptionsManager.Instance.currentGameOptions.MapId);
-                    }
-
-                    switch (whichgamemodeHUD) {
-                        // Capture The Flag
-                        case 1:
-                            new CustomMessage(Language.introTexts[1], LasMonjas.gamemodeMatchDuration, -1.3f, 15);
-                            new CustomMessage(CaptureTheFlag.flagpointCounter, LasMonjas.gamemodeMatchDuration, 1.9f, 17);
-                            // Add Arrows pointing the flags
-                            if (CaptureTheFlag.localRedFlagArrow.Count == 0) CaptureTheFlag.localRedFlagArrow.Add(new Arrow(Color.red));
-                            CaptureTheFlag.localRedFlagArrow[0].arrow.SetActive(true);
-                            if (CaptureTheFlag.localBlueFlagArrow.Count == 0) CaptureTheFlag.localBlueFlagArrow.Add(new Arrow(Color.blue));
-                            CaptureTheFlag.localBlueFlagArrow[0].arrow.SetActive(true);
-                            break;
-                        // Police And Thiefs
-                        case 2:
-                            if (!PoliceAndThief.policeCanSeeJewels) {
-                                foreach (PlayerControl police in PoliceAndThief.policeTeam) {
-                                    if (police == PlayerInCache.LocalPlayer.PlayerControl) {
-                                        foreach (GameObject jewel in PoliceAndThief.thiefTreasures) {
-                                            jewel.SetActive(false);
-                                        }
-                                    }
-                                }
-                            }
-                            new CustomMessage(Language.introTexts[1], LasMonjas.gamemodeMatchDuration, -1.3f, 15);
-                            PoliceAndThief.thiefpointCounter = Language.introTexts[3] + "<color=#00F7FFFF>" + PoliceAndThief.currentJewelsStoled + " / " + PoliceAndThief.requiredJewels + "</color> | " + Language.introTexts[4] + "<color=#928B55FF>" + PoliceAndThief.currentThiefsCaptured + " / " + PoliceAndThief.thiefTeam.Count + "</color>";
-                            new CustomMessage(PoliceAndThief.thiefpointCounter, LasMonjas.gamemodeMatchDuration, 1.9f, 17);
-                            break;
-                        // King Of The Hill
-                        case 3:
-                            new CustomMessage(Language.introTexts[1], LasMonjas.gamemodeMatchDuration, -1.3f, 15);
-                            new CustomMessage(KingOfTheHill.kingpointCounter, LasMonjas.gamemodeMatchDuration, 1.9f, 17);
-                            // Add Arrows pointing the zones
-                            if (KingOfTheHill.localArrows.Count == 0 && KingOfTheHill.localArrows.Count < 4) {
-                                KingOfTheHill.localArrows.Add(new Arrow(KingOfTheHill.zoneonecolor));
-                                KingOfTheHill.localArrows.Add(new Arrow(KingOfTheHill.zonetwocolor));
-                                KingOfTheHill.localArrows.Add(new Arrow(KingOfTheHill.zonethreecolor));
-                                KingOfTheHill.localArrows.Add(new Arrow(Color.cyan));
-                                KingOfTheHill.localArrows.Add(new Arrow(Color.cyan));
-                                KingOfTheHill.localArrows.Add(new Arrow(Color.cyan));
-                            }
-                            KingOfTheHill.localArrows[0].arrow.SetActive(true);
-                            KingOfTheHill.localArrows[1].arrow.SetActive(true);
-                            KingOfTheHill.localArrows[2].arrow.SetActive(true);
-                            if (PlayerInCache.LocalPlayer.PlayerControl == KingOfTheHill.greenKingplayer || PlayerInCache.LocalPlayer.PlayerControl == KingOfTheHill.yellowKingplayer) {
-                                KingOfTheHill.localArrows[3].arrow.SetActive(false);
-                            }
-                            else {
-                                KingOfTheHill.localArrows[3].arrow.SetActive(true);
-                            }
-                            if (KingOfTheHill.usurperPlayer != null && PlayerInCache.LocalPlayer.PlayerControl == KingOfTheHill.usurperPlayer) {
-                                KingOfTheHill.localArrows[3].arrow.SetActive(false);
-                                KingOfTheHill.localArrows[4].arrow.SetActive(true);
-                                KingOfTheHill.localArrows[5].arrow.SetActive(true);
-                            }
-                            else {
-                                KingOfTheHill.localArrows[4].arrow.SetActive(false);
-                                KingOfTheHill.localArrows[5].arrow.SetActive(false);
-                            }
-                            break;
-                        // Hot Potato
-                        case 4:
-                            new CustomMessage(Language.introTexts[5], LasMonjas.gamemodeMatchDuration, -1f, 18);
-                            new CustomMessage(Language.introTexts[1], LasMonjas.gamemodeMatchDuration, -1.3f, 15);
-                            HotPotato.hotpotatopointCounter = Language.introTexts[5] + "<color=#808080FF>" + HotPotato.hotPotatoPlayer.name + "</color> | " + Language.introTexts[6] + "<color=#00F7FFFF>" + HotPotato.notPotatoTeam.Count + "</color>";
-                            new CustomMessage(HotPotato.hotpotatopointCounter, LasMonjas.gamemodeMatchDuration, 1.9f, 17); 
-                            break;
-                        // Zombie Laboratory
-                        case 5:
-                            // Spawn key items
-                            GameObject keyitem01 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                            keyitem01.transform.position = ZombieLaboratory.susBoxPositions[0];
-                            keyitem01.name = "keyItem01";
-                            ZombieLaboratory.laboratoryKeyItem01 = keyitem01;
-                            GameObject keyitem02 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                            keyitem02.transform.position = ZombieLaboratory.susBoxPositions[1];
-                            keyitem02.name = "keyItem02";
-                            ZombieLaboratory.laboratoryKeyItem02 = keyitem02;
-                            GameObject keyitem03 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                            keyitem03.transform.position = ZombieLaboratory.susBoxPositions[2];
-                            keyitem03.name = "keyItem03";
-                            ZombieLaboratory.laboratoryKeyItem03 = keyitem03;
-                            GameObject keyitem04 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                            keyitem04.transform.position = ZombieLaboratory.susBoxPositions[3];
-                            keyitem04.name = "keyItem04";
-                            ZombieLaboratory.laboratoryKeyItem04 = keyitem04;
-                            GameObject keyitem05 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                            keyitem05.transform.position = ZombieLaboratory.susBoxPositions[4];
-                            keyitem05.name = "keyItem05";
-                            ZombieLaboratory.laboratoryKeyItem05 = keyitem05;
-                            GameObject keyitem06 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                            keyitem06.transform.position = ZombieLaboratory.susBoxPositions[5];
-                            keyitem06.name = "keyItem06";
-                            ZombieLaboratory.laboratoryKeyItem06 = keyitem06;
-                            // Ammoboxes
-                            GameObject ammoBox01 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                            ammoBox01.transform.position = ZombieLaboratory.susBoxPositions[6];
-                            ammoBox01.name = "ammoBox";
-                            GameObject ammoBox02 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                            ammoBox02.transform.position = ZombieLaboratory.susBoxPositions[7];
-                            ammoBox02.name = "ammoBox";
-                            GameObject ammoBox03 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                            ammoBox03.transform.position = ZombieLaboratory.susBoxPositions[8];
-                            ammoBox03.name = "ammoBox";
-                            GameObject ammoBox04 = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                            ammoBox04.transform.position = ZombieLaboratory.susBoxPositions[9];
-                            ammoBox04.name = "ammoBox";
-                            ZombieLaboratory.groundItems.Add(keyitem01);
-                            ZombieLaboratory.groundItems.Add(keyitem02);
-                            ZombieLaboratory.groundItems.Add(keyitem03);
-                            ZombieLaboratory.groundItems.Add(keyitem04);
-                            ZombieLaboratory.groundItems.Add(keyitem05);
-                            ZombieLaboratory.groundItems.Add(keyitem06);
-                            ZombieLaboratory.groundItems.Add(ammoBox01);
-                            ZombieLaboratory.groundItems.Add(ammoBox02);
-                            ZombieLaboratory.groundItems.Add(ammoBox03);
-                            ZombieLaboratory.groundItems.Add(ammoBox04);
-                            // Nothing boxes
-                            for (int i = 0; i < ZombieLaboratory.susBoxPositions.Count - 10; i++) {
-                                GameObject nothingBox = GameObject.Instantiate(CustomMain.customAssets.susBox, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                                nothingBox.transform.position = ZombieLaboratory.susBoxPositions[i + 10];
-                                nothingBox.name = "nothingBox";
-                                ZombieLaboratory.groundItems.Add(nothingBox);
-                            }
-                            new CustomMessage(Language.introTexts[1], LasMonjas.gamemodeMatchDuration, -1.3f, 15);
-                            ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
-                            new CustomMessage(ZombieLaboratory.zombieLaboratoryCounter, LasMonjas.gamemodeMatchDuration, 1.9f, 17);
-                            break;
-                        // Battle Royale
-                        case 6:
-                            new CustomMessage(Language.introTexts[1], LasMonjas.gamemodeMatchDuration, -1.3f, 15);
-                            switch (BattleRoyale.matchType) {
-                                case 0:
-                                    BattleRoyale.battleRoyalepointCounter = Language.introTexts[11] + "<color=#009F57FF>" + BattleRoyale.soloPlayerTeam.Count + "</color>";
-                                    break;
-                                case 1:
-                                    if (BattleRoyale.serialKiller != null) {
-                                        BattleRoyale.battleRoyalepointCounter = Language.introTexts[12] + "<color=#39FF14FF>" + BattleRoyale.limeTeam.Count + "</color> | " + Language.introTexts[13] + "<color=#F2BEFFFF>" + BattleRoyale.pinkTeam.Count + "</color> | " + Language.introTexts[14] + "<color=#808080FF>" + BattleRoyale.serialKillerTeam.Count + "</color>";
-                                    }
-                                    else {
-                                        BattleRoyale.battleRoyalepointCounter = Language.introTexts[12] + "<color=#39FF14FF>" + BattleRoyale.limeTeam.Count + "</color> | " + Language.introTexts[13] + "<color=#F2BEFFFF>" + BattleRoyale.pinkTeam.Count + "</color>";
-                                    }
-                                    break;
-                                case 2:
-                                    if (BattleRoyale.serialKiller != null) {
-                                        BattleRoyale.battleRoyalepointCounter = Language.introTexts[15] + BattleRoyale.requiredScore + " | <color=#39FF14FF>" + Language.introTexts[12] + BattleRoyale.limePoints + "</color> | " + "<color=#F2BEFFFF>" + Language.introTexts[13] + BattleRoyale.pinkPoints + "</color> | " + "<color=#808080FF>" + Language.introTexts[16] + BattleRoyale.serialKillerPoints + "</color>";
-                                    }
-                                    else {
-                                        BattleRoyale.battleRoyalepointCounter = Language.introTexts[15] + BattleRoyale.requiredScore + " | <color=#39FF14FF>" + Language.introTexts[12] + BattleRoyale.limePoints + "</color> | " + "<color=#F2BEFFFF>" + Language.introTexts[13] + BattleRoyale.pinkPoints + "</color>";
-                                    }
-                                    break;
-                            }
-                            new CustomMessage(BattleRoyale.battleRoyalepointCounter, LasMonjas.gamemodeMatchDuration, 1.9f, 17);
-                            break;
-                        // Monja Festival
-                        case 7:
-                            new CustomMessage(Language.introTexts[1], LasMonjas.gamemodeMatchDuration, -1.3f, 15);
-                            if (MonjaFestival.bigMonjaPlayer != null) {
-                                MonjaFestival.monjaFestivalCounter = "<color=#00FF00FF>" + Language.introTexts[17] + MonjaFestival.greenPoints + "</color> | " + "<color=#00F7FFFF>" + Language.introTexts[18] + MonjaFestival.cyanPoints + "</color> | " + "<color=#808080FF>" + Language.introTexts[19] + MonjaFestival.bigMonjaPoints + "</color>";
-                            }
-                            else {
-                                MonjaFestival.monjaFestivalCounter = "<color=#00FF00FF>" + Language.introTexts[17] + MonjaFestival.greenPoints + "</color> | " + "<color=#00F7FFFF>" + Language.introTexts[18] + MonjaFestival.cyanPoints + "</color>";
-                            }
-                            new CustomMessage(MonjaFestival.monjaFestivalCounter, LasMonjas.gamemodeMatchDuration, 1.9f, 17);
-                            if (MonjaFestival.localArrows.Count == 0) {
-                                MonjaFestival.localArrows.Add(new Arrow(Color.green));
-                                MonjaFestival.localArrows.Add(new Arrow(Color.cyan));
-                                MonjaFestival.localArrows.Add(new Arrow(Color.grey));
-                                MonjaFestival.localArrows.Add(new Arrow(Color.grey));
-                                MonjaFestival.localArrows[0].arrow.SetActive(false);
-                                MonjaFestival.localArrows[1].arrow.SetActive(false);
-                                MonjaFestival.localArrows[2].arrow.SetActive(false);
-                                MonjaFestival.localArrows[3].arrow.SetActive(false);
-
-                                if (PlayerInCache.LocalPlayer.PlayerControl == MonjaFestival.bigMonjaPlayer) {
-                                    MonjaFestival.localArrows[2].arrow.SetActive(true);
-                                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
-                                        MonjaFestival.localArrows[3].arrow.SetActive(true);
-                                    }
-                                }
-
-                                foreach (PlayerControl player in MonjaFestival.greenTeam) {
-                                    if (player == PlayerInCache.LocalPlayer.PlayerControl)
-                                        MonjaFestival.localArrows[0].arrow.SetActive(true);
-                                }
-                                foreach (PlayerControl player in MonjaFestival.cyanTeam) {
-                                    if (player == PlayerInCache.LocalPlayer.PlayerControl)
-                                        MonjaFestival.localArrows[1].arrow.SetActive(true);
-                                }
-                            }
-                            foreach (PlayerControl player in PlayerInCache.AllPlayers) {
-                                if (player != null) {
-                                    GameObject hands = GameObject.Instantiate(CustomMain.customAssets.pickOneGreenMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                                    hands.GetComponent<SpriteRenderer>().sprite = null;
-                                    hands.transform.position = new Vector3(player.transform.position.x, player.transform.position.y - 0.1f, -0.5f);
-                                    hands.transform.parent = player.transform;
-                                    hands.name = "hands" + player.name;
-                                }
-                            }
-                            if (MonjaFestival.greenPlayer01 != null) {
-                                MonjaFestival.handsGreen01 = GameObject.Find("hands" + MonjaFestival.greenPlayer01.name);
-                            }
-                            if (MonjaFestival.greenPlayer02 != null) {
-                                MonjaFestival.handsGreen02 = GameObject.Find("hands" + MonjaFestival.greenPlayer02.name);
-                            }
-                            if (MonjaFestival.greenPlayer03 != null) {
-                                MonjaFestival.handsGreen03 = GameObject.Find("hands" + MonjaFestival.greenPlayer03.name);
-                            }
-                            if (MonjaFestival.greenPlayer04 != null) {
-                                MonjaFestival.handsGreen04 = GameObject.Find("hands" + MonjaFestival.greenPlayer04.name);
-                            }
-                            if (MonjaFestival.greenPlayer05 != null) {
-                                MonjaFestival.handsGreen05 = GameObject.Find("hands" + MonjaFestival.greenPlayer05.name);
-                            }
-                            if (MonjaFestival.greenPlayer06 != null) {
-                                MonjaFestival.handsGreen06 = GameObject.Find("hands" + MonjaFestival.greenPlayer06.name);
-                            }
-                            if (MonjaFestival.greenPlayer07 != null) {
-                                MonjaFestival.handsGreen07 = GameObject.Find("hands" + MonjaFestival.greenPlayer07.name);
-                            }
-                            if (MonjaFestival.cyanPlayer01 != null) {
-                                MonjaFestival.handsCyan01 = GameObject.Find("hands" + MonjaFestival.cyanPlayer01.name);
-                            }
-                            if (MonjaFestival.cyanPlayer02 != null) {
-                                MonjaFestival.handsCyan02 = GameObject.Find("hands" + MonjaFestival.cyanPlayer02.name);
-                            }
-                            if (MonjaFestival.cyanPlayer03 != null) {
-                                MonjaFestival.handsCyan03 = GameObject.Find("hands" + MonjaFestival.cyanPlayer03.name);
-                            }
-                            if (MonjaFestival.cyanPlayer04 != null) {
-                                MonjaFestival.handsCyan04 = GameObject.Find("hands" + MonjaFestival.cyanPlayer04.name);
-                            }
-                            if (MonjaFestival.cyanPlayer05 != null) {
-                                MonjaFestival.handsCyan05 = GameObject.Find("hands" + MonjaFestival.cyanPlayer05.name);
-                            }
-                            if (MonjaFestival.cyanPlayer06 != null) {
-                                MonjaFestival.handsCyan06 = GameObject.Find("hands" + MonjaFestival.cyanPlayer06.name);
-                            }
-                            if (MonjaFestival.cyanPlayer07 != null) {
-                                MonjaFestival.handsCyan07 = GameObject.Find("hands" + MonjaFestival.cyanPlayer07.name);
-                            }
-                            break;
-                    }
+                    }                    
                 }
             }
         }
@@ -994,7 +989,7 @@ namespace LasMonjas.Patches
             }
         }
 
-        public static void removeAirshipDoors() {
+        /*public static void removeAirshipDoors() {
 
             bool removeAirshipDoors = CustomOptionHolder.removeAirshipDoors.getBool();
 
@@ -1048,6 +1043,6 @@ namespace LasMonjas.Patches
 
                 removedAirshipDoors = true;
             }
-        }
+        }*/
     }
 }

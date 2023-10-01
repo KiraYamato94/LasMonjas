@@ -91,7 +91,7 @@ tomozbot - Original idea for the Mayor (Captain) and Lighter
 NotHunter101 - Original idea for the Medic (Squire and Forensic) and Engineer (Mechanic)
 Woodi-dev - Original idea for the Sheriff, Lovers mod and the Jailer mod reference
 Hardel-DW - Original idea came for the Investigator (Detective) and Time Master (Time Traveler)
-TheOtherRoles - Original idea for Medium (Forensic), Time Master (Time Traveler), Seer (Fortune Teller), Hacker, Tracker (Sleuth), Mini (Kid), Security Guard (Welder and Vigilant), Bait (The Chosen One), Pursuer (Jinx), Vampire (Demon), Trickster (Illusionist), Warlock (Manipulator), Guesser (Gambler), Witch (Sorcerer) and Paintball (Bloody). Also used Submerged's update button.
+TheOtherRoles - Original idea for Medium (Forensic), Time Master (Time Traveler), Seer (Fortune Teller), Hacker, Tracker (Sleuth), Mini (Kid), Security Guard (Welder and Vigilant), Bait (The Chosen One), Pursuer (Jinx), Vampire (Demon), Trickster (Illusionist), Guesser (Gambler), Witch (Sorcerer) and Paintball (Bloody). Also used Submerged's update button.
 Town-Of-Us - Original idea for Swapper (Cheater), Altruist (Spiritualist), Flash, Giant (Big Chungus), Shifter (Role Thief), Arsonist (Pyromaniac), Undertaker (Janitor), Plumber (Miner), Librarian (Blackmailer), Exiler (Executioner) and Amnesiac
 ottomated_ - Original idea for Morphling (Mimic), Camouflager (Painter) and Snitch (Fink)
 Wunax - Original idea for Chameleon
@@ -107,6 +107,8 @@ Eisbison - Original idea for Night Vision cameras
 Pandraghon - Original idea for the Better Reactor, Comms and Oxygen sabotage
 eDonnes124 - Original idea for Drunk (Pro)
 Dolly1016 - Original idea for Sniper (Archer), Empiric (Poisoner), Alien (Bat), Necromancer and Trapper (Engineer)
+Goose Goose Duck - Idea for Devourer (Pelican ability)
+Town of Host - Idea for Welder (vent bomb) and Manipulator
 Herysia - Original idea for the try hard vents
 Twix - Downloader tool used to make Las Monjas Downloader
 四个憨批汉化组 - Partial Chinese translation.

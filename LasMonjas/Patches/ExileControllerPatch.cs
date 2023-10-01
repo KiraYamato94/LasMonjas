@@ -77,6 +77,7 @@ namespace LasMonjas.Patches {
                 vent.name = "SealedVent_" + vent.name;
             }
             MapOptions.ventsToSeal = new List<Vent>();
+            Welder.bombedVent = null;
 
             // Vigilant cameras activate after meeting
             var allCameras = ShipStatus.Instance.AllCameras.ToList();

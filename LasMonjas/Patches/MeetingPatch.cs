@@ -494,8 +494,26 @@ namespace LasMonjas.Patches {
                     Fink.resetCamera();
                 }
 
+                // Remove manipulated
+                if (Manipulator.manipulatedVictim != null) {
+                    Manipulator.manipulatedVictim = null;
+                    Manipulator.manipulatedVictimTimer = 21f;
+                }
+
+                // Check Devourer
+                if (Devourer.devourer != null) {
+                    Devourer.devouredBodies += Devourer.eatenPlayers.Count;
+                    Devourer.devourCounterButtonText.text = $"{Devourer.devouredBodies} / {Devourer.neededBodies}";
+                    Devourer.eatenPlayers.Clear();
+                    if (Devourer.devouredBodies >= Devourer.neededBodies) {
+                        Devourer.triggerdevourerWin = true;
+                    }
+                    Devourer.devourEatCounterButtonText.text = $"{Devourer.eatenPlayers.Count}";
+                }
+
                 // Reset medusa target
                 Medusa.petrified = null;
+                Medusa.petrifiedPlayers.Clear();
 
                 // Reset necromancer Arrow
                 Necromancer.CleanArrow();

@@ -14,7 +14,7 @@ namespace LasMonjas.Patches
     class RoleOptionsDataGetNumPerGamePatch
     {
         public static void Postfix(ref int __result) {
-            if (CustomOptionHolder.activateRoles.getBool() && GameOptionsManager.Instance.CurrentGameOptions.GameMode == GameModes.Normal) __result = 0; // Deactivate Vanilla Roles if the mod roles are active
+            if (GameOptionsManager.Instance.CurrentGameOptions.GameMode == GameModes.Normal) __result = 0; // Deactivate Vanilla Roles
         }
     }
 
@@ -29,14 +29,8 @@ namespace LasMonjas.Patches
             AmongUsClient.Instance.FinishRpcImmediately(writer);
             RPCProcedure.resetVariables();
 
-            if (GameOptionsManager.Instance.currentGameMode == GameModes.Normal) {
-                // Don't assign Roles if deactivated
-                if (!CustomOptionHolder.activateRoles.getBool()) {
-                    gameType = 0;
-                }
-                else {
-                    getRoleAssignmentData();
-                }
+            if (GameOptionsManager.Instance.currentGameMode == GameModes.Normal) {                
+                getRoleAssignmentData();
             }
         }
 
@@ -55,7 +49,7 @@ namespace LasMonjas.Patches
             // Assign roles only if the game won't be a custom gamemode
             switch (gameType) {
                 case 0:
-                // Roles
+                    // Roles
                     int crewmateMax = 15;
                     int neutralMax = 1;
                     int impostorMax = 3;
@@ -132,7 +126,9 @@ namespace LasMonjas.Patches
                     crewSettings.Add((byte)RoleId.Bat, CustomOptionHolder.batSpawnRate.getSelection());
                     crewSettings.Add((byte)RoleId.Necromancer, CustomOptionHolder.necromancerSpawnRate.getSelection());
                     crewSettings.Add((byte)RoleId.Engineer, CustomOptionHolder.engineerSpawnRate.getSelection());
-                    crewSettings.Add((byte)RoleId.Shy, CustomOptionHolder.shySpawnRate.getSelection());
+                    if ((GameOptionsManager.Instance.currentGameOptions.MapId == 0 && !CustomOptionHolder.activateSenseiMap.getBool()) || GameOptionsManager.Instance.currentGameOptions.MapId >= 1) {
+                        crewSettings.Add((byte)RoleId.Locksmith, CustomOptionHolder.locksmithSpawnRate.getSelection());
+                    }
                     crewSettings.Add((byte)RoleId.TaskMaster, CustomOptionHolder.taskMasterSpawnRate.getSelection());
                     crewSettings.Add((byte)RoleId.Jailer, CustomOptionHolder.jailerSpawnRate.getSelection());
 

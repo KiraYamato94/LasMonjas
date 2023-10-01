@@ -12,6 +12,8 @@ using LasMonjas.Core;
 using static LasMonjas.HudManagerStartPatch;
 using AmongUs.GameOptions;
 using System.Collections;
+using TMPro;
+using static UnityEngine.GraphicsBuffer;
 
 namespace LasMonjas.Patches {
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
@@ -121,8 +123,8 @@ namespace LasMonjas.Patches {
                         setPlayerNameColor(Necromancer.necromancer, Necromancer.color);
                     else if (Engineer.engineer != null && Engineer.engineer == PlayerInCache.LocalPlayer.PlayerControl)
                         setPlayerNameColor(Engineer.engineer, Engineer.color);
-                    else if (Shy.shy != null && Shy.shy == PlayerInCache.LocalPlayer.PlayerControl)
-                        setPlayerNameColor(Shy.shy, Shy.color);
+                    else if (Locksmith.locksmith != null && Locksmith.locksmith == PlayerInCache.LocalPlayer.PlayerControl)
+                        setPlayerNameColor(Locksmith.locksmith, Locksmith.color);
                     else if (TaskMaster.taskMaster != null && TaskMaster.taskMaster == PlayerInCache.LocalPlayer.PlayerControl)
                         setPlayerNameColor(TaskMaster.taskMaster, TaskMaster.color);
                     else if (Jailer.jailer != null && Jailer.jailer == PlayerInCache.LocalPlayer.PlayerControl)
@@ -594,31 +596,31 @@ namespace LasMonjas.Patches {
                         foreach (PlayerControl pinkPlayer in BattleRoyale.pinkTeam) {
                             if (pinkPlayer == PlayerInCache.LocalPlayer.PlayerControl) {
                                 if (BattleRoyale.pinkPlayer01 != null) {
-                                    string suffix = Helpers.cs(Shy.color, " (" + BattleRoyale.pinkPlayer01Lifes + "♥)");
+                                    string suffix = Helpers.cs(Locksmith.color, " (" + BattleRoyale.pinkPlayer01Lifes + "♥)");
                                     BattleRoyale.pinkPlayer01.cosmetics.nameText.text += suffix;
                                 }
                                 if (BattleRoyale.pinkPlayer02 != null) {
-                                    string suffix = Helpers.cs(Shy.color, " (" + BattleRoyale.pinkPlayer02Lifes + "♥)");
+                                    string suffix = Helpers.cs(Locksmith.color, " (" + BattleRoyale.pinkPlayer02Lifes + "♥)");
                                     BattleRoyale.pinkPlayer02.cosmetics.nameText.text += suffix;
                                 }
                                 if (BattleRoyale.pinkPlayer03 != null) {
-                                    string suffix = Helpers.cs(Shy.color, " (" + BattleRoyale.pinkPlayer03Lifes + "♥)");
+                                    string suffix = Helpers.cs(Locksmith.color, " (" + BattleRoyale.pinkPlayer03Lifes + "♥)");
                                     BattleRoyale.pinkPlayer03.cosmetics.nameText.text += suffix;
                                 }
                                 if (BattleRoyale.pinkPlayer04 != null) {
-                                    string suffix = Helpers.cs(Shy.color, " (" + BattleRoyale.pinkPlayer04Lifes + "♥)");
+                                    string suffix = Helpers.cs(Locksmith.color, " (" + BattleRoyale.pinkPlayer04Lifes + "♥)");
                                     BattleRoyale.pinkPlayer04.cosmetics.nameText.text += suffix;
                                 }
                                 if (BattleRoyale.pinkPlayer05 != null) {
-                                    string suffix = Helpers.cs(Shy.color, " (" + BattleRoyale.pinkPlayer05Lifes + "♥)");
+                                    string suffix = Helpers.cs(Locksmith.color, " (" + BattleRoyale.pinkPlayer05Lifes + "♥)");
                                     BattleRoyale.pinkPlayer05.cosmetics.nameText.text += suffix;
                                 }
                                 if (BattleRoyale.pinkPlayer06 != null) {
-                                    string suffix = Helpers.cs(Shy.color, " (" + BattleRoyale.pinkPlayer06Lifes + "♥)");
+                                    string suffix = Helpers.cs(Locksmith.color, " (" + BattleRoyale.pinkPlayer06Lifes + "♥)");
                                     BattleRoyale.pinkPlayer06.cosmetics.nameText.text += suffix;
                                 }
                                 if (BattleRoyale.pinkPlayer07 != null) {
-                                    string suffix = Helpers.cs(Shy.color, " (" + BattleRoyale.pinkPlayer07Lifes + "♥)");
+                                    string suffix = Helpers.cs(Locksmith.color, " (" + BattleRoyale.pinkPlayer07Lifes + "♥)");
                                     BattleRoyale.pinkPlayer07.cosmetics.nameText.text += suffix;
                                 }
                             }
@@ -831,11 +833,12 @@ namespace LasMonjas.Patches {
                     if (Illusionist.illusionist != null) {
                         Illusionist.lightsOutTimer -= deltaTime;
                     }
+                    if (Manipulator.manipulatedVictim != null && !MeetingHud.Instance && !Seeker.isMinigaming && !Challenger.isDueling) {
+                        Manipulator.manipulatedVictimTimer -= deltaTime;
+                        Manipulator.manipulatedVictimTimerCountButtonText.text = $"{Manipulator.manipulatedVictimTimer.ToString("F0")}";                        
+                    }
                     if (Bomberman.bomberman != null) {
                         Bomberman.bombTimer -= deltaTime;
-                    }
-                    if (Medusa.medusa != null) {
-                        Medusa.messageTimer -= deltaTime;
                     }
                     if (Hypnotist.hypnotist != null) {
                         Hypnotist.messageTimer -= deltaTime;
@@ -843,7 +846,7 @@ namespace LasMonjas.Patches {
                     if (Berserker.berserker != null && Berserker.killedFirstTime && MeetingHud.Instance == null && !Seeker.isMinigaming && !Berserker.berserker.Data.IsDead) {
                         Berserker.timeToKill -= deltaTime;
                         Berserker.berserkerCountButtonText.text = $"{Berserker.timeToKill.ToString("F0")}";
-                        if (Berserker.timeToKill < 0) {
+                        if (Berserker.timeToKill <= 0) {
                             Berserker.berserker.MurderPlayer(Berserker.berserker);
                         }
                     }
@@ -858,6 +861,7 @@ namespace LasMonjas.Patches {
                     }
                     if (Sleuth.sleuth != null) {
                         Sleuth.corpsesPathfindTimer -= deltaTime;
+                        Sleuth.timer -= deltaTime;
                     }
                     if (Fink.fink != null) {
                         Fink.finkTimer -= deltaTime;
@@ -868,9 +872,6 @@ namespace LasMonjas.Patches {
                     if (Engineer.engineer != null) {
                         Engineer.messageTimer -= deltaTime;
                     }
-                    if (Shy.shy != null) {
-                        Shy.timer -= deltaTime;
-                    }
                     if (TaskMaster.taskMaster != null) {
                         TaskMaster.taskTimer -= deltaTime;
                     }
@@ -880,8 +881,13 @@ namespace LasMonjas.Patches {
                     break;
                 case 2:
                     // CTF timers
+                    progressStart += deltaTime;
                     gamemodeMatchDuration -= deltaTime;
-                    if (gamemodeMatchDuration < 0) {
+                    if (progress != null) {
+                        progress.GetComponentInChildren<TextMeshPro>().text = "<color=#FF8000FF>" + Language.introTexts[1] + "</color>" + gamemodeMatchDuration.ToString("F0");
+                        progress.GetComponent<ProgressTracker>().curValue = Mathf.Lerp(PlayerInCache.AllPlayers.Count - 1, 0, progressStart / progressEnd);
+                    }
+                    if (gamemodeMatchDuration <= 0) {
                         // both teams with same points = Draw
                         if (CaptureTheFlag.currentRedTeamPoints == CaptureTheFlag.currentBlueTeamPoints) {
                             CaptureTheFlag.triggerDrawWin = true;
@@ -908,16 +914,26 @@ namespace LasMonjas.Patches {
                     PoliceAndThief.policeplayer05lightTimer -= deltaTime;
                     PoliceAndThief.policeplayer06lightTimer -= deltaTime;
 
+                    progressStart += deltaTime;
                     gamemodeMatchDuration -= deltaTime;
-                    if (gamemodeMatchDuration < 0) {
+                    if (progress != null) {
+                        progress.GetComponentInChildren<TextMeshPro>().text = "<color=#FF8000FF>" + Language.introTexts[1] + "</color>" + gamemodeMatchDuration.ToString("F0");
+                        progress.GetComponent<ProgressTracker>().curValue = Mathf.Lerp(PlayerInCache.AllPlayers.Count - 1, 0, progressStart / progressEnd);
+                    }
+                    if (gamemodeMatchDuration <= 0) {
                         PoliceAndThief.triggerPoliceWin = true;
                         GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.ThiefModePoliceWin, false);
                     }
                     break;
                 case 4:
                     // KOTH:
+                    progressStart += deltaTime;
                     gamemodeMatchDuration -= deltaTime;
-                    if (gamemodeMatchDuration < 0) {
+                    if (progress != null) {
+                        progress.GetComponentInChildren<TextMeshPro>().text = "<color=#FF8000FF>" + Language.introTexts[1] + "</color>" + gamemodeMatchDuration.ToString("F0");
+                        progress.GetComponent<ProgressTracker>().curValue = Mathf.Lerp(PlayerInCache.AllPlayers.Count - 1, 0, progressStart / progressEnd);
+                    }
+                    if (gamemodeMatchDuration <= 0) {
                         // both teams with same points = draw
                         if (KingOfTheHill.currentGreenTeamPoints == KingOfTheHill.currentYellowTeamPoints) {
                             KingOfTheHill.triggerDrawWin = true;
@@ -964,9 +980,13 @@ namespace LasMonjas.Patches {
                             RPCProcedure.hotPotatoExploded(); 
                         }
 
+                        progressStart += deltaTime;
                         gamemodeMatchDuration -= deltaTime;
-
-                        if (gamemodeMatchDuration < 0) {
+                        if (progress != null) {
+                            progress.GetComponentInChildren<TextMeshPro>().text = "<color=#FF8000FF>" + Language.introTexts[1] + "</color>" + gamemodeMatchDuration.ToString("F0") + " | <color=#FF8000FF>" + Language.introTexts[5] + "</color>" + HotPotato.timeforTransfer.ToString("F0");
+                            progress.GetComponent<ProgressTracker>().curValue = Mathf.Lerp(PlayerInCache.AllPlayers.Count - 1, 0, progressStart / progressEnd);
+                        }
+                        if (gamemodeMatchDuration <= 0) {
                             HotPotato.triggerHotPotatoEnd = true;
                             GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.HotPotatoEnd, false);
                         }
@@ -974,17 +994,26 @@ namespace LasMonjas.Patches {
                     break;
                 case 6:
                     // ZL timers
+                    progressStart += deltaTime;
                     gamemodeMatchDuration -= deltaTime;
-
-                    if (gamemodeMatchDuration < 0) {
+                    if (progress != null) {
+                        progress.GetComponentInChildren<TextMeshPro>().text = "<color=#FF8000FF>" + Language.introTexts[1] + "</color>" + gamemodeMatchDuration.ToString("F0");
+                        progress.GetComponent<ProgressTracker>().curValue = Mathf.Lerp(PlayerInCache.AllPlayers.Count - 1, 0, progressStart / progressEnd);
+                    }
+                    if (gamemodeMatchDuration <= 0) {
                         ZombieLaboratory.triggerZombieWin = true;
                         GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.ZombieWin, false);
                     }
                     break;
                 case 7:
                     // BR timers
+                    progressStart += deltaTime;
                     gamemodeMatchDuration -= deltaTime;
-                    if (gamemodeMatchDuration < 0) {
+                    if (progress != null) {
+                        progress.GetComponentInChildren<TextMeshPro>().text = "<color=#FF8000FF>" +Language.introTexts[1] + "</color>" + gamemodeMatchDuration.ToString("F0");
+                        progress.GetComponent<ProgressTracker>().curValue = Mathf.Lerp(PlayerInCache.AllPlayers.Count - 1, 0, progressStart / progressEnd);
+                    }
+                    if (gamemodeMatchDuration <= 0) {
                         if (BattleRoyale.matchType == 2) {
                             if (BattleRoyale.serialKiller != null) {
                                 // all teams with same points = Draw
@@ -1039,8 +1068,13 @@ namespace LasMonjas.Patches {
                     break;
                 case 8:
                     // MF
+                    progressStart += deltaTime;
                     gamemodeMatchDuration -= deltaTime;
-                    if (gamemodeMatchDuration < 0) {
+                    if (progress != null) {
+                        progress.GetComponentInChildren<TextMeshPro>().text = "<color=#FF8000FF>" + Language.introTexts[1] + "</color>" + gamemodeMatchDuration.ToString("F0");
+                        progress.GetComponent<ProgressTracker>().curValue = Mathf.Lerp(PlayerInCache.AllPlayers.Count - 1, 0, progressStart / progressEnd);
+                    }
+                    if (gamemodeMatchDuration <= 0) {
                         if (MonjaFestival.bigMonjaPlayer != null) {
                             // all teams with same points = Draw
                             if (MonjaFestival.greenPoints == MonjaFestival.cyanPoints && MonjaFestival.cyanPoints == MonjaFestival.bigMonjaPoints) {
@@ -1147,6 +1181,7 @@ namespace LasMonjas.Patches {
                 BountyHunter.bountyhunter.MurderPlayer(BountyHunter.bountyhunter);
             }
         }
+
         static void yinyangerUpdate() {
 
             if (Yinyanger.yinyanger == null || Yinyanger.yinyanger.Data.IsDead) {
@@ -1436,6 +1471,21 @@ namespace LasMonjas.Patches {
             }
         }
 
+        static void yandereUpdate() {
+
+            if (Yandere.yandere == null) return;
+
+            // Yandere rampage mode if target disconnects
+            if (Yandere.yandere != null && Yandere.target != null && Yandere.target.Data.Disconnected && !Yandere.rampageMode) {
+                Yandere.rampageMode = true;
+                Yandere.yandereTargetButtonText.text = Language.statusRolesTexts[2];
+                Yandere.yandereKillButtonText.text = Language.statusRolesTexts[3];
+                if (PlayerInCache.LocalPlayer.PlayerControl == Yandere.yandere) {
+                    SoundManager.Instance.PlaySound(CustomMain.customAssets.hunterTarget, false, 100f);
+                }
+            }
+        }
+
         static void strandedUpdate() {
 
             if (Stranded.stranded == null) return;
@@ -1554,7 +1604,7 @@ namespace LasMonjas.Patches {
                         }
                         Seeker.seekerPlayerPointsCount.text = $"{Seeker.currentPlayers} / 3";
                         Seeker.seekerPerformMinigamePlayerPointsCount.text = $"{Seeker.currentPoints} / {Seeker.neededPoints}"; 
-                        new CustomMessage(Language.statusRolesTexts[4] + Seeker.currentPoints, 3, 1.6f, 8);
+                        new CustomMessage(Language.statusRolesTexts[4] + Seeker.currentPoints, 3, new Vector2(0f, 1.6f), 8);
                     }
                 })));
             }
@@ -1612,7 +1662,7 @@ namespace LasMonjas.Patches {
                         }
                         Seeker.seekerPlayerPointsCount.text = $"{Seeker.currentPlayers} / 3";
                         Seeker.seekerPerformMinigamePlayerPointsCount.text = $"{Seeker.currentPoints} / {Seeker.neededPoints}"; 
-                        new CustomMessage(Language.statusRolesTexts[4] + Seeker.currentPoints, 3, 1.6f, 8);
+                        new CustomMessage(Language.statusRolesTexts[4] + Seeker.currentPoints, 3, new Vector2(0f, 1.6f), 8);
                     }
                 })));
             }
@@ -2018,7 +2068,7 @@ namespace LasMonjas.Patches {
                 }
                 KingOfTheHill.greenkingaura.transform.parent = KingOfTheHill.greenKingplayer.transform;
                 if (PlayerInCache.LocalPlayer.PlayerControl == KingOfTheHill.greenKingplayer) {
-                    new CustomMessage(Language.statusKingOfTheHillTexts[0], 5, 1.6f, 16);
+                    Helpers.showGamemodesPopUp(3, Helpers.playerById(KingOfTheHill.greenKingplayer.PlayerId));
                     KingOfTheHill.localArrows[3].arrow.SetActive(false);
                 }
                 KingOfTheHill.greenKingIsReviving = false;
@@ -2060,7 +2110,7 @@ namespace LasMonjas.Patches {
                 }
                 KingOfTheHill.yellowkingaura.transform.parent = KingOfTheHill.yellowKingplayer.transform;
                 if (PlayerInCache.LocalPlayer.PlayerControl == KingOfTheHill.yellowKingplayer) {
-                    new CustomMessage(Language.statusKingOfTheHillTexts[1], 5, 1.6f, 16);
+                    Helpers.showGamemodesPopUp(4, Helpers.playerById(KingOfTheHill.yellowKingplayer.PlayerId));
                     KingOfTheHill.localArrows[3].arrow.SetActive(false);
                 }
                 KingOfTheHill.yellowKingIsReviving = false;
@@ -2095,6 +2145,22 @@ namespace LasMonjas.Patches {
             if (gameType != 5)
                 return;
 
+            // Fill the Danger Metter for hotPotato and update its distance for coldpotatoes
+            if (HotPotato.hotPotatoPlayer != null && HudManager.Instance.DangerMeter.gameObject.active) {
+                float leftdistance = 55f;
+                float rightdistance = 15f;
+                float currentdistance = float.MaxValue;
+
+                float sqrMagnitude = (HotPotato.hotPotatoPlayer.transform.position - PlayerControl.LocalPlayer.transform.position).sqrMagnitude;
+                if (sqrMagnitude < leftdistance && currentdistance > sqrMagnitude) {
+                    currentdistance = sqrMagnitude;
+                }
+
+                float dangerLevelLeft = Mathf.Clamp01((leftdistance - currentdistance) / (leftdistance - rightdistance));
+                float dangerLevelRight = Mathf.Clamp01((rightdistance - currentdistance) / rightdistance);
+                HudManager.Instance.DangerMeter.SetDangerValue(dangerLevelLeft, dangerLevelRight);
+            }
+            
             // Hide hot potato sprite if in vent
             if (HotPotato.hotPotatoPlayer != null && HotPotato.hotPotato != null) {
                 if (HotPotato.hotPotatoPlayer.inVent) {
@@ -2110,10 +2176,6 @@ namespace LasMonjas.Patches {
 
                 if (!HotPotato.firstPotatoTransfered) {
                     HotPotato.firstPotatoTransfered = true;
-                    /*new CustomMessage(Language.introTexts[5], LasMonjas.gamemodeMatchDuration, -1f, 18);
-                    new CustomMessage(Language.introTexts[1], LasMonjas.gamemodeMatchDuration, -1.3f, 15);
-                    HotPotato.hotpotatopointCounter = Language.introTexts[5] + "<color=#808080FF>" + HotPotato.hotPotatoPlayer.name + "</color> | " + Language.introTexts[6] + "<color=#00F7FFFF>" + HotPotato.notPotatoTeam.Count + "</color>";
-                    new CustomMessage(HotPotato.hotpotatopointCounter, LasMonjas.gamemodeMatchDuration, 1.9f, 17);*/
                 }
 
                 HotPotato.timeforTransfer = HotPotato.savedtimeforTransfer;
@@ -2185,7 +2247,7 @@ namespace LasMonjas.Patches {
 
                 hotPotatoButton.Timer = HotPotato.transferCooldown;
 
-                new CustomMessage("<color=#808080FF>" + HotPotato.hotPotatoPlayer.name + "</color>" + Language.statusHotPotatoTexts[0], 5, 1f, 16);
+                Helpers.showGamemodesPopUp(1, Helpers.playerById(HotPotato.hotPotatoPlayer.PlayerId));
                 HotPotato.hotpotatopointCounter = Language.introTexts[5] + "<color=#808080FF>" + HotPotato.hotPotatoPlayer.name + "</color> | " + Language.introTexts[6] + "<color=#00F7FFFF>" + notPotatosAlives + "</color>";
             }
 
@@ -3381,6 +3443,9 @@ namespace LasMonjas.Patches {
             // Challenger update
             challengerUpdate();
 
+            // Yandere update
+            yandereUpdate();
+            
             // Stranded update
             strandedUpdate();
 

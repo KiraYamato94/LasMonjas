@@ -120,21 +120,26 @@ namespace LasMonjas.Patches
                     GameObject myWardrobe = GameObject.Find("panel_Wardrobe(Clone)");
                     myWardrobe.SetActive(false);
                     List<PlayerControl> howManyPlayers = PlayerControl.AllPlayerControls.ToArray().ToList();
-                    if (howManyPlayers.Count < 7) {
+                    if (howManyPlayers.Count < 7 || gameType >= 2) {
                         NumImpostors = 1;
                     }
-                    customSkeldHS = 0;
-
-                    // Randomize at 50% custom skeld for H&S
-                    if (GameOptionsManager.Instance.currentGameMode == GameModes.HideNSeek) {
+                    
+                    // Ensure vanilla roles are disabled when playing with mod roles
+                    GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.SetRoleRate(RoleTypes.Scientist, 0, 0);
+                    GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.SetRoleRate(RoleTypes.Engineer, 0, 0);
+                    GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.SetRoleRate(RoleTypes.GuardianAngel, 0, 0);
+                    GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.SetRoleRate(RoleTypes.Shapeshifter, 0, 0);
+                    
+                    // Randomize at 50% custom skeld for H&S Skeld
+                    if (GameOptionsManager.Instance.currentGameMode == GameModes.HideNSeek && GameOptionsManager.Instance.currentGameOptions.MapId == 0) {
                         SoundManager.Instance.StopSound(CustomMain.customAssets.lobbyMusic);
                         if (AmongUsClient.Instance.AmHost) {
-                            customSkeldHS = rnd.Next(1, 101);
-                        }
-                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.RandomizeCustomSkeldOnHS, Hazel.SendOption.Reliable, -1);
-                        writer.Write(customSkeldHS);
-                        AmongUsClient.Instance.FinishRpcImmediately(writer);
-                        RPCProcedure.randomizeCustomSkeldOnHS(customSkeldHS);
+                            customSkeldHS = (byte)rnd.Next(1, 101);
+                            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.RandomizeCustomSkeldOnHS, Hazel.SendOption.Reliable, -1);
+                            writer.Write(customSkeldHS);
+                            AmongUsClient.Instance.FinishRpcImmediately(writer);
+                            RPCProcedure.randomizeCustomSkeldOnHS(customSkeldHS);
+                        }                       
                     }                    
                 }
             }

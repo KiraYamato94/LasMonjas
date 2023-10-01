@@ -9,6 +9,7 @@ using LasMonjas.Objects;
 using UnityEngine;
 using LasMonjas.Core;
 using AmongUs.GameOptions;
+using static UnityEngine.GraphicsBuffer;
 
 namespace LasMonjas.Patches {
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.FixedUpdate))]
@@ -194,11 +195,14 @@ namespace LasMonjas.Patches {
                 Manipulator.currentTarget = setTarget();
                 setPlayerOutline(Manipulator.currentTarget, Manipulator.color);
             }
-            else {
-                Manipulator.manipulatedVictimTarget = setTarget(targetingPlayer: Manipulator.manipulatedVictim);
-                setPlayerOutline(Manipulator.manipulatedVictimTarget, Manipulator.color);
-            }
         }
+
+        static void manipulatedVictimSetTarget() {
+            if (Manipulator.manipulatedVictim == null || Manipulator.manipulatedVictim != PlayerInCache.LocalPlayer.PlayerControl) return;
+            Manipulator.manipulatedVictimTarget = setTarget();
+            setPlayerOutline(Manipulator.manipulatedVictimTarget, Manipulator.color);
+        }
+
         static void sorcererSetTarget() {
             if (Sorcerer.sorcerer == null || Sorcerer.sorcerer != PlayerInCache.LocalPlayer.PlayerControl) return;
             List<PlayerControl> untargetables;
@@ -269,11 +273,12 @@ namespace LasMonjas.Patches {
         }
         static void yandereSetTarget() {
             if (Yandere.yandere == null || Yandere.yandere != PlayerInCache.LocalPlayer.PlayerControl) return;
-            if (Yandere.target == null) return;
 
             if (!Yandere.rampageMode) {
-                var untargetables = PlayerControl.AllPlayerControls.ToArray().Where(x => x.PlayerId != Yandere.target.PlayerId).ToList();
-                Yandere.currentTarget = setTarget(untargetablePlayers: untargetables);
+                if (Yandere.target != null) {
+                    var untargetables = PlayerControl.AllPlayerControls.ToArray().Where(x => x.PlayerId != Yandere.target.PlayerId).ToList();
+                    Yandere.currentTarget = setTarget(untargetablePlayers: untargetables);
+                }
             } else {
                 Yandere.currentTarget = setTarget();
             }
@@ -304,6 +309,12 @@ namespace LasMonjas.Patches {
             Pyromaniac.currentTarget = setTarget(untargetablePlayers: untargetables);
             if (Pyromaniac.currentTarget != null) setPlayerOutline(Pyromaniac.currentTarget, Pyromaniac.color);
         }
+        static void devourerSetTarget() {
+            if (Devourer.devourer == null || Devourer.devourer != PlayerInCache.LocalPlayer.PlayerControl) return;
+            Devourer.currentTarget = setTarget();
+            setPlayerOutline(Devourer.currentTarget, Devourer.color);
+        }
+
         public static void poisonerSetTarget() {
             if (Poisoner.poisoner == null || Poisoner.poisoner != PlayerInCache.LocalPlayer.PlayerControl) return;
             List<PlayerControl> untargetables;
@@ -486,6 +497,43 @@ namespace LasMonjas.Patches {
                 foreach (Arrow arrow in Sleuth.localArrows) UnityEngine.Object.Destroy(arrow.arrow);
                 Sleuth.localArrows = new List<Arrow>();
             }
+
+            // Handle closest player locate
+            if (Sleuth.sleuth == PlayerInCache.LocalPlayer.PlayerControl && !Sleuth.sleuth.Data.IsDead) {
+                if (Sleuth.timer >= 0f) {
+
+                    PlayerControl result = null;
+                    float num = 10f;
+
+                    Vector2 truePosition = Sleuth.sleuth.GetTruePosition();
+                    Il2CppSystem.Collections.Generic.List<GameData.PlayerInfo> allPlayers = GameData.Instance.AllPlayers;
+                    for (int i = 0; i < allPlayers.Count; i++) {
+                        GameData.PlayerInfo playerInfo = allPlayers[i];
+                        if (!playerInfo.Disconnected && playerInfo.PlayerId != Sleuth.sleuth.PlayerId && !playerInfo.IsDead) {
+                            PlayerControl @object = playerInfo.Object;
+                            if (@object && @object.Collider.enabled) {
+                                Vector2 vector = @object.GetTruePosition() - truePosition;
+                                float magnitude = vector.magnitude;
+                                if (magnitude <= num) {
+                                    result = @object;
+                                    num = magnitude;
+                                }
+                            }
+                        }
+                    }
+
+                    if (result != null && Vector2.Distance(result.transform.position, Sleuth.sleuth.transform.position) < 10f) {
+                        Sleuth.arrowWho.Update(result.transform.position, Palette.PlayerColors[result.Data.DefaultOutfit.ColorId]);
+                        Sleuth.arrowWho.arrow.SetActive(true);
+                    }
+                    else {
+                        Sleuth.arrowWho.arrow.SetActive(false);
+                    }
+                }
+                else {
+                    Sleuth.arrowWho.arrow.SetActive(false);
+                }
+            }
         }
         static void finkUpdate() {
 
@@ -594,53 +642,7 @@ namespace LasMonjas.Patches {
             setPlayerOutline(Jinx.target, Jinx.color);
             if (Jinx.target != null && Jinx.jinxedList.Any(p => p.Data.PlayerId == Jinx.target.Data.PlayerId)) Jinx.target = null; // Remove target if already Jinxed and didn't trigger the jinx
         }
-        static void shyUpdate() {
-
-            if (Shy.shy == null)
-                return;
-
-            // Handle closest player locate
-            if (Shy.shy == PlayerInCache.LocalPlayer.PlayerControl && !Shy.shy.Data.IsDead) {
-                if (Shy.timer >= 0f) {
-
-                    PlayerControl result = null;
-                    float num = Shy.shyArrowRange;
-
-                    Vector2 truePosition = Shy.shy.GetTruePosition();
-                    Il2CppSystem.Collections.Generic.List<GameData.PlayerInfo> allPlayers = GameData.Instance.AllPlayers;
-                    for (int i = 0; i < allPlayers.Count; i++) {
-                        GameData.PlayerInfo playerInfo = allPlayers[i];
-                        if (!playerInfo.Disconnected && playerInfo.PlayerId != Shy.shy.PlayerId && !playerInfo.IsDead) {
-                            PlayerControl @object = playerInfo.Object;
-                            if (@object && @object.Collider.enabled) {
-                                Vector2 vector = @object.GetTruePosition() - truePosition;
-                                float magnitude = vector.magnitude;
-                                if (magnitude <= num) {
-                                    result = @object;
-                                    num = magnitude;
-                                }
-                            }
-                        }
-                    }
-
-                    if (result != null && Vector2.Distance(result.transform.position, Shy.shy.transform.position) < Shy.shyArrowRange) {
-                        if (Shy.playerColor) {
-                            Shy.arrow.Update(result.transform.position, Palette.PlayerColors[result.Data.DefaultOutfit.ColorId]);
-                        }
-                        else {
-                            Shy.arrow.Update(result.transform.position, Shy.color);
-                        }
-                        Shy.arrow.arrow.SetActive(true);
-                    }
-                    else {
-                        Shy.arrow.arrow.SetActive(false);
-                    }
-                }
-                else {
-                    Shy.arrow.arrow.SetActive(false);
-                }
-            }
-        }
+       
         static void jailerSetTarget() {
             if (Jailer.jailer == null || Jailer.jailer != PlayerInCache.LocalPlayer.PlayerControl) return;
             Jailer.currentTarget = setTarget();
@@ -664,7 +666,17 @@ namespace LasMonjas.Patches {
                             RPCProcedure.fixBomb();
                         }
 
+                        // Remove manipulated
+                        if (Manipulator.manipulatedVictim != null) {
+                            Manipulator.manipulatedVictim = null;
+                            Manipulator.manipulatedVictimTimer = 21f;
+                        }
+
                         Helpers.handleDemonBiteOnBodyReport(); // Manually call Demon handling, since the CmdReportDeadBody Prefix won't be called
+                        Helpers.handleMedusaPetrifyOnBodyReport(); // Manually call Medusa handling, since the CmdReportDeadBody Prefix won't be called
+                        if (Devourer.devourer != null && Devourer.devourer.PlayerId != Modifiers.theChosenOne.PlayerId) {
+                            Helpers.handleEatenPlayersOnBodyReport(); // Manually call Devourer devour if he isnt the chosenone, since the CmdReportDeadBody Prefix won't be called
+                        }
                         RPCProcedure.uncheckedCmdReportDeadBody(deadPlayer.killerIfExisting.PlayerId, Modifiers.theChosenOne.PlayerId);
 
                         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.UncheckedCmdReportDeadBody, Hazel.SendOption.Reliable, -1);
@@ -1425,7 +1437,7 @@ namespace LasMonjas.Patches {
 
             if (ZombieLaboratory.nursePlayer != null && ZombieLaboratory.nursePlayer == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.nursePlayercurrentTarget = setTarget();
-                setPlayerOutline(ZombieLaboratory.nursePlayercurrentTarget, Shy.color);
+                setPlayerOutline(ZombieLaboratory.nursePlayercurrentTarget, Locksmith.color);
             }
             if (ZombieLaboratory.survivorPlayer01 != null && ZombieLaboratory.survivorPlayer01 == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.survivorPlayer01currentTarget = setTarget(untargetablePlayers: untargetableSurvivorsPlayers);
@@ -1859,6 +1871,7 @@ namespace LasMonjas.Patches {
 
                 // Manipulator
                 manipulatorSetTarget();
+                manipulatedVictimSetTarget();
 
                 // Sorcerer
                 sorcererSetTarget();
@@ -1907,6 +1920,9 @@ namespace LasMonjas.Patches {
 
                 // Pyromaniac
                 pyromaniacSetTarget();
+
+                // Devourer
+                devourerSetTarget();
 
                 // Poisoner
                 poisonerSetTarget();
@@ -1959,9 +1975,6 @@ namespace LasMonjas.Patches {
 
                 // Jinx
                 jinxSetTarget();
-
-                // Shy
-                shyUpdate();
 
                 // Jailer
                 jailerSetTarget();
@@ -2016,6 +2029,18 @@ namespace LasMonjas.Patches {
 
             // Murder the bitten player before the meeting starts or reset the bitten player
             Helpers.handleDemonBiteOnBodyReport();
+
+            // Murder the petrify players before the meeting starts
+            Helpers.handleMedusaPetrifyOnBodyReport();
+
+            // Murder the eaten players before the meating starts
+            Helpers.handleEatenPlayersOnBodyReport();
+
+            // Remove manipulated
+            if (Manipulator.manipulatedVictim != null) {
+                Manipulator.manipulatedVictim = null;
+                Manipulator.manipulatedVictimTimer = 21f;
+            }
 
             // Murder the Spiritualist if someone reports a body or call emergency while trying to revive another player
             if (Spiritualist.spiritualist != null && Spiritualist.isReviving && Spiritualist.canRevive) {
@@ -2207,12 +2232,11 @@ namespace LasMonjas.Patches {
                     if (Janitor.janitor != null && target == Janitor.janitor && Janitor.dragginBody) {
                         Janitor.janitorResetValuesAtDead();
                     }
-
-                    // Manipulator Button Sync
-                    if (Manipulator.manipulator != null && PlayerInCache.LocalPlayer.PlayerControl == Manipulator.manipulator && __instance == Manipulator.manipulator && HudManagerStartPatch.manipulatorManipulateButton != null) {
-                        if (Manipulator.manipulator.killTimer > HudManagerStartPatch.manipulatorManipulateButton.Timer) {
-                            HudManagerStartPatch.manipulatorManipulateButton.Timer = Manipulator.manipulator.killTimer;
-                        }
+                                       
+                    // Manipulator reset manipulated if killed
+                    if (Manipulator.manipulatedVictim != null && target == Manipulator.manipulatedVictim) {
+                        Manipulator.manipulatedVictim = null;
+                        Manipulator.manipulatedVictimTimer = 21f;
                     }
 
                     // Chameleon reset invisibility
@@ -2223,6 +2247,24 @@ namespace LasMonjas.Patches {
                     // Sorcerer Button Sync
                     if (Sorcerer.sorcerer != null && PlayerInCache.LocalPlayer.PlayerControl == Sorcerer.sorcerer && __instance == Sorcerer.sorcerer && HudManagerStartPatch.sorcererSpellButton != null)
                         HudManagerStartPatch.sorcererSpellButton.Timer = HudManagerStartPatch.sorcererSpellButton.MaxTimer;
+
+                    // Medusa remove petrify from list
+                    if (Medusa.medusa != null && Medusa.petrifiedPlayers.Count != 0) {
+                        Helpers.unpetrifyForMinigames(target);                        
+                    }
+
+                    // Devourer clear List if killed
+                    if (Devourer.devourer != null && target == Devourer.devourer) {
+                        if (Devourer.eatenPlayers.Count != 0) {
+                            foreach (PlayerControl devouredPlayer in Devourer.eatenPlayers) {
+                                if (devouredPlayer == PlayerInCache.LocalPlayer.PlayerControl) {
+                                    devouredPlayer.transform.position = MapOptions.positionBeforeAte;
+                                }
+                            }
+                        }
+                        Devourer.eatenPlayers.Clear();
+                        Devourer.devourEatCounterButtonText.text = $"{Devourer.eatenPlayers.Count}";
+                    }
 
                     // Archer dead
                     if (Archer.archer != null && target == Archer.archer) {
@@ -2487,7 +2529,7 @@ namespace LasMonjas.Patches {
                     // Capture the flag reset flag position if killed while having it
                     if (CaptureTheFlag.redPlayerWhoHasBlueFlag != null && target == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
                         CaptureTheFlag.blueflagtaken = false;
-                        CaptureTheFlag.blueteamAlerted = false;
+                        Helpers.showGamemodesPopUp(0, Helpers.playerById(CaptureTheFlag.redPlayerWhoHasBlueFlag.PlayerId));
                         CaptureTheFlag.redPlayerWhoHasBlueFlag = null;
                         CaptureTheFlag.blueflag.transform.parent = CaptureTheFlag.blueflagbase.transform.parent;
                         switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
@@ -2525,7 +2567,7 @@ namespace LasMonjas.Patches {
 
                     if (CaptureTheFlag.bluePlayerWhoHasRedFlag != null && target == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
                         CaptureTheFlag.redflagtaken = false;
-                        CaptureTheFlag.redteamAlerted = false;
+                        Helpers.showGamemodesPopUp(0, Helpers.playerById(CaptureTheFlag.bluePlayerWhoHasRedFlag.PlayerId));
                         CaptureTheFlag.bluePlayerWhoHasRedFlag = null;
                         CaptureTheFlag.redflag.transform.parent = CaptureTheFlag.redflagbase.transform.parent;
                         switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
@@ -3135,7 +3177,6 @@ namespace LasMonjas.Patches {
 
                             // Restore zones
                             if (KingOfTheHill.greenKingplayer != null && target.PlayerId == KingOfTheHill.greenKingplayer.PlayerId) {
-                                KingOfTheHill.greenteamAlerted = false;
                                 if (KingOfTheHill.greenKinghaszoneone) {
                                     KingOfTheHill.greenKinghaszoneone = false;
                                     KingOfTheHill.flagzoneone.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.whiteflag.GetComponent<SpriteRenderer>().sprite;
@@ -3154,15 +3195,7 @@ namespace LasMonjas.Patches {
                                     KingOfTheHill.zonethree.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.whitebase.GetComponent<SpriteRenderer>().sprite;
                                     KingOfTheHill.zonethreecolor = Color.white;
                                 }
-                                // Alert green team players
-                                if (!KingOfTheHill.greenteamAlerted) {
-                                    KingOfTheHill.greenteamAlerted = true;
-                                    foreach (PlayerControl greenplayer in KingOfTheHill.greenTeam) {
-                                        if (greenplayer == PlayerInCache.LocalPlayer.PlayerControl && greenplayer != null) {
-                                            new CustomMessage(Language.statusKingOfTheHillTexts[4], 5, 1f, 16);
-                                        }
-                                    }
-                                }
+                                Helpers.showGamemodesPopUp(1, Helpers.playerById(KingOfTheHill.greenKingplayer.PlayerId));                                
                                 KingOfTheHill.totalGreenKingzonescaptured = 0;
                                 KingOfTheHill.greenKingIsReviving = true;
                                 // Hide aura while dead
@@ -3278,7 +3311,6 @@ namespace LasMonjas.Patches {
 
                             // Restore zones
                             if (KingOfTheHill.yellowKingplayer != null && target.PlayerId == KingOfTheHill.yellowKingplayer.PlayerId) {
-                                KingOfTheHill.yellowteamAlerted = false;
                                 if (KingOfTheHill.yellowKinghaszoneone) {
                                     KingOfTheHill.yellowKinghaszoneone = false;
                                     KingOfTheHill.flagzoneone.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.whiteflag.GetComponent<SpriteRenderer>().sprite;
@@ -3297,15 +3329,7 @@ namespace LasMonjas.Patches {
                                     KingOfTheHill.zonethree.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.whitebase.GetComponent<SpriteRenderer>().sprite;
                                     KingOfTheHill.zonethreecolor = Color.white;
                                 }
-                                // Alert yellow team players
-                                if (!KingOfTheHill.yellowteamAlerted) {
-                                    KingOfTheHill.yellowteamAlerted = true;
-                                    foreach (PlayerControl yellowplayer in KingOfTheHill.yellowTeam) {
-                                        if (yellowplayer == PlayerInCache.LocalPlayer.PlayerControl && yellowplayer != null) {
-                                            new CustomMessage(Language.statusKingOfTheHillTexts[4], 5, 1f, 16);
-                                        }
-                                    }
-                                }
+                                Helpers.showGamemodesPopUp(2, Helpers.playerById(KingOfTheHill.yellowKingplayer.PlayerId));                                
                                 KingOfTheHill.totalYellowKingzonescaptured = 0;
                                 KingOfTheHill.yellowKingIsReviving = true;
                                 // Hide aura while dead
@@ -3560,7 +3584,7 @@ namespace LasMonjas.Patches {
                                     }
                                 })));
 
-                                new CustomMessage("<color=#808080FF>" + HotPotato.hotPotatoPlayer.name + "</color>" + Language.statusHotPotatoTexts[0], 5, 1f, 16);
+                                Helpers.showGamemodesPopUp(1, Helpers.playerById(HotPotato.hotPotatoPlayer.PlayerId));
                                 HotPotato.hotpotatopointCounter = Language.introTexts[5] + "<color=#808080FF>" + HotPotato.hotPotatoPlayer.name + "</color> | " + Language.introTexts[6] + "<color=#00F7FFFF>" + notPotatosAlives + "</color>";
                             }
                         })));

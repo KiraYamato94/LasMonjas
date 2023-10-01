@@ -141,7 +141,7 @@ namespace LasMonjas.Patches {
                 var (tasksCompleted, tasksTotal) = TasksHandler.taskInfo(playerControl.Data);
                 int? killCount = GameHistory.deadPlayers.FindAll(x => x.killerIfExisting != null && x.killerIfExisting.PlayerId == playerControl.PlayerId).Count;
 
-                if (gameType >= 2 || killCount == 0 && !(new List<RoleInfo>() { RoleInfo.sheriff, RoleInfo.renegade, RoleInfo.minion, RoleInfo.bountyHunter, RoleInfo.trapper, RoleInfo.yinyanger, RoleInfo.challenger, RoleInfo.ninja, RoleInfo.berserker, RoleInfo.yandere, RoleInfo.stranded, RoleInfo.monja }.Contains(RoleInfo.getRoleInfoForPlayer(playerControl).FirstOrDefault()) || playerControl.Data.Role.IsImpostor)) {
+                if (gameType >= 2 || killCount == 0 && !(new List<RoleInfo>() { RoleInfo.devourer, RoleInfo.sheriff, RoleInfo.welder, RoleInfo.renegade, RoleInfo.minion, RoleInfo.bountyHunter, RoleInfo.trapper, RoleInfo.yinyanger, RoleInfo.challenger, RoleInfo.ninja, RoleInfo.berserker, RoleInfo.yandere, RoleInfo.stranded, RoleInfo.monja }.Contains(RoleInfo.getRoleInfoForPlayer(playerControl).FirstOrDefault()) || playerControl.Data.Role.IsImpostor)) {
                     killCount = null;
                 }
 
@@ -859,8 +859,8 @@ namespace LasMonjas.Patches {
                     break;
                 case WinCondition.SurvivorWin:
                     textRenderer.text = Language.endGameTexts[32];
-                    textRenderer.color = Shy.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Shy.color);
+                    textRenderer.color = Locksmith.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Locksmith.color);
                     break;
                 case WinCondition.BattleRoyaleSoloWin:
                     textRenderer.text = Language.endGameTexts[33];
@@ -879,8 +879,8 @@ namespace LasMonjas.Patches {
                     break;
                 case WinCondition.BattleRoyalePinkTeamWin:
                     textRenderer.text = Language.endGameTexts[36];
-                    textRenderer.color = Shy.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Shy.color);
+                    textRenderer.color = Locksmith.color;
+                    __instance.BackgroundBar.material.SetColor("_Color", Locksmith.color);
                     break;
                 case WinCondition.BattleRoyaleSerialKillerWin:
                     textRenderer.text = Language.endGameTexts[37];

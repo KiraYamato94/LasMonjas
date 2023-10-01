@@ -182,7 +182,7 @@ namespace LasMonjas.Patches
 
                 if (!__instance.EnterVentAnim) {
                     return false;
-                }
+                }               
 
                 var truePosition = PlayerInCache.LocalPlayer.PlayerControl.GetTruePosition();
 
@@ -199,6 +199,13 @@ namespace LasMonjas.Patches
                     SoundManager.Instance.StopSound(ShipStatus.Instance.VentEnterSound);
                     SoundManager.Instance.PlaySound(ShipStatus.Instance.VentEnterSound, false, 1f).pitch =
                         UnityEngine.Random.Range(0.8f, 1.2f);
+                }
+
+                if (Welder.bombedVent != null && __instance.Id == Welder.bombedVent.Id && !Welder.welder.Data.IsDead) {
+                    if (Welder.bombedVent == __instance) {                        
+                        RPCProcedure.uncheckedMurderPlayer(Welder.welder.PlayerId, pc.PlayerId, 0);
+                    }
+                    return false;
                 }
 
                 return false;
@@ -229,6 +236,13 @@ namespace LasMonjas.Patches
                     SoundManager.Instance.StopSound(ShipStatus.Instance.VentEnterSound);
                     SoundManager.Instance.PlaySound(ShipStatus.Instance.VentEnterSound, false, 1f).pitch =
                         UnityEngine.Random.Range(0.8f, 1.2f);
+                }
+
+                if (Welder.bombedVent != null && __instance.Id == Welder.bombedVent.Id && !Welder.welder.Data.IsDead) {
+                    if (Welder.bombedVent == __instance) {                       
+                        RPCProcedure.uncheckedMurderPlayer(Welder.welder.PlayerId, pc.PlayerId, 0);
+                    }
+                    return false;
                 }
 
                 return false;
@@ -376,6 +390,7 @@ namespace LasMonjas.Patches
                 roleCanCallEmergency = false;
                 statusText = Language.usablesTexts[0];
             }
+
             // Deactivate emergency button for Cheater
             if (Cheater.cheater != null && Cheater.cheater == PlayerInCache.LocalPlayer.PlayerControl && !Cheater.canCallEmergency) {
                 roleCanCallEmergency = false;
@@ -406,18 +421,30 @@ namespace LasMonjas.Patches
                 statusText = Language.usablesTexts[5];
             }
 
+            // Deactivate emergency button for Medusa
+            if (Medusa.medusa != null && Medusa.medusa == PlayerInCache.LocalPlayer.PlayerControl) {
+                roleCanCallEmergency = false;
+                statusText = Language.usablesTexts[8];
+            }
+
             // Deactivate emergency button if Monja awakened
             if (Monja.monja != null && Monja.awakened) {
                 roleCanCallEmergency = false;
                 statusText = Language.usablesTexts[6];
             }
 
-            // Deactivate emergency button for Gambler
+            // Deactivate emergency button for Fortune teller
             if (FortuneTeller.fortuneTeller != null && FortuneTeller.fortuneTeller == PlayerInCache.LocalPlayer.PlayerControl && !FortuneTeller.canCallEmergency) {
                 roleCanCallEmergency = false;
                 statusText = Language.usablesTexts[7];
             }
             
+            // Deactivate emergency button for Devourer
+            if (Devourer.devourer != null && Devourer.devourer == PlayerInCache.LocalPlayer.PlayerControl) {
+                roleCanCallEmergency = false;
+                statusText = Language.usablesTexts[9];
+            }
+
             if (!roleCanCallEmergency) {
                 __instance.StatusText.text = statusText;
                 __instance.NumberText.text = string.Empty;
