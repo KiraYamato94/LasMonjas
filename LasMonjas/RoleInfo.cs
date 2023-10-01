@@ -111,7 +111,7 @@ namespace LasMonjas
         public static RoleInfo explodedPotato14 = new RoleInfo(Language.roleInfoRoleNames[87], Mechanic.color, Language.roleInfoNames[15], Language.roleInfoNames[15], RoleId.ExplodedPotato14);
 
         // ZombieLaboratory Teams
-        public static RoleInfo nursePlayer = new RoleInfo(Language.roleInfoRoleNames[88], Shy.color, Language.roleInfoNames[16], Language.roleInfoNames[17], RoleId.NursePlayer);
+        public static RoleInfo nursePlayer = new RoleInfo(Language.roleInfoRoleNames[88], Locksmith.color, Language.roleInfoNames[16], Language.roleInfoNames[17], RoleId.NursePlayer);
         public static RoleInfo survivorPlayer01 = new RoleInfo(Language.roleInfoRoleNames[89], Color.cyan, Language.roleInfoNames[18], Language.roleInfoNames[19], RoleId.SurvivorPlayer01);
         public static RoleInfo survivorPlayer02 = new RoleInfo(Language.roleInfoRoleNames[89], Color.cyan, Language.roleInfoNames[18], Language.roleInfoNames[19], RoleId.SurvivorPlayer02);
         public static RoleInfo survivorPlayer03 = new RoleInfo(Language.roleInfoRoleNames[89], Color.cyan, Language.roleInfoNames[18], Language.roleInfoNames[19], RoleId.SurvivorPlayer03);
@@ -164,13 +164,13 @@ namespace LasMonjas
         public static RoleInfo limePlayer05 = new RoleInfo(Language.roleInfoRoleNames[92], FortuneTeller.color, Language.roleInfoNames[22], Language.roleInfoNames[22], RoleId.LimePlayer05);
         public static RoleInfo limePlayer06 = new RoleInfo(Language.roleInfoRoleNames[92], FortuneTeller.color, Language.roleInfoNames[22], Language.roleInfoNames[22], RoleId.LimePlayer06);
         public static RoleInfo limePlayer07 = new RoleInfo(Language.roleInfoRoleNames[92], FortuneTeller.color, Language.roleInfoNames[22], Language.roleInfoNames[22], RoleId.LimePlayer07);
-        public static RoleInfo pinkPlayer01 = new RoleInfo(Language.roleInfoRoleNames[93], Shy.color, Language.roleInfoNames[23], Language.roleInfoNames[23], RoleId.PinkPlayer01);
-        public static RoleInfo pinkPlayer02 = new RoleInfo(Language.roleInfoRoleNames[93], Shy.color, Language.roleInfoNames[23], Language.roleInfoNames[23], RoleId.PinkPlayer02);
-        public static RoleInfo pinkPlayer03 = new RoleInfo(Language.roleInfoRoleNames[93], Shy.color, Language.roleInfoNames[23], Language.roleInfoNames[23], RoleId.PinkPlayer03);
-        public static RoleInfo pinkPlayer04 = new RoleInfo(Language.roleInfoRoleNames[93], Shy.color, Language.roleInfoNames[23], Language.roleInfoNames[23], RoleId.PinkPlayer04);
-        public static RoleInfo pinkPlayer05 = new RoleInfo(Language.roleInfoRoleNames[93], Shy.color, Language.roleInfoNames[23], Language.roleInfoNames[23], RoleId.PinkPlayer05);
-        public static RoleInfo pinkPlayer06 = new RoleInfo(Language.roleInfoRoleNames[93], Shy.color, Language.roleInfoNames[23], Language.roleInfoNames[23], RoleId.PinkPlayer06);
-        public static RoleInfo pinkPlayer07 = new RoleInfo(Language.roleInfoRoleNames[93], Shy.color, Language.roleInfoNames[23], Language.roleInfoNames[23], RoleId.PinkPlayer07);
+        public static RoleInfo pinkPlayer01 = new RoleInfo(Language.roleInfoRoleNames[93], Locksmith.color, Language.roleInfoNames[23], Language.roleInfoNames[23], RoleId.PinkPlayer01);
+        public static RoleInfo pinkPlayer02 = new RoleInfo(Language.roleInfoRoleNames[93], Locksmith.color, Language.roleInfoNames[23], Language.roleInfoNames[23], RoleId.PinkPlayer02);
+        public static RoleInfo pinkPlayer03 = new RoleInfo(Language.roleInfoRoleNames[93], Locksmith.color, Language.roleInfoNames[23], Language.roleInfoNames[23], RoleId.PinkPlayer03);
+        public static RoleInfo pinkPlayer04 = new RoleInfo(Language.roleInfoRoleNames[93], Locksmith.color, Language.roleInfoNames[23], Language.roleInfoNames[23], RoleId.PinkPlayer04);
+        public static RoleInfo pinkPlayer05 = new RoleInfo(Language.roleInfoRoleNames[93], Locksmith.color, Language.roleInfoNames[23], Language.roleInfoNames[23], RoleId.PinkPlayer05);
+        public static RoleInfo pinkPlayer06 = new RoleInfo(Language.roleInfoRoleNames[93], Locksmith.color, Language.roleInfoNames[23], Language.roleInfoNames[23], RoleId.PinkPlayer06);
+        public static RoleInfo pinkPlayer07 = new RoleInfo(Language.roleInfoRoleNames[93], Locksmith.color, Language.roleInfoNames[23], Language.roleInfoNames[23], RoleId.PinkPlayer07);
         public static RoleInfo serialKiller = new RoleInfo(Language.roleInfoRoleNames[94], Joker.color, Language.helpersTexts[1], Language.helpersTexts[1], RoleId.SerialKiller);
 
         // Monja Festival
@@ -257,7 +257,7 @@ namespace LasMonjas
         public static RoleInfo bat = new RoleInfo(Language.roleInfoRoleNames[55], Bat.color, Language.roleInfoNames[92], Language.roleInfoNames[93], RoleId.Bat);
         public static RoleInfo necromancer = new RoleInfo(Language.roleInfoRoleNames[56], Necromancer.color, Language.roleInfoNames[94], Language.roleInfoNames[94], RoleId.Necromancer);
         public static RoleInfo engineer = new RoleInfo(Language.roleInfoRoleNames[57], Engineer.color, Language.roleInfoNames[95], Language.roleInfoNames[96], RoleId.Engineer);
-        public static RoleInfo shy = new RoleInfo(Language.roleInfoRoleNames[58], Shy.color, Language.roleInfoNames[97], Language.roleInfoNames[97], RoleId.Shy);
+        public static RoleInfo locksmith = new RoleInfo(Language.roleInfoRoleNames[58], Locksmith.color, Language.roleInfoNames[97], Language.roleInfoNames[97], RoleId.Locksmith);
         public static RoleInfo taskMaster = new RoleInfo(Language.roleInfoRoleNames[59], TaskMaster.color, Language.roleInfoNames[98], Language.roleInfoNames[99], RoleId.TaskMaster);
         public static RoleInfo jailer = new RoleInfo(Language.roleInfoRoleNames[60], Jailer.color, Language.roleInfoNames[100], Language.roleInfoNames[100], RoleId.Jailer);
         public static RoleInfo impostor = new RoleInfo(Language.roleInfoRoleNames[61], Palette.ImpostorRed, Helpers.cs(Palette.ImpostorRed, Language.roleInfoNames[101]), Language.roleInfoNames[101], RoleId.Impostor);
@@ -338,7 +338,7 @@ namespace LasMonjas
             bat,
             necromancer,
             engineer,
-            shy,
+            locksmith,
             taskMaster,
             jailer,
             lighter,
@@ -736,7 +736,7 @@ namespace LasMonjas
             if (p == Bat.bat) infos.Add(bat);
             if (p == Necromancer.necromancer) infos.Add(necromancer);
             if (p == Engineer.engineer) infos.Add(engineer);
-            if (p == Shy.shy) infos.Add(shy);
+            if (p == Locksmith.locksmith) infos.Add(locksmith);
             if (p == TaskMaster.taskMaster) infos.Add(taskMaster);
             if (p == Jailer.jailer) infos.Add(jailer);
 
@@ -875,9 +875,9 @@ namespace LasMonjas
                     name = "Engineer";
                     color = Engineer.color;
                 }
-                else if (Shy.shy != null && p == Shy.shy) {
-                    name = "Shy";
-                    color = Shy.color;
+                else if (Locksmith.locksmith != null && p == Locksmith.locksmith) {
+                    name = "Locksmith";
+                    color = Locksmith.color;
                 }
                 else if (TaskMaster.taskMaster != null && p == TaskMaster.taskMaster) {
                     name = "Task Master";

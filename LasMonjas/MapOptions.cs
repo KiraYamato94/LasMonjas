@@ -18,6 +18,7 @@ namespace LasMonjas
         public static Dictionary<byte, PoolablePlayer> playerIcons = new Dictionary<byte, PoolablePlayer>();
         public static Vector3 positionBeforeDuel = new Vector3();
         public static Vector3 positionBeforeMinigame = new Vector3();
+        public static Vector3 positionBeforeAte = new Vector3();
 
         public static void clearAndReloadMapOptions() {
             camerasToAdd = new List<SurvCamera>();

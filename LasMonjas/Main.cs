@@ -27,7 +27,7 @@ namespace LasMonjas
     {
         public const string Id = "me.allul.lasmonjas";
 
-        public const string VersionString = "3.3.0";
+        public const string VersionString = "3.4.0";
 
         public static System.Version Version = System.Version.Parse(VersionString);
         internal static BepInEx.Logging.ManualLogSource Logger;
@@ -81,10 +81,7 @@ namespace LasMonjas
 
             defaultRegions = ServerManager.DefaultRegions;
 
-            UpdateRegions(); 
-            
-            //GameOptionsData.RecommendedImpostors = GameOptionsData.MaxImpostors = Enumerable.Repeat(3, 16).ToArray(); // Max Imp = Recommended Imp = 3
-            //GameOptionsData.MinPlayers = Enumerable.Repeat(4, 15).ToArray(); // Min Players = 4
+            UpdateRegions();
 
             Instance = this;
             CustomOptionHolder.Load();

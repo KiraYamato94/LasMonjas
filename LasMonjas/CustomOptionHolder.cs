@@ -15,14 +15,12 @@ namespace LasMonjas
 
         // Global Settings
         public static CustomOption globalSettings;
-        public static CustomOption activateRoles;
         public static CustomOption activateSenseiMap;
         public static CustomOption hideVentAnimOnShadows;
 
         // Roles Settings
         public static CustomOption rolesSettings;
         public static CustomOption removeSwipeCard;
-        public static CustomOption removeAirshipDoors;
         public static CustomOption nightVisionLightSabotage;
         public static CustomOption screenShakeReactorSabotage;
         public static CustomOption anonymousCommsSabotage;
@@ -102,6 +100,7 @@ namespace LasMonjas
         // Bomberman
         public static CustomOption bombermanSpawnRate;
         public static CustomOption bombermanBombCooldown;
+        public static CustomOption bombermanSelfBombDuration;
 
         // Chameleon
         public static CustomOption chameleonSpawnRate;
@@ -125,7 +124,6 @@ namespace LasMonjas
         public static CustomOption medusaSpawnRate;
         public static CustomOption medusaCooldown;
         public static CustomOption medusaDelay;
-        public static CustomOption medusaDuration;
 
         // Hypnotist
         public static CustomOption hypnotistSpawnRate;
@@ -309,6 +307,7 @@ namespace LasMonjas
         public static CustomOption sleuthResetTargetAfterMeeting;
         public static CustomOption sleuthCorpsesPathfindCooldown;
         public static CustomOption sleuthCorpsesPathfindDuration;
+        public static CustomOption sleuthDuration;
 
         // Fink
         public static CustomOption finkSpawnRate;
@@ -367,12 +366,9 @@ namespace LasMonjas
         public static CustomOption engineerAccelTrapIncrease;
         public static CustomOption engineerDecelTrapDecrease;
 
-        // Shy
-        public static CustomOption shySpawnRate;
-        public static CustomOption shyCooldown;
-        public static CustomOption shyDuration;
-        public static CustomOption shyArrowRange;
-        public static CustomOption shyPlayerColor;
+        // Locksmith
+        public static CustomOption locksmithSpawnRate;
+        public static CustomOption locksmithCooldown;
 
         // TimeMaster
         public static CustomOption taskMasterSpawnRate;
@@ -422,18 +418,16 @@ namespace LasMonjas
 
             // Global Settings
             globalSettings = CustomOption.Create(2, cs(Jailer.color, "Global Settings"), "setting", false, null, true);
-            activateRoles = CustomOption.Create(3, cs(Jailer.color, "Activate mod roles and gamemodes"), "setting", true, globalSettings);
-            activateSenseiMap = CustomOption.Create(4, cs(Jailer.color, "Activate Custom Skeld Map"), "setting", false, globalSettings);
-            hideVentAnimOnShadows = CustomOption.Create(5, cs(Jailer.color, "Hide Vent Anim on Shadows"), "setting", false, globalSettings);
+            activateSenseiMap = CustomOption.Create(3, cs(Jailer.color, "Activate Custom Skeld Map"), "setting", false, globalSettings);
+            hideVentAnimOnShadows = CustomOption.Create(4, cs(Jailer.color, "Hide Vent Anim on Shadows"), "setting", false, globalSettings);
 
             // Roles Settings
-            rolesSettings = CustomOption.Create(10, cs(Shy.color, "Roles Settings"), "setting", false, null, true);
-            removeSwipeCard = CustomOption.Create(11, cs(Shy.color, "Remove Swipe Card Task"), "setting", false, rolesSettings);
-            removeAirshipDoors = CustomOption.Create(12, cs(Shy.color, "Remove Airship Doors"), "setting", false, rolesSettings);
-            nightVisionLightSabotage = CustomOption.Create(13, cs(Shy.color, "Night vision for lights sabotage"), "setting", false, rolesSettings);
-            screenShakeReactorSabotage = CustomOption.Create(14, cs(Shy.color, "Screen shake for reactor sabotage"), "setting", false, rolesSettings);
-            anonymousCommsSabotage = CustomOption.Create(15, cs(Shy.color, "Anonymous players for comms sabotage"), "setting", false, rolesSettings);
-            slowSpeedOxigenSabotage = CustomOption.Create(16, cs(Shy.color, "Decrease speed for oxygen sabotage"), "setting", false, rolesSettings);
+            rolesSettings = CustomOption.Create(10, cs(Locksmith.color, "Roles Settings"), "setting", false, null, true);
+            removeSwipeCard = CustomOption.Create(11, cs(Locksmith.color, "Remove Swipe Card Task"), "setting", false, rolesSettings);
+            nightVisionLightSabotage = CustomOption.Create(12, cs(Locksmith.color, "Night vision for lights sabotage"), "setting", false, rolesSettings);
+            screenShakeReactorSabotage = CustomOption.Create(13, cs(Locksmith.color, "Screen shake for reactor sabotage"), "setting", false, rolesSettings);
+            anonymousCommsSabotage = CustomOption.Create(14, cs(Locksmith.color, "Anonymous players for comms sabotage"), "setting", false, rolesSettings);
+            slowSpeedOxigenSabotage = CustomOption.Create(15, cs(Locksmith.color, "Decrease speed for oxygen sabotage"), "setting", false, rolesSettings);
 
             // Gamemode Settings
             gamemodeSettings = CustomOption.Create(20, cs(Sheriff.color, "Gamemode Global Settings"), "setting", false, null, true);
@@ -460,10 +454,10 @@ namespace LasMonjas
             kingRequiredPoints = CustomOption.Create(51, cs(Squire.color, "King of the Hill") + ": Score Number", "gamemode", 200f, 100f, 300f, 10f, gamemodeIndividualSettings);
             kingCaptureCooldown = CustomOption.Create(52, cs(Squire.color, "King of the Hill") + ": Capture Cooldown", "gamemode", 10f, 5f, 15f, 1f, gamemodeIndividualSettings);
             // Hot Potato
-            hotPotatoTransferLimit = CustomOption.Create(61, cs(Shy.color, "Hot Potato") + ": Time Limit for Transfer", "gamemode", 20f, 10f, 30f, 1f, gamemodeIndividualSettings);
-            hotPotatoCooldown = CustomOption.Create(62, cs(Shy.color, "Hot Potato") + ": Transfer Cooldown", "gamemode", 5f, 5f, 10f, 1f, gamemodeIndividualSettings);
-            hotPotatoResetTimeForTransfer = CustomOption.Create(63, cs(Shy.color, "Hot Potato") + ": Reset timer after Transfer", "gamemode", true, gamemodeIndividualSettings);
-            hotPotatoIncreaseTimeIfNoReset = CustomOption.Create(64, cs(Shy.color, "Hot Potato") + ": Extra Time when timer doesn't reset", "gamemode", 10f, 10f, 15f, 1f, gamemodeIndividualSettings);
+            hotPotatoTransferLimit = CustomOption.Create(61, cs(Locksmith.color, "Hot Potato") + ": Time Limit for Transfer", "gamemode", 20f, 10f, 30f, 1f, gamemodeIndividualSettings);
+            hotPotatoCooldown = CustomOption.Create(62, cs(Locksmith.color, "Hot Potato") + ": Transfer Cooldown", "gamemode", 5f, 5f, 10f, 1f, gamemodeIndividualSettings);
+            hotPotatoResetTimeForTransfer = CustomOption.Create(63, cs(Locksmith.color, "Hot Potato") + ": Reset timer after Transfer", "gamemode", true, gamemodeIndividualSettings);
+            hotPotatoIncreaseTimeIfNoReset = CustomOption.Create(64, cs(Locksmith.color, "Hot Potato") + ": Extra Time when timer doesn't reset", "gamemode", 10f, 10f, 15f, 1f, gamemodeIndividualSettings);
             // ZombieLaboratory
             zombieLaboratoryStartZombies = CustomOption.Create(71, cs(Hunter.color, "Zombie Laboratory") + ": Initial Zombies", "gamemode", 1f, 1f, 5f, 1f, gamemodeIndividualSettings);
             zombieLaboratoryInfectTime = CustomOption.Create(72, cs(Hunter.color, "Zombie Laboratory") + ": Time to Infect", "gamemode", 3f, 2f, 3f, 1f, gamemodeIndividualSettings);
@@ -508,6 +502,7 @@ namespace LasMonjas
             // Bomberman options
             bombermanSpawnRate = CustomOption.Create(210, cs(Bomberman.color, "Bomberman"), "impostor", rates, null, true);
             bombermanBombCooldown = CustomOption.Create(211, cs(Bomberman.color, "Bomberman") + ": Cooldown", "impostor", 30f, 30f, 60f, 5f, bombermanSpawnRate);
+            bombermanSelfBombDuration = CustomOption.Create(212, cs(Bomberman.color, "Bomberman") + ": Self Bomb Timer", "impostor", 10f, 5f, 15f, 1f, bombermanSpawnRate);
 
             // Chameleon options
             chameleonSpawnRate = CustomOption.Create(220, cs(Chameleon.color, "Chameleon"), "impostor", rates, null, true);
@@ -529,9 +524,8 @@ namespace LasMonjas
 
             // Medusa options
             medusaSpawnRate = CustomOption.Create(250, cs(Medusa.color, "Medusa"), "impostor", rates, null, true);
-            medusaCooldown = CustomOption.Create(251, cs(Medusa.color, "Medusa") + ": Cooldown", "impostor", 20f, 15f, 30f, 2.5f, medusaSpawnRate);
-            medusaDelay = CustomOption.Create(252, cs(Medusa.color, "Medusa") + ": Petrify Delay", "impostor", 10f, 5f, 10f, 1f, medusaSpawnRate);
-            medusaDuration = CustomOption.Create(253, cs(Medusa.color, "Medusa") + ": Petrify Duration", "impostor", 10f, 5f, 10f, 1f, medusaSpawnRate);
+            medusaCooldown = CustomOption.Create(251, cs(Medusa.color, "Medusa") + ": Cooldown", "impostor", 20f, 20f, 30f, 1f, medusaSpawnRate);
+            medusaDelay = CustomOption.Create(252, cs(Medusa.color, "Medusa") + ": Petrify Delay", "impostor", 10f, 10f, 15f, 1f, medusaSpawnRate);
 
             // Hypnotist options
             hypnotistSpawnRate = CustomOption.Create(260, cs(Hypnotist.color, "Hypnotist"), "impostor", rates, null, true);
@@ -617,7 +611,7 @@ namespace LasMonjas
 
             // Devourer options
             devourerSpawnRate = CustomOption.Create(440, cs(Devourer.color, "Devourer"), "neutral", rates, null, true);
-            devourerBodiesNumber = CustomOption.Create(441, cs(Devourer.color, "Devourer") + ": Devours to Win", "neutral", 3f, 2f, 5f, 1f, devourerSpawnRate);
+            devourerBodiesNumber = CustomOption.Create(441, cs(Devourer.color, "Devourer") + ": Devours to Win", "neutral", 4f, 3f, 7f, 1f, devourerSpawnRate);
 
             // Poisoner options
             poisonerSpawnRate = CustomOption.Create(450, cs(Poisoner.color, "Poisoner"), "neutral", rates, null, true);
@@ -627,7 +621,7 @@ namespace LasMonjas
 
             // Puppeteer options
             puppeteerSpawnRate = CustomOption.Create(460, cs(Puppeteer.color, "Puppeteer"), "neutral", rates, null, true);
-            puppeteerNumberOfKills = CustomOption.Create(461, cs(Puppeteer.color, "Puppeteer") + ": Number of Kills", "neutral", 3f, 2f, 4f, 1f, devourerSpawnRate);
+            puppeteerNumberOfKills = CustomOption.Create(461, cs(Puppeteer.color, "Puppeteer") + ": Number of Kills", "neutral", 3f, 2f, 4f, 1f, puppeteerSpawnRate);
 
             // Exiler options
             exilerSpawnRate = CustomOption.Create(470, cs(Exiler.color, "Exiler"), "neutral", rates, null, true);
@@ -707,6 +701,7 @@ namespace LasMonjas
             sleuthResetTargetAfterMeeting = CustomOption.Create(602, cs(Sleuth.color, "Sleuth") + ": Can Track again after meeting", "crewmate", true, sleuthSpawnRate);
             sleuthCorpsesPathfindCooldown = CustomOption.Create(604, cs(Sleuth.color, "Sleuth") + ": Track Corpses Cooldown", "crewmate", 30f, 20f, 40f, 2.5f, sleuthSpawnRate);
             sleuthCorpsesPathfindDuration = CustomOption.Create(605, cs(Sleuth.color, "Sleuth") + ": Track Corpses Duration", "crewmate", 10f, 5f, 15f, 2.5f, sleuthSpawnRate);
+            sleuthDuration = CustomOption.Create(606, cs(Sleuth.color, "Sleuth") + ": Who's There Duration", "crewmate", 10f, 5f, 15f, 1f, sleuthSpawnRate);
 
             // Fink options
             finkSpawnRate = CustomOption.Create(610, cs(Fink.color, "Fink"), "crewmate", rates, null, true);
@@ -765,12 +760,9 @@ namespace LasMonjas
             engineerAccelTrapIncrease = CustomOption.Create(714, cs(Engineer.color, "Engineer") + ": Speed Increase", "crewmate", 1.1f, 1.1f, 1.3f, 0.2f, engineerSpawnRate);
             engineerDecelTrapDecrease = CustomOption.Create(715, cs(Engineer.color, "Engineer") + ": Speed Decrease", "crewmate", 0.4f, 0.4f, 0.8f, 0.2f, engineerSpawnRate);
 
-            // Shy options
-            shySpawnRate = CustomOption.Create(720, cs(Shy.color, "Shy"), "crewmate", rates, null, true);
-            shyCooldown = CustomOption.Create(721, cs(Shy.color, "Shy") + ": Cooldown", "crewmate", 20f, 10f, 30f, 1f, shySpawnRate);
-            shyDuration = CustomOption.Create(722, cs(Shy.color, "Shy") + ": Duration", "crewmate", 10f, 5f, 20f, 1f, shySpawnRate);
-            shyArrowRange = CustomOption.Create(723, cs(Shy.color, "Shy") + ": Notify Range", "crewmate", 10f, 5f, 15f, 1f, shySpawnRate);
-            shyPlayerColor = CustomOption.Create(724, cs(Shy.color, "Shy") + ": Arrow color is player color", "crewmate", true, shySpawnRate);
+            // Locksmith options
+            locksmithSpawnRate = CustomOption.Create(720, cs(Locksmith.color, "Locksmith"), "crewmate", rates, null, true);
+            locksmithCooldown = CustomOption.Create(721, cs(Locksmith.color, "Locksmith") + ": Cooldown", "crewmate", 20f, 20f, 40f, 1f, locksmithSpawnRate);
 
             // Task Master
             taskMasterSpawnRate = CustomOption.Create(730, cs(TaskMaster.color, "Task Master"), "crewmate", rates, null, true);

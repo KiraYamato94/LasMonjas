@@ -12,6 +12,7 @@ using LasMonjas.Objects;
 using LasMonjas.Patches;
 using AmongUs.GameOptions;
 using System.Collections;
+using TMPro;
 
 namespace LasMonjas
 {
@@ -87,6 +88,20 @@ namespace LasMonjas
             writer.Write(byte.MaxValue);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
             RPCProcedure.demonSetBitten(byte.MaxValue, byte.MaxValue);
+        }
+
+        public static void handleMedusaPetrifyOnBodyReport() {
+            // Murder the petrified players (regardless whether the kill was successful or not)
+            foreach (PlayerControl player in Medusa.petrifiedPlayers) {
+                Helpers.checkMurderAttemptAndKill(Medusa.medusa, player, true, false);
+            }
+        }
+
+        public static void handleEatenPlayersOnBodyReport() {
+            // Murder the eaten players (regardless whether the kill was successful or not)
+            foreach (PlayerControl player in Devourer.eatenPlayers) {
+                Helpers.checkMurderAttemptAndKill(Devourer.devourer, player, true, false);                             
+            }
         }
 
         public static void refreshRoleDescription(PlayerControl player) {
@@ -400,6 +415,11 @@ namespace LasMonjas
                 return MurderAttemptResult.JinxKill;
             }
 
+            // Check eatenPlayer
+            else if (checkIfEaten(playerById(killer.PlayerId))) {
+                return MurderAttemptResult.JinxKill;
+            }
+
             // Block impostor shielded kill
             else if (Squire.shielded != null && Squire.shielded == target) {
                 MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(killer.NetId, (byte)CustomRPC.ShieldedMurderAttempt, Hazel.SendOption.Reliable, -1);
@@ -555,67 +575,64 @@ namespace LasMonjas
         }
 
         public static void alphaPlayer(bool invisible, byte playerId) {
-            foreach (PlayerControl player in PlayerInCache.AllPlayers) {
-                if (player.PlayerId == playerId) {
-                    if (invisible) {
-                        player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0.5f);
-                        player.cosmetics.colorBlindText.color = new Color(player.cosmetics.colorBlindText.color.r, player.cosmetics.colorBlindText.color.g, player.cosmetics.colorBlindText.color.b, 0.5f);
-                        if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
-                            player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 0.5f);
-                            player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 0.5f);
-                        }
-                        if (player.cosmetics.hat != null) {
-                            player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0.5f);
-                            player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 0.5f);
-                            player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 0.5f);
-                        }
-                        if (player.cosmetics.visor != null) {
-                            player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 0.5f);
-                        }
-                        player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
-                    }
-                    else {
-                        player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 1f);
-                        player.cosmetics.colorBlindText.color = new Color(player.cosmetics.colorBlindText.color.r, player.cosmetics.colorBlindText.color.g, player.cosmetics.colorBlindText.color.b, 1);
-                        if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
-                            player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 1f);
-                            player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 1f);
-                        }
-                        if (player.cosmetics.hat != null) {
-                            player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 1f);
-                            player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 1f);
-                            player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 1f);
-                        }
-                        if (player.cosmetics.visor != null) {
-                            player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 1f);
-                        }
-                        player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
-                    }
+            PlayerControl player = playerById(playerId);
+
+            if (invisible) {
+                player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0.5f);
+                player.cosmetics.colorBlindText.color = new Color(player.cosmetics.colorBlindText.color.r, player.cosmetics.colorBlindText.color.g, player.cosmetics.colorBlindText.color.b, 0.5f);
+                if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
+                    player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 0.5f);
+                    player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 0.5f);
                 }
+                if (player.cosmetics.hat != null) {
+                    player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0.5f);
+                    player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 0.5f);
+                    player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 0.5f);
+                }
+                if (player.cosmetics.visor != null) {
+                    player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 0.5f);
+                }
+                player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
+            }
+            else {
+                player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 1f);
+                player.cosmetics.colorBlindText.color = new Color(player.cosmetics.colorBlindText.color.r, player.cosmetics.colorBlindText.color.g, player.cosmetics.colorBlindText.color.b, 1);
+                if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
+                    player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 1f);
+                    player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 1f);
+                }
+                if (player.cosmetics.hat != null) {
+                    player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 1f);
+                    player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 1f);
+                    player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 1f);
+                }
+                if (player.cosmetics.visor != null) {
+                    player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 1f);
+                }
+                player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
             }
         }
 
         public static void invisiblePlayer(byte playerId) {
-            foreach (PlayerControl player in PlayerInCache.AllPlayers) {
-                if (player.PlayerId == playerId) {
-                    player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0f);
-                    player.cosmetics.colorBlindText.color = new Color(player.cosmetics.colorBlindText.color.r, player.cosmetics.colorBlindText.color.g, player.cosmetics.colorBlindText.color.b, 0);
-                    if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
-                        player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 0f);
-                        player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 0f);
-                    }
-                    if (player.cosmetics.hat != null) {
-                        player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0f);
-                        player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 0f);
-                        player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 0f);
-                    }
-                    if (player.cosmetics.visor != null) {
-                        player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 0f);
-                    }
-                    player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0f);
-                }
+            PlayerControl player = playerById(playerId);
+
+            player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0f);
+            player.cosmetics.colorBlindText.color = new Color(player.cosmetics.colorBlindText.color.r, player.cosmetics.colorBlindText.color.g, player.cosmetics.colorBlindText.color.b, 0);
+            if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
+                player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 0f);
+                player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 0f);
             }
+            if (player.cosmetics.hat != null) {
+                player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0f);
+                player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 0f);
+                player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 0f);
+            }
+            if (player.cosmetics.visor != null) {
+                player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 0f);
+            }
+            player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0f);
         }
+
         public static void turnIntoImpostor(PlayerControl player) {
             player.Data.Role.TeamType = RoleTeamTypes.Impostor;
             RoleManager.Instance.SetRole(player, RoleTypes.Impostor);
@@ -1205,8 +1222,8 @@ namespace LasMonjas
                     activatedSensei = true;
                 }
             }
-        }
-
+        }        
+        
         public static StaticDoor GetStaticDoor(string name)
         {
             foreach (var doors in UnityEngine.Object.FindObjectsOfType(Il2CppType.Of<StaticDoor>()))
@@ -1964,6 +1981,8 @@ namespace LasMonjas
                 hotpotato.transform.position = HotPotato.hotPotatoPlayer.transform.position + new Vector3(0, 0.5f, -0.25f);
                 HotPotato.hotPotato = hotpotato;
 
+                HudManager.Instance.DangerMeter.gameObject.SetActive(true);
+
                 createdhotpotato = true;
             }
         }
@@ -2107,9 +2126,9 @@ namespace LasMonjas
                 ZombieLaboratory.nurseMedkits.Add(mapMedKitthree);
                 // Add Arrows pointing the medkit only for nurse
                 if (ZombieLaboratory.localNurseArrows.Count == 0 && ZombieLaboratory.localNurseArrows.Count < 3) {
-                    ZombieLaboratory.localNurseArrows.Add(new Arrow(Shy.color));
-                    ZombieLaboratory.localNurseArrows.Add(new Arrow(Shy.color));
-                    ZombieLaboratory.localNurseArrows.Add(new Arrow(Shy.color));
+                    ZombieLaboratory.localNurseArrows.Add(new Arrow(Locksmith.color));
+                    ZombieLaboratory.localNurseArrows.Add(new Arrow(Locksmith.color));
+                    ZombieLaboratory.localNurseArrows.Add(new Arrow(Locksmith.color));
                 }
                 ZombieLaboratory.localNurseArrows[0].arrow.SetActive(true);
                 ZombieLaboratory.localNurseArrows[1].arrow.SetActive(true);
@@ -2654,6 +2673,197 @@ namespace LasMonjas
             writer.Write((byte)0);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
             RPCProcedure.setJinxed(player.PlayerId, 0);
+        }
+
+        public static void unpetrifyForMinigames (PlayerControl player) {
+            bool isPetrified = Medusa.petrifiedPlayers.FirstOrDefault(x => x.PlayerId == player.PlayerId);
+            if (isPetrified) {
+                PlayerControl unPetrify = Medusa.petrifiedPlayers.FirstOrDefault(x => x.PlayerId == player.PlayerId);
+                unPetrify.moveable = true;
+                Medusa.petrifiedPlayers.Remove(unPetrify);
+                GameObject petrifyZone = GameObject.Find(unPetrify.name + "petrifyZone");
+                if (petrifyZone != null) {
+                    UnityEngine.Object.Destroy(petrifyZone);
+                }
+            }
+        }
+
+        public static bool checkIfEaten(PlayerControl player) {
+            return Devourer.eatenPlayers.Any(p => p.Data.PlayerId == player.Data.PlayerId);
+        }
+
+        public static void showGamemodesPopUp(int flag, PlayerControl player) {
+            var popup = GameManagerCreator.Instance.HideAndSeekManagerPrefab.DeathPopupPrefab;
+
+            var newPopUp = UnityEngine.Object.Instantiate(popup, HudManager.Instance.transform.parent);
+            if (flag != 0) {
+                newPopUp.gameObject.transform.GetChild(0).GetComponent<TextTranslatorTMP>().enabled = false;
+            }
+            switch (gameType) {
+                case 2:
+                    // CTF:
+                    switch (flag) {
+                        case 0: // kill flag player
+                            if (player == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
+                                newPopUp.gameObject.transform.position += new Vector3(-3, -0.25f, 0);
+                            }
+                            else if (player == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
+                                newPopUp.gameObject.transform.position += new Vector3(3, -0.25f, 0);
+                            }
+                            break;
+                        case 1: // new red player
+                            newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusCaptureTheFlagTexts[0];
+                            newPopUp.gameObject.transform.position += new Vector3 (0, -0.25f, 0);
+                            break;
+                        case 2: // new blue player
+                            newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusCaptureTheFlagTexts[1];
+                            newPopUp.gameObject.transform.position += new Vector3(0, -0.25f, 0);
+                            break;
+                        case 3: // steal blue flag
+                            newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusCaptureTheFlagTexts[2];
+                            newPopUp.gameObject.transform.position += new Vector3(-3, -0.25f, 0);
+                            break;
+                        case 4: // steal red flag
+                            newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusCaptureTheFlagTexts[4];
+                            newPopUp.gameObject.transform.position += new Vector3(3, -0.25f, 0);
+                            break;
+                        case 5: // score red
+                            newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusCaptureTheFlagTexts[5];
+                            newPopUp.gameObject.transform.position += new Vector3(-3, -0.25f, 0);
+                            break;
+                        case 6: // score blue
+                            newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusCaptureTheFlagTexts[6];
+                            newPopUp.gameObject.transform.position += new Vector3(3, -0.25f, 0);
+                            break;
+                    }
+                    break;
+                case 3:
+                    // PAT:
+                    switch (flag) {
+                        case 1: // captured thief
+                            newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusPoliceAndThiefsTexts[0];
+                            newPopUp.gameObject.transform.position += new Vector3(-3, -0.25f, 0);
+                            break;
+                        case 2: // release thief
+                            newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusPoliceAndThiefsTexts[1];
+                            newPopUp.gameObject.transform.position += new Vector3(0, -0.25f, 0);
+                            break;
+                        case 3: // deliver jewel
+                            newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusPoliceAndThiefsTexts[2];
+                            newPopUp.gameObject.transform.position += new Vector3(3, -0.25f, 0);
+                            break;
+                    }
+                    break;
+                case 4:
+                    // KOTH:
+                    switch (flag) {
+                        case 1: // green king killed
+                            newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusKingOfTheHillTexts[4];
+                            newPopUp.gameObject.transform.position += new Vector3(-2, -0.25f, 0);
+                            break;
+                        case 2: // yellow king killed
+                            newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusKingOfTheHillTexts[5];
+                            newPopUp.gameObject.transform.position += new Vector3(2, -0.25f, 0);
+                            break;
+                        case 3: // new green king
+                            newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusKingOfTheHillTexts[0];
+                            newPopUp.gameObject.transform.position += new Vector3(-2, -0.25f, 0);
+                            break;
+                        case 4: // new yellow king
+                            newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusKingOfTheHillTexts[1];
+                            newPopUp.gameObject.transform.position += new Vector3(2, -0.25f, 0);
+                            break;
+                        case 5: // green zone
+                            newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusKingOfTheHillTexts[2];
+                            newPopUp.gameObject.transform.position += new Vector3(-2, -0.25f, 0);
+                            break;
+                        case 6: // yellow zone
+                            newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusKingOfTheHillTexts[3];
+                            newPopUp.gameObject.transform.position += new Vector3(2, -0.25f, 0);
+                            break;
+                    }
+                    break;
+                case 5:
+                    // HP:
+                    newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusHotPotatoTexts[0];
+                    newPopUp.gameObject.transform.position += new Vector3(0, -0.25f, 0);
+                    break;
+                case 6:
+                    // ZL:
+                    switch (flag) {
+                        case 1: // key item delivered
+                            newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusZombieLaboratoryTexts[0];
+                            newPopUp.gameObject.transform.position += new Vector3(3, -0.25f, 0);
+                            break;
+                        case 2: // survivor infected
+                            newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusZombieLaboratoryTexts[1];
+                            newPopUp.gameObject.transform.position += new Vector3(-3, -0.25f, 0);
+                            break;
+                        case 3: // survivor zombie
+                            newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusZombieLaboratoryTexts[2];
+                            newPopUp.gameObject.transform.position += new Vector3(0, -0.25f, 0);
+                            break;
+                    }
+                    break;
+                case 7:
+                    // BR:
+                    switch (BattleRoyale.matchType) {
+                        case 0:
+                            newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusBattleRoyaleTexts[0];
+                            break;
+                        case 1:
+                            switch (flag) {
+                                case 1:
+                                    newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusBattleRoyaleTexts[1];
+                                    newPopUp.gameObject.transform.position += new Vector3(-3, -0.25f, 0);
+                                    break;
+                                case 2:
+                                    newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusBattleRoyaleTexts[2];
+                                    newPopUp.gameObject.transform.position += new Vector3(-3, -0.25f, 0);
+                                    break;
+                                case 3:
+                                    newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusBattleRoyaleTexts[3];
+                                    newPopUp.gameObject.transform.position += new Vector3(0, -0.25f, 0);
+                                    break;
+                            }
+                            break;
+                        case 2:
+                            switch (flag) {
+                                case 1:
+                                    newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusBattleRoyaleTexts[4];
+                                    newPopUp.gameObject.transform.position += new Vector3(-3, -0.25f, 0);
+                                    break;
+                                case 2:
+                                    newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusBattleRoyaleTexts[5];
+                                    newPopUp.gameObject.transform.position += new Vector3(0, -0.25f, 0);
+                                    break;
+                                case 3:
+                                    newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusBattleRoyaleTexts[6];
+                                    newPopUp.gameObject.transform.position += new Vector3(-3, -0.25f, 0);
+                                    break;
+                            }
+                            break;
+                    }
+                    break;
+                case 8:
+                    // MF:
+                    switch (flag) {
+                        case 1: // steal from green
+                            newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusMonjaFestivalTexts[0];
+                            newPopUp.gameObject.transform.position += new Vector3(0, -0.25f, 0);
+                            break;
+                        case 2: // steal from cyan
+                            newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusMonjaFestivalTexts[0];
+                            newPopUp.gameObject.transform.position += new Vector3(0, -0.25f, 0);
+                            break;
+                        case 3: // survivor zombie
+                            newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusZombieLaboratoryTexts[2];
+                            newPopUp.gameObject.transform.position += new Vector3(0, -0.25f, 0);
+                            break;
+                    }
+                    break;
+            }
+            newPopUp.Show(player, 0);
         }
     }
 }

@@ -28,6 +28,8 @@ namespace LasMonjas
 
         public static bool createdseekerarena = false;
 
+        public static bool createddevourerarena = false;
+
         public static bool createdjail = false;
 
         public static bool createdStrandedBoxes = false;
@@ -54,8 +56,6 @@ namespace LasMonjas
 
         public static int alivePlayers = 15;
 
-        public static int whichgamemodeHUD = 0;
-
         public static int howmanyBattleRoyaleplayers = 0;
 
         public static List<GameObject> nightOverlay = new List<GameObject>();
@@ -80,7 +80,7 @@ namespace LasMonjas
         public static List<GameObject> whoAmIModeNeutralsItems = new List<GameObject>();
         public static bool createdWhoAmI = false;
         public static bool whoAmIFoundRole = false;
-        public static int customSkeldHS = 0;
+        public static byte customSkeldHS = 0;
 
         public static int gameType = CustomOptionHolder.gameType.getSelection(); // 0 - Roles, 1 - Find a Role, 2 - CTF, 3 - PT, 4 - KOTH, 5 - HP, 6 - ZL, 7 - BR, 8 - MJ
         public static float gamemodeMatchDuration = CustomOptionHolder.gamemodeMatchDuration.getFloat();
@@ -90,6 +90,10 @@ namespace LasMonjas
         public static float gamemodeReviveTime = CustomOptionHolder.gamemodeReviveTime.getFloat();
         public static float gamemodeInvincibilityTime = CustomOptionHolder.gamemodeInvincibilityTimeAfterRevive.getFloat();
 
+        public static GameObject progress = null;
+        public static float progressStart = 0;
+        public static float progressEnd = 0;
+
         public static void clearAndReloadRoles() {
             gameType = CustomOptionHolder.gameType.getSelection();
             gamemodeMatchDuration = CustomOptionHolder.gamemodeMatchDuration.getFloat();
@@ -97,7 +101,9 @@ namespace LasMonjas
             gamemodeEnableFlashlight = CustomOptionHolder.gamemodeEnableFlashlight.getBool();
             gamemodeFlashlightRange = CustomOptionHolder.gamemodeFlashlightRange.getFloat(); 
             gamemodeReviveTime = CustomOptionHolder.gamemodeReviveTime.getFloat();
-            gamemodeInvincibilityTime = CustomOptionHolder.gamemodeInvincibilityTimeAfterRevive.getFloat(); 
+            gamemodeInvincibilityTime = CustomOptionHolder.gamemodeInvincibilityTimeAfterRevive.getFloat();
+            progressStart = 0;
+            progressEnd = gamemodeMatchDuration;
 
             Mimic.clearAndReload();
             Painter.clearAndReload();
@@ -160,7 +166,7 @@ namespace LasMonjas
             Bat.clearAndReload();
             Necromancer.clearAndReload();
             Engineer.clearAndReload();
-            Shy.clearAndReload();
+            Locksmith.clearAndReload();
             TaskMaster.clearAndReload();
             Jailer.clearAndReload();
 
@@ -187,6 +193,7 @@ namespace LasMonjas
             updatedSenseiAdminmap = false;
             createdduelarena = false;
             createdseekerarena = false;
+            createddevourerarena = false;
             createdjail = false;
             createdStrandedBoxes = false;
             createdMonjaItems = false;
@@ -199,8 +206,7 @@ namespace LasMonjas
             createdmonjafestival = false;
             activatedReportButtonAfterCustomMode = false;
             quackNumber = 0;
-            alivePlayers = 15;
-            whichgamemodeHUD = 0;
+            alivePlayers = PlayerInCache.AllPlayers.Count;
             howmanyBattleRoyaleplayers = 0;
 
             nightOverlay = new List<GameObject>();
@@ -449,14 +455,16 @@ namespace LasMonjas
         public static PlayerControl manipulatedVictimTarget;
 
         public static float cooldown = 30f;
+        public static float manipulatedVictimTimer = 21f;
+        public static TMPro.TMP_Text manipulatedVictimTimerCountButtonText;
 
-        private static Sprite manipulateButtonSprite;
+        private static Sprite manipulateKillOrDieButtonSprite;
         private static Sprite manipulateKillButtonSprite;
 
-        public static Sprite getManipulateButtonSprite() {
-            if (manipulateButtonSprite) return manipulateButtonSprite;
-            manipulateButtonSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.ManipulatorManipulateButton.png", 90f);
-            return manipulateButtonSprite;
+        public static Sprite getKillOrDieButtonSprite() {
+            if (manipulateKillOrDieButtonSprite) return manipulateKillOrDieButtonSprite;
+            manipulateKillOrDieButtonSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.ManipulatorKillOrDieButton.png", 90f);
+            return manipulateKillOrDieButtonSprite;
         }
 
         public static Sprite getManipulateKillButtonSprite() {
@@ -470,16 +478,17 @@ namespace LasMonjas
             currentTarget = null;
             manipulatedVictim = null;
             manipulatedVictimTarget = null;
+            manipulatedVictimTimer = 21f;
             cooldown = GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
         }
 
         public static void resetManipulate() {
             HudManagerStartPatch.manipulatorManipulateButton.Timer = HudManagerStartPatch.manipulatorManipulateButton.MaxTimer;
-            HudManagerStartPatch.manipulatorManipulateButton.Sprite = Manipulator.getManipulateButtonSprite();
             HudManagerStartPatch.manipulatorManipulateButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
             currentTarget = null;
             manipulatedVictim = null;
             manipulatedVictimTarget = null;
+            manipulatedVictimTimer = 21f;
         }
     }
 
@@ -490,11 +499,20 @@ namespace LasMonjas
         public static float bombCooldown = 30f;
         public static float bombDuration = 10f;
         public static float bombTimer = 0f;
+        public static float selfbombDuration = 10f;
         public static bool activeBomb = false;
         public static bool triggerBombExploded = false;
         public static int currentBombNumber = 0;
         public static GameObject bombObject = null;
+        public static GameObject bombArea = null;
 
+        private static Sprite selfbombButtonSprite;
+        public static Sprite getSelfBombButtonSprite() {
+            if (selfbombButtonSprite) return selfbombButtonSprite;
+            selfbombButtonSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.BombermanSelfBombButton.png", 90f);
+            return selfbombButtonSprite;
+        }
+        
         private static Sprite bombButtonSprite;
         public static Sprite getBombButtonSprite() {
             if (bombButtonSprite) return bombButtonSprite;
@@ -513,11 +531,13 @@ namespace LasMonjas
             bomberman = null;
             bombTimer = 0f;
             bombCooldown = CustomOptionHolder.bombermanBombCooldown.getFloat();
+            selfbombDuration = CustomOptionHolder.bombermanSelfBombDuration.getFloat();
             bombDuration = 60;
             activeBomb = false;
             triggerBombExploded = false;
             currentBombNumber = 0;
             bombObject = null;
+            bombArea = null;
         }
 
     }
@@ -625,14 +645,14 @@ namespace LasMonjas
     {
         public static PlayerControl medusa;
         public static Color color = Palette.ImpostorRed;
+        public static List<PlayerControl> petrifiedPlayers = new List<PlayerControl>();
 
         public static float cooldown = 20f;
         public static float delay = 10f;
-        public static float duration = 10f;
-        public static float messageTimer = 0f;
 
         public static PlayerControl currentTarget;
         public static PlayerControl petrified;
+        public static PlayerControl localPetrifiedPlayer;
 
         private static Sprite buttonSprite;
         public static Sprite getButtonSprite() {
@@ -641,14 +661,21 @@ namespace LasMonjas
             return buttonSprite;
         }
 
+        private static Sprite buttonUnpetrifySprite;
+        public static Sprite getButtonUnpetrifySprite() {
+            if (buttonUnpetrifySprite) return buttonUnpetrifySprite;
+            buttonUnpetrifySprite = Helpers.loadSpriteFromResources("LasMonjas.Images.MedusaUnpetrifyButton.png", 90f);
+            return buttonUnpetrifySprite;
+        }
+
         public static void clearAndReload() {
             medusa = null;
+            petrifiedPlayers = new List<PlayerControl>(); 
             petrified = null;
+            localPetrifiedPlayer = null;
             currentTarget = null;
             cooldown = CustomOptionHolder.medusaCooldown.getFloat();
             delay = CustomOptionHolder.medusaDelay.getFloat();
-            duration = CustomOptionHolder.medusaDuration.getFloat();
-            messageTimer = 0f;
         }
     }
     public static class Hypnotist
@@ -1356,6 +1383,9 @@ namespace LasMonjas
         public static void resetStranded() {
             invisibleTimer = 0f;
             isInvisible = false;
+            HudManagerStartPatch.strandedInvisibleButton.Timer = HudManagerStartPatch.strandedInvisibleButton.MaxTimer;
+            HudManagerStartPatch.strandedInvisibleButton.isEffectActive = false;
+            HudManagerStartPatch.strandedInvisibleButton.actionButton.cooldownTimerText.color = Palette.EnabledColor; 
             if (stranded != null) {
                 Helpers.alphaPlayer(false, stranded.PlayerId);
             }
@@ -1928,8 +1958,11 @@ namespace LasMonjas
         public static bool triggerdevourerWin = false;
         public static int devouredBodies = 0;
         public static float neededBodies = 3;
+        public static PlayerControl currentTarget = null;
+        public static List<PlayerControl> eatenPlayers = new List<PlayerControl>();
 
         public static TMPro.TMP_Text devourCounterButtonText;
+        public static TMPro.TMP_Text devourEatCounterButtonText;
 
         private static Sprite buttonSprite;
         public static Sprite getButtonSprite() {
@@ -1938,11 +1971,20 @@ namespace LasMonjas
             return buttonSprite;
         }
 
+        private static Sprite buttonEatSprite;
+        public static Sprite getEatButtonSprite() {
+            if (buttonEatSprite) return buttonSprite;
+            buttonEatSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.DevourerEatButton.png", 90f);
+            return buttonEatSprite;
+        }
+
         public static void clearAndReload() {
             devourer = null;
             triggerdevourerWin = false;
             devouredBodies = 0;
             neededBodies = CustomOptionHolder.devourerBodiesNumber.getFloat();
+            currentTarget = null;
+            eatenPlayers = new List<PlayerControl>();
         }
     }
 
@@ -2716,6 +2758,8 @@ namespace LasMonjas
         public static float corpsesPathfindDuration = 5f;
         public static float corpsesPathfindTimer = 0f;
         public static List<Vector3> deadBodyPositions = new List<Vector3>();
+        public static float duration = 5f;
+        public static float timer = 0f;
 
         public static float backUpduration = 10f;
 
@@ -2724,6 +2768,7 @@ namespace LasMonjas
         public static bool usedLocate = false;
         public static float timeUntilUpdate = 0f;
         public static Arrow arrow = new Arrow(Color.blue);
+        public static Arrow arrowWho = new Arrow(Color.magenta);
 
         private static Sprite corpsePathfindButtonSprite;
         public static Sprite getCorpsePathfindButtonSprite() {
@@ -2739,6 +2784,13 @@ namespace LasMonjas
             return locateButtonSprite;
         }
 
+        private static Sprite sleuthWhosThereButtonSprite;
+        public static Sprite getwhosThereButtonSprite() {
+            if (sleuthWhosThereButtonSprite) return sleuthWhosThereButtonSprite;
+            sleuthWhosThereButtonSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.SleuthWhosThereButton.png", 90f);
+            return sleuthWhosThereButtonSprite;
+        }
+
         public static void resetLocated() {
             currentTarget = located = null;
             usedLocate = false;
@@ -2746,10 +2798,16 @@ namespace LasMonjas
             arrow = new Arrow(Color.blue);
             if (arrow.arrow != null) arrow.arrow.SetActive(false);
         }
+        public static void resetWhoLocated() {
+            if (arrowWho?.arrow != null) UnityEngine.Object.Destroy(arrowWho.arrow);
+            arrowWho = new Arrow(Color.magenta);
+            if (arrowWho.arrow != null) arrowWho.arrow.SetActive(false);
+        }
 
         public static void clearAndReload() {
             sleuth = null;
             resetLocated();
+            resetWhoLocated();
             timeUntilUpdate = 0f;
             updateIntervall = CustomOptionHolder.sleuthUpdateIntervall.getFloat();
             resetTargetAfterMeeting = CustomOptionHolder.sleuthResetTargetAfterMeeting.getBool();
@@ -2762,6 +2820,8 @@ namespace LasMonjas
             corpsesPathfindTimer = 0f;
             corpsesPathfindCooldown = CustomOptionHolder.sleuthCorpsesPathfindCooldown.getFloat();
             corpsesPathfindDuration = CustomOptionHolder.sleuthCorpsesPathfindDuration.getFloat();
+            timer = 0;
+            duration = CustomOptionHolder.sleuthCorpsesPathfindCooldown.getFloat();
             backUpduration = corpsesPathfindDuration;
         }
     }
@@ -2836,7 +2896,15 @@ namespace LasMonjas
         public static TMPro.TMP_Text welderButtonText;
         public static Vent ventTarget = null;
         public static List<Vent> ventsSealed = new List<Vent>();
+        public static Vent bombedVent = null;
 
+        private static Sprite bombVentButtonSprite;
+        public static Sprite getBombVentButtonSprite() {
+            if (bombVentButtonSprite) return bombVentButtonSprite;
+            bombVentButtonSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.WelderBombVentButton.png", 90f);
+            return bombVentButtonSprite;
+        }
+        
         private static Sprite closeVentButtonSprite;
         public static Sprite getCloseVentButtonSprite() {
             if (closeVentButtonSprite) return closeVentButtonSprite;
@@ -2865,6 +2933,7 @@ namespace LasMonjas
             totalWelds = remainingWelds = Mathf.RoundToInt(CustomOptionHolder.welderTotalWelds.getFloat());
             ventsSealed.Clear();
             ventsSealed = new List<Vent>();
+            bombedVent = null;
         }
     }
 
@@ -3232,43 +3301,24 @@ namespace LasMonjas
         }
     }
 
-    public static class Shy
+    public static class Locksmith
     {
 
-        public static PlayerControl shy;
+        public static PlayerControl locksmith;
         public static Color color = new Color32(242, 190, 255, byte.MaxValue);
 
         public static float cooldown = 30f;
-        public static float duration = 5f;
-        public static float timer = 0f;
-        public static float shyArrowRange = 5f;
-        public static bool playerColor = false;
-        public static float backUpduration = 10f;
 
-        public static Arrow arrow = new Arrow(Color.green);
-
-        private static Sprite shyButtonSprite;
-        public static Sprite getshyButtonSprite() {
-            if (shyButtonSprite) return shyButtonSprite;
-            shyButtonSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.ShyWhosThereButton.png", 90f);
-            return shyButtonSprite;
-        }
-
-        public static void resetLocated() {
-            if (arrow?.arrow != null) UnityEngine.Object.Destroy(arrow.arrow);
-            arrow = new Arrow(Color.blue);
-            if (arrow.arrow != null) arrow.arrow.SetActive(false);
+        private static Sprite locksmithButtonSprite;
+        public static Sprite getlocksmithButtonSprite() {
+            if (locksmithButtonSprite) return locksmithButtonSprite;
+            locksmithButtonSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.LocksmithOpenButton.png", 90f);
+            return locksmithButtonSprite;
         }
 
         public static void clearAndReload() {
-            shy = null;
-            resetLocated();
-            cooldown = CustomOptionHolder.shyCooldown.getFloat();
-            duration = CustomOptionHolder.shyDuration.getFloat();
-            shyArrowRange = CustomOptionHolder.shyArrowRange.getFloat();
-            timer = 0;
-            playerColor = CustomOptionHolder.shyPlayerColor.getBool();
-            backUpduration = duration;
+            locksmith = null;
+            cooldown = CustomOptionHolder.locksmithCooldown.getFloat();            
         }
     }
 
@@ -3503,7 +3553,6 @@ namespace LasMonjas
         public static PlayerControl redPlayerWhoHasBlueFlag = null;
         public static float currentRedTeamPoints = 0;
         public static List<Arrow> localRedFlagArrow = new List<Arrow>();
-        public static bool redteamAlerted = false;
 
         public static GameObject blueflag = null;
         public static GameObject blueflagbase = null;
@@ -3511,7 +3560,6 @@ namespace LasMonjas
         public static PlayerControl bluePlayerWhoHasRedFlag = null;
         public static float currentBlueTeamPoints = 0;
         public static List<Arrow> localBlueFlagArrow = new List<Arrow>();
-        public static bool blueteamAlerted = false;
 
         public static bool triggerRedTeamWin = false;
         public static bool triggerBlueTeamWin = false;
@@ -3605,7 +3653,6 @@ namespace LasMonjas
             redflagtaken = false;
             redPlayerWhoHasBlueFlag = null;
             currentRedTeamPoints = 0;
-            redteamAlerted = false;
             blueflag = null;
             blueflagbase = null;
             blueflagtaken = false;
@@ -3614,7 +3661,6 @@ namespace LasMonjas
             triggerBlueTeamWin = false;
             triggerDrawWin = false;
             currentBlueTeamPoints = 0;
-            blueteamAlerted = false;
             localRedFlagArrow = new List<Arrow>();
             localBlueFlagArrow = new List<Arrow>();
             flagpointCounter = Language.introTexts[2] + "<color=#FF0000FF>" + currentRedTeamPoints + "</color> - " + "<color=#0000FFFF>" + currentBlueTeamPoints + "</color>";
@@ -4055,11 +4101,9 @@ namespace LasMonjas
 
         public static GameObject greenflag = null;
         public static float currentGreenTeamPoints = 0;
-        public static bool greenteamAlerted = false;
 
         public static GameObject yellowflag = null;
         public static float currentYellowTeamPoints = 0;
-        public static bool yellowteamAlerted = false;
 
         public static List<GameObject> kingZones = new List<GameObject>();
         public static GameObject flagzoneone = null;
@@ -4163,11 +4207,9 @@ namespace LasMonjas
 
             greenflag = null;
             currentGreenTeamPoints = 0;
-            greenteamAlerted = false;
 
             yellowflag = null;
             currentYellowTeamPoints = 0;
-            yellowteamAlerted = false;
 
             kingZones.Clear();
             flagzoneone = null;
@@ -6626,6 +6668,8 @@ namespace LasMonjas
         public AudioClip bombermanPlaceBombClip;
         public AudioClip bombermanBombMusic;
         public AudioClip bombermanBombClip;
+        public GameObject bombermanArea;
+        public GameObject medusaPetrifyProp;
         public AudioClip medusaPetrify;
         public GameObject hypnotistReverse;
         public AudioClip archerBowClip;
@@ -6657,7 +6701,8 @@ namespace LasMonjas
         public AudioClip pyromaniacIgniteClip;
         public GameObject treasureHunterTreasure;
         public AudioClip treasureHunterPlaceTreasure;
-        public AudioClip treasureHunterCollectTreasure; 
+        public AudioClip treasureHunterCollectTreasure;
+        public GameObject devourerArena;
         public AudioClip devourerDingClip;
         public AudioClip devourerDevourClip;
         public AudioClip poisonerPoisonClip;
@@ -6701,7 +6746,7 @@ namespace LasMonjas
         public AudioClip jailerJail;
         public AudioClip jinxJinx;
         public AudioClip mechanicWelderAction;
-        public AudioClip shyThere;
+        public AudioClip sleuthThere;
         public AudioClip sleuthBody;
         public AudioClip sleuthTarget;
         public AudioClip squireShield;
