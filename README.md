@@ -36,6 +36,17 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
 
+**Version 3.4.0 (1st October 2023)**
+- All gamemodes HUD reworked.
+- Medusa rework: petrify last forever now, petrified players die when a meeting is called but every crewmate has a button to unpetrify a player.
+- Manipulator rework: manipulate a player to force it to kill or get killed.
+- New ability for Bomberman: self bomb, kill anyone inside explosion range including himself.
+- New ability for Welder: vent bomb, place a bomb per round inside a vent, the player that enters or exits (but not going through) that specific vent dies. 
+- Shy role removed from the mod, but its ability got added to Sleuth.
+- New crewmate: Locksmith, can open all closed doors. On MiraHQ it removes decontamination doors.
+- New ability for Devourer: eat players, can eat players to teleport them to a place where they can't do anything but move, killing the Devourer free those players, but eaten players die when a meeting is called if the Devourer is alive.
+- 26 new hats, 7 new visors and 2 new nameplates
+
 **Version 3.3.0 (6th August 2023)**
 - Submerged compatibility update
 - Fixed adaptive color for custom cosmetics (again)
@@ -473,7 +484,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 |  |  [Bat](#bat) |  | |  |
 |  |  [Necromancer](#necromancer) |  | |  |
 |  |  [Engineer](#engineer) |  | |  |
-|  |  [Shy](#shy) |  | |  |
+|  |  [Locksmith](#locksmith) |  | |  |
 |  |  [Task Master](#taskmaster) |  | |  |
 |  |  [Jailer](#jailer) |  | |  |
 
@@ -493,6 +504,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 - If he mimics the shielded player, the Mimic gains the shield indicator but not the shield itself accordingly to the configured option on the Squire role.
 - Fortune Teller can still see the Mimic original name.
 - Pick/Disguise button has a fixed 5 seconds cooldown.
+- Has the Shapeshifter animation.
 
 -----------------------
 
@@ -564,20 +576,21 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 ## Manipulator
 | Team and Options  | Description |
 |----------|-------------|
-| Impostors | Can manipulate a player to kill his adjacent from anywhere |
+| Impostors | Can manipulate a player to force it to kill or get killed |
 
 **Additional Ability Notes:**
-- Can kill himself or other impostor with his ability.
-- Using his ability to kill will increase his next cooldown for additional 10 seconds.
-- Kill and Manipulate ability cooldown are shared to prevent double killing.
+- Manipulated player gets a button that can kill anyone but it has a few seconds to use it, if it runs out of time, the Manipulated gets killed instead.
+- If a minigame or meeting happens, the Manipulated player resets.
+- Kill and Manipulate ability cooldown are shared.
 
 -----------------------
 
 ## Bomberman
 | Team and Options  | Description |
 |----------|-------------|
-| Impostors | Can use a new sabotage, place bomb on the map |
+| Impostors | Can use a new sabotage, place bomb on the map and explode himself |
 | Cooldown | Ability Cooldown | 
+| Self Bomb Duration | Time before exploding himself | 
 
 **Additional Ability Notes:**
 - Can't place the bomb if he's too close to another player or a sabotage is happening.
@@ -587,6 +600,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 - While the Bomb is active, custom music will play and a custom message with the remaining time for defusing it will display to the players.
 - Bomb duration is fixed to 60 seconds for Skeld, MiraHQ, Dlesk and the custom map, 90 for Polus and Submerged, and 180 for Airship.
 - An additional 5 seconds will be added to the bomb duration for every dead crewmate player.
+- Self Bomb ability starts a countdown, reaching 0 kills all players inside the explosion area (only visible for Bomberman) and Bomberman himself afterwards.
 
 -----------------------
 
@@ -642,15 +656,16 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 ## Medusa
 | Team and Options  | Description |
 |----------|-------------|
-| Impostors | Can petrify other players  |
+| Impostors | Can petrify other players |
 | Cooldown | Ability Cooldown |
 | Petrify Delay | Delay the petrify effect |
-| Duration | Ability Duration |
 
 **Additional Ability Notes:**
-- A petrified player can't move and a custom message will tell him he's petrified.
+- A petrified player can't move and a stone prop spawns above that player so everyone knows it's petrified.
+- If a petrified player is challenged by Challenger or Seeker, that player unpetrify itself.
+- All petrified players die when a meeting is called, but every crewmate has a button to unpetrify players.
 - Petrify doesn't affect players inside vents.
-- Can only petrify alive players.
+- Can't use the emergency button
 
 -----------------------
 
@@ -946,13 +961,17 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 ## Devourer
 | Team and Options  | Description |
 |----------|-------------|
-| Neutrals | Has to eat corpses to win |
+| Neutrals | Has to eat players and corpses to win |
 | Devours to Win | Number of needed corpses to win | 
 
 **Additional Ability Notes:**
 - Can make tasks to disguise himself but won't count for the tasks progress.
-- When a player dies, a sound will be played only for Devourer, indicating him there's a body somewhere.
-- He can't devour if he's dead.
+- When a player dies, a sound will be played only for Devourer, which means that there's a body somewhere.
+- He can eat players, teleporting them to a place where they can't do anything but move around.
+- Eaten players die when a meeting is called, counting towards the Devours to Win progress.
+- The only way to save the eaten players is killing the Devourer.
+- Eaten players aren't affected by Time Traveler abilities.
+- Can't use emergency button.
 - He can't be in the same game as Joker, Role Thief, Pyromaniac, Treasure Hunter, Poisoner, Puppeteer, Exiler, Amnesiac and Seeker.
 
 -----------------------
@@ -1201,12 +1220,14 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 | Track Interval | How often the arrow updates its position |  
 | Can Track again after meeting | Let's the Sleuth select a new player to track, removing the old one |  
 | Track Corpses Cooldown | Ability Cooldown |  
-| Track Corpses Duration | Ability Duration |  
+| Track Corpses Duration | Ability Duration |
+| Who's There Duration | Ability Duration |
 
 **Additional Ability Notes:**
 - Player's position arrow is blue.
 - Corpses's arrows are green.
 - The arrow is the same as the vanilla sabotages one.
+- Who's there points with a color based arrow the closest player to Sleuth.
 
 -----------------------
 
@@ -1238,7 +1259,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 ## Welder
 | Team and Options  | Description |
 |----------|-------------|
-| Crewmates | Can seal vents |
+| Crewmates | Can seal vents and place a bomb in a vent |
 | Cooldown | Ability Cooldown |
 | Seal Number | How many vents can be sealed |
 
@@ -1247,6 +1268,8 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 - He can't seal the same vent multiple times.
 - A sealed vent can't be entered or exited, but can still be used as a tunnel.
 - He sees which vent is gonna be sealed on next meeting.
+- Can place one bomb per round inside a vent, all players who enter or exit that specific vent die.
+- Can't seal and vent the same vent, also the bomb one resets when a meeting is called. 
 
 -----------------------
 
@@ -1371,17 +1394,15 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 
 -----------------------
 
-## Shy
+## Locksmith
 | Team and Options  | Description |
 |----------|-------------|
-| Crewmates | Can reveal closet player position to him inside a specific range |
+| Crewmates | Can open all closed doors on the map |
 | Cooldown | Ability Cooldown |
-| Duration | Reveal position duration |
-| Notify Range | Maximum distance to reveal a player |
-| Arrow color is player color | Arrow can be the same color or not as the revealed player |
 
 **Additional Ability Notes:**
-- If arrow isn't player color based, it will be Shy's color.
+- Can use his ability whenever he wants.
+- On MiraHQ it removes the decontamitation doors, since there aren't doors on that map.
 
 -----------------------
 
@@ -1418,7 +1439,6 @@ This mod also features some game mechanic changes, one of them being a [custom m
 
 | Global Setting  | Description |
 |----------|-------------|
-| Activate Mod Roles and Gamemodes | Activate this option to play mod roles and gamemodes, and turn it off to play vanilla games |
 | Activate Custom Skeld Map | If enabled and Skeld is selected as the game map, the custom map will load instead the normal Skeld |
 | Hide Vent Anim on Shadows | Remove being able to see a vent opening or closing inside shadows |
 
@@ -1426,7 +1446,6 @@ This mod also features some game mechanic changes, one of them being a [custom m
 |----------|-------------|
 | Find a Role Mode | Activate this to play games where everyone is vanilla and have to get a role from a box |
 | Remove Swipe Card Task | I hate this task so I made an option to remove it |
-| Remove Airship Doors | After reading what is written above this, you can guess why this option is here |
 | Night Vision for Lights Sabotage | Security Cameras will have night vision when lights are sabotaged making all players lime color with "Player" as their names (not available on Submerged) |
 | Screen Shake for Reactor Sabotage | Add a player's screen shake visual effect during reactor sabotage. Graphic's game option "screen shake" has to be active |
 | Anomymous Players for Comms Sabotage | Makes the players grey with "Player" as their names during Cooms sabotage |
