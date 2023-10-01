@@ -98,7 +98,7 @@ namespace LasMonjas.Objects
                         if (MapBehaviour.Instance) {
                             MapBehaviour.Instance.Close();
                         }
-                        new CustomMessage(Language.statusRolesTexts[1], Hypnotist.spiralDuration, 1.3f, 4);
+                        new CustomMessage(Language.statusRolesTexts[1], Hypnotist.spiralDuration, new Vector2(0f, 1.3f), 4);
                         PlayerControl target = Helpers.playerById(player.PlayerId);
                         MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ActivateSpiralTrap, Hazel.SendOption.Reliable, -1);
                         killWriter.Write(player.PlayerId);

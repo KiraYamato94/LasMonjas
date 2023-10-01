@@ -140,7 +140,7 @@ namespace LasMonjas.Objects
                                 MapBehaviour.Instance.Close();
                             }
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.treasureHunterPlaceTreasure, false, 100f);
-                            new CustomMessage(Language.statusRolesTexts[0], 5, 1f, 10);
+                            new CustomMessage(Language.statusRolesTexts[0], 5, new Vector2(0f, 1f), 10);
                         }
 
                         PlayerControl target = Helpers.playerById(player.PlayerId);
