@@ -10,7 +10,7 @@ namespace LasMonjas.Core {
         private TMPro.TMP_Text text;
         private static List<CustomMessage> customMessages = new List<CustomMessage>();
 
-        public CustomMessage(string message, float duration, float localPosition, int whichmessage) {
+        public CustomMessage(string message, float duration, Vector2 localPosition, int whichmessage) {
             RoomTracker roomTracker = HudManager.Instance?.roomTracker;
             if (roomTracker != null) {
                 GameObject gameObject = UnityEngine.Object.Instantiate(roomTracker.gameObject);
@@ -20,7 +20,7 @@ namespace LasMonjas.Core {
                 text = gameObject.GetComponent<TMPro.TMP_Text>();
                 text.text = message;
 
-                gameObject.transform.localPosition = new Vector3(0, localPosition, gameObject.transform.localPosition.z);
+                gameObject.transform.localPosition = new Vector3(localPosition.x, localPosition.y, gameObject.transform.localPosition.z);
                 customMessages.Add(this);
 
                 HudManager.Instance.StartCoroutine(Effects.Lerp(duration, new Action<float>((p) => {
@@ -46,13 +46,13 @@ namespace LasMonjas.Core {
                             text.text = "";
                             break;
                         case 3:
-                            // Petrify text
-                            while (Medusa.messageTimer > 0) {
+                            // free slot
+                            /*while ( ) {
                                 string prefix = (even ? "<color=#FCBA03FF>" : "<color=#FF0000FF>");
                                 text.text = prefix + message + "</color>";
                                 return;
                             }
-                            text.text = "";
+                            text.text = "";*/
                             break;
                         case 4:
                             // Hypnotized text
@@ -92,12 +92,12 @@ namespace LasMonjas.Core {
                             break;
                         case 8:
                             // Seeker points warning text
-                            while (Seeker.isMinigaming) {
-                                string prefix = (even ? "<color=#FCBA03FF>" : "<color=#808080FF>");
-                                text.text = prefix + message + "</color>";
-                                return;
-                            }
-                            text.text = "";
+                            //while (Seeker.isMinigaming) {
+                                string prefixS = (even ? "<color=#FCBA03FF>" : "<color=#808080FF>");
+                                text.text = prefixS + message + "</color>";
+                                //return;
+                            //}
+                            //text.text = "";
                             break;
                         case 9:
                             // Fink camera use for other impostors
@@ -118,25 +118,8 @@ namespace LasMonjas.Core {
                             text.text = "";
                             break;
                         case 15:
-                            // Gamemode match duration
-                            while (LasMonjas.gameType >= 2 && LasMonjas.gamemodeMatchDuration >= 0) {
-                                string prefix = ("<color=#FF8000FF>");
-                                text.text = prefix + message + LasMonjas.gamemodeMatchDuration.ToString("F0") + "</color>";
-                                return;
-                            }
-                            text.text = "";
-                            break;
-                        case 16:
-                            // Gamemode warnings
-                            if (LasMonjas.gameType >= 2 && LasMonjas.gamemodeMatchDuration >= 0) {
-                                string prefix = ("<color=#FF8000FF>");
-                                text.text = prefix + message + "</color>";
-                            } else {
-                                text.text = "";
-                            }
-                            break;
-                        case 17:
                             // Gamemode progress counter
+                            text.alignment = TMPro.TextAlignmentOptions.Left;
                             while (LasMonjas.gameType >= 2 && LasMonjas.gamemodeMatchDuration >= 0) {
                                 string prefix = ("<color=#FF8000FF>");
                                 switch (LasMonjas.gameType) {
@@ -162,15 +145,6 @@ namespace LasMonjas.Core {
                                         text.text = prefix + MonjaFestival.monjaFestivalCounter + "</color>";
                                         break;
                                 }
-                                return;
-                            }
-                            text.text = "";
-                            break;
-                        case 18:
-                            // Hot potato timer
-                            while (LasMonjas.gameType == 5 && LasMonjas.gamemodeMatchDuration >= 0) {
-                                string prefix = ("<color=#FF8000FF>");
-                                text.text = prefix + message + HotPotato.timeforTransfer.ToString("F0") + "</color>";
                                 return;
                             }
                             text.text = "";

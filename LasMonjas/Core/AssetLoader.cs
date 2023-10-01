@@ -34,8 +34,10 @@ namespace LasMonjas.Core
             CustomMain.customAssets.bombermanBomb = assetBundleBundle.LoadAsset<GameObject>("Bomb.prefab").DontUnload();
             CustomMain.customAssets.bombermanPlaceBombClip = assetBundleBundle.LoadAsset<AudioClip>("bombermanPlaceBombClip_Switch2.ogg").DontUnload();
             CustomMain.customAssets.bombermanBombClip = assetBundleBundle.LoadAsset<AudioClip>("bombermanBombClip_Explosion2.ogg").DontUnload();
+            CustomMain.customAssets.bombermanArea = assetBundleBundle.LoadAsset<GameObject>("bomb_Area.prefab").DontUnload();
             CustomMain.customAssets.chameleonInvisible = assetBundleBundle.LoadAsset<AudioClip>("chameleonInvisible_Up1.ogg").DontUnload();
             CustomMain.customAssets.sorcererHex = assetBundleBundle.LoadAsset<AudioClip>("sorcererHex_Magic1.ogg").DontUnload();
+            CustomMain.customAssets.medusaPetrifyProp = assetBundleBundle.LoadAsset<GameObject>("medusa_Petrify.prefab").DontUnload();
             CustomMain.customAssets.medusaPetrify = assetBundleBundle.LoadAsset<AudioClip>("medusaPretrify_Earth2.ogg").DontUnload();
             CustomMain.customAssets.hypnotistReverse = assetBundleBundle.LoadAsset<GameObject>("hypnotistReverse.prefab").DontUnload();
             CustomMain.customAssets.archerBowClip = assetBundleBundle.LoadAsset<AudioClip>("archer_Bow3.ogg").DontUnload();
@@ -71,6 +73,7 @@ namespace LasMonjas.Core
             CustomMain.customAssets.treasureHunterTreasure = assetBundleBundle.LoadAsset<GameObject>("treasure.prefab").DontUnload();
             CustomMain.customAssets.treasureHunterPlaceTreasure = assetBundleBundle.LoadAsset<AudioClip>("treasureHunterPlaceTreasure_Flash2.ogg").DontUnload();
             CustomMain.customAssets.treasureHunterCollectTreasure = assetBundleBundle.LoadAsset<AudioClip>("treasureHunterCollectTreasure_Item3.ogg").DontUnload();
+            CustomMain.customAssets.devourerArena = assetBundleBundle.LoadAsset<GameObject>("devourer_Arena.prefab").DontUnload();
             CustomMain.customAssets.devourerDingClip = assetBundleBundle.LoadAsset<AudioClip>("devourerDingClip_Bell3.ogg").DontUnload();
             CustomMain.customAssets.devourerDevourClip = assetBundleBundle.LoadAsset<AudioClip>("devourerDevourClip_Slash1.ogg").DontUnload();
             CustomMain.customAssets.poisonerPoisonClip = assetBundleBundle.LoadAsset<AudioClip>("poisonerPoison.ogg").DontUnload();
@@ -90,6 +93,7 @@ namespace LasMonjas.Core
             CustomMain.customAssets.hackerHack = assetBundleBundle.LoadAsset<AudioClip>("hackerHack_Heal1.ogg").DontUnload();
             CustomMain.customAssets.sleuthBody = assetBundleBundle.LoadAsset<AudioClip>("sleuthBody_Heal7.ogg").DontUnload();
             CustomMain.customAssets.sleuthTarget = assetBundleBundle.LoadAsset<AudioClip>("sleuthTarget_Key.ogg").DontUnload();
+            CustomMain.customAssets.sleuthThere = assetBundleBundle.LoadAsset<AudioClip>("shyThere_Ice7.ogg").DontUnload();
             CustomMain.customAssets.finkSpy = assetBundleBundle.LoadAsset<AudioClip>("finkSpy_Heal2.ogg").DontUnload();
             CustomMain.customAssets.spiritualistRevive = assetBundleBundle.LoadAsset<AudioClip>("spiritualistRevive_Recovery.ogg").DontUnload();
             CustomMain.customAssets.hunterTarget = assetBundleBundle.LoadAsset<AudioClip>("hunter_Blind.ogg").DontUnload();
@@ -99,7 +103,6 @@ namespace LasMonjas.Core
             CustomMain.customAssets.accelSprite = assetBundleBundle.LoadAsset<GameObject>("engineer_accelerate.prefab").DontUnload();
             CustomMain.customAssets.decelSprite = assetBundleBundle.LoadAsset<GameObject>("engineer_slow.prefab").DontUnload();
             CustomMain.customAssets.positionSprite = assetBundleBundle.LoadAsset<GameObject>("engineer_detect.prefab").DontUnload();
-            CustomMain.customAssets.shyThere = assetBundleBundle.LoadAsset<AudioClip>("shyThere_Ice7.ogg").DontUnload();
             CustomMain.customAssets.jailerJail = assetBundleBundle.LoadAsset<AudioClip>("jailerJail_Close3.ogg").DontUnload();
 
             CustomMain.customAssets.performerDio = assetBundleBundle.LoadAsset<GameObject>("dio.prefab").DontUnload();

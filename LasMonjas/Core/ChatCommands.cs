@@ -437,10 +437,10 @@ namespace LasMonjas.Core
                                 case "机关师":
                                     infoText = Language.crewSummaryTexts[21];
                                     break;
-                                case "shy":
-                                case "timido":
-                                case "シャイ":
-                                case "内敛者":
+                                case "locksmith":
+                                case "cerrajero":
+                                case "錠前屋":
+                                case "鎖匠":
                                     infoText = Language.crewSummaryTexts[22];
                                     break;
                                 case "taskmaster":
@@ -930,10 +930,10 @@ namespace LasMonjas.Core
                                     case "机关师":
                                         infoText = Language.crewSummaryTexts[21];
                                         break;
-                                    case "shy":
-                                    case "timido":
-                                    case "シャイ":
-                                    case "内敛者":
+                                    case "locksmith":
+                                    case "cerrajero":
+                                    case "錠前屋":
+                                    case "鎖匠":
                                         infoText = Language.crewSummaryTexts[22];
                                         break;
                                     case "taskmaster":

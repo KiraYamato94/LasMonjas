@@ -33,6 +33,7 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "Muaresito", VisorName = "Menacing"},
             new AuthorData {AuthorName = "Muaresito", VisorName = "Susonal"},
             new AuthorData {AuthorName = "Muaresito", VisorName = "Loading"},
+            new AuthorData {AuthorName = "Muaresito", VisorName = "Furbysor"},
             new AuthorData {AuthorName = "Xago", VisorName = "Zargothrax"},
             new AuthorData {AuthorName = "IceCreamGuy", VisorName = "Mungus"},
             new AuthorData {AuthorName = "ERIKHAPPY", VisorName = "Bubble Gum"},
@@ -47,7 +48,13 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "lotty", VisorName = "Kek Smile"},
             new AuthorData {AuthorName = "lotty", VisorName = "Golf Club"},
             new AuthorData {AuthorName = "Xeno<33", VisorName = "Wand"},
+            new AuthorData {AuthorName = "Xeno<33", VisorName = "Play A Game", altShader = true},
             new AuthorData {AuthorName = "Nyxx", VisorName = "Sunglasses"},
+            new AuthorData {AuthorName = "Nyxx", VisorName = "Ball", altShader = true},
+            new AuthorData {AuthorName = "Nyxx", VisorName = "Floating Hearts"},
+            new AuthorData {AuthorName = "Nyxx", VisorName = "Heart", altShader = true},
+            new AuthorData {AuthorName = "Nyxx", VisorName = "Selfie", altShader = true},
+            new AuthorData {AuthorName = "Nyxx", VisorName = "Ribbon"},
         };
 
         public static bool _customVisorLoaded = false;

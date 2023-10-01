@@ -40,12 +40,14 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "Muaresito", NamePlateName = "Su... Suspai"},
             new AuthorData {AuthorName = "Muaresito", NamePlateName = "Yandere"},
             new AuthorData {AuthorName = "Muaresito", NamePlateName = "Samba Lentin"},
+            new AuthorData {AuthorName = "Muaresito", NamePlateName = "Zargothrax Business Card"},
             new AuthorData {AuthorName = "Blocky", NamePlateName = "Submerged"},
             new AuthorData {AuthorName = "Blocky", NamePlateName = "What the cow"},
             new AuthorData {AuthorName = "Blocky", NamePlateName = "Bluescreen"},
             new AuthorData {AuthorName = "Blocky", NamePlateName = "Lot of bodies"},
             new AuthorData {AuthorName = "Blocky", NamePlateName = "RIP"},
             new AuthorData {AuthorName = "AD", NamePlateName = "Jailed"},
+            new AuthorData {AuthorName = "Nyxx", NamePlateName = "Report"},
         };
 
         public static bool _customNamePlatesLoaded = false;

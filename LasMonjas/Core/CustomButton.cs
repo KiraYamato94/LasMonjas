@@ -43,8 +43,9 @@ namespace LasMonjas.Core {
             public static readonly Vector3 upperRowFarLeft = new Vector3(-3f, 1f, 0f);
             public static readonly Vector3 topRowRight = new Vector3(0f, 2f, 0f);
             public static readonly Vector3 topRowCenter = new Vector3(-1f, 2f, 0f);
+            public static readonly Vector3 topRowUpper = new Vector3(-2f, 2f, 0f);
 
-            //                                                    TopRowCenter/Defuse   TopRowRight/Nun
+            //                              TopRowUpper/Defuse  TopRowCenter/Depetrified   TopRowRight/Nun
             //              UpperFarLeft        UpperLeft          UpperCenter/Vent    UpperRight/Kill
             //  LowerLeft   LowerCenter    LowerRight/Sabotage         Report               Use
         }
