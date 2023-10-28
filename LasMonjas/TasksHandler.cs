@@ -57,7 +57,7 @@ namespace LasMonjas
 
             TaskMaster.taskMasterAddCommonTasks = SetTasksToList(ref list, ShipStatus.Instance.CommonTasks.ToList(), Mathf.RoundToInt(TaskMaster.taskMasterAddCommonTasks));
             TaskMaster.taskMasterAddLongTasks = SetTasksToList(ref list, ShipStatus.Instance.LongTasks.ToList(), Mathf.RoundToInt(TaskMaster.taskMasterAddLongTasks));
-            TaskMaster.taskMasterAddShortTasks = SetTasksToList(ref list, ShipStatus.Instance.NormalTasks.ToList(), Mathf.RoundToInt(TaskMaster.taskMasterAddShortTasks));
+            TaskMaster.taskMasterAddShortTasks = SetTasksToList(ref list, ShipStatus.Instance.ShortTasks.ToList(), Mathf.RoundToInt(TaskMaster.taskMasterAddShortTasks));
 
             return list.ToArray();
         }

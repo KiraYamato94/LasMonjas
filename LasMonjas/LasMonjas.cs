@@ -392,7 +392,7 @@ namespace LasMonjas
             // Restore janitor values when dead
             dragginBody = false;
             bodyId = 0;
-            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+            if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                 GameObject vent = GameObject.Find("LowerCentralVent");
                 vent.GetComponent<BoxCollider2D>().enabled = true;
             }
@@ -1214,8 +1214,12 @@ namespace LasMonjas
                     case 4:
                         Jailer.prisonPlayer.transform.position = new Vector3(16.25f, 15.25f, Jailer.prisonPlayer.transform.position.z);
                         break;
-                    // Submerged
+                    // Fungle
                     case 5:
+                        Jailer.prisonPlayer.transform.position = new Vector3(-5.5f, 1f, Jailer.prisonPlayer.transform.position.z);
+                        break;
+                    // Submerged
+                    case 6:
                         if (Jailer.prisonPlayer.transform.position.y > 0) {
                             Jailer.prisonPlayer.transform.position = new Vector3(-4.3f, 13.5f, Jailer.prisonPlayer.transform.position.z);
                         }
@@ -1607,6 +1611,39 @@ namespace LasMonjas
                     susBoxPositions.Add(new Vector3(-8.75f, 12.5f, 0.4f));
                     break;
                 case 5:
+                    susBoxPositions.Add(new Vector3(-16.5f, 7.15f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-20.4f, -0.15f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-16f, -0.15f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-14f, -7.35f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-21.5f, -7.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-8.35f, -14.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-7.3f, -11f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-5.25f, -8.65f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-3.33f, -10.45f, 0.4f));
+                    susBoxPositions.Add(new Vector3(6.45f, -14.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(10.5f, -12f, 0.4f));
+                    susBoxPositions.Add(new Vector3(7.65f, -10f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-1f, -6f, 0.4f));
+                    susBoxPositions.Add(new Vector3(1.5f, -1.65f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-0.45f, 1.4f, 0.4f));
+                    susBoxPositions.Add(new Vector3(1.25f, 4.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(23.85f, 13.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(20f, 11f, 0.4f));
+                    susBoxPositions.Add(new Vector3(18.5f, 7.35f, 0.4f));
+                    susBoxPositions.Add(new Vector3(22f, 2.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(13.25f, 10f, 0.4f));
+                    susBoxPositions.Add(new Vector3(7f, 4.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(8.15f, 1.2f, 0.4f));
+                    susBoxPositions.Add(new Vector3(12.25f, 1.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(19f, 0.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(20.75f, -6.85f, 0.4f));
+                    susBoxPositions.Add(new Vector3(19.25f, -12f, 0.4f));
+                    susBoxPositions.Add(new Vector3(11f, -7f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-8.85f, 5.15f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-11.35f, -4.45f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-0.75f, -10.25f, 0.4f));
+                    break;
+                case 6:
                     susBoxPositions.Add(new Vector3(0, -33.75f, -1f));
                     susBoxPositions.Add(new Vector3(5.25f, -33.5f, -1f));
                     susBoxPositions.Add(new Vector3(7.8f, -39.5f, -1f));
@@ -1816,6 +1853,23 @@ namespace LasMonjas
                     itemListPositions.Add(new Vector3(-8.75f, 12.5f, 0.4f));
                     break;
                 case 5:
+                    itemListPositions.Add(new Vector3(-3, 7.25f, 0.4f));
+                    itemListPositions.Add(new Vector3(-0.4f, 6.4f, 0.4f));
+                    itemListPositions.Add(new Vector3(-17.75f, 2.5f, 0.4f));
+                    itemListPositions.Add(new Vector3(-17.15f, 0.55f, 0.4f));
+                    itemListPositions.Add(new Vector3(-13.45f, -7f, 0.4f));
+                    itemListPositions.Add(new Vector3(-5.3f, -8.75f, 0.4f));
+                    itemListPositions.Add(new Vector3(9.25f, -12f, 0.4f));
+                    itemListPositions.Add(new Vector3(14.75f, -6.135f, 0.4f));
+                    itemListPositions.Add(new Vector3(2.35f, -5.75f, 0.4f));
+                    itemListPositions.Add(new Vector3(9.25f, 4.25f, 0.4f));
+                    itemListPositions.Add(new Vector3(11.85f, 8.45f, 0.4f));
+                    itemListPositions.Add(new Vector3(20.25f, 1.35f, 0.4f));
+                    itemListPositions.Add(new Vector3(18f, 11.75f, 0.4f));
+                    itemListPositions.Add(new Vector3(22.25f, 13.5f, 0.4f));
+                    itemListPositions.Add(new Vector3(-19.35f, -2f, 0.4f));
+                    break;
+                case 6:
                     itemListPositions.Add(new Vector3(0, -33.75f, -1f));
                     itemListPositions.Add(new Vector3(7.8f, -39.5f, -1f));
                     itemListPositions.Add(new Vector3(-10.95f, -39f, -1f));
@@ -2353,8 +2407,12 @@ namespace LasMonjas
                     case 4:
                         Jailer.prisonPlayer.transform.position = new Vector3(16.25f, 15.25f, Jailer.prisonPlayer.transform.position.z);
                         break;
-                    // Submerged
+                    // Fungle
                     case 5:
+                        Jailer.prisonPlayer.transform.position = new Vector3(-5.5f, 1f, Jailer.prisonPlayer.transform.position.z);
+                        break;
+                    // Submerged
+                    case 6:
                         if (Jailer.prisonPlayer.transform.position.y > 0) {
                             Jailer.prisonPlayer.transform.position = new Vector3(-4.3f, 13.5f, Jailer.prisonPlayer.transform.position.z);
                         }
@@ -2926,6 +2984,13 @@ namespace LasMonjas
             return staticVentSealedSprite;
         }
 
+        private static Sprite staticVentFungleSealedSprite;
+        public static Sprite getFungleVentSealedSprite() {
+            if (staticVentFungleSealedSprite) return staticVentFungleSealedSprite;
+            staticVentFungleSealedSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.WelderPlantVentSealed.png", 160f); // Change sprite and pixelPerUnit
+            return staticVentFungleSealedSprite;
+        }
+
         public static void clearAndReload() {
             welder = null;
             ventTarget = null;
@@ -3042,7 +3107,7 @@ namespace LasMonjas
             cooldown = CustomOptionHolder.vigilantCooldown.getFloat();
             totalCameras = 4;
             remainingCameras = totalCameras;
-            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+            if (GameOptionsManager.Instance.currentGameOptions.MapId >= 5) {
                 placedCameras = 4;
             }
             else {
@@ -3222,6 +3287,9 @@ namespace LasMonjas
                     targetRoom = SystemTypes.Medical;
                     break;
                 case 5:
+                    targetRoom = SystemTypes.FishingDock;
+                    break;
+                case 6:
                     targetRoom = SystemTypes.Comms;
                     break;
             }
@@ -5333,6 +5401,72 @@ namespace LasMonjas
                     break;
                 case 5:
                     // sus[0-5] = key items
+                    susBoxPositions.Add(new Vector3(-16.5f, 7.15f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-20.4f, -0.15f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-16f, -0.15f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-14f, -7.35f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-21.5f, -7.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-8.35f, -14.5f, 0.4f));
+                    // sus[6-9] = ammo boxes
+                    susBoxPositions.Add(new Vector3(-7.3f, -11f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-5.25f, -8.65f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-3.33f, -10.45f, 0.4f));
+                    susBoxPositions.Add(new Vector3(6.45f, -14.5f, 0.4f));
+                    // sus[10-59] = nothing boxes
+                    susBoxPositions.Add(new Vector3(10.5f, -12f, 0.4f));
+                    susBoxPositions.Add(new Vector3(7.65f, -10f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-1f, -6f, 0.4f));
+                    susBoxPositions.Add(new Vector3(1.5f, -1.65f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-0.45f, 1.4f, 0.4f));
+                    susBoxPositions.Add(new Vector3(1.25f, 4.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(23.85f, 13.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(20f, 11f, 0.4f));
+                    susBoxPositions.Add(new Vector3(18.5f, 7.35f, 0.4f));
+                    susBoxPositions.Add(new Vector3(22f, 2.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(13.25f, 10f, 0.4f));
+                    susBoxPositions.Add(new Vector3(7f, 4.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(8.15f, 1.2f, 0.4f));
+                    susBoxPositions.Add(new Vector3(12.25f, 1.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(19f, 0.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(20.75f, -6.85f, 0.4f));
+                    susBoxPositions.Add(new Vector3(19.25f, -12f, 0.4f));
+                    susBoxPositions.Add(new Vector3(11f, -7f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-8.85f, 5.15f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-11.35f, -4.45f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-0.75f, -10.25f, 0.4f));                    
+                    
+                    susBoxPositions.Add(new Vector3(-18.3f, 5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-16.85f, 2.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-21.5f, -2.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-14.7f, -1.75f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-11.5f, 6.35f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-3f, 7f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-11.4f, 2f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-17.5f, -7.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-17.25f, -9.3f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-13.75f, -9.3f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-11.15f, -8.75f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-4.5f, -14.75f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-7.4f, -7.75f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-3.65f, -8.8f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-5.15f, -10.15f, 0.4f));
+                    susBoxPositions.Add(new Vector3(3.35f, -12.25f, 0.4f));
+                    susBoxPositions.Add(new Vector3(11f, -15f, 0.4f));
+                    susBoxPositions.Add(new Vector3(17.85f, -12.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(13.5f, -10.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(10.75f, -10, 0.4f));
+                    susBoxPositions.Add(new Vector3(8f, -12f, 0.4f));
+                    susBoxPositions.Add(new Vector3(16.25f, -6.5f, 0.4f));
+                    susBoxPositions.Add(new Vector3(18f, 3.75f, 0.4f));
+                    susBoxPositions.Add(new Vector3(13f, 4f, 0.4f));
+                    susBoxPositions.Add(new Vector3(9.15f, 4f, 0.4f));
+                    susBoxPositions.Add(new Vector3(10f, 1f, 0.4f));
+                    susBoxPositions.Add(new Vector3(12.35f, 7.75f, 0.4f));
+                    susBoxPositions.Add(new Vector3(20f, 13.75f, 0.4f));
+                    susBoxPositions.Add(new Vector3(-0.25f, 6.35f, 0.4f));
+                    break;
+                case 6:
+                    // sus[0-5] = key items
                     susBoxPositions.Add(new Vector3(0, -33.75f, -1f));
                     susBoxPositions.Add(new Vector3(2.5f, -33f, -1f));
                     susBoxPositions.Add(new Vector3(2.5f, -36f, -1f));
@@ -5852,6 +5986,23 @@ namespace LasMonjas
                     soloPlayersSpawnPositions.Add(new Vector3(-0.5f, -1, 0f));
                     break;
                 case 5:
+                    soloPlayersSpawnPositions.Add(new Vector3(-18.25f, 5f, 0f)); 
+                    soloPlayersSpawnPositions.Add(new Vector3(-22.65f, -7.15f, 0f)); 
+                    soloPlayersSpawnPositions.Add(new Vector3(2, 4.35f, 0f)); 
+                    soloPlayersSpawnPositions.Add(new Vector3(-3.15f, -10.5f, 0f)); 
+                    soloPlayersSpawnPositions.Add(new Vector3(23.7f, -7.8f, 0f)); 
+                    soloPlayersSpawnPositions.Add(new Vector3(-4.75f, -1.75f, 0f)); 
+                    soloPlayersSpawnPositions.Add(new Vector3(8f, -10f, 0f));
+                    soloPlayersSpawnPositions.Add(new Vector3(7f, 1.75f, 0f)); 
+                    soloPlayersSpawnPositions.Add(new Vector3(13.25f, 10, 0f)); 
+                    soloPlayersSpawnPositions.Add(new Vector3(22.3f, 3.3f, 0f)); 
+                    soloPlayersSpawnPositions.Add(new Vector3(20.5f, 7.35f, 0f)); 
+                    soloPlayersSpawnPositions.Add(new Vector3(24.15f, 14.45f, 0f)); 
+                    soloPlayersSpawnPositions.Add(new Vector3(-16.12f, 0.7f, 0f)); 
+                    soloPlayersSpawnPositions.Add(new Vector3(1.65f, -1.5f, 0f));
+                    soloPlayersSpawnPositions.Add(new Vector3(10.5f, -12, 0f)); 
+                    break;
+                case 6:
                     soloPlayersSpawnPositions.Add(new Vector3(3.75f, -26.5f, 0f));
                     break;
             }
@@ -6645,6 +6796,13 @@ namespace LasMonjas
                     allulMonjaPositions.Add(new Vector3(-4f, 1.5f, 0.4f));
                     break;
                 case 5:
+                    allulMonjaPositions.Add(new Vector3(1.5f, -1.5f, 0.4f));
+                    allulMonjaPositions.Add(new Vector3(-22.75f, -7.15f, 0.4f));
+                    allulMonjaPositions.Add(new Vector3(-7.25f, -9, 0.4f));
+                    allulMonjaPositions.Add(new Vector3(-14.25f, -16.5f, 0.4f));
+                    allulMonjaPositions.Add(new Vector3(8.15f, 1.15f, 0.4f));
+                    break;
+                case 6:
                     allulMonjaPositions.Add(new Vector3(-14.5f, -34.25f, -0.01f));
                     allulMonjaPositions.Add(new Vector3(-6.45f, -42.75f, -0.01f));
                     allulMonjaPositions.Add(new Vector3(-11.25f, 30.5f, 0.03f));

@@ -8,6 +8,8 @@ using System.Linq;
 using LasMonjas.Core;
 using System.Collections.Generic;
 using AmongUs.GameOptions;
+using LasMonjas.Patches;
+using Epic.OnlineServices.Presence;
 
 namespace LasMonjas
 {
@@ -131,6 +133,8 @@ namespace LasMonjas
 
         public static CustomButton zoomOutButton;
         public static CustomButton whoAmIButton;
+        public static CustomButton roleSummaryButton;
+
 
         // Capture the flag buttons
         private static CustomButton redplayer01KillButton;
@@ -518,6 +522,8 @@ namespace LasMonjas
 
             zoomOutButton.MaxTimer = 0f;
             whoAmIButton.MaxTimer = 10f;
+            roleSummaryButton.Timer = 0f;
+            roleSummaryButton.MaxTimer = 0f;
 
             // Remaining uses text
             Manipulator.manipulatedVictimTimerCountButtonText.text = $"{Manipulator.manipulatedVictimTimer.ToString("F0")}";
@@ -940,7 +946,7 @@ namespace LasMonjas
                     }
                 },
                 () => { return Mimic.mimic != null && Mimic.mimic == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
-                () => { return (Mimic.currentTarget || Mimic.pickTarget) && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
+                () => { return (Mimic.currentTarget || Mimic.pickTarget) && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming && !Helpers.MushroomSabotageActive(); },
                 () => {
                     mimicTransformButton.Timer = mimicTransformButton.MaxTimer;
                     mimicTransformButton.Sprite = Mimic.getpickTargetSprite();
@@ -990,7 +996,7 @@ namespace LasMonjas
                     RPCProcedure.painterPaint(colorNumber);
                 },
                 () => { return Painter.painter != null && Painter.painter == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
-                () => { return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
+                () => { return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming && !Helpers.MushroomSabotageActive(); },
                 () => {
                     painterPaintButton.Timer = painterPaintButton.MaxTimer;
                     painterPaintButton.isEffectActive = false;
@@ -1034,8 +1040,7 @@ namespace LasMonjas
                             RPCProcedure.demonSetBitten(Demon.bitten.PlayerId, 0);
 
                             HudManager.Instance.StartCoroutine(Effects.Lerp(Demon.delay, new Action<float>((p) => { 
-                                if (p == 1f) {
-                                   
+                                if (p == 1f && Demon.bitten.CanMove) {
                                     MurderAttemptResult murder = Helpers.checkMurderAttemptAndKill(Demon.demon, Demon.bitten, showAnimation: false);
                                     if (murder == MurderAttemptResult.JinxKill) {
                                         SoundManager.Instance.PlaySound(CustomMain.customAssets.jinxQuack, false, 5f);
@@ -1323,14 +1328,14 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.lightsOut();
                 },
-                () => { return Illusionist.illusionist != null && Illusionist.illusionist == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && Hats.hasHatLimitReached() && Hats.hatsConvertedToVents; },
+                () => { return Illusionist.illusionist != null && Illusionist.illusionist == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && Hats.hasHatLimitReached() && Hats.hatsConvertedToVents && GameOptionsManager.Instance.currentGameOptions.MapId != 5; },
                 () => {
                     bool sabotageActive = false;
                     if (Bomberman.activeBomb == true || Illusionist.lightsOutTimer > 0) {
                         sabotageActive = true;
                     }
                     else {
-                        sabotageActive = Helpers.AnySabotageActive();                       
+                        sabotageActive = (Helpers.AnySabotageActive() || Helpers.MushroomSabotageActive());                       
                     }
                     return !sabotageActive && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming && Hats.hasHatLimitReached() && Hats.hatsConvertedToVents;
                 },
@@ -1491,6 +1496,9 @@ namespace LasMonjas
                         case 5:
                             Bomberman.bombDuration = 90;
                             break;
+                        case 6:
+                            Bomberman.bombDuration = 90;
+                            break;
                     }
 
                     foreach (PlayerControl player in PlayerInCache.AllPlayers) {
@@ -1520,7 +1528,7 @@ namespace LasMonjas
                         }
                     }
                     bool sabotageActive = false;
-                    sabotageActive = Helpers.AnySabotageActive();
+                    sabotageActive = (Helpers.AnySabotageActive() || Helpers.MushroomSabotageActive());
 
                     return !closetoPlayer && !sabotageActive && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Bomberman.activeBomb && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming && Illusionist.lightsOutTimer <= 0 && (Jailer.prisonPlayer == null || Jailer.prisonPlayer != null && Jailer.prisonPlayer.PlayerId != Bomberman.bomberman.PlayerId);
                 },
@@ -1771,7 +1779,7 @@ namespace LasMonjas
                         return;
                     }
 
-                    if (Medusa.petrified != null && !Medusa.petrified.Data.IsDead && !Seeker.isMinigaming && !Challenger.isDueling) {
+                    if (Medusa.petrified != null && !Medusa.petrified.Data.IsDead && !Seeker.isMinigaming && !Challenger.isDueling && Medusa.petrified.CanMove) {
                         SoundManager.Instance.PlaySound(CustomMain.customAssets.medusaPetrify, false, 100f);
                         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.MedusaPetrify, Hazel.SendOption.Reliable, -1);
                         writer.Write(Medusa.petrified.PlayerId);
@@ -1861,7 +1869,7 @@ namespace LasMonjas
                     }
                     bool closetoObjects = false;
                     foreach (GameObject movementObject in Hypnotist.objectsCantPlaceTraps) {
-                        if (Vector2.Distance(movementObject.transform.position, Hypnotist.hypnotist.transform.position) < 2f) {
+                        if (Vector2.Distance(movementObject.transform.position, Hypnotist.hypnotist.transform.position) < 2.5f) {
                             closetoObjects = true;
                         }
                     }
@@ -2041,7 +2049,7 @@ namespace LasMonjas
                             if (player.Data.IsDead) continue;
                             if (!Archer.Guides.ContainsKey(player.PlayerId)) continue;
 
-                            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                            if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                                 if ((Archer.archer.transform.position.y > 0 && player.transform.position.y > 0) || (Archer.archer.transform.position.y < 0 && player.transform.position.y < 0)) {
                                     Archer.Guides[player.PlayerId].color = color;
                                     Vector3 dir = player.transform.position - PlayerInCache.LocalPlayer.PlayerControl.transform.position;
@@ -2074,7 +2082,7 @@ namespace LasMonjas
                         }
 
                         foreach (var deadBody in UnityEngine.Object.FindObjectsOfType<DeadBody>()) {
-                            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                            if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                                 if ((Archer.archer.transform.position.y > 0 && deadBody.transform.position.y > 0) || (Archer.archer.transform.position.y < 0 && deadBody.transform.position.y < 0)) {
                                     Archer.Guides[deadBody.ParentId].color = color;
                                     Vector3 dir = deadBody.transform.position - PlayerInCache.LocalPlayer.PlayerControl.transform.position;
@@ -2461,7 +2469,13 @@ namespace LasMonjas
                             closetoMine = true;
                         }
                     }
-                    return !closetoPlayer && !closetoMine && PlayerInCache.LocalPlayer.PlayerControl.CanMove && Trapper.currentMineNumber < Trapper.numberOfMines && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
+                    bool closetoObjects = false;
+                    foreach (GameObject movementObject in Hypnotist.objectsCantPlaceTraps) {
+                        if (Vector2.Distance(movementObject.transform.position, Trapper.trapper.transform.position) < 2f) {
+                            closetoObjects = true;
+                        }
+                    }
+                    return !closetoPlayer && !closetoMine && !closetoObjects && PlayerInCache.LocalPlayer.PlayerControl.CanMove && Trapper.currentMineNumber < Trapper.numberOfMines && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
                 },
                 () => {
                     trapperMineButton.Timer = trapperMineButton.MaxTimer;
@@ -2522,7 +2536,13 @@ namespace LasMonjas
                             closetoTrap = true;
                         }
                     }
-                    return !closetoPlayer && !closetoTrap && PlayerInCache.LocalPlayer.PlayerControl.CanMove && Trapper.currentTrapNumber < Trapper.numberOfTraps && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
+                    bool closetoObjects = false;
+                    foreach (GameObject movementObject in Hypnotist.objectsCantPlaceTraps) {
+                        if (Vector2.Distance(movementObject.transform.position, Trapper.trapper.transform.position) < 2.5f) {
+                            closetoObjects = true;
+                        }
+                    }
+                    return !closetoPlayer && !closetoTrap && !closetoObjects && PlayerInCache.LocalPlayer.PlayerControl.CanMove && Trapper.currentTrapNumber < Trapper.numberOfTraps && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
                 },
                 () => {
                     trapperTrapButton.Timer = trapperTrapButton.MaxTimer;
@@ -2752,7 +2772,7 @@ namespace LasMonjas
                 () => {
                     bool canUse = false;
                     if (Yinyanger.yinyedplayer != null && Yinyanger.yangyedplayer != null) {
-                        if (Vector2.Distance(Yinyanger.yinyedplayer.transform.position, Yinyanger.yangyedplayer.transform.position) < 1.5f && !Yinyanger.yinyanger.Data.IsDead && !Yinyanger.yinyedplayer.Data.IsDead && !Yinyanger.yangyedplayer.Data.IsDead) {
+                        if (Vector2.Distance(Yinyanger.yinyedplayer.transform.position, Yinyanger.yangyedplayer.transform.position) < 1.5f && !Yinyanger.yinyanger.Data.IsDead && !Yinyanger.yinyedplayer.Data.IsDead && !Yinyanger.yangyedplayer.Data.IsDead && Yinyanger.yinyedplayer.CanMove && Yinyanger.yangyedplayer.CanMove) {
                             canUse = true;
                         }
                     }                    
@@ -2804,16 +2824,21 @@ namespace LasMonjas
                                 }
                                 else if (!Challenger.challenger.Data.IsDead && Challenger.rivalPlayer != null && !Challenger.rivalPlayer.Data.IsDead && murder == MurderAttemptResult.PerformKill && MeetingHud.Instance == null && !TimeTraveler.isRewinding && !Monja.awakened && !Seeker.isMinigaming) {
                                     // Perform duel if no sabotage and player has no squire shield
+                                    bool canUse = true;
                                     bool sabotageActive = false;
                                     if (Bomberman.activeBomb == true || Illusionist.lightsOutTimer > 0) {
                                         sabotageActive = true;
                                     }
                                     else {
-                                        sabotageActive = Helpers.AnySabotageActive();
-
+                                        sabotageActive = (Helpers.AnySabotageActive() || Helpers.MushroomSabotageActive());
                                     }
-
-                                    if (!sabotageActive) {
+                                    foreach (PlayerControl player in PlayerInCache.AllPlayers) {
+                                        if (!player.CanMove && !player.Data.IsDead && GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                                            canUse = false;
+                                            Helpers.ClearRivalPlayer();
+                                        }
+                                    }
+                                    if (!sabotageActive && canUse) {
                                         // If the Demon bitten is the challenger or the rival player, murder him and cancel the duel
                                         if (Demon.demon != null && Demon.bitten != null && (Demon.bitten == Challenger.challenger || Demon.bitten == Challenger.rivalPlayer)) {
                                             Helpers.handleDemonBiteOnBodyReport();
@@ -2831,11 +2856,7 @@ namespace LasMonjas
                                 }
                                 else {
                                     // Notify players about clearing rivalplayer
-                                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ChallengerSetRival, Hazel.SendOption.Reliable, -1);
-                                    writer.Write(byte.MaxValue);
-                                    writer.Write(byte.MaxValue);
-                                    AmongUsClient.Instance.FinishRpcImmediately(writer);
-                                    RPCProcedure.challengerSetRival(byte.MaxValue, byte.MaxValue);
+                                    Helpers.ClearRivalPlayer();
                                 }
                             }
                         })));
@@ -2861,8 +2882,7 @@ namespace LasMonjas
                         sabotageActive = true;
                     }
                     else {
-                        sabotageActive = Helpers.AnySabotageActive();
-
+                        sabotageActive = (Helpers.AnySabotageActive() || Helpers.MushroomSabotageActive());
                     }
                     return !sabotageActive && Challenger.currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove;
                 },
@@ -3120,10 +3140,10 @@ namespace LasMonjas
                     }
                     bool canUse = true;
                     if (Ninja.markedTarget != null && !Ninja.markedTarget.Data.IsDead && !Ninja.markedTarget.inVent) {
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5 && ((Ninja.ninja.transform.position.y > 0 && Ninja.markedTarget.transform.position.y < 0) || (Ninja.ninja.transform.position.y < 0 && Ninja.markedTarget.transform.position.y > 0))) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6 && ((Ninja.ninja.transform.position.y > 0 && Ninja.markedTarget.transform.position.y < 0) || (Ninja.ninja.transform.position.y < 0 && Ninja.markedTarget.transform.position.y > 0))) {
                             canUse = false;
                         }
-                        if (Vector2.Distance(Ninja.ninja.transform.position, Ninja.markedTarget.transform.position) < 5f && !Ninja.ninja.Data.IsDead) {
+                        if (Vector2.Distance(Ninja.ninja.transform.position, Ninja.markedTarget.transform.position) < 5f && !Ninja.ninja.Data.IsDead || GameOptionsManager.Instance.currentGameOptions.MapId == 5 && !Ninja.markedTarget.CanMove) {
                             canUse = false;
                         }
                     }
@@ -3555,7 +3575,7 @@ namespace LasMonjas
                             sabotageActive = true;
                         }
                         else {
-                            sabotageActive = Helpers.AnySabotageActive();
+                            sabotageActive = (Helpers.AnySabotageActive() || Helpers.MushroomSabotageActive());
                         }
                         if (Monja.ritualObject != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, Monja.ritualObject.transform.position) < 0.5f) {
                             CanUse = true;
@@ -3797,6 +3817,10 @@ namespace LasMonjas
                             TreasureHunter.randomSpawn = airshipNumber;
                             break;
                         case 5:
+                            int fungleNumber = rnd.Next(1, 20);
+                            TreasureHunter.randomSpawn = fungleNumber;
+                            break;
+                        case 6:
                             int submergedNumber = rnd.Next(1, 23);
                             TreasureHunter.randomSpawn = submergedNumber;
                             break;
@@ -4112,7 +4136,7 @@ namespace LasMonjas
                     } else {
                         puppeteerTransformButton.actionButton.graphic.sprite = Puppeteer.getTransformSprite();
                     }
-                    return (Puppeteer.pickTarget || Puppeteer.morphed) && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
+                    return (Puppeteer.pickTarget || Puppeteer.morphed) && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming && !Helpers.MushroomSabotageActive(); },
                 () => {
                     puppeteerTransformButton.Timer = puppeteerTransformButton.MaxTimer;
                 },
@@ -4251,7 +4275,7 @@ namespace LasMonjas
                     }
                     else if (Seeker.currentTarget != null && Seeker.hidedPlayerThree != null && Seeker.currentTarget == Seeker.hidedPlayerThree) {
                         canUse = false;
-                    }
+                    }                    
                     return canUse && Seeker.currentTarget && !Seeker.minigameReady && !Challenger.isDueling && !Monja.awakened && PlayerInCache.LocalPlayer.PlayerControl.CanMove;
                 },
                 () => {
@@ -4313,14 +4337,20 @@ namespace LasMonjas
                     return !Seeker.isMinigaming && Seeker.seeker != null && Seeker.seeker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead;
                 },
                 () => {
+                    bool canUse = true;
                     bool sabotageActive = false;
                     if (Bomberman.activeBomb == true || Illusionist.lightsOutTimer > 0) {
                         sabotageActive = true;
                     }
                     else {
-                        sabotageActive = Helpers.AnySabotageActive();
+                        sabotageActive = (Helpers.AnySabotageActive() || Helpers.MushroomSabotageActive());
                     }
-                    return !sabotageActive && Seeker.currentPlayers >= 1 && !Challenger.isDueling && !Monja.awakened && PlayerInCache.LocalPlayer.PlayerControl.CanMove;
+                    foreach (PlayerControl player in PlayerInCache.AllPlayers) {
+                        if (!player.CanMove && !player.Data.IsDead && GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                            canUse = false;
+                        }
+                    }
+                    return !sabotageActive && canUse && Seeker.currentPlayers >= 1 && !Challenger.isDueling && !Monja.awakened && PlayerInCache.LocalPlayer.PlayerControl.CanMove;
                 },
                 () => {
                     seekerPerformMinigameButton.Timer = 15f;
@@ -4581,22 +4611,27 @@ namespace LasMonjas
                             RPCProcedure.mechanicFixLights();
                         }
                         else if (task.TaskType == TaskTypes.RestoreOxy) {
-                            ShipStatus.Instance.RpcRepairSystem(SystemTypes.LifeSupp, 0 | 64);
-                            ShipStatus.Instance.RpcRepairSystem(SystemTypes.LifeSupp, 1 | 64);
+                            ShipStatus.Instance.RpcUpdateSystem(SystemTypes.LifeSupp, 0 | 64);
+                            ShipStatus.Instance.RpcUpdateSystem(SystemTypes.LifeSupp, 1 | 64);
                         }
                         else if (task.TaskType == TaskTypes.ResetReactor) {
-                            ShipStatus.Instance.RpcRepairSystem(SystemTypes.Reactor, 16);
+                            ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Reactor, 16);
                         }
                         else if (task.TaskType == TaskTypes.ResetSeismic) {
-                            ShipStatus.Instance.RpcRepairSystem(SystemTypes.Laboratory, 16);
+                            ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Laboratory, 16);
                         }
                         else if (task.TaskType == TaskTypes.FixComms) {
-                            ShipStatus.Instance.RpcRepairSystem(SystemTypes.Comms, 16 | 0);
-                            ShipStatus.Instance.RpcRepairSystem(SystemTypes.Comms, 16 | 1);
+                            ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Comms, 16 | 0);
+                            ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Comms, 16 | 1);
                         }
                         else if (task.TaskType == TaskTypes.StopCharles) {
-                            ShipStatus.Instance.RpcRepairSystem(SystemTypes.Reactor, 0 | 16);
-                            ShipStatus.Instance.RpcRepairSystem(SystemTypes.Reactor, 1 | 16);
+                            ShipStatus.Instance.RpcUpdateSystem(SystemTypes.HeliSabotage, 0 | 16);
+                            ShipStatus.Instance.RpcUpdateSystem(SystemTypes.HeliSabotage, 1 | 16);
+                        }
+                        else if (task.TaskType == TaskTypes.MushroomMixupSabotage) {
+                            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.MechanicFixMushroom, Hazel.SendOption.Reliable, -1);
+                            AmongUsClient.Instance.FinishRpcImmediately(writer);
+                            RPCProcedure.mechanicFixMushroom();
                         }
                     }
                     if (Bomberman.activeBomb == true) {
@@ -4657,22 +4692,27 @@ namespace LasMonjas
                             RPCProcedure.mechanicFixLights();
                         }
                         else if (task.TaskType == TaskTypes.RestoreOxy) {
-                            ShipStatus.Instance.RpcRepairSystem(SystemTypes.LifeSupp, 0 | 64);
-                            ShipStatus.Instance.RpcRepairSystem(SystemTypes.LifeSupp, 1 | 64);
+                            ShipStatus.Instance.RpcUpdateSystem(SystemTypes.LifeSupp, 0 | 64);
+                            ShipStatus.Instance.RpcUpdateSystem(SystemTypes.LifeSupp, 1 | 64);
                         }
                         else if (task.TaskType == TaskTypes.ResetReactor) {
-                            ShipStatus.Instance.RpcRepairSystem(SystemTypes.Reactor, 16);
+                            ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Reactor, 16);
                         }
                         else if (task.TaskType == TaskTypes.ResetSeismic) {
-                            ShipStatus.Instance.RpcRepairSystem(SystemTypes.Laboratory, 16);
+                            ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Laboratory, 16);
                         }
                         else if (task.TaskType == TaskTypes.FixComms) {
-                            ShipStatus.Instance.RpcRepairSystem(SystemTypes.Comms, 16 | 0);
-                            ShipStatus.Instance.RpcRepairSystem(SystemTypes.Comms, 16 | 1);
+                            ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Comms, 16 | 0);
+                            ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Comms, 16 | 1);
                         }
                         else if (task.TaskType == TaskTypes.StopCharles) {
-                            ShipStatus.Instance.RpcRepairSystem(SystemTypes.Reactor, 0 | 16);
-                            ShipStatus.Instance.RpcRepairSystem(SystemTypes.Reactor, 1 | 16);
+                            ShipStatus.Instance.RpcUpdateSystem(SystemTypes.HeliSabotage, 0 | 16);
+                            ShipStatus.Instance.RpcUpdateSystem(SystemTypes.HeliSabotage, 1 | 16);
+                        }
+                        else if (task.TaskType == TaskTypes.MushroomMixupSabotage) {
+                            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.MechanicFixMushroom, Hazel.SendOption.Reliable, -1);
+                            AmongUsClient.Instance.FinishRpcImmediately(writer);
+                            RPCProcedure.mechanicFixMushroom();
                         }
                     }
                     if (Bomberman.activeBomb == true) {
@@ -4689,7 +4729,7 @@ namespace LasMonjas
                     }
                     else {
                         foreach (PlayerTask task in PlayerInCache.LocalPlayer.PlayerControl.myTasks)
-                            if (task.TaskType == TaskTypes.FixLights || task.TaskType == TaskTypes.RestoreOxy || task.TaskType == TaskTypes.ResetReactor || task.TaskType == TaskTypes.ResetSeismic || task.TaskType == TaskTypes.FixComms || task.TaskType == TaskTypes.StopCharles)
+                            if (task.TaskType == TaskTypes.FixLights || task.TaskType == TaskTypes.RestoreOxy || task.TaskType == TaskTypes.ResetReactor || task.TaskType == TaskTypes.ResetSeismic || task.TaskType == TaskTypes.FixComms || task.TaskType == TaskTypes.StopCharles || task.TaskType == TaskTypes.MushroomMixupSabotage)
                                 sabotageActive = true; 
                     }
                     return sabotageActive && !Mechanic.usedRepair && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
@@ -4925,8 +4965,7 @@ namespace LasMonjas
                         sabotageActive = true;
                     }
                     else {
-                        sabotageActive = Helpers.AnySabotageActive();
-
+                        sabotageActive = (Helpers.AnySabotageActive() || Helpers.MushroomSabotageActive());
                     }
                     return !sabotageActive && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming && !TimeTraveler.usedShield;
                 },
@@ -4972,8 +5011,7 @@ namespace LasMonjas
                         sabotageActive = true;
                     }
                     else {
-                        sabotageActive = Helpers.AnySabotageActive();
-
+                        sabotageActive = (Helpers.AnySabotageActive() || Helpers.MushroomSabotageActive());
                     }
                     return !sabotageActive && !TimeTraveler.usedRewind && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
                 },
@@ -5412,8 +5450,7 @@ namespace LasMonjas
                         sabotageActive = true;
                     }
                     else {
-                        sabotageActive = Helpers.AnySabotageActive();
-
+                        sabotageActive = (Helpers.AnySabotageActive() || Helpers.MushroomSabotageActive());
                     }
                     return !sabotageActive && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
                 },
@@ -5469,7 +5506,7 @@ namespace LasMonjas
                 () => {
                     bool canSeal = true;
                     if (Welder.ventTarget != null) {
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             if (Welder.ventTarget.name == "LowerCentralVent" || Welder.ventTarget.name == "UpperCentralVent" || Welder.ventTarget.name == "OpenEngineVent" || Welder.ventTarget.name == "NormalAdminVent") {
                                 canSeal = false;
                             }
@@ -5541,7 +5578,7 @@ namespace LasMonjas
                 () => {
                     bool canBombVent = true;
                     if (Welder.ventTarget != null) {
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             if (Welder.ventTarget.name == "LowerCentralVent" || Welder.ventTarget.name == "UpperCentralVent" || Welder.ventTarget.name == "OpenEngineVent" || Welder.ventTarget.name == "NormalAdminVent") {
                                 canBombVent = false;
                             }
@@ -5745,6 +5782,13 @@ namespace LasMonjas
                             break;
                         case 5:
                             if (Vigilant.minigame == null) {
+                                var e = UnityEngine.Object.FindObjectsOfType<SystemConsole>().FirstOrDefault(x => x.gameObject.name.Contains("BinocularsSecurityConsole"));
+                                if (e == null || Camera.main == null) return;
+                                Vigilant.minigame = UnityEngine.Object.Instantiate(e.MinigamePrefab, Camera.main.transform, false);
+                            }
+                            break;
+                        case 6:
+                            if (Vigilant.minigame == null) {
                                 var e = UnityEngine.Object.FindObjectsOfType<SystemConsole>().FirstOrDefault(x => x.gameObject.name.Contains("SecurityConsole"));
                                 if (e == null || Camera.main == null) return;
                                 Vigilant.minigame = UnityEngine.Object.Instantiate(e.MinigamePrefab, Camera.main.transform, false);
@@ -5907,8 +5951,7 @@ namespace LasMonjas
                         sabotageActive = true;
                     }
                     else {
-                        sabotageActive = Helpers.AnySabotageActive();
-
+                        sabotageActive = (Helpers.AnySabotageActive() || Helpers.MushroomSabotageActive());
                     }
                     return !sabotageActive && !Coward.usedCalls && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
                 },
@@ -6011,7 +6054,7 @@ namespace LasMonjas
                                     if (Vector2.Distance(truePosition2, truePosition) <= PlayerInCache.LocalPlayer.PlayerControl.MaxReportDistance && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PhysicsHelpers.AnythingBetween(truePosition, truePosition2, Constants.ShipAndObjectsMask, false)) {
                                         GameData.PlayerInfo playerInfo = GameData.Instance.GetPlayerById(component.ParentId);
 
-                                        if (GameOptionsManager.Instance.currentGameOptions.MapId != 5) {
+                                        if (GameOptionsManager.Instance.currentGameOptions.MapId != 6) {
                                             if (activatedSensei) {
                                                 Necromancer.targetRoom = SystemTypes.MedBay;
                                             }
@@ -6446,6 +6489,32 @@ namespace LasMonjas
                 KeyCode.F
             );
 
+            // roleSummary button
+            roleSummaryButton = new CustomButton(
+                () => {
+                    if (LobbyRoleInfo.RolesSummaryUI == null) {
+                        LobbyRoleInfo.RoleSummaryOnClick();
+                    }
+                    else {
+                        UnityEngine.Object.Destroy(LobbyRoleInfo.RolesSummaryUI);
+                        LobbyRoleInfo.RolesSummaryUI = null;
+                    }
+                },
+                () => { return PlayerControl.LocalPlayer != null && LobbyBehaviour.Instance; },
+                () => {
+                    if (PlayerCustomizationMenu.Instance || GameSettingMenu.Instance) {
+                        if (LobbyRoleInfo.RolesSummaryUI != null) {
+                            UnityEngine.Object.Destroy(LobbyRoleInfo.RolesSummaryUI);
+                        }
+                    }
+                    return true;
+                },
+                () => { },
+                Helpers.loadSpriteFromResources("LasMonjas.Images.roleSummaryButton.png", 150f),
+                new Vector3(0.4f, 4.2f, 0),
+                __instance,
+                null
+            );
 
             // Capture the flag buttons
             // Redplayer01 Kill
@@ -8092,13 +8161,13 @@ namespace LasMonjas
                 () => {
                     if (PoliceAndThief.localThiefReleaseArrow.Count != 0) {
                         PoliceAndThief.localThiefReleaseArrow[0].Update(PoliceAndThief.cellbutton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             PoliceAndThief.localThiefReleaseArrow[1].Update(PoliceAndThief.cellbuttontwo.transform.position);
                         }
                     }
                     if (PoliceAndThief.localThiefDeliverArrow.Count != 0) {
                         PoliceAndThief.localThiefDeliverArrow[0].Update(PoliceAndThief.jewelbutton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             PoliceAndThief.localThiefDeliverArrow[1].Update(PoliceAndThief.jewelbuttontwo.transform.position);
                         }
                     }
@@ -8275,13 +8344,13 @@ namespace LasMonjas
                 () => {
                     if (PoliceAndThief.localThiefReleaseArrow.Count != 0) {
                         PoliceAndThief.localThiefReleaseArrow[0].Update(PoliceAndThief.cellbutton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             PoliceAndThief.localThiefReleaseArrow[1].Update(PoliceAndThief.cellbuttontwo.transform.position);
                         }
                     }
                     if (PoliceAndThief.localThiefDeliverArrow.Count != 0) {
                         PoliceAndThief.localThiefDeliverArrow[0].Update(PoliceAndThief.jewelbutton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             PoliceAndThief.localThiefDeliverArrow[1].Update(PoliceAndThief.jewelbuttontwo.transform.position);
                         }
                     }
@@ -8458,13 +8527,13 @@ namespace LasMonjas
                 () => {
                     if (PoliceAndThief.localThiefReleaseArrow.Count != 0) {
                         PoliceAndThief.localThiefReleaseArrow[0].Update(PoliceAndThief.cellbutton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             PoliceAndThief.localThiefReleaseArrow[1].Update(PoliceAndThief.cellbuttontwo.transform.position);
                         }
                     }
                     if (PoliceAndThief.localThiefDeliverArrow.Count != 0) {
                         PoliceAndThief.localThiefDeliverArrow[0].Update(PoliceAndThief.jewelbutton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             PoliceAndThief.localThiefDeliverArrow[1].Update(PoliceAndThief.jewelbuttontwo.transform.position);
                         }
                     }
@@ -8641,13 +8710,13 @@ namespace LasMonjas
                 () => {
                     if (PoliceAndThief.localThiefReleaseArrow.Count != 0) {
                         PoliceAndThief.localThiefReleaseArrow[0].Update(PoliceAndThief.cellbutton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             PoliceAndThief.localThiefReleaseArrow[1].Update(PoliceAndThief.cellbuttontwo.transform.position);
                         }
                     }
                     if (PoliceAndThief.localThiefDeliverArrow.Count != 0) {
                         PoliceAndThief.localThiefDeliverArrow[0].Update(PoliceAndThief.jewelbutton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             PoliceAndThief.localThiefDeliverArrow[1].Update(PoliceAndThief.jewelbuttontwo.transform.position);
                         }
                     }
@@ -8824,13 +8893,13 @@ namespace LasMonjas
                 () => {
                     if (PoliceAndThief.localThiefReleaseArrow.Count != 0) {
                         PoliceAndThief.localThiefReleaseArrow[0].Update(PoliceAndThief.cellbutton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             PoliceAndThief.localThiefReleaseArrow[1].Update(PoliceAndThief.cellbuttontwo.transform.position);
                         }
                     }
                     if (PoliceAndThief.localThiefDeliverArrow.Count != 0) {
                         PoliceAndThief.localThiefDeliverArrow[0].Update(PoliceAndThief.jewelbutton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             PoliceAndThief.localThiefDeliverArrow[1].Update(PoliceAndThief.jewelbuttontwo.transform.position);
                         }
                     }
@@ -9007,13 +9076,13 @@ namespace LasMonjas
                 () => {
                     if (PoliceAndThief.localThiefReleaseArrow.Count != 0) {
                         PoliceAndThief.localThiefReleaseArrow[0].Update(PoliceAndThief.cellbutton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             PoliceAndThief.localThiefReleaseArrow[1].Update(PoliceAndThief.cellbuttontwo.transform.position);
                         }
                     }
                     if (PoliceAndThief.localThiefDeliverArrow.Count != 0) {
                         PoliceAndThief.localThiefDeliverArrow[0].Update(PoliceAndThief.jewelbutton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             PoliceAndThief.localThiefDeliverArrow[1].Update(PoliceAndThief.jewelbuttontwo.transform.position);
                         }
                     }
@@ -9190,13 +9259,13 @@ namespace LasMonjas
                 () => {
                     if (PoliceAndThief.localThiefReleaseArrow.Count != 0) {
                         PoliceAndThief.localThiefReleaseArrow[0].Update(PoliceAndThief.cellbutton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             PoliceAndThief.localThiefReleaseArrow[1].Update(PoliceAndThief.cellbuttontwo.transform.position);
                         }
                     }
                     if (PoliceAndThief.localThiefDeliverArrow.Count != 0) {
                         PoliceAndThief.localThiefDeliverArrow[0].Update(PoliceAndThief.jewelbutton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             PoliceAndThief.localThiefDeliverArrow[1].Update(PoliceAndThief.jewelbuttontwo.transform.position);
                         }
                     }
@@ -9373,13 +9442,13 @@ namespace LasMonjas
                 () => {
                     if (PoliceAndThief.localThiefReleaseArrow.Count != 0) {
                         PoliceAndThief.localThiefReleaseArrow[0].Update(PoliceAndThief.cellbutton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             PoliceAndThief.localThiefReleaseArrow[1].Update(PoliceAndThief.cellbuttontwo.transform.position);
                         }
                     }
                     if (PoliceAndThief.localThiefDeliverArrow.Count != 0) {
                         PoliceAndThief.localThiefDeliverArrow[0].Update(PoliceAndThief.jewelbutton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             PoliceAndThief.localThiefDeliverArrow[1].Update(PoliceAndThief.jewelbuttontwo.transform.position);
                         }
                     }
@@ -9556,13 +9625,13 @@ namespace LasMonjas
                 () => {
                     if (PoliceAndThief.localThiefReleaseArrow.Count != 0) {
                         PoliceAndThief.localThiefReleaseArrow[0].Update(PoliceAndThief.cellbutton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             PoliceAndThief.localThiefReleaseArrow[1].Update(PoliceAndThief.cellbuttontwo.transform.position);
                         }
                     }
                     if (PoliceAndThief.localThiefDeliverArrow.Count != 0) {
                         PoliceAndThief.localThiefDeliverArrow[0].Update(PoliceAndThief.jewelbutton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             PoliceAndThief.localThiefDeliverArrow[1].Update(PoliceAndThief.jewelbuttontwo.transform.position);
                         }
                     }
@@ -12140,7 +12209,7 @@ namespace LasMonjas
                 () => {
                     if (ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].Update(ZombieLaboratory.laboratoryEnterButton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].Update(ZombieLaboratory.laboratorytwoEnterButton.transform.position);
                         }
                     }
@@ -12352,7 +12421,7 @@ namespace LasMonjas
                 () => {
                     if (ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].Update(ZombieLaboratory.laboratoryEnterButton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].Update(ZombieLaboratory.laboratorytwoEnterButton.transform.position);
                         }
                     }
@@ -12563,7 +12632,7 @@ namespace LasMonjas
                 () => {
                     if (ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].Update(ZombieLaboratory.laboratoryEnterButton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].Update(ZombieLaboratory.laboratorytwoEnterButton.transform.position);
                         }
                     }
@@ -12774,7 +12843,7 @@ namespace LasMonjas
                 () => {
                     if (ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].Update(ZombieLaboratory.laboratoryEnterButton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].Update(ZombieLaboratory.laboratorytwoEnterButton.transform.position);
                         }
                     }
@@ -12985,7 +13054,7 @@ namespace LasMonjas
                 () => {
                     if (ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].Update(ZombieLaboratory.laboratoryEnterButton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].Update(ZombieLaboratory.laboratorytwoEnterButton.transform.position);
                         }
                     }
@@ -13196,7 +13265,7 @@ namespace LasMonjas
                 () => {
                     if (ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].Update(ZombieLaboratory.laboratoryEnterButton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].Update(ZombieLaboratory.laboratorytwoEnterButton.transform.position);
                         }
                     }
@@ -13407,7 +13476,7 @@ namespace LasMonjas
                 () => {
                     if (ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].Update(ZombieLaboratory.laboratoryEnterButton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].Update(ZombieLaboratory.laboratorytwoEnterButton.transform.position);
                         }
                     }
@@ -13618,7 +13687,7 @@ namespace LasMonjas
                 () => {
                     if (ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].Update(ZombieLaboratory.laboratoryEnterButton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].Update(ZombieLaboratory.laboratorytwoEnterButton.transform.position);
                         }
                     }
@@ -13829,7 +13898,7 @@ namespace LasMonjas
                 () => {
                     if (ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].Update(ZombieLaboratory.laboratoryEnterButton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].Update(ZombieLaboratory.laboratorytwoEnterButton.transform.position);
                         }
                     }
@@ -14040,7 +14109,7 @@ namespace LasMonjas
                 () => {
                     if (ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].Update(ZombieLaboratory.laboratoryEnterButton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].Update(ZombieLaboratory.laboratorytwoEnterButton.transform.position);
                         }
                     }
@@ -14251,7 +14320,7 @@ namespace LasMonjas
                 () => {
                     if (ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].Update(ZombieLaboratory.laboratoryEnterButton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].Update(ZombieLaboratory.laboratorytwoEnterButton.transform.position);
                         }
                     }
@@ -14462,7 +14531,7 @@ namespace LasMonjas
                 () => {
                     if (ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].Update(ZombieLaboratory.laboratoryEnterButton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].Update(ZombieLaboratory.laboratorytwoEnterButton.transform.position);
                         }
                     }
@@ -14673,7 +14742,7 @@ namespace LasMonjas
                 () => {
                     if (ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].Update(ZombieLaboratory.laboratoryEnterButton.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].Update(ZombieLaboratory.laboratorytwoEnterButton.transform.position);
                         }
                     }
@@ -20004,7 +20073,7 @@ namespace LasMonjas
                 () => {
                     if (MonjaFestival.localArrows.Count != 0) {
                         MonjaFestival.localArrows[2].Update(MonjaFestival.bigMonjaBase.transform.position);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             MonjaFestival.localArrows[3].Update(MonjaFestival.bigMonjaBaseTwo.transform.position);
                         }
                     }

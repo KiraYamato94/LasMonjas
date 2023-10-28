@@ -13,6 +13,8 @@ using LasMonjas.Patches;
 using AmongUs.GameOptions;
 using System.Collections;
 using TMPro;
+using System.Text.RegularExpressions;
+
 
 namespace LasMonjas
 {
@@ -24,11 +26,17 @@ namespace LasMonjas
     }
     public static class Helpers {
 
+        private static readonly Dictionary<string, Sprite> _CachedSprites = new();
         public static Sprite loadSpriteFromResources(string path, float pixelsPerUnit) {
             try {
+                if (_CachedSprites.TryGetValue(path + pixelsPerUnit, out Sprite sprite))
+                    return sprite;
                 Texture2D texture = loadTextureFromResources(path);
-                return Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);
-            } catch {
+                sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f), pixelsPerUnit);
+                sprite.hideFlags |= HideFlags.HideAndDontSave | HideFlags.DontSaveInEditor;
+                return _CachedSprites[path + pixelsPerUnit] = sprite;
+            }
+            catch {
                 //System.Console.WriteLine("Error loading sprite from path: " + path);
             }
             return null;
@@ -222,7 +230,9 @@ namespace LasMonjas
         }
 
         public static void setDefaultLook(this PlayerControl target) {
-            target.setLook(target.Data.PlayerName, target.Data.DefaultOutfit.ColorId, target.Data.DefaultOutfit.HatId, target.Data.DefaultOutfit.VisorId, target.Data.DefaultOutfit.SkinId, target.Data.DefaultOutfit.PetId);
+            if (!MushroomSabotageActive()) {
+                target.setLook(target.Data.PlayerName, target.Data.DefaultOutfit.ColorId, target.Data.DefaultOutfit.HatId, target.Data.DefaultOutfit.VisorId, target.Data.DefaultOutfit.SkinId, target.Data.DefaultOutfit.PetId);
+            }
         }
 
         public static void setLook(this PlayerControl target, String playerName, int colorId, string hatId, string visorId, string skinId, string petId) {
@@ -432,7 +442,7 @@ namespace LasMonjas
             else if (Jailer.jailedPlayer != null && Jailer.jailedPlayer == target) {
                 List<RoleInfo> infos = RoleInfo.getRoleInfoForPlayer(killer);
                 RoleInfo roleInfo = infos.FirstOrDefault();
-                if (killer.Data.Role.IsImpostor || roleInfo.isRebel) {
+                if (killer.Data.Role.IsImpostor || roleInfo.TeamId == Team.Rebel) {
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(killer.NetId, (byte)CustomRPC.PrisonPlayer, Hazel.SendOption.Reliable, -1);
                     writer.Write(killer.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
@@ -504,7 +514,17 @@ namespace LasMonjas
         public static bool AnySabotageActive() {           
 
             foreach (PlayerTask task in PlayerInCache.LocalPlayer.PlayerControl.myTasks) {
-                if (PlayerTask.TaskIsEmergency(task)) {
+                if (PlayerTask.TaskIsEmergency(task) || task.TaskType == TaskTypes.MushroomMixupSabotage) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool MushroomSabotageActive() {
+            foreach (PlayerTask task in PlayerInCache.LocalPlayer.PlayerControl.myTasks) {
+                if (task.TaskType == TaskTypes.MushroomMixupSabotage) {
                     return true;
                 }
             }
@@ -1237,14 +1257,234 @@ namespace LasMonjas
         public static bool isNeutral(PlayerControl player) {
             RoleInfo roleInfo = RoleInfo.getRoleInfoForPlayer(player).FirstOrDefault();
             if (roleInfo != null)
-                return roleInfo.isNeutral;
+                return roleInfo.TeamId == Team.Neutral;
             return false;
         }
         public static bool isRebel(PlayerControl player) {
             RoleInfo roleInfo = RoleInfo.getRoleInfoForPlayer(player).FirstOrDefault();
             if (roleInfo != null)
-                return roleInfo.isRebel;
+                return roleInfo.TeamId == Team.Rebel;
             return false;
+        }
+        public static void ClearRivalPlayer() {
+            // Notify players about clearing rivalplayer
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ChallengerSetRival, Hazel.SendOption.Reliable, -1);
+            writer.Write(byte.MaxValue);
+            writer.Write(byte.MaxValue);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+            RPCProcedure.challengerSetRival(byte.MaxValue, byte.MaxValue);
+        }
+
+        private static Sprite menuBackground;
+
+        public static Sprite getMenuBackground() {
+            if (menuBackground != null) return menuBackground;
+            menuBackground = loadSpriteFromResources("LasMonjas.Images.RoleListScreen.png", 110f);
+            return menuBackground;
+        }
+        
+        private static Sprite roleSummaryBackground;
+
+        public static Sprite getRoleSummaryBackground() {
+            if (roleSummaryBackground != null) return roleSummaryBackground;
+            roleSummaryBackground = loadSpriteFromResources("LasMonjas.Images.TeamScreen.png", 110f);
+            return roleSummaryBackground;
+        }
+        
+        private static readonly Regex MatchLengthRegex = new("<color=#[A-Z0-9]{8}>(.+)<\\/color>");
+        public static string WrapText(string text, int width = 52) {
+            List<string> newLines = new();
+            string[] lines = text.Split("\n");
+
+            foreach (string line in lines) {
+                if (line.Length <= width) {
+                    newLines.Add(line);
+                    continue;
+                }
+
+                List<List<string>> splitLines = new()
+                {
+                    new List<string>()
+                };
+                int length = 0;
+                foreach (string word in line.Split(" ")) {
+                    Match matches = MatchLengthRegex.Match(word);
+                    int trueLength = matches.Groups.Count >= 2 ? matches.Groups[1].Value.Length : word.Length;
+                    if (length + trueLength > width) {
+                        splitLines.Add(new List<string>());
+                        length = 0;
+                    }
+                    splitLines[^1].Add(word);
+                    length += trueLength;
+                }
+
+                foreach (List<string> splitLine in splitLines)
+                    newLines.Add(string.Join(' ', splitLine));
+            }
+
+            return string.Join('\n', newLines);
+        }
+
+        public static void UpdateLanguageForRoleSummary() {
+            RoleInfo.mimic.name = Language.roleInfoRoleNames[0];
+            RoleInfo.mimic.SettingsDescription = Language.impSummaryTexts[0];
+            RoleInfo.painter.name = Language.roleInfoRoleNames[1];
+            RoleInfo.painter.SettingsDescription = Language.impSummaryTexts[1];
+            RoleInfo.demon.name = Language.roleInfoRoleNames[2];
+            RoleInfo.demon.SettingsDescription = Language.impSummaryTexts[2];
+            RoleInfo.janitor.name = Language.roleInfoRoleNames[3];
+            RoleInfo.janitor.SettingsDescription = Language.impSummaryTexts[3];
+            RoleInfo.illusionist.name = Language.roleInfoRoleNames[4];
+            RoleInfo.illusionist.SettingsDescription = Language.impSummaryTexts[4];
+            RoleInfo.manipulator.name = Language.roleInfoRoleNames[5];
+            RoleInfo.manipulator.SettingsDescription = Language.impSummaryTexts[5];
+            RoleInfo.bomberman.name = Language.roleInfoRoleNames[6];
+            RoleInfo.bomberman.SettingsDescription = Language.impSummaryTexts[6];
+            RoleInfo.chameleon.name = Language.roleInfoRoleNames[7];
+            RoleInfo.chameleon.SettingsDescription = Language.impSummaryTexts[7];
+            RoleInfo.gambler.name = Language.roleInfoRoleNames[8];
+            RoleInfo.gambler.SettingsDescription = Language.impSummaryTexts[8];
+            RoleInfo.sorcerer.name = Language.roleInfoRoleNames[9];
+            RoleInfo.sorcerer.SettingsDescription = Language.impSummaryTexts[9];
+            RoleInfo.medusa.name = Language.roleInfoRoleNames[10];
+            RoleInfo.medusa.SettingsDescription = Language.impSummaryTexts[10];
+            RoleInfo.hypnotist.name = Language.roleInfoRoleNames[11];
+            RoleInfo.hypnotist.SettingsDescription = Language.impSummaryTexts[11];
+            RoleInfo.archer.name = Language.roleInfoRoleNames[12];
+            RoleInfo.archer.SettingsDescription = Language.impSummaryTexts[12];
+            RoleInfo.plumber.name = Language.roleInfoRoleNames[13];
+            RoleInfo.plumber.SettingsDescription = Language.impSummaryTexts[13];
+            RoleInfo.librarian.name = Language.roleInfoRoleNames[14];
+            RoleInfo.librarian.SettingsDescription = Language.impSummaryTexts[14];
+
+            RoleInfo.renegade.name = Language.roleInfoRoleNames[15];
+            RoleInfo.renegade.SettingsDescription = Language.rebelSummaryTexts[0];
+            RoleInfo.bountyHunter.name = Language.roleInfoRoleNames[17];
+            RoleInfo.bountyHunter.SettingsDescription = Language.rebelSummaryTexts[1];
+            RoleInfo.trapper.name = Language.roleInfoRoleNames[18];
+            RoleInfo.trapper.SettingsDescription = Language.rebelSummaryTexts[2];
+            RoleInfo.yinyanger.name = Language.roleInfoRoleNames[19];
+            RoleInfo.yinyanger.SettingsDescription = Language.rebelSummaryTexts[3];
+            RoleInfo.challenger.name = Language.roleInfoRoleNames[20];
+            RoleInfo.challenger.SettingsDescription = Language.rebelSummaryTexts[4];
+            RoleInfo.ninja.name = Language.roleInfoRoleNames[21];
+            RoleInfo.ninja.SettingsDescription = Language.rebelSummaryTexts[5];
+            RoleInfo.berserker.name = Language.roleInfoRoleNames[22];
+            RoleInfo.berserker.SettingsDescription = Language.rebelSummaryTexts[6];
+            RoleInfo.yandere.name = Language.roleInfoRoleNames[23];
+            RoleInfo.yandere.SettingsDescription = Language.rebelSummaryTexts[7];
+            RoleInfo.stranded.name = Language.roleInfoRoleNames[24];
+            RoleInfo.stranded.SettingsDescription = Language.rebelSummaryTexts[8];
+            RoleInfo.monja.name = Language.roleInfoRoleNames[25];
+            RoleInfo.monja.SettingsDescription = Language.rebelSummaryTexts[9];
+
+            RoleInfo.joker.name = Language.roleInfoRoleNames[26];
+            RoleInfo.joker.SettingsDescription = Language.neutralSummaryTexts[0];
+            RoleInfo.rolethief.name = Language.roleInfoRoleNames[27];
+            RoleInfo.rolethief.SettingsDescription = Language.neutralSummaryTexts[1];
+            RoleInfo.pyromaniac.name = Language.roleInfoRoleNames[28];
+            RoleInfo.pyromaniac.SettingsDescription = Language.neutralSummaryTexts[2];
+            RoleInfo.treasureHunter.name = Language.roleInfoRoleNames[29];
+            RoleInfo.treasureHunter.SettingsDescription = Language.neutralSummaryTexts[3];
+            RoleInfo.devourer.name = Language.roleInfoRoleNames[30];
+            RoleInfo.devourer.SettingsDescription = Language.neutralSummaryTexts[4];
+            RoleInfo.poisoner.name = Language.roleInfoRoleNames[31];
+            RoleInfo.poisoner.SettingsDescription = Language.neutralSummaryTexts[5];
+            RoleInfo.puppeteer.name = Language.roleInfoRoleNames[32];
+            RoleInfo.puppeteer.SettingsDescription = Language.neutralSummaryTexts[6];
+            RoleInfo.exiler.name = Language.roleInfoRoleNames[33];
+            RoleInfo.exiler.SettingsDescription = Language.neutralSummaryTexts[7];
+            RoleInfo.amnesiac.name = Language.roleInfoRoleNames[34];
+            RoleInfo.amnesiac.SettingsDescription = Language.neutralSummaryTexts[8];
+            RoleInfo.seeker.name = Language.roleInfoRoleNames[35]; 
+            RoleInfo.seeker.SettingsDescription = Language.neutralSummaryTexts[9];
+
+            RoleInfo.captain.name = Language.roleInfoRoleNames[36];
+            RoleInfo.captain.SettingsDescription = Language.crewSummaryTexts[0];
+            RoleInfo.mechanic.name = Language.roleInfoRoleNames[37];
+            RoleInfo.mechanic.SettingsDescription = Language.crewSummaryTexts[1];
+            RoleInfo.sheriff.name = Language.roleInfoRoleNames[38];
+            RoleInfo.sheriff.SettingsDescription = Language.crewSummaryTexts[2];
+            RoleInfo.detective.name = Language.roleInfoRoleNames[39];
+            RoleInfo.detective.SettingsDescription = Language.crewSummaryTexts[3];
+            RoleInfo.forensic.name = Language.roleInfoRoleNames[40];
+            RoleInfo.forensic.SettingsDescription = Language.crewSummaryTexts[4];
+            RoleInfo.timeTraveler.name = Language.roleInfoRoleNames[41];
+            RoleInfo.timeTraveler.SettingsDescription = Language.crewSummaryTexts[5];
+            RoleInfo.squire.name = Language.roleInfoRoleNames[42];
+            RoleInfo.squire.SettingsDescription = Language.crewSummaryTexts[6];
+            RoleInfo.cheater.name = Language.roleInfoRoleNames[43];
+            RoleInfo.cheater.SettingsDescription = Language.crewSummaryTexts[7];
+            RoleInfo.fortuneTeller.name = Language.roleInfoRoleNames[44];
+            RoleInfo.fortuneTeller.SettingsDescription = Language.crewSummaryTexts[8];
+            RoleInfo.hacker.name = Language.roleInfoRoleNames[45];
+            RoleInfo.hacker.SettingsDescription = Language.crewSummaryTexts[9];
+            RoleInfo.sleuth.name = Language.roleInfoRoleNames[46];
+            RoleInfo.sleuth.SettingsDescription = Language.crewSummaryTexts[10];
+            RoleInfo.fink.name = Language.roleInfoRoleNames[47];
+            RoleInfo.fink.SettingsDescription = Language.crewSummaryTexts[11];
+            RoleInfo.kid.name = Language.roleInfoRoleNames[48];
+            RoleInfo.kid.SettingsDescription = Language.crewSummaryTexts[12];
+            RoleInfo.welder.name = Language.roleInfoRoleNames[49];
+            RoleInfo.welder.SettingsDescription = Language.crewSummaryTexts[13];
+            RoleInfo.spiritualist.name = Language.roleInfoRoleNames[50];
+            RoleInfo.spiritualist.SettingsDescription = Language.crewSummaryTexts[14];
+            RoleInfo.coward.name = Language.roleInfoRoleNames[51];
+            RoleInfo.coward.SettingsDescription = Language.crewSummaryTexts[18];
+            RoleInfo.vigilant.name = Language.roleInfoRoleNames[52];
+            RoleInfo.vigilant.SettingsDescription = Language.crewSummaryTexts[15];
+            RoleInfo.hunter.name = Language.roleInfoRoleNames[53];
+            RoleInfo.hunter.SettingsDescription = Language.crewSummaryTexts[16];
+            RoleInfo.jinx.name = Language.roleInfoRoleNames[54];
+            RoleInfo.jinx.SettingsDescription = Language.crewSummaryTexts[17];
+            RoleInfo.bat.name = Language.roleInfoRoleNames[55];
+            RoleInfo.bat.SettingsDescription = Language.crewSummaryTexts[19];
+            RoleInfo.necromancer.name = Language.roleInfoRoleNames[56];
+            RoleInfo.necromancer.SettingsDescription = Language.crewSummaryTexts[20];
+            RoleInfo.engineer.name = Language.roleInfoRoleNames[57];
+            RoleInfo.engineer.SettingsDescription = Language.crewSummaryTexts[21];
+            RoleInfo.locksmith.name = Language.roleInfoRoleNames[58];
+            RoleInfo.locksmith.SettingsDescription = Language.crewSummaryTexts[22];
+            RoleInfo.taskMaster.name = Language.roleInfoRoleNames[59];
+            RoleInfo.taskMaster.SettingsDescription = Language.crewSummaryTexts[23];
+            RoleInfo.jailer.name = Language.roleInfoRoleNames[60];
+            RoleInfo.jailer.SettingsDescription = Language.crewSummaryTexts[24];
+
+            RoleInfo.lighter.name = Language.roleInfoRoleNames[63];
+            RoleInfo.lighter.SettingsDescription = Language.modifierSummaryTexts[2];
+            RoleInfo.blind.name = Language.roleInfoRoleNames[64];
+            RoleInfo.blind.SettingsDescription = Language.modifierSummaryTexts[3];
+            RoleInfo.flash.name = Language.roleInfoRoleNames[65];
+            RoleInfo.flash.SettingsDescription = Language.modifierSummaryTexts[4];
+            RoleInfo.bigchungus.name = Language.roleInfoRoleNames[66];
+            RoleInfo.bigchungus.SettingsDescription = Language.modifierSummaryTexts[5];
+            RoleInfo.theChosenOne.name = Language.roleInfoRoleNames[67];
+            RoleInfo.theChosenOne.SettingsDescription = Language.modifierSummaryTexts[6];
+            RoleInfo.performer.name = Language.roleInfoRoleNames[68];
+            RoleInfo.performer.SettingsDescription = Language.modifierSummaryTexts[7];
+            RoleInfo.pro.name = Language.roleInfoRoleNames[69];
+            RoleInfo.pro.SettingsDescription = Language.modifierSummaryTexts[8];
+            RoleInfo.paintball.name = Language.roleInfoRoleNames[70];
+            RoleInfo.paintball.SettingsDescription = Language.modifierSummaryTexts[9];
+            RoleInfo.electrician.name = Language.roleInfoRoleNames[71];
+            RoleInfo.electrician.SettingsDescription = Language.modifierSummaryTexts[10];
+            RoleInfo.lover.name = Language.roleInfoRoleNames[72];
+            RoleInfo.lover.SettingsDescription = Language.modifierSummaryTexts[1];
+
+            RoleInfo.captureTheFlag.name = Language.teamNames[2];
+            RoleInfo.captureTheFlag.SettingsDescription = Language.gamemodeSummaryTexts[0];
+            RoleInfo.policeandThiefs.name = Language.teamNames[3];
+            RoleInfo.policeandThiefs.SettingsDescription = Language.gamemodeSummaryTexts[1];
+            RoleInfo.kingOfTheHill.name = Language.teamNames[4];
+            RoleInfo.kingOfTheHill.SettingsDescription = Language.gamemodeSummaryTexts[2];
+            RoleInfo.hotPotatoMode.name = Language.teamNames[5];
+            RoleInfo.hotPotatoMode.SettingsDescription = Language.gamemodeSummaryTexts[3];
+            RoleInfo.zombieLaboratory.name = Language.teamNames[6];
+            RoleInfo.zombieLaboratory.SettingsDescription = Language.gamemodeSummaryTexts[4];
+            RoleInfo.battleRoyale.name = Language.teamNames[7];
+            RoleInfo.battleRoyale.SettingsDescription = Language.gamemodeSummaryTexts[5];
+            RoleInfo.monjaFestival.name = Language.teamNames[8];
+            RoleInfo.monjaFestival.SettingsDescription = Language.gamemodeSummaryTexts[6];
         }
 
         public static void CreateCTF() {
@@ -1319,8 +1559,18 @@ namespace LasMonjas
                     blueFlagPos = new Vector3(33.6f, 1.25f, 0.5f);
                     blueFlagBasePos = new Vector3(33.6f, 1.2f, 1f);
                     break;
-                // Submerged
+                // Fungle
                 case 5:
+                    stealerPlayerPos = new Vector3(2.85f, -5.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    redTeamPos = new Vector3(-23f, -0.45f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    blueTeamPos = new Vector3(19.25f, 2.35f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    redFlagPos = new Vector3(-23f, -0.65f, 0.5f);
+                    redFlagBasePos = new Vector3(-23, -0.7f, 1f);
+                    blueFlagPos = new Vector3(19.25f, 2.15f, 0.5f);
+                    blueFlagBasePos = new Vector3(19.25f, 2.1f, 1f);
+                    break;
+                // Submerged
+                case 6:
                     stealerPlayerPos = new Vector3(1f, 10f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                     redTeamPos = new Vector3(-8.35f, 28.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                     blueTeamPos = new Vector3(12.5f, -31.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
@@ -1554,8 +1804,32 @@ namespace LasMonjas
                     jewel14Pos = new Vector3(25.2f, -8.75f, 1f);
                     jewel15Pos = new Vector3(16.3f, -11, 1f);
                     break;
-                // Submerged
+               // Fungle
                 case 5:
+                    policeTeamPos = new Vector3(-22.5f, -0.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    thiefTeamPos = new Vector3(20f, 11f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    cellPos = new Vector3(-26.75f, -0.65f, 0.5f);
+                    cellButtonPos = new Vector3(-24f, -0.5f, 0.5f);
+                    jewelButtonPos = new Vector3(18f, 11.75f, 0.05f);
+                    thiefSpaceShipPos = new Vector3(19f, 9.25f, 0.6f);
+                    jewel01Pos = new Vector3(-18.25f, 5f, 1f);
+                    jewel02Pos = new Vector3(-22.65f, -7.15f, 1f);
+                    jewel03Pos = new Vector3(2, 4.35f, 1f);
+                    jewel04Pos = new Vector3(-3.15f, -10.5f, 0.9f);
+                    jewel05Pos = new Vector3(23.7f, -7.8f, 1f);
+                    jewel06Pos = new Vector3(-4.75f, -1.75f, 1f);
+                    jewel07Pos = new Vector3(8f, -10f, 1f);
+                    jewel08Pos = new Vector3(7f, 1.75f, 1f);
+                    jewel09Pos = new Vector3(13.25f, 10, 1f);
+                    jewel10Pos = new Vector3(22.3f, 3.3f, 1f);
+                    jewel11Pos = new Vector3(20.5f, 7.35f, 1f);
+                    jewel12Pos = new Vector3(24.15f, 14.45f, 1f);
+                    jewel13Pos = new Vector3(-16.12f, 0.7f, 1f);
+                    jewel14Pos = new Vector3(1.65f, -1.5f, 1f);
+                    jewel15Pos = new Vector3(10.5f, -12, 1f);
+                    break;
+                // Submerged
+                case 6:
                     policeTeamPos = new Vector3(-8.45f, 27f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                     thiefTeamPos = new Vector3(1f, 10f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                     cellPos = new Vector3(-5.9f, 31.85f, 0.5f);
@@ -1611,7 +1885,7 @@ namespace LasMonjas
                     if (PoliceAndThief.localThiefReleaseArrow.Count == 0) {
                         PoliceAndThief.localThiefReleaseArrow.Add(new Arrow(Palette.PlayerColors[10]));
                         PoliceAndThief.localThiefReleaseArrow[0].arrow.SetActive(true);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             PoliceAndThief.localThiefReleaseArrow.Add(new Arrow(Palette.PlayerColors[10]));
                             PoliceAndThief.localThiefReleaseArrow[1].arrow.SetActive(true);
                         }
@@ -1619,7 +1893,7 @@ namespace LasMonjas
                     if (PoliceAndThief.localThiefDeliverArrow.Count == 0) {
                         PoliceAndThief.localThiefDeliverArrow.Add(new Arrow(Palette.PlayerColors[16]));
                         PoliceAndThief.localThiefDeliverArrow[0].arrow.SetActive(true);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             PoliceAndThief.localThiefDeliverArrow.Add(new Arrow(Palette.PlayerColors[16]));
                             PoliceAndThief.localThiefDeliverArrow[1].arrow.SetActive(true);
                         }
@@ -1829,8 +2103,22 @@ namespace LasMonjas
                     flagZoneThreePos = new Vector3(16.3f, -8.6f, 0.4f);
                     zoneThreePos = new Vector3(16.3f, -8.6f, 0.5f);
                     break;
-                // Submerged
+                // Fungle
                 case 5:
+                    usurperPlayerPos = new Vector3(-3.25f, -10.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    greenTeamPos = new Vector3(-17.5f, 7f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    yellowTeamPos = new Vector3(21.5f, -6.85f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    greenTeamFloorPos = new Vector3(-17.5f, 7.25f, 0.5f);
+                    yellowTeamFloorPos = new Vector3(21.5f, -7.1f, 0.5f);
+                    flagZoneOnePos = new Vector3(-17.5f, -7.25f, 0.4f);
+                    zoneOnePos = new Vector3(-17.5f, -7.25f, 0.5f);
+                    flagZoneTwoPos = new Vector3(10.7f, -12f, 0.4f);
+                    zoneTwoPos = new Vector3(10.7f, -12f, 0.5f);
+                    flagZoneThreePos = new Vector3(13.15f, 10f, 0.4f);
+                    zoneThreePos = new Vector3(13.15f, 10f, 0.5f);
+                    break;
+                // Submerged
+                case 6:
                     usurperPlayerPos = new Vector3(5.75f, 31.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                     greenTeamPos = new Vector3(-12.25f, 18.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                     yellowTeamPos = new Vector3(-8.5f, -39.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
@@ -1913,7 +2201,7 @@ namespace LasMonjas
                     KingOfTheHill.usurperSpawns.Add(yellowteamfloor);                    
                 }
 
-                if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                     greenkingaura.transform.position = new Vector3(KingOfTheHill.greenKingplayer.transform.position.x, KingOfTheHill.greenKingplayer.transform.position.y, -0.5f);
                     yellowkingaura.transform.position = new Vector3(KingOfTheHill.yellowKingplayer.transform.position.x, KingOfTheHill.yellowKingplayer.transform.position.y, -0.5f);
                 }
@@ -1959,8 +2247,13 @@ namespace LasMonjas
                     hotPotatoPlayerPos = new Vector3(12.25f, 2f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                     notPotatoTeamPos = new Vector3(6.25f, 2.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                     break;
-                // Submerged
+                // Fungle
                 case 5:
+                    hotPotatoPlayerPos = new Vector3(-10.75f, 12.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    notPotatoTeamPos = new Vector3(-3.25f, -10.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    break;
+                // Submerged
+                case 6:
                     hotPotatoPlayerPos = new Vector3(-4.25f, -33.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                     notPotatoTeamPos = new Vector3(13f, -25.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                     break;
@@ -2059,8 +2352,18 @@ namespace LasMonjas
                     laboratoryPos = new Vector3(-18.45f, 3f, 0.5f);
                     ZombieLaboratory.nursePlayerInsideLaboratory = false;
                     break;
-                // Submerged
+                // Fungle
                 case 5:
+                    zombieTeamPos = new Vector3(-4.25f, -10.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    survivorTeamPos = new Vector3(6.5f, 2.85f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    nursePos = new Vector3(-26.75f, -0.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    medkitOnePos = new Vector3(-2.75f, -0.15f, -0.1f);
+                    medkitTwoPos = new Vector3(-10, -12.25f, -0.1f);
+                    medkitThreePos = new Vector3(-9.25f, 6.4f, -0.1f);
+                    laboratoryPos = new Vector3(-27f, -0.65f, 0.5f);
+                    break;
+                // Submerged
+                case 6:
                     zombieTeamPos = new Vector3(1f, 10f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                     survivorTeamPos = new Vector3(5.5f, 31.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                     nursePos = new Vector3(-6f, 31.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
@@ -2102,7 +2405,7 @@ namespace LasMonjas
                     if (ZombieLaboratory.localSurvivorsDeliverArrow.Count == 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow.Add(new Arrow(Palette.PlayerColors[3]));
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(true);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             ZombieLaboratory.localSurvivorsDeliverArrow.Add(new Arrow(Palette.PlayerColors[3]));
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(true);
                         }
@@ -2146,6 +2449,9 @@ namespace LasMonjas
                 ZombieLaboratory.laboratory = laboratory;
                 ZombieLaboratory.laboratoryEnterButton = laboratory.transform.GetChild(1).gameObject;
                 if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                    ZombieLaboratory.laboratoryEnterButton.transform.position = new Vector3(-23.6f, -0.73f, 0.04f);
+                }
+                else if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                     ZombieLaboratory.laboratoryEnterButton.transform.position = new Vector3(-5.7f, 29.47f, -0.01f);
                 }
                 ZombieLaboratory.laboratoryExitButton = laboratory.transform.GetChild(2).gameObject;
@@ -2227,8 +2533,16 @@ namespace LasMonjas
                     limeTeamFloorPos = new Vector3(-13.9f, -14.45f, 0.5f);
                     pinkTeamFloorPos = new Vector3(37.35f, -3.25f, 0.5f);                    
                     break;
-                // Submerged
+                // Fungle
                 case 5:
+                    serialKillerPos = new Vector3(9.35f, -9.85f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    limeTeamPos = new Vector3(1.6f, -1.65f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    pinkTeamPos = new Vector3(6.75f, 2f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    limeTeamFloorPos = new Vector3(1.6f, -1.65f, 0.5f);
+                    pinkTeamFloorPos = new Vector3(6.75f, 2, 0.5f);                    
+                    break;
+                // Submerged
+                case 6:
                     serialKillerPos = new Vector3(5.75f, 31.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                     limeTeamPos = new Vector3(-12.25f, 18.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                     pinkTeamPos = new Vector3(-8.5f, -39.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
@@ -2401,8 +2715,24 @@ namespace LasMonjas
                     greyBasePos = new Vector3(6.35f, 2.5f, 0.5f);
                     allulMonjaPos = new Vector3(20.75f, 2.5f, 0.5f);
                     break;
-                // Submerged
+                // Fungle
                 case 5:
+                    bigMonjaPos = new Vector3(-4.25f, -8.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    greenTeamPos = new Vector3(-17.5f, 7.2f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    cyanTeamPos = new Vector3(12.5f, 10, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    bigSpawnOnePos = new Vector3(-0.65f, 4.25f, 1f);
+                    bigSpawnTwoPos = new Vector3(23.25f, 13.5f, 1f);
+                    littleSpawnOnePos = new Vector3(-17.45f, -7.35f, 0.5f);
+                    littleSpawnTwoPos = new Vector3(10.85f, -15, 0.5f);
+                    littleSpawnThreePos = new Vector3(21.85f, -7.5f, 0.5f);
+                    littleSpawnFourPos = new Vector3(21.45f, 3, 0.5f);
+                    greenBasePos = new Vector3(-17.5f, 7.2f, 0.5f);
+                    cyanBasePos = new Vector3(12.5f, 10, 0.5f);
+                    greyBasePos = new Vector3(-4.25f, -8.5f, 0.5f);
+                    allulMonjaPos = new Vector3(1.5f, -1.5f, 0.5f);
+                    break;
+                // Submerged
+                case 6:
                     bigMonjaPos = new Vector3(-12.2f, 19.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                     greenTeamPos = new Vector3(-1.8f, 12.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                     cyanTeamPos = new Vector3(2.65f, -35.65f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
@@ -2620,6 +2950,15 @@ namespace LasMonjas
                     recordsadmin.GetComponent<BoxCollider2D>().enabled = false;
                     break;
                 case 5:
+                    // Remove Decon doors, camera use, vitals, admin tables on Fungle
+                    GameObject binoculars = GameObject.Find("BinocularsSecurityConsole");
+                    binoculars.GetComponent<PolygonCollider2D>().enabled = false;
+                    GameObject mushrooms = GameObject.Find("FungleShip(Clone)/Outside/OutsideJungle/Mushrooms");
+                    mushrooms.SetActive(false);               
+                    GameObject labvitals = GameObject.Find("FungleShip(Clone)/Rooms/Laboratory/VitalsConsole");
+                    labvitals.GetComponent<BoxCollider2D>().enabled = false;                    
+                    break;
+                case 6:
                     // Remove camera use, admin table, vitals, on Submerged
                     GameObject upperCentralVent = GameObject.Find("UpperCentralVent");
                     upperCentralVent.GetComponent<CircleCollider2D>().enabled = false;
