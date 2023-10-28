@@ -99,6 +99,12 @@ namespace LasMonjas.Patches {
                 voterPlayer.Object.SetPlayerMaterialColors(spriteRenderer);
                 spriteRenderer.transform.SetParent(parent);
                 spriteRenderer.transform.localScale = Vector3.zero;
+
+                PlayerVoteArea component = parent.GetComponent<PlayerVoteArea>();
+                if (component != null) {
+                    spriteRenderer.material.SetInt(PlayerMaterial.MaskLayer, component.MaskLayer);
+                }
+
                 __instance.StartCoroutine(Effects.Bloop((float)index * 0.3f, spriteRenderer.transform, 1f, 0.5f));
                 parent.GetComponent<VoteSpreader>().AddVote(spriteRenderer);
                 voterPlayer.Object.SetColor(cId); 
@@ -520,7 +526,7 @@ namespace LasMonjas.Patches {
 
                 // Add 20 seconds for Berserker
                 if (Berserker.killedFirstTime) {
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                         Berserker.timeToKill += 35;
                     }
                     else {

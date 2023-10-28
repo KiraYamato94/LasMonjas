@@ -52,7 +52,7 @@ namespace LasMonjas.Patches
             }
 
             // Submerged check
-            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+            if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                 // as submerged does, only change stuff for vents 9 and 14 of submerged. Code partially provided by AlexejheroYTB
                 if (SubmergedCompatibility.getInTransition()) {
                     __result = float.MaxValue;
@@ -189,9 +189,14 @@ namespace LasMonjas.Patches
                 Vector2 vector = pc.GetTruePosition() - truePosition;
                 var magnitude = vector.magnitude;
                 if (pc != null && !hideVentAnim || hideVentAnim && magnitude < PlayerInCache.LocalPlayer.PlayerControl.lightSource.viewDistance &&
-                    !PhysicsHelpers.AnyNonTriggersBetween(truePosition, vector.normalized, magnitude,
-                        ShipAndObjectsMask)) {
-                    __instance.GetComponent<SpriteAnim>().Play(__instance.EnterVentAnim, 1f);
+                !PhysicsHelpers.AnyNonTriggersBetween(truePosition, vector.normalized, magnitude,
+                    ShipAndObjectsMask)) {
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId != 5) {
+                        __instance.GetComponent<SpriteAnim>().Play(__instance.EnterVentAnim, 1f);
+                    }
+                    else {
+                        __instance.transform.GetChild(3).GetComponent<SpriteAnim>().Play(__instance.EnterVentAnim, 1f);
+                    }
                 }
 
                 if (pc.AmOwner && Constants.ShouldPlaySfx()) //ShouldPlaySfx
@@ -226,9 +231,14 @@ namespace LasMonjas.Patches
                 Vector2 vector = pc.GetTruePosition() - truePosition;
                 var magnitude = vector.magnitude;
                 if (pc != null && !hideVentAnim || hideVentAnim && magnitude < PlayerInCache.LocalPlayer.PlayerControl.lightSource.viewDistance &&
-                    !PhysicsHelpers.AnyNonTriggersBetween(truePosition, vector.normalized, magnitude,
-                        ShipAndObjectsMask)) {
-                    __instance.GetComponent<SpriteAnim>().Play(__instance.ExitVentAnim, 1f);
+                !PhysicsHelpers.AnyNonTriggersBetween(truePosition, vector.normalized, magnitude,
+                    ShipAndObjectsMask)) {
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId != 5) {
+                        __instance.GetComponent<SpriteAnim>().Play(__instance.ExitVentAnim, 1f);
+                    }
+                    else {
+                        __instance.transform.GetChild(3).GetComponent<SpriteAnim>().Play(__instance.ExitVentAnim, 1f);
+                    }
                 }
 
                 if (pc.AmOwner && Constants.ShouldPlaySfx()) //ShouldPlaySfx
@@ -331,7 +341,7 @@ namespace LasMonjas.Patches
     {
         static void Postfix() {
 
-            // Change sabotage button image and block sabotages if capture the flag mode or police and thief mode
+            // Change sabotage button image and block sabotages for gamemodes
             if (gameType >= 2 || Monja.awakened) {
                 HudManager.Instance.SabotageButton.Hide();
             }
@@ -691,32 +701,30 @@ namespace LasMonjas.Patches
     }
 
     [HarmonyPatch]
-    class SurveillanceMinigamePatch
-    {
+    class SurveillanceMinigamePatch {
         private static int page = 0;
         private static float timer = 0f;
 
         [HarmonyPatch(typeof(SurveillanceMinigame), nameof(SurveillanceMinigame.Begin))]
-        class SurveillanceMinigameBeginPatch
-        {
+        class SurveillanceMinigameBeginPatch {
             public static void Postfix(SurveillanceMinigame __instance) {
 
-                if (nightVision) { 
-                GameObject gameObject = __instance.Viewables.transform.Find("CloseButton").gameObject;
-                nightOverlay = new List<GameObject>();
-                foreach (MeshRenderer meshRenderer in __instance.ViewPorts) {
-                    GameObject gameObject2 = UnityEngine.Object.Instantiate<GameObject>(gameObject, __instance.Viewables.transform);
-                    gameObject2.name = "NightVisionOverlay";
-                    gameObject2.transform.position = new Vector3(meshRenderer.transform.position.x, meshRenderer.transform.position.y, gameObject2.transform.position.z);
-                    gameObject2.transform.localScale = new Vector3(0.91f, 0.612f, 1f);
-                    gameObject2.GetComponent<SpriteRenderer>().sprite = null;
-                    UnityEngine.Object.Destroy(gameObject2.GetComponent<ButtonBehavior>());
-                    UnityEngine.Object.Destroy(gameObject2.GetComponent<CloseButtonConsoleBehaviour>());
-                    UnityEngine.Object.Destroy(gameObject2.GetComponent<CircleCollider2D>());
-                    nightOverlay.Add(gameObject2);
-                }
-                canNightOverlay = true;
-                removeNightOverlay = true;
+                if (nightVision) {
+                    GameObject gameObject = __instance.Viewables.transform.Find("CloseButton").gameObject;
+                    nightOverlay = new List<GameObject>();
+                    foreach (MeshRenderer meshRenderer in __instance.ViewPorts) {
+                        GameObject gameObject2 = UnityEngine.Object.Instantiate<GameObject>(gameObject, __instance.Viewables.transform);
+                        gameObject2.name = "NightVisionOverlay";
+                        gameObject2.transform.position = new Vector3(meshRenderer.transform.position.x, meshRenderer.transform.position.y, gameObject2.transform.position.z);
+                        gameObject2.transform.localScale = new Vector3(0.91f, 0.612f, 1f);
+                        gameObject2.GetComponent<SpriteRenderer>().sprite = null;
+                        UnityEngine.Object.Destroy(gameObject2.GetComponent<ButtonBehavior>());
+                        UnityEngine.Object.Destroy(gameObject2.GetComponent<CloseButtonConsoleBehaviour>());
+                        UnityEngine.Object.Destroy(gameObject2.GetComponent<CircleCollider2D>());
+                        nightOverlay.Add(gameObject2);
+                    }
+                    canNightOverlay = true;
+                    removeNightOverlay = true;
                 }
 
                 // Add Vigilant cameras
@@ -739,8 +747,7 @@ namespace LasMonjas.Patches
         }
 
         [HarmonyPatch(typeof(SurveillanceMinigame), nameof(SurveillanceMinigame.Update))]
-        class SurveillanceMinigameUpdatePatch
-        {
+        class SurveillanceMinigameUpdatePatch {
 
             public static bool Prefix(SurveillanceMinigame __instance) {
 
@@ -827,8 +834,7 @@ namespace LasMonjas.Patches
         }
 
         [HarmonyPatch(typeof(SurveillanceMinigame), nameof(SurveillanceMinigame.Close))]
-        class SurveillanceMinigameClosePatch
-        {
+        class SurveillanceMinigameClosePatch {
 
             public static bool Prefix(SurveillanceMinigame __instance) {
 
@@ -848,8 +854,7 @@ namespace LasMonjas.Patches
         }
 
         [HarmonyPatch(typeof(SurveillanceMinigame), nameof(SurveillanceMinigame.OnDestroy))]
-        class SurveillanceMinigameOnDestroyPatch
-        {
+        class SurveillanceMinigameOnDestroyPatch {
 
             public static bool Prefix(SurveillanceMinigame __instance) {
 
@@ -869,8 +874,7 @@ namespace LasMonjas.Patches
         }
 
         [HarmonyPatch(typeof(PlanetSurveillanceMinigame), nameof(PlanetSurveillanceMinigame.Begin))]
-        class PlanetSurveillanceMinigameBeginPatch
-        {
+        class PlanetSurveillanceMinigameBeginPatch {
             public static void Postfix(PlanetSurveillanceMinigame __instance) {
 
                 if (nightVision) {
@@ -894,8 +898,7 @@ namespace LasMonjas.Patches
         }
 
         [HarmonyPatch(typeof(PlanetSurveillanceMinigame), nameof(PlanetSurveillanceMinigame.Update))]
-        class PlanetSurveillanceMinigameUpdatePatch
-        {
+        class PlanetSurveillanceMinigameUpdatePatch {
 
             public static bool Prefix(PlanetSurveillanceMinigame __instance) {
 
@@ -936,8 +939,7 @@ namespace LasMonjas.Patches
         }
 
         [HarmonyPatch(typeof(PlanetSurveillanceMinigame), nameof(PlanetSurveillanceMinigame.Close))]
-        class PlanetSurveillanceMinigameClosePatch
-        {
+        class PlanetSurveillanceMinigameClosePatch {
 
             public static bool Prefix(PlanetSurveillanceMinigame __instance) {
 
@@ -957,8 +959,7 @@ namespace LasMonjas.Patches
         }
 
         [HarmonyPatch(typeof(PlanetSurveillanceMinigame), nameof(PlanetSurveillanceMinigame.OnDestroy))]
-        class PlanetSurveillanceMinigameOnDestroyPatch
-        {
+        class PlanetSurveillanceMinigameOnDestroyPatch {
 
             public static bool Prefix(PlanetSurveillanceMinigame __instance) {
 

@@ -114,7 +114,7 @@ namespace LasMonjas.Patches {
                 foreach (Vent vent in ShipStatus.Instance.AllVents) {
                     try {
                         if (vent?.myRend?.material != null) {
-                            if (Renegade.renegade != null && Renegade.renegade.inVent || Minion.minion != null && Minion.minion.inVent) {
+                            if (Renegade.renegade != null && Renegade.renegade.inVent || Minion.minion != null && Minion.minion.inVent || Stranded.stranded != null && Stranded.stranded.inVent) {
                                 vent.myRend.material.SetFloat("_Outline", 1f);
                                 vent.myRend.material.SetColor("_OutlineColor", Renegade.color);
                             }
@@ -153,11 +153,11 @@ namespace LasMonjas.Patches {
             // Paint reset and set Mimic look if necessary
             if (oldPaintTimer > 0f && Painter.painterTimer <= 0f) {
                 Painter.resetPaint();
-                if (Mimic.transformTimer > 0f && Mimic.mimic != null && Mimic.transformTarget != null) {
+                if (Mimic.transformTimer > 0f && Mimic.mimic != null && Mimic.transformTarget != null && !Helpers.MushroomSabotageActive()) {
                     PlayerControl target = Mimic.transformTarget;
                     Mimic.mimic.setLook(target.Data.PlayerName, target.Data.DefaultOutfit.ColorId, target.Data.DefaultOutfit.HatId, target.Data.DefaultOutfit.VisorId, target.Data.DefaultOutfit.SkinId, target.Data.DefaultOutfit.PetId);
                 }
-                if (Puppeteer.puppeteer != null && Puppeteer.morphed) {
+                if (Puppeteer.puppeteer != null && Puppeteer.morphed && !Helpers.MushroomSabotageActive()) {
                     PlayerControl target = Puppeteer.transformTarget;
                     Puppeteer.puppeteer.setLook(target.Data.PlayerName, target.Data.DefaultOutfit.ColorId, target.Data.DefaultOutfit.HatId, target.Data.DefaultOutfit.VisorId, target.Data.DefaultOutfit.SkinId, target.Data.DefaultOutfit.PetId);
                 }                
@@ -388,7 +388,7 @@ namespace LasMonjas.Patches {
                     }
 
                     // Set position
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                         localPlayerPositions.RemoveAt(0);
 
                         if (localPlayerPositions.Count > 1) localPlayerPositions.RemoveAt(0); // Skip every second position to rewind twice as fast, but never skip the last position
@@ -670,6 +670,13 @@ namespace LasMonjas.Patches {
                         if (Manipulator.manipulatedVictim != null) {
                             Manipulator.manipulatedVictim = null;
                             Manipulator.manipulatedVictimTimer = 21f;
+                        }
+
+                        // Stop Performer Music
+                        if (Modifiers.performer != null && Modifiers.performer.Data.IsDead && !Modifiers.performerReported) {
+                            MessageWriter performerwriter = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.PerformerIsReported, Hazel.SendOption.Reliable, -1);
+                            AmongUsClient.Instance.FinishRpcImmediately(performerwriter); 
+                            RPCProcedure.performerIsReported(0);
                         }
 
                         Helpers.handleDemonBiteOnBodyReport(); // Manually call Demon handling, since the CmdReportDeadBody Prefix won't be called
@@ -2139,7 +2146,7 @@ namespace LasMonjas.Patches {
                             FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerInCache.LocalPlayer.PlayerControl, msg);
                         }
                         if (msg.IndexOf("who", StringComparison.OrdinalIgnoreCase) >= 0) {
-                            FastDestroyableSingleton<Assets.CoreScripts.Telemetry>.Instance.SendWho();
+                            FastDestroyableSingleton<Assets.CoreScripts.UnityTelemetry>.Instance.SendWho();
                         }
                     }
                 }
@@ -2211,7 +2218,7 @@ namespace LasMonjas.Patches {
                     if ((Modifiers.lover1 != null && target == Modifiers.lover1) || (Modifiers.lover2 != null && target == Modifiers.lover2)) {
                         PlayerControl otherLover = target == Modifiers.lover1 ? Modifiers.lover2 : Modifiers.lover1;
                         if (otherLover != null && !otherLover.Data.IsDead) {
-                            otherLover.MurderPlayer(otherLover);
+                            otherLover.MurderPlayer(otherLover, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
                             if (Monja.awakened) {
                                 var loverBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == otherLover.PlayerId);
                                 loverBody.transform.position = new Vector3(50, 50, 1);
@@ -2288,7 +2295,7 @@ namespace LasMonjas.Patches {
                     // BountyHunter suicide trigger if his target is murdered
                     if (BountyHunter.bountyhunter != null && target == BountyHunter.hasToKill && BountyHunter.bountyhunter != __instance) {
                         if (!BountyHunter.bountyhunter.Data.IsDead) {
-                            BountyHunter.bountyhunter.MurderPlayer(BountyHunter.bountyhunter);
+                            BountyHunter.bountyhunter.MurderPlayer(BountyHunter.bountyhunter, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
                         }
                     }
 
@@ -2365,7 +2372,7 @@ namespace LasMonjas.Patches {
                             if (p == 1f) {
                                 // revive puppeteer
                                 target.Revive();
-                                if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                                if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                                     if (Puppeteer.puppeteer.transform.position.y > 0) {
                                         Puppeteer.puppeteer.transform.position = new Vector3(5.5f, 31.5f, -5);
                                     }
@@ -2412,7 +2419,7 @@ namespace LasMonjas.Patches {
 
                     // Kill Exiler if the target is killed
                     if (Exiler.exiler != null && Exiler.target != null && target == Exiler.target && !Exiler.exiler.Data.IsDead) {
-                        Exiler.exiler.MurderPlayer(Exiler.exiler);
+                        Exiler.exiler.MurderPlayer(Exiler.exiler, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
                     }
 
                     // Reset hided player if killed
@@ -2463,7 +2470,7 @@ namespace LasMonjas.Patches {
                     // Hunter target suicide trigger on Hunter murder
                     if (Hunter.hunter != null && target == Hunter.hunter) {
                         if (Hunter.hunted != null && !Hunter.hunted.Data.IsDead) {
-                            Hunter.hunted.MurderPlayer(Hunter.hunted);
+                            Hunter.hunted.MurderPlayer(Hunter.hunted, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
                             Hunter.targetButtonText.text = $" ";
                         }
                     }
@@ -2558,8 +2565,12 @@ namespace LasMonjas.Patches {
                             case 4:
                                 CaptureTheFlag.blueflag.transform.position = new Vector3(33.6f, 1.25f, 0.5f);
                                 break;
-                            // Submerged
+                            // Fungle
                             case 5:
+                                CaptureTheFlag.blueflag.transform.position = new Vector3(19.25f, 2.15f, 0.5f);
+                                break;
+                            // Submerged
+                            case 6:
                                 CaptureTheFlag.blueflag.transform.position = new Vector3(12.5f, -31.45f, -0.011f);
                                 break;
                         }
@@ -2596,8 +2607,12 @@ namespace LasMonjas.Patches {
                             case 4:
                                 CaptureTheFlag.redflag.transform.position = new Vector3(-17.5f, -1.2f, 0.5f);
                                 break;
-                            // Submerged
+                            // Fungle
                             case 5:
+                                CaptureTheFlag.redflag.transform.position = new Vector3(-23f, -0.65f, 0.5f);
+                                break;
+                            // Submerged
+                            case 6:
                                 CaptureTheFlag.redflag.transform.position = new Vector3(-8.35f, 28.05f, 0.03f);
                                 break;
                         }
@@ -2646,8 +2661,12 @@ namespace LasMonjas.Patches {
                                     case 4:
                                         CaptureTheFlag.stealerPlayer.transform.position = new Vector3(10.25f, -15.35f, CaptureTheFlag.stealerPlayer.transform.position.z);
                                         break;
-                                    // Submerged
+                                    // Fungle
                                     case 5:
+                                        CaptureTheFlag.stealerPlayer.transform.position = new Vector3(2.85f, -5.75f, CaptureTheFlag.stealerPlayer.transform.position.z);
+                                        break;
+                                    // Submerged
+                                    case 6:
                                         if (CaptureTheFlag.stealerPlayer.transform.position.y > 0) {
                                             CaptureTheFlag.stealerPlayer.transform.position = new Vector3(1f, 10f, CaptureTheFlag.stealerPlayer.transform.position.z);
                                         }
@@ -2747,8 +2766,12 @@ namespace LasMonjas.Patches {
                                         case 4:
                                             player.transform.position = new Vector3(-17.5f, -1.1f, player.transform.position.z);
                                             break;
-                                        // Submerged
+                                        // Fungle
                                         case 5:
+                                            player.transform.position = new Vector3(-23f, -0.45f, player.transform.position.z);
+                                            break;
+                                        // Submerged
+                                        case 6:
                                             if (player.transform.position.y > 0) {
                                                 player.transform.position = new Vector3(-8.35f, 28.25f, player.transform.position.z);
                                             }
@@ -2848,8 +2871,12 @@ namespace LasMonjas.Patches {
                                         case 4:
                                             player.transform.position = new Vector3(33.6f, 1.45f, player.transform.position.z);
                                             break;
-                                        // Submerged
+                                        // Fungle
                                         case 5:
+                                            player.transform.position = new Vector3(19.25f, 2.35f, player.transform.position.z);
+                                            break;
+                                        // Submerged
+                                        case 6:
                                             if (player.transform.position.y > 0) {
                                                 player.transform.position = new Vector3(14.25f, 24.25f, player.transform.position.z);
                                             }
@@ -2945,9 +2972,13 @@ namespace LasMonjas.Patches {
                                         // Airship
                                         case 4:
                                             player.transform.position = new Vector3(-18.5f, 0.75f, player.transform.position.z);
+                                            break; 
+                                        // Fungle
+                                        case 5:
+                                            player.transform.position = new Vector3(-22.5f, -0.5f, player.transform.position.z);
                                             break;
                                         // Submerged
-                                        case 5:
+                                        case 6:
                                             if (player.transform.position.y > 0) {
                                                 player.transform.position = new Vector3(-8.45f, 27f, player.transform.position.z);
                                             }
@@ -3086,8 +3117,12 @@ namespace LasMonjas.Patches {
                                         case 4:
                                             player.transform.position = new Vector3(7.15f, -14.5f, player.transform.position.z);
                                             break;
-                                        // Submerged
+                                        // Fungle
                                         case 5:
+                                            player.transform.position = new Vector3(20f, 11f, player.transform.position.z);
+                                            break;
+                                        // Submerged
+                                        case 6:
                                             if (player.transform.position.y > 0) {
                                                 player.transform.position = new Vector3(1f, 10f, player.transform.position.z);
                                             }
@@ -3151,8 +3186,12 @@ namespace LasMonjas.Patches {
                                     case 4:
                                         KingOfTheHill.usurperPlayer.transform.position = new Vector3(12.25f, 2f, KingOfTheHill.usurperPlayer.transform.position.z);
                                         break;
-                                    // Submerged
+                                    // Fungle
                                     case 5:
+                                        KingOfTheHill.usurperPlayer.transform.position = new Vector3(-3.25f, -10.5f, KingOfTheHill.usurperPlayer.transform.position.z);
+                                        break;
+                                    // Submerged
+                                    case 6:
                                         if (KingOfTheHill.usurperPlayer.transform.position.y > 0) {
                                             KingOfTheHill.usurperPlayer.transform.position = new Vector3(5.75f, 31.25f, KingOfTheHill.usurperPlayer.transform.position.z);
                                         }
@@ -3285,8 +3324,12 @@ namespace LasMonjas.Patches {
                                         case 4:
                                             player.transform.position = new Vector3(-13.9f, -14.45f, player.transform.position.z);
                                             break;
-                                        // Submerged
+                                        // Fungle
                                         case 5:
+                                            player.transform.position = new Vector3(-17.5f, 7f, player.transform.position.z);
+                                            break;
+                                        // Submerged
+                                        case 6:
                                             if (player.transform.position.y > 0) {
                                                 player.transform.position = new Vector3(-12.25f, 18.5f, player.transform.position.z);
                                             }
@@ -3420,8 +3463,12 @@ namespace LasMonjas.Patches {
                                         case 4:
                                             player.transform.position = new Vector3(37.35f, -3.25f, player.transform.position.z);
                                             break;
-                                        // Submerged
+                                        // Fungle
                                         case 5:
+                                            player.transform.position = new Vector3(21.5f, -6.85f, player.transform.position.z);
+                                            break;
+                                        // Submerged
+                                        case 6:
                                             if (player.transform.position.y > 0) {
                                                 player.transform.position = new Vector3(0f, 33.5f, player.transform.position.z);
                                             }
@@ -3857,8 +3904,17 @@ namespace LasMonjas.Patches {
                                                 player.transform.position = new Vector3(25.25f, -8.65f, player.transform.position.z);
                                             }
                                             break;
-                                        // Submerged
+                                        // Fungle
                                         case 5:
+                                            if (player == ZombieLaboratory.nursePlayer) {
+                                                player.transform.position = new Vector3(-26.75f, -0.5f, player.transform.position.z);
+                                            }
+                                            else {
+                                                player.transform.position = new Vector3(6.5f, 2.85f, player.transform.position.z);
+                                            }
+                                            break;
+                                        // Submerged
+                                        case 6:
                                             if (player.transform.position.y > 0) {
                                                 if (player == ZombieLaboratory.nursePlayer) {
                                                     player.transform.position = new Vector3(-6f, 31.85f, player.transform.position.z);
@@ -4011,8 +4067,12 @@ namespace LasMonjas.Patches {
                                         case 4:
                                             player.transform.position = new Vector3(32.35f, 7.25f, player.transform.position.z);
                                             break;
-                                        // Submerged
+                                        // Fungle
                                         case 5:
+                                            player.transform.position = new Vector3(-4.25f, -10.5f, player.transform.position.z);
+                                            break;
+                                        // Submerged
+                                        case 6:
                                             if (player.transform.position.y > 0) {
                                                 player.transform.position = new Vector3(1f, 10f, player.transform.position.z);
                                             }
@@ -4084,8 +4144,12 @@ namespace LasMonjas.Patches {
                                         case 4:
                                             BattleRoyale.serialKiller.transform.position = new Vector3(12.25f, 2f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                                             break;
-                                        // Submerged
+                                        // Fungle
                                         case 5:
+                                            BattleRoyale.serialKiller.transform.position = new Vector3(9.35f, -9.85f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                                            break;
+                                        // Submerged
+                                        case 6:
                                             if (BattleRoyale.serialKiller.transform.position.y > 0) {
                                                 BattleRoyale.serialKiller.transform.position = new Vector3(5.75f, 31.25f, BattleRoyale.serialKiller.transform.position.z);
                                             }
@@ -4190,8 +4254,12 @@ namespace LasMonjas.Patches {
                                             case 4:
                                                 player.transform.position = new Vector3(-13.9f, -14.45f, player.transform.position.z);
                                                 break;
-                                            // Submerged
+                                            // Fungle
                                             case 5:
+                                                player.transform.position = new Vector3(1.6f, -1.65f, player.transform.position.z);
+                                                break;
+                                            // Submerged
+                                            case 6:
                                                 if (player.transform.position.y > 0) {
                                                     player.transform.position = new Vector3(-12.25f, 18.5f, player.transform.position.z);
                                                 }
@@ -4297,8 +4365,12 @@ namespace LasMonjas.Patches {
                                             case 4:
                                                 player.transform.position = new Vector3(37.35f, -3.25f, player.transform.position.z);
                                                 break;
-                                            // Submerged
+                                            // Fungle
                                             case 5:
+                                                player.transform.position = new Vector3(6.75f, 2f, player.transform.position.z);
+                                                break;
+                                            // Submerged
+                                            case 6:
                                                 if (player.transform.position.y > 0) {
                                                     player.transform.position = new Vector3(0f, 33.5f, player.transform.position.z);
                                                 }
@@ -4378,8 +4450,12 @@ namespace LasMonjas.Patches {
                                     case 4:
                                         MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(6.35f, 2.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                                         break;
-                                    // Submerged
+                                    // Fungle
                                     case 5:
+                                        MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-4.25f, -8.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                                        break;
+                                    // Submerged
+                                    case 6:
                                         if (MonjaFestival.bigMonjaPlayer.transform.position.y > 0) {
                                             MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-12.2f, 19.15f, MonjaFestival.bigMonjaPlayer.transform.position.z);
                                         }
@@ -4567,8 +4643,12 @@ namespace LasMonjas.Patches {
                                         case 4:
                                             player.transform.position = new Vector3(-10.15f, -6.75f, player.transform.position.z);
                                             break;
-                                        // Submerged
+                                        // Fungle
                                         case 5:
+                                            player.transform.position = new Vector3(-17.5f, 7.2f, player.transform.position.z);
+                                            break;
+                                        // Submerged
+                                        case 6:
                                             if (player.transform.position.y > 0) {
                                                 player.transform.position = new Vector3(-1.8f, 12.25f, player.transform.position.z);
                                             }
@@ -4758,8 +4838,12 @@ namespace LasMonjas.Patches {
                                         case 4:
                                             player.transform.position = new Vector3(38.25f, 0f, player.transform.position.z);
                                             break;
-                                        // Submerged
+                                        // Fungle
                                         case 5:
+                                            player.transform.position = new Vector3(12.5f, 10, player.transform.position.z);
+                                            break;
+                                        // Submerged
+                                        case 6:
                                             if (player.transform.position.y > 0) {
                                                 player.transform.position = new Vector3(-10.25f, 10.15f, player.transform.position.z);
                                             }

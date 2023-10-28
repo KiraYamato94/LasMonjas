@@ -698,6 +698,10 @@ namespace LasMonjas.Patches {
                         minimapSabotageAirship.SetActive(false);
                         break;
                     case 5:
+                        GameObject minimapSabotageFungle = GameObject.Find("Main Camera/Hud/FungleMap(Clone)/InfectedOverlay");
+                        minimapSabotageFungle.SetActive(false);
+                        break;
+                    case 6:
                         GameObject minimapSabotageSubmerged = GameObject.Find("Main Camera/Hud/HudMapPrefab(Clone)(Clone)/MapHud/InfectedOverlay");
                         minimapSabotageSubmerged.SetActive(false);
                         break;
@@ -833,7 +837,7 @@ namespace LasMonjas.Patches {
                     if (Illusionist.illusionist != null) {
                         Illusionist.lightsOutTimer -= deltaTime;
                     }
-                    if (Manipulator.manipulatedVictim != null && !MeetingHud.Instance && !Seeker.isMinigaming && !Challenger.isDueling) {
+                    if (Manipulator.manipulatedVictim != null && !MeetingHud.Instance && !Seeker.isMinigaming && !Challenger.isDueling && Manipulator.manipulatedVictim.CanMove) {
                         Manipulator.manipulatedVictimTimer -= deltaTime;
                         Manipulator.manipulatedVictimTimerCountButtonText.text = $"{Manipulator.manipulatedVictimTimer.ToString("F0")}";                        
                     }
@@ -843,11 +847,11 @@ namespace LasMonjas.Patches {
                     if (Hypnotist.hypnotist != null) {
                         Hypnotist.messageTimer -= deltaTime;
                     }
-                    if (Berserker.berserker != null && Berserker.killedFirstTime && MeetingHud.Instance == null && !Seeker.isMinigaming && !Berserker.berserker.Data.IsDead) {
+                    if (Berserker.berserker != null && Berserker.killedFirstTime && MeetingHud.Instance == null && !Seeker.isMinigaming && !Berserker.berserker.Data.IsDead && Berserker.berserker.CanMove) {
                         Berserker.timeToKill -= deltaTime;
                         Berserker.berserkerCountButtonText.text = $"{Berserker.timeToKill.ToString("F0")}";
                         if (Berserker.timeToKill <= 0) {
-                            Berserker.berserker.MurderPlayer(Berserker.berserker);
+                            Berserker.berserker.MurderPlayer(Berserker.berserker, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
                         }
                     }
                     if (Monja.monja != null && Monja.awakened) {
@@ -1142,7 +1146,7 @@ namespace LasMonjas.Patches {
                             Constants.ShipAndObjectsMask,
                             false
                         )) {
-                            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                            if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                                 array[i].transform.position = newPos;
                                 array[i].transform.position += new Vector3(0, 0, -0.5f);
                             }
@@ -1178,7 +1182,7 @@ namespace LasMonjas.Patches {
             if (BountyHunter.bountyhunter == null) return;
 
             if (BountyHunter.usedTarget && BountyHunter.hasToKill.Data.Disconnected && BountyHunter.bountyhunter == PlayerInCache.LocalPlayer.PlayerControl && !BountyHunter.bountyhunter.Data.IsDead) {
-                BountyHunter.bountyhunter.MurderPlayer(BountyHunter.bountyhunter);
+                BountyHunter.bountyhunter.MurderPlayer(BountyHunter.bountyhunter, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
             }
         }
 
@@ -1256,35 +1260,35 @@ namespace LasMonjas.Patches {
                         int whoDied = 0;
 
                         if (Challenger.challengerRock && Challenger.rivalPaper) {
-                            Challenger.rivalPlayer.MurderPlayer(Challenger.challenger);
+                            Challenger.rivalPlayer.MurderPlayer(Challenger.challenger, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.challengerDuelKillClip, false, 5f);
                             whoDied = 1;
                         }
                         else if (Challenger.challengerRock && Challenger.rivalScissors) {
-                            Challenger.challenger.MurderPlayer(Challenger.rivalPlayer);
+                            Challenger.challenger.MurderPlayer(Challenger.rivalPlayer, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
                             Challenger.duelKills += 1;
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.challengerDuelKillClip, false, 5f);
                             whoDied = 2;
                         }
                         else if (Challenger.challengerPaper && Challenger.rivalRock) {
-                            Challenger.challenger.MurderPlayer(Challenger.rivalPlayer);
+                            Challenger.challenger.MurderPlayer(Challenger.rivalPlayer, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
                             Challenger.duelKills += 1; 
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.challengerDuelKillClip, false, 5f);
                             whoDied = 2;
                         }
                         else if (Challenger.challengerPaper && Challenger.rivalScissors) {
-                            Challenger.rivalPlayer.MurderPlayer(Challenger.challenger);
+                            Challenger.rivalPlayer.MurderPlayer(Challenger.challenger, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.challengerDuelKillClip, false, 5f);
                             whoDied = 1;
                         }
                         else if (Challenger.challengerScissors && Challenger.rivalPaper) {
-                            Challenger.challenger.MurderPlayer(Challenger.rivalPlayer);
+                            Challenger.challenger.MurderPlayer(Challenger.rivalPlayer, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
                             Challenger.duelKills += 1; 
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.challengerDuelKillClip, false, 5f);
                             whoDied = 2;
                         }
                         else if (Challenger.challengerScissors && Challenger.rivalRock) {
-                            Challenger.rivalPlayer.MurderPlayer(Challenger.challenger);
+                            Challenger.rivalPlayer.MurderPlayer(Challenger.challenger, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.challengerDuelKillClip, false, 5f);
                             whoDied = 1;
                         }
@@ -1310,19 +1314,19 @@ namespace LasMonjas.Patches {
                         int whoDied = 0;
 
                         if ((Challenger.challengerRock || Challenger.challengerPaper || Challenger.challengerScissors) && (!Challenger.rivalRock && !Challenger.rivalPaper && !Challenger.rivalScissors)) {
-                            Challenger.challenger.MurderPlayer(Challenger.rivalPlayer);
+                            Challenger.challenger.MurderPlayer(Challenger.rivalPlayer, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.challengerDuelKillClip, false, 5f);
                             Challenger.duelKills += 1; 
                             whoDied = 2;
                         }
                         else if ((!Challenger.challengerRock && !Challenger.challengerPaper && !Challenger.challengerScissors) && (Challenger.rivalRock || Challenger.rivalPaper || Challenger.rivalScissors)) {
-                            Challenger.rivalPlayer.MurderPlayer(Challenger.challenger);
+                            Challenger.rivalPlayer.MurderPlayer(Challenger.challenger, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.challengerDuelKillClip, false, 5f);
                             whoDied = 1;
                         }
                         else if ((!Challenger.challengerRock && !Challenger.challengerPaper && !Challenger.challengerScissors) && (!Challenger.rivalRock || !Challenger.rivalPaper || !Challenger.rivalScissors)) {
-                            Challenger.challenger.MurderPlayer(Challenger.rivalPlayer);
-                            Challenger.rivalPlayer.MurderPlayer(Challenger.challenger);
+                            Challenger.challenger.MurderPlayer(Challenger.rivalPlayer, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
+                            Challenger.rivalPlayer.MurderPlayer(Challenger.challenger, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
                             SoundManager.Instance.PlaySound(CustomMain.customAssets.challengerDuelKillClip, false, 5f);
                             whoDied = 3;
                         }
@@ -1460,6 +1464,10 @@ namespace LasMonjas.Patches {
                     body.transform.position = emerButton.transform.position + new Vector3(-2.875f, 0f, -0.5f);
                     break;
                 case 5:
+                    emerButton = GameObject.Find("ConchEmergencyButton");
+                    body.transform.position = emerButton.transform.position + new Vector3(1.5f, 0f, -0.5f);
+                    break;
+                case 6:
                     //emerButton = GameObject.Find("console-mr-callmeeting");
                     if (body.transform.position.y > 0) {
                         body.transform.position = new Vector3(5f, 19.5f, -5);
@@ -1579,7 +1587,7 @@ namespace LasMonjas.Patches {
                                 break;
                         }
 
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             switch (Seeker.seekerSelectedHiding) {
                                 case 1:
                                     Seeker.lowerminigameArenaHideOnePointOne.transform.parent.gameObject.SetActive(false);
@@ -1627,7 +1635,7 @@ namespace LasMonjas.Patches {
                                     break;
                             }
 
-                            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                            if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                                 switch (Seeker.seekerSelectedHiding) {
                                     case 1:
                                         Seeker.lowerminigameArenaHideOnePointOne.transform.parent.gameObject.SetActive(false);
@@ -1715,7 +1723,7 @@ namespace LasMonjas.Patches {
                             break;
                     }
 
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                         switch (Seeker.seekerSelectedHiding) {
                             case 1:
                                 Seeker.lowerminigameArenaHideOnePointOne.transform.parent.gameObject.SetActive(true);
@@ -1875,7 +1883,7 @@ namespace LasMonjas.Patches {
                             Constants.ShipAndObjectsMask,
                             false
                         )) {
-                            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                            if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                                 array[i].transform.position = newPos;
                                 array[i].transform.position += new Vector3(0, 0, -0.5f);
                             }
@@ -1920,8 +1928,12 @@ namespace LasMonjas.Patches {
                     case 4:
                         CaptureTheFlag.blueflag.transform.position = new Vector3(33.6f, 1.25f, 0.5f);
                         break;
-                    // Submerged
+                    // Fungle
                     case 5:
+                        CaptureTheFlag.blueflag.transform.position = new Vector3(19.25f, 2.15f, 0.5f);
+                        break;
+                    // Submerged
+                    case 6:
                         CaptureTheFlag.blueflag.transform.position = new Vector3(12.5f, -31.45f, -0.011f);
                         break;
                 }
@@ -1957,8 +1969,12 @@ namespace LasMonjas.Patches {
                     case 4:
                         CaptureTheFlag.redflag.transform.position = new Vector3(-17.5f, -1.2f, 0.5f);
                         break;
-                    // Submerged
+                    // Fungle
                     case 5:
+                        CaptureTheFlag.redflag.transform.position = new Vector3(-23f, -0.65f, 0.5f);
+                        break;
+                    // Submerged
+                    case 6:
                         CaptureTheFlag.redflag.transform.position = new Vector3(-8.35f, 28.05f, 0.03f);
                         break;
                 }
@@ -2060,7 +2076,7 @@ namespace LasMonjas.Patches {
                 KingOfTheHill.greenTeam.Remove(KingOfTheHill.greenKingplayer);
                 KingOfTheHill.greenKingplayer = null;
                 KingOfTheHill.greenKingplayer = KingOfTheHill.greenTeam[0];
-                if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                     KingOfTheHill.greenkingaura.transform.position = new Vector3(KingOfTheHill.greenKingplayer.transform.position.x, KingOfTheHill.greenKingplayer.transform.position.y, -0.5f);
                 }
                 else {
@@ -2102,7 +2118,7 @@ namespace LasMonjas.Patches {
                 KingOfTheHill.yellowTeam.Remove(KingOfTheHill.yellowKingplayer);
                 KingOfTheHill.yellowKingplayer = null;
                 KingOfTheHill.yellowKingplayer = KingOfTheHill.yellowTeam[0];
-                if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                     KingOfTheHill.yellowkingaura.transform.position = new Vector3(KingOfTheHill.yellowKingplayer.transform.position.x, KingOfTheHill.yellowKingplayer.transform.position.y, -0.5f);
                 }
                 else {
@@ -2340,7 +2356,7 @@ namespace LasMonjas.Patches {
                     ZombieLaboratory.survivorPlayer01IsInfected = false;
                     if (ZombieLaboratory.survivorPlayer01 == PlayerInCache.LocalPlayer.PlayerControl && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
                         }
                     }
@@ -2361,7 +2377,7 @@ namespace LasMonjas.Patches {
                     ZombieLaboratory.survivorPlayer02IsInfected = false;
                     if (ZombieLaboratory.survivorPlayer02 == PlayerInCache.LocalPlayer.PlayerControl && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
                         }
                     }
@@ -2382,7 +2398,7 @@ namespace LasMonjas.Patches {
                     ZombieLaboratory.survivorPlayer03IsInfected = false;
                     if (ZombieLaboratory.survivorPlayer03 == PlayerInCache.LocalPlayer.PlayerControl && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
                         }
                     }
@@ -2403,7 +2419,7 @@ namespace LasMonjas.Patches {
                     ZombieLaboratory.survivorPlayer04IsInfected = false;
                     if (ZombieLaboratory.survivorPlayer04 == PlayerInCache.LocalPlayer.PlayerControl && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
                         }
                     }
@@ -2424,7 +2440,7 @@ namespace LasMonjas.Patches {
                     ZombieLaboratory.survivorPlayer05IsInfected = false;
                     if (ZombieLaboratory.survivorPlayer05 == PlayerInCache.LocalPlayer.PlayerControl && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
                         }
                     }
@@ -2445,7 +2461,7 @@ namespace LasMonjas.Patches {
                     ZombieLaboratory.survivorPlayer06IsInfected = false;
                     if (ZombieLaboratory.survivorPlayer06 == PlayerInCache.LocalPlayer.PlayerControl && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
                         }
                     }
@@ -2466,7 +2482,7 @@ namespace LasMonjas.Patches {
                     ZombieLaboratory.survivorPlayer07IsInfected = false;
                     if (ZombieLaboratory.survivorPlayer07 == PlayerInCache.LocalPlayer.PlayerControl && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
                         }
                     }
@@ -2487,7 +2503,7 @@ namespace LasMonjas.Patches {
                     ZombieLaboratory.survivorPlayer08IsInfected = false;
                     if (ZombieLaboratory.survivorPlayer08 == PlayerInCache.LocalPlayer.PlayerControl && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
                         }
                     }
@@ -2508,7 +2524,7 @@ namespace LasMonjas.Patches {
                     ZombieLaboratory.survivorPlayer09IsInfected = false;
                     if (ZombieLaboratory.survivorPlayer09 == PlayerInCache.LocalPlayer.PlayerControl && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
                         }
                     }
@@ -2529,7 +2545,7 @@ namespace LasMonjas.Patches {
                     ZombieLaboratory.survivorPlayer10IsInfected = false;
                     if (ZombieLaboratory.survivorPlayer10 == PlayerInCache.LocalPlayer.PlayerControl && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
                         }
                     }
@@ -2550,7 +2566,7 @@ namespace LasMonjas.Patches {
                     ZombieLaboratory.survivorPlayer11IsInfected = false;
                     if (ZombieLaboratory.survivorPlayer11 == PlayerInCache.LocalPlayer.PlayerControl && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
                         }
                     }
@@ -2571,7 +2587,7 @@ namespace LasMonjas.Patches {
                     ZombieLaboratory.survivorPlayer12IsInfected = false;
                     if (ZombieLaboratory.survivorPlayer12 == PlayerInCache.LocalPlayer.PlayerControl && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
                         }
                     }
@@ -2592,7 +2608,7 @@ namespace LasMonjas.Patches {
                     ZombieLaboratory.survivorPlayer13IsInfected = false;
                     if (ZombieLaboratory.survivorPlayer13 == PlayerInCache.LocalPlayer.PlayerControl && ZombieLaboratory.localSurvivorsDeliverArrow.Count != 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(false);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(false);
                         }
                     }

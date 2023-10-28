@@ -23,12 +23,12 @@ namespace LasMonjas.Patches
             template.transform.localScale = new Vector3(0.42f, 0.84f, 0.84f);
             template.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.625f, 0.5f);
             template.transform.FindChild("FontPlacer").transform.localScale = new Vector3(1.8f, 0.9f, 0.9f);
-            template.transform.FindChild("FontPlacer").transform.localPosition = new Vector3(-1.1f, 0f, 0f);
+            template.transform.FindChild("FontPlacer").transform.localPosition = new Vector3(-0.8f, 0f, 0f);
 
             template2.transform.localScale = new Vector3(0.42f, 0.84f, 0.84f);
             template2.GetComponent<AspectPosition>().anchorPoint = new Vector2(0.378f, 0.5f);
             template2.transform.FindChild("FontPlacer").transform.localScale = new Vector3(1.8f, 0.9f, 0.9f);
-            template2.transform.FindChild("FontPlacer").transform.localPosition = new Vector3(-1.1f, 0f, 0f);
+            template2.transform.FindChild("FontPlacer").transform.localPosition = new Vector3(-0.8f, 0f, 0f);
 
             // LMJ discord button
             var buttonDiscord = UnityEngine.Object.Instantiate(template, template.transform.parent);

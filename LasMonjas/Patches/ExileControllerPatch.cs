@@ -54,10 +54,14 @@ namespace LasMonjas.Patches {
                     vent.Center = null;
                     vent.Id = ventId;
                     vent.gameObject.GetComponent<BoxCollider2D>().enabled = true;
-                    vent.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId != 5) {
+                        vent.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+                    } else {
+                        vent.transform.GetChild(3).GetComponent<SpriteRenderer>().color = Color.white;
+                    }
                     allVents.Add(vent);
                     ventId += 1;
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                         vent.gameObject.GetComponent<CircleCollider2D>().enabled = true;
                     }
                 }
@@ -69,10 +73,17 @@ namespace LasMonjas.Patches {
 
             // Welder vents seal after meeting
             foreach (Vent vent in MapOptions.ventsToSeal) {
-                PowerTools.SpriteAnim animator = vent.GetComponent<PowerTools.SpriteAnim>();
-                animator?.Stop();
+                PowerTools.SpriteAnim ventanimator;
+                if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                    ventanimator = vent.transform.GetChild(3).GetComponent<PowerTools.SpriteAnim>();
+                    vent.transform.GetChild(3).GetComponent<SpriteRenderer>().sprite = Welder.getFungleVentSealedSprite();
+                }
+                else {
+                    ventanimator = vent.GetComponent<PowerTools.SpriteAnim>();
+                    vent.myRend.sprite = ventanimator == null ? Welder.getStaticVentSealedSprite() : Welder.getAnimatedVentSealedSprite();                    
+                }
+                ventanimator?.Stop();
                 vent.EnterVentAnim = vent.ExitVentAnim = null;
-                vent.myRend.sprite = animator == null ? Welder.getStaticVentSealedSprite() : Welder.getAnimatedVentSealedSprite();
                 vent.myRend.color = Color.white;
                 vent.name = "SealedVent_" + vent.name;
             }
@@ -100,7 +111,7 @@ namespace LasMonjas.Patches {
             }
 
             // Run a postfix on submerged exile cutscene
-            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+            if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                 ExileControllerWrapUpPatch.WrapUpPostfix(ExileControllerBeginPatch.lastExiled);
             }
         }

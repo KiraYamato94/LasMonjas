@@ -1168,9 +1168,12 @@ namespace LasMonjas.Patches {
                     return true;
                 }
             }
-            ISystemType systemType2 = ShipStatus.Instance.Systems.ContainsKey(SystemTypes.Reactor) ? ShipStatus.Instance.Systems[SystemTypes.Reactor] : null;
+            ISystemType systemType2 = ShipStatus.Instance.Systems.ContainsKey(SystemTypes.HeliSabotage) ? ShipStatus.Instance.Systems[SystemTypes.HeliSabotage] : null; 
             if (systemType2 == null) {
                 systemType2 = ShipStatus.Instance.Systems.ContainsKey(SystemTypes.Laboratory) ? ShipStatus.Instance.Systems[SystemTypes.Laboratory] : null;
+            }
+            if (systemType2 == null) {
+                systemType2 = ShipStatus.Instance.Systems.ContainsKey(SystemTypes.Reactor) ? ShipStatus.Instance.Systems[SystemTypes.Reactor] : null;
             }
             if (systemType2 != null) {
                 ICriticalSabotage criticalSystem = systemType2.TryCast<ICriticalSabotage>();

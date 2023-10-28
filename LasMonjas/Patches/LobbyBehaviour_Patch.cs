@@ -123,7 +123,12 @@ namespace LasMonjas.Patches
                     if (howManyPlayers.Count < 7 || gameType >= 2) {
                         NumImpostors = 1;
                     }
-                    
+
+                    // Reset rolesummary values
+                    if (LobbyRoleInfo.RolesSummaryUI != null) {
+                        LobbyRoleInfo.RolesSummaryUI.SetActive(false);
+                    }
+
                     // Ensure vanilla roles are disabled when playing with mod roles
                     GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.SetRoleRate(RoleTypes.Scientist, 0, 0);
                     GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.SetRoleRate(RoleTypes.Engineer, 0, 0);

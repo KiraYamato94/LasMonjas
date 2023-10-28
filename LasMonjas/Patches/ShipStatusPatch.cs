@@ -3,6 +3,7 @@ using static LasMonjas.LasMonjas;
 using UnityEngine;
 using AmongUs.GameOptions;
 using LasMonjas.Core;
+using System;
 
 namespace LasMonjas.Patches
 {
@@ -191,8 +192,10 @@ namespace LasMonjas.Patches
 
             if (isImpostor) return shipStatus.MaxLightRadius * GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.ImpostorLightMod);
 
-            SwitchSystem switchSystem = shipStatus.Systems[SystemTypes.Electrical].TryCast<SwitchSystem>();
-            float lerpValue = switchSystem.Value / 255f;
+            float lerpValue = 1;
+            if (shipStatus.Systems.TryGetValue(SystemTypes.Electrical, out ISystemType elec)) {
+                lerpValue = elec.TryCast<SwitchSystem>().Value / 255f;
+            }
 
             return Mathf.Lerp(shipStatus.MinLightRadius, shipStatus.MaxLightRadius, lerpValue) * GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.CrewLightMod);
         }
@@ -203,7 +206,7 @@ namespace LasMonjas.Patches
             __result = false;
         }
 
-        [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.RepairSystem))]
+        [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.UpdateSystem), new Type[] { typeof(SystemTypes), typeof(PlayerControl), typeof(byte) })]
         class RepairSystemPatch {
             public static bool Prefix(ShipStatus __instance, [HarmonyArgument(0)] SystemTypes systemType, [HarmonyArgument(1)] PlayerControl player, [HarmonyArgument(2)] byte amount) {
 
@@ -212,53 +215,42 @@ namespace LasMonjas.Patches
                     switch (systemType) {
                         case SystemTypes.Reactor:
                             if (amount == 64 || amount == 65) {
-                                ShipStatus.Instance.RpcRepairSystem(SystemTypes.Reactor, 67);
-                                ShipStatus.Instance.RpcRepairSystem(SystemTypes.Reactor, 66);
+                                ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Reactor, 67);
+                                ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Reactor, 66);
                             }
                             if (amount == 16 || amount == 17) {
-                                ShipStatus.Instance.RpcRepairSystem(SystemTypes.Reactor, 19);
-                                ShipStatus.Instance.RpcRepairSystem(SystemTypes.Reactor, 18);
+                                ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Reactor, 19);
+                                ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Reactor, 18);
                             }
                             break;
                         case SystemTypes.Laboratory:
                             if (amount == 64 || amount == 65) {
-                                ShipStatus.Instance.RpcRepairSystem(SystemTypes.Laboratory, 67);
-                                ShipStatus.Instance.RpcRepairSystem(SystemTypes.Laboratory, 66);
+                                ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Laboratory, 67);
+                                ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Laboratory, 66);
                             }
                             break;
                         case SystemTypes.LifeSupp:
                             if (amount == 64 || amount == 65) {
-                                ShipStatus.Instance.RpcRepairSystem(SystemTypes.LifeSupp, 67);
-                                ShipStatus.Instance.RpcRepairSystem(SystemTypes.LifeSupp, 66);
+                                ShipStatus.Instance.RpcUpdateSystem(SystemTypes.LifeSupp, 67);
+                                ShipStatus.Instance.RpcUpdateSystem(SystemTypes.LifeSupp, 66);
                             }
                             break;
                         case SystemTypes.Comms:
                             if (amount == 16 || amount == 17) {
-                                ShipStatus.Instance.RpcRepairSystem(SystemTypes.Comms, 19);
-                                ShipStatus.Instance.RpcRepairSystem(SystemTypes.Comms, 18);
+                                ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Comms, 19);
+                                ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Comms, 18);
+                            }
+                            break;
+                        case SystemTypes.Electrical:
+                            if (amount >= 0 && amount <= 4) {
+                                SwitchSystem switchSystem = ShipStatus.Instance.Systems[SystemTypes.Electrical].Cast<SwitchSystem>();
+                                switchSystem.ActualSwitches = 0;
+                                switchSystem.ExpectedSwitches = 0;
                             }
                             break;
                     }
                 }
-
                 return true;
-            }
-        }
-
-        [HarmonyPatch(typeof(SwitchSystem), nameof(SwitchSystem.RepairDamage))]
-        class SwitchSystemRepairPatch
-        {
-            public static void Postfix(SwitchSystem __instance, [HarmonyArgument(0)] PlayerControl player, [HarmonyArgument(1)] byte amount) {
-
-                // Mechanic expert lights repairs
-                if (Mechanic.mechanic != null && Mechanic.mechanic == player && Mechanic.expertRepairs) {
-
-                    if (amount >= 0 && amount <= 4) {
-                        __instance.ActualSwitches = 0;
-                        __instance.ExpectedSwitches = 0;
-                    }
-
-                }
             }
         }
 

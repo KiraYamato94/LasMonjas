@@ -33,17 +33,17 @@ namespace LasMonjas.Patches
         public static void PostfixNetwork(CustomNetworkTransform __instance) {
             if (GameOptionsManager.Instance.currentGameMode == GameModes.Normal && AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started) {
 
-                if (!__instance.AmOwner && __instance.interpolateMovement != 0.0f && Janitor.janitor != null && __instance.gameObject.GetComponent<PlayerControl>().PlayerId == Janitor.janitor.PlayerId && Janitor.dragginBody)
+                if (!__instance.AmOwner  && Janitor.janitor != null && __instance.gameObject.GetComponent<PlayerControl>().PlayerId == Janitor.janitor.PlayerId && Janitor.dragginBody)
                     __instance.body.velocity *= 0.80f;
-                else if (!__instance.AmOwner && __instance.interpolateMovement != 0.0f && TaskMaster.taskMaster != null && __instance.gameObject.GetComponent<PlayerControl>().PlayerId == TaskMaster.taskMaster.PlayerId && !Challenger.isDueling && !Seeker.isMinigaming && !LasMonjas.isHappeningAnonymousComms && TaskMaster.taskTimer > 0)
+                else if (!__instance.AmOwner && TaskMaster.taskMaster != null && __instance.gameObject.GetComponent<PlayerControl>().PlayerId == TaskMaster.taskMaster.PlayerId && !Challenger.isDueling && !Seeker.isMinigaming && !LasMonjas.isHappeningAnonymousComms && TaskMaster.taskTimer > 0)
                     __instance.body.velocity *= 1.20f;
-                else if (!__instance.AmOwner && __instance.interpolateMovement != 0.0f && Monja.monja != null && __instance.gameObject.GetComponent<PlayerControl>().PlayerId == Monja.monja.PlayerId && Monja.awakened)
+                else if (!__instance.AmOwner && Monja.monja != null && __instance.gameObject.GetComponent<PlayerControl>().PlayerId == Monja.monja.PlayerId && Monja.awakened)
                     __instance.body.velocity *= 1.30f;
-                else if (!__instance.AmOwner && __instance.interpolateMovement != 0.0f && Modifiers.flash != null && __instance.gameObject.GetComponent<PlayerControl>().PlayerId == Modifiers.flash.PlayerId && !Challenger.isDueling && !Seeker.isMinigaming && !LasMonjas.isHappeningAnonymousComms)
+                else if (!__instance.AmOwner && Modifiers.flash != null && __instance.gameObject.GetComponent<PlayerControl>().PlayerId == Modifiers.flash.PlayerId && !Challenger.isDueling && !Seeker.isMinigaming && !LasMonjas.isHappeningAnonymousComms)
                     __instance.body.velocity *= 1.10f;
-                else if (!__instance.AmOwner && __instance.interpolateMovement != 0.0f && Modifiers.bigchungus != null && __instance.gameObject.GetComponent<PlayerControl>().PlayerId == Modifiers.bigchungus.PlayerId && !Challenger.isDueling && !Seeker.isMinigaming && !LasMonjas.isHappeningAnonymousComms)
+                else if (!__instance.AmOwner && Modifiers.bigchungus != null && __instance.gameObject.GetComponent<PlayerControl>().PlayerId == Modifiers.bigchungus.PlayerId && !Challenger.isDueling && !Seeker.isMinigaming && !LasMonjas.isHappeningAnonymousComms)
                     __instance.body.velocity *= 0.90f;
-                else if (!__instance.AmOwner && __instance.interpolateMovement != 0.0f && ZombieLaboratory.nursePlayer != null && __instance.gameObject.GetComponent<PlayerControl>().PlayerId == ZombieLaboratory.nursePlayer.PlayerId && gameType == 6 && ZombieLaboratory.currentKeyItems >= 3)
+                else if (!__instance.AmOwner && ZombieLaboratory.nursePlayer != null && __instance.gameObject.GetComponent<PlayerControl>().PlayerId == ZombieLaboratory.nursePlayer.PlayerId && gameType == 6 && ZombieLaboratory.currentKeyItems >= 3)
                     __instance.body.velocity *= 1.10f;
             }
         }

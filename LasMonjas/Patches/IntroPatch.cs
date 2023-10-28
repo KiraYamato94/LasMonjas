@@ -48,6 +48,10 @@ namespace LasMonjas.Patches
                     allulbanner.transform.position = new Vector3(11f, 16.75f, 0.5f);
                     break;
                 case 5:
+                    allulfitti.transform.position = new Vector3(15f, 12.5f, 0.5f);
+                    allulbanner.transform.position = new Vector3(-5f, 4.25f, 0.5f);
+                    break;
+                case 6:
                     allulfitti.transform.position = new Vector3(6f, 22.65f, -0.5f);
                     allulbanner.transform.position = new Vector3(3.85f, -19.35f, -0.5f);
                     break;
@@ -214,13 +218,13 @@ namespace LasMonjas.Patches
                 switch (gameType) {
                     case 0:
                     case 1:
-                        if (roleInfo.isNeutral) {
+                        if (roleInfo.TeamId == Team.Neutral) {
                             var neutralColor = new Color32(128, 128, 128, 255);
                             __instance.BackgroundBar.material.color = neutralColor;
                             __instance.TeamTitle.text = Language.teamNames[0];
                             __instance.TeamTitle.color = neutralColor;
                         }
-                        else if (roleInfo.isRebel) {
+                        else if (roleInfo.TeamId == Team.Rebel) {
                             var rebelColor = new Color32(79, 125, 0, 255);
                             __instance.BackgroundBar.material.color = rebelColor;
                             __instance.TeamTitle.text = Language.teamNames[1];
@@ -348,7 +352,7 @@ namespace LasMonjas.Patches
                     GameObject duelArena = GameObject.Instantiate(CustomMain.customAssets.challengerDuelArena, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                     duelArena.name = "duelArena";
                     duelArena.transform.position = new Vector3(40, 0f, 1f);
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) { // Create another duel arena on submerged lower floor
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) { // Create another duel arena on submerged lower floor
                         GameObject lowerduelArena = GameObject.Instantiate(CustomMain.customAssets.challengerDuelArena, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                         lowerduelArena.name = "lowerduelArena";
                         lowerduelArena.transform.position = new Vector3(40, -48.119f, 1f);
@@ -373,7 +377,7 @@ namespace LasMonjas.Patches
                     Seeker.minigameArenaHideThreePointOne.transform.parent.transform.position = Seeker.minigameArenaHideThreePointOne.transform.parent.transform.position + new Vector3(0, 0, -2);
                     Seeker.minigameArenaHideThreePointTwo = seekerArena.transform.GetChild(2).transform.GetChild(1).gameObject;
                     Seeker.minigameArenaHideThreePointThree = seekerArena.transform.GetChild(2).transform.GetChild(2).gameObject; 
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) { // Create another duel arena on submerged lower floor
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) { // Create another duel arena on submerged lower floor
                         GameObject lowerseekerArena = GameObject.Instantiate(CustomMain.customAssets.seekerArena, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                         lowerseekerArena.name = "lowerseekerArena";
                         lowerseekerArena.transform.position = new Vector3(-40, -48.119f, 1f);
@@ -398,7 +402,7 @@ namespace LasMonjas.Patches
                     GameObject devourerArena = GameObject.Instantiate(CustomMain.customAssets.devourerArena, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                     devourerArena.name = "devourerArena";
                     devourerArena.transform.position = new Vector3(-40, 0f, 1f);
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) { // Create another devourer arena on submerged lower floor
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) { // Create another devourer arena on submerged lower floor
                         GameObject lowerdevourerArena = GameObject.Instantiate(CustomMain.customAssets.devourerArena, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                         lowerdevourerArena.name = "lowerdevourerArena";
                         lowerdevourerArena.transform.position = new Vector3(-40, -48.119f, 1f);
@@ -410,7 +414,7 @@ namespace LasMonjas.Patches
                 if (Bomberman.bomberman != null && PlayerInCache.LocalPlayer.PlayerControl == Bomberman.bomberman) {
                     GameObject bombArea = GameObject.Instantiate(CustomMain.customAssets.bombermanArea, PlayerInCache.LocalPlayer.PlayerControl.transform);
                     bombArea.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                         bombArea.transform.localPosition = new Vector3(0, 0f, -0.5f);
                     }
                     else {
@@ -427,8 +431,8 @@ namespace LasMonjas.Patches
                     vent.GetComponent<BoxCollider2D>().enabled = false;
                 }
 
-                // Make object list for Hypnotist for traps
-                if (Hypnotist.hypnotist != null && PlayerInCache.LocalPlayer.PlayerControl == Hypnotist.hypnotist) {
+                // Make object list for Hypnotist and Trapper for traps
+                if ((Hypnotist.hypnotist != null && PlayerInCache.LocalPlayer.PlayerControl == Hypnotist.hypnotist) || (Trapper.trapper != null && PlayerInCache.LocalPlayer.PlayerControl == Trapper.trapper)) {
                     switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                         case 0:
                             GameObject skeldMedScanner = GameObject.Find("MedScanner");
@@ -465,6 +469,20 @@ namespace LasMonjas.Patches
                             Hypnotist.objectsCantPlaceTraps.Add(airshipelectricalLadderBottom);
                             break;
                         case 5:
+                            GameObject fungleZiplineBottom = GameObject.Find("FungleShip(Clone)/Zipline/ZiplineBottomPost");
+                            GameObject fungleZiplineTop = GameObject.Find("FungleShip(Clone)/Zipline/ZiplineTopPost");
+                            GameObject fungleBottomLeftLadder = GameObject.Find("FungleShip(Clone)/Outside/OutsideHighlands/Ladders/BottomLeftLadder");
+                            GameObject fungleBottomRightLadder = GameObject.Find("FungleShip(Clone)/Outside/OutsideHighlands/Ladders/BottomRightLadder");
+                            GameObject fungleBottomLedgeLadder = GameObject.Find("FungleShip(Clone)/Outside/OutsideHighlands/Ladders/BottomLedgeLadder");
+                            GameObject fungleTopLedgeLadder = GameObject.Find("FungleShip(Clone)/Outside/OutsideHighlands/Ladders/TopLedgeLadder");
+                            Hypnotist.objectsCantPlaceTraps.Add(fungleZiplineBottom);
+                            Hypnotist.objectsCantPlaceTraps.Add(fungleZiplineTop);
+                            Hypnotist.objectsCantPlaceTraps.Add(fungleBottomLeftLadder);
+                            Hypnotist.objectsCantPlaceTraps.Add(fungleBottomRightLadder);
+                            Hypnotist.objectsCantPlaceTraps.Add(fungleBottomLedgeLadder);
+                            Hypnotist.objectsCantPlaceTraps.Add(fungleTopLedgeLadder);
+                            break;
+                        case 6:
                             GameObject submergedMedScanner = GameObject.Find("console_medscan");
                             Hypnotist.objectsCantPlaceTraps.Add(submergedMedScanner);
                             break;
@@ -509,6 +527,9 @@ namespace LasMonjas.Patches
                             cell.transform.position = new Vector3(-18.45f, 3.55f, 0.5f);
                             break;
                         case 5:
+                            cell.transform.position = new Vector3(-26.75f, -0.65f, 0.5f);
+                            break;
+                        case 6:
                             cell.transform.position = new Vector3(-15.25f, 28.4f, 0.5f);
                             // Create another jail on submerged lower floor
                             GameObject celltwo = GameObject.Instantiate(CustomMain.customAssets.cell, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
@@ -586,6 +607,9 @@ namespace LasMonjas.Patches
                             Monja.ritualObject.transform.position = new Vector3(10.75f, -0.25f, 0.5f);
                             break;
                         case 5:
+                            Monja.ritualObject.transform.position = new Vector3(-10.5f, 5.15f, 0.5f);
+                            break;
+                        case 6:
                             Monja.ritualObject.transform.position = new Vector3(-6.35f, 13.85f, -0.005f);
                             break;
                     }
@@ -872,7 +896,7 @@ namespace LasMonjas.Patches
 
                                     if (PlayerInCache.LocalPlayer.PlayerControl == MonjaFestival.bigMonjaPlayer) {
                                         MonjaFestival.localArrows[2].arrow.SetActive(true);
-                                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                                             MonjaFestival.localArrows[3].arrow.SetActive(true);
                                         }
                                     }
