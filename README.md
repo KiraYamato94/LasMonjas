@@ -36,6 +36,14 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
 
+**Version 3.5.0 (28th October 2023)**
+- Support for Among Us 2023.24.10 and Fungle map
+- New lobby button for mod summary
+- New darker color: Shadow
+- Highlighted vent for Impostors if Stranded is inside
+- Fixed a few language issues
+- New cosmetics: 8 hats, 4 visors, 1 nameplate
+
 **Version 3.4.0 (1st October 2023)**
 - All gamemodes HUD reworked.
 - Medusa rework: petrify last forever now, petrified players die when a meeting is called but every crewmate has a button to unpetrify a player.
