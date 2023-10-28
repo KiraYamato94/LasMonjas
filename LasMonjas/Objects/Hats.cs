@@ -41,7 +41,7 @@ namespace LasMonjas.Objects {
         public Hats(Vector2 p) {
             gameObject = new GameObject("Hat");
             gameObject.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover); 
-            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+            if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                 position = new Vector3(p.x, p.y, -0.5f);
             }
             else {
@@ -55,7 +55,7 @@ namespace LasMonjas.Objects {
 
 
             var referenceVent = UnityEngine.Object.FindObjectOfType<Vent>();
-            vent = UnityEngine.Object.Instantiate<Vent>(referenceVent);
+            vent = UnityEngine.Object.Instantiate(referenceVent);
             vent.gameObject.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover); 
             vent.transform.position = gameObject.transform.position;
             vent.Left = null;
@@ -64,9 +64,16 @@ namespace LasMonjas.Objects {
             vent.EnterVentAnim = null;
             vent.ExitVentAnim = null;
             vent.Offset = new Vector3(0f, 0.25f, 0f);
-            vent.GetComponent<PowerTools.SpriteAnim>()?.Stop();
+            //vent.GetComponent<PowerTools.SpriteAnim>()?.Stop();
             vent.Id = ShipStatus.Instance.AllVents.Select(x => x.Id).Max() + 1;
-            var ventRenderer = vent.GetComponent<SpriteRenderer>();
+            var console = vent.GetComponent<Console>();
+            if (console != null) {
+                UnityEngine.Object.Destroy(console);
+            }
+            if (!vent.TryGetComponent<SpriteRenderer>(out var ventRenderer)) {
+                ventRenderer = vent.myRend;
+            }
+            stopAnim(ventRenderer.gameObject); 
             ventRenderer.sprite = getHatAnimationSprite(0);
             vent.myRend = ventRenderer;
             var allVentsList = ShipStatus.Instance.AllVents.ToList();
@@ -85,6 +92,14 @@ namespace LasMonjas.Objects {
                 convertToVents();
         }
 
+        private static void stopAnim(GameObject obj) {
+            var anim = obj.GetComponent<PowerTools.SpriteAnim>();
+            if (anim != null) {
+                anim.Stop();
+                anim.enabled = false;
+            }
+        }
+
         public static void UpdateStates() {
             if (hatsConvertedToVents == true) return;
             foreach (var hat in AllHats) {
@@ -96,7 +111,12 @@ namespace LasMonjas.Objects {
         public void convertToVent() {
             gameObject.SetActive(false);
             vent.gameObject.SetActive(true);
-            vent.gameObject.GetComponent<SpriteRenderer>().sprite = getHatAnimationSprite(0);
+            if (GameOptionsManager.Instance.currentGameOptions.MapId != 5) {
+                vent.gameObject.GetComponent<SpriteRenderer>().sprite = getHatAnimationSprite(0);
+            }
+            else {
+                vent.transform.GetChild(3).GetComponent<SpriteRenderer>().sprite = getHatAnimationSprite(0);
+            }
             return;
         }
 

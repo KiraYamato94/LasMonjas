@@ -29,7 +29,7 @@ namespace LasMonjas.Objects
 
             mine = new GameObject("Mine" + mines.Count.ToString());
             mine.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+            if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                 position = new Vector3(player.x, player.y, -0.5f);
             }
             else {

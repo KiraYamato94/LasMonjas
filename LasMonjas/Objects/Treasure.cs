@@ -375,6 +375,70 @@ namespace LasMonjas.Objects
                 case 5:
                     switch (TreasureHunter.randomSpawn) {
                         case 1:
+                            position = new Vector3(-11f, 12.75f, -1f);
+                            break;
+                        case 2:
+                            position = new Vector3(-11.5f, 8.5f, -1f);
+                            break;
+                        case 3:
+                            position = new Vector3(-17.35f, 7.15f, -1f);
+                            break;
+                        case 4:
+                            position = new Vector3(-22.15f, -2.25f, -1f);
+                            break;
+                        case 5:
+                            position = new Vector3(-15.5f, -2.575f, -1f);
+                            break;
+                        case 6:
+                            position = new Vector3(-22.75f, -7.25f, -1f);
+                            break;
+                        case 7:
+                            position = new Vector3(-8.85f, -14.25f, -1f);
+                            break;
+                        case 8:
+                            position = new Vector3(-3.3f, -10.5f, -1f);
+                            break;
+                        case 9:
+                            position = new Vector3(10.75f, -15f, -1f);
+                            break;
+                        case 10:
+                            position = new Vector3(7.7f, -10f, -1f);
+                            break;
+                        case 11:
+                            position = new Vector3(0.55f, -1.75f, -1f);
+                            break;
+                        case 12:
+                            position = new Vector3(2.25f, 4.25f, -1f);
+                            break;
+                        case 13:
+                            position = new Vector3(2.175f, 1.5f, -1f);
+                            break;
+                        case 14:
+                            position = new Vector3(23.25f, -7.75f, -1f);
+                            break;
+                        case 15:
+                            position = new Vector3(10f, 1.15f, -1f);
+                            break;
+                        case 16:
+                            position = new Vector3(15.25f, 4.75f, -1f);
+                            break;
+                        case 17:
+                            position = new Vector3(13.25f, 10.25f, -1f);
+                            break;
+                        case 18:
+                            position = new Vector3(20.25f, 7.5f, -1f);
+                            break;
+                        case 19:
+                            position = new Vector3(24.4f, 14.45f, -1f);
+                            break;
+                    }
+                    treasure.transform.position = position;
+                    treasure.transform.localPosition = position;
+                    treasure.transform.SetParent(TreasureHunter.treasureHunter.transform.parent); 
+                    break;
+                case 6:
+                    switch (TreasureHunter.randomSpawn) {
+                        case 1:
                             position = new Vector3(-12.85f, -27.75f, -1f);
                             break;
                         case 2:

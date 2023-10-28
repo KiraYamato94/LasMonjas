@@ -38,7 +38,7 @@ namespace LasMonjas.Objects
 
             shoot = new GameObject("BattleRoyaleShoot");
             shoot.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-            if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+            if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                 position = new Vector3(player.transform.position.x, player.transform.position.y, -0.5f);
             }
             else {
