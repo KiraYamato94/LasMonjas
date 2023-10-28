@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using static LasMonjas.LasMonjas;
+using LasMonjas.Patches;
 
 namespace LasMonjas.Core
 {
@@ -59,6 +60,7 @@ namespace LasMonjas.Core
                             break;
                     }
                     Language.LoadLanguage();
+                    Helpers.UpdateLanguageForRoleSummary();
                 }
 
                 static bool Prefix(ChatController __instance) {
@@ -440,7 +442,7 @@ namespace LasMonjas.Core
                                 case "locksmith":
                                 case "cerrajero":
                                 case "錠前屋":
-                                case "鎖匠":
+                                case "锁匠":
                                     infoText = Language.crewSummaryTexts[22];
                                     break;
                                 case "taskmaster":
@@ -583,7 +585,7 @@ namespace LasMonjas.Core
 
                     if (MeetingHud.Instance != null && gameType <= 1) {
                         List<RoleInfo> infos = RoleInfo.getRoleInfoForPlayer(PlayerInCache.LocalPlayer.PlayerControl);
-                        RoleInfo roleInfo = infos.Where(info => !info.isModifier).FirstOrDefault();
+                        RoleInfo roleInfo = infos.Where(info => info.TeamId != Team.Modifier).FirstOrDefault();
                         if (text.ToLower().StartsWith("/myrole")) {
                             if (roleInfo == null) {
                                 infoText = Language.helpersTexts[3];
@@ -933,7 +935,7 @@ namespace LasMonjas.Core
                                     case "locksmith":
                                     case "cerrajero":
                                     case "錠前屋":
-                                    case "鎖匠":
+                                    case "锁匠":
                                         infoText = Language.crewSummaryTexts[22];
                                         break;
                                     case "taskmaster":
@@ -961,7 +963,7 @@ namespace LasMonjas.Core
                             //CachedPlayer.LocalPlayer.PlayerControl.RpcSendChat(infoText);
                         }
 
-                        RoleInfo roleInfoModifier = infos.Where(info => info.isModifier).FirstOrDefault();
+                        RoleInfo roleInfoModifier = infos.Where(info => info.TeamId == Team.Modifier).FirstOrDefault();
                         if (text.ToLower().StartsWith("/mymodifier") || text.ToLower().StartsWith("/mymod")) {
                             if (roleInfoModifier == null) {
                                 infoText = Language.modifierSummaryTexts[0];

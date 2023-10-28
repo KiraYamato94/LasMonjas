@@ -158,7 +158,7 @@ namespace LasMonjas.Core {
             }
         }
 
-        private void Update()
+        public void Update()
         {
             var localPlayer = PlayerInCache.LocalPlayer;
             var moveable = localPlayer.PlayerControl.moveable; 

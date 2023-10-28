@@ -55,6 +55,10 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "Nyxx", VisorName = "Heart", altShader = true},
             new AuthorData {AuthorName = "Nyxx", VisorName = "Selfie", altShader = true},
             new AuthorData {AuthorName = "Nyxx", VisorName = "Ribbon"},
+            new AuthorData {AuthorName = "Sonrio", VisorName = "Thunder"},
+            new AuthorData {AuthorName = "Sonrio", VisorName = "Warning", altShader = true},
+            new AuthorData {AuthorName = "Dr Blockhead", VisorName = "Pencil", altShader = true},
+            new AuthorData {AuthorName = "Dr Blockhead", VisorName = "Bowling Ball", altShader = true},
         };
 
         public static bool _customVisorLoaded = false;
@@ -164,6 +168,11 @@ namespace LasMonjas.Core
                         __instance.Image.maskInteraction = (SpriteMaskInteraction)0;
                         break;
                 }
+                if (__instance.matProperties.MaskLayer <= 0) {
+                    PlayerMaterial.SetMaskLayerBasedOnLocalPlayer(__instance.Image, __instance.matProperties.IsLocalPlayer);
+                    return false;
+                }
+                __instance.Image.material.SetInt(PlayerMaterial.MaskLayer, __instance.matProperties.MaskLayer);
                 return false;
             }
         }

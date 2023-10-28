@@ -41,6 +41,7 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "Muaresito", NamePlateName = "Yandere"},
             new AuthorData {AuthorName = "Muaresito", NamePlateName = "Samba Lentin"},
             new AuthorData {AuthorName = "Muaresito", NamePlateName = "Zargothrax Business Card"},
+            new AuthorData {AuthorName = "Muaresito", NamePlateName = "Devourer"},
             new AuthorData {AuthorName = "Blocky", NamePlateName = "Submerged"},
             new AuthorData {AuthorName = "Blocky", NamePlateName = "What the cow"},
             new AuthorData {AuthorName = "Blocky", NamePlateName = "Bluescreen"},

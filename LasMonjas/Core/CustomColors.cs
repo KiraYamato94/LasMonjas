@@ -46,6 +46,12 @@ namespace LasMonjas.Core {
                 color = new Color32(183, 247, 253, byte.MaxValue),
                 shadow = new Color32(88, 159, 200, byte.MaxValue),
                 isLighterColor = true
+            }); 
+            colors.Add(new CustomColor {
+                longname = "Shadow",
+                color = new Color32(16, 19, 20, byte.MaxValue),
+                shadow = new Color32(5, 5, 5, byte.MaxValue),
+                isLighterColor = false
             });
 
             pickableColors += (uint)colors.Count;

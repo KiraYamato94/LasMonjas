@@ -213,6 +213,14 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "Nyxx", HatName = "Frog Hat", NoBounce = true},
             new AuthorData {AuthorName = "Nyxx", HatName = "Magician Hat", NoBounce = true},
             new AuthorData {AuthorName = "Ravengirl", HatName = "Flag", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "Sonrio", HatName = "Flaming", NoBounce = true},
+            new AuthorData {AuthorName = "Sonrio", HatName = "Freezing", NoBounce = true},
+            new AuthorData {AuthorName = "Sonrio", HatName = "Night Friday", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "Sonrio", HatName = "Puppetist", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "Sonrio", HatName = "Calling All Crewmates", NoBounce = true},
+            new AuthorData {AuthorName = "Sonrio", HatName = "Fighter", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "Dr Blockhead", HatName = "Got Any Grapes", NoBounce = true},
+            new AuthorData {AuthorName = "Dr Blockhead", HatName = "Bucket", NoBounce = true},
         };
 
         internal static Dictionary<int, AuthorData> IdToData = new Dictionary<int, AuthorData>();
@@ -425,6 +433,12 @@ namespace LasMonjas.Core
                     }
                     if (__instance.BackLayer) {
                         __instance.BackLayer.maskInteraction = SpriteMaskInteraction.None;
+                    }
+                }
+                if (__instance.matProperties.MaskLayer <= 0) {
+                    PlayerMaterial.SetMaskLayerBasedOnLocalPlayer(__instance.FrontLayer, __instance.matProperties.IsLocalPlayer);
+                    if (__instance.BackLayer) {
+                        PlayerMaterial.SetMaskLayerBasedOnLocalPlayer(__instance.BackLayer, __instance.matProperties.IsLocalPlayer);
                     }
                 }
                 return false;

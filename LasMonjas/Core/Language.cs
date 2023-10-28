@@ -1,6 +1,16 @@
-﻿using LasMonjas.Patches;
+﻿using Il2CppSystem.Runtime.Remoting.Messaging;
+using Il2CppSystem;
+using LasMonjas.Objects;
+using LasMonjas.Patches;
+using Sentry.Protocol;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using UnityEngine;
+using static Rewired.Controller;
+using static Rewired.Utils.Classes.Utility.ObjectInstanceTracker;
+using static UnityEngine.ParticleSystem.PlaybackState;
+using UnityEngine.Profiling;
+using System.Collections.Generic;
 
 namespace LasMonjas.Core
 {
@@ -64,7 +74,7 @@ namespace LasMonjas.Core
             switch (LasMonjasPlugin.modLanguage.Value) {
                 // English
                 case 1:
-                    colorNames = new string[5] { "Lavender", "Petrol", "Mint", "Olive", "Ice" };
+                    colorNames = new string[6] { "Lavender", "Petrol", "Mint", "Olive", "Ice", "Shadow" };
                     for (int i = 0; i < colorNames.Count(); i++) {
                         CustomColors.ColorStrings[i + 50000] = colorNames[i];
                     }
@@ -692,6 +702,9 @@ namespace LasMonjas.Core
                         "You don't have a Role.",
                         "No info found.",
                         "Tab for next page",
+                        "Role Summary",
+                        "Modifier",
+                        "Gamemode",
                     };
                     impSummaryTexts = new string[] {
                         "Mimic: impostor who can mimic the appearance of other player.",
@@ -704,7 +717,7 @@ namespace LasMonjas.Core
                         "Chameleon: impostor who can become invisible.\nHe can't use vents. While invisible, he can be killed by roles who have a kill button.",
                         "Gambler: impostor who can shoot a player choosing its role during the meeting.\nHe has to guess the player's role to kill him, only the current ingame roles appear on his screen. Choosing the wrong one kills himself.",
                         "Sorcerer: impostor who can cast spells on players.\nSpelled players will have a purple pumpkin icon next to their names during the meeting and will die afterwards unless the Sorcerer is voted out.",
-                        "Medusa: impostor who can petrify other players.\nA petrified player can't move until a meeting is called (the petrified player dies) or a crewmates unpetrified that player.",
+                        "Medusa: impostor who can petrify other players.\nA petrified player can't move until a meeting is called (the petrified player dies) or a crewmate unpetrify that player.",
                         "Hypnotist: impostor who can place traps which inverts player's movement controls.\nTraps become active after a meeting and don't affect impostors.",
                         "Archer: impostor who can make long distance kills but can't make normal ones.\nHe needs to pick the bow (invisible to other players), aim with the mouse and right click to shoot.\nA warning image appears on his position if he misses the shoot or above the player's body if he kills someone.",
                         "Plumber: impostor who can create usable vents for any vent role.\nVents become available after a meeting only when all extra vents had been placed.",
@@ -714,8 +727,8 @@ namespace LasMonjas.Core
                     rebelSummaryTexts = new string[] {
                         "Renegade: rebel who has to kill everyone.\nHe can recruit a Minion to help him killing, both have impostor vision, can vent and their names will be green.",
                         "Bounty Hunter: rebel who has to kill a specific player.\nHis target button assigns a random player's role to be his target but if the target is already dead, he also dies.\nIf the target gets exiled, Bounty Hunter also does, and if the target disconnects, Bounty Hunter dies.",
-                        "Trapper: rebel who has to kill everyone with mines.\nHe can put traps that root the player who touched it and mines that kill whoever steps on it.",
-                        "Yinyanger: rebel who has to kill everyone marking two players each time.\nHe can mark a player with the Yin and another one with the Yang, if they collide both die ignoring any shields they could have.\nAfter marking one player, he can't mark the other one if the marked one is too close to the target.",
+                        "Trapper: rebel who has to kill everyone with mines.\nHe can put traps that roots the player and mines that kills whoever steps on it.",
+                        "Yinyanger: rebel who has to kill everyone marking two players each time.\nHe can mark a player with the Yin and another one with the Yang, if they collide Yinyanger can kill both of them via button use ignoring any shields they could have.\nAfter marking one player, he can't mark the other one if the marked one is too close to the target.",
                         "Challenger: rebel who has to kill everyone with rock-paper-scissors duels.\nSelecting a player will teleport all players to the duel arena after 10 seconds if no sabotage is active.\nIf one of them doesn't select an attack, the other wins automatically. If no one selects an attack both die. Nobody dies on draw.",
                         "Ninja: rebel who has to kill everyone making double kills.\nSelect a player to teleport to his position afterwards killing him in the process. He can use the normal kill button right after to make a double kill.",
                         "Berserker: rebel who has to kill everyone but can't stop killing.\nAfter killing for first time, his kill button gets a permanent 10 second cooldown but he dies if he doesn't kill for a set amount of time.",
@@ -728,7 +741,7 @@ namespace LasMonjas.Core
                         "Role Thief: neutral with no win condition.\nHe can steal the role of other players but if he tries to steal an impostor or rebel role, he dies.",
                         "Pyromaniac: neutral who has to ignite everyone to win.\nHe can spray players by standing next to them, once he sprays everyone he wins.",
                         "Treasure Hunter: neutral who has to look for treasures to win.\nHis button spawns one treasure randomly on the map and can use it again after finding the first treasure, after getting the needed amount he wins.",
-                        "Devourer: neutral who has to eat bodies to win.\nHe hears a sound when a player dies.\nHe also can eat players, teleporting them to an area where they can't do anything but move around, if a meeting is called, those players die and count towards the required bodies to win, but if the Devourer gets killed, those players are released.",
+                        "Devourer: neutral who has to eat players and bodies to win.\nHe hears a sound when a player dies.\nHe also can eat players, teleporting them to an area where they can't do anything but move around, if a meeting is called, those players die and count towards the required bodies to win, but if the Devourer gets killed, those players are released.",
                         "Poisoner: neutral who has to poison everyone to win.\nHe selects a player to be the poisoned one, players standing next to the poisoned increase their poison meter.\nA player who reached 100% meter counts towards poisoning other players. Once every player reaches 100% poison meter, he wins.",
                         "Puppeteer: neutral who can morph into other players and has to get killed while morphed a few times to win.\nHe can pick a sample from a player and morph into it all the time he wants or until a meeting is called, he gets killed or he decides to uncover himself.\nIf he gets killed while morphed, he gains one point and revives on the spot where he started the morph, he wins after reaching the needed points.",
                         "Exiler: neutral who has to vote out a specific player to win.\nHis target button assigns a random player to be his target but if the target is already dead, he also dies. But if the target disconnects, he wins.",
@@ -741,15 +754,15 @@ namespace LasMonjas.Core
                         "Sheriff: crewmate who can kill players.\nHe dies if he tries to kill a crewmate.",
                         "Detective: crewmate who can see player's footprints.\nFootprints don't spawn close to vents and only spawn if Detective is alive.",
                         "Forensic: crewmate who gets clues by reporting bodies and asking player's ghosts.\nThe clues that he can get by reporting a body are the killer's name, color type or something about his appearance.\nGhosts appear on the next round where a body was and their clues are which role killed that player, killer's color type or how much time has passed before reporting the body.",
-                        "Time Traveler: crewmate who can rewind the time two times per game, reviving players that were killed during the rewind.\nHe can rewind the time if there's no active sabotage, the time rewinds also if someone tries to kill him while he's shielded by time shield.",
+                        "Time Traveler: crewmate who can rewind the time two times per game.\nHe can rewind the time if there's no active sabotage, the time rewinds also if someone tries to kill him while he's shielded by time shield.",
                         "Squire: crewmate who can put a shield on a player.\nThe shield last until he gets exiled or killed. Trying to kill the shielded player will trigger a sound heard by Impostors, Rebels, Sheriff, Squire and the shielded player.",
                         "Cheater: crewmate who can swap the votes of two players.\nAfter swapping votes, he gets exiled if one of those two players turned out to be a crewmate.",
                         "Fortune Teller: crewmate who can reveal if a player is good or bad.\nRevealing triggers a sound and turns the screen blue for both players.\nThe name turns red for bad roles and cyan for good ones.",
                         "Hacker: crewmate who can use Admin and Vitals from anywhere and gets more information from them.\nWhile his hack ability is active, he can see player colors on Admin and how much time has passed since someone died on Vitals.",
-                        "Sleuth: crewmate who can track bodies and one player's position.\nHe sees a blue arrow pointing to the tracked player and green ones pointing to the bodies.",
+                        "Sleuth: crewmate who can track bodies and one player's position.\nHe sees a blue arrow pointing to the tracked player and green ones pointing to the bodies.\nHe can also reveal the position of the closest player with a color based arrow.",
                         "Fink: crewmate who reveals who the impostors are after finishing his tasks and can zoom out the camera.\nHe can't move while the camera is zoomed out.\nImpostors also know who the Fink is when a few tasks remain or when he's zooming out the camera.",
                         "Kid: crewmate who shouldn't be killed or exiled, otherwise everyone loses.\nHe's smaller than the other players.",
-                        "Welder: crewmate who can disable vents.\nThose vents become unavailable after the next meeting and can't be entered or exited, but still can be used as a tunnel.\nHe can also plant a bomb in a vent that last until the next meeting, each player who enters or exits that vent dies.",
+                        "Welder: crewmate who can disable vents.\nThose vents become unavailable after the next meeting and can't be entered or exited, but still can be used as a tunnel.\nHe can also place a bomb in a vent that last until the next meeting, each player who enters or exits that vent dies.",
                         "Spiritualist: crewmate who can revive another player at the cost of his own life.\nHe needs to stay next to a body to revive it, but if someone calls a meeting while he tries to revive, he dies instead.\nImpostors and Rebels get a pink arrow pointing the revived player.",
                         "Vigilant: crewmate who can place four extra cameras on the map.\nThe cameras become available after a meeting and when he places all the cameras he gets the ability to remote check cameras.\nOn MiraHQ he can remote check doorlog instead.",
                         "Hunter: crewmate who can mark another player who will die if he gets killed.\nExiling him won't exile the marked player.",
@@ -846,7 +859,7 @@ namespace LasMonjas.Core
                     break;
                 // Spanish
                 case 2:
-                    colorNames = new string[5] { "Lavanda", "Petroleo", "Menta", "Aceituna", "Hielo" };
+                    colorNames = new string[6] { "Lavanda", "Petroleo", "Menta", "Aceituna", "Hielo", "Sombra" };
                     for (int i = 0; i < colorNames.Count(); i++) {
                         CustomColors.ColorStrings[i + 50000] = colorNames[i];
                     }
@@ -1470,10 +1483,13 @@ namespace LasMonjas.Core
                     helpersTexts = new string[] {
                         " y recluta un Minion",
                         "Mata a todos",
-                        "Report de Cadaver",
+                        "Reporte de Cadaver",
                         "No tienes un rol",
                         "No se encontro informacion.",
                         "Tab para pasar pagina.",
+                        "Resumen de Roles",
+                        "Modificador",
+                        "Modos de Juego",
                     };
                     impSummaryTexts = new string[] {
                         "Imitador: impostor que puede copiar el aspecto de otro jugador durante un tiempo determinado.",
@@ -1523,12 +1539,12 @@ namespace LasMonjas.Core
                         "Sheriff: tripulante que puede matar a otros jugadores.\nSi intenta matar a un tripulante se muere.",
                         "Detective: tripulante que puede ver las huellas de los jugadores.\nLas huellas no aparecen cerca de las rejillas y solo aparecen mientras el Detective esta vivo.",
                         "Forense: tripulante que puede obtener pistas reportando cuerpos y hablando con fantasmas.\nLas pistas al reportar cuerpos pueden ser el nombre del asesino, su tono de color o algo sobre su apariencia.\nLos fantasmas de los jugadores que murieron aparecen tras la siguiente ruenion y sus pistas pueden ser que rol tiene el asesino, su tono de color y cuanto tiempo paso hasta que reportaron el cuerpo.",
-                        "Viajero Temporal: tripulante que puede rebobinar el tiempo dos veces por partida, reviviendo a los jugadores que murieron durante ese tiempo.\nSolo puede rebobinar el tiempo si no hay un sabotaje activo o si lo intenta matar mientras tiene el escudo temporal activado.",
+                        "Viajero Temporal: tripulante que puede rebobinar el tiempo dos veces por partida.\nSolo puede rebobinar el tiempo si no hay un sabotaje activo o si lo intenta matar mientras tiene el escudo temporal activado.",
                         "Defensor: tripulante que puede proteger a otro jugador con un escudo.\nEl escudo dura hasta que el Defensor es expulsado, asesinado o se convoca una reunion. Si intentas matar al escudado los Impostores, Rebeles, Sheriff, Defensor y el escudado escucharan un sonido.",
                         "Tramposo: tripulante que puede intercambiar los votos de dos jugadores.\nSi cambia los votos y el expulsado era inocente, el Tramposo tambien es expulsado.",
                         "Adivino: tripulante que puede revelear quien es bueno o malo.\nTras revelar a un jugador se escuchara un sonido y la pantalla se volvera azul para ambos jugadores dependiendo de la opcion de a quien notificar que ha sido revelado.\nEl nombre de los jugadores revelados se volvera rojo si es malo y azul si es bueno.",
                         "Hacker: tripulante que puede usar Admin y Vitales a distancia y obtener mas informacion que los demas.\nPuede ver el color de los jugadores en Admin y cuando tiempo lleva muerto un jugador en Vitales.",
-                        "Sabueso: tripulante que puede rastrear a un jugador y cuerpos.\nLa flecha rastreadora de jugadores es azul mientras que la de cuerpo es verde.",
+                        "Sabueso: tripulante que puede rastrear a un jugador y cuerpos.\nLa flecha rastreadora de jugadores es azul mientras que la de cuerpo es verde.\nTambien puede revelar si hay jugadores cercanos a el con una flecha del color del jugador revelado.",
                         "Soplon: tripulante que puede alejar la camara del mapa y revelar quienes son los Impostores si finaliza todas sus tareas antes de morir.\nNo puede moverse cuando aleja la camara.\nLos Impostores sabran quien es el Soplon cuando le quede cierto numero de tareas por hacer y tendran un aviso si esta usando su habilidad de alejar la camara.",
                         "Niño: tripulante que no debe ser expulsado ni matado, de lo contrario todos perderan.\nEs mas pequeño que otros jugadores.",
                         "Soldador: tripulante que puede sellar rejillas.\nEl sellado se produce tras una reunion y provoca que esa rejilla no pueda ser usada para entrar ni salir, pero si es posible usarla de tunel.\nTambien puede poner una bomba en una rejilla, los jugadores que entren o salgan de esa rejilla mueren.",
@@ -1628,7 +1644,7 @@ namespace LasMonjas.Core
                     break;
                 // Japanese
                 case 3:
-                    colorNames = new string[5] { "ラベンダー", "ペトロリウム", "ミント", "オリーブ", "アイス" };
+                    colorNames = new string[6] { "ラベンダー", "ペトロリウム", "ミント", "オリーブ", "アイス", "シャドー" };
                     for (int i = 0; i < colorNames.Count(); i++) {
                         CustomColors.ColorStrings[i + 50000] = colorNames[i];
                     }
@@ -2256,21 +2272,24 @@ namespace LasMonjas.Core
                         "あなたには役割がありません。",
                         "情報が見つかりません",
                         "Tab 次のページへ",
+                        "役割の概要",
+                        "修飾子",
+                        "ゲームモード",
                     };
                     impSummaryTexts = new string[] {
                         "ミミック: 他のプレイヤーになりすますことができるインポスター。",
                         "画家: 他のプレイヤーをランダムな色で装飾できるインポスター。",
                         "悪魔: 噛みつくことでプレイヤーを時間をかけて殺せるインポスター。\nもし悪魔が存在する場合、1ゲーム、1マップごとに修道女を配置するボタンがあります。\n修道女のとなりに滞在することで、噛みつきを無効にできます。",
                         "管理人: 死体を取り除いたり、移動できるインポスター。\n同時に死体を取り除き、移動することはできません。",
-                        "イリュージョニスト: 専用のベントネットワークを構築し、どこからでも照明をおとせるインポスター。\n3つのベントネットワークは自分でしか使用できず、3番目のベントを配置した直後に。\nすべての人にみえるようになります。ベントネットワーク構築後、照明をオフにすることができます。",
+                        "イリュージョニスト: 専用のベントネットワークを構築し、どこからでも照明をおとせるインポスター。\n3つのベントネットワークは自分でしか使用できず、3番目のベントを配置した直後に。\nすべての人にみえるようになります。\nベントネットワーク構築後、照明をオフにすることができます。",
                         "マニピュレータ: プレイヤーを操作して強制的に殺すか死亡させることができる詐欺師。",
-                        "ボンバーマン: 爆弾をマップに配置できるインポスター。\n妨害が実行されている場合、またはプレイヤーがインポスターの近くにいるときは爆弾は配置できません。\nプレイヤーは爆弾に触れることで、信管を取り除くことができます。爆弾の信管が取り除かれない場合、インポスターが勝利します。\nまた、数秒後に自爆し、自分を含む範囲内の全員を殺害することもできます。",
-                        "カメレオン: 姿を消せるインポスター。\nベントを使用することはできません。姿はみえない状態でも、killボタンを持っている他の役職により殺される可能性はあります。",
-                        "ギャンブラー: 会議中に選択した役割のプレイヤーを撃つことができるインポスター。\nプレイヤーを撃つには役割を推測して充てる必要があります。もし、間違った場合、自分自身を撃つことになります。",
+                        "ボンバーマン: 爆弾をマップに配置できるインポスター。\n妨害が実行されている場合、またはプレイヤーがインポスターの近くにいるときは爆弾は配置できません。\nプレイヤーは爆弾に触れることで、信管を取り除くことができます。\n爆弾の信管が取り除かれない場合、インポスターが勝利します。\nまた、数秒後に自爆し、自分を含む範囲内の全員を殺害することもできます。",
+                        "カメレオン: 姿を消せるインポスター。\nベントを使用することはできません。\n姿はみえない状態でも、killボタンを持っている他の役職により殺される可能性はあります。",
+                        "ギャンブラー: 会議中に選択した役割のプレイヤーを撃つことができるインポスター。\nプレイヤーを撃つには役割を推測して充てる必要があります。\nもし、間違った場合、自分自身を撃つことになります。",
                         "ソーサラー: 他のプレイヤーに呪文を唱えることができるインポスター。\n呪文を唱えられたプレイヤーはミーティング中、名前の横に紫のかぼちゃのアイコンが表示され、魔術師が投票されない場合、ミーティング後に死亡します。",
                         "メデューサ: 他のプレイヤーを石化できるインポスター。\n石化したプレイヤーは、会議が招集される（石化したプレイヤーが死亡する）か、乗組員がそのプレイヤーの石化を解除するまで動くことができません。",
                         "催眠術師: プレイヤーの動きの制御を反対にさせる罠を配置できるインポスター。\n罠は会議の後に有効になり、インポスターには影響を与えません。",
-                        "射手: 長距離kill ができるインポスター。ただし、通常のkill はできません。\n他のプレイヤーからは見えない弓を使用して、マウスで標準をあわせ、右クリックにて射ぬく必要があります。\n標的を逃した場合、インポスターの位置に警告が表示され、標的を殺した場合は、標的の上に警告が表示されます。",
+                        "射手: 長距離kill ができるインポスター。\nただし、通常のkill はできません。\n他のプレイヤーからは見えない弓を使用して、マウスで標準をあわせ、右クリックにて射ぬく必要があります。\n標的を逃した場合、インポスターの位置に警告が表示され、標的を殺した場合は、標的の上に警告が表示されます。",
                         "配管工: ベント可能な役割のために、ベントを作ることができるインポスター。\nベントはミーティング後にすべての追加ベントが配置された場合に有効になります。",
                         "司書: プレイヤーが会議で話すのを妨げることができるインポスター。\n誰もが会議中に誰が妨げられているかを知ることができます。",
                         "簒奪者: 妨害して全員を殺す。",
@@ -2280,19 +2299,19 @@ namespace LasMonjas.Core
                         "賞金稼ぎ: 特定のプレイヤーを殺害しなければいけない反乱軍。\nターゲットボタンはランダムにターゲットにすべきプレイヤーの役割を設定しますが、\nもし、そのターゲットが既に死んでいる場合はその物も死ぬことになります。",
                         "トラッパー: 地雷で全員を殺害する反乱者。\n触れたプレイヤーを根こそぎ殺す罠や、踏んだ者を殺す地雷を設置することができます。",
                         "インヤンガー: 毎回2人のプレイヤーをマークする全員を殺さなければならない反乱者。\n彼は、彼らが持っている可能性のあるシールドを無視して両方を衝突させるならば、彼は陰でプレーヤーとヤンと一緒に別のプレイヤーをマークすることができます。\n1人のプレーヤーをマークした後、マークされた1つがターゲットに近すぎる場合、もう1つのプレーヤーをマークすることはできません。",
-                        "チャレンジャー: じゃんけんデュエルで全員を殺さねばならない反乱軍。\n妨害は実行されていない場合、10秒後に選ばれたプレイヤーがデュエルアリーナへテレポートします。\n誰も攻撃を選ばなかった場合、自動的に他の人が勝利します。攻撃を選択しない場合は両方とも死にます。引き分けでは誰も死にません。",
-                        "忍者: 誰もがダブルキルをしている人を殺さなければならない反逆者。\nプレーヤーを選択して、その後、その過程で彼を殺した後、自分の立場にテレポートします。彼はすぐに通常のキルボタンを使用してダブルキルを行うことができます。",
+                        "チャレンジャー: じゃんけんデュエルで全員を殺さねばならない反乱軍。\n妨害は実行されていない場合、10秒後に選ばれたプレイヤーがデュエルアリーナへテレポートします。\n誰も攻撃を選ばなかった場合、自動的に他の人が勝利します。\n攻撃を選択しない場合は両方とも死にます。\n引き分けでは誰も死にません。",
+                        "忍者: 誰もがダブルキルをしている人を殺さなければならない反逆者。\nプレーヤーを選択して、その後、その過程で彼を殺した後、自分の立場にテレポートします。\n彼はすぐに通常のキルボタンを使用してダブルキルを行うことができます。",
                         "バーサーカー: 全員を殺さなければならないが、殺すのを止めることはできない反乱者。\n初めて殺した後、彼のキルボタンは永久に10秒のクールダウンを受け取りますが、彼が一定の時間を殺さないと彼は死にます。",
                         "ヤンデレ: ターゲットを数回ストーキングし、それを殺して勝つ必要がある反乱軍。\nターゲットが別のプレーヤーに追放または殺された場合、彼は大暴れモードに入り、代わりに勝つために全員を殺さなければなりません。",
                         "座礁した: 地図の周りの箱で弾薬を見つけて3人のプレイヤーを殺さなければならない反逆者。\n彼はまた、しばらく目に見えないアイテムとベント能力を見つけることができます。",
-                        "もんじゃ: 小さなモンジャを見つけて儀式の場所に連れて行かなければならない反乱者。\nすべてのモンジャが配達されると、彼女は60秒以内にすべての人を殺すためにモンジャに変身することができます。そうでなければ彼女は死ぬでしょう。\n子供が登場した場合、モンジャは子供を除くすべての人を殺して勝つために殺さなければなりません。",
+                        "もんじゃ: 小さなモンジャを見つけて儀式の場所に連れて行かなければならない反乱者。\nすべてのモンジャが配達されると、彼女は60秒以内にすべての人を殺すためにモンジャに変身することができます。\nそうでなければ彼女は死ぬでしょう。\n子供が登場した場合、モンジャは子供を除くすべての人を殺して勝つために殺さなければなりません。",
                     };
                     neutralSummaryTexts = new string[] {
                         "ジョーカー: 勝つために投票されなければならないニュートラル。\n彼は生きている場合にのみ妨害することができます。",
                         "ロール泥棒: 勝利状態のないニュートラル。\n彼は他のプレイヤーの役割を盗むことができますが、彼が詐欺師や反逆者の役割を盗もうとすると死ぬ。",
                         "放火魔: 勝つために全員を点火しなければならないニュートラル。\n彼は彼らの隣に立って、彼が勝ったすべての人をスプレーしたら、プレーヤーをスプレーすることができます。",
                         "トレジャーハンター: 勝つために宝物を探さなければならないニュートラル。\n彼のボタンは、必要な量を見つけた後、マップ上でラウンドごとに1つの宝物をランダムに発生させます。",
-                        "むさぼり食う者: 勝つために体を食べなければならない中立。\nプレーヤーが死ぬと彼は音を聞きます。彼はプレイヤーを食べることもでき、動き回る以外何もできないエリアにプレイヤーをテレポートさせます。会議が招集された場合、それらのプレイヤーは死亡し、勝利に必要な死体にカウントされますが、貪食者が殺された場合、それらのプレイヤーは消滅します。 解放されました。",
+                        "むさぼり食う者: 勝つために体を食べなければならない中立。\nプレーヤーが死ぬと彼は音を聞きます。\n彼はプレイヤーを食べることもでき、動き回る以外何もできないエリアにプレイヤーをテレポートさせます。\n会議が招集された場合、それらのプレイヤーは死亡し、勝利に必要な死体にカウントされますが、貪食者が殺された場合、それらのプレイヤーは消滅します。\n解放されました。",
                         "毒殺者: 勝つために皆を毒しなければならないニュートラル。\n彼は毒されたプレーヤーを選択し、毒されたプレーヤーは毒の隣に立って毒計を増やします。\nすべてのプレイヤーが100％の毒メーターに達すると、彼は勝ちます。",
                         "操り人形師: 他のプレイヤーにモーフィングできるニュートラルで、勝つために数回変化している間に殺さなければなりません。\n彼はプレイヤーからサンプルを選んで、望んでいる間、または会議が呼ばれるまで、彼は殺されるか、自分自身を明らかにすることにしたことに決めます。\nモーフィング中に殺された場合、彼は1つのポイントを獲得し、モーフを始めた場所で復活し、必要なポイントに到達した後に勝ちます。",
                         "亡命者: 勝つために特定のプレーヤーに投票しなければならないニュートラル。\n彼のターゲットボタンは、ランダムなプレーヤーを自分のターゲットに割り当てますが、ターゲットがすでに死んでいる場合、彼は死にます。",
@@ -2305,12 +2324,12 @@ namespace LasMonjas.Core
                         "シェリフ: 選手を殺すことができるクルーメイト。\nしかし、彼が乗組員を殺そうとすると彼は死にます。",
                         "隠密: プレイヤーの足跡を見ることができるクルーメイト。\nフットプリントはベントを閉じないで、探偵が生きている場合にのみスポーンしません。",
                         "フォレンジック: 身体を報告し、プレイヤーの幽霊に尋ねることで手がかりを得る乗組員。\n身体を報告することで彼が得ることができる手がかりは、キラーの名前、色の種類、または彼の外観に関する何かです。\nゴーストは次のラウンドに登場し、身体が存在し、その手がかりがそのプレーヤー、キラーの色のタイプ、または体を報告する前にどれだけの時間が経過したかを殺しました。",
-                        "タイムトラベラー: ゲームごとに2回時間を巻き戻すことができ、巻き戻し中に殺されたプレイヤーを復活させることができるクルーメイト。\n彼は、積極的な妨害行為がなければ時間を巻き戻すことができます。時間は、彼がタイムシールドで保護されている間に誰かが彼を殺そうとする場合にも巻き戻します。",
-                        "スクワイア: プレーヤーにシールドを置くことができるクルーメイト。\n彼が追放されたり殺されたりするまで、盾は続きます。シールドプレーヤーを殺そうとすると、詐欺師、反乱軍、保安官、スクワイア、シールドプレイヤーが聞いた音が引き起こされます。",
+                        "タイムトラベラー: ゲームごとに2回時間を巻き戻すことができ。\n彼は、積極的な妨害行為がなければ時間を巻き戻すことができます。\n時間は、彼がタイムシールドで保護されている間に誰かが彼を殺そうとする場合にも巻き戻します。",
+                        "スクワイア: プレーヤーにシールドを置くことができるクルーメイト。\n彼が追放されたり殺されたりするまで、盾は続きます。\nシールドプレーヤーを殺そうとすると、詐欺師、反乱軍、保安官、スクワイア、シールドプレイヤーが聞いた音が引き起こされます。",
                         "詐欺師: 2人のプレーヤーの票を交換できるクルーメイト。\n投票を交換した後、これら2人のプレーヤーのうちの1人が乗組員で​​あることが判明した場合、彼は追放されます。",
                         "占い師: プレーヤーが良いか悪いかを明らかにできるクルーメイト。\n明らかにすると、音がトリガーされ、両方のプレイヤーの画面が青くなります。\n名前は悪い役割では赤くなり、シアンは良い役割については赤くなります。",
                         "ハッカー: どこからでも管理者とバイタルを使用し、彼らからより多くの情報を得ることができる乗組員。\n彼のハック能力はアクティブですが、彼は誰かがバイタルで亡くなって以来、管理者が管理者の色の色とどれくらいの時間が経過したかを見ることができます。",
-                        "探偵: 身体と1人のプレイヤーの位置を追跡できるクルーメイト。\n彼は、追跡されたプレーヤーと緑のプレーヤーを指している青い矢印が体を指しているのを見ます。",
+                        "探偵: 身体と1人のプレイヤーの位置を追跡できるクルーメイト。\n彼は、追跡されたプレーヤーと緑のプレーヤーを指している青い矢印が体を指しているのを見ます。\nまた、色ベースの矢印で最も近いプレイヤーの位置を明らかにすることもできます。",
                         "フィンク: 詐欺師がタスクを終えた後に誰であるかを明らかにし、カメラをズームアウトできる乗組員。\nカメラがズームアウトされている間、彼は動くことができません。\n詐欺師はまた、いくつかのタスクが残っているとき、またはカメラをズームアウトしているときにフィンクが誰であるかを知っています。",
                         "子供: 殺されたり追放されるべきではない乗組員、さもなければ全員が損失します。\n彼は他のプレイヤーよりも小さいです。",
                         "溶接機: 通気口を無効にできる乗組員。\nこれらの通気孔は次の会議の後に利用できなくなり、入場または退出することはできませんが、それでもトンネルとして使用できます。\nまた、通気口に爆弾を仕掛けることもでき、その爆弾は次のミーティングまで持続し、通気口に出入りする各プレイヤーは死亡します。",
@@ -2341,13 +2360,13 @@ namespace LasMonjas.Core
                         "電気技師: 数秒間彼の殺人者を麻痺させる修飾子。",
                     };
                     gamemodeSummaryTexts = new string[] {
-                        "旗を取れ: 各チームが相手のチームフラグを盗み、それをベースに持ち込む必要がある赤と青のチームの間のゲームモード。\n誰もが通気して殺すことができますが、旗を持っている間はできません。\n奇数プレイヤー数ゲーム、フラグスティーラーと呼ばれる特別な役割が表示されます。彼がフラグでプレイヤーを殺すと、彼はチームを切り替えます。",
-                        "警察と泥棒: シアンチームとブラウンチームの間のゲームモードは、警察チームがすべての泥棒を捕らえなければなりませんが、泥棒チームは捕らえられることなく地図上のすべての宝石を盗まなければなりません。\nこのゲームモードは、新しいマップルーム、刑務所を追加します。\nプレイヤーの割り当ては、最大9泥棒と6つのポリシーです。\n泥棒は通気することができますが、宝石を持っている間はできません。",
-                        "キングオブザヒル: 緑と黄色のチームの間のゲームモード。マップには3つの捕虜ゾーンがあり、各チームにはそれらをキャプチャできる王がいます。\n誰もが王を除いて排出して殺すことができます。\n\n奇妙なプレイヤー番号のゲームでは、王を殺すと、王と呼ばれる特別な役割が登場します。彼は彼とチームをスイッチします。",
-                        "焼き芋: ランダムなプレーヤーがホットポテトの役割を獲得し、時間がなくなる前にホットポテトを別のプレイヤーに与える必要があるゲームモード、そうでなければホットポテトプレーヤーは死にます。\nゲームでは1匹のホットポテトしかありません。残りは冷たいジャガイモや燃えたジャガイモが亡くなった場合に焦げたジャガイモになります。\nこのゲームモードは、かくれんぼとしても機能します。",
-                        "ゾンビ研究所: ランダムプレーヤーがゾンビの役割を獲得し、別のプレーヤーが看護師の役割を担当し、残りは生存者になるゲームモード。\nゾンビはすべての人に勝つために感染しなければなりませんが、生存者は地図の周りの箱に隠れた重要なアイテムを探して、看護師が治療を行い、ゲームに勝つことができる新しい地図ゾーン、診療所にそれらを届けなければなりません。\nゾンビのみが通気することができ、看護師は感染することができず、感染したプレイを癒すためにメドキットを選ぶことができます。",
-                        "バトルロワイアル: 誰もがアーチャーのメカニック（右マウスのクリックで使用可能）と非常に低いクールダウンで遠隔キルボタンを持っているゲームモード。\n誰もベントできず、プレイヤーは生命を持つことができず、彼らが0人の生命に達すると、彼らは試合の残りの部分で死ぬ、最後の生きたものが勝ちます。\nまた、このゲームモードをプレイする方法は3つあります。すべてのVS、チームバトルまたはスコアバトルがあります。\nチームとスコアバトルの奇妙なプレイヤー番号ゲームでは、シリアルキラーと呼ばれる強力なニュートラルな役割があり、これもすべての人を殺したり、必要なスコアに達したりすることができます。この役割にはX2寿命があり、半分のクールダウンがあります。",
-                        "もんじゃ祭り: 緑と水色のチームの間のゲームモードで、各チームはマップ上の箱の中にある小さなモンジャを選び、基地に届けなければなりません。 配達されたら、敵チームに盗まれることはありません。\n誰もが殺すことができますが、小さなもんじゃを運んでいる間はできません。\n奇数プレイヤー数のゲームでは、ビッグもんじゃと呼ばれる特別な役割が登場します。彼女は、小さなもんじゃを運びながら、ベント、キル、透明化、他のチームの基地から小さなもんじゃを盗むことができます。",
+                        "旗を取れ: 各チームが相手のチームフラグを盗み、\nそれをベースに持ち込む必要がある赤と青のチームの間のゲームモード。\n誰もが通気して殺すことができますが、\n旗を持っている間はできません。\n奇数プレイヤー数ゲーム、\nフラグスティーラーと呼ばれる特別な役割が表示されます。\n彼がフラグでプレイヤーを殺すと、\n彼はチームを切り替えます。",
+                        "警察と泥棒: シアンチームとブラウンチームの間のゲームモードは、\n警察チームがすべての泥棒を捕らえなければなりませんが、\n泥棒チームは捕らえられることなく地図上のすべての宝石を盗まなければなりません。\nこのゲームモードは、\n新しいマップルーム、\n刑務所を追加します。\nプレイヤーの割り当ては、\n最大9泥棒と6つのポリシーです。\n泥棒は通気することができますが、\n宝石を持っている間はできません。",
+                        "キングオブザヒル: 緑と黄色のチームの間のゲームモード。\nマップには3つの捕虜ゾーンがあり、\n各チームにはそれらをキャプチャできる王がいます。\n誰もが王を除いて排出して殺すことができます。\n奇妙なプレイヤー番号のゲームでは、\n王を殺すと、王と呼ばれる特別な役割が登場します。\n彼は彼とチームをスイッチします。",
+                        "焼き芋: ランダムなプレーヤーがホットポテトの役割を獲得し、\n時間がなくなる前にホットポテトを別のプレイヤーに与える必要があるゲームモード、\nそうでなければホットポテトプレーヤーは死にます。\nゲームでは1匹のホットポテトしかありません。\n残りは冷たいジャガイモや燃えたジャガイモが亡くなった場合に焦げたジャガイモになります。\nこのゲームモードは、かくれんぼとしても機能します。",
+                        "ゾンビ研究所: ランダムプレーヤーがゾンビの役割を獲得し、\n別のプレーヤーが看護師の役割を担当し、\n残りは生存者になるゲームモード。\nゾンビはすべての人に勝つために感染しなければなりませんが、\n生存者は地図の周りの箱に隠れた重要なアイテムを探して、\n看護師が治療を行い、ゲームに勝つことができる新しい地図ゾーン、\n診療所にそれらを届けなければなりません。\nゾンビのみが通気することができ、看護師は感染することができず、\n感染したプレイを癒すためにメドキットを選ぶことができます。",
+                        "バトルロワイアル: 誰もがアーチャーのメカニック（右マウスのクリックで使用可能）\nと非常に低いクールダウンで遠隔キルボタンを持っているゲームモード。\n誰もベントできず、プレイヤーは生命を持つことができず、\n彼らが0人の生命に達すると、彼らは試合の残りの部分で死ぬ、\n最後の生きたものが勝ちます。\nまた、このゲームモードをプレイする方法は3つあります。すべてのVS、\nチームバトルまたはスコアバトルがあります。\nチームとスコアバトルの奇妙なプレイヤー番号ゲームでは、\nシリアルキラーと呼ばれる強力なニュートラルな役割があり、\nこれもすべての人を殺したり、\n必要なスコアに達したりすることができます。\nこの役割にはX2寿命があり、半分のクールダウンがあります。",
+                        "もんじゃ祭り: 緑と水色のチームの間のゲームモードで、\n各チームはマップ上の箱の中にある小さなモンジャを選び、\n基地に届けなければなりません。 \n配達されたら、敵チームに盗まれることはありません。\n誰もが殺すことができますが、\n小さなもんじゃを運んでいる間はできません。\n奇数プレイヤー数のゲームでは、\nビッグもんじゃと呼ばれる特別な役割が登場します。\n彼女は、小さなもんじゃを運びながら、ベント、キル、透明化、\n他のチームの基地から小さなもんじゃを盗むことができます。",
                     };
                     statusRolesTexts = new string[] {
                         "速度の変更！",
@@ -2410,7 +2429,7 @@ namespace LasMonjas.Core
                     break;
                 // Chinese
                 case 4:
-                    colorNames = new string[5] { "薰衣紫", "深绿色", "薄荷色", "橄榄绿", "冰蓝色" };
+                    colorNames = new string[6] { "薰衣紫", "深绿色", "薄荷色", "橄榄绿", "冰蓝色", "阴影" };
                     for (int i = 0; i < colorNames.Count(); i++) {
                         CustomColors.ColorStrings[i + 50000] = colorNames[i];
                     }
@@ -3037,77 +3056,80 @@ namespace LasMonjas.Core
                         "报告尸体",
                         "你没有职业。",
                         "没有找到信息。",
-                        "按Tab查看下一页"
+                        "按Tab查看下一页",
+                        "角色总结",
+                        "职业",
+                        "游戏模式",
                     };
                     impSummaryTexts = new string[] {
                         "化形者: 化形者属于内鬼阵营，可以在一定时间内将自己的外形变化为其他玩家。",
-                        "隐蔽者: 隐蔽者属于内鬼阵营，可以在一定时间内将所有玩家的装扮隐藏并让所有玩家的皮肤颜色变为同一种随机颜色。",
+                        "隐蔽者: 隐蔽者属于内鬼阵营，\n可以在一定时间内将所有玩家的装扮隐藏并让所有玩家的皮肤颜色变为同一种随机颜色。",
                         "吸血鬼: 吸血鬼属于内鬼阵营，可以通过吸血来让一名玩家被延时击杀。\n游戏中可能存在一名吸血鬼时，所有玩家都将获得技能：每局游戏限一次，在地图上放置一处神圣屏障。\n神圣屏障可以让吸血鬼的吸血无效。",
                         "清理者: 清理者属于内鬼阵营，拥有清理尸体和挪动尸体的能力。\n清理者不能在挪动尸体的途中清理尸体或使用管道。",
-                        "骗术师: 骗术师属于内鬼阵营，可以自行搭建一组管道网络，并造成照明破坏。\n骗术师搭建的管道网络包含三个骗术帽，仅供骗术师自己使用。在第三个骗术帽放置完毕后，骗术帽立刻对所有玩家可见。\n骗术师的管道网络搭建完毕后，骗术师获得照明破坏的能力。",
-                        "术士: 术士属于内鬼阵营，可以操纵一名玩家，然后在任何位置远程击杀被操纵玩家附近的一名玩家。\n术士以这种方式造成的击杀可以击杀包括自己和其他内鬼在内的任何玩家。",
-                        "爆破者: 爆破者属于内鬼阵营，可以在地图上放置一枚炸弹。\n爆破者不可以在紧急破坏持续期间或一名玩家在附近时放置炸弹。\n其他玩家触碰到炸弹时可以将其拆除。若炸弹爆炸前没有被拆除，内鬼阵营获胜。",
-                        "隐身人: 隐身人属于内鬼阵营，可以隐形一段时间。\n隐身人不可以使用管道。隐身人隐形期间，依然可以被拥有击杀能力的玩家击杀。",
-                        "赌徒: 赌徒属于内鬼阵营，可以通过猜测一名玩家的身份在会议上击杀那名玩家。\n赌徒必须正确选择那名玩家的职业才能将其击杀，且只能选择本局游戏中可能存在的身份进行猜测。若赌徒选择了错误的身份，赌徒将会自杀。",
-                        "女巫: 女巫属于内鬼阵营，可以对其他玩家下咒。\n在下一次会议阶段，被下咒的玩家的昵称旁会出现一个紫色的南瓜标记。除非女巫在这轮会议阶段被放逐，否则被下咒的玩家在会议结束后死亡。",
-                        "美杜莎: 美杜莎属于内鬼阵营，可以石化其他玩家。\n被石化的玩家在一定时间内不能移动。",
+                        "骗术师: 骗术师属于内鬼阵营，可以自行搭建一组管道网络，并造成照明破坏。\n骗术师搭建的管道网络包含三个骗术帽，仅供骗术师自己使用。\n在第三个骗术帽放置完毕后，骗术帽立刻对所有玩家可见。\n骗术师的管道网络搭建完毕后，骗术师获得照明破坏的能力。",
+                        "术士: 术士属于内鬼阵营，可以操纵一名玩家，令其获得击杀能力。\n若一段时间内那名玩家不进行击杀，则该玩家死亡。",
+                        "爆破者: 爆破者属于内鬼阵营，可以在地图上放置一枚炸弹。\n爆破者不可以在紧急破坏持续期间或一名玩家在附近时放置炸弹。\n其他玩家触碰到炸弹时可以将其拆除。\n若炸弹爆炸前没有被拆除，内鬼阵营获胜。\n此外，爆破者还可以自爆，在一段时间后击杀一定范围内包括自己在内的所有玩家。",
+                        "隐身人: 隐身人属于内鬼阵营，可以隐形一段时间。\n隐身人不可以使用管道。\n隐身人隐形期间，依然可以被拥有击杀能力的玩家击杀。",
+                        "赌徒: 赌徒属于内鬼阵营，可以通过猜测一名玩家的身份在会议上击杀那名玩家。\n赌徒必须正确选择那名玩家的职业才能将其击杀，且只能选择本局游戏中可能存在的身份进行猜测。\n若赌徒选择了错误的身份，赌徒将会自杀。",
+                        "女巫: 女巫属于内鬼阵营，可以对其他玩家下咒。\n在下一次会议阶段，被下咒的玩家的昵称旁会出现一个紫色的南瓜标记。\n除非女巫在这轮会议阶段被放逐，否则被下咒的玩家在会议结束后死亡。",
+                        "美杜莎: 被石化的玩家直到其他玩家帮助其解除石化前都无法移动。\n若行动阶段结束时被石化的玩家依然未被解除石化，该玩家死亡。",
                         "催眠师: 催眠师属于内鬼阵营，可以在地图上放置能使经过的玩家移动操作颠倒的催眠陷阱。\n催眠陷阱在下一次会议阶段结束后激活，内鬼阵营玩家不会受到催眠陷阱影响。",
-                        "弓箭手: 弓箭手属于内鬼阵营，拥有远程击杀的能力，但不可以进行通常击杀。\n弓箭手进行击杀需要拿起弓箭（对其它玩家不可见），使用鼠标瞄准，并点击鼠标右键射击。\n若弓箭手的射击未命中任何玩家，警告标志将出现在弓箭手所在的位置；若弓箭手的射击成功击杀了一名玩家，警告标志将出现在被击杀玩家的尸体上。",
+                        "弓箭手: 弓箭手属于内鬼阵营，拥有远程击杀的能力，但不可以进行通常击杀。\n弓箭手进行击杀需要拿起弓箭（对其它玩家不可见），使用鼠标瞄准，并点击鼠标右键射击。\n若弓箭手的射击未命中任何玩家，警告标志将出现在弓箭手所在的位置。\n若弓箭手的射击成功击杀了一名玩家，警告标志将出现在被击杀玩家的尸体上。",
                         "管道工: 管道工属于内鬼阵营，可以搭建供所有可以使用管道的职业使用的管道网络。\n管道工将所有管道放置完毕的那轮会议后，管道工放置的所有管道对所有玩家可见。",
                         "勒索者: 勒索者属于内鬼阵营，可以让一名玩家无法在会议上发言。\n所有玩家都能确认被勒索的玩家是谁。",
                         "内鬼: 普通内鬼。破坏并杀死所有人。",
                     };
                     rebelSummaryTexts = new string[] {
-                        "变节者: 变节者属于背叛者阵营，需要杀死所有玩家来获得胜利。\n变节者可以招募一名爪牙来协助自己。变节者和爪牙都有内鬼视野，可以使用管道，昵称都为绿色。",
-                        "赏金猎人: 赏金猎人属于背叛者阵营，需要杀死一名特定的玩家来获得胜利。\n赏金猎人使用技能后将得知一名随机玩家的职业，杀死这名玩家赏金猎人即可获胜。赏金猎人的目标死亡时，赏金猎人死亡。",
+                        "变节者: 变节者属于背叛者阵营，需要杀死所有玩家来获得胜利。\n变节者可以招募一名爪牙来协助自己。\n变节者和爪牙都有内鬼视野，可以使用管道，昵称都为绿色。",
+                        "赏金猎人: 赏金猎人属于背叛者阵营，需要杀死一名特定的玩家来获得胜利。\n赏金猎人使用技能后将得知一名随机玩家的职业，杀死这名玩家赏金猎人即可获胜。\n赏金猎人的目标死亡时，赏金猎人死亡。",
                         "陷阱师: 陷阱师属于背叛者阵营，需要用地雷击杀所有玩家来获得胜利。\n陷阱师可以放置两种陷阱：可以让经过的玩家无法行动的捕兽夹和可以击杀经过的玩家的地雷。",
-                        "阴阳师: 阴阳师属于背叛者阵营，需要操纵阴阳术来杀死所有其他玩家获得胜利。\n阴阳师可以分别给两名不同玩家“阴”标记和“阳”标记。当拥有标记的两名玩家相遇时，两名玩家死亡。阴阳术无视任何护盾。\n阴阳师标记了一名玩家后，其不可以在这名玩家附近对另一名玩家进行标记。",
-                        "决斗者: 决斗者属于背叛者阵营，需要用猜拳决斗的形式击杀所有其他玩家获得胜利。\n决斗者选择决斗目标后，若途中没有发生紧急破坏，所有玩家都会在10秒后被传送到决斗场中，之后决斗开始。\n决斗胜利的一方击杀落败的一方。平局的场合，不会有玩家被击杀。如果决斗双方的其中一方没有进行任何操作，另一方自动获胜。如果决斗双方均没有进行任何操作，双方均死亡。",
-                        "忍者: 忍者属于背叛者阵营，需要用自己独特的二刀流机制杀死所有其他玩家获得胜利。\n忍者可以标记一名玩家，在这之后可以发动技能，将自己传送到这名玩家所在的位置并将其击杀。刺杀完成后，他可以再进行一次通常击杀，以此完成双杀。",
+                        "阴阳师: 阴阳师属于背叛者阵营，需要操纵阴阳术来杀死所有其他玩家获得胜利。\n阴阳师可以分别给两名不同玩家“阴”标记和“阳”标记。\n当拥有标记的两名玩家相遇时，两名玩家死亡。\n阴阳术无视任何护盾。\n阴阳师标记了一名玩家后，其不可以在这名玩家附近对另一名玩家进行标记。",
+                        "决斗者: 决斗者属于背叛者阵营，需要用猜拳决斗的形式击杀所有其他玩家获得胜利。\n决斗者选择决斗目标后，若途中没有发生紧急破坏，所有玩家都会在10秒后被传送到决斗场中，之后决斗开始。\n决斗胜利的一方击杀落败的一方。\n平局的场合，不会有玩家被击杀。\n如果决斗双方的其中一方没有进行任何操作，另一方自动获胜。\n如果决斗双方均没有进行任何操作，双方均死亡。",
+                        "忍者: 忍者属于背叛者阵营，需要用自己独特的二刀流机制杀死所有其他玩家获得胜利。\n忍者可以标记一名玩家，在这之后可以发动技能，将自己传送到这名玩家所在的位置并将其击杀。\n刺杀完成后，他可以再进行一次通常击杀，以此完成双杀。",
                         "狂战士: 狂战士属于背叛者阵营，需要不断击杀其他玩家来获得游戏胜利。\n狂战士进行第一次击杀后，狂战士的击杀冷却永久变为10秒，但这之后，若狂战士不在一定时间内进行击杀就会死亡。",
                         "病娇: 病娇属于背叛者阵营，需要多次跟踪一名玩家并击杀这名玩家来获得胜利。\n如果这名目标被放逐或被其他玩家击杀，该职业将进入狂暴状态，胜利条件变更为杀死所有其他玩家。",
                         "探险家: 探险家属于背叛者阵营，需要在地图上散落的物资箱中找到军火，并用其击杀三名玩家来获得胜利。\n物资箱中还有可能找到能让探险家在一段时间内隐身并获得使用管道能力的道具。",
-                        "古神: 古神属于背叛者阵营，需要在地图上找到化身像，并将它们带到禁忌仪式阵中。\n当所有化身像进入仪式阵后，该职业可以化形为化身像，并需要在60秒内杀死所有玩家来获得胜利。若该职业没能在60秒内杀死所有玩家，该职业死亡。\n如果游戏中存在小孩，则该职业需要击杀小孩以外的所有其他玩家来获得胜利。",
+                        "古神: 古神属于背叛者阵营，需要在地图上找到化身像，并将它们带到禁忌仪式阵中。\n当所有化身像进入仪式阵后，该职业可以化形为化身像，并需要在60秒内杀死所有玩家来获得胜利。\n若该职业没能在60秒内杀死所有玩家，该职业死亡。\n如果游戏中存在小孩，则该职业需要击杀小孩以外的所有其他玩家来获得胜利。",
                     };
                     neutralSummaryTexts = new string[] {
                         "小丑: 小丑属于中立阵营，需要被放逐来获得胜利。\n小丑存活时可以造成紧急破坏。",
-                        "身份窃贼: 身份窃贼属于中立阵营，没有胜利条件。\n身份窃贼可以偷走其他玩家的职业。如果身份窃贼尝试偷取内鬼或背叛者阵营的职业，身份窃贼将死亡。",
-                        "纵火犯: 纵火犯属于中立阵营，需要烧死所有其他玩家来获得胜利。\n纵火犯在一名未被涂油的其他玩家附近时，可以发动技能给这名玩家涂油；所有玩家都被涂油时，纵火犯获胜。",
-                        "寻宝猎人: 寻宝猎人属于中立阵营，需要寻找宝藏来获得胜利。\n寻宝猎人每轮可以发动一次技能，在地图上随机生成一处宝藏。寻宝猎人找齐足够数量的宝藏后，寻宝猎人获胜。",
-                        "秃鹫: 秃鹫属于中立阵营，需要吞吃尸体来获得胜利。\n当一名玩家死亡时，秃鹫可以听到音效提示。",
-                        "毒师: 毒师属于中立阵营，需要让所有玩家中毒来获得胜利。\n毒师需要选择一名玩家令其中毒。在中毒玩家身边的玩家会不断积累中毒进度。\n当一名玩家的中毒进度到达100%时，那名玩家也变为中毒玩家；当所有玩家的中毒进度到达100%时，毒师获胜。",
-                        "傀儡师: 傀儡师属于中立阵营，拥有化形为其他玩家的能力。傀儡师需要在化形状态下被击杀若干次来获得胜利。\n傀儡师可以选择一名玩家进行取样。之后，傀儡师可以化形为那名玩家。化形可以被傀儡师主动解除，也会在会议阶段开始时或被击杀时自动解除。\n当化形中的傀儡师被击杀时，其将获得一分，并在其进入化形状态之处复活。傀儡师获得足够的分数后，傀儡师获胜",
-                        "处刑者: 处刑者属于中立阵营，需要放逐一名指定玩家来获得胜利。\n处刑者发动技能后，随机一名其他玩家成为其处刑目标。若处刑目标死亡，则处刑者死亡。",
+                        "身份窃贼: 身份窃贼属于中立阵营，没有胜利条件。\n身份窃贼可以偷走其他玩家的职业。\n如果身份窃贼尝试偷取内鬼或背叛者阵营的职业，身份窃贼将死亡。",
+                        "纵火犯: 纵火犯属于中立阵营，需要烧死所有其他玩家来获得胜利。\n纵火犯在一名未被涂油的其他玩家附近时，可以发动技能给这名玩家涂油。\n所有玩家都被涂油时，纵火犯获胜。",
+                        "寻宝猎人: 寻宝猎人属于中立阵营，需要寻找宝藏来获得胜利。\n寻宝猎人每轮可以发动一次技能，在地图上随机生成一处宝藏。\n寻宝猎人找齐足够数量的宝藏后，寻宝猎人获胜。",
+                        "秃鹫: 秃鹫属于中立阵营，需要吞吃尸体来获得胜利。\n当一名玩家死亡时，秃鹫可以听到音效提示。\n此外，秃鹫还可以吞下玩家。\n被吞下的玩家将被传送到一个地图外的区域，在其中的玩家除移动外无法进行任何行动。\n秃鹫被击杀后，这些玩家将被释放，回到地图中。\n若会议阶段开始时，秃鹫仍然存活，则这些玩家死亡。",
+                        "毒师: 毒师属于中立阵营，需要让所有玩家中毒来获得胜利。\n毒师需要选择一名玩家令其中毒。\n在中毒玩家身边的玩家会不断积累中毒进度。\n当一名玩家的中毒进度到达100%时，那名玩家也变为中毒玩家。\n当所有玩家的中毒进度到达100%时，毒师获胜。",
+                        "傀儡师: 傀儡师属于中立阵营，拥有化形为其他玩家的能力。\n傀儡师需要在化形状态下被击杀若干次来获得胜利。\n傀儡师可以选择一名玩家进行取样。\n之后，傀儡师可以化形为那名玩家。\n化形可以被傀儡师主动解除，也会在会议阶段开始时或被击杀时自动解除。\n当化形中的傀儡师被击杀时，其将获得一分，并在其进入化形状态之处复活。\n傀儡师获得足够的分数后，傀儡师获胜",
+                        "处刑者: 处刑者属于中立阵营，需要放逐一名指定玩家来获得胜利。\n处刑者发动技能后，随机一名其他玩家成为其处刑目标。\n若处刑目标死亡，则处刑者死亡。",
                         "失忆者: 失忆者属于中立阵营，需要通过报告尸体来回忆职业。\n失忆者回忆成功后，其失去失忆者的能力。",
                         "捉人鬼: 捉人鬼属于中立阵营，需要找其他玩家玩捉迷藏小游戏。\n捉人鬼选择三名玩家后，可以开启小游戏，将所有玩家传送到捉迷藏的场地中。\n该职业每抓到一名玩家，便可获得一分，获得足够的分数后，该职业获胜。",
                     };
                     crewSummaryTexts = new string[] {
-                        "船长: 船长属于船员阵营，在会议阶段，船长的一票算作两票。\n此外，每局游戏限一次，船长可以将一次会议阶段中所有的投票都改投给一名其他玩家。若船长以这种方式将票改投给了一名船员阵营玩家，船长将被放逐。\n当游戏中只剩船长和一名内鬼或背叛者阵营玩家时，船长获得立即召开紧急会议的权力。",
+                        "船长: 船长属于船员阵营，在会议阶段，船长的一票算作两票。\n此外，每局游戏限一次，船长可以将一次会议阶段中所有的投票都改投给一名其他玩家。\n若船长以这种方式将票改投给了一名船员阵营玩家，船长将被放逐。\n当游戏中只剩船长和一名内鬼或背叛者阵营玩家时，船长获得立即召开紧急会议的权力。",
                         "修理工: 修理工属于船员阵营，可以在地图的任意位置立即修理紧急破坏。\n此外，当修理工用常规方式修理需要两处以上修复的紧急破坏时，只需修复其中一处即可。",
                         "警长: 警长属于船员阵营，可以击杀其他玩家。\n若警长尝试击杀船员阵营玩家，警长将会死亡。",
                         "侦探: 侦探属于船员阵营，可以看到其他玩家的脚印。\n脚印在管道附近不会显示，且只会对存活的侦探显示。",
-                        "法医: 法医属于船员阵营，可以通过报告尸体获得线索，也可以对玩家的鬼魂进行询问。\n通过报告尸体，法医可以获得的线索有：凶手是谁，凶手的颜色深浅或凶手身上的装扮的有无。\n玩家的鬼魂将在这名玩家死亡后的下一轮行动阶段出现在他们那轮死亡时的所在地点。通过询问鬼魂，法医可以获得的线索有：凶手的职业，凶手的颜色深浅，在报告之前该玩家已经死亡了多长时间。",
-                        "时间之主: 时间之主属于船员阵营，每局游戏拥有两次回溯时间的机会。时间回溯期间被击杀的玩家也会复活。\n时间之主每局游戏可以在紧急破坏未发生时主动回溯一次时间；此外，时间之主在时光之盾状态下被击杀的场合，也会触发一次时间回溯。",
-                        "卫兵: 卫兵属于船员阵营，可以用护盾保护一名玩家。\n护盾的作用时间持续到卫兵被放逐或被击杀为止。若有玩家尝试击杀被护盾保护的玩家，所有内鬼与背叛者阵营玩家、警长、卫兵与被护盾保护的玩家都会听到提示音效。",
+                        "法医: 法医属于船员阵营，可以通过报告尸体获得线索，也可以对玩家的鬼魂进行询问。\n通过报告尸体，法医可以获得的线索有：凶手是谁，凶手的颜色深浅或凶手身上的装扮的有无。\n玩家的鬼魂将在这名玩家死亡后的下一轮行动阶段出现在他们那轮死亡时的所在地点。\n通过询问鬼魂，法医可以获得的线索有：凶手的职业，凶手的颜色深浅，在报告之前该玩家已经死亡了多长时间。",
+                        "时间之主: 时间之主属于船员阵营。\n时间回溯期间被击杀的玩家也会复活。\n时间之主每局游戏可以在紧急破坏未发生时主动回溯一次时间。\n此外，时间之主在时光之盾状态下被击杀的场合，也会触发一次时间回溯。",
+                        "卫兵: 卫兵属于船员阵营，可以用护盾保护一名玩家。\n护盾的作用时间持续到卫兵被放逐或被击杀为止。\n若有玩家尝试击杀被护盾保护的玩家，所有内鬼与背叛者阵营玩家、警长、卫兵与被护盾保护的玩家都会听到提示音效。",
                         "换票师: 换票师属于船员阵营，可以交换两名玩家在会议阶段的得票。\n换票师换票后，若被换票的这两名玩家中有一名玩家被放逐且是船员，换票师被放逐。",
-                        "预言家: 预言家属于船员阵营，可以查验一名玩家的身份是好人或坏人。\n预言家查验时，预言家与被查验的玩家都会看到屏幕的蓝色闪光，并触发提示音效。\n被查验对象为坏人时，被查验对象的昵称变为红色；被查验对象为好人时，昵称变为青色。",
+                        "预言家: 预言家属于船员阵营，可以查验一名玩家的身份是好人或坏人。\n预言家查验时，预言家与被查验的玩家都会看到屏幕的蓝色闪光，并触发提示音效。\n被查验对象为坏人时，被查验对象的昵称变为红色。\n被查验对象为好人时，昵称变为青色。",
                         "黑客: 黑客属于船员阵营，使用管理室地图和生命监测装置时可以得到更多信息。\n黑客的黑入技能激活时，他可以确认管理室地图上的玩家颜色与生命监测装置中死亡玩家的死亡时间。",
-                        "追踪者: 追踪者属于船员阵营，可以追踪一名玩家和场上的尸体。\n追踪者可以通过蓝色箭头确认其选择的追踪目标的位置，通过绿色箭头确认场上尸体的位置。",
-                        "告密者: 告密者属于船员阵营，可以在完成所有任务后确认所有内鬼阵营玩家。此外，告密者可以使用“千里眼”，获得完全自由的视野。\n告密者在使用千里眼期间不可以移动。\n当告密者仅剩一定数量或更少的任务或告密者正在使用千里眼时，内鬼玩家也能确认告密者是谁。",
+                        "追踪者: 追踪者属于船员阵营，可以追踪一名玩家和场上的尸体。\n追踪者可以通过蓝色箭头确认其选择的追踪目标的位置，通过绿色箭头确认场上尸体的位置。\n属于船员阵营，可以确认与其距离最近的玩家的位置。\n将看到箭头指向最近玩家的位置",
+                        "告密者: 告密者属于船员阵营，可以在完成所有任务后确认所有内鬼阵营玩家。\n此外，告密者可以使用“千里眼”，获得完全自由的视野。\n告密者在使用千里眼期间不可以移动。\n当告密者仅剩一定数量或更少的任务或告密者正在使用千里眼时，内鬼玩家也能确认告密者是谁。",
                         "小孩: 小孩属于船员阵营，由于未成年人保护法，小孩不应当被击杀或放逐，否则所有玩家都将输掉游戏。\n小孩的身形小于正常玩家。",
-                        "焊工: 焊工属于船员阵营，拥有封锁管道口的能力。\n焊工封锁管道口的下一轮会议阶段结束后，这些管道口将无法使用，不能进入或从中跳出，但仍然可以停留在管道口内。",
-                        "殉道者: 殉道者属于船员阵营，可以以自己的生命为代价复活一名其他玩家。\n殉道者需要站在尸体旁来复活那名玩家。如果在复活期间内有人召开了会议，殉道者将死亡且复活失败。\n内鬼与背叛者阵营玩家可以通过粉色箭头确认被殉道者复活的玩家的位置。",
+                        "焊工: 焊工属于船员阵营，拥有封锁管道口的能力。\n焊工封锁管道口的下一轮会议阶段结束后，这些管道口将无法使用，不能进入或从中跳出，但仍然可以停留在管道口内。\n此外，每轮行动阶段限一次，焊工可以在一处管道口放置一个炸弹。\n直到下轮会议阶段开始前，所有进入或退出该管道口的玩家死亡。",
+                        "殉道者: 殉道者属于船员阵营，可以以自己的生命为代价复活一名其他玩家。\n殉道者需要站在尸体旁来复活那名玩家。\n如果在复活期间内有人召开了会议，殉道者将死亡且复活失败。\n内鬼与背叛者阵营玩家可以通过粉色箭头确认被殉道者复活的玩家的位置。",
                         "哨兵: 哨兵属于船员阵营，可以在地图上安装四个额外的监控摄像头。\n哨兵安装的监控摄像头在安装的下一轮会议阶段结束后生效，在所有监控摄像头放置完毕后，哨兵获得远程观看监控的能力。\n在米拉总部地图，由于没有监控摄像头，哨兵获得远程观看通行记录的能力。",
                         "猎人: 猎人属于船员阵营，可以标记一名玩家，若猎人被击杀，则那名玩家一同死亡。\n猎人被放逐不会触发该技能。",
                         "扫把星: 扫把星属于船员阵营，可以给一名玩家传递厄运，让该玩家的技能失效一次。\n被扫把星传递厄运的玩家使用技能的场合，技能重新计算冷却。",
                         "怯懦者: 怯懦者属于船员阵营，可以在地图的任意位置召开紧急会议。\n怯懦者不可以在紧急破坏期间召开紧急会议。",
                         "蝙蝠侠: 蝙蝠侠属于船员阵营，可以发射高频谐振波来改变其他玩家的技能冷却。\n对于船员、背叛者与中立阵营玩家，其技能冷却加速一倍。\n对于内鬼阵营玩家，其技能冷却每秒钟增加一秒。",
-                        "死灵法师: 死灵法师属于船员阵营，可以拖拽尸体。将尸体拖拽到指定房间后，其可以复活那名玩家。\n死灵法师通过蓝色箭头确认指定房间位置。\n内鬼与背叛者阵营玩家可以通过粉色箭头确认被死灵法师复活的玩家的位置。",
+                        "死灵法师: 死灵法师属于船员阵营，可以拖拽尸体。\n将尸体拖拽到指定房间后，其可以复活那名玩家。\n死灵法师通过蓝色箭头确认指定房间位置。\n内鬼与背叛者阵营玩家可以通过粉色箭头确认被死灵法师复活的玩家的位置。",
                         "机关师: 机关师属于船员阵营，可以放置三种机关：加速机关、减速机关、感应机关。\n机关师可以按F键切换机关种类。\n机关在被放置的那轮会议阶段结束后生效，效果持续时间为5秒。",
-                        "鎖匠: 可以打開所有門。",
+                        "锁匠: 锁匠属于船员阵营，可以打开所有关闭的门。\n在Mira HQ地图，锁匠可以移除去污室的门。",
                         "工作达人: 工作达人属于船员阵营，完成自己的所有初始任务后，该职业将获得一部分额外任务。\n若该职业在自己存活的条件下完成了所有任务，则船员阵营获得游戏的胜利。",
-                        "狱警: 狱警属于船员阵营，可以选择一名玩家协助办案。\n有玩家尝试击杀协助者时，那次击杀无效，那名玩家将被传送到监狱一段时间。这之后协助关系解除，狱警需要重新选择一名玩家。",
-                        "船员: 普通船员。找出并放逐内鬼。",
+                        "狱警: 狱警属于船员阵营，可以选择一名玩家协助办案。\n有玩家尝试击杀协助者时，那次击杀无效，那名玩家将被传送到监狱一段时间。\n这之后协助关系解除，狱警需要重新选择一名玩家。",
+                        "船员: 普通船员。\n找出并放逐内鬼。",
                     };
                     modifierSummaryTexts = new string[] {
                         "你没有附加职业。",
@@ -3123,13 +3145,13 @@ namespace LasMonjas.Core
                         "电工: 电工为附加职业，拥有该职业的玩家被击杀时，凶手在一段时间内无法行动。",
                     };
                     gamemodeSummaryTexts = new string[] {
-                        "夺旗赛：分为红蓝两队。每队需要偷走敌方队伍大本营中的旗帜，并将其带到己方大本营中。\n所有玩家都可以使用管道或击杀。持有旗帜的玩家不可以使用管道或击杀。\n当玩家人数为奇数时，特殊职业“窃旗者”将加入游戏。窃旗者自成一队，没有胜利条件。当窃旗者击杀一名携带旗帜的玩家时，窃旗者与被击杀的玩家互换队伍。",
-                        "警察抓小偷：分为警察与小偷两队。警察队需要逮捕所有小偷，小偷队则需要躲避警察的追捕，并搜集地图上的全部珠宝。\n该游戏模式中，地图上增加一处新地点：监狱。\n一局游戏最多存在9名小偷与6名警察。\n小偷可以使用管道。持有珠宝的小偷不可以使用管道。",
-                        "山丘之王：分为绿黄两队。地图上将出现三个得分点，每队随机一名玩家成为国王。只有国王可以占点。\n国王以外的玩家都可以使用管道或击杀。\n当玩家人数为奇数时，特殊职业“篡位者”将加入游戏。篡位者自成一队，没有胜利条件。当篡位者击杀一名国王时，篡位者与被击杀玩家互换身份。",
-                        "烫手山芋：游戏开始时，随机一名玩家成为烫手山芋。烫手山芋需要在倒计时结束前把山芋丢给一名其他玩家，否则烫手山芋将自爆而亡。\n整局游戏中有且仅有一名烫手山芋。其余存活玩家为凉山芋，死亡玩家为烧糊的山芋。\n这个游戏模式也可以当作躲猫猫来玩。",
-                        "生化危机：游戏开始时，随机一名玩家成为僵尸，另一名玩家成为护士，其余玩家为幸存者。\n僵尸阵营需要感染所有玩家来获得胜利，幸存者阵营需要在地图中散落的物资箱内寻找关键物品，并将它们送到地图增加的新地点：医疗室。在医疗室中，护士可以治疗幸存者的感染，并使用逃生道具带领幸存者阵营获得胜利。\n只有僵尸可以使用管道。护士不会被僵尸感染，可以在地图上寻找急救包来治疗被感染的幸存者。",
-                        "大逃杀：所有玩家都拥有远程击杀的能力，机制与弓箭手相同（右键射击），冷却时间非常短。\n所有玩家都不可以使用管道，且拥有一定数量的生命值。当一名玩家生命值归零时，这名玩家死亡。最后一名存活玩家获得游戏的胜利。\n该模式有三种游戏方式：死斗、团队死斗或团队积分赛。\n当玩家人数为奇数且游戏方式为团队死斗或团队积分赛时，特殊职业“连环杀手”将加入游戏。连环杀手自成一队，胜利条件同样为杀害所有玩家或得到足够分数。连环杀手生命值为其他玩家的三倍，击杀冷却为其他玩家的一半。",
-                        "玩偶狂欢：分为绿青两队。每队需要搜寻地图上散布的箱子里的玩偶并把它们送回大本营。一旦运回大本营，玩偶就不能被另一队抢走。\n所有玩家都可以击杀。持有玩偶的玩家不可以击杀。所有玩家都不可以使用管道。若持有玩偶的玩家被击杀，玩偶将掉落。\n当玩家人数为奇数时，特殊职业“大偶怪”将加入游戏。大偶怪可以击杀、使用管道、隐身并且持有玩偶时也不受影响，还可以从其他玩家的大本营里偷走玩偶。",
+                        "夺旗赛：分为红蓝两队。\n每队需要偷走敌方队伍大本营中的旗帜，并将其带到己方大本营中。\n所有玩家都可以使用管道或击杀。\n持有旗帜的玩家不可以使用管道或击杀。\n当玩家人数为奇数时，特殊职业“窃旗者”将加入游戏。\n窃旗者自成一队，没有胜利条件。\n当窃旗者击杀一名携带旗帜的玩家时，窃旗者与被击杀的玩家互换队伍。",
+                        "警察抓小偷：分为警察与小偷两队。\n警察队需要逮捕所有小偷，小偷队则需要躲避警察的追捕，\n并搜集地图上的全部珠宝。\n该游戏模式中，地图上增加一处新地点：监狱。\n一局游戏最多存在9名小偷与6名警察。\n小偷可以使用管道。\n持有珠宝的小偷不可以使用管道。",
+                        "山丘之王：分为绿黄两队。\n地图上将出现三个得分点，每队随机一名玩家成为国王。\n只有国王可以占点。\n国王以外的玩家都可以使用管道或击杀。\n当玩家人数为奇数时，特殊职业“篡位者”将加入游戏。\n篡位者自成一队，没有胜利条件。\n当篡位者击杀一名国王时，篡位者与被击杀玩家互换身份。",
+                        "烫手山芋：游戏开始时，随机一名玩家成为烫手山芋。\n烫手山芋需要在倒计时结束前把山芋丢给一名其他玩家，\n否则烫手山芋将自爆而亡。\n整局游戏中有且仅有一名烫手山芋。\n其余存活玩家为凉山芋，死亡玩家为烧糊的山芋。\n这个游戏模式也可以当作躲猫猫来玩。",
+                        "生化危机：游戏开始时，随机一名玩家成为僵尸，另一名玩家成为护士，\n其余玩家为幸存者。\n僵尸阵营需要感染所有玩家来获得胜利，\n幸存者阵营需要在地图中散落的物资箱内寻找关键物品，\n并将它们送到地图增加的新地点：医疗室。\n在医疗室中，护士可以治疗幸存者的感染，\n并使用逃生道具带领幸存者阵营获得胜利。\n只有僵尸可以使用管道。\n护士不会被僵尸感染，可以在地图上寻找急救包来治疗被感染的幸存者。",
+                        "大逃杀：所有玩家都拥有远程击杀的能力，机制与弓箭手相同（右键射击），\n冷却时间非常短。\n所有玩家都不可以使用管道，且拥有一定数量的生命值。\n当一名玩家生命值归零时，这名玩家死亡。\n最后一名存活玩家获得游戏的胜利。\n该模式有三种游戏方式：死斗、团队死斗或团队积分赛。\n当玩家人数为奇数且游戏方式为团队死斗或团队积分赛时，\n特殊职业“连环杀手”将加入游戏。\n连环杀手自成一队，胜利条件同样为杀害所有玩家或得到足够分数。\n连环杀手生命值为其他玩家的三倍，击杀冷却为其他玩家的一半。",
+                        "玩偶狂欢：分为绿青两队。\n每队需要搜寻地图上散布的箱子里的玩偶并把它们送回大本营。\n一旦运回大本营，玩偶就不能被另一队抢走。\n所有玩家都可以击杀。\n持有玩偶的玩家不可以击杀。\n所有玩家都不可以使用管道。\n若持有玩偶的玩家被击杀，玩偶将掉落。\n当玩家人数为奇数时，特殊职业“大偶怪”将加入游戏。\n大偶怪可以击杀、使用管道、隐身并且持有玩偶时也不受影响，\n还可以从其他玩家的大本营里偷走玩偶。",
                     }; 
                     statusRolesTexts = new string[] {
                        "你的速度改变了",
