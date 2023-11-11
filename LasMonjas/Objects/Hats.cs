@@ -64,7 +64,6 @@ namespace LasMonjas.Objects {
             vent.EnterVentAnim = null;
             vent.ExitVentAnim = null;
             vent.Offset = new Vector3(0f, 0.25f, 0f);
-            //vent.GetComponent<PowerTools.SpriteAnim>()?.Stop();
             vent.Id = ShipStatus.Instance.AllVents.Select(x => x.Id).Max() + 1;
             var console = vent.GetComponent<Console>();
             if (console != null) {
