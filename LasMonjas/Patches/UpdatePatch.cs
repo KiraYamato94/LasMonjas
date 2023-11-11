@@ -1788,7 +1788,7 @@ namespace LasMonjas.Patches {
                 else if (Puppeteer.puppeteer != null && Puppeteer.puppeteer == p && Puppeteer.transformTarget != null && Puppeteer.transformTarget == Kid.kid && Puppeteer.morphed)
                     p.transform.localScale = new Vector3(0.45f, 0.45f, 1f);
                 // big chungus update, restore original scale on duel and painting to be more fair
-                else if (Modifiers.bigchungus != null && Modifiers.bigchungus == p && !Challenger.isDueling && !Seeker.isMinigaming && Painter.painterTimer <= 0 && !isHappeningAnonymousComms) {
+                else if (Modifiers.bigchungus != null && Modifiers.bigchungus == p && !Challenger.isDueling && !Seeker.isMinigaming && Painter.painterTimer <= 0 && !isHappeningAnonymousComms && !Helpers.MushroomSabotageActive()) {
                     if (Mimic.mimic != null && Mimic.transformTimer > 0f && Mimic.mimic.PlayerId == Modifiers.bigchungus.PlayerId) {
                         p.transform.localScale = new Vector3(0.7f, 0.7f, 1f);
                     }
@@ -1800,9 +1800,9 @@ namespace LasMonjas.Patches {
                     }
                 }
                 // Mimic and Puppeteer big chungus update
-                else if (Mimic.mimic != null && Mimic.mimic == p && Mimic.transformTarget != null && Mimic.transformTarget == Modifiers.bigchungus && Mimic.transformTimer > 0f && !isHappeningAnonymousComms)
+                else if (Mimic.mimic != null && Mimic.mimic == p && Mimic.transformTarget != null && Mimic.transformTarget == Modifiers.bigchungus && Mimic.transformTimer > 0f && !isHappeningAnonymousComms && !Helpers.MushroomSabotageActive())
                     p.transform.localScale = new Vector3(0.9f, 0.9f, 1f);
-                else if (Puppeteer.puppeteer != null && Puppeteer.puppeteer == p && Puppeteer.transformTarget != null && Puppeteer.transformTarget == Modifiers.bigchungus && Puppeteer.morphed && !isHappeningAnonymousComms)
+                else if (Puppeteer.puppeteer != null && Puppeteer.puppeteer == p && Puppeteer.transformTarget != null && Puppeteer.transformTarget == Modifiers.bigchungus && Puppeteer.morphed && !isHappeningAnonymousComms && !Helpers.MushroomSabotageActive())
                     p.transform.localScale = new Vector3(0.9f, 0.9f, 1f);
                 else
                     p.transform.localScale = new Vector3(0.7f, 0.7f, 1f);
