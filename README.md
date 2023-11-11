@@ -7,7 +7,7 @@ Las Monjas is a Spanish mod (available on English, Spanish, Chinese and Japanese
   2. [10 modifiers and 7 game mechanics](#modifiers)
   3. [1 custom map](https://youtu.be/9tDh9eYqAgk)
   4. [7 custom gamemodes](#gamemodes)
-  5. [5 new colors](#settings)
+  5. [6 new colors](#settings)
   6. [Custom Music](#settings)
   7. [Custom Lobby](#settings)
   8. [Custom Hats, Visors and Nameplates](#customcosmetics)
@@ -35,6 +35,12 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 # Changelog
 <details>
   <summary>Click to show</summary>
+
+**Version 3.5.1 (11st November 2023)**
+- Fixed Big Chungus and Kid size during mushroom sabotage on Fungle
+- Updated some role summary texts
+- Added a new seal sprite for Fungle vents
+- Added Submerged 2023.11.2 to the download
 
 **Version 3.5.0 (28th October 2023)**
 - Support for Among Us 2023.24.10 and Fungle map
@@ -455,7 +461,7 @@ I recommend to play this mod only on custom servers (for example [Impostor](http
 -----------------------
 
 # Settings
-This mod adds a custom lobby which I won't spoil to you, it also adds five colors (Lavender, Petrol, Mint, Olive and Ice), a button to zoom out / in the map if you're dead and have all tasks done, and four settings to the client option tab:
+This mod adds a custom lobby which I won't spoil to you, it also adds six colors (Lavender, Petrol, Mint, Olive, Ice and Shadow), a button to zoom out / in the map if you're dead and have all tasks done, and four settings to the client option tab:
 - **Game Summary:** Activating this option will create a list containing which role, task progress and kills the players had on game end.
 - **Activate Music:** Music pack containing 7 songs from Kevin MacLeod (1 for Lobby, 3 for Tasks and 3 for Meeting depending of how many players are alive)
 - **Ghost Can See Roles:** Only after being reported, ghosts will be able to see which role the players have.
