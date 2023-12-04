@@ -36,6 +36,13 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
 
+**Version 3.6.0 (4st December 2023)**
+- Time Traveler rework: can pick a location and teleport to it afterwards. After completing all its tasks it becomes unkillable by normal kill buttons (can still be killed by hazard traps or voted out) and gains the ability to stop the time for a few seconds.
+- Added an intro chat when the player joins the lobby, can be disabled via mod options
+- Added /myrole for Minion
+- Trying to kill Squire's shielded player triggers the Guardian Angel's animation.
+- Added Submerged 2023.11.29 to the download
+
 **Version 3.5.2 (29th November 2023)**
 - Fixed some issues with Among Us 2023.11.28
 - Fixed Chameleon's intro screen
@@ -1156,17 +1163,14 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 ## TimeTraveler
 | Team and Options  | Description |
 |----------|-------------|
-| Crewmates | Can rewind the time two times per game |
+| Crewmates | Can mark a location and teleport to it afterwards |
 | Cooldown | Ability Cooldown |
-| Shield Duration | Time shield duration time ||
-| Rewind Time | Time the game goes back in time ||
+| Stop Time Duration | Seconds the time is freezed ||
 
 **Additional Ability Notes:**
-- Rewind and Shield button shared their cooldown.
-- Rewind button can be used only 1 time per game and only if there's no sabotages at the moment.
-- Shield button can be used whenever the player wants until a successfull use of the shield.
-- Trying to kill the Time Traveler while the shield is active will trigger the rewind time.
-- His buttons enters cooldown after a Challenger's duel or Seeker's minigame.
+- Becomes unkillable by normal kill buttons after completing all its tasks (can still be killed by hazard traps or voted out) and gains the ability to stop the time for a few seconds.
+- Teleport location resets after using it or after a meeting.
+- Trying to kill it when all tasks are done triggers the guardian angel's animation.
 
 -----------------------
 
@@ -1182,6 +1186,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 - The only way to break the shield is killing or exiling the Squire.
 - Murder attempt sound will be hear by the shielded player, Squire, Sheriff, all Impostors and all Rebels.
 - He can't shield himself.
+- Trying to kill the shielded player triggers the guardian angel's animation for the killer.
 
 -----------------------
 
