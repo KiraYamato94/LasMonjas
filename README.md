@@ -36,6 +36,11 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
 
+**Version 3.5.2 (29th November 2023)**
+- Fixed some issues with Among Us 2023.11.28
+- Fixed Chameleon's intro screen
+- Manipulated player's kill timer doesn't decrease if the player can't move
+
 **Version 3.5.1 (11st November 2023)**
 - Fixed Big Chungus and Kid size during mushroom sabotage on Fungle
 - Updated some role summary texts
