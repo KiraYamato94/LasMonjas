@@ -36,7 +36,7 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
 
-**Version 3.6.0 (4st December 2023)**
+**Version 3.6.0 (4th December 2023)**
 - Time Traveler rework: can pick a location and teleport to it afterwards. After completing all its tasks it becomes unkillable by normal kill buttons (can still be killed by hazard traps or voted out) and gains the ability to stop the time for a few seconds.
 - Added an intro chat when the player joins the lobby, can be disabled via mod options
 - Added /myrole for Minion
