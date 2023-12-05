@@ -36,6 +36,13 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
 
+**Version 3.6.1 (5th December 2023)**
+- Fixed some language issues.
+- Fixed an issue with Time Traveler on submerged elevators.
+- Gambler: removed shoot limit but can only shot 1 time per meeting.
+- Hypnotist: traps become visible and active after a few seconds, they last until next meeting and can be placed again after each meeting.
+- Plumbler: removed extra vents limit, they become active and visible after a few seconds.
+
 **Version 3.6.0 (4th December 2023)**
 - Time Traveler rework: can pick a location and teleport to it afterwards. After completing all its tasks it becomes unkillable by normal kill buttons (can still be killed by hazard traps or voted out) and gains the ability to stop the time for a few seconds.
 - Added an intro chat when the player joins the lobby, can be disabled via mod options
@@ -649,9 +656,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 | Team and Options  | Description |
 |----------|-------------|
 | Impostors | Can Shoot a player choosing their role during the meeting |
-| Shoot Number | Time he can shoot per game | 
-| Can use emergency button | His ability depends on calling meetings, define if he can or not use the button | 
-| Can Shoot multiple times | He's able or not to shoot multiple times on the same meeting | 
+| Can use emergency button | His ability depends on calling meetings, define if he can or not use the button |
 | Ignore shields | If set to true, shoots will ignore the Squire shield | 
 
 **Additional Ability Notes:**
@@ -700,13 +705,14 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 |----------|-------------|
 | Impostors | Can place invert movement control traps |
 | Cooldown | Ability Cooldown |
-| Spiral Number | Maximum Spirals per game |
+| Spiral Number | Maximum Spirals per meeting |
 | Effect Duration | Invert Duration |
 
 **Additional Ability Notes:**
-- Traps became active after a meeting and don't affect Hypnotist or other impostors.
+- Traps became active and visible after a few seconds and they disappear when a meeting is called.
 - Stepping on a trap triggers a sound and a custom message will tell the player that he's hypnotized.
 - While Hypnotized, player's camera turns upside down.
+- Traps can be placed again after a meeting and don't affect Impostor team.
 
 -----------------------
 
@@ -732,10 +738,9 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 |----------|-------------|
 | Impostors | Can create new vents |
 | Cooldown | Ability Cooldown |
-| Number of Vents | Maxumum Vents per game |
 
 **Additional Ability Notes:**
-- The new vents become available to any role who can vent after placing the maximum vent's number and calling a meeting, they can also be sealed.
+- The new vents become active and visible after a few seconds and any role who can vent can use them, they can also be sealed.
 
 -----------------------
 
