@@ -36,6 +36,11 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
 
+**Version 3.6.2 (7th December 2023)**
+- Mechanic: decreased maximum stackable repairs to 2 and added rechargeable uses by doing tasks.
+- Fortune Teller: decreased maximum stackable reveals to 2, starts only with 1 reveal and added rechargeable uses by doing tasks.
+- Coward: decreased maximum remote meetings to 2 and added rechargeable uses by doing tasks.
+
 **Version 3.6.1 (5th December 2023)**
 - Fixed some language issues.
 - Fixed an issue with Time Traveler on submerged elevators.
@@ -1107,11 +1112,12 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 |----------|-------------|
 | Crewmates | Can fix sabotages from anywhere |
 | Repairs Number | Number of sabotages he can repair |
+| Tasks for recharge batteries | Tasks needed to recharge 1 battery |
 | Expert Repairs | Define if the ability is active |
 
 **Additional Ability Notes:**
 - He can fix Bomberman's Bomb, but he can't fix Illusionist's Blackout.
-- Remaining uses will be displayed above the repair button.
+- Uses will be displayed above the repair button.
 - Expert repairs makes the Mechanic able to fix duo sabotages by himself.
 
 -----------------------
@@ -1215,6 +1221,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 | Cooldown | Ability Cooldown |  
 | Reveal Time | Time needed near the player to reveal it |  
 | Reveal Number | Times he can reveal players |  
+| Tasks for recharge batteries | Tasks needed to recharge 1 battery |
 | Revealed Information | Reveals if the player is good or bad, or their role name |  
 | Show Notification to | Select who recieves the notification, impostors, crewmates, all or nobody |  
 | Can use emergency button | Define if he can make emergency meetings |  
@@ -1365,6 +1372,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 |----------|-------------|
 | Crewmates | Can call meeting from anywhere |
 | Number of Meetings | How many times can call meetings |
+| Tasks for recharge batteries | Tasks needed to recharge 1 battery |
 
 **Additional Ability Notes:**
 - He can't call meetings is a sabotage is happening
