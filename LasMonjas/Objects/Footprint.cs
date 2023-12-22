@@ -68,9 +68,9 @@ namespace LasMonjas.Objects
                     c = Palette.ShadowColors[Mimic.transformTarget.Data.DefaultOutfit.ColorId];
                 else if (owner == Puppeteer.puppeteer && Puppeteer.morphed && Puppeteer.transformTarget?.Data != null)
                     c = Palette.ShadowColors[Puppeteer.transformTarget.Data.DefaultOutfit.ColorId];
-                else if (Painter.painterTimer > 0)
+                else if (Painter.painterTimer > 0 || Helpers.MushroomSabotageActive())
                     c = Palette.PlayerColors[Detective.footprintcolor];
-                else if (Challenger.isDueling || Seeker.isMinigaming)
+                else if (Challenger.isDueling || Seeker.isMinigaming || Helpers.MushroomSabotageActive())
                     c = Palette.PlayerColors[6];
             }
 
