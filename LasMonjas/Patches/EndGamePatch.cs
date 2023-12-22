@@ -141,7 +141,7 @@ namespace LasMonjas.Patches {
                 var (tasksCompleted, tasksTotal) = TasksHandler.taskInfo(playerControl.Data);
                 int? killCount = GameHistory.deadPlayers.FindAll(x => x.killerIfExisting != null && x.killerIfExisting.PlayerId == playerControl.PlayerId).Count;
 
-                if (gameType >= 2 || killCount == 0 && !(new List<RoleInfo>() { RoleInfo.devourer, RoleInfo.sheriff, RoleInfo.welder, RoleInfo.renegade, RoleInfo.minion, RoleInfo.bountyHunter, RoleInfo.trapper, RoleInfo.yinyanger, RoleInfo.challenger, RoleInfo.ninja, RoleInfo.berserker, RoleInfo.yandere, RoleInfo.stranded, RoleInfo.monja }.Contains(RoleInfo.getRoleInfoForPlayer(playerControl).FirstOrDefault()) || playerControl.Data.Role.IsImpostor)) {
+                if (gameType >= 2 || killCount == 0 && !(new List<RoleInfo>() { RoleInfo.devourer, RoleInfo.sheriff, RoleInfo.welder, RoleInfo.taskMaster, RoleInfo.renegade, RoleInfo.minion, RoleInfo.bountyHunter, RoleInfo.trapper, RoleInfo.yinyanger, RoleInfo.challenger, RoleInfo.ninja, RoleInfo.berserker, RoleInfo.yandere, RoleInfo.stranded, RoleInfo.monja }.Contains(RoleInfo.getRoleInfoForPlayer(playerControl).FirstOrDefault()) || playerControl.Data.Role.IsImpostor)) {
                     killCount = null;
                 }
 

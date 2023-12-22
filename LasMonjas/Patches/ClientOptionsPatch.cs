@@ -19,6 +19,7 @@ namespace LasMonjas.Patches
             new SelectionBehaviour(Language.clientOptionNames[2], () => MapOptions.ghostsSeeRoles = LasMonjasPlugin.GhostsSeeRoles.Value = !LasMonjasPlugin.GhostsSeeRoles.Value, LasMonjasPlugin.GhostsSeeRoles.Value),
             //new SelectionBehaviour("Horse Mode", () => MapOptions.horseMode = LasMonjasPlugin.HorseMode.Value = !LasMonjasPlugin.HorseMode.Value, LasMonjasPlugin.HorseMode.Value),
             new SelectionBehaviour(Language.clientOptionNames[3], () => MapOptions.monjaCursor = LasMonjasPlugin.MonjaCursor.Value = !LasMonjasPlugin.MonjaCursor.Value, LasMonjasPlugin.MonjaCursor.Value),
+            new SelectionBehaviour(Language.clientOptionNames[4], () => MapOptions.showChatIntro = LasMonjasPlugin.ShowChatIntro.Value = !LasMonjasPlugin.ShowChatIntro.Value, LasMonjasPlugin.ShowChatIntro.Value),
         };
 
         private static GameObject popUp;
@@ -101,7 +102,7 @@ namespace LasMonjas.Patches
             moreOptions.transform.localScale = new Vector3(0.66f, 1, 1);
 
             moreOptions.gameObject.SetActive(true);
-            moreOptions.Text.text = "<color=#CC00FFFF>Las Monjas " + Language.clientOptionNames[4] +"</color>";
+            moreOptions.Text.text = "<color=#CC00FFFF>Las Monjas " + Language.clientOptionNames[5] +"</color>";
             moreOptions.Text.transform.localScale = new Vector3(1 / 0.66f, 1, 1);
             var moreOptionsButton = moreOptions.GetComponent<PassiveButton>();
             moreOptionsButton.OnClick = new ButtonClickedEvent();
@@ -139,7 +140,7 @@ namespace LasMonjas.Patches
             var title = Object.Instantiate(titleText, popUp.transform);
             title.GetComponent<RectTransform>().localPosition = Vector3.up * 2.3f;
             title.gameObject.SetActive(true);
-            title.text = "Las Monjas " + Language.clientOptionNames[4];
+            title.text = "Las Monjas " + Language.clientOptionNames[5];
             title.name = "TitleText";
         }
 

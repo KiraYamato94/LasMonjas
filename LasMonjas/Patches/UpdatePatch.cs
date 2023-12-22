@@ -839,7 +839,10 @@ namespace LasMonjas.Patches {
                     }
                     if (Manipulator.manipulatedVictim != null && !MeetingHud.Instance && !Seeker.isMinigaming && !Challenger.isDueling && Manipulator.manipulatedVictim.CanMove) {
                         Manipulator.manipulatedVictimTimer -= deltaTime;
-                        Manipulator.manipulatedVictimTimerCountButtonText.text = $"{Manipulator.manipulatedVictimTimer.ToString("F0")}";                        
+                        Manipulator.manipulatedVictimTimerCountButtonText.text = $"{Manipulator.manipulatedVictimTimer.ToString("F0")}";
+                        if (Manipulator.manipulatedVictimTimer <= 0) {
+                            Manipulator.manipulatedVictim.MurderPlayer(Manipulator.manipulatedVictim, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
+                        }
                     }
                     if (Bomberman.bomberman != null) {
                         Bomberman.bombTimer -= deltaTime;
@@ -869,6 +872,13 @@ namespace LasMonjas.Patches {
                     }
                     if (Fink.fink != null) {
                         Fink.finkTimer -= deltaTime;
+                    }
+                    if (Spiritualist.revivedPlayer != null && !MeetingHud.Instance && !Seeker.isMinigaming && !Challenger.isDueling && Spiritualist.revivedPlayer.CanMove) {
+                        Spiritualist.revivedPlayerTimer -= deltaTime;
+                        Spiritualist.revivedPlayerTimerCountButtonText.text = $"{Spiritualist.revivedPlayerKiller.name + " : " + Spiritualist.revivedPlayerTimer.ToString("F0")}";
+                        if (Spiritualist.revivedPlayerTimer <= 0) {
+                            RPCProcedure.murderSpiritualistRevivedPlayer();
+                        }
                     }
                     if (Bat.bat != null) {
                         Bat.frequencyTimer -= deltaTime;
@@ -1425,9 +1435,6 @@ namespace LasMonjas.Patches {
                         if (player.cosmetics.currentPet) player.cosmetics.currentPet.gameObject.SetActive(true);
                     }
 
-                    timeTravelerRewindTimeButton.Timer = timeTravelerRewindTimeButton.MaxTimer;
-                    timeTravelerShieldButton.Timer = timeTravelerShieldButton.MaxTimer;
-
                     Challenger.challengerDuelButtonText.text = $"{Challenger.duelKills} / {Challenger.neededKills}";
                     if (Challenger.duelKills >= Challenger.neededKills) {
                         Challenger.triggerChallengerWin = true;
@@ -1707,8 +1714,6 @@ namespace LasMonjas.Patches {
                         if (player.cosmetics.currentPet) player.cosmetics.currentPet.gameObject.SetActive(true);
                     }
 
-                    timeTravelerRewindTimeButton.Timer = timeTravelerRewindTimeButton.MaxTimer;
-                    timeTravelerShieldButton.Timer = timeTravelerShieldButton.MaxTimer;
                     seekerMinigameButton.Timer = 15f;
 
                     switch (Seeker.seekerSelectedHiding) {
@@ -1806,26 +1811,6 @@ namespace LasMonjas.Patches {
                     p.transform.localScale = new Vector3(0.9f, 0.9f, 1f);
                 else
                     p.transform.localScale = new Vector3(0.7f, 0.7f, 1f);
-            }
-        }      
-        static void spiritualistUpdate() {
-
-            if (PlayerInCache.LocalPlayer.PlayerControl == Spiritualist.spiritualist && Spiritualist.spiritualist != null) {
-                foreach (var player in PlayerInCache.AllPlayers) {
-                    if (player.Data.IsDead) {
-                        player.PlayerControl.cosmetics.currentBodySprite.BodySprite.gameObject.SetActive(true);
-                        player.PlayerControl.cosmetics.currentBodySprite.BodySprite.enabled = true;
-                        player.PlayerControl.cosmetics.nameText.enabled = true;
-                        player.PlayerControl.cosmetics.nameText.gameObject.SetActive(true);
-                    }
-                }
-            }
-
-            // Identify Spiritualist by name color if you're dead
-            foreach (PlayerControl p in PlayerInCache.AllPlayers) {
-                if (Spiritualist.spiritualist != null && !Spiritualist.spiritualist.Data.IsDead && p == PlayerInCache.LocalPlayer.PlayerControl && p.Data.IsDead) {
-                    Spiritualist.spiritualist.cosmetics.nameText.color = Spiritualist.color;
-                }
             }
         }
         static void vigilantMiraUpdate() {
@@ -3476,9 +3461,6 @@ namespace LasMonjas.Patches {
 
             // Kid
             kidUpdate();
-
-            // Spiritualist update
-            spiritualistUpdate();
 
             // VigilantMira update
             vigilantMiraUpdate();

@@ -306,7 +306,7 @@ namespace LasMonjas.Patches {
                         }
                         else {
                             PlayerControl target = Helpers.playerById((byte)__instance.playerStates[buttonTarget].TargetPlayerId);
-                            if (!(__instance.state == MeetingHud.VoteStates.Voted || __instance.state == MeetingHud.VoteStates.NotVoted) || target == null || Gambler.numberOfShots <= 0) return;
+                            if (!(__instance.state == MeetingHud.VoteStates.Voted || __instance.state == MeetingHud.VoteStates.NotVoted) || target == null) return;
 
                             if (!Gambler.canKillThroughShield && target == Squire.shielded) { // If can't bypass shields, notifiy everyone about the kill attempt and close the window without lossing a shoot opportunity
                                 __instance.playerStates.ToList().ForEach(x => x.gameObject.SetActive(true));
@@ -327,11 +327,7 @@ namespace LasMonjas.Patches {
                             // Reset the GUI
                             __instance.playerStates.ToList().ForEach(x => x.gameObject.SetActive(true));
                             UnityEngine.Object.Destroy(container.gameObject);
-                            if (Gambler.canShootMultipleTimes && Gambler.numberOfShots > 1 && target != PlayerInCache.LocalPlayer.PlayerControl)
-                                __instance.playerStates.ToList().ForEach(x => { if (x.TargetPlayerId == target.PlayerId && x.transform.FindChild("ShootButton") != null) UnityEngine.Object.Destroy(x.transform.FindChild("ShootButton").gameObject); });
-                            else
-                                __instance.playerStates.ToList().ForEach(x => { if (x.transform.FindChild("ShootButton") != null) UnityEngine.Object.Destroy(x.transform.FindChild("ShootButton").gameObject); });
-
+                            __instance.playerStates.ToList().ForEach(x => { if (x.transform.FindChild("ShootButton") != null) UnityEngine.Object.Destroy(x.transform.FindChild("ShootButton").gameObject); });
 
                             // Shoot player and send chat info if activated
                             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.GamblerShoot, Hazel.SendOption.Reliable, -1);
@@ -428,7 +424,7 @@ namespace LasMonjas.Patches {
             }
 
             // Add Gambler Buttons
-            if (Gambler.gambler != null && PlayerInCache.LocalPlayer.PlayerControl == Gambler.gambler && !Gambler.gambler.Data.IsDead && Gambler.numberOfShots > 0) {
+            if (Gambler.gambler != null && PlayerInCache.LocalPlayer.PlayerControl == Gambler.gambler && !Gambler.gambler.Data.IsDead) {
                 for (int i = 0; i < __instance.playerStates.Length; i++) {
                     PlayerVoteArea playerVoteArea = __instance.playerStates[i];
                     if (playerVoteArea.AmDead || playerVoteArea.TargetPlayerId == PlayerInCache.LocalPlayer.PlayerControl.PlayerId) continue;

@@ -17,7 +17,7 @@ namespace LasMonjas.Patches
     public static class VentCanUsePatch
     {
         public static bool Prefix(bool __runOriginal, Vent __instance, ref float __result, [HarmonyArgument(0)] GameData.PlayerInfo pc, [HarmonyArgument(1)] ref bool canUse, [HarmonyArgument(2)] ref bool couldUse) {
-            if (GameOptionsManager.Instance.currentGameMode == GameModes.HideNSeek) { 
+            if (GameOptionsManager.Instance.currentGameMode == GameModes.HideNSeek) {
                 __runOriginal = true;
                 return __runOriginal;
             }
@@ -182,7 +182,7 @@ namespace LasMonjas.Patches
 
                 if (!__instance.EnterVentAnim) {
                     return false;
-                }               
+                }
 
                 var truePosition = PlayerInCache.LocalPlayer.PlayerControl.GetTruePosition();
 
@@ -207,7 +207,7 @@ namespace LasMonjas.Patches
                 }
 
                 if (Welder.bombedVent != null && __instance.Id == Welder.bombedVent.Id && !Welder.welder.Data.IsDead) {
-                    if (Welder.bombedVent == __instance) {                        
+                    if (Welder.bombedVent == __instance) {
                         RPCProcedure.uncheckedMurderPlayer(Welder.welder.PlayerId, pc.PlayerId, 0);
                     }
                     return false;
@@ -249,7 +249,7 @@ namespace LasMonjas.Patches
                 }
 
                 if (Welder.bombedVent != null && __instance.Id == Welder.bombedVent.Id && !Welder.welder.Data.IsDead) {
-                    if (Welder.bombedVent == __instance) {                       
+                    if (Welder.bombedVent == __instance) {
                         RPCProcedure.uncheckedMurderPlayer(Welder.welder.PlayerId, pc.PlayerId, 0);
                     }
                     return false;
@@ -381,7 +381,7 @@ namespace LasMonjas.Patches
         static bool Prefix(ReportButton __instance) {
 
             // Block report button if dueling or gamemodes)
-            bool blockReport = Challenger.isDueling || Spiritualist.preventReport || gameType >= 2 || Monja.awakened || Seeker.isMinigaming;
+            bool blockReport = Challenger.isDueling || gameType >= 2 || Monja.awakened || Seeker.isMinigaming;
             if (blockReport) return false;
 
             return true;
@@ -448,11 +448,17 @@ namespace LasMonjas.Patches
                 roleCanCallEmergency = false;
                 statusText = Language.usablesTexts[7];
             }
-            
+
             // Deactivate emergency button for Devourer
             if (Devourer.devourer != null && Devourer.devourer == PlayerInCache.LocalPlayer.PlayerControl) {
                 roleCanCallEmergency = false;
                 statusText = Language.usablesTexts[9];
+            }
+
+            // Deactivate emergency button for Spiritualist revived player
+            if (Spiritualist.revivedPlayer != null && Spiritualist.revivedPlayer == PlayerInCache.LocalPlayer.PlayerControl) {
+                roleCanCallEmergency = false;
+                statusText = Language.usablesTexts[0];
             }
 
             if (!roleCanCallEmergency) {
@@ -485,7 +491,7 @@ namespace LasMonjas.Patches
 
             if (gameType >= 2 && !HotPotato.hotPotato) {
                 HudManager.Instance.AbilityButton.Hide();
-            }           
+            }
         }
     }
 
@@ -615,7 +621,7 @@ namespace LasMonjas.Patches
                         PlainShipRoom plainShipRoom = ShipStatus.Instance.FastRooms[counterArea.RoomType];
 
                         if (plainShipRoom != null && plainShipRoom.roomArea) {
-                            HashSet<int> hashSet = new HashSet<int>(); 
+                            HashSet<int> hashSet = new HashSet<int>();
                             int num = plainShipRoom.roomArea.OverlapCollider(__instance.filter, __instance.buffer);
                             int num2 = 0;
                             for (int j = 0; j < num; j++) {
@@ -701,12 +707,14 @@ namespace LasMonjas.Patches
     }
 
     [HarmonyPatch]
-    class SurveillanceMinigamePatch {
+    class SurveillanceMinigamePatch
+    {
         private static int page = 0;
         private static float timer = 0f;
 
         [HarmonyPatch(typeof(SurveillanceMinigame), nameof(SurveillanceMinigame.Begin))]
-        class SurveillanceMinigameBeginPatch {
+        class SurveillanceMinigameBeginPatch
+        {
             public static void Postfix(SurveillanceMinigame __instance) {
 
                 if (nightVision) {
@@ -747,7 +755,8 @@ namespace LasMonjas.Patches
         }
 
         [HarmonyPatch(typeof(SurveillanceMinigame), nameof(SurveillanceMinigame.Update))]
-        class SurveillanceMinigameUpdatePatch {
+        class SurveillanceMinigameUpdatePatch
+        {
 
             public static bool Prefix(SurveillanceMinigame __instance) {
 
@@ -834,7 +843,8 @@ namespace LasMonjas.Patches
         }
 
         [HarmonyPatch(typeof(SurveillanceMinigame), nameof(SurveillanceMinigame.Close))]
-        class SurveillanceMinigameClosePatch {
+        class SurveillanceMinigameClosePatch
+        {
 
             public static bool Prefix(SurveillanceMinigame __instance) {
 
@@ -854,7 +864,8 @@ namespace LasMonjas.Patches
         }
 
         [HarmonyPatch(typeof(SurveillanceMinigame), nameof(SurveillanceMinigame.OnDestroy))]
-        class SurveillanceMinigameOnDestroyPatch {
+        class SurveillanceMinigameOnDestroyPatch
+        {
 
             public static bool Prefix(SurveillanceMinigame __instance) {
 
@@ -874,7 +885,8 @@ namespace LasMonjas.Patches
         }
 
         [HarmonyPatch(typeof(PlanetSurveillanceMinigame), nameof(PlanetSurveillanceMinigame.Begin))]
-        class PlanetSurveillanceMinigameBeginPatch {
+        class PlanetSurveillanceMinigameBeginPatch
+        {
             public static void Postfix(PlanetSurveillanceMinigame __instance) {
 
                 if (nightVision) {
@@ -898,7 +910,8 @@ namespace LasMonjas.Patches
         }
 
         [HarmonyPatch(typeof(PlanetSurveillanceMinigame), nameof(PlanetSurveillanceMinigame.Update))]
-        class PlanetSurveillanceMinigameUpdatePatch {
+        class PlanetSurveillanceMinigameUpdatePatch
+        {
 
             public static bool Prefix(PlanetSurveillanceMinigame __instance) {
 
@@ -939,7 +952,8 @@ namespace LasMonjas.Patches
         }
 
         [HarmonyPatch(typeof(PlanetSurveillanceMinigame), nameof(PlanetSurveillanceMinigame.Close))]
-        class PlanetSurveillanceMinigameClosePatch {
+        class PlanetSurveillanceMinigameClosePatch
+        {
 
             public static bool Prefix(PlanetSurveillanceMinigame __instance) {
 
@@ -959,7 +973,8 @@ namespace LasMonjas.Patches
         }
 
         [HarmonyPatch(typeof(PlanetSurveillanceMinigame), nameof(PlanetSurveillanceMinigame.OnDestroy))]
-        class PlanetSurveillanceMinigameOnDestroyPatch {
+        class PlanetSurveillanceMinigameOnDestroyPatch
+        {
 
             public static bool Prefix(PlanetSurveillanceMinigame __instance) {
 
@@ -976,6 +991,32 @@ namespace LasMonjas.Patches
                 return true;
             }
 
+        }
+
+        // This class is partially taken from The Other Roles to fix outfits on ziplines https://github.com/TheOtherRolesAU/TheOtherRoles/blob/main/TheOtherRoles/Patches/TransportationToolPatches.cs Licensed under GPLv3
+        [HarmonyPostfix]
+        [HarmonyPatch(typeof(ZiplineBehaviour), nameof(ZiplineBehaviour.Use), new Type[] { typeof(PlayerControl), typeof(bool) })]
+        public static void postfix(ZiplineBehaviour __instance, PlayerControl player, bool fromTop) {
+            __instance.StartCoroutine(Effects.Lerp(fromTop ? __instance.downTravelTime : __instance.upTravelTime, new System.Action<float>((p) => {
+                HandZiplinePoolable hand;
+                __instance.playerIdHands.TryGetValue(player.PlayerId, out hand);
+                if (hand != null) {
+                    if (Painter.painterTimer <= 0 && !Helpers.MushroomSabotageActive()) {
+                        if (player == Mimic.mimic && Mimic.transformTimer > 0) {
+                            hand.SetPlayerColor(Mimic.transformTarget.CurrentOutfit, PlayerMaterial.MaskType.None);
+                        }
+                        else if (player == Puppeteer.puppeteer && Puppeteer.morphed) {
+                            hand.SetPlayerColor(Puppeteer.transformTarget.CurrentOutfit, PlayerMaterial.MaskType.None);
+                        }
+                        else {
+                            hand.SetPlayerColor(player.CurrentOutfit, PlayerMaterial.MaskType.None);
+                        }
+                    }
+                    else {
+                        PlayerMaterial.SetColors(6, hand.handRenderer);
+                    }
+                }
+            })));
         }
     }
 }

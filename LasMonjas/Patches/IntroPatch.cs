@@ -426,7 +426,7 @@ namespace LasMonjas.Patches
                 }
                 
                 // Submerged remove Chameleon special vent
-                if (Chameleon.chameleon != null && PlayerInCache.LocalPlayer.PlayerControl == Chameleon.chameleon && GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
+                if (Chameleon.chameleon != null && PlayerInCache.LocalPlayer.PlayerControl == Chameleon.chameleon && GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                     GameObject vent = GameObject.Find("LowerCentralVent");
                     vent.GetComponent<BoxCollider2D>().enabled = false;
                 }
@@ -487,6 +487,30 @@ namespace LasMonjas.Patches
                             Hypnotist.objectsCantPlaceTraps.Add(submergedMedScanner);
                             break;
                     }
+                }
+
+                // Make elevator list for Time Traveler
+                if ((TimeTraveler.timeTraveler != null || Plumber.plumber != null) && GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+                    GameObject westLeftElevatorLower = GameObject.Find("Submerged(Clone)/Elevators/WestLeftElevator/LowerElevator");
+                    GameObject westLeftElevatorUpper = GameObject.Find("Submerged(Clone)/Elevators/WestLeftElevator/UpperElevator");
+                    GameObject westRightElevatorLower = GameObject.Find("Submerged(Clone)/Elevators/WestRightElevator/LowerElevator");
+                    GameObject westRightElevatorUpper = GameObject.Find("Submerged(Clone)/Elevators/WestRightElevator/UpperElevator");
+                    GameObject eastLeftElevatorLower = GameObject.Find("Submerged(Clone)/Elevators/EastLeftElevator/LowerElevator");
+                    GameObject eastLeftElevatorUpper = GameObject.Find("Submerged(Clone)/Elevators/EastLeftElevator/UpperElevator");
+                    GameObject eastRightElevatorLower = GameObject.Find("Submerged(Clone)/Elevators/EastRightElevator/LowerElevator");
+                    GameObject eastRightElevatorUpper = GameObject.Find("Submerged(Clone)/Elevators/EastRightElevator/UpperElevator");
+                    GameObject serviceElevatorLower = GameObject.Find("Submerged(Clone)/Elevators/ServiceElevator/LowerElevator");
+                    GameObject serviceElevatorUpper = GameObject.Find("Submerged(Clone)/Elevators/ServiceElevator/UpperElevator");
+                    TimeTraveler.objectsCantPlaceTeleport.Add(westLeftElevatorLower);
+                    TimeTraveler.objectsCantPlaceTeleport.Add(westLeftElevatorUpper);
+                    TimeTraveler.objectsCantPlaceTeleport.Add(westRightElevatorLower);
+                    TimeTraveler.objectsCantPlaceTeleport.Add(westRightElevatorUpper);
+                    TimeTraveler.objectsCantPlaceTeleport.Add(eastLeftElevatorLower);
+                    TimeTraveler.objectsCantPlaceTeleport.Add(eastLeftElevatorUpper);
+                    TimeTraveler.objectsCantPlaceTeleport.Add(eastRightElevatorLower);
+                    TimeTraveler.objectsCantPlaceTeleport.Add(eastRightElevatorUpper);
+                    TimeTraveler.objectsCantPlaceTeleport.Add(serviceElevatorLower);
+                    TimeTraveler.objectsCantPlaceTeleport.Add(serviceElevatorUpper);
                 }
 
                 // Remove the swipe card task

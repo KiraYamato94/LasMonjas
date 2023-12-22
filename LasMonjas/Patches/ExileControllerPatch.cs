@@ -24,7 +24,7 @@ namespace LasMonjas.Patches {
 
                 if ((sorcererDiesWithExiledLover || exiledIsSorcerer)) Sorcerer.spelledPlayers = new List<PlayerControl>();
                 foreach (PlayerControl target in Sorcerer.spelledPlayers) {
-                    if (target != null && !target.Data.IsDead && Helpers.checkMurderAttempt(Sorcerer.sorcerer, target, true) == MurderAttemptResult.PerformKill)
+                    if (target != null && !target.Data.IsDead && Helpers.checkMurderAttempt(Sorcerer.sorcerer, target) == MurderAttemptResult.PerformKill)
                     {
                         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.UncheckedExilePlayer, Hazel.SendOption.Reliable, -1);
                         writer.Write(target.PlayerId);
@@ -35,41 +35,16 @@ namespace LasMonjas.Patches {
             }
             Sorcerer.spelledPlayers = new List<PlayerControl>();
 
-            // Hypnotist Spirals activate after meeting
+            // Hypnotist Spirals remove after meeting and reset counter
             if (Hypnotist.hypnotist != null && HypnotistSpiral.hypnotistSpirals.Count != 0) {
-                HypnotistSpiral.activateSpirals();
-            }
-
-            // Plumber make vents
-            if (Plumber.currentVents == Plumber.maxVents && !Plumber.madeVents) {
-                var ventId = ShipStatus.Instance.AllVents.Select(x => x.Id).Max() + 1;
-                var allVents = ShipStatus.Instance.AllVents.ToList();
-                for (var i = 0; i < Plumber.Vents.Count - 1; i++) {
-                    var a = Plumber.Vents[i];
-                    var b = Plumber.Vents[i + 1];
-                    a.Right = b;
-                    b.Left = a;
+                foreach (HypnotistSpiral spiral in HypnotistSpiral.hypnotistSpirals) {
+                    spiral.hypnotistSpiral.transform.position = new Vector3(-1000, 500, 0);
+                    spiral.hypnotistSpiral.SetActive(false);
                 }
-                foreach (Vent vent in Plumber.Vents) {
-                    vent.Center = null;
-                    vent.Id = ventId;
-                    vent.gameObject.GetComponent<BoxCollider2D>().enabled = true;
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId != 5) {
-                        vent.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
-                    } else {
-                        vent.transform.GetChild(3).GetComponent<SpriteRenderer>().color = Color.white;
-                    }
-                    allVents.Add(vent);
-                    ventId += 1;
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
-                        vent.gameObject.GetComponent<CircleCollider2D>().enabled = true;
-                    }
-                }
-                ShipStatus.Instance.AllVents = allVents.ToArray();
-                Plumber.Vents.First().Left = Plumber.Vents.Last();
-                Plumber.Vents.Last().Right = Plumber.Vents.First();
-                Plumber.madeVents = true;
-            }
+                HypnotistSpiral.hypnotistSpirals.Clear();
+                Hypnotist.currentSpiralNumber = 0;
+                Hypnotist.trapsCounterButtonText.text = $"{Hypnotist.currentSpiralNumber} / {Hypnotist.numberOfSpirals}";
+            }            
 
             // Welder vents seal after meeting
             foreach (Vent vent in MapOptions.ventsToSeal) {
