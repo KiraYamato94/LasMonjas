@@ -28,7 +28,7 @@ namespace LasMonjas.Core {
                     switch (whichmessage) {
                         case 1:
                             // Illusionist light out ability timer for other impostors
-                            while (Illusionist.lightsOutDuration > 0) {
+                            while (Illusionist.lightsOutTimer > 0) {
                                 string prefix = (even ? "<color=#FCBA03FF>" : "<color=#FF0000FF>");
                                 text.text = prefix + message + Illusionist.lightsOutTimer.ToString("F0") + "</color>";
                                 return;

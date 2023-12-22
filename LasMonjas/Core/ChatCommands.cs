@@ -247,6 +247,12 @@ namespace LasMonjas.Core
                                 case "古神":
                                     infoText = Language.rebelSummaryTexts[9];
                                     break;
+                                case "minion":
+                                case "subdito":
+                                case "ミニオン":
+                                case "爪牙":
+                                    infoText = Language.rebelSummaryTexts[10];
+                                    break;
 
                                 // Neutral roles
                                 case "joker":
@@ -739,6 +745,12 @@ namespace LasMonjas.Core
                                     case "もんじゃ":
                                     case "古神":
                                         infoText = Language.rebelSummaryTexts[9];
+                                        break;
+                                    case "minion":
+                                    case "subdito":
+                                    case "ミニオン":
+                                    case "爪牙":
+                                        infoText = Language.rebelSummaryTexts[10];
                                         break;
 
                                     // Neutral roles

@@ -463,9 +463,20 @@ namespace LasMonjas.Core
     [HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.CoSpawnPlayer))]
     public class AmongUsClientOnPlayerJoinedPatch
     {
-        public static void Postfix() {
+        public static void Postfix(PlayerPhysics __instance) {
             if (PlayerControl.LocalPlayer != null && AmongUsClient.Instance.AmHost) {
                 CustomOption.ShareOptionSelections();
+            }
+
+            if (__instance.myPlayer == PlayerInCache.LocalPlayer.PlayerControl && MapOptions.showChatIntro) {
+                ChatController chat = HudManager.Instance.Chat;
+                chat.AddChat(PlayerInCache.LocalPlayer.PlayerControl, "Welcome to <color=#CC00FFFF>Las Monjas</color>! Thanks for playing!\n\n" +
+                    "On Lobby:\n" +
+                    "Type <color=#4F7D00FF>/language</color> plus <color=#4F7D00FF>english</color>, <color=#4F7D00FF>spanish</color>, <color=#4F7D00FF>japanese</color> or <color=#4F7D00FF>chinese</color> to change the mod's language.\n" +
+                    "Type <color=#4E61FFFF>/help</color> plus a <color=#4E61FFFF>role name</color> to get its summary.\n\n" +
+                    "On Meetings:\n" +
+                    "Type <color=#00BDFFFF>/myrole</color> to get your role's summary.\n" +
+                    "Type <color=#F08048FF>/mymodifier</color> to get your modifier's summary");
             }
         }
     }
@@ -560,11 +571,11 @@ namespace LasMonjas.Core
             int detailedSettingsP1 = roleSettingsLines + 25;
             int detailedSettingsP2 = detailedSettingsP1 + 26;
             int detailedSettingsP3 = detailedSettingsP2 + 24;
-            int detailedSettingsP4 = detailedSettingsP3 + 45;
+            int detailedSettingsP4 = detailedSettingsP3 + 42;
             int detailedSettingsP5 = detailedSettingsP4 + 40;
             int detailedSettingsP6 = detailedSettingsP5 + 26;
-            int detailedSettingsP7 = detailedSettingsP6 + 33;
-            int detailedSettingsP8 = detailedSettingsP7 + 23;
+            int detailedSettingsP7 = detailedSettingsP6 + 34;
+            int detailedSettingsP8 = detailedSettingsP7 + 24;
             int end1 = hudString.TakeWhile(c => (defaultSettingsLines -= (c == '\n' ? 1 : 0)) > 0).Count();
             int end2 = hudString.TakeWhile(c => (roleSettingsLines -= (c == '\n' ? 1 : 0)) > 0).Count();
             int end3 = hudString.TakeWhile(c => (detailedSettingsP1 -= (c == '\n' ? 1 : 0)) > 0).Count();

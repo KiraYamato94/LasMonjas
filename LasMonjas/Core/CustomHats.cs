@@ -287,17 +287,7 @@ namespace LasMonjas.Core
             }
 
             public static int HatID = 0;
-            /// <summary>
-            /// Creates hat based on specified values
-            /// </summary>
-            /// <param name="sprite"></param>
-            /// <param name="author"></param>
-            /// <param name="climb"></param>
-            /// <param name="floor"></param>
-            /// <param name="leftimage"></param>
-            /// <param name="bounce"></param>
-            /// <param name="altshader"></param>
-            /// <returns>HatData</returns>
+            
             private static HatData CreateHat(Sprite sprite, string author, Sprite climb = null, Sprite floor = null, Sprite leftimage = null, bool bounce = false, bool altshader = false) {
                 //Borrowed from Other Roles to get hats alt shaders to work
                 if (MagicShader == null) {
