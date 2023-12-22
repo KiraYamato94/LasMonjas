@@ -109,9 +109,7 @@ namespace LasMonjas
 
         // Gambler
         public static CustomOption gamblerSpawnRate;
-        public static CustomOption gamblerNumberOfShots;
         public static CustomOption gamblerCanCallEmergency;
-        public static CustomOption gamblerCanShootMultipleTimes;
         public static CustomOption gamblerCanKillThroughShield;
 
         // Sorcerer
@@ -140,7 +138,6 @@ namespace LasMonjas
         // Plumber
         public static CustomOption plumberSpawnRate;
         public static CustomOption plumberCooldown;
-        public static CustomOption plumberVentNumber;
 
         public static CustomOption librarianSpawnRate;
         public static CustomOption librarianCooldown;
@@ -247,6 +244,7 @@ namespace LasMonjas
         // Mechanic
         public static CustomOption mechanicSpawnRate;
         public static CustomOption mechanicNumberOfRepairs;
+        public static CustomOption mechanicRechargeTasksNumber; 
         public static CustomOption mechanicExpertRepairs;
 
         // Sheriff
@@ -271,8 +269,7 @@ namespace LasMonjas
         // TimeTraveler
         public static CustomOption timeTravelerSpawnRate;
         public static CustomOption timeTravelerCooldown;
-        public static CustomOption timeTravelerRewindTime;
-        public static CustomOption timeTravelerShieldDuration;
+        public static CustomOption timeTravelerStopTime;
 
         // Squire
         public static CustomOption squireSpawnRate;
@@ -290,6 +287,7 @@ namespace LasMonjas
         public static CustomOption fortuneTellerCooldown;
         public static CustomOption fortuneTellerDuration; 
         public static CustomOption fortuneTellerNumberOfSee;
+        public static CustomOption fortuneTellerRechargeTasksNumber;
         public static CustomOption fortuneTellerKindOfInfo;
         public static CustomOption fortuneTellerPlayersWithNotification;
         public static CustomOption fortuneTellerCanCallEmergency;
@@ -345,6 +343,7 @@ namespace LasMonjas
         // Coward
         public static CustomOption cowardSpawnRate;
         public static CustomOption cowardNumberOfCalls;
+        public static CustomOption cowardRechargeTasksNumber;
 
         // Bat
         public static CustomOption batSpawnRate;
@@ -377,6 +376,7 @@ namespace LasMonjas
         public static CustomOption taskMasterExtraCommonTasks;
         public static CustomOption taskMasterExtraShortTasks;
         public static CustomOption taskMasterExtraLongTasks;
+        public static CustomOption taskMasterRewardType;
 
         // Jailer
         public static CustomOption jailerSpawnRate;
@@ -511,10 +511,8 @@ namespace LasMonjas
 
             // Gambler options
             gamblerSpawnRate = CustomOption.Create(230, cs(Gambler.color, "Gambler"), "impostor", rates, null, true);
-            gamblerNumberOfShots = CustomOption.Create(231, cs(Gambler.color, "Gambler") + ": Shoot Number", "impostor", 3f, 1f, 3f, 1f, gamblerSpawnRate);
-            gamblerCanCallEmergency = CustomOption.Create(232, cs(Gambler.color, "Gambler") + ": Can use emergency button", "impostor", false, gamblerSpawnRate);
-            gamblerCanShootMultipleTimes = CustomOption.Create(233, cs(Gambler.color, "Gambler") + ": Can Shoot multiple times", "impostor", true, gamblerSpawnRate);
-            gamblerCanKillThroughShield = CustomOption.Create(234, cs(Gambler.color, "Gambler") + ": Ignore shields", "impostor", false, gamblerSpawnRate);
+            gamblerCanCallEmergency = CustomOption.Create(231, cs(Gambler.color, "Gambler") + ": Can use emergency button", "impostor", false, gamblerSpawnRate);
+            gamblerCanKillThroughShield = CustomOption.Create(232, cs(Gambler.color, "Gambler") + ": Ignore shields", "impostor", false, gamblerSpawnRate);
 
             // Sorcerer Options
             sorcererSpawnRate = CustomOption.Create(240, cs(Sorcerer.color, "Sorcerer"), "impostor", rates, null, true);
@@ -542,7 +540,6 @@ namespace LasMonjas
             // Plumber options
             plumberSpawnRate = CustomOption.Create(280, cs(Plumber.color, "Plumber"), "impostor", rates, null, true);
             plumberCooldown = CustomOption.Create(281, cs(Plumber.color, "Plumber") + ": Cooldown", "impostor", 20f, 15f, 30f, 1f, plumberSpawnRate);
-            plumberVentNumber = CustomOption.Create(282, cs(Plumber.color, "Plumber") + ": Number of Vents", "impostor", 5f, 2f, 5f, 1f, plumberSpawnRate);
 
             // Librarian options
             librarianSpawnRate = CustomOption.Create(290, cs(Librarian.color, "Librarian"), "impostor", rates, null, true);
@@ -640,8 +637,9 @@ namespace LasMonjas
 
             // Mechanic options
             mechanicSpawnRate = CustomOption.Create(510, cs(Mechanic.color, "Mechanic"), "crewmate", rates, null, true);
-            mechanicNumberOfRepairs = CustomOption.Create(511, cs(Mechanic.color, "Mechanic") + ": Repairs Number", "crewmate", 3f, 1f, 3f, 1f, mechanicSpawnRate);
-            mechanicExpertRepairs = CustomOption.Create(512, cs(Mechanic.color, "Mechanic") + ": Expert Repairs", "crewmate", true, mechanicSpawnRate);
+            mechanicNumberOfRepairs = CustomOption.Create(511, cs(Mechanic.color, "Mechanic") + ": Repairs Number", "crewmate", 2f, 1f, 2f, 1f, mechanicSpawnRate);
+            mechanicRechargeTasksNumber = CustomOption.Create(512, cs(Mechanic.color, "Mechanic") + ": Tasks for recharge batteries", "crewmate", 2f, 1f, 3f, 1f, mechanicSpawnRate);
+            mechanicExpertRepairs = CustomOption.Create(513, cs(Mechanic.color, "Mechanic") + ": Expert Repairs", "crewmate", true, mechanicSpawnRate);
 
             // Sheriff options
             sheriffSpawnRate = CustomOption.Create(520, cs(Sheriff.color, "Sheriff"), "crewmate", rates, null, true);
@@ -664,9 +662,8 @@ namespace LasMonjas
 
             // TimeTraveler options
             timeTravelerSpawnRate = CustomOption.Create(550, cs(TimeTraveler.color, "Time Traveler"), "crewmate", rates, null, true);
-            timeTravelerCooldown = CustomOption.Create(551, cs(TimeTraveler.color, "Time Traveler") + ": Cooldown", "crewmate", 30f, 20f, 40f, 2.5f, timeTravelerSpawnRate);
-            timeTravelerShieldDuration = CustomOption.Create(552, cs(TimeTraveler.color, "Time Traveler") + ": Shield Duration", "crewmate", 10f, 5f, 15f, 1f, timeTravelerSpawnRate);
-            timeTravelerRewindTime = CustomOption.Create(553, cs(TimeTraveler.color, "Time Traveler") + ": Rewind Duration", "crewmate", 10f, 10f, 15f, 1f, timeTravelerSpawnRate);
+            timeTravelerCooldown = CustomOption.Create(551, cs(TimeTraveler.color, "Time Traveler") + ": Cooldown", "crewmate", 15f, 10f, 20f, 1f, timeTravelerSpawnRate);
+            timeTravelerStopTime = CustomOption.Create(552, cs(TimeTraveler.color, "Time Traveler") + ": Stop Duration", "crewmate", 10f, 5f, 10f, 1f, timeTravelerSpawnRate);
 
             // Squire options
             squireSpawnRate = CustomOption.Create(560, cs(Squire.color, "Squire"), "crewmate", rates, null, true);
@@ -683,10 +680,11 @@ namespace LasMonjas
             fortuneTellerSpawnRate = CustomOption.Create(580, cs(FortuneTeller.color, "Fortune Teller"), "crewmate", rates, null, true);
             fortuneTellerCooldown = CustomOption.Create(581, cs(FortuneTeller.color, "Fortune Teller") + ": Cooldown", "crewmate", 30f, 30f, 40f, 2.5f, fortuneTellerSpawnRate);
             fortuneTellerDuration = CustomOption.Create(582, cs(FortuneTeller.color, "Fortune Teller") + ": Reveal Time", "crewmate", 3f, 3f, 5f, 1f, fortuneTellerSpawnRate);
-            fortuneTellerNumberOfSee = CustomOption.Create(583, cs(FortuneTeller.color, "Fortune Teller") + ": Reveal Number", "crewmate", 3f, 1f, 3f, 1f, fortuneTellerSpawnRate);
-            fortuneTellerKindOfInfo = CustomOption.Create(584, cs(FortuneTeller.color, "Fortune Teller") + ": Revealed Information", "crewmate", new string[] { "Good / Bad", "Rol Name" }, fortuneTellerSpawnRate);
-            fortuneTellerPlayersWithNotification = CustomOption.Create(585, cs(FortuneTeller.color, "Fortune Teller") + ": Show Notification to", "crewmate", new string[] { "Impostors", "Crewmates", "All", "Nobody" }, fortuneTellerSpawnRate);
-            fortuneTellerCanCallEmergency = CustomOption.Create(586, cs(FortuneTeller.color, "Fortune Teller") + ": Can use emergency button", "crewmate", false, fortuneTellerSpawnRate);
+            fortuneTellerNumberOfSee = CustomOption.Create(583, cs(FortuneTeller.color, "Fortune Teller") + ": Reveal Number", "crewmate", 1f, 1f, 2f, 1f, fortuneTellerSpawnRate);
+            fortuneTellerRechargeTasksNumber = CustomOption.Create(584, cs(FortuneTeller.color, "Fortune Teller") + ": Tasks for recharge batteries", "crewmate", 3f, 3f, 4f, 1f, fortuneTellerSpawnRate);
+            fortuneTellerKindOfInfo = CustomOption.Create(585, cs(FortuneTeller.color, "Fortune Teller") + ": Revealed Information", "crewmate", new string[] { "Good / Bad", "Rol Name" }, fortuneTellerSpawnRate);
+            fortuneTellerPlayersWithNotification = CustomOption.Create(586, cs(FortuneTeller.color, "Fortune Teller") + ": Show Notification to", "crewmate", new string[] { "Impostors", "Crewmates", "All", "Nobody" }, fortuneTellerSpawnRate);
+            fortuneTellerCanCallEmergency = CustomOption.Create(587, cs(FortuneTeller.color, "Fortune Teller") + ": Can use emergency button", "crewmate", false, fortuneTellerSpawnRate);
 
             // Hacker options
             hackerSpawnRate = CustomOption.Create(590, cs(Hacker.color, "Hacker"), "crewmate", rates, null, true);
@@ -738,7 +736,8 @@ namespace LasMonjas
 
             // Coward options
             cowardSpawnRate = CustomOption.Create(680, cs(Coward.color, "Coward"), "crewmate", rates, null, true);
-            cowardNumberOfCalls = CustomOption.Create(681, cs(Coward.color, "Coward") + ": Number Of Meetings", "crewmate", 3f, 1f, 3f, 1f, cowardSpawnRate);
+            cowardNumberOfCalls = CustomOption.Create(681, cs(Coward.color, "Coward") + ": Number Of Meetings", "crewmate", 2f, 1f, 2f, 1f, cowardSpawnRate);
+            cowardRechargeTasksNumber = CustomOption.Create(682, cs(Coward.color, "Coward") + ": Tasks for recharge batteries", "crewmate", 2f, 2f, 3f, 1f, cowardSpawnRate);
 
             // Bat options
             batSpawnRate = CustomOption.Create(690, cs(Bat.color, "Bat"), "crewmate", rates, null, true);
@@ -771,6 +770,7 @@ namespace LasMonjas
             taskMasterExtraShortTasks = CustomOption.Create(733, cs(TaskMaster.color, "Task Master") + ": Extra Short Tasks", "crewmate", 1f, 1f, 5f, 1f, taskMasterSpawnRate);
             taskMasterCooldown = CustomOption.Create(734, cs(TaskMaster.color, "Task Master") + ": Speed Cooldown", "crewmate", 20f, 20f, 30f, 1f, taskMasterSpawnRate);
             taskMasterDuration = CustomOption.Create(735, cs(TaskMaster.color, "Task Master") + ": Speed Duration", "crewmate", 10f, 5f, 10f, 1f, taskMasterSpawnRate);
+            taskMasterRewardType = CustomOption.Create(736, cs(TaskMaster.color, "Task Master") + ": Reward Type", "crewmate", new string[] { "Extra tasks", "Kill button" }, taskMasterSpawnRate);
 
             // Jailer
             jailerSpawnRate = CustomOption.Create(740, cs(Jailer.color, "Jailer"), "crewmate", rates, null, true);

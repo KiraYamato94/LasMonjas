@@ -87,10 +87,16 @@ namespace LasMonjas
                 res.Add(player.PlayerId, player);
             return res;
         }
-
+        public static int availableVentId() {
+            var id = 0;
+            while (true) {
+                if (ShipStatus.Instance.AllVents.All(v => v.Id != id)) return id;
+                id++;
+            }
+        }
         public static void handleDemonBiteOnBodyReport() {
             // Murder the bitten player and reset bitten (regardless whether the kill was successful or not)
-            Helpers.checkMurderAttemptAndKill(Demon.demon, Demon.bitten, true, false);
+            Helpers.checkMurderAttemptAndKill(Demon.demon, Demon.bitten, false);
             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.DemonSetBitten, Hazel.SendOption.Reliable, -1);
             writer.Write(byte.MaxValue);
             writer.Write(byte.MaxValue);
@@ -101,14 +107,14 @@ namespace LasMonjas
         public static void handleMedusaPetrifyOnBodyReport() {
             // Murder the petrified players (regardless whether the kill was successful or not)
             foreach (PlayerControl player in Medusa.petrifiedPlayers) {
-                Helpers.checkMurderAttemptAndKill(Medusa.medusa, player, true, false);
+                Helpers.checkMurderAttemptAndKill(Medusa.medusa, player, false);
             }
         }
 
         public static void handleEatenPlayersOnBodyReport() {
             // Murder the eaten players (regardless whether the kill was successful or not)
             foreach (PlayerControl player in Devourer.eatenPlayers) {
-                Helpers.checkMurderAttemptAndKill(Devourer.devourer, player, true, false);                             
+                Helpers.checkMurderAttemptAndKill(Devourer.devourer, player, false);                             
             }
         }
 
@@ -408,7 +414,7 @@ namespace LasMonjas
             return roleCouldUse;
         }
 
-        public static MurderAttemptResult checkMurderAttempt(PlayerControl killer, PlayerControl target, bool blockRewind = false) {
+        public static MurderAttemptResult checkMurderAttempt(PlayerControl killer, PlayerControl target) {
             // Modified vanilla checks
             if (AmongUsClient.Instance.IsGameOver) return MurderAttemptResult.SuppressKill;
             if (killer == null || killer.Data == null || killer.Data.IsDead || killer.Data.Disconnected) return MurderAttemptResult.SuppressKill; // Allow non Impostor kills compared to vanilla code
@@ -432,6 +438,7 @@ namespace LasMonjas
 
             // Block impostor shielded kill
             else if (Squire.shielded != null && Squire.shielded == target) {
+                killer.MurderPlayer(Squire.shielded, MurderResultFlags.FailedProtected);
                 MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(killer.NetId, (byte)CustomRPC.ShieldedMurderAttempt, Hazel.SendOption.Reliable, -1);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
                 RPCProcedure.shieldedMurderAttempt();
@@ -451,13 +458,9 @@ namespace LasMonjas
                 return MurderAttemptResult.SuppressKill;
             }
 
-            // Block TimeTraveler with time shield kill
-            else if (TimeTraveler.shieldActive && TimeTraveler.timeTraveler != null && TimeTraveler.timeTraveler == target) {
-                if (!blockRewind) { // Only rewind the attempt was not called because a meeting startet 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(killer.NetId, (byte)CustomRPC.TimeTravelerRewindTime, Hazel.SendOption.Reliable, -1);
-                    AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.timeTravelerRewindTime();
-                }
+            // Block TimeTraveler with shield kill
+            else if (TimeTraveler.shielded && TimeTraveler.timeTraveler != null && TimeTraveler.timeTraveler == target) {
+                killer.MurderPlayer(TimeTraveler.timeTraveler, MurderResultFlags.FailedProtected);
                 return MurderAttemptResult.SuppressKill;
             }
 
@@ -479,11 +482,11 @@ namespace LasMonjas
             return MurderAttemptResult.PerformKill;
         }
 
-        public static MurderAttemptResult checkMurderAttemptAndKill(PlayerControl killer, PlayerControl target, bool isMeetingStart = false, bool showAnimation = true) {
+        public static MurderAttemptResult checkMurderAttemptAndKill(PlayerControl killer, PlayerControl target, bool showAnimation = true) {
             // The local player checks for the validity of the kill and performs it afterwards (different to vanilla, where the host performs all the checks)
             // The kill attempt will be shared using a custom RPC, hence combining modded and unmodded versions is impossible
 
-            MurderAttemptResult murder = checkMurderAttempt(killer, target, isMeetingStart);
+            MurderAttemptResult murder = checkMurderAttempt(killer, target);
             if (murder == MurderAttemptResult.PerformKill) {
                 MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.UncheckedMurderPlayer, Hazel.SendOption.Reliable, -1);
                 writer.Write(killer.PlayerId);
@@ -600,9 +603,9 @@ namespace LasMonjas
             if (invisible) {
                 player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0.5f);
                 player.cosmetics.colorBlindText.color = new Color(player.cosmetics.colorBlindText.color.r, player.cosmetics.colorBlindText.color.g, player.cosmetics.colorBlindText.color.b, 0.5f);
-                if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
-                    player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 0.5f);
-                    player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 0.5f);
+                if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.renderers[0] != null && player.cosmetics.currentPet.shadows[0] != null) {
+                    player.cosmetics.currentPet.renderers[0].color = new Color(player.cosmetics.currentPet.renderers[0].color.r, player.cosmetics.currentPet.renderers[0].color.g, player.cosmetics.currentPet.renderers[0].color.b, 0.5f);
+                    player.cosmetics.currentPet.shadows[0].color = new Color(player.cosmetics.currentPet.shadows[0].color.r, player.cosmetics.currentPet.shadows[0].color.g, player.cosmetics.currentPet.shadows[0].color.b, 0.5f);
                 }
                 if (player.cosmetics.hat != null) {
                     player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0.5f);
@@ -617,9 +620,9 @@ namespace LasMonjas
             else {
                 player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 1f);
                 player.cosmetics.colorBlindText.color = new Color(player.cosmetics.colorBlindText.color.r, player.cosmetics.colorBlindText.color.g, player.cosmetics.colorBlindText.color.b, 1);
-                if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
-                    player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 1f);
-                    player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 1f);
+                if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.renderers[0] != null && player.cosmetics.currentPet.shadows[0] != null) {
+                    player.cosmetics.currentPet.renderers[0].color = new Color(player.cosmetics.currentPet.renderers[0].color.r, player.cosmetics.currentPet.renderers[0].color.g, player.cosmetics.currentPet.renderers[0].color.b, 1f);
+                    player.cosmetics.currentPet.shadows[0].color = new Color(player.cosmetics.currentPet.shadows[0].color.r, player.cosmetics.currentPet.shadows[0].color.g, player.cosmetics.currentPet.shadows[0].color.b, 1f);
                 }
                 if (player.cosmetics.hat != null) {
                     player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 1f);
@@ -638,9 +641,9 @@ namespace LasMonjas
 
             player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0f);
             player.cosmetics.colorBlindText.color = new Color(player.cosmetics.colorBlindText.color.r, player.cosmetics.colorBlindText.color.g, player.cosmetics.colorBlindText.color.b, 0);
-            if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.rend != null && player.cosmetics.currentPet.shadowRend != null) {
-                player.cosmetics.currentPet.rend.color = new Color(player.cosmetics.currentPet.rend.color.r, player.cosmetics.currentPet.rend.color.g, player.cosmetics.currentPet.rend.color.b, 0f);
-                player.cosmetics.currentPet.shadowRend.color = new Color(player.cosmetics.currentPet.shadowRend.color.r, player.cosmetics.currentPet.shadowRend.color.g, player.cosmetics.currentPet.shadowRend.color.b, 0f);
+            if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.renderers[0] != null && player.cosmetics.currentPet.shadows[0] != null) {
+                player.cosmetics.currentPet.renderers[0].color = new Color(player.cosmetics.currentPet.renderers[0].color.r, player.cosmetics.currentPet.renderers[0].color.g, player.cosmetics.currentPet.renderers[0].color.b, 0f);
+                player.cosmetics.currentPet.shadows[0].color = new Color(player.cosmetics.currentPet.shadows[0].color.r, player.cosmetics.currentPet.shadows[0].color.g, player.cosmetics.currentPet.shadows[0].color.b, 0f);
             }
             if (player.cosmetics.hat != null) {
                 player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0f);

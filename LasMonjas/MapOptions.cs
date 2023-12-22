@@ -11,6 +11,7 @@ namespace LasMonjas
         public static bool ghostsSeeRoles = true;
         //public static bool horseMode = false;
         public static bool monjaCursor = true;
+        public static bool showChatIntro = true;
 
         // Updating values
         public static List<SurvCamera> camerasToAdd = new List<SurvCamera>();
@@ -30,6 +31,7 @@ namespace LasMonjas
             ghostsSeeRoles = LasMonjasPlugin.GhostsSeeRoles.Value;
             //horseMode = LasMonjasPlugin.HorseMode.Value;
             monjaCursor = LasMonjasPlugin.MonjaCursor.Value;
+            showChatIntro = LasMonjasPlugin.ShowChatIntro.Value;
         }
 
         public static void checkMusic() {

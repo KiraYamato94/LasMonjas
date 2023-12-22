@@ -583,8 +583,6 @@ namespace LasMonjas
         public static Color color = Palette.ImpostorRed;
         private static Sprite targetSprite;
         public static bool canCallEmergency = false;
-        public static int numberOfShots = 2;
-        public static bool canShootMultipleTimes = false;
         public static bool canKillThroughShield = true;
 
         public static Sprite getTargetSprite() {
@@ -596,8 +594,6 @@ namespace LasMonjas
         public static void clearAndReload() {
             gambler = null;
             canCallEmergency = CustomOptionHolder.gamblerCanCallEmergency.getBool();
-            numberOfShots = Mathf.RoundToInt(CustomOptionHolder.gamblerNumberOfShots.getFloat());
-            canShootMultipleTimes = CustomOptionHolder.gamblerCanShootMultipleTimes.getBool();
             canKillThroughShield = CustomOptionHolder.gamblerCanKillThroughShield.getBool();
         }
     }
@@ -817,12 +813,8 @@ namespace LasMonjas
         public static Color color = Palette.ImpostorRed;
 
         public static float cooldown = 30f;
-        public static float currentVents = 0f;
-        public static float maxVents = 0f;
         public static List<Vent> Vents = new List<Vent>();
-        public static bool madeVents = false;
         public static Vector2 VentSize { get; set; }
-        public static TMPro.TMP_Text plumberVentButtonText;
 
         public static Sprite buttonSprite;
         public static Sprite getPlumberButtonSprite() {
@@ -834,10 +826,7 @@ namespace LasMonjas
         public static void clearAndReload() {
             plumber = null;
             cooldown = CustomOptionHolder.plumberCooldown.getFloat();
-            currentVents = 0;
-            maxVents = CustomOptionHolder.plumberVentNumber.getFloat();
             Vents = new List<Vent>();
-            madeVents = false;
         }
     }
 
@@ -2466,12 +2455,13 @@ namespace LasMonjas
     {
         public static PlayerControl mechanic;
         public static Color color = new Color32(127, 76, 0, byte.MaxValue);
-        public static bool usedRepair;
         public static int numberOfRepairs;
-        public static int timesUsedRepairs;
         public static TMPro.TMP_Text mechanicRepairButtonText;
         private static Sprite buttonSprite;
         public static bool expertRepairs;
+        public static int rechargeTasksNumber = 3;
+        public static int rechargedTasks = 3;
+        public static int charges = 1;
 
         public static Sprite getButtonSprite() {
             if (buttonSprite) return buttonSprite;
@@ -2481,11 +2471,11 @@ namespace LasMonjas
 
         public static void clearAndReload() {
             mechanic = null;
-            usedRepair = false;
-            timesUsedRepairs = 0;
             numberOfRepairs = (int)CustomOptionHolder.mechanicNumberOfRepairs.getFloat();
             expertRepairs = CustomOptionHolder.mechanicExpertRepairs.getBool();
-        }
+            rechargeTasksNumber = Mathf.RoundToInt(CustomOptionHolder.mechanicRechargeTasksNumber.getFloat());
+            rechargedTasks = Mathf.RoundToInt(CustomOptionHolder.mechanicRechargeTasksNumber.getFloat());
+            charges = numberOfRepairs;        }
     }
 
     public static class Sheriff
@@ -2598,41 +2588,63 @@ namespace LasMonjas
         public static PlayerControl timeTraveler;
         public static Color color = new Color32(0, 189, 255, byte.MaxValue);
 
-        //public static bool reviveDuringRewind = false;
-        public static float rewindTime = 3f;
-        public static float shieldDuration = 3f;
-        public static float cooldown = 30f;
-        public static float backUpduration = 10f;
+        public static float stopTime = 10f;
+        public static float cooldown = 10f;
 
-        public static bool shieldActive = false;
-        public static bool isRewinding = false;
+        public static bool markedLocation = false;
+        public static Vector3 teleportPos;
+        public static bool isStoppingTime = false;
+        public static bool shielded = false;
 
-        public static bool usedRewind;
-        public static bool usedShield;
+        private static Sprite teleportbuttonSprite;
+        private static Sprite markedteleportbuttonSprite;
+        private static Sprite floorbuttonSprite;
+        private static Sprite stoptimebuttonSprite;
+        public static GameObject teleportMark = null;
+        public static List<GameObject> objectsCantPlaceTeleport = new List<GameObject>();
 
-        private static Sprite shieldbuttonSprite;
-        private static Sprite rewindbuttonSprite;
-        public static Sprite getShieldButtonSprite() {
-            if (shieldbuttonSprite) return shieldbuttonSprite;
-            shieldbuttonSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.TimeTravelerTimeShieldButton.png", 90f);
-            return shieldbuttonSprite;
+        public static Sprite getTeleportButtonSprite() {
+            if (teleportbuttonSprite) return teleportbuttonSprite;
+            teleportbuttonSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.TimeTravelerPlaceWarpButton.png", 90f);
+            return teleportbuttonSprite;
         }
-        public static Sprite getRewindButtonSprite() {
-            if (rewindbuttonSprite) return rewindbuttonSprite;
-            rewindbuttonSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.TimeTravelerRewindButton.png", 90f);
-            return rewindbuttonSprite;
+        public static Sprite getMarkedTeleportButtonSprite() {
+            if (markedteleportbuttonSprite) return markedteleportbuttonSprite;
+            markedteleportbuttonSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.TimeTravelerTeleportButton.png", 90f);
+            return markedteleportbuttonSprite;
+        }
+        public static Sprite getStopTimeButtonSprite() {
+            if (stoptimebuttonSprite) return stoptimebuttonSprite;
+            stoptimebuttonSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.TimeTravelerStopTimeButton.png", 90f);
+            return stoptimebuttonSprite;
+        }
+        public static Sprite getFloorSprite() {
+            if (floorbuttonSprite) return floorbuttonSprite;
+            floorbuttonSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.TimeTravelerFloorWarp.png", 120f);
+            return floorbuttonSprite;
         }
 
         public static void clearAndReload() {
             timeTraveler = null;
-            isRewinding = false;
-            shieldActive = false;
-            rewindTime = CustomOptionHolder.timeTravelerRewindTime.getFloat();
-            shieldDuration = CustomOptionHolder.timeTravelerShieldDuration.getFloat();
+            isStoppingTime = false;
+            markedLocation = false;
+            shielded = false;
+            teleportPos = new Vector3 (0,0,0);
+            teleportMark = null;
+            stopTime = CustomOptionHolder.timeTravelerStopTime.getFloat();
             cooldown = CustomOptionHolder.timeTravelerCooldown.getFloat();
-            usedRewind = false;
-            usedShield = false;
-            backUpduration = shieldDuration;
+            objectsCantPlaceTeleport.Clear();
+        }
+
+        public static void resetTimeTraveler() {
+            isStoppingTime = false;
+            markedLocation = false;
+            shielded = false;
+            teleportPos = new Vector3(0, 0, 0);
+            if (teleportMark != null) {
+                teleportMark.SetActive(false);
+            }
+            teleportMark = null;
         }
     }
 
@@ -2718,11 +2730,12 @@ namespace LasMonjas
         public static PlayerControl revealTarget;
         public static float duration = 3;
 
-        public static bool usedFortune;
         public static int numberOfFortunes;
-        public static int timesUsedFortune;
         public static TMPro.TMP_Text fortuneTellerRevealButtonText;
         public static bool canCallEmergency = false;
+        public static int rechargeTasksNumber = 3;
+        public static int rechargedTasks = 3;
+        public static int charges = 1;
 
         private static Sprite buttonSprite;
         public static Sprite getButtonSprite() {
@@ -2738,12 +2751,13 @@ namespace LasMonjas
             duration = CustomOptionHolder.fortuneTellerDuration.getFloat();
             kindOfInfo = CustomOptionHolder.fortuneTellerKindOfInfo.getSelection();
             playersWithNotification = CustomOptionHolder.fortuneTellerPlayersWithNotification.getSelection();
-            usedFortune = false;
-            timesUsedFortune = 0;
             numberOfFortunes = (int)CustomOptionHolder.fortuneTellerNumberOfSee.getFloat();
             currentTarget = null;
             revealTarget = null;
             canCallEmergency = CustomOptionHolder.fortuneTellerCanCallEmergency.getBool();
+            rechargeTasksNumber = Mathf.RoundToInt(CustomOptionHolder.fortuneTellerRechargeTasksNumber.getFloat());
+            rechargedTasks = Mathf.RoundToInt(CustomOptionHolder.fortuneTellerRechargeTasksNumber.getFloat());
+            charges = 1;
         }
     }
 
@@ -3006,17 +3020,22 @@ namespace LasMonjas
     {
         public static PlayerControl spiritualist;
         public static Color color = new Color32(255, 197, 225, byte.MaxValue);
-        public static bool usedRevive;
         public static float spiritualistReviveTime = 0f;
         private static Sprite buttonSprite;
+        private static Sprite revivedPlayerKillButtonSprite;
+        public static TMPro.TMP_Text revivedPlayerTimerCountButtonText;
+        public static float revivedPlayerTimer = 21f;
 
-        public static bool isReviving = false;
         public static bool canRevive = false;
         public static PlayerControl revivedPlayer = null;
-        public static bool preventReport = false;
+        public static PlayerControl revivedPlayerTarget = null;
+        public static PlayerControl revivedPlayerKiller = null;
 
-        public static List<Arrow> localSpiritArrows = new List<Arrow>();
-
+        public static Sprite getRevivedPlayerRevengeButtonSprite() {
+            if (revivedPlayerKillButtonSprite) return revivedPlayerKillButtonSprite;
+            revivedPlayerKillButtonSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.SpiritualistRevenge.png", 90f);
+            return revivedPlayerKillButtonSprite;
+        }
         public static Sprite getButtonSprite() {
             if (buttonSprite) return buttonSprite;
             buttonSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.SpiritualistReviveButton.png", 90f);
@@ -3025,13 +3044,12 @@ namespace LasMonjas
 
         public static void clearAndReload() {
             spiritualist = null;
-            usedRevive = false;
-            spiritualistReviveTime = 10f;
-            isReviving = false;
+            spiritualistReviveTime = 5f;
             canRevive = false;
-            localSpiritArrows = new List<Arrow>();
             revivedPlayer = null;
-            preventReport = false;
+            revivedPlayerTarget = null;
+            revivedPlayerKiller = null;
+            revivedPlayerTimer = 21;
         }
     }
 
@@ -3041,11 +3059,12 @@ namespace LasMonjas
         public static PlayerControl coward;
         public static Color color = new Color32(0, 247, 255, byte.MaxValue);
 
-        public static bool usedCalls;
         public static int numberOfCalls;
-        public static int timesUsedCalls;
         public static TMPro.TMP_Text cowardCallButtonText;
         private static Sprite buttonSprite;
+        public static int rechargeTasksNumber = 3;
+        public static int rechargedTasks = 3;
+        public static int charges = 1;
 
         public static Sprite getButtonSprite() {
             if (buttonSprite) return buttonSprite;
@@ -3055,9 +3074,10 @@ namespace LasMonjas
 
         public static void clearAndReload() {
             coward = null;
-            usedCalls = false;
-            timesUsedCalls = 0;
             numberOfCalls = (int)CustomOptionHolder.cowardNumberOfCalls.getFloat();
+            rechargeTasksNumber = Mathf.RoundToInt(CustomOptionHolder.vigilantCamRechargeTasksNumber.getFloat());
+            rechargedTasks = Mathf.RoundToInt(CustomOptionHolder.vigilantCamRechargeTasksNumber.getFloat());
+            charges = numberOfCalls;
         }
     }
 
@@ -3404,6 +3424,10 @@ namespace LasMonjas
         public static float duration = 10f;
         public static float taskTimer = 0f;
         public static float backUpduration = 10f;
+        public static byte rewardType = 0;
+        public static bool hasKillButton = false;
+        public static PlayerControl currentTarget;
+        public static float killCooldown;
 
         private static Sprite taskMasterButtonSprite;
         public static Sprite gettaskMasterButtonSprite() {
@@ -3424,6 +3448,10 @@ namespace LasMonjas
             cooldown = CustomOptionHolder.taskMasterCooldown.getFloat();
             duration = CustomOptionHolder.taskMasterDuration.getFloat();
             backUpduration = duration;
+            rewardType = (byte)CustomOptionHolder.taskMasterRewardType.getSelection();
+            hasKillButton = false;
+            currentTarget = null;
+            killCooldown = GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
         }
     }
     public static class Jailer

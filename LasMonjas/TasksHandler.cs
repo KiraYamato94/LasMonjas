@@ -86,6 +86,16 @@ namespace LasMonjas
         {
             private static void Postfix(GameData __instance, [HarmonyArgument(0)] PlayerControl pc, [HarmonyArgument(1)] uint taskId) {
 
+                if (TimeTraveler.timeTraveler != null && TimeTraveler.timeTraveler == PlayerInCache.LocalPlayer.PlayerControl && !TimeTraveler.timeTraveler.Data.IsDead) {
+                    var (playerCompleted, playerTotal) = taskInfo(TimeTraveler.timeTraveler.Data);
+                    int numberOfLeftTasks = playerTotal - playerCompleted;
+                    if (numberOfLeftTasks <= 0) {
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.TimeTravelerSetShield, Hazel.SendOption.Reliable, -1);
+                        AmongUsClient.Instance.FinishRpcImmediately(writer);
+                        RPCProcedure.timeTravelerSetShield();
+                    }
+                }
+                
                 if (TaskMaster.taskMaster != null && TaskMaster.taskMaster == PlayerInCache.LocalPlayer.PlayerControl && !TaskMaster.taskMaster.Data.IsDead) {
 
                     var (playerCompleted, playerTotal) = taskInfo(TaskMaster.taskMaster.Data);
@@ -104,8 +114,9 @@ namespace LasMonjas
                             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.TaskMasterSetExtraTasks, Hazel.SendOption.Reliable, -1);
                             writer.Write(TaskMaster.taskMaster.PlayerId);
                             writer.Write(taskTypeIds);
+                            writer.Write(TaskMaster.rewardType);
                             AmongUsClient.Instance.FinishRpcImmediately(writer);
-                            RPCProcedure.taskMasterSetExTasks(TaskMaster.taskMaster.PlayerId, byte.MaxValue, taskTypeIds);
+                            RPCProcedure.taskMasterSetExTasks(TaskMaster.taskMaster.PlayerId, byte.MaxValue, taskTypeIds, TaskMaster.rewardType);
                         }
                     }
                 }

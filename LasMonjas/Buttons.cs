@@ -104,8 +104,8 @@ namespace LasMonjas
         private static CustomButton sheriffKillButton;
         private static CustomButton detectiveButton;
         private static CustomButton forensicButton;
-        public static CustomButton timeTravelerShieldButton;
-        public static CustomButton timeTravelerRewindTimeButton;
+        public static CustomButton timeTravelerTeleportButton;
+        public static CustomButton timeTravelerStopTimeButton;
         private static CustomButton squireShieldButton;
         private static CustomButton fortuneTellerRevealButton;
         private static CustomButton hackerButton;
@@ -118,6 +118,7 @@ namespace LasMonjas
         public static CustomButton welderSealButton;
         public static CustomButton welderBombVentButton;
         public static CustomButton spiritualistReviveButton;
+        public static CustomButton spiritualistRevivedKillButton;
         public static CustomButton vigilantButton;
         public static CustomButton vigilantCamButton;
         private static CustomButton hunterButton;
@@ -129,6 +130,7 @@ namespace LasMonjas
         private static CustomButton engineerTrapButton;
         private static CustomButton locksmithOpenDoorButton;
         private static CustomButton taskMasterButton;
+        private static CustomButton taskMasterKillButton;
         public static CustomButton jailerJailButton;
 
         public static CustomButton zoomOutButton;
@@ -480,9 +482,8 @@ namespace LasMonjas
             detectiveButton.EffectDuration = Detective.duration;
             forensicButton.MaxTimer = 20f;
             forensicButton.EffectDuration = Forensic.duration;
-            timeTravelerShieldButton.MaxTimer = TimeTraveler.cooldown;
-            timeTravelerRewindTimeButton.MaxTimer = TimeTraveler.cooldown;
-            timeTravelerShieldButton.EffectDuration = TimeTraveler.shieldDuration;
+            timeTravelerTeleportButton.MaxTimer = TimeTraveler.cooldown;
+            timeTravelerStopTimeButton.MaxTimer = 60f;
             squireShieldButton.MaxTimer = 10f;
             fortuneTellerRevealButton.MaxTimer = FortuneTeller.cooldown;
             fortuneTellerRevealButton.EffectDuration = FortuneTeller.duration;
@@ -503,6 +504,7 @@ namespace LasMonjas
             welderBombVentButton.MaxTimer = Welder.cooldown;
             spiritualistReviveButton.MaxTimer = 20f;
             spiritualistReviveButton.EffectDuration = Spiritualist.spiritualistReviveTime;
+            spiritualistRevivedKillButton.MaxTimer = 20f;
             vigilantButton.MaxTimer = Vigilant.cooldown;
             vigilantCamButton.MaxTimer = Vigilant.cooldown;
             vigilantCamButton.EffectDuration = Vigilant.duration;
@@ -518,6 +520,7 @@ namespace LasMonjas
             locksmithOpenDoorButton.MaxTimer = Locksmith.cooldown;
             taskMasterButton.MaxTimer = TaskMaster.cooldown;
             taskMasterButton.EffectDuration = TaskMaster.duration;
+            taskMasterKillButton.MaxTimer = TaskMaster.killCooldown; 
             jailerJailButton.MaxTimer = Jailer.cooldown;
 
             zoomOutButton.MaxTimer = 0f;
@@ -527,7 +530,6 @@ namespace LasMonjas
 
             // Remaining uses text
             Manipulator.manipulatedVictimTimerCountButtonText.text = $"{Manipulator.manipulatedVictimTimer.ToString("F0")}";
-            Plumber.plumberVentButtonText.text = $"{Plumber.currentVents} / {Plumber.maxVents}";
             Hypnotist.trapsCounterButtonText.text = $"{Hypnotist.currentSpiralNumber} / {Hypnotist.numberOfSpirals}";
             Librarian.targetNameButtonText.text = $" ";
             BountyHunter.targetNameButtonText.text = $" ";
@@ -549,16 +551,17 @@ namespace LasMonjas
             Exiler.targetNameButtonText.text = $" ";
             Seeker.seekerPlayerPointsCount.text = $"{Seeker.currentPlayers} / 3";
             Seeker.seekerPerformMinigamePlayerPointsCount.text = $"{Seeker.currentPoints} / {Seeker.neededPoints}";
-            Mechanic.mechanicRepairButtonText.text = $"{Mechanic.numberOfRepairs - Mechanic.timesUsedRepairs} / {Mechanic.numberOfRepairs}";
-            FortuneTeller.fortuneTellerRevealButtonText.text = $"{FortuneTeller.numberOfFortunes - FortuneTeller.timesUsedFortune} / {FortuneTeller.numberOfFortunes}";
+            Mechanic.mechanicRepairButtonText.text = $"{Mechanic.charges} / {Mechanic.numberOfRepairs}";
+            FortuneTeller.fortuneTellerRevealButtonText.text = $"{FortuneTeller.charges} / {FortuneTeller.numberOfFortunes}";
             Hacker.hackerAdminTableChargesText.text = $"{Hacker.chargesAdminTable} / {Hacker.toolsNumber}";
             Hacker.hackerVitalsChargesText.text = $"{Hacker.chargesVitals} / {Hacker.toolsNumber}";
             Welder.welderButtonText.text = $"{Welder.remainingWelds} / {Welder.totalWelds}";
+            Spiritualist.revivedPlayerTimerCountButtonText.text = $"{Spiritualist.revivedPlayerTimer.ToString("F0")}";
             Vigilant.vigilantButtonCameraText.text = $"{Vigilant.remainingCameras} / {Vigilant.totalCameras}";
             Vigilant.vigilantButtonCameraUsesText.text = $"{Vigilant.charges} / {Vigilant.maxCharges}";
             Hunter.targetButtonText.text = $" ";
             Jinx.jinxButtonJinxsText.text = $"{Jinx.jinxNumber - Jinx.jinxs} / {Jinx.jinxNumber}";
-            Coward.cowardCallButtonText.text = $"{Coward.numberOfCalls - Coward.timesUsedCalls} / {Coward.numberOfCalls}";
+            Coward.cowardCallButtonText.text = $"{Coward.charges} / {Coward.numberOfCalls}";
             Jailer.jailButtonText.text = $" ";
 
             // Capture the flag buttons
@@ -870,12 +873,6 @@ namespace LasMonjas
             bombermanBombButton.Timer = bombermanBombButton.MaxTimer;
             bombermanBombButton.isEffectActive = false;
             bombermanBombButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
-        }
-
-        public static void resetTimeTravelerButton() {
-            timeTravelerShieldButton.Timer = timeTravelerShieldButton.MaxTimer;
-            timeTravelerShieldButton.isEffectActive = false;
-            timeTravelerShieldButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
         }
         public static void resetSpiritualistReviveButton() {
             spiritualistReviveButton.Timer = 0f;
@@ -1554,7 +1551,7 @@ namespace LasMonjas
                     RPCProcedure.fixBomb();
                     bombButton.Timer = bombButton.MaxTimer;
                 },
-                () => { return !PlayerInCache.LocalPlayer.Data.IsDead /*&& Bomberman.bomberman != null*/ && PlayerInCache.LocalPlayer.PlayerControl != Bomberman.bomberman && Bomberman.activeBomb && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
+                () => { return !PlayerInCache.LocalPlayer.Data.IsDead && PlayerInCache.LocalPlayer.PlayerControl != Bomberman.bomberman && Bomberman.activeBomb && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => {
                     bool CanUse = false;
                     if (Bomberman.bombObject != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, Bomberman.bombObject.transform.position) < 0.5f) {
@@ -1829,7 +1826,7 @@ namespace LasMonjas
                 false
             );
             
-            // Hypnotist spirtal button
+            // Hypnotist spiral button
             hypnotistSpiralButton = new CustomButton(
                 () => {
                     if (Helpers.checkIfEaten(PlayerInCache.LocalPlayer.PlayerControl)) {
@@ -2156,9 +2153,11 @@ namespace LasMonjas
                     byte[] buff = new byte[sizeof(float) * 2];
                     Buffer.BlockCopy(BitConverter.GetBytes(pos.x), 0, buff, 0 * sizeof(float), sizeof(float));
                     Buffer.BlockCopy(BitConverter.GetBytes(pos.y), 0, buff, 1 * sizeof(float), sizeof(float));
+                    var ventId = Helpers.availableVentId();
+                    writer.Write(ventId); 
                     writer.WriteBytesAndSize(buff);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.plumberMakeVent(buff);
+                    RPCProcedure.plumberMakeVent(ventId, buff);
                 },
                 () => { return Plumber.plumber != null && Plumber.plumber == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
                 () => {
@@ -2168,7 +2167,17 @@ namespace LasMonjas
                             canUse = false;
                         }
                     }
-                    return canUse && Plumber.currentVents < Plumber.maxVents && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming && (Jailer.prisonPlayer == null || Jailer.prisonPlayer != null && Jailer.prisonPlayer.PlayerId != Plumber.plumber.PlayerId);
+                    bool closetoElevators = false;
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {                        
+                        if (TimeTraveler.objectsCantPlaceTeleport.Count > 0) {
+                            foreach (GameObject elevator in TimeTraveler.objectsCantPlaceTeleport) {
+                                if (Vector2.Distance(elevator.transform.position, Plumber.plumber.transform.position) < 2.15f) {
+                                    closetoElevators = true;
+                                }
+                            }
+                        }
+                    }
+                    return canUse && !closetoElevators && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming && (Jailer.prisonPlayer == null || Jailer.prisonPlayer != null && Jailer.prisonPlayer.PlayerId != Plumber.plumber.PlayerId);
                 },
                 () => { 
                     plumberMakeVentButton.Timer = plumberMakeVentButton.MaxTimer;
@@ -2178,12 +2187,6 @@ namespace LasMonjas
                 __instance,
                 KeyCode.F
             );
-
-            // Plumber vent button spawn remaining uses text
-            Plumber.plumberVentButtonText = GameObject.Instantiate(plumberMakeVentButton.actionButton.cooldownTimerText, plumberMakeVentButton.actionButton.cooldownTimerText.transform.parent);
-            Plumber.plumberVentButtonText.enableWordWrapping = false;
-            Plumber.plumberVentButtonText.transform.localScale = Vector3.one * 0.5f;
-            Plumber.plumberVentButtonText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
 
             // Librarian Silence
             librarianSilenceButton = new CustomButton(
@@ -2822,7 +2825,7 @@ namespace LasMonjas
                                     Challenger.currentTarget = null;
                                     return;
                                 }
-                                else if (!Challenger.challenger.Data.IsDead && Challenger.rivalPlayer != null && !Challenger.rivalPlayer.Data.IsDead && murder == MurderAttemptResult.PerformKill && MeetingHud.Instance == null && !TimeTraveler.isRewinding && !Monja.awakened && !Seeker.isMinigaming) {
+                                else if (!Challenger.challenger.Data.IsDead && Challenger.rivalPlayer != null && !Challenger.rivalPlayer.Data.IsDead && murder == MurderAttemptResult.PerformKill && MeetingHud.Instance == null && !TimeTraveler.isStoppingTime && !Monja.awakened && !Seeker.isMinigaming) {
                                     // Perform duel if no sabotage and player has no squire shield
                                     bool canUse = true;
                                     bool sabotageActive = false;
@@ -4682,8 +4685,9 @@ namespace LasMonjas
 
                     mechanicRepairButton.Timer = mechanicRepairButton.MaxTimer;
                     MessageWriter usedRepairWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.MechanicUsedRepair, Hazel.SendOption.Reliable, -1);
+                    usedRepairWriter.Write(0);
                     AmongUsClient.Instance.FinishRpcImmediately(usedRepairWriter);
-                    RPCProcedure.mechanicUsedRepair();
+                    RPCProcedure.mechanicUsedRepair(0);
 
                     foreach (PlayerTask task in PlayerInCache.LocalPlayer.PlayerControl.myTasks) {
                         if (task.TaskType == TaskTypes.FixLights) {
@@ -4732,7 +4736,7 @@ namespace LasMonjas
                             if (task.TaskType == TaskTypes.FixLights || task.TaskType == TaskTypes.RestoreOxy || task.TaskType == TaskTypes.ResetReactor || task.TaskType == TaskTypes.ResetSeismic || task.TaskType == TaskTypes.FixComms || task.TaskType == TaskTypes.StopCharles || task.TaskType == TaskTypes.MushroomMixupSabotage)
                                 sabotageActive = true; 
                     }
-                    return sabotageActive && !Mechanic.usedRepair && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
+                    return sabotageActive && Mechanic.charges > 0 && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
                 },
                 () => { },
                 Mechanic.getButtonSprite(),
@@ -4933,78 +4937,102 @@ namespace LasMonjas
             );
 
             // TimeTraveler shield
-            timeTravelerShieldButton = new CustomButton(
+            timeTravelerTeleportButton = new CustomButton(
                 () => {
                     if (Helpers.checkIfEaten(PlayerInCache.LocalPlayer.PlayerControl)) {
-                        TimeTraveler.shieldDuration = quackNumber;
-                        timeTravelerShieldButton.EffectDuration = TimeTraveler.shieldDuration;
-                        timeTravelerShieldButton.Timer = timeTravelerShieldButton.MaxTimer;
+                        timeTravelerTeleportButton.Timer = timeTravelerTeleportButton.MaxTimer;
                     }
                     
                     if (Helpers.checkIfJinxed(TimeTraveler.timeTraveler)) {
                         Helpers.jinxedAction(TimeTraveler.timeTraveler);
 
                         SoundManager.Instance.PlaySound(CustomMain.customAssets.jinxQuack, false, 5f);
-                        TimeTraveler.shieldDuration = quackNumber;
-                        timeTravelerShieldButton.EffectDuration = TimeTraveler.shieldDuration;
-                        timeTravelerShieldButton.Timer = timeTravelerShieldButton.MaxTimer;
+                        timeTravelerTeleportButton.Timer = timeTravelerTeleportButton.MaxTimer;
                         return;
                     }
 
-                    TimeTraveler.shieldDuration = TimeTraveler.backUpduration;
-                    timeTravelerShieldButton.EffectDuration = TimeTraveler.shieldDuration;
-                    timeTravelerRewindTimeButton.Timer = timeTravelerRewindTimeButton.MaxTimer;
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.TimeTravelerShield, Hazel.SendOption.Reliable, -1);
-                    AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.timeTravelerShield();
+                    if (TimeTraveler.markedLocation) {
+                        TimeTraveler.teleportMark.SetActive(false);
+                        SoundManager.Instance.PlaySound(CustomMain.customAssets.ninjaTime, false, 100f);
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.TimeTravelerTeleport, Hazel.SendOption.Reliable, -1);
+                        writer.Write(0);
+                        AmongUsClient.Instance.FinishRpcImmediately(writer);
+                        RPCProcedure.timeTravelerTeleport(0);
+                    } else {
+                        if (TimeTraveler.teleportMark == null) {
+                            TimeTraveler.teleportMark = new GameObject("TimeTravelerMark");
+                            TimeTraveler.teleportMark.AddComponent<SpriteRenderer>();
+                            TimeTraveler.teleportMark.GetComponent<SpriteRenderer>().sprite = TimeTraveler.getFloorSprite();
+                        }
+                        SoundManager.Instance.PlaySound(CustomMain.customAssets.bombermanPlaceBombClip, false, 100f);
+                        TimeTraveler.teleportMark.transform.position = TimeTraveler.timeTraveler.GetTruePosition();
+                        TimeTraveler.teleportMark.transform.position += new Vector3(0,0,-0.5f);
+                        TimeTraveler.teleportMark.SetActive(true);
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.TimeTravelerTeleport, Hazel.SendOption.Reliable, -1);
+                        writer.Write(1);
+                        AmongUsClient.Instance.FinishRpcImmediately(writer);
+                        RPCProcedure.timeTravelerTeleport(1);
+                    }                    
+                    timeTravelerTeleportButton.Timer = timeTravelerTeleportButton.MaxTimer;
                 },
                 () => { return TimeTraveler.timeTraveler != null && TimeTraveler.timeTraveler == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
                 () => {
-                    bool sabotageActive = false;
-                    if (Bomberman.activeBomb == true || Illusionist.lightsOutTimer > 0) {
-                        sabotageActive = true;
+                    if (TimeTraveler.markedLocation) {
+                        timeTravelerTeleportButton.actionButton.graphic.sprite = TimeTraveler.getMarkedTeleportButtonSprite();
                     }
                     else {
-                        sabotageActive = (Helpers.AnySabotageActive() || Helpers.MushroomSabotageActive());
+                        timeTravelerTeleportButton.actionButton.graphic.sprite = TimeTraveler.getTeleportButtonSprite();
                     }
-                    return !sabotageActive && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming && !TimeTraveler.usedShield;
+                    bool canUse = true;
+                    bool closetoElevators = false;
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+                        if (TimeTraveler.markedLocation && (TimeTraveler.timeTraveler.transform.position.y > 0 && TimeTraveler.teleportPos.y < 0) || (TimeTraveler.timeTraveler.transform.position.y < 0 && TimeTraveler.teleportPos.y > 0)) {
+                            canUse = false;
+                        }
+                        if (TimeTraveler.objectsCantPlaceTeleport.Count > 0) {
+                            foreach (GameObject elevator in TimeTraveler.objectsCantPlaceTeleport) {
+                                if (Vector2.Distance(elevator.transform.position, TimeTraveler.timeTraveler.transform.position) < 2.15f) {
+                                    closetoElevators = true;
+                                }
+                            }
+                        }
+                    }                    
+                    return canUse && !closetoElevators && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
                 },
                 () => {
-                    timeTravelerShieldButton.Timer = timeTravelerShieldButton.MaxTimer;
-                    timeTravelerShieldButton.isEffectActive = false;
-                    timeTravelerShieldButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
+                    TimeTraveler.markedLocation = false;
+                    if (TimeTraveler.teleportMark != null) {
+                        TimeTraveler.teleportMark.SetActive(false);
+                    }
+                    timeTravelerTeleportButton.Timer = timeTravelerTeleportButton.MaxTimer;
                 },
-                TimeTraveler.getShieldButtonSprite(),
+                TimeTraveler.getTeleportButtonSprite(),
                 CustomButton.ButtonPositions.lowerRowRight,
                 __instance,
-                KeyCode.F,
-                true,
-                TimeTraveler.shieldDuration,
-                () => { timeTravelerShieldButton.Timer = timeTravelerShieldButton.MaxTimer; }
+                KeyCode.F
             );
 
-            // TimeTraveler rewind time
-            timeTravelerRewindTimeButton = new CustomButton(
+            // TimeTraveler stop time
+            timeTravelerStopTimeButton = new CustomButton(
                 () => {
                     if (Helpers.checkIfEaten(PlayerInCache.LocalPlayer.PlayerControl)) {
-                        timeTravelerRewindTimeButton.Timer = timeTravelerRewindTimeButton.MaxTimer;
+                        timeTravelerStopTimeButton.Timer = timeTravelerStopTimeButton.MaxTimer;
                     }
 
                     if (Helpers.checkIfJinxed(TimeTraveler.timeTraveler)) {
                         Helpers.jinxedAction(TimeTraveler.timeTraveler);
 
                         SoundManager.Instance.PlaySound(CustomMain.customAssets.jinxQuack, false, 5f);
-                        timeTravelerRewindTimeButton.Timer = timeTravelerRewindTimeButton.MaxTimer;
+                        timeTravelerStopTimeButton.Timer = timeTravelerStopTimeButton.MaxTimer;
                         return;
                     }
 
-                    timeTravelerRewindTimeButton.Timer = 0f;
-                    TimeTraveler.usedRewind = true;
-                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.TimeTravelerRewindTime, Hazel.SendOption.Reliable, -1);
+                    timeTravelerStopTimeButton.Timer = 60f;
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.TimeTravelerStopTime, Hazel.SendOption.Reliable, -1);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.timeTravelerRewindTime();
+                    RPCProcedure.timeTravelerStopTime();
                 },
-                () => { return TimeTraveler.timeTraveler != null && TimeTraveler.timeTraveler == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return TimeTraveler.timeTraveler != null && TimeTraveler.timeTraveler == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && TimeTraveler.shielded; },
                 () => {
                     bool sabotageActive = false;
                     if (Bomberman.activeBomb == true || Illusionist.lightsOutTimer > 0) {
@@ -5013,10 +5041,10 @@ namespace LasMonjas
                     else {
                         sabotageActive = (Helpers.AnySabotageActive() || Helpers.MushroomSabotageActive());
                     }
-                    return !sabotageActive && !TimeTraveler.usedRewind && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
+                    return !sabotageActive && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
                 },
-                () => { timeTravelerRewindTimeButton.Timer = timeTravelerRewindTimeButton.MaxTimer; },
-                TimeTraveler.getRewindButtonSprite(),
+                () => { timeTravelerStopTimeButton.Timer = timeTravelerStopTimeButton.MaxTimer; },
+                TimeTraveler.getStopTimeButtonSprite(),
                 CustomButton.ButtonPositions.lowerRowCenter,
                 __instance,
                 KeyCode.T
@@ -5067,7 +5095,7 @@ namespace LasMonjas
                         fortuneTellerRevealButton.isEffectActive = false;
                     }
 
-                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && FortuneTeller.currentTarget != null && !FortuneTeller.usedFortune && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
+                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && FortuneTeller.currentTarget != null && FortuneTeller.charges > 0 && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
                 },
                 () => {
                     FortuneTeller.revealTarget = null;
@@ -5615,28 +5643,24 @@ namespace LasMonjas
             spiritualistReviveButton = new CustomButton(
                 () => {
                     spiritualistReviveButton.HasEffect = true;
-
-                    MessageWriter isRevivingSpiritualist = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.SendSpiritualistIsReviving, Hazel.SendOption.Reliable, -1);
-                    AmongUsClient.Instance.FinishRpcImmediately(isRevivingSpiritualist);
-                    RPCProcedure.sendSpiritualistIsReviving();
                 },
-                () => { return Spiritualist.spiritualist != null && !Spiritualist.usedRevive && Spiritualist.spiritualist == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Spiritualist.spiritualist != null && Spiritualist.spiritualist == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
                 () => {
-                    if (spiritualistReviveButton.isEffectActive && (!Spiritualist.isReviving || !Spiritualist.canRevive)) {
-                        MessageWriter resetSpiritualist = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ResetSpiritualistReviveValues, Hazel.SendOption.Reliable, -1);
-                        AmongUsClient.Instance.FinishRpcImmediately(resetSpiritualist);
-                        RPCProcedure.resetSpiritualistReviveValues();
+                    if (spiritualistReviveButton.isEffectActive && !Spiritualist.canRevive) {
+                        spiritualistReviveButton.Timer = 0f;
+                        spiritualistReviveButton.isEffectActive = false;
                     }
                     Spiritualist.canRevive = false;
                     foreach (Collider2D collider2D in Physics2D.OverlapCircleAll(PlayerInCache.LocalPlayer.PlayerControl.GetTruePosition(), 1f, Constants.PlayersOnlyMask))
                         if (collider2D.tag == "DeadBody")
                             Spiritualist.canRevive = true;
-                    return Spiritualist.canRevive && !Spiritualist.usedRevive && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
+                    return Spiritualist.canRevive && Spiritualist.revivedPlayer == null && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
                 },
                 () => {
                     spiritualistReviveButton.Timer = spiritualistReviveButton.MaxTimer;
                     spiritualistReviveButton.isEffectActive = false;
-                    Spiritualist.isReviving = false;
+                    Spiritualist.revivedPlayer = null;
+                    Spiritualist.revivedPlayerKiller = null;
                 },
                 Spiritualist.getButtonSprite(),
                 CustomButton.ButtonPositions.lowerRowRight,
@@ -5657,7 +5681,7 @@ namespace LasMonjas
                         return;
                     }
 
-                    if (Spiritualist.isReviving & Spiritualist.canRevive) {
+                    if (Spiritualist.canRevive) {
                         foreach (Collider2D collider2D in Physics2D.OverlapCircleAll(PlayerInCache.LocalPlayer.PlayerControl.GetTruePosition(), 1f, Constants.PlayersOnlyMask)) {
                             if (collider2D.tag == "DeadBody") {
                                 DeadBody component = collider2D.GetComponent<DeadBody>();
@@ -5684,6 +5708,56 @@ namespace LasMonjas
                 }
             );
 
+            // Spiritualist Revived Player Kill
+            spiritualistRevivedKillButton = new CustomButton(
+                () => {
+
+                    if (Spiritualist.revivedPlayerTarget != null) {
+
+                        MurderAttemptResult murderAttemptResult = Helpers.checkMurderAttempt(Spiritualist.revivedPlayer, Spiritualist.revivedPlayerTarget);
+                        if (murderAttemptResult == MurderAttemptResult.JinxKill) {
+                            SoundManager.Instance.PlaySound(CustomMain.customAssets.jinxQuack, false, 5f);
+                            spiritualistRevivedKillButton.Timer = spiritualistRevivedKillButton.MaxTimer;
+                            Spiritualist.revivedPlayerTarget = null;
+                            return;
+                        }
+                        else if (murderAttemptResult == MurderAttemptResult.SuppressKill) {
+                            return;
+                        }
+
+                        if (murderAttemptResult == MurderAttemptResult.PerformKill) {
+                            byte targetId = 0;
+
+                            targetId = Spiritualist.revivedPlayerTarget.PlayerId;
+
+                            MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.UncheckedMurderPlayer, Hazel.SendOption.Reliable, -1);
+                            killWriter.Write(Spiritualist.revivedPlayer.Data.PlayerId);
+                            killWriter.Write(targetId);
+                            killWriter.Write(byte.MaxValue);
+                            AmongUsClient.Instance.FinishRpcImmediately(killWriter);
+                            RPCProcedure.uncheckedMurderPlayer(Spiritualist.revivedPlayer.Data.PlayerId, targetId, Byte.MaxValue);
+                        }
+
+                        spiritualistRevivedKillButton.Timer = spiritualistRevivedKillButton.MaxTimer;
+                        Spiritualist.revivedPlayerTarget = null;
+                    }
+                },
+                () => { return Spiritualist.revivedPlayer != null && Spiritualist.revivedPlayer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Spiritualist.revivedPlayerTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
+                () => { spiritualistRevivedKillButton.Timer = spiritualistRevivedKillButton.MaxTimer; },
+                Spiritualist.getRevivedPlayerRevengeButtonSprite(),
+                CustomButton.ButtonPositions.upperRowRight,
+                __instance,
+                null,
+                true
+            );
+
+            // Spiritualist revived time count text
+            Spiritualist.revivedPlayerTimerCountButtonText = GameObject.Instantiate(spiritualistRevivedKillButton.actionButton.cooldownTimerText, spiritualistRevivedKillButton.actionButton.cooldownTimerText.transform.parent);
+            Spiritualist.revivedPlayerTimerCountButtonText.enableWordWrapping = false;
+            Spiritualist.revivedPlayerTimerCountButtonText.transform.localScale = Vector3.one * 0.5f;
+            Spiritualist.revivedPlayerTimerCountButtonText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
+            
             // Vigilant camera button
             vigilantButton = new CustomButton(
                 () => {
@@ -5935,8 +6009,9 @@ namespace LasMonjas
 
                     cowardCallButton.Timer = cowardCallButton.MaxTimer;
                     MessageWriter usedCallWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.CowardUsedCall, Hazel.SendOption.Reliable, -1);
+                    usedCallWriter.Write(0);
                     AmongUsClient.Instance.FinishRpcImmediately(usedCallWriter);
-                    RPCProcedure.cowardUsedCall();
+                    RPCProcedure.cowardUsedCall(0);
 
                     HudManager.Instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) => { // Delayed action
                         if (p == 1f) {
@@ -5953,7 +6028,7 @@ namespace LasMonjas
                     else {
                         sabotageActive = (Helpers.AnySabotageActive() || Helpers.MushroomSabotageActive());
                     }
-                    return !sabotageActive && !Coward.usedCalls && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
+                    return !sabotageActive && Coward.charges > 0 && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
                 },
                 () => { },
                 Coward.getButtonSprite(),
@@ -6395,6 +6470,51 @@ namespace LasMonjas
                 }
             );
 
+            // TaskMaster Kill
+            taskMasterKillButton = new CustomButton(
+                () => {
+                    MurderAttemptResult murderAttemptResult = Helpers.checkMurderAttempt(TaskMaster.taskMaster, TaskMaster.currentTarget);
+                    if (murderAttemptResult == MurderAttemptResult.JinxKill) {
+                        SoundManager.Instance.PlaySound(CustomMain.customAssets.jinxQuack, false, 5f);
+                        taskMasterKillButton.Timer = taskMasterKillButton.MaxTimer;
+                        TaskMaster.currentTarget = null;
+                        return;
+                    }
+                    else if (murderAttemptResult == MurderAttemptResult.SuppressKill) {
+                        return;
+                    }
+
+                    if (murderAttemptResult == MurderAttemptResult.PerformKill) {
+                        byte targetId = 0;
+                        if (TaskMaster.currentTarget.Data.Role.IsImpostor ||
+                            Helpers.isNeutral(TaskMaster.currentTarget) ||
+                            Helpers.isRebel(TaskMaster.currentTarget)) {
+                            targetId = TaskMaster.currentTarget.PlayerId;
+                        }
+                        else {
+                            targetId = PlayerInCache.LocalPlayer.PlayerControl.PlayerId;
+                        }
+
+                        MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.UncheckedMurderPlayer, Hazel.SendOption.Reliable, -1);
+                        killWriter.Write(TaskMaster.taskMaster.Data.PlayerId);
+                        killWriter.Write(targetId);
+                        killWriter.Write(byte.MaxValue);
+                        AmongUsClient.Instance.FinishRpcImmediately(killWriter);
+                        RPCProcedure.uncheckedMurderPlayer(TaskMaster.taskMaster.Data.PlayerId, targetId, Byte.MaxValue);
+                    }
+
+                    taskMasterKillButton.Timer = taskMasterKillButton.MaxTimer;
+                    TaskMaster.currentTarget = null;
+                },
+                () => { return TaskMaster.hasKillButton && TaskMaster.rewardType == 1 && TaskMaster.taskMaster != null && TaskMaster.taskMaster == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return TaskMaster.currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
+                () => { taskMasterKillButton.Timer = taskMasterKillButton.MaxTimer; },
+                __instance.KillButton.graphic.sprite,
+                CustomButton.ButtonPositions.upperRowRight,
+                __instance,
+                KeyCode.Q
+            );
+            
             // Jailer jail
             jailerJailButton = new CustomButton(
                 () => {
@@ -6437,7 +6557,7 @@ namespace LasMonjas
             zoomOutButton = new CustomButton(
                 () => { Helpers.toggleZoom();
                 },
-                () => { if (PlayerInCache.LocalPlayer.PlayerControl == null || !PlayerInCache.LocalPlayer.Data.IsDead || TimeTraveler.isRewinding || (gameType >= 2 && gameType != 5)) return false;
+                () => { if (PlayerInCache.LocalPlayer.PlayerControl == null || !PlayerInCache.LocalPlayer.Data.IsDead || TimeTraveler.isStoppingTime || (gameType >= 2 && gameType != 5)) return false;
                     var (playerCompleted, playerTotal) = TasksHandler.taskInfo(PlayerInCache.LocalPlayer.Data);
                     int numberOfLeftTasks = playerTotal - playerCompleted;
                     return numberOfLeftTasks <= 0;

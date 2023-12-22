@@ -16,6 +16,7 @@ using AmongUs.GameOptions;
 using static UnityEngine.GraphicsBuffer;
 using TMPro;
 using UnityEngine.Rendering.VirtualTexturing;
+using MS.Internal.Xml.XPath;
 
 namespace LasMonjas
 {
@@ -353,19 +354,21 @@ namespace LasMonjas
         MechanicFixMushroom,
         MechanicUsedRepair,
         SheriffKill,
-        TimeTravelerShield,
-        TimeTravelerRewindTime,
+        TimeTravelerTeleport,
+        TimeTravelerStopTime,
+        TimeTravelerSetShield,
         SquireSetShielded,
         ShieldedMurderAttempt,
         CheaterCheat,
         FortuneTellerReveal,
+        FortuneTellerAbilityUses,
         HackerAbilityUses,
         SleuthUsedLocate,
         FinkHawkEye,
         SealVent,
         SpiritualistRevive,
         SendSpiritualistIsReviving,
-        MurderSpiritualistIfReportWhileReviving,
+        MurderSpiritualistRevivedPlayer,
         ResetSpiritualistReviveValues,
         CowardUsedCall,
         PlaceCamera,
@@ -1485,11 +1488,6 @@ namespace LasMonjas
             else {
                 Manipulator.manipulatedVictim = Helpers.playerById(targetId);
                 Manipulator.manipulatedVictimTimer = 21f;
-                HudManager.Instance.StartCoroutine(Effects.Lerp(Manipulator.manipulatedVictimTimer, new Action<float>((p) => {
-                    if (p == 1f && !MeetingHud.Instance) {
-                        Manipulator.manipulatedVictim.MurderPlayer(Manipulator.manipulatedVictim, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
-                    }
-                })));
             }
         }
 
@@ -1570,7 +1568,6 @@ namespace LasMonjas
             target.Exiled();
             PlayerControl partner = target.getPartner(); // Lover check
             byte partnerId = partner != null ? partner.PlayerId : playerId;
-            Gambler.numberOfShots = Mathf.Max(0, Gambler.numberOfShots - 1);
             if (Constants.ShouldPlaySfx()) SoundManager.Instance.PlaySound(target.KillSfx, false, 0.8f);
             if (MeetingHud.Instance) {
                 foreach (PlayerVoteArea pva in MeetingHud.Instance.playerStates) {
@@ -1658,9 +1655,6 @@ namespace LasMonjas
                 HudManager.Instance.StartCoroutine(Effects.Lerp(Hypnotist.spiralDuration, new Action<float>((p) => {
                     if (p == 1f) {
                         camera.transform.rotation = Quaternion.Euler(0, 0, 0);
-                        foreach (HypnotistSpiral spiral in HypnotistSpiral.hypnotistSpirals) {
-                            spiral.isActive = true;
-                        }
                     }
                 })));
             }
@@ -1690,10 +1684,7 @@ namespace LasMonjas
             }
         }
 
-        public static void plumberMakeVent(byte[] buff) {
-
-            Plumber.currentVents += 1;
-            Plumber.plumberVentButtonText.text = $"{Plumber.currentVents} / {Plumber.maxVents}";
+        public static void plumberMakeVent(int ventId, byte[] buff) {
 
             Vector3 position = Vector3.zero;
             position.x = BitConverter.ToSingle(buff, 0 * sizeof(float));
@@ -1701,6 +1692,7 @@ namespace LasMonjas
 
             var ventPrefab = UnityEngine.Object.FindObjectOfType<Vent>();
             var vent = UnityEngine.Object.Instantiate(ventPrefab, ventPrefab.transform.parent);
+            vent.Id = ventId; 
             vent.gameObject.GetComponent<BoxCollider2D>().enabled = false;
             if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
                 vent.gameObject.layer = 12;
@@ -1726,7 +1718,38 @@ namespace LasMonjas
                 ventRenderer.color = new Color(1, 1, 1, 0f);
             }
 
+            if (Plumber.Vents.Count > 0) {
+                var leftVent = Plumber.Vents[^1];
+                vent.Left = leftVent;
+                leftVent.Right = vent;
+            }
+            else {
+                vent.Left = null;
+            }
+            vent.Right = null;
+            vent.Center = null;
+            var allVents = ShipStatus.Instance.AllVents.ToList();
+            allVents.Add(vent);
+            ShipStatus.Instance.AllVents = allVents.ToArray();
             Plumber.Vents.Add(vent);
+            HudManager.Instance.StartCoroutine(Effects.Lerp(5, new Action<float>((p) => {
+
+                if (p == 1f) {
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId != 5) {
+                        vent.gameObject.GetComponent<SpriteRenderer>().color = Color.white;
+                    }
+                    else {
+                        vent.transform.GetChild(3).GetComponent<SpriteRenderer>().color = Color.white;
+                    }
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+                        vent.gameObject.GetComponent<CircleCollider2D>().enabled = true;
+                    }
+                    else {
+                        vent.gameObject.GetComponent<BoxCollider2D>().enabled = true;
+                    }
+                }
+
+            })));
         }
 
         public static void silencePlayer(byte playerId) {
@@ -2559,8 +2582,6 @@ namespace LasMonjas
             HudManager.Instance.FullScreen.enabled = false;
             Monja.monjaSprite.SetActive(false);
             Monja.awakened = false;
-            timeTravelerRewindTimeButton.Timer = timeTravelerRewindTimeButton.MaxTimer;
-            timeTravelerShieldButton.Timer = timeTravelerShieldButton.MaxTimer;
             monjaFindDeliverButton.HasEffect = false;
             HudManager.Instance.PlayerCam.shakeAmount = 0f;
             HudManager.Instance.PlayerCam.shakePeriod = 0;
@@ -2612,6 +2633,7 @@ namespace LasMonjas
                     Forensic.forensic = oldRoleThief;
                 }
                 else if (TimeTraveler.timeTraveler != null && TimeTraveler.timeTraveler == player) {
+                    TimeTraveler.resetTimeTraveler();                    
                     TimeTraveler.timeTraveler = oldRoleThief;
                 }
                 else if (Squire.squire != null && Squire.squire == player) {
@@ -2699,7 +2721,7 @@ namespace LasMonjas
                     // Randomize again and reset the tasks for taskmaster after steal role
                     if (TaskMaster.clearedInitialTasks) {
                         byte[] taskTypeIds = TasksHandler.GetTaskMasterTasks(TaskMaster.taskMaster);
-                        taskMasterSetExTasks(TaskMaster.taskMaster.PlayerId, byte.MaxValue, taskTypeIds);
+                        taskMasterSetExTasks(TaskMaster.taskMaster.PlayerId, byte.MaxValue, taskTypeIds, TaskMaster.rewardType);
                     }
                 }
                 else if (Jailer.jailer != null && Jailer.jailer == player) {
@@ -3232,7 +3254,7 @@ namespace LasMonjas
                     // Randomize again and reset the tasks for taskmaster after steal role
                     if (TaskMaster.clearedInitialTasks) {
                         byte[] taskTypeIds = TasksHandler.GetTaskMasterTasks(TaskMaster.taskMaster);
-                        taskMasterSetExTasks(TaskMaster.taskMaster.PlayerId, byte.MaxValue, taskTypeIds);
+                        taskMasterSetExTasks(TaskMaster.taskMaster.PlayerId, byte.MaxValue, taskTypeIds, TaskMaster.rewardType);
                     }
                     break;
                 case RoleId.Jailer:
@@ -3259,6 +3281,10 @@ namespace LasMonjas
             Helpers.handleDemonBiteOnBodyReport(); // Manually call Demon handling, since the CmdReportDeadBody Prefix won't be called
             Helpers.handleMedusaPetrifyOnBodyReport(); // Manually call Medusa handling, since the CmdReportDeadBody Prefix won't be called
             Helpers.handleEatenPlayersOnBodyReport(); // Manually call Devourer devour, since the CmdReportDeadBody Prefix won't be called
+            // Manually murder the Spiritualist's revived player
+            if (Spiritualist.revivedPlayer != null && !Spiritualist.revivedPlayer.Data.IsDead) {                
+                murderSpiritualistRevivedPlayer();
+            }
             HudManager.Instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) => { // Delayed action
                 if (p == 1f) {
                     oldAmnesiac.CmdReportDeadBody(playerInfo);
@@ -3560,15 +3586,16 @@ namespace LasMonjas
             switchSystem.currentSecondsUntilHeal = 0.001f;
         }
 
-        public static void mechanicUsedRepair() {
-            SoundManager.Instance.PlaySound(CustomMain.customAssets.mechanicWelderAction, false, 100f);
-            if (Mechanic.timesUsedRepairs < Mechanic.numberOfRepairs) {
-                Mechanic.timesUsedRepairs += 1;
-                if (Mechanic.timesUsedRepairs == Mechanic.numberOfRepairs) {
-                    Mechanic.usedRepair = true;
-                }
+        public static void mechanicUsedRepair(byte value) {
+            if (value == 0) {
+                SoundManager.Instance.PlaySound(CustomMain.customAssets.mechanicWelderAction, false, 100f);
+                Mechanic.charges--;
             }
-            Mechanic.mechanicRepairButtonText.text = $"{Mechanic.numberOfRepairs - Mechanic.timesUsedRepairs} / {Mechanic.numberOfRepairs}";
+            else {
+                Mechanic.rechargedTasks += Mechanic.rechargeTasksNumber;
+                if (Mechanic.numberOfRepairs > Mechanic.charges) Mechanic.charges++;
+            }
+            Mechanic.mechanicRepairButtonText.text = $"{Mechanic.charges} / {Mechanic.numberOfRepairs}"; 
         }
 
         public static void sheriffKill(byte targetId) {
@@ -3578,31 +3605,31 @@ namespace LasMonjas
             return;
         }
 
-        public static void timeTravelerShield() {
-            TimeTraveler.shieldActive = true;
-            HudManager.Instance.StartCoroutine(Effects.Lerp(TimeTraveler.shieldDuration, new Action<float>((p) => {
-                if (p == 1f) TimeTraveler.shieldActive = false;
-            })));
+        public static void timeTravelerTeleport(byte mark) {
+            if (mark == 0) {
+                TimeTraveler.timeTraveler.transform.position = TimeTraveler.teleportPos;
+                TimeTraveler.markedLocation = false;
+            } else {
+                TimeTraveler.teleportPos = TimeTraveler.timeTraveler.GetTruePosition();
+                TimeTraveler.markedLocation = true;
+            }            
         }
 
-        public static void timeTravelerRewindTime() {
-            if (TimeTraveler.shieldActive == true) {
-                TimeTraveler.usedShield = true;
-            }
-            TimeTraveler.shieldActive = false; // Shield is no longer active when rewinding
-            if (TimeTraveler.timeTraveler != null && TimeTraveler.timeTraveler == PlayerInCache.LocalPlayer.PlayerControl) {
-                resetTimeTravelerButton();
-            }
+        public static void timeTravelerStopTime() {
             HudManager.Instance.FullScreen.color = new Color(0f, 0.5f, 0.8f, 0.3f);
             HudManager.Instance.FullScreen.enabled = true;
             HudManager.Instance.FullScreen.gameObject.SetActive(true);
-            HudManager.Instance.StartCoroutine(Effects.Lerp(TimeTraveler.rewindTime / 2, new Action<float>((p) => {
-                if (p == 1f) HudManager.Instance.FullScreen.enabled = false;
+            HudManager.Instance.StartCoroutine(Effects.Lerp(TimeTraveler.stopTime, new Action<float>((p) => {
+                if (p == 1f) {
+                    HudManager.Instance.FullScreen.enabled = false;
+                    TimeTraveler.isStoppingTime = false;
+                    PlayerInCache.LocalPlayer.PlayerControl.moveable = true;
+                }
             })));
 
             SoundManager.Instance.PlaySound(CustomMain.customAssets.timeTravelerTimeReverseClip, false, 100f);
 
-            if (!PlayerInCache.LocalPlayer.PlayerControl.CanMove || TimeTraveler.timeTraveler == null || PlayerInCache.LocalPlayer.PlayerControl == TimeTraveler.timeTraveler) return; // TimeTraveler himself does not rewind
+            if ((GameOptionsManager.Instance.currentGameOptions.MapId == 5 && !PlayerInCache.LocalPlayer.PlayerControl.CanMove) || TimeTraveler.timeTraveler == null || PlayerInCache.LocalPlayer.PlayerControl == TimeTraveler.timeTraveler) return; // TimeTraveler himself does not stop
 
             // Don't rewind eaten players
             if (Devourer.eatenPlayers.Count != 0) {
@@ -3611,13 +3638,31 @@ namespace LasMonjas
                 }
             }
 
-            TimeTraveler.isRewinding = true;
+            TimeTraveler.isStoppingTime = true;
 
             if (MapBehaviour.Instance)
                 MapBehaviour.Instance.Close();
             if (Minigame.Instance)
                 Minigame.Instance.ForceClose();
+
+            // Exit current vent if necessary
+            if (PlayerInCache.LocalPlayer.PlayerControl.inVent) {
+                foreach (Vent vent in ShipStatus.Instance.AllVents) {
+                    bool canUse;
+                    bool couldUse;
+                    vent.CanUse(PlayerInCache.LocalPlayer.Data, out canUse, out couldUse);
+                    if (canUse) {
+                        PlayerInCache.LocalPlayer.PlayerControl.MyPhysics.RpcExitVent(vent.Id);
+                        vent.SetButtons(false);
+                    }
+                }
+            }
+
             PlayerInCache.LocalPlayer.PlayerControl.moveable = false;
+        }
+
+        public static void timeTravelerSetShield() {
+            TimeTraveler.shielded = true;
         }
 
         public static void squireSetShielded(byte shieldedId) {
@@ -3683,14 +3728,18 @@ namespace LasMonjas
                     })));
                 }
             }
+            fortuneTellerAbilityUses(0);
+        }
 
-            if (FortuneTeller.timesUsedFortune < FortuneTeller.numberOfFortunes) {
-                FortuneTeller.timesUsedFortune += 1;
-                if (FortuneTeller.timesUsedFortune == FortuneTeller.numberOfFortunes) {
-                    FortuneTeller.usedFortune = true;
-                }
+        public static void fortuneTellerAbilityUses (byte value) {
+            if (value == 0) {
+                FortuneTeller.charges--;
             }
-            FortuneTeller.fortuneTellerRevealButtonText.text = $"{FortuneTeller.numberOfFortunes - FortuneTeller.timesUsedFortune} / {FortuneTeller.numberOfFortunes}";
+            else {
+                FortuneTeller.rechargedTasks += FortuneTeller.rechargeTasksNumber;
+                if (FortuneTeller.numberOfFortunes > FortuneTeller.charges) FortuneTeller.charges++;
+            }
+            FortuneTeller.fortuneTellerRevealButtonText.text = $"{FortuneTeller.charges} / {FortuneTeller.numberOfFortunes}";
         }
 
         public static void hackerAbilityUses(byte value) {
@@ -3757,17 +3806,7 @@ namespace LasMonjas
                             vent.EnterVentAnim = vent.ExitVentAnim = null; 
                             vent.transform.GetChild(3).GetComponent<SpriteRenderer>().sprite = Welder.getFungleVentSealedSprite();
                             break;
-                    }           
-                    // Welder vents seal sprite
-                    /*if (GameOptionsManager.Instance.currentGameOptions.MapId == 2 || GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
-                        vent.myRend.sprite = Welder.getStaticVentSealedSprite();
                     }
-                    else {
-                        PowerTools.SpriteAnim animator = vent.GetComponent<PowerTools.SpriteAnim>();
-                        animator?.Stop();
-                        vent.EnterVentAnim = vent.ExitVentAnim = null;
-                        vent.myRend.sprite = Welder.getAnimatedVentSealedSprite(); 
-                    }*/
                     vent.myRend.color = new Color(1, 1, 1, 0.5f);
                 }
             } else {
@@ -3788,7 +3827,13 @@ namespace LasMonjas
                 if (player.PlayerId == playerId) {
                     if (Spiritualist.spiritualist != null && Spiritualist.spiritualist.PlayerId == reviverId) {
                         Spiritualist.revivedPlayer = Helpers.playerById(playerId);
-                        Spiritualist.usedRevive = true;
+                        DeadPlayer deadPlayer = deadPlayers?.Where(x => x.player?.PlayerId == Spiritualist.revivedPlayer.PlayerId)?.FirstOrDefault();
+                        Spiritualist.revivedPlayerKiller = deadPlayer.killerIfExisting;
+                        spiritualistRevivedKillButton.Timer = 5f;
+                        Spiritualist.revivedPlayerTimer = 21f;
+                        if (Spiritualist.revivedPlayerKiller.Data.IsDead) {
+                            murderSpiritualistRevivedPlayer();
+                        }
                     }
                     if (Necromancer.necromancer != null && Necromancer.necromancer.PlayerId == reviverId) {
                         Necromancer.revivedPlayer = Helpers.playerById(playerId);
@@ -3861,21 +3906,6 @@ namespace LasMonjas
 
             // Reset zoomed out ghosts
             Helpers.toggleZoom(reset: true);
-
-            if (Spiritualist.spiritualist != null && Spiritualist.spiritualist.PlayerId == reviverId) {
-                Spiritualist.preventReport = true;
-                HudManager.Instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) => { // Delayed action
-                    if (p == 1f) {
-                        murderSpiritualistIfReportWhileReviving();
-                    }
-                }))); 
-                HudManager.Instance.StartCoroutine(Effects.Lerp(0.5f, new Action<float>((p) => { // Delayed action
-                    if (p == 1f) {
-                        removeBody(Spiritualist.spiritualist.PlayerId);
-                        Spiritualist.preventReport = false;
-                    }
-                })));
-            }
         }
 
         public static void spiritualistPinkScreen(byte playerId) {
@@ -3903,20 +3933,15 @@ namespace LasMonjas
             }
         }
 
-        public static void sendSpiritualistIsReviving() {
-            Spiritualist.canRevive = true;
-            Spiritualist.isReviving = true;
-        }
-
-        public static void murderSpiritualistIfReportWhileReviving() {
-            Spiritualist.spiritualist.MurderPlayer(Spiritualist.spiritualist, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
-            resetSpiritualistReviveValues();
-        }
-
-        public static void resetSpiritualistReviveValues() {
-            Spiritualist.canRevive = false;
-            Spiritualist.isReviving = false;
-            resetSpiritualistReviveButton();
+        public static void murderSpiritualistRevivedPlayer() {
+            Spiritualist.revivedPlayer.MurderPlayer(Spiritualist.revivedPlayer, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
+            HudManager.Instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) => { // Delayed action
+                if (p == 1f && !MeetingHud.Instance) {
+                    removeBody(Spiritualist.revivedPlayer.PlayerId);
+                    Spiritualist.revivedPlayerKiller = null;
+                    Spiritualist.revivedPlayer = null;
+                }
+            })));
         }
 
         public static void teleportSpiritualistNecromancerBodies(PlayerControl player, DeadBody body) {
@@ -3938,14 +3963,15 @@ namespace LasMonjas
             spiritualistPinkScreen(player.PlayerId);
         }
 
-        public static void cowardUsedCall() {
-            if (Coward.timesUsedCalls < Coward.numberOfCalls) {
-                Coward.timesUsedCalls += 1;
-                if (Coward.timesUsedCalls == Coward.numberOfCalls) {
-                    Coward.usedCalls = true;
-                }
+        public static void cowardUsedCall(byte value) {
+            if (value == 0) {
+                Coward.charges--;
             }
-            Coward.cowardCallButtonText.text = $"{Coward.numberOfCalls - Coward.timesUsedCalls} / {Coward.numberOfCalls}";
+            else {
+                Coward.rechargedTasks += Coward.rechargeTasksNumber;
+                if (Coward.numberOfCalls > Coward.charges) Coward.charges++;
+            }
+            Coward.cowardCallButtonText.text = $"{Coward.charges} / {Coward.numberOfCalls}";
         }
 
         public static void placeCamera(byte[] buff) {
@@ -3976,7 +4002,7 @@ namespace LasMonjas
             Vigilant.remainingCameras -= 1;
             Vigilant.vigilantButtonCameraText.text = $"{Vigilant.remainingCameras} / {Vigilant.totalCameras}";
         }
-
+        
         public static void vigilantAbilityUses(byte value) {
             if (value == 0) {
                 Vigilant.charges--;
@@ -4108,39 +4134,46 @@ namespace LasMonjas
 
         public static void setNewExtraTasks() {
             byte[] taskTypeIds = TasksHandler.GetTaskMasterTasks(TaskMaster.taskMaster);
-            taskMasterSetExTasks(TaskMaster.taskMaster.PlayerId, byte.MaxValue, taskTypeIds);
+            taskMasterSetExTasks(TaskMaster.taskMaster.PlayerId, byte.MaxValue, taskTypeIds, TaskMaster.rewardType);
         }
 
-        public static void taskMasterSetExTasks(byte playerId, byte oldTaskMasterPlayerId, byte[] taskTypeIds) {
-            PlayerControl oldTaskMasterPlayer = Helpers.playerById(oldTaskMasterPlayerId);
-            if (oldTaskMasterPlayer != null) {
-                oldTaskMasterPlayer.clearAllTasks();
-                TaskMaster.oldTaskMasterPlayerId = oldTaskMasterPlayerId;
-            }
+        public static void taskMasterSetExTasks(byte playerId, byte oldTaskMasterPlayerId, byte[] taskTypeIds, byte rewardType) {
 
-            GameData.PlayerInfo player = GameData.Instance.GetPlayerById(playerId);
-            if (player == null)
-                return;
-
-            if (taskTypeIds != null && taskTypeIds.Length > 0) {
-                player.Object.clearAllTasks();
-                player.Tasks = new Il2CppSystem.Collections.Generic.List<GameData.TaskInfo>(taskTypeIds.Length);
-                for (int i = 0; i < taskTypeIds.Length; i++) {
-                    player.Tasks.Add(new GameData.TaskInfo(taskTypeIds[i], (uint)i));
-                    player.Tasks[i].Id = (uint)i;
-                }
-                for (int i = 0; i < player.Tasks.Count; i++) {
-                    GameData.TaskInfo taskInfo = player.Tasks[i];
-                    NormalPlayerTask normalPlayerTask = UnityEngine.Object.Instantiate(ShipStatus.Instance.GetTaskById(taskInfo.TypeId), player.Object.transform);
-                    normalPlayerTask.Id = taskInfo.Id;
-                    normalPlayerTask.Owner = player.Object;
-                    normalPlayerTask.Initialize();
-                    player.Object.myTasks.Add(normalPlayerTask);
-                }
-                TaskMaster.clearedInitialTasks = true;
+            if (rewardType != 0) {
+                TaskMaster.hasKillButton = true;
+                TaskMaster.clearedInitialTasks = false;
             }
             else {
-                TaskMaster.clearedInitialTasks = false;
+                PlayerControl oldTaskMasterPlayer = Helpers.playerById(oldTaskMasterPlayerId);
+                if (oldTaskMasterPlayer != null) {
+                    oldTaskMasterPlayer.clearAllTasks();
+                    TaskMaster.oldTaskMasterPlayerId = oldTaskMasterPlayerId;
+                }
+
+                GameData.PlayerInfo player = GameData.Instance.GetPlayerById(playerId);
+                if (player == null)
+                    return;
+
+                if (taskTypeIds != null && taskTypeIds.Length > 0) {
+                    player.Object.clearAllTasks();
+                    player.Tasks = new Il2CppSystem.Collections.Generic.List<GameData.TaskInfo>(taskTypeIds.Length);
+                    for (int i = 0; i < taskTypeIds.Length; i++) {
+                        player.Tasks.Add(new GameData.TaskInfo(taskTypeIds[i], (uint)i));
+                        player.Tasks[i].Id = (uint)i;
+                    }
+                    for (int i = 0; i < player.Tasks.Count; i++) {
+                        GameData.TaskInfo taskInfo = player.Tasks[i];
+                        NormalPlayerTask normalPlayerTask = UnityEngine.Object.Instantiate(ShipStatus.Instance.GetTaskById(taskInfo.TypeId), player.Object.transform);
+                        normalPlayerTask.Id = taskInfo.Id;
+                        normalPlayerTask.Owner = player.Object;
+                        normalPlayerTask.Initialize();
+                        player.Object.myTasks.Add(normalPlayerTask);
+                    }
+                    TaskMaster.clearedInitialTasks = true;
+                }
+                else {
+                    TaskMaster.clearedInitialTasks = false;
+                }
             }
         }
 
@@ -4333,7 +4366,19 @@ namespace LasMonjas
                     Forensic.forensic = player;
                     break;
                 case "timetravelerRole":
-                    TimeTraveler.timeTraveler = player;                    
+                    TimeTraveler.timeTraveler = player;
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+                        GameObject westLeftElevator = GameObject.Find("WestLeftElevator");
+                        GameObject westRightElevator = GameObject.Find("WestRightElevator");
+                        GameObject eastLeftElevator = GameObject.Find("EastLeftElevator");
+                        GameObject eastRightElevator = GameObject.Find("EastRightElevator");
+                        GameObject serviceElevator = GameObject.Find("ServiceElevator");
+                        TimeTraveler.objectsCantPlaceTeleport.Add(westLeftElevator);
+                        TimeTraveler.objectsCantPlaceTeleport.Add(westRightElevator);
+                        TimeTraveler.objectsCantPlaceTeleport.Add(eastLeftElevator);
+                        TimeTraveler.objectsCantPlaceTeleport.Add(eastRightElevator);
+                        TimeTraveler.objectsCantPlaceTeleport.Add(serviceElevator);
+                    }
                     break;
                 case "squireRole":
                     Squire.squire = player;
@@ -8893,8 +8938,9 @@ namespace LasMonjas
                     RPCProcedure.showArcherNotification(reader.ReadByte());
                     break;
                 case (byte)CustomRPC.PlumberMakeVent:
+                    var plumberventId = reader.ReadInt32();
                     var pos = reader.ReadBytesAndSize();
-                    RPCProcedure.plumberMakeVent(pos);
+                    RPCProcedure.plumberMakeVent(plumberventId, pos);
                     break;
                 case (byte)CustomRPC.SilencePlayer:
                     RPCProcedure.silencePlayer(reader.ReadByte());
@@ -9060,16 +9106,21 @@ namespace LasMonjas
                     RPCProcedure.mechanicFixMushroom();
                     break;
                 case (byte)CustomRPC.MechanicUsedRepair:
-                    RPCProcedure.mechanicUsedRepair();
+                    byte mechanicCharges = reader.ReadByte();
+                    RPCProcedure.mechanicUsedRepair(mechanicCharges);
                     break;
                 case (byte)CustomRPC.SheriffKill:
                     RPCProcedure.sheriffKill(reader.ReadByte());
                     break;
-                case (byte)CustomRPC.TimeTravelerShield:
-                    RPCProcedure.timeTravelerShield();
+                case (byte)CustomRPC.TimeTravelerTeleport:
+                    byte mark = reader.ReadByte();
+                    RPCProcedure.timeTravelerTeleport(mark);
                     break;
-                case (byte)CustomRPC.TimeTravelerRewindTime:
-                    RPCProcedure.timeTravelerRewindTime();
+                case (byte)CustomRPC.TimeTravelerStopTime:
+                    RPCProcedure.timeTravelerStopTime();
+                    break;
+                case (byte)CustomRPC.TimeTravelerSetShield:
+                    RPCProcedure.timeTravelerSetShield();
                     break;
                 case (byte)CustomRPC.SquireSetShielded:
                     RPCProcedure.squireSetShielded(reader.ReadByte());
@@ -9085,6 +9136,10 @@ namespace LasMonjas
                 case (byte)CustomRPC.FortuneTellerReveal:
                     byte targetFortuneId = reader.ReadByte();
                     RPCProcedure.fortuneTellerReveal(targetFortuneId);
+                    break;
+                case (byte)CustomRPC.FortuneTellerAbilityUses:
+                    byte fortuneCharges = reader.ReadByte();
+                    RPCProcedure.fortuneTellerAbilityUses(fortuneCharges);
                     break;
                 case (byte)CustomRPC.HackerAbilityUses:
                     byte adminOrVitals = reader.ReadByte();
@@ -9104,17 +9159,12 @@ namespace LasMonjas
                 case (byte)CustomRPC.SpiritualistRevive:
                     RPCProcedure.spiritualistRevive(reader.ReadByte(), reader.ReadByte());
                     break;
-                case (byte)CustomRPC.SendSpiritualistIsReviving:
-                    RPCProcedure.sendSpiritualistIsReviving();
-                    break;
-                case (byte)CustomRPC.MurderSpiritualistIfReportWhileReviving:
-                    RPCProcedure.murderSpiritualistIfReportWhileReviving();
-                    break;
-                case (byte)CustomRPC.ResetSpiritualistReviveValues:
-                    RPCProcedure.resetSpiritualistReviveValues();
+                case (byte)CustomRPC.MurderSpiritualistRevivedPlayer:
+                    RPCProcedure.murderSpiritualistRevivedPlayer();
                     break;
                 case (byte)CustomRPC.CowardUsedCall:
-                    RPCProcedure.cowardUsedCall();
+                    byte cowardCharges = reader.ReadByte(); 
+                    RPCProcedure.cowardUsedCall(cowardCharges);
                     break;
                 case (byte)CustomRPC.PlaceCamera:
                     RPCProcedure.placeCamera(reader.ReadBytesAndSize());
@@ -9151,7 +9201,8 @@ namespace LasMonjas
                     playerId = reader.ReadByte();
                     byte oldTaskMasterPlayerId = reader.ReadByte();
                     byte[] taskTypeIds = reader.BytesRemaining > 0 ? reader.ReadBytes(reader.BytesRemaining) : null;
-                    RPCProcedure.taskMasterSetExTasks(playerId, oldTaskMasterPlayerId, taskTypeIds);
+                    byte rewardType = reader.ReadByte();
+                    RPCProcedure.taskMasterSetExTasks(playerId, oldTaskMasterPlayerId, taskTypeIds, rewardType);
                     break;
                 case (byte)CustomRPC.TaskMasterTriggerCrewWin:
                     RPCProcedure.taskMasterTriggerCrewWin();
