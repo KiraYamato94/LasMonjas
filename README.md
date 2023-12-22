@@ -36,6 +36,14 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
 
+**Version 3.7.0 (22nd December 2023)**
+- Spiritualist Rework
+- Reward system for Task Master: added a lobby option to choose what it gets after completing all initial tasks, being extra tasks to try to achieve a crewmate win or a kill button
+- Fixed a bug with Illusionist's blackout message
+- Fixed a bug with Bomberman bomb's area not dissapearing after a meeting
+- Fixed an issue with Painter's paint, Squire's shield and Paintball's trail with mushroom sabotage
+- Fixed an issue with Manipulator where it could manipulate other impostors
+
 **Version 3.6.2 (7th December 2023)**
 - Mechanic: decreased maximum stackable repairs to 2 and added rechargeable uses by doing tasks.
 - Fortune Teller: decreased maximum stackable reveals to 2, starts only with 1 reveal and added rechargeable uses by doing tasks.
@@ -1312,15 +1320,14 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 ## Spiritualist
 | Team and Options  | Description |
 |----------|-------------|
-| Crewmates | Can revive another player at the cost of his own life |
+| Crewmates | Can revive another player |
 
 **Additional Ability Notes:**
-- Ghosts know who the Spiritualist is by looking at the player's name, it will be pink.
 - To revive someone, he has to stay near the corpse for the defined amount of time. This time resets if you move far away from the corpse.
-- If he's trying to revive someone and a meeting or body report is called, he will fail the revive and die instead.
-- If he manages to revive the player, Spiritualist's body will disappear and the revived player will be revealed to Impostors and Rebel with a pink arrow targeting him.
-- The revived player spawns where his body was after a pink screen flash, if he was doing a tasks in ghost form it won't be canceled.
-- Reviving a Lover will also revive the other Lover, the same goes with the Bounty Hunter and his target.
+- It can only be one revived player at the same time and that player can't use the emergency button.
+- The revived player gets a special kill button with a timer and has to try to find it's killer and kill him.
+- The revived player dies again without leaving a body if its killer dies, ran out of time, a meeting is called or someone already killed the killer at the momento revival.
+- Reviving a Lover will also revive the other Lover, the same goes with the Bounty Hunter and his target, but both will die again afterwards.
 
 -----------------------
 
@@ -1452,9 +1459,11 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 | Extra Short Tasks Range | How many extra short tasks |
 | Speed Cooldown | Ability Cooldown |
 | Duration | Speed Duration |
+| Reward Type | What it gets after completing all initial tasks |
 
 **Additional Ability Notes:**
 - If he's doing the extra tasks and gets his role stolen, the extra tasks progress resets and randomizes again.
+- Reward can be extra tasks to try to achieve a crewmate win or a kill button an become like another Sheriff.
 
 -----------------------
 
