@@ -503,7 +503,7 @@ namespace LasMonjas.Core
                         "Remove and move bodies\nfrom the crime scene",
                         "Create your own vent network and turn off the lights",
                         "Create your own vent\nnetwork and turn off the lights", //30
-                        "Manipulate a player to kill his adjacent",
+                        "Force a player to kill or get killed",
                         "Sabotage by putting bombs",
                         "Make yourself invisible\nbut you can't vent",
                         "Shoot a player choosing their role during the meeting",
@@ -512,7 +512,7 @@ namespace LasMonjas.Core
                         "Petrify players",
                         "Invert player movement controls",
                         "Make range kills",
-                        "Pick bow with F\nand right click to shoot", //40
+                        "Pick bow and right click to shoot", //40
                         "Create new vents",
                         "Silence a player to prevent him from talking",
                         "Silence a player\nto prevent him from talking",
@@ -535,11 +535,11 @@ namespace LasMonjas.Core
                         "Steal other player's role",//60
                         "Ignite all survivors to win",
                         "Find treasures to win",
-                        "Devour bodies to win",
+                        "Devour players and bodies to win",
                         "Poison all players to win",
                         "Poison all players to win\nOpen the map to activate the sabotage button",//65
-                        "Make dummies and get them killed to win",
-                        "Make dummies and\nget them killed to win",
+                        "Morph and get yourself killed to win",
+                        "Morph and\nget yourself killed to win",
                         "Get your target voted out to win",
                         "Remember your role reporting a body",
                         "Gain points playing hide and seek",//70
@@ -569,7 +569,7 @@ namespace LasMonjas.Core
                         "Take a body to its room and revive it",
                         "Place speed and position traps",//95
                         "Place speed and position traps\nSwitch trap type with Q key",
-                        "Check close players",
+                        "Open all doors",
                         "Complete all your tasks to get a reward",
                         "Complete all your tasks\nto get a reward",
                         "Send killers to prison",//100
@@ -1293,7 +1293,7 @@ namespace LasMonjas.Core
                         "Quita y mueve cuerpos\nde la escena del crimen",
                         "Crea tu propia red de rejillas y apaga las luces",
                         "Crea tu propia red de\nrejillas y apaga las luces", //30
-                        "Manipula a un jugador para matar a su adyacente",
+                        "Fuerza a un jugador a matar o morir",
                         "Sabotea poniendo bombas",
                         "Hazte invisible pero\nno puedes usar rejillas",
                         "Dispara a un jugador durante una reunion adivinando su rol",
@@ -1302,7 +1302,7 @@ namespace LasMonjas.Core
                         "Petrifica jugadores",
                         "Invierte los controles de los jugadores",
                         "Mata a distancia",
-                        "Equipa el arco con la F\ny dispara con clic derecho", //40
+                        "Equipa el arco \ny dispara con clic derecho", //40
                         "Crea nuevas rejillas",
                         "Silencia a un jugador para que no hable en la reunion",
                         "Silencia a un jugador\npara que no hable en la reunion",
@@ -1325,11 +1325,11 @@ namespace LasMonjas.Core
                         "Roba el rol a otro jugador",//60
                         "Rocia a todos para ganar",
                         "Encuentra tesoros para ganar",
-                        "Devora cuerpos para ganar",
+                        "Devora jugadores y cuerpos para ganar",
                         "Envenena a todos para ganar",
                         "Envenena a todos para ganar\nAbre el mapa para activar el boton de sabotajes",//65
-                        "Muere haciendo de señuelo para ganar",
-                        "Muere haciendo\nde señuelo para ganar",
+                        "Muere transformado para ganar",
+                        "Muere transformado\n para ganar",
                         "Expulsa a tu objetivo para ganar",
                         "Recuerda tu rol reportando un cuerpo",
                         "Gana puntos jugando al escondite",//70
@@ -2083,7 +2083,7 @@ namespace LasMonjas.Core
                         "犯罪現場から体を取り除き、移動します",
                         "独自のベントネットワークを作成し、ライトをオフにします",
                         "独自のベントネットワークを作成し\nライトをオフにします", //30
-                        "プレイヤーを操作して隣接する",
+                        "プレイヤーに殺すか殺されるかを強制する",
                         "爆弾を置くことによる妨害",
                         "自分を見えないようにしてください",
                         "会議中に自分の役割を選択するプレイヤーを撃ちます",
@@ -2149,7 +2149,7 @@ namespace LasMonjas.Core
                         "体をその部屋に持って行き、それを復活させてください",
                         "速度と位置トラップを配置し",//95
                         "速度と位置トラップを配置し\nQキーでトラップタイプを切り替えます",
-                        "クローズプレイヤーを確認してください",
+                        "すべてのドアを開けてください",
                         "すべてのタスクを完了して報酬を獲得してください",
                         "すべてのタスクを完了し\nて報酬を獲得してください",
                         "殺人者を刑務所に送ります",//100
@@ -2873,7 +2873,7 @@ namespace LasMonjas.Core
                         "毁尸灭迹",
                         "搭建管道网络并造成照明破坏",
                         "搭建管道网络\n并造成照明破坏", //30
-                        "操纵玩家杀害他旁边的人",
+                        "强迫玩家杀死或被杀死",
                         "用炸弹炸毁飞船",
                         "让自己隐形",
                         "生命就是豪赌",
@@ -2939,7 +2939,7 @@ namespace LasMonjas.Core
                         "把死亡玩家的尸体带去指定房间复活",
                         "在地图上安放各种机关",//95
                         "在地图上安放各种机关\n按Q切换机关类型",
-                        "提防附近的玩家",
+                        "打开所有门",
                         "完成所有任务后获得奖励",
                         "完成所有任务后获得奖励",
                         "把杀人凶手关进大牢",//100
