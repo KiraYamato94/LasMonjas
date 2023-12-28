@@ -36,7 +36,10 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
 
-**Version 3.7.0 (22nd December 2023)**
+**Version 3.7.1 (28th December 2023)**
+- Fixed some language issues
+
+- **Version 3.7.0 (22nd December 2023)**
 - Spiritualist Rework
 - Reward system for Task Master: added a lobby option to choose what it gets after completing all initial tasks, being extra tasks to try to achieve a crewmate win or a kill button
 - Fixed a bug with Illusionist's blackout message
