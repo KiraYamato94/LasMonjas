@@ -4167,7 +4167,7 @@ namespace LasMonjas
                     }
 
                     foreach (PlayerControl player in PlayerInCache.AllPlayers) {
-                        if (player != Kid.kid && player != Exiler.exiler) {
+                        if (player != Kid.kid && player != Exiler.exiler && Exiler.possibleTargets.Count == 0) {
                             Exiler.possibleTargets.Add(player);
                         }
                     }
@@ -4222,6 +4222,12 @@ namespace LasMonjas
                                     RPCProcedure.amnesiacReportAndTakeRole(playerInfo.PlayerId);
 
                                     SoundManager.Instance.PlaySound(CustomMain.customAssets.mimicPuppeteerTransform, false, 100f);
+
+                                    HudManager.Instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) => { // Delayed action
+                                        if (p == 1f) {
+                                            PlayerInCache.LocalPlayer.PlayerControl.CmdReportDeadBody(playerInfo);
+                                        }
+                                    }))); 
                                     break;
                                 }
                             }
@@ -5654,13 +5660,14 @@ namespace LasMonjas
                     foreach (Collider2D collider2D in Physics2D.OverlapCircleAll(PlayerInCache.LocalPlayer.PlayerControl.GetTruePosition(), 1f, Constants.PlayersOnlyMask))
                         if (collider2D.tag == "DeadBody")
                             Spiritualist.canRevive = true;
-                    return Spiritualist.canRevive && Spiritualist.revivedPlayer == null && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
+                    return Spiritualist.canRevive && Spiritualist.revivePerRound && Spiritualist.revivedPlayer == null && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
                 },
                 () => {
                     spiritualistReviveButton.Timer = spiritualistReviveButton.MaxTimer;
                     spiritualistReviveButton.isEffectActive = false;
                     Spiritualist.revivedPlayer = null;
                     Spiritualist.revivedPlayerKiller = null;
+                    Spiritualist.revivePerRound = true;
                 },
                 Spiritualist.getButtonSprite(),
                 CustomButton.ButtonPositions.lowerRowRight,
@@ -5698,7 +5705,7 @@ namespace LasMonjas
                                         RPCProcedure.spiritualistRevive(playerInfo.PlayerId, Spiritualist.spiritualist.PlayerId);
 
                                         spiritualistReviveButton.Timer = spiritualistReviveButton.MaxTimer;
-
+                                        Spiritualist.revivePerRound = false;
                                         break;
                                     }
                                 }

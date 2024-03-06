@@ -270,7 +270,7 @@ namespace LasMonjas
     {
         // Main Controls
 
-        ResetVaribles = 60,
+        ResetVaribles = 70,
         ShareOptions,
         SetRole,
         SetModifier, 
@@ -282,7 +282,7 @@ namespace LasMonjas
 
         // Role functionality
 
-        MimicTransform = 70,
+        MimicTransform = 80,
         PainterPaint,
         DemonSetBitten,
         PlaceNun,
@@ -1568,6 +1568,11 @@ namespace LasMonjas
             target.Exiled();
             PlayerControl partner = target.getPartner(); // Lover check
             byte partnerId = partner != null ? partner.PlayerId : playerId;
+            if (Exiler.exiler != null && Exiler.target != null && Exiler.target == target) {
+                Exiler.targetNameButtonText.text = "";
+                Exiler.target = null;
+                Exiler.usedTarget = false;
+            }
             if (Constants.ShouldPlaySfx()) SoundManager.Instance.PlaySound(target.KillSfx, false, 0.8f);
             if (MeetingHud.Instance) {
                 foreach (PlayerVoteArea pva in MeetingHud.Instance.playerStates) {
@@ -3274,6 +3279,7 @@ namespace LasMonjas
                     break;
             }
 
+            
             // Bomberman bomb reset when report the chosen one
             if (Bomberman.bomberman != null && Bomberman.activeBomb == true) {
                 fixBomb();
@@ -3284,12 +3290,7 @@ namespace LasMonjas
             // Manually murder the Spiritualist's revived player
             if (Spiritualist.revivedPlayer != null && !Spiritualist.revivedPlayer.Data.IsDead) {                
                 murderSpiritualistRevivedPlayer();
-            }
-            HudManager.Instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) => { // Delayed action
-                if (p == 1f) {
-                    oldAmnesiac.CmdReportDeadBody(playerInfo);
-                }
-            })));
+            }            
             changeMusic(1);
         }
 
@@ -3935,7 +3936,7 @@ namespace LasMonjas
 
         public static void murderSpiritualistRevivedPlayer() {
             Spiritualist.revivedPlayer.MurderPlayer(Spiritualist.revivedPlayer, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
-            HudManager.Instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) => { // Delayed action
+            HudManager.Instance.StartCoroutine(Effects.Lerp(0.25f, new Action<float>((p) => { // Delayed action
                 if (p == 1f && !MeetingHud.Instance) {
                     removeBody(Spiritualist.revivedPlayer.PlayerId);
                     Spiritualist.revivedPlayerKiller = null;

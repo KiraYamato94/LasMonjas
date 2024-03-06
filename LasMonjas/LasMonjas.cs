@@ -3030,6 +3030,7 @@ namespace LasMonjas
         public static PlayerControl revivedPlayer = null;
         public static PlayerControl revivedPlayerTarget = null;
         public static PlayerControl revivedPlayerKiller = null;
+        public static bool revivePerRound = true;
 
         public static Sprite getRevivedPlayerRevengeButtonSprite() {
             if (revivedPlayerKillButtonSprite) return revivedPlayerKillButtonSprite;
@@ -3050,6 +3051,7 @@ namespace LasMonjas
             revivedPlayerTarget = null;
             revivedPlayerKiller = null;
             revivedPlayerTimer = 21;
+            revivePerRound = true;
         }
     }
 
