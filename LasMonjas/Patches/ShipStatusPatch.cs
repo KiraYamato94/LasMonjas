@@ -241,13 +241,13 @@ namespace LasMonjas.Patches
                                 ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Comms, 18);
                             }
                             break;
-                        case SystemTypes.Electrical:
+                        /*case SystemTypes.Electrical:
                             if (amount >= 0 && amount <= 4) {
                                 SwitchSystem switchSystem = ShipStatus.Instance.Systems[SystemTypes.Electrical].Cast<SwitchSystem>();
                                 switchSystem.ActualSwitches = 0;
                                 switchSystem.ExpectedSwitches = 0;
                             }
-                            break;
+                            break;*/
                     }
                 }
                 return true;
