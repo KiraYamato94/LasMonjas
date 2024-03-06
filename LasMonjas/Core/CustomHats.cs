@@ -307,7 +307,7 @@ namespace LasMonjas.Core
                 newHat.NoBounce = bounce;                
                 newHat.Free = true;
                 newHat.ChipOffset = new Vector2(-0.1f, 0.4f);
-                if (altshader == true) { viewdata.AltShader = MagicShader; }
+                if (altshader == true) { viewdata.MatchPlayerColor = true; }
                 HatExtension extend = new HatExtension(); 
                 CustomHatRegistry.Add(newHat.name, extend);
                 CustomHatViewDatas.Add(newHat.name, viewdata);
@@ -354,8 +354,8 @@ namespace LasMonjas.Core
         {
             public static bool Prefix(HatParent __instance, int color) {
                 if (!CustomHatRegistry.ContainsKey(__instance.Hat.name)) return true;
-                __instance.hatDataAsset = null;
-                __instance.PopulateFromHatViewData();
+                __instance.viewAsset = null;
+                __instance.PopulateFromViewData();
                 __instance.SetMaterialColor(color);
                 return false;
             }
@@ -366,7 +366,7 @@ namespace LasMonjas.Core
             public static bool Prefix(HatParent __instance) {
                 HatViewData asset;
                 try {
-                    HatViewData vanillaAsset = __instance.hatDataAsset.GetAsset();
+                    HatViewData vanillaAsset = __instance.viewAsset.GetAsset();
                     return true;
                 }
                 catch {
@@ -377,10 +377,10 @@ namespace LasMonjas.Core
                         return false;
                     }
                 }
-                if (asset.AltShader) {
-                    __instance.FrontLayer.sharedMaterial = asset.AltShader;
+                if (asset.MatchPlayerColor) {
+                    __instance.FrontLayer.sharedMaterial = MagicShader;
                     if (__instance.BackLayer) {
-                        __instance.BackLayer.sharedMaterial = asset.AltShader;
+                        __instance.BackLayer.sharedMaterial = MagicShader;
                     }
                 }
                 else {
@@ -439,7 +439,7 @@ namespace LasMonjas.Core
         {
             public static bool Prefix(HatParent __instance) {
                 try {
-                    HatViewData vanillaAsset = __instance.hatDataAsset.GetAsset();
+                    HatViewData vanillaAsset = __instance.viewAsset.GetAsset();
                     return true;
                 }
                 catch { }
@@ -459,8 +459,8 @@ namespace LasMonjas.Core
                 if (!CustomHatRegistry.ContainsKey(__instance.Hat.name))
                     return true;
                 HatViewData hatViewData = CustomHatViewDatas[__instance.Hat.name];
-                __instance.hatDataAsset = null;
-                __instance.PopulateFromHatViewData();
+                __instance.viewAsset = null;
+                __instance.PopulateFromViewData();
                 __instance.SetMaterialColor(colorId);
                 return false;
             }
@@ -471,7 +471,7 @@ namespace LasMonjas.Core
         {
             public static bool Prefix(HatParent __instance) {
                 try {
-                    HatViewData vanillaAsset = __instance.hatDataAsset.GetAsset();
+                    HatViewData vanillaAsset = __instance.viewAsset.GetAsset();
                     return true;
                 }
                 catch { }
@@ -488,12 +488,12 @@ namespace LasMonjas.Core
         }
 
 
-        [HarmonyPatch(typeof(HatParent), nameof(HatParent.PopulateFromHatViewData))]
+        [HarmonyPatch(typeof(HatParent), nameof(HatParent.PopulateFromViewData))]
         public class PopulateFromHatViewDataPatch
         {
             public static bool Prefix(HatParent __instance) {
                 try {
-                    HatViewData vanillaAsset = __instance.hatDataAsset.GetAsset();
+                    HatViewData vanillaAsset = __instance.viewAsset.GetAsset();
                     return true;
                 }
                 catch {

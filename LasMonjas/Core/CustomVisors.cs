@@ -79,7 +79,7 @@ namespace LasMonjas.Core
                     VisorViewData vvd = new VisorViewData();
                     vvd.IdleFrame = GetSprite(data.VisorName);
                     if (data.altShader) {
-                        vvd.AltShader = MagicShader;
+                        vvd.MatchPlayerColor = true;
                     }
                     var plate = new CustomVisors(vvd);
                     plate.name = $"{data.VisorName} (by {data.AuthorName})";
@@ -147,18 +147,25 @@ namespace LasMonjas.Core
         class VisorLayerUpdateMaterialPatch
         {
             public static bool Prefix(VisorLayer __instance) {
-                if (__instance.currentVisor == null || !__instance.currentVisor.ProductId.StartsWith("lmj_")) return true;
-                VisorViewData asset = getbycache(__instance.currentVisor.ProductId);                
-                if (asset.AltShader) {
-                    __instance.Image.sharedMaterial = asset.AltShader;
+                if (__instance.visorData == null || !__instance.visorData.ProductId.StartsWith("lmj_")) return true;
+                VisorViewData asset = getbycache(__instance.visorData.ProductId);
+                PlayerMaterial.MaskType maskType = __instance.matProperties.MaskType;
+                if (asset.MatchPlayerColor) {
+                    if (maskType == PlayerMaterial.MaskType.ComplexUI || maskType == PlayerMaterial.MaskType.ScrollingUI) {
+                        __instance.Image.sharedMaterial = DestroyableSingleton<HatManager>.Instance.MaskedPlayerMaterial;
+                    }
+                    else {
+                        __instance.Image.sharedMaterial = DestroyableSingleton<HatManager>.Instance.PlayerMaterial;
+                    }
+                }
+                else if (maskType == PlayerMaterial.MaskType.ComplexUI || maskType == PlayerMaterial.MaskType.ScrollingUI) {
+                    __instance.Image.sharedMaterial = DestroyableSingleton<HatManager>.Instance.MaskedMaterial;
                 }
                 else {
                     __instance.Image.sharedMaterial = FastDestroyableSingleton<HatManager>.Instance.DefaultShader;
                 }
-                PlayerMaterial.SetColors(__instance.matProperties.ColorId, __instance.Image);
-                switch (__instance.matProperties.MaskType) {
+                switch (maskType) {
                     case PlayerMaterial.MaskType.SimpleUI:
-                    case PlayerMaterial.MaskType.ScrollingUI:
                         __instance.Image.maskInteraction = (SpriteMaskInteraction)1;
                         break;
                     case PlayerMaterial.MaskType.Exile:
@@ -167,6 +174,11 @@ namespace LasMonjas.Core
                     default:
                         __instance.Image.maskInteraction = (SpriteMaskInteraction)0;
                         break;
+                }
+                __instance.Image.material.SetInt(PlayerMaterial.MaskLayer, __instance.matProperties.MaskLayer);
+                if (asset.MatchPlayerColor)
+                {
+                    PlayerMaterial.SetColors(__instance.matProperties.ColorId, __instance.Image);
                 }
                 if (__instance.matProperties.MaskLayer <= 0) {
                     PlayerMaterial.SetMaskLayerBasedOnLocalPlayer(__instance.Image, __instance.matProperties.IsLocalPlayer);
@@ -181,9 +193,9 @@ namespace LasMonjas.Core
         class VisorLayerSetFlipXPatch
         {
             public static bool Prefix(VisorLayer __instance, bool flipX) {
-                if (__instance.currentVisor == null || !__instance.currentVisor.ProductId.StartsWith("lmj_")) return true;
+                if (__instance.visorData == null || !__instance.visorData.ProductId.StartsWith("lmj_")) return true;
                 __instance.Image.flipX = flipX;
-                VisorViewData asset = getbycache(__instance.currentVisor.ProdId);
+                VisorViewData asset = getbycache(__instance.visorData.ProdId);
                 if (flipX && asset.LeftIdleFrame) {
                     __instance.Image.sprite = asset.LeftIdleFrame;
                 }
@@ -194,20 +206,27 @@ namespace LasMonjas.Core
             }
         }
 
-        [HarmonyPatch(typeof(VisorLayer), nameof(VisorLayer.SetVisor), new Type[] { typeof(VisorData), typeof(VisorViewData), typeof(int) })]
-        class VisorLayerSetVisorPositionPatch
+        [HarmonyPatch(typeof(VisorLayer), nameof(VisorLayer.SetFloorAnim))]
+        class VisorLayerSetVisorFloorPositionPatch
         {
-            public static bool Prefix(VisorLayer __instance, VisorData data, VisorViewData visorView, int colorId) {
-                if (!data.ProductId.StartsWith("lmj_")) return true;
-                __instance.currentVisor = data;
-                if (data.BehindHats) {
-                    __instance.transform.SetLocalZ(__instance.ZIndexSpacing * -1.5f);
+            public static bool Prefix(VisorLayer __instance) {
+                if (__instance.visorData == null || !__instance.visorData.ProductId.StartsWith("lmj_")) return true;
+                VisorViewData asset = getbycache(__instance.visorData.ProdId);
+                __instance.Image.sprite = asset.FloorFrame ? asset.FloorFrame : asset.IdleFrame;
+                return false;
+            }
+        }
+        [HarmonyPatch(typeof(VisorLayer), nameof(VisorLayer.PopulateFromViewData))]
+        class VisorLayerPopulateFromViewDataPatch
+        {
+            public static bool Prefix(VisorLayer __instance) {
+                if (__instance.visorData == null || !__instance.visorData.ProductId.StartsWith("lmj_"))
+                    return true;
+                __instance.UpdateMaterial();
+                if (!__instance.IsDestroyedOrNull()) {
+                    __instance.transform.SetLocalZ(__instance.DesiredLocalZPosition);
+                    __instance.SetFlipX(__instance.Image.flipX);
                 }
-                else {
-                    __instance.transform.SetLocalZ(__instance.ZIndexSpacing * -3f);
-                }
-                __instance.SetFlipX(__instance.Image.flipX);
-                __instance.SetMaterialColor(colorId);
                 return false;
             }
         }
@@ -215,10 +234,11 @@ namespace LasMonjas.Core
         [HarmonyPatch(typeof(VisorLayer), nameof(VisorLayer.SetVisor), new Type[] { typeof(VisorData), typeof(int) })]
         class VisorLayerSetVisorPatch
         {
-            public static bool Prefix(VisorLayer __instance, VisorData data, int colorId) {
+            public static bool Prefix(VisorLayer __instance, VisorData data, int color) {
                 if (!data.ProductId.StartsWith("lmj_")) return true;
-                __instance.currentVisor = data;
-                __instance.SetVisor(__instance.currentVisor, getbycache(data.ProdId), colorId);
+                __instance.visorData = data;
+                __instance.SetMaterialColor(color);
+                __instance.PopulateFromViewData();
                 return false;
             }
         }
