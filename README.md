@@ -36,6 +36,10 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
 
+**Version 3.7.3 (25th March 2024)**
+- Readded Dleks
+- Readded Submerged to the modpack
+
 **Version 3.7.2 (6th March 2024)**
 - Compatibility update for Among Us 2024.3.5
 - Fixed some Chinese language issues
