@@ -41,7 +41,7 @@ namespace LasMonjas.Patches
                     break;
                 case 3:
                     allulfitti.transform.position = new Vector3(13.75f, 2, 0.5f);
-                    allulbanner.transform.position = new Vector3(13.75f, 2, 0.5f);
+                    allulbanner.transform.position = new Vector3(0.75f, -3.5f, 0.5f);
                     break;
                 case 4:
                     allulfitti.transform.position = new Vector3(7.75f, 7.5f, 0.5f);
