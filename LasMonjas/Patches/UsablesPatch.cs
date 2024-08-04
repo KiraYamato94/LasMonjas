@@ -16,7 +16,7 @@ namespace LasMonjas.Patches
     [HarmonyPatch(typeof(Vent), nameof(Vent.CanUse))]
     public static class VentCanUsePatch
     {
-        public static bool Prefix(bool __runOriginal, Vent __instance, ref float __result, [HarmonyArgument(0)] GameData.PlayerInfo pc, [HarmonyArgument(1)] ref bool canUse, [HarmonyArgument(2)] ref bool couldUse) {
+        public static bool Prefix(bool __runOriginal, Vent __instance, ref float __result, [HarmonyArgument(0)] NetworkedPlayerInfo pc, [HarmonyArgument(1)] ref bool canUse, [HarmonyArgument(2)] ref bool couldUse) {
             if (GameOptionsManager.Instance.currentGameMode == GameModes.HideNSeek) {
                 __runOriginal = true;
                 return __runOriginal;
@@ -341,6 +341,7 @@ namespace LasMonjas.Patches
     {
         static void Postfix() {
 
+            if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) return;
             // Change sabotage button image and block sabotages for gamemodes
             if (gameType >= 2 || Monja.awakened) {
                 HudManager.Instance.SabotageButton.Hide();
@@ -538,7 +539,7 @@ namespace LasMonjas.Patches
                 if (Hacker.hacker != null && Hacker.hacker == PlayerInCache.LocalPlayer.PlayerControl && Hacker.hackerTimer > 0) {
                     for (int k = 0; k < __instance.vitals.Length; k++) {
                         VitalsPanel vitalsPanel = __instance.vitals[k];
-                        GameData.PlayerInfo player = vitalsPanel.PlayerInfo;
+                        NetworkedPlayerInfo player = vitalsPanel.PlayerInfo;
                         // Hacker update
                         if (vitalsPanel.IsDead) {
                             DeadPlayer deadPlayer = deadPlayers?.Where(x => x.player?.PlayerId == player?.PlayerId)?.FirstOrDefault();
@@ -630,7 +631,7 @@ namespace LasMonjas.Patches
                                     num2++;
                                     DeadBody bodyComponent = collider2D.GetComponent<DeadBody>();
                                     if (bodyComponent) {
-                                        GameData.PlayerInfo playerInfo = GameData.Instance.GetPlayerById(bodyComponent.ParentId);
+                                        NetworkedPlayerInfo playerInfo = GameData.Instance.GetPlayerById(bodyComponent.ParentId);
                                         if (playerInfo != null) {
                                             var color = Palette.PlayerColors[playerInfo.DefaultOutfit.ColorId];
                                             roomColors.Add(color);

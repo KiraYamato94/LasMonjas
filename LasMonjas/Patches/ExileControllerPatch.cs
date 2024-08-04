@@ -13,8 +13,8 @@ namespace LasMonjas.Patches {
     [HarmonyPatch(typeof(ExileController), nameof(ExileController.Begin))]
     [HarmonyPriority(Priority.First)]
     class ExileControllerBeginPatch {
-        public static GameData.PlayerInfo lastExiled; 
-        public static void Prefix(ExileController __instance, [HarmonyArgument(0)]ref GameData.PlayerInfo exiled, [HarmonyArgument(1)]bool tie) {
+        public static NetworkedPlayerInfo lastExiled; 
+        public static void Prefix(ExileController __instance, [HarmonyArgument(0)]ref NetworkedPlayerInfo exiled, [HarmonyArgument(1)]bool tie) {
             lastExiled = exiled;
 
             // Sorcerer execute casted spells
@@ -109,7 +109,7 @@ namespace LasMonjas.Patches {
             }
         }
 
-        public static void WrapUpPostfix(GameData.PlayerInfo exiled) {
+        public static void WrapUpPostfix(NetworkedPlayerInfo exiled) {
             // Kid win condition if exiled
             if (exiled != null && Kid.kid != null && Kid.kid.PlayerId == exiled.PlayerId) {
                 Kid.triggerKidLose = true;

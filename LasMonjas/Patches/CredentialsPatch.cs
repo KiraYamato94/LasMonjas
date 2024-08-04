@@ -20,7 +20,11 @@ namespace LasMonjas.Patches {
 
             static void Postfix(PingTracker __instance) {
 
+                __instance.text.alignment = TextAlignmentOptions.Top;
+                var position = __instance.GetComponent<AspectPosition>();
+                position.Alignment = AspectPosition.EdgeAlignments.Top; 
                 __instance.text.text += "\n<color=#CC00FFFF>Las Monjas "+ LasMonjasPlugin.Version.ToString() + "</color>";
+                position.DistanceFromEdge = new Vector3(0f, 0.1f, 0);
                 __instance.transform.localPosition = new Vector3(1.25f, 3f, __instance.transform.localPosition.z);
             }
         }

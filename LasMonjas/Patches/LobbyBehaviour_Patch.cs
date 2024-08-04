@@ -7,6 +7,7 @@ using System.Linq;
 using AmongUs.GameOptions;
 using static LasMonjas.LasMonjas;
 using LasMonjas.Core;
+using Rewired.Utils.Platforms.Windows;
 
 namespace LasMonjas.Patches
 {
@@ -60,9 +61,9 @@ namespace LasMonjas.Patches
         class LobbyBehavour_Start_Patch
         {
             public static void Postfix(LobbyBehaviour __instance) {
-                if (MapOptions.activateMusic) {
+                /*if (MapOptions.activateMusic) {
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.lobbyMusic, true, 5f);
-                }
+                }*/
 
                 gameType = 0;
 
@@ -125,19 +126,22 @@ namespace LasMonjas.Patches
                     }
 
                     // Reset rolesummary values
-                    if (LobbyRoleInfo.RolesSummaryUI != null) {
+                    /*if (LobbyRoleInfo.RolesSummaryUI != null) {
                         LobbyRoleInfo.RolesSummaryUI.SetActive(false);
-                    }
+                    }*/
 
                     // Ensure vanilla roles are disabled when playing with mod roles
                     GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.SetRoleRate(RoleTypes.Scientist, 0, 0);
                     GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.SetRoleRate(RoleTypes.Engineer, 0, 0);
                     GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.SetRoleRate(RoleTypes.GuardianAngel, 0, 0);
                     GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.SetRoleRate(RoleTypes.Shapeshifter, 0, 0);
+                    GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.SetRoleRate(RoleTypes.Noisemaker, 0, 0);
+                    GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.SetRoleRate(RoleTypes.Phantom, 0, 0);
+                    GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.SetRoleRate(RoleTypes.Tracker, 0, 0);
                     
                     // Randomize at 50% custom skeld for H&S Skeld
                     if (GameOptionsManager.Instance.currentGameMode == GameModes.HideNSeek && GameOptionsManager.Instance.currentGameOptions.MapId == 0) {
-                        SoundManager.Instance.StopSound(CustomMain.customAssets.lobbyMusic);
+                        //SoundManager.Instance.StopSound(CustomMain.customAssets.lobbyMusic);
                         if (AmongUsClient.Instance.AmHost) {
                             customSkeldHS = (byte)rnd.Next(1, 101);
                             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.RandomizeCustomSkeldOnHS, Hazel.SendOption.Reliable, -1);
@@ -148,6 +152,6 @@ namespace LasMonjas.Patches
                     }                    
                 }
             }
-        }
+        }        
     }
 }

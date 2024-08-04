@@ -19,9 +19,9 @@ namespace LasMonjas.Patches
         Modifier,
         Gamemode,
         Null
-    }    
+    }
 
-    public static class LobbyRoleInfo
+    /*public static class LobbyRoleInfo
     {
         public static GameObject RolesSummaryUI { get; set; }
         public static readonly List<string> Teams = new() { "Impostors", "Rebels", "Neutrals", "Crewmates", "Modifiers", "Gamemodes" };
@@ -215,5 +215,5 @@ namespace LasMonjas.Patches
             infoTitleText.alignment = TextAlignmentOptions.Center;
             infoTitleText.fontStyle = FontStyles.Bold;
         }
-    }
+    }*/
 }

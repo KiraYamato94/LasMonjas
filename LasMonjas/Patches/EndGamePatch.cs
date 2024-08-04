@@ -180,11 +180,12 @@ namespace LasMonjas.Patches {
             if (KingOfTheHill.usurperPlayer != null) notWinners.Add(KingOfTheHill.usurperPlayer);
             if (HotPotato.hotPotatoPlayer != null) notWinners.Add(HotPotato.hotPotatoPlayer);
 
-            List<WinningPlayerData> winnersToRemove = new List<WinningPlayerData>();
-            foreach (WinningPlayerData winner in TempData.winners) {
+            List<CachedPlayerData> winnersToRemove = new List<CachedPlayerData>();
+            //foreach (CachedPlayerData winner in EndGameResult.CachedWinners.GetFastEnumerator()) {
+            foreach (CachedPlayerData winner in EndGameResult.CachedWinners) {
                 if (notWinners.Any(x => x.Data.PlayerName == winner.PlayerName)) winnersToRemove.Add(winner);
             }
-            foreach (var winner in winnersToRemove) TempData.winners.Remove(winner);
+            foreach (var winner in winnersToRemove) EndGameResult.CachedWinners.Remove(winner);
 
             bool kidLose = Kid.kid != null && gameOverReason == (GameOverReason)CustomGameOverReason.KidLose;
             bool bombExploded = Bomberman.bomberman != null && gameOverReason == (GameOverReason)CustomGameOverReason.BombExploded;
@@ -232,20 +233,20 @@ namespace LasMonjas.Patches {
 
             // Kid lose
             if (kidLose) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                WinningPlayerData wpd = new WinningPlayerData(Kid.kid.Data);
+                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+                CachedPlayerData wpd = new CachedPlayerData(Kid.kid.Data);
                 wpd.IsYou = false;
-                TempData.winners.Add(wpd);
+                EndGameResult.CachedWinners.Add(wpd);
                 AdditionalTempData.winCondition = WinCondition.KidLose;
             }
 
             // Bomb exploded
             else if (bombExploded) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
                 foreach (PlayerControl imimpostor in PlayerInCache.AllPlayers) {
                     if (imimpostor.Data.Role.IsImpostor == true) {
-                        WinningPlayerData wpd = new WinningPlayerData(imimpostor.Data);
-                        TempData.winners.Add(wpd);
+                        CachedPlayerData wpd = new CachedPlayerData(imimpostor.Data);
+                        EndGameResult.CachedWinners.Add(wpd);
                     }
                 }
                 AdditionalTempData.winCondition = WinCondition.BombExploded;
@@ -255,98 +256,98 @@ namespace LasMonjas.Patches {
             else if (loversWin) {
                 // Double win for lovers with crewmates
                 if (!Modifiers.existingWithKiller()) {
-                    TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                    EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
                     foreach (PlayerControl p in PlayerInCache.AllPlayers) {
                         if (p == null) continue;
                         if (p == Modifiers.lover1 || p == Modifiers.lover2)
-                            TempData.winners.Add(new WinningPlayerData(p.Data));
+                            EndGameResult.CachedWinners.Add(new CachedPlayerData(p.Data));
                         else if (p != Joker.joker && p != RoleThief.rolethief && p != Pyromaniac.pyromaniac && p != TreasureHunter.treasureHunter && p != Devourer.devourer && p != Poisoner.poisoner && p != Puppeteer.puppeteer && p != Exiler.exiler && p != Amnesiac.amnesiac && p != Seeker.seeker && p != Renegade.renegade && p != Minion.minion && !Renegade.formerRenegades.Contains(p) && p != BountyHunter.bountyhunter && p != Trapper.trapper && p != Yinyanger.yinyanger && p != Challenger.challenger && p != Ninja.ninja && p != Berserker.berserker && p != Yandere.yandere && p != Stranded.stranded && p != Monja.monja && !p.Data.Role.IsImpostor)
-                            TempData.winners.Add(new WinningPlayerData(p.Data));
+                            EndGameResult.CachedWinners.Add(new CachedPlayerData(p.Data));
                     }
                     AdditionalTempData.winCondition = WinCondition.LoversTeamWin;
 
                 }
                 // Lovers solo win
                 else {
-                    TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                    TempData.winners.Add(new WinningPlayerData(Modifiers.lover1.Data));
-                    TempData.winners.Add(new WinningPlayerData(Modifiers.lover2.Data));
+                    EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+                    EndGameResult.CachedWinners.Add(new CachedPlayerData(Modifiers.lover1.Data));
+                    EndGameResult.CachedWinners.Add(new CachedPlayerData(Modifiers.lover2.Data));
                     AdditionalTempData.winCondition = WinCondition.LoversSoloWin;
                 }
             }
 
             // TaskMaster crew win
             else if (taskMasterCrewWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
                 foreach (PlayerControl p in PlayerInCache.AllPlayers) {
                     if (p == null) continue;
                     if (p != Joker.joker && p != RoleThief.rolethief && p != Pyromaniac.pyromaniac && p != TreasureHunter.treasureHunter && p != Devourer.devourer && p != Poisoner.poisoner && p != Puppeteer.puppeteer && p != Exiler.exiler && p != Amnesiac.amnesiac && p != Seeker.seeker && p != Renegade.renegade && p != Minion.minion && !Renegade.formerRenegades.Contains(p) && p != BountyHunter.bountyhunter && p != Trapper.trapper && p != Yinyanger.yinyanger && p != Challenger.challenger && p != Ninja.ninja && p != Berserker.berserker && p != Yandere.yandere && p != Stranded.stranded && p != Monja.monja && !p.Data.Role.IsImpostor)
-                        TempData.winners.Add(new WinningPlayerData(p.Data));
+                        EndGameResult.CachedWinners.Add(new CachedPlayerData(p.Data));
                 }
                 AdditionalTempData.winCondition = WinCondition.TaskMasterCrewWin;
             }
 
             // Joker win
             else if (jokerWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                WinningPlayerData wpd = new WinningPlayerData(Joker.joker.Data);
-                TempData.winners.Add(wpd);
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+                CachedPlayerData wpd = new CachedPlayerData(Joker.joker.Data);
+                EndGameResult.CachedWinners.Add(wpd);
                 AdditionalTempData.winCondition = WinCondition.JokerWin;
             }
 
             // Pyromaniac win
             else if (pyromaniacWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                WinningPlayerData wpd = new WinningPlayerData(Pyromaniac.pyromaniac.Data);
-                TempData.winners.Add(wpd);
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+                CachedPlayerData wpd = new CachedPlayerData(Pyromaniac.pyromaniac.Data);
+                EndGameResult.CachedWinners.Add(wpd);
                 AdditionalTempData.winCondition = WinCondition.PyromaniacWin;
             }
 
             // TreasureHunter win
             else if (treasurehunterWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                WinningPlayerData wpd = new WinningPlayerData(TreasureHunter.treasureHunter.Data);
-                TempData.winners.Add(wpd);
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+                CachedPlayerData wpd = new CachedPlayerData(TreasureHunter.treasureHunter.Data);
+                EndGameResult.CachedWinners.Add(wpd);
                 AdditionalTempData.winCondition = WinCondition.TreasureHunterWin;
             }
 
             // Devourer win
             else if (devourerWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                WinningPlayerData wpd = new WinningPlayerData(Devourer.devourer.Data);
-                TempData.winners.Add(wpd);
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+                CachedPlayerData wpd = new CachedPlayerData(Devourer.devourer.Data);
+                EndGameResult.CachedWinners.Add(wpd);
                 AdditionalTempData.winCondition = WinCondition.DevourerWin;
             }
 
             // Poisoner win
             else if (poisonerWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                WinningPlayerData wpd = new WinningPlayerData(Poisoner.poisoner.Data);
-                TempData.winners.Add(wpd);
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+                CachedPlayerData wpd = new CachedPlayerData(Poisoner.poisoner.Data);
+                EndGameResult.CachedWinners.Add(wpd);
                 AdditionalTempData.winCondition = WinCondition.PoisonerWin;
             }
 
             // Puppeteer win
             else if (puppeteerWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                WinningPlayerData wpd = new WinningPlayerData(Puppeteer.puppeteer.Data);
-                TempData.winners.Add(wpd);
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+                CachedPlayerData wpd = new CachedPlayerData(Puppeteer.puppeteer.Data);
+                EndGameResult.CachedWinners.Add(wpd);
                 AdditionalTempData.winCondition = WinCondition.PuppeteerWin;
             }
 
             // Exiler win
             else if (exilerWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                WinningPlayerData wpd = new WinningPlayerData(Exiler.exiler.Data);
-                TempData.winners.Add(wpd);
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+                CachedPlayerData wpd = new CachedPlayerData(Exiler.exiler.Data);
+                EndGameResult.CachedWinners.Add(wpd);
                 AdditionalTempData.winCondition = WinCondition.ExilerWin;
             }
 
             // Seeker win
             else if (seekerWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                WinningPlayerData wpd = new WinningPlayerData(Seeker.seeker.Data);
-                TempData.winners.Add(wpd);
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+                CachedPlayerData wpd = new CachedPlayerData(Seeker.seeker.Data);
+                EndGameResult.CachedWinners.Add(wpd);
                 AdditionalTempData.winCondition = WinCondition.SeekerWin;
             }
 
@@ -354,124 +355,124 @@ namespace LasMonjas.Patches {
             else if (teamRenegadeWin) {
                 // Renegade wins if nobody except renegade is alive
                 AdditionalTempData.winCondition = WinCondition.RenegadeWin;
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                WinningPlayerData wpd = new WinningPlayerData(Renegade.renegade.Data);
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+                CachedPlayerData wpd = new CachedPlayerData(Renegade.renegade.Data);
                 wpd.IsImpostor = false;
-                TempData.winners.Add(wpd);
+                EndGameResult.CachedWinners.Add(wpd);
                 // If there is a minion. The minion also wins
                 if (Minion.minion != null) {
-                    WinningPlayerData wpdMinion = new WinningPlayerData(Minion.minion.Data);
+                    CachedPlayerData wpdMinion = new CachedPlayerData(Minion.minion.Data);
                     wpdMinion.IsImpostor = false;
-                    TempData.winners.Add(wpdMinion);
+                    EndGameResult.CachedWinners.Add(wpdMinion);
                 }
                 foreach (var player in Renegade.formerRenegades) {
-                    WinningPlayerData wpdFormerRenegade = new WinningPlayerData(player.Data);
+                    CachedPlayerData wpdFormerRenegade = new CachedPlayerData(player.Data);
                     wpdFormerRenegade.IsImpostor = false;
-                    TempData.winners.Add(wpdFormerRenegade);
+                    EndGameResult.CachedWinners.Add(wpdFormerRenegade);
                 }
             }
 
             // BountyHunter win
             else if (bountyhunterWin) {
                 // BountyHunter wins if he kills his target 
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                WinningPlayerData wpd = new WinningPlayerData(BountyHunter.bountyhunter.Data);
-                TempData.winners.Add(wpd);
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+                CachedPlayerData wpd = new CachedPlayerData(BountyHunter.bountyhunter.Data);
+                EndGameResult.CachedWinners.Add(wpd);
                 AdditionalTempData.winCondition = WinCondition.BountyHunterWin;
             }
 
             // Trapper win
             else if (trapperWin) {
                 // Trapper wins if nobody except Trapper is alive
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                WinningPlayerData wpd = new WinningPlayerData(Trapper.trapper.Data);
-                TempData.winners.Add(wpd);
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+                CachedPlayerData wpd = new CachedPlayerData(Trapper.trapper.Data);
+                EndGameResult.CachedWinners.Add(wpd);
                 AdditionalTempData.winCondition = WinCondition.TrapperWin;
             }
 
             // Yinyanger win
             else if (yinyangerWin) {
                 // Yinyanger wins if nobody except Yinyanger is alive
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                WinningPlayerData wpd = new WinningPlayerData(Yinyanger.yinyanger.Data);
-                TempData.winners.Add(wpd);
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+                CachedPlayerData wpd = new CachedPlayerData(Yinyanger.yinyanger.Data);
+                EndGameResult.CachedWinners.Add(wpd);
                 AdditionalTempData.winCondition = WinCondition.YinyangerWin;
             }
 
             // Challenger win
             else if (challengerWin) {
                 // Challenger wins if nobody except Challenger is alive
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                WinningPlayerData wpd = new WinningPlayerData(Challenger.challenger.Data);
-                TempData.winners.Add(wpd);
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+                CachedPlayerData wpd = new CachedPlayerData(Challenger.challenger.Data);
+                EndGameResult.CachedWinners.Add(wpd);
                 AdditionalTempData.winCondition = WinCondition.ChallengerWin;
             }
 
             // Ninja win
             else if (ninjaWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                WinningPlayerData wpd = new WinningPlayerData(Ninja.ninja.Data);
-                TempData.winners.Add(wpd);
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+                CachedPlayerData wpd = new CachedPlayerData(Ninja.ninja.Data);
+                EndGameResult.CachedWinners.Add(wpd);
                 AdditionalTempData.winCondition = WinCondition.NinjaWin;
             }
 
             // Berserker win
             else if (berserkerWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                WinningPlayerData wpd = new WinningPlayerData(Berserker.berserker.Data);
-                TempData.winners.Add(wpd);
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+                CachedPlayerData wpd = new CachedPlayerData(Berserker.berserker.Data);
+                EndGameResult.CachedWinners.Add(wpd);
                 AdditionalTempData.winCondition = WinCondition.BerserkerWin;
             }
 
             // Yandere win
             else if (yandereWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                WinningPlayerData wpd = new WinningPlayerData(Yandere.yandere.Data);
-                TempData.winners.Add(wpd);
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+                CachedPlayerData wpd = new CachedPlayerData(Yandere.yandere.Data);
+                EndGameResult.CachedWinners.Add(wpd);
                 AdditionalTempData.winCondition = WinCondition.YandereWin;
             }
 
             // Stranded win
             else if (strandedWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                WinningPlayerData wpd = new WinningPlayerData(Stranded.stranded.Data);
-                TempData.winners.Add(wpd);
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+                CachedPlayerData wpd = new CachedPlayerData(Stranded.stranded.Data);
+                EndGameResult.CachedWinners.Add(wpd);
                 AdditionalTempData.winCondition = WinCondition.StrandedWin;
             }
 
             // Monja win
             else if (monjaWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                WinningPlayerData wpd = new WinningPlayerData(Monja.monja.Data);
-                TempData.winners.Add(wpd);
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+                CachedPlayerData wpd = new CachedPlayerData(Monja.monja.Data);
+                EndGameResult.CachedWinners.Add(wpd);
                 AdditionalTempData.winCondition = WinCondition.MonjaWin;
             }
 
             // Flag Game Mode Win
             // Draw
             else if (drawTeamWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
                 foreach (PlayerControl player in PlayerInCache.AllPlayers) {
-                    WinningPlayerData wpd = new WinningPlayerData(player.Data);
-                    TempData.winners.Add(wpd);
+                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
+                    EndGameResult.CachedWinners.Add(wpd);
                 }
                 AdditionalTempData.winCondition = WinCondition.DrawTeamWin;
             }
             // Red Team Win
             else if (redTeamFlagWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
                 foreach (PlayerControl player in CaptureTheFlag.redteamFlag) {
-                    WinningPlayerData wpd = new WinningPlayerData(player.Data);
-                    TempData.winners.Add(wpd);
+                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
+                    EndGameResult.CachedWinners.Add(wpd);
                 }
                 AdditionalTempData.winCondition = WinCondition.RedTeamFlagWin;
             }
             // Blue Team Win
             else if (blueTeamFlagWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
                 foreach (PlayerControl player in CaptureTheFlag.blueteamFlag) {
-                    WinningPlayerData wpd = new WinningPlayerData(player.Data);
-                    TempData.winners.Add(wpd);
+                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
+                    EndGameResult.CachedWinners.Add(wpd);
                 }
                 AdditionalTempData.winCondition = WinCondition.BlueTeamFlagWin;
             }
@@ -479,19 +480,19 @@ namespace LasMonjas.Patches {
             // Thief Mode Win
             // Thief Team Win
             else if (thiefModeThiefWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
                 foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
-                    WinningPlayerData wpd = new WinningPlayerData(player.Data);
-                    TempData.winners.Add(wpd);
+                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
+                    EndGameResult.CachedWinners.Add(wpd);
                 }
                 AdditionalTempData.winCondition = WinCondition.ThiefModeThiefWin;
             }
             // Police Team Win
             else if (thiefModePoliceWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
                 foreach (PlayerControl player in PoliceAndThief.policeTeam) {
-                    WinningPlayerData wpd = new WinningPlayerData(player.Data);
-                    TempData.winners.Add(wpd);
+                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
+                    EndGameResult.CachedWinners.Add(wpd);
                 }
                 AdditionalTempData.winCondition = WinCondition.ThiefModePoliceWin;
             }
@@ -499,87 +500,87 @@ namespace LasMonjas.Patches {
             // King Game Mode Win
             // Draw
             else if (teamHillDraw) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
                 foreach (PlayerControl player in PlayerInCache.AllPlayers) {
-                    WinningPlayerData wpd = new WinningPlayerData(player.Data);
-                    TempData.winners.Add(wpd);
+                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
+                    EndGameResult.CachedWinners.Add(wpd);
                 }
                 AdditionalTempData.winCondition = WinCondition.TeamHillDraw;
             }
             // Green Team Win
             else if (greenTeamHillWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
                 foreach (PlayerControl player in KingOfTheHill.greenTeam) {
-                    WinningPlayerData wpd = new WinningPlayerData(player.Data);
-                    TempData.winners.Add(wpd);
+                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
+                    EndGameResult.CachedWinners.Add(wpd);
                 }
                 AdditionalTempData.winCondition = WinCondition.GreenTeamHillWin;
             }
             // Yellow Team Win
             else if (yellowTeamHillWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
                 foreach (PlayerControl player in KingOfTheHill.yellowTeam) {
-                    WinningPlayerData wpd = new WinningPlayerData(player.Data);
-                    TempData.winners.Add(wpd);
+                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
+                    EndGameResult.CachedWinners.Add(wpd);
                 }
                 AdditionalTempData.winCondition = WinCondition.YellowTeamHillWin;
             }
 
             // Hot Potato Game Mode Win
             else if (hotPotatoEnd) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
                 foreach (PlayerControl player in HotPotato.notPotatoTeamAlive) {
-                    WinningPlayerData wpd = new WinningPlayerData(player.Data);
-                    TempData.winners.Add(wpd);
+                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
+                    EndGameResult.CachedWinners.Add(wpd);
                 }
                 AdditionalTempData.winCondition = WinCondition.HotPotatoEnd;
             }
 
             // ZombieLaboratory zombie Win
             else if (zombieWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
                 foreach (PlayerControl player in ZombieLaboratory.zombieTeam) {
-                    WinningPlayerData wpd = new WinningPlayerData(player.Data);
-                    TempData.winners.Add(wpd);
+                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
+                    EndGameResult.CachedWinners.Add(wpd);
                 }
                 AdditionalTempData.winCondition = WinCondition.ZombieWin;
             }
             else if (survivorWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
                 foreach (PlayerControl player in ZombieLaboratory.survivorTeam) {
-                    WinningPlayerData wpd = new WinningPlayerData(player.Data);
-                    TempData.winners.Add(wpd);
+                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
+                    EndGameResult.CachedWinners.Add(wpd);
                 }
                 AdditionalTempData.winCondition = WinCondition.SurvivorWin;
             }
 
             // BattleRoyale Win
             else if (battleRoyaleSoloWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
                 foreach (PlayerControl player in BattleRoyale.soloPlayerTeam) {
                     if (!player.Data.IsDead) {
-                        WinningPlayerData wpd = new WinningPlayerData(player.Data);
-                        TempData.winners.Add(wpd);
+                        CachedPlayerData wpd = new CachedPlayerData(player.Data);
+                        EndGameResult.CachedWinners.Add(wpd);
                     }
                 }
                 AdditionalTempData.winCondition = WinCondition.BattleRoyaleSoloWin;
             }
             // BattleRoyale Time Win
             else if (battleRoyaleTimeWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
                 if (BattleRoyale.matchType == 0) {
                     foreach (PlayerControl player in BattleRoyale.soloPlayerTeam) {
                         if (!player.Data.IsDead) {
-                            WinningPlayerData wpd = new WinningPlayerData(player.Data);
-                            TempData.winners.Add(wpd);
+                            CachedPlayerData wpd = new CachedPlayerData(player.Data);
+                            EndGameResult.CachedWinners.Add(wpd);
                         }
                     }
                 }
                 else {
                     foreach (PlayerControl player in PlayerInCache.AllPlayers) {
                         if (!player.Data.IsDead) {
-                            WinningPlayerData wpd = new WinningPlayerData(player.Data);
-                            TempData.winners.Add(wpd);
+                            CachedPlayerData wpd = new CachedPlayerData(player.Data);
+                            EndGameResult.CachedWinners.Add(wpd);
                         }
                     }
                 }
@@ -587,70 +588,70 @@ namespace LasMonjas.Patches {
             }
             // BattleRoyale Lime Team Win
             else if (battleRoyaleLimeTeamWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
                 foreach (PlayerControl player in BattleRoyale.limeTeam) {
-                    WinningPlayerData wpd = new WinningPlayerData(player.Data);
-                    TempData.winners.Add(wpd);
+                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
+                    EndGameResult.CachedWinners.Add(wpd);
                 }
                 AdditionalTempData.winCondition = WinCondition.BattleRoyaleLimeTeamWin;
             }
             // BattleRoyale Pink Team Win
             else if (battleRoyalePinkTeamWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
                 foreach (PlayerControl player in BattleRoyale.pinkTeam) {
-                    WinningPlayerData wpd = new WinningPlayerData(player.Data);
-                    TempData.winners.Add(wpd);
+                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
+                    EndGameResult.CachedWinners.Add(wpd);
                 }
                 AdditionalTempData.winCondition = WinCondition.BattleRoyalePinkTeamWin;
             }
             // BattleRoyale Serial Killer Win
             else if (battleRoyaleSerialKillerWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                WinningPlayerData wpd = new WinningPlayerData(BattleRoyale.serialKiller.Data);
-                TempData.winners.Add(wpd);
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+                CachedPlayerData wpd = new CachedPlayerData(BattleRoyale.serialKiller.Data);
+                EndGameResult.CachedWinners.Add(wpd);
                 AdditionalTempData.winCondition = WinCondition.BattleRoyaleSerialKillerWin;
             }
             // BattleRoyale Draw
             else if (battleRoyaleDraw) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
                 foreach (PlayerControl player in PlayerInCache.AllPlayers) {
-                    WinningPlayerData wpd = new WinningPlayerData(player.Data);
-                    TempData.winners.Add(wpd);
+                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
+                    EndGameResult.CachedWinners.Add(wpd);
                 }
                 AdditionalTempData.winCondition = WinCondition.BattleRoyaleDraw; 
             }
 
             // MonjaFestival Green Team Win
             else if (monjaFestivalGreenWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
                 foreach (PlayerControl player in MonjaFestival.greenTeam) {
-                    WinningPlayerData wpd = new WinningPlayerData(player.Data);
-                    TempData.winners.Add(wpd);
+                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
+                    EndGameResult.CachedWinners.Add(wpd);
                 }
                 AdditionalTempData.winCondition = WinCondition.MonjaFestivalGreenWin;
             }
             // MonjaFestival Pink Team Win
             else if (monjaFestivalCyanWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
                 foreach (PlayerControl player in MonjaFestival.cyanTeam) {
-                    WinningPlayerData wpd = new WinningPlayerData(player.Data);
-                    TempData.winners.Add(wpd);
+                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
+                    EndGameResult.CachedWinners.Add(wpd);
                 }
                 AdditionalTempData.winCondition = WinCondition.MonjaFestivalCyanWin;
             }
             // MonjaFestival Big Monja Win
             else if (monjaFestivalBigMonjaWin) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                WinningPlayerData wpd = new WinningPlayerData(MonjaFestival.bigMonjaPlayer.Data);
-                TempData.winners.Add(wpd);
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+                CachedPlayerData wpd = new CachedPlayerData(MonjaFestival.bigMonjaPlayer.Data);
+                EndGameResult.CachedWinners.Add(wpd);
                 AdditionalTempData.winCondition = WinCondition.MonjaFestivalBigMonjaWin;
             }
             // MonjaFestival Draw
             else if (monjaFestivalDraw) {
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
                 foreach (PlayerControl player in PlayerInCache.AllPlayers) {
-                    WinningPlayerData wpd = new WinningPlayerData(player.Data);
-                    TempData.winners.Add(wpd);
+                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
+                    EndGameResult.CachedWinners.Add(wpd);
                 }
                 AdditionalTempData.winCondition = WinCondition.MonjaFestivalDraw;
             }
@@ -1195,7 +1196,7 @@ namespace LasMonjas.Patches {
         private static bool CheckAndEndGameForImpostorWin(LogicGameFlowNormal __instance, PlayerStatistics statistics) {
             if (gameType <= 1 && statistics.TeamImpostorsAlive >= statistics.TotalAlive - statistics.TeamImpostorsAlive + statistics.TeamCaptainAlive && statistics.TeamRenegadeAlive == 0 && statistics.TeamBountyHunterAlive == 0 && statistics.TeamTrapperAlive == 0 && statistics.TeamYinyangerAlive == 0 && statistics.TeamChallengerAlive == 0 && statistics.TeamNinjaAlive == 0 && statistics.TeamBerserkerAlive == 0 && statistics.TeamYandereAlive == 0 && statistics.TeamStrandedAlive == 0 && statistics.TeamMonjaAlive == 0 && statistics.TeamCaptainAlive != statistics.TeamImpostorsAlive && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
                 GameOverReason endReason;
-                switch (TempData.LastDeathReason) {
+                switch (GameData.LastDeathReason) {
                     case DeathReason.Exile:
                         endReason = GameOverReason.ImpostorByVote;
                         break;
@@ -1394,7 +1395,7 @@ namespace LasMonjas.Patches {
             GetPlayerCounts();
         }
 
-        private bool isLover(GameData.PlayerInfo p) {
+        private bool isLover(NetworkedPlayerInfo p) {
             return (Modifiers.lover1 != null && Modifiers.lover1.PlayerId == p.PlayerId) || (Modifiers.lover2 != null && Modifiers.lover2.PlayerId == p.PlayerId);
         }
 
@@ -1417,7 +1418,7 @@ namespace LasMonjas.Patches {
             int numCaptainAlive = 0;
 
             for (int i = 0; i < GameData.Instance.PlayerCount; i++) {
-                GameData.PlayerInfo playerInfo = GameData.Instance.AllPlayers[i];
+                NetworkedPlayerInfo playerInfo = GameData.Instance.AllPlayers[i];
                 if (!playerInfo.Disconnected) {
                     if (!playerInfo.IsDead) {
                         numTotalAlive++;

@@ -62,7 +62,7 @@ namespace LasMonjas.Patches
             if (PlayerInCache.LocalPlayer.PlayerControl != null && HudManager.Instance != null && gameType <= 1) {
                 Vector3 bottomLeft = new Vector3(-HudManager.Instance.UseButton.transform.parent.localPosition.x, HudManager.Instance.UseButton.transform.parent.localPosition.y, HudManager.Instance.UseButton.transform.parent.localPosition.z);
                 foreach (PlayerControl p in PlayerInCache.AllPlayers) {
-                    GameData.PlayerInfo data = p.Data;
+                    NetworkedPlayerInfo data = p.Data;
                     PoolablePlayer player = UnityEngine.Object.Instantiate<PoolablePlayer>(__instance.PlayerPrefab, HudManager.Instance.transform);
                     p.SetPlayerMaterialColors(player.cosmetics.currentBodySprite.BodySprite);
                     player.SetSkin(data.DefaultOutfit.SkinId, data.DefaultOutfit.ColorId);
@@ -91,7 +91,7 @@ namespace LasMonjas.Patches
     {
         public static void setupIntroTeamIcons(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam) {
 
-            SoundManager.Instance.StopSound(CustomMain.customAssets.lobbyMusic);            
+            //SoundManager.Instance.StopSound(CustomMain.customAssets.lobbyMusic);            
 
             if (GameOptionsManager.Instance.currentGameMode == GameModes.Normal) {
                 switch (gameType) {

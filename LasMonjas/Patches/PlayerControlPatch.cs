@@ -23,9 +23,9 @@ namespace LasMonjas.Patches {
             if (targetingPlayer.Data.IsDead) return result;
 
             Vector2 truePosition = targetingPlayer.GetTruePosition();
-            Il2CppSystem.Collections.Generic.List<GameData.PlayerInfo> allPlayers = GameData.Instance.AllPlayers;
+            Il2CppSystem.Collections.Generic.List<NetworkedPlayerInfo> allPlayers = GameData.Instance.AllPlayers;
             for (int i = 0; i < allPlayers.Count; i++) {
-                GameData.PlayerInfo playerInfo = allPlayers[i];
+                NetworkedPlayerInfo playerInfo = allPlayers[i];
                 if (!playerInfo.Disconnected && playerInfo.PlayerId != targetingPlayer.PlayerId && !playerInfo.IsDead && (!onlyCrewmates || !playerInfo.Role.IsImpostor)) {
                     PlayerControl @object = playerInfo.Object;
                     if (untargetablePlayers != null && untargetablePlayers.Any(x => x == @object)) {
@@ -483,9 +483,9 @@ namespace LasMonjas.Patches {
                     float num = 10f;
 
                     Vector2 truePosition = Sleuth.sleuth.GetTruePosition();
-                    Il2CppSystem.Collections.Generic.List<GameData.PlayerInfo> allPlayers = GameData.Instance.AllPlayers;
+                    Il2CppSystem.Collections.Generic.List<NetworkedPlayerInfo> allPlayers = GameData.Instance.AllPlayers;
                     for (int i = 0; i < allPlayers.Count; i++) {
-                        GameData.PlayerInfo playerInfo = allPlayers[i];
+                        NetworkedPlayerInfo playerInfo = allPlayers[i];
                         if (!playerInfo.Disconnected && playerInfo.PlayerId != Sleuth.sleuth.PlayerId && !playerInfo.IsDead) {
                             PlayerControl @object = playerInfo.Object;
                             if (@object && @object.Collider.enabled) {
@@ -2070,7 +2070,7 @@ namespace LasMonjas.Patches {
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerInCache.LocalPlayer.PlayerControl.CmdReportDeadBody))]
     class BodyReportPatch
     {
-        static void Postfix(PlayerControl __instance, [HarmonyArgument(0)] GameData.PlayerInfo target) {
+        static void Postfix(PlayerControl __instance, [HarmonyArgument(0)] NetworkedPlayerInfo target) {
             // Forensic report
             bool isForensicReport = Forensic.forensic != null && Forensic.forensic == PlayerInCache.LocalPlayer.PlayerControl && __instance.PlayerId == Forensic.forensic.PlayerId;
             if (isForensicReport) {
