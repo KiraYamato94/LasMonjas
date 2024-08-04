@@ -270,7 +270,7 @@ namespace LasMonjas
     {
         // Main Controls
 
-        ResetVaribles = 70,
+        ResetVaribles = 100, // 70
         ShareOptions,
         SetRole,
         SetModifier, 
@@ -282,7 +282,7 @@ namespace LasMonjas
 
         // Role functionality
 
-        MimicTransform = 80,
+        MimicTransform = 120, // 80
         PainterPaint,
         DemonSetBitten,
         PlaceNun,
@@ -2908,7 +2908,7 @@ namespace LasMonjas
 
         public static void amnesiacReportAndTakeRole(byte targetId) {
             PlayerControl target = Helpers.playerById(targetId);
-            GameData.PlayerInfo playerInfo = GameData.Instance.GetPlayerById(targetId);
+            NetworkedPlayerInfo playerInfo = GameData.Instance.GetPlayerById(targetId);
             PlayerControl oldAmnesiac = Amnesiac.amnesiac;
             if (target == null || oldAmnesiac == null) return;
             List<RoleInfo> targetInfo = RoleInfo.getRoleInfoForPlayer(target);
@@ -3684,9 +3684,9 @@ namespace LasMonjas
             if (MeetingHud.Instance) {
                 Cheater.playerId1 = playerId1;
                 Cheater.playerId2 = playerId2;
-                GameData.PlayerInfo playerById1 = GameData.Instance.GetPlayerById((byte)Cheater.playerId1);
+                NetworkedPlayerInfo playerById1 = GameData.Instance.GetPlayerById((byte)Cheater.playerId1);
                 Cheater.cheatedP1 = playerById1.Object;
-                GameData.PlayerInfo playerById2 = GameData.Instance.GetPlayerById((byte)Cheater.playerId2);
+                NetworkedPlayerInfo playerById2 = GameData.Instance.GetPlayerById((byte)Cheater.playerId2);
                 Cheater.cheatedP2 = playerById2.Object;
                 Cheater.usedCheat = true;
             }
@@ -4151,19 +4151,19 @@ namespace LasMonjas
                     TaskMaster.oldTaskMasterPlayerId = oldTaskMasterPlayerId;
                 }
 
-                GameData.PlayerInfo player = GameData.Instance.GetPlayerById(playerId);
+                NetworkedPlayerInfo player = GameData.Instance.GetPlayerById(playerId);
                 if (player == null)
                     return;
 
                 if (taskTypeIds != null && taskTypeIds.Length > 0) {
                     player.Object.clearAllTasks();
-                    player.Tasks = new Il2CppSystem.Collections.Generic.List<GameData.TaskInfo>(taskTypeIds.Length);
+                    player.Tasks = new Il2CppSystem.Collections.Generic.List<NetworkedPlayerInfo.TaskInfo>(taskTypeIds.Length);
                     for (int i = 0; i < taskTypeIds.Length; i++) {
-                        player.Tasks.Add(new GameData.TaskInfo(taskTypeIds[i], (uint)i));
+                        player.Tasks.Add(new NetworkedPlayerInfo.TaskInfo(taskTypeIds[i], (uint)i));
                         player.Tasks[i].Id = (uint)i;
                     }
                     for (int i = 0; i < player.Tasks.Count; i++) {
-                        GameData.TaskInfo taskInfo = player.Tasks[i];
+                        NetworkedPlayerInfo.TaskInfo taskInfo = player.Tasks[i];
                         NormalPlayerTask normalPlayerTask = UnityEngine.Object.Instantiate(ShipStatus.Instance.GetTaskById(taskInfo.TypeId), player.Object.transform);
                         normalPlayerTask.Id = taskInfo.Id;
                         normalPlayerTask.Owner = player.Object;

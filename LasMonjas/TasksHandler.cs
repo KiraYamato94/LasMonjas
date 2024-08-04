@@ -12,7 +12,7 @@ namespace LasMonjas
     [HarmonyPatch]
     public static class TasksHandler {
 
-        public static Tuple<int, int> taskInfo(GameData.PlayerInfo playerInfo) {
+        public static Tuple<int, int> taskInfo(NetworkedPlayerInfo playerInfo) {
             int TotalTasks = 0;
             int CompletedTasks = 0;
             if (!playerInfo.Disconnected && playerInfo.Tasks != null &&
@@ -37,7 +37,7 @@ namespace LasMonjas
                 __instance.TotalTasks = 0;
                 __instance.CompletedTasks = 0;
                 for (int i = 0; i < __instance.AllPlayers.Count; i++) {
-                    GameData.PlayerInfo playerInfo = __instance.AllPlayers[i];
+                    NetworkedPlayerInfo playerInfo = __instance.AllPlayers[i];
                     if (playerInfo.Object
                     && playerInfo.Object.hasAliveKillingLover()) // Tasks do not count if a Crewmate has an alive killing Lover
                         continue;

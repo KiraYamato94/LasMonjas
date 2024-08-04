@@ -27,7 +27,7 @@ namespace LasMonjas
     {
         public const string Id = "me.allul.lasmonjas";
 
-        public const string VersionString = "3.7.3";
+        public const string VersionString = "3.8.0";
 
         public static System.Version Version = System.Version.Parse(VersionString);
         internal static BepInEx.Logging.ManualLogSource Logger;
@@ -82,6 +82,9 @@ namespace LasMonjas
             modLanguage = Config.Bind("Custom", "Mod Language", 1);
 
             defaultRegions = ServerManager.DefaultRegions;
+
+            // Removes vanilla Servers
+            ServerManager.DefaultRegions = new Il2CppReferenceArray<IRegionInfo>(new IRegionInfo[0]);
 
             UpdateRegions();
 

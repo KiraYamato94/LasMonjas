@@ -135,7 +135,7 @@ namespace LasMonjas
 
         public static CustomButton zoomOutButton;
         public static CustomButton whoAmIButton;
-        public static CustomButton roleSummaryButton;
+        //public static CustomButton roleSummaryButton;
 
 
         // Capture the flag buttons
@@ -525,8 +525,8 @@ namespace LasMonjas
 
             zoomOutButton.MaxTimer = 0f;
             whoAmIButton.MaxTimer = 10f;
-            roleSummaryButton.Timer = 0f;
-            roleSummaryButton.MaxTimer = 0f;
+            //roleSummaryButton.Timer = 0f;
+            //roleSummaryButton.MaxTimer = 0f;
 
             // Remaining uses text
             Manipulator.manipulatedVictimTimerCountButtonText.text = $"{Manipulator.manipulatedVictimTimer.ToString("F0")}";
@@ -1143,7 +1143,7 @@ namespace LasMonjas
                                 Vector2 truePosition = PlayerInCache.LocalPlayer.PlayerControl.GetTruePosition();
                                 Vector2 truePosition2 = component.TruePosition;
                                 if (Vector2.Distance(truePosition2, truePosition) <= PlayerInCache.LocalPlayer.PlayerControl.MaxReportDistance && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PhysicsHelpers.AnythingBetween(truePosition, truePosition2, Constants.ShipAndObjectsMask, false)) {
-                                    GameData.PlayerInfo playerInfo = GameData.Instance.GetPlayerById(component.ParentId);
+                                    NetworkedPlayerInfo playerInfo = GameData.Instance.GetPlayerById(component.ParentId);
 
                                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.RemoveBody, Hazel.SendOption.Reliable, -1);
                                     writer.Write(playerInfo.PlayerId);
@@ -1207,7 +1207,7 @@ namespace LasMonjas
                                     Vector2 truePosition = PlayerInCache.LocalPlayer.PlayerControl.GetTruePosition();
                                     Vector2 truePosition2 = component.TruePosition;
                                     if (Vector2.Distance(truePosition2, truePosition) <= PlayerInCache.LocalPlayer.PlayerControl.MaxReportDistance && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PhysicsHelpers.AnythingBetween(truePosition, truePosition2, Constants.ShipAndObjectsMask, false)) {
-                                        GameData.PlayerInfo playerInfo = GameData.Instance.GetPlayerById(component.ParentId);
+                                        NetworkedPlayerInfo playerInfo = GameData.Instance.GetPlayerById(component.ParentId);
                                         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.DragPlaceBody, Hazel.SendOption.Reliable, -1);
                                         writer.Write(playerInfo.PlayerId);
                                         writer.Write(Janitor.janitor.Data.PlayerId);
@@ -1237,7 +1237,7 @@ namespace LasMonjas
                                 Vector2 truePosition = PlayerInCache.LocalPlayer.PlayerControl.GetTruePosition();
                                 Vector2 truePosition2 = component.TruePosition;
                                 if (Vector2.Distance(truePosition2, truePosition) <= PlayerInCache.LocalPlayer.PlayerControl.MaxReportDistance && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PhysicsHelpers.AnythingBetween(truePosition, truePosition2, Constants.ShipAndObjectsMask, false)) {
-                                    GameData.PlayerInfo playerInfo = GameData.Instance.GetPlayerById(component.ParentId);
+                                    NetworkedPlayerInfo playerInfo = GameData.Instance.GetPlayerById(component.ParentId);
                                     if (Necromancer.necromancer == null) {
                                         canDrag = true;
                                     }
@@ -3870,7 +3870,7 @@ namespace LasMonjas
                                 Vector2 truePosition = PlayerInCache.LocalPlayer.PlayerControl.GetTruePosition();
                                 Vector2 truePosition2 = component.TruePosition;
                                 if (Vector2.Distance(truePosition2, truePosition) <= PlayerInCache.LocalPlayer.PlayerControl.MaxReportDistance && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PhysicsHelpers.AnythingBetween(truePosition, truePosition2, Constants.ShipAndObjectsMask, false)) {
-                                    GameData.PlayerInfo playerInfo = GameData.Instance.GetPlayerById(component.ParentId);
+                                    NetworkedPlayerInfo playerInfo = GameData.Instance.GetPlayerById(component.ParentId);
 
                                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.DevourBody, Hazel.SendOption.Reliable, -1);
                                     writer.Write(playerInfo.PlayerId);
@@ -4214,7 +4214,7 @@ namespace LasMonjas
                                 Vector2 truePosition = PlayerInCache.LocalPlayer.PlayerControl.GetTruePosition();
                                 Vector2 truePosition2 = component.TruePosition;
                                 if (Vector2.Distance(truePosition2, truePosition) <= PlayerInCache.LocalPlayer.PlayerControl.MaxReportDistance && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PhysicsHelpers.AnythingBetween(truePosition, truePosition2, Constants.ShipAndObjectsMask, false)) {
-                                    GameData.PlayerInfo playerInfo = GameData.Instance.GetPlayerById(component.ParentId);
+                                    NetworkedPlayerInfo playerInfo = GameData.Instance.GetPlayerById(component.ParentId);
 
                                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.AmnesiacReportAndTakeRole, Hazel.SendOption.Reliable, -1);
                                     writer.Write(playerInfo.PlayerId);
@@ -5696,7 +5696,7 @@ namespace LasMonjas
                                     Vector2 truePosition = PlayerInCache.LocalPlayer.PlayerControl.GetTruePosition();
                                     Vector2 truePosition2 = component.TruePosition;
                                     if (Vector2.Distance(truePosition2, truePosition) <= PlayerInCache.LocalPlayer.PlayerControl.MaxReportDistance && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PhysicsHelpers.AnythingBetween(truePosition, truePosition2, Constants.ShipAndObjectsMask, false)) {
-                                        GameData.PlayerInfo playerInfo = GameData.Instance.GetPlayerById(component.ParentId);
+                                        NetworkedPlayerInfo playerInfo = GameData.Instance.GetPlayerById(component.ParentId);
 
                                         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.SpiritualistRevive, Hazel.SendOption.Reliable, -1);
                                         writer.Write(playerInfo.PlayerId);
@@ -6134,7 +6134,7 @@ namespace LasMonjas
                                     Vector2 truePosition = PlayerInCache.LocalPlayer.PlayerControl.GetTruePosition();
                                     Vector2 truePosition2 = component.TruePosition;
                                     if (Vector2.Distance(truePosition2, truePosition) <= PlayerInCache.LocalPlayer.PlayerControl.MaxReportDistance && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PhysicsHelpers.AnythingBetween(truePosition, truePosition2, Constants.ShipAndObjectsMask, false)) {
-                                        GameData.PlayerInfo playerInfo = GameData.Instance.GetPlayerById(component.ParentId);
+                                        NetworkedPlayerInfo playerInfo = GameData.Instance.GetPlayerById(component.ParentId);
 
                                         if (GameOptionsManager.Instance.currentGameOptions.MapId != 6) {
                                             if (activatedSensei) {
@@ -6224,7 +6224,7 @@ namespace LasMonjas
                                 Vector2 truePosition = PlayerInCache.LocalPlayer.PlayerControl.GetTruePosition();
                                 Vector2 truePosition2 = component.TruePosition;
                                 if (Vector2.Distance(truePosition2, truePosition) <= PlayerInCache.LocalPlayer.PlayerControl.MaxReportDistance && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PhysicsHelpers.AnythingBetween(truePosition, truePosition2, Constants.ShipAndObjectsMask, false)) {
-                                    GameData.PlayerInfo playerInfo = GameData.Instance.GetPlayerById(component.ParentId);
+                                    NetworkedPlayerInfo playerInfo = GameData.Instance.GetPlayerById(component.ParentId);
                                     if (Janitor.janitor == null) {
                                         canDrag = true;
                                     }
@@ -6306,7 +6306,7 @@ namespace LasMonjas
                                     Vector2 truePosition = PlayerInCache.LocalPlayer.PlayerControl.GetTruePosition();
                                     Vector2 truePosition2 = component.TruePosition;
                                     if (Vector2.Distance(truePosition2, truePosition) <= PlayerInCache.LocalPlayer.PlayerControl.MaxReportDistance && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PhysicsHelpers.AnythingBetween(truePosition, truePosition2, Constants.ShipAndObjectsMask, false)) {
-                                        GameData.PlayerInfo playerInfo = GameData.Instance.GetPlayerById(component.ParentId);
+                                        NetworkedPlayerInfo playerInfo = GameData.Instance.GetPlayerById(component.ParentId);
 
                                         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.SpiritualistRevive, Hazel.SendOption.Reliable, -1);
                                         writer.Write(playerInfo.PlayerId);
@@ -6617,7 +6617,7 @@ namespace LasMonjas
             );
 
             // roleSummary button
-            roleSummaryButton = new CustomButton(
+            /*roleSummaryButton = new CustomButton(
                 () => {
                     if (LobbyRoleInfo.RolesSummaryUI == null) {
                         LobbyRoleInfo.RoleSummaryOnClick();
@@ -6641,7 +6641,7 @@ namespace LasMonjas
                 new Vector3(0.4f, 4.2f, 0),
                 __instance,
                 null
-            );
+            );*/
 
             // Capture the flag buttons
             // Redplayer01 Kill

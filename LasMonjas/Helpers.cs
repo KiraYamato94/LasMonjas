@@ -197,6 +197,9 @@ namespace LasMonjas
             f = Mathf.Clamp01(f);
             return (byte)(f * 255);
         }
+        public static int lineCount(string text) {
+            return text.Count(c => c == '\n');
+        }
 
         public static KeyValuePair<byte, int> MaxPair(this Dictionary<byte, int> self, out bool tie) {
             tie = true;

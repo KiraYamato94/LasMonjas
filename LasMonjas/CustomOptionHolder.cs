@@ -1,5 +1,6 @@
 using UnityEngine;
 using LasMonjas.Core;
+using Types = LasMonjas.Core.CustomOption.CustomOptionType;
 
 namespace LasMonjas
 {
@@ -411,387 +412,387 @@ namespace LasMonjas
         public static void Load() {
 
             // Game Options
-            presetSelection = CustomOption.Create(0, cs(new Color(204f / 255f, 204f / 255f, 0, 1f), "Preset"), "setting", presets, null, true);
+            presetSelection = CustomOption.Create(0, Types.General, cs(new Color(204f / 255f, 204f / 255f, 0, 1f), "Preset"), presets, null, true);
 
             // Game Type
-            gameType = CustomOption.Create(1, cs(TaskMaster.color, "Game Type"), "setting", new string[] { "Roles", "Find a Role", "Capture the Flag", "Police and Thieves", "King of the Hill", "Hot Potato", "Zombie Laboratory", "Battle Royale", "Monja Festival" }, null, true);
+            gameType = CustomOption.Create(1, Types.General, cs(TaskMaster.color, "Game Type"), new string[] { "Roles", "Find a Role", "Capture the Flag", "Police and Thieves", "King of the Hill", "Hot Potato", "Zombie Laboratory", "Battle Royale", "Monja Festival" }, null, true);
 
             // Global Settings
-            globalSettings = CustomOption.Create(2, cs(Jailer.color, "Global Settings"), "setting", false, null, true);
-            activateSenseiMap = CustomOption.Create(3, cs(Jailer.color, "Activate Custom Skeld Map"), "setting", false, globalSettings);
-            hideVentAnimOnShadows = CustomOption.Create(4, cs(Jailer.color, "Hide Vent Anim on Shadows"), "setting", false, globalSettings);
+            globalSettings = CustomOption.Create(2, Types.General, cs(Jailer.color, "Global Settings"), false, null, true);
+            activateSenseiMap = CustomOption.Create(3, Types.General, cs(Jailer.color, "Activate Custom Skeld Map"), false, globalSettings);
+            hideVentAnimOnShadows = CustomOption.Create(4, Types.General, cs(Jailer.color, "Hide Vent Anim on Shadows"), false, globalSettings);
 
             // Roles Settings
-            rolesSettings = CustomOption.Create(10, cs(Locksmith.color, "Roles Settings"), "setting", false, null, true);
-            removeSwipeCard = CustomOption.Create(11, cs(Locksmith.color, "Remove Swipe Card Task"), "setting", false, rolesSettings);
-            nightVisionLightSabotage = CustomOption.Create(12, cs(Locksmith.color, "Night vision for lights sabotage"), "setting", false, rolesSettings);
-            screenShakeReactorSabotage = CustomOption.Create(13, cs(Locksmith.color, "Screen shake for reactor sabotage"), "setting", false, rolesSettings);
-            anonymousCommsSabotage = CustomOption.Create(14, cs(Locksmith.color, "Anonymous players for comms sabotage"), "setting", false, rolesSettings);
-            slowSpeedOxigenSabotage = CustomOption.Create(15, cs(Locksmith.color, "Decrease speed for oxygen sabotage"), "setting", false, rolesSettings);
+            rolesSettings = CustomOption.Create(10, Types.General, cs(Locksmith.color, "Roles Settings"), false, null, true);
+            removeSwipeCard = CustomOption.Create(11, Types.General, cs(Locksmith.color, "Remove Swipe Card Task"), false, rolesSettings);
+            nightVisionLightSabotage = CustomOption.Create(12, Types.General, cs(Locksmith.color, "Night vision for lights sabotage"), false, rolesSettings);
+            screenShakeReactorSabotage = CustomOption.Create(13, Types.General, cs(Locksmith.color, "Screen shake for reactor sabotage"), false, rolesSettings);
+            anonymousCommsSabotage = CustomOption.Create(14, Types.General, cs(Locksmith.color, "Anonymous players for comms sabotage"), false, rolesSettings);
+            slowSpeedOxigenSabotage = CustomOption.Create(15, Types.General, cs(Locksmith.color, "Decrease speed for oxygen sabotage"), false, rolesSettings);
 
             // Gamemode Settings
-            gamemodeSettings = CustomOption.Create(20, cs(Sheriff.color, "Gamemode Global Settings"), "setting", false, null, true);
-            gamemodeMatchDuration = CustomOption.Create(21, cs(Sheriff.color, "Match Duration"), "setting", 180f, 180f, 420f, 30f, gamemodeSettings);
-            gamemodeKillCooldown = CustomOption.Create(22, cs(Sheriff.color, "Kill Cooldown"), "setting", 10f, 10f, 20f, 1f, gamemodeSettings);
-            gamemodeEnableFlashlight = CustomOption.Create(23, cs(Sheriff.color, "Enable flashlight if possible"), "setting", true, gamemodeSettings);
-            gamemodeFlashlightRange = CustomOption.Create(24, cs(Sheriff.color, "Flashlight range"), "setting", 0.8f, 0.6f, 1.2f, 0.2f, gamemodeSettings);
-            gamemodeReviveTime = CustomOption.Create(25, cs(Sheriff.color, "Revive Wait Time"), "setting", 8f, 7f, 15f, 1f, gamemodeSettings);
-            gamemodeInvincibilityTimeAfterRevive = CustomOption.Create(26, cs(Sheriff.color, "Invincibility Time After Revive"), "setting", 3f, 2f, 5f, 1f, gamemodeSettings);
+            gamemodeSettings = CustomOption.Create(20, Types.General, cs(Sheriff.color, "Gamemode Global Settings"), false, null, true);
+            gamemodeMatchDuration = CustomOption.Create(21, Types.General, cs(Sheriff.color, "Match Duration"), 180f, 180f, 420f, 30f, gamemodeSettings);
+            gamemodeKillCooldown = CustomOption.Create(22, Types.General, cs(Sheriff.color, "Kill Cooldown"), 10f, 10f, 20f, 1f, gamemodeSettings);
+            gamemodeEnableFlashlight = CustomOption.Create(23, Types.General, cs(Sheriff.color, "Enable flashlight if possible"), true, gamemodeSettings);
+            gamemodeFlashlightRange = CustomOption.Create(24, Types.General, cs(Sheriff.color, "Flashlight range"), 0.8f, 0.6f, 1.2f, 0.2f, gamemodeSettings);
+            gamemodeReviveTime = CustomOption.Create(25, Types.General, cs(Sheriff.color, "Revive Wait Time"), 8f, 7f, 15f, 1f, gamemodeSettings);
+            gamemodeInvincibilityTimeAfterRevive = CustomOption.Create(26, Types.General, cs(Sheriff.color, "Invincibility Time After Revive"), 3f, 2f, 5f, 1f, gamemodeSettings);
 
             // Gamemode Individual Settings
-            gamemodeIndividualSettings = CustomOption.Create(30, cs(Sheriff.color, "Gamemode Individual Settings"), "gamemode", false, null, true);
+            gamemodeIndividualSettings = CustomOption.Create(30, Types.General, cs(Sheriff.color, "Gamemode Individual Settings"), false, null, true);
             // Capture the flag mode
-            requiredFlags = CustomOption.Create(31, cs(Sheriff.color, "Capture the Flag") + ": Score Number", "gamemode", 3f, 3f, 5f, 1f, gamemodeIndividualSettings);
+            requiredFlags = CustomOption.Create(31, Types.General, cs(Sheriff.color, "Capture the Flag") + ": Score Number", 3f, 3f, 5f, 1f, gamemodeIndividualSettings);
             // Police and Thief mode
-            thiefModerequiredJewels = CustomOption.Create(41, cs(Coward.color, "Police and Thieves") + ": Jewel Number", "gamemode", 15f, 8f, 15f, 1f, gamemodeIndividualSettings);
-            thiefModePoliceCatchCooldown = CustomOption.Create(42, cs(Coward.color, "Police and Thieves") + ": Arrest Cooldown", "gamemode", 10f, 5f, 15f, 1f, gamemodeIndividualSettings);
-            thiefModecaptureThiefTime = CustomOption.Create(43, cs(Coward.color, "Police and Thieves") + ": Time to Arrest", "gamemode", 3f, 2f, 3f, 1f, gamemodeIndividualSettings);
-            thiefModePoliceTaseCooldown = CustomOption.Create(44, cs(Coward.color, "Police and Thieves") + ": Tase Cooldown", "gamemode", 15f, 10f, 15f, 1f, gamemodeIndividualSettings);
-            thiefModePoliceTaseDuration = CustomOption.Create(45, cs(Coward.color, "Police and Thieves") + ": Tase Duration", "gamemode", 3f, 3f, 5f, 1f, gamemodeIndividualSettings);
-            thiefModePoliceCanSeeJewels = CustomOption.Create(46, cs(Coward.color, "Police and Thieves") + ": Police can see Jewels", "gamemode", false, gamemodeIndividualSettings);
-            thiefModeWhoCanThiefsKill = CustomOption.Create(47, cs(Coward.color, "Police and Thieves") + ": Who Can Thieves Kill", "gamemode", new string[] { "Taser", "All", "Nobody" }, gamemodeIndividualSettings);
+            thiefModerequiredJewels = CustomOption.Create(41, Types.General, cs(Coward.color, "Police and Thieves") + ": Jewel Number", 15f, 8f, 15f, 1f, gamemodeIndividualSettings);
+            thiefModePoliceCatchCooldown = CustomOption.Create(42, Types.General, cs(Coward.color, "Police and Thieves") + ": Arrest Cooldown", 10f, 5f, 15f, 1f, gamemodeIndividualSettings);
+            thiefModecaptureThiefTime = CustomOption.Create(43, Types.General, cs(Coward.color, "Police and Thieves") + ": Time to Arrest", 3f, 2f, 3f, 1f, gamemodeIndividualSettings);
+            thiefModePoliceTaseCooldown = CustomOption.Create(44, Types.General, cs(Coward.color, "Police and Thieves") + ": Tase Cooldown", 15f, 10f, 15f, 1f, gamemodeIndividualSettings);
+            thiefModePoliceTaseDuration = CustomOption.Create(45, Types.General, cs(Coward.color, "Police and Thieves") + ": Tase Duration", 3f, 3f, 5f, 1f, gamemodeIndividualSettings);
+            thiefModePoliceCanSeeJewels = CustomOption.Create(46, Types.General, cs(Coward.color, "Police and Thieves") + ": Police can see Jewels", false, gamemodeIndividualSettings);
+            thiefModeWhoCanThiefsKill = CustomOption.Create(47, Types.General, cs(Coward.color, "Police and Thieves") + ": Who Can Thieves Kill", new string[] { "Taser", "All", "Nobody" }, gamemodeIndividualSettings);
             // King of the hill mode
-            kingRequiredPoints = CustomOption.Create(51, cs(Squire.color, "King of the Hill") + ": Score Number", "gamemode", 200f, 100f, 300f, 10f, gamemodeIndividualSettings);
-            kingCaptureCooldown = CustomOption.Create(52, cs(Squire.color, "King of the Hill") + ": Capture Cooldown", "gamemode", 10f, 5f, 15f, 1f, gamemodeIndividualSettings);
+            kingRequiredPoints = CustomOption.Create(51, Types.General, cs(Squire.color, "King of the Hill") + ": Score Number", 200f, 100f, 300f, 10f, gamemodeIndividualSettings);
+            kingCaptureCooldown = CustomOption.Create(52, Types.General, cs(Squire.color, "King of the Hill") + ": Capture Cooldown", 10f, 5f, 15f, 1f, gamemodeIndividualSettings);
             // Hot Potato
-            hotPotatoTransferLimit = CustomOption.Create(61, cs(Locksmith.color, "Hot Potato") + ": Time Limit for Transfer", "gamemode", 20f, 10f, 30f, 1f, gamemodeIndividualSettings);
-            hotPotatoCooldown = CustomOption.Create(62, cs(Locksmith.color, "Hot Potato") + ": Transfer Cooldown", "gamemode", 5f, 5f, 10f, 1f, gamemodeIndividualSettings);
-            hotPotatoResetTimeForTransfer = CustomOption.Create(63, cs(Locksmith.color, "Hot Potato") + ": Reset timer after Transfer", "gamemode", true, gamemodeIndividualSettings);
-            hotPotatoIncreaseTimeIfNoReset = CustomOption.Create(64, cs(Locksmith.color, "Hot Potato") + ": Extra Time when timer doesn't reset", "gamemode", 10f, 10f, 15f, 1f, gamemodeIndividualSettings);
+            hotPotatoTransferLimit = CustomOption.Create(61, Types.General, cs(Locksmith.color, "Hot Potato") + ": Time Limit for Transfer", 20f, 10f, 30f, 1f, gamemodeIndividualSettings);
+            hotPotatoCooldown = CustomOption.Create(62, Types.General, cs(Locksmith.color, "Hot Potato") + ": Transfer Cooldown", 5f, 5f, 10f, 1f, gamemodeIndividualSettings);
+            hotPotatoResetTimeForTransfer = CustomOption.Create(63, Types.General, cs(Locksmith.color, "Hot Potato") + ": Reset timer after Transfer", true, gamemodeIndividualSettings);
+            hotPotatoIncreaseTimeIfNoReset = CustomOption.Create(64, Types.General, cs(Locksmith.color, "Hot Potato") + ": Extra Time when timer doesn't reset", 10f, 10f, 15f, 1f, gamemodeIndividualSettings);
             // ZombieLaboratory
-            zombieLaboratoryStartZombies = CustomOption.Create(71, cs(Hunter.color, "Zombie Laboratory") + ": Initial Zombies", "gamemode", 1f, 1f, 5f, 1f, gamemodeIndividualSettings);
-            zombieLaboratoryInfectTime = CustomOption.Create(72, cs(Hunter.color, "Zombie Laboratory") + ": Time to Infect", "gamemode", 3f, 2f, 3f, 1f, gamemodeIndividualSettings);
-            zombieLaboratoryInfectCooldown = CustomOption.Create(73, cs(Hunter.color, "Zombie Laboratory") + ": Infect Cooldown", "gamemode", 10f, 10f, 20f, 1f, gamemodeIndividualSettings);
-            zombieLaboratorySearchBoxTimer = CustomOption.Create(74, cs(Hunter.color, "Zombie Laboratory") + ": Search Box Timer", "gamemode", 3f, 2f, 3f, 1f, gamemodeIndividualSettings);
-            zombieLaboratoryMaxTimeForHeal = CustomOption.Create(75, cs(Hunter.color, "Zombie Laboratory") + ": Time to use Medkit", "gamemode", 45f, 30f, 90f, 5f, gamemodeIndividualSettings);
+            zombieLaboratoryStartZombies = CustomOption.Create(71, Types.General, cs(Hunter.color, "Zombie Laboratory") + ": Initial Zombies", 1f, 1f, 5f, 1f, gamemodeIndividualSettings);
+            zombieLaboratoryInfectTime = CustomOption.Create(72, Types.General, cs(Hunter.color, "Zombie Laboratory") + ": Time to Infect", 3f, 2f, 3f, 1f, gamemodeIndividualSettings);
+            zombieLaboratoryInfectCooldown = CustomOption.Create(73, Types.General, cs(Hunter.color, "Zombie Laboratory") + ": Infect Cooldown", 10f, 10f, 20f, 1f, gamemodeIndividualSettings);
+            zombieLaboratorySearchBoxTimer = CustomOption.Create(74, Types.General, cs(Hunter.color, "Zombie Laboratory") + ": Search Box Timer", 3f, 2f, 3f, 1f, gamemodeIndividualSettings);
+            zombieLaboratoryMaxTimeForHeal = CustomOption.Create(75, Types.General, cs(Hunter.color, "Zombie Laboratory") + ": Time to use Medkit", 45f, 30f, 90f, 5f, gamemodeIndividualSettings);
             // Battle Royale
-            battleRoyaleMatchType = CustomOption.Create(81, cs(Sleuth.color, "Battle Royale") + ": Match Type", "gamemode", new string[] { "All vs All", "Team Battle", "Score Battle" }, gamemodeIndividualSettings);
-            battleRoyaleKillCooldown = CustomOption.Create(82, cs(Sleuth.color, "Battle Royale") + ": Shoot Cooldown", "gamemode", 1f, 1f, 3f, 1f, gamemodeIndividualSettings);
-            battleRoyaleLifes = CustomOption.Create(83, cs(Sleuth.color, "Battle Royale") + ": Fighter Lifes", "gamemode", 3f, 3f, 10f, 1f, gamemodeIndividualSettings);
-            battleRoyaleScoreNeeded = CustomOption.Create(84, cs(Sleuth.color, "Battle Royale") + ": Score Number", "gamemode", 200f, 100f, 300f, 10f, gamemodeIndividualSettings);
+            battleRoyaleMatchType = CustomOption.Create(81, Types.General, cs(Sleuth.color, "Battle Royale") + ": Match Type", new string[] { "All vs All", "Team Battle", "Score Battle" }, gamemodeIndividualSettings);
+            battleRoyaleKillCooldown = CustomOption.Create(82, Types.General, cs(Sleuth.color, "Battle Royale") + ": Shoot Cooldown", 1f, 1f, 3f, 1f, gamemodeIndividualSettings);
+            battleRoyaleLifes = CustomOption.Create(83, Types.General, cs(Sleuth.color, "Battle Royale") + ": Fighter Lifes", 3f, 3f, 10f, 1f, gamemodeIndividualSettings);
+            battleRoyaleScoreNeeded = CustomOption.Create(84, Types.General, cs(Sleuth.color, "Battle Royale") + ": Score Number", 200f, 100f, 300f, 10f, gamemodeIndividualSettings);
 
             // Monja Festival, reserved 90-99
 
             // Mimic options
-            mimicSpawnRate = CustomOption.Create(150, cs(Mimic.color, "Mimic"), "impostor", rates, null, true);
-            mimicDuration = CustomOption.Create(151, cs(Mimic.color, "Mimic") + ": Duration", "impostor", 10f, 10f, 15f, 1f, mimicSpawnRate);
+            mimicSpawnRate = CustomOption.Create(150, Types.Impostor, cs(Mimic.color, "Mimic"),  rates, null, true);
+            mimicDuration = CustomOption.Create(151, Types.Impostor, cs(Mimic.color, "Mimic") + ": Duration",  10f, 10f, 15f, 1f, mimicSpawnRate);
 
             // Painter options
-            painterSpawnRate = CustomOption.Create(160, cs(Painter.color, "Painter"), "impostor", rates, null, true);
-            painterCooldown = CustomOption.Create(161, cs(Painter.color, "Painter") + ": Cooldown", "impostor", 30f, 20f, 40f, 2.5f, painterSpawnRate);
-            painterDuration = CustomOption.Create(162, cs(Painter.color, "Painter") + ": Duration", "impostor", 10f, 10f, 15f, 1f, painterSpawnRate);
+            painterSpawnRate = CustomOption.Create(160, Types.Impostor, cs(Painter.color, "Painter"),  rates, null, true);
+            painterCooldown = CustomOption.Create(161, Types.Impostor, cs(Painter.color, "Painter") + ": Cooldown",  30f, 20f, 40f, 2.5f, painterSpawnRate);
+            painterDuration = CustomOption.Create(162, Types.Impostor, cs(Painter.color, "Painter") + ": Duration",  10f, 10f, 15f, 1f, painterSpawnRate);
 
             // Demon options
-            demonSpawnRate = CustomOption.Create(170, cs(Demon.color, "Demon"), "impostor", rates, null, true);
-            demonKillDelay = CustomOption.Create(171, cs(Demon.color, "Demon") + ": Delay Time", "impostor", 10f, 5f, 15f, 1f, demonSpawnRate);
-            demonCanKillNearNuns = CustomOption.Create(172, cs(Demon.color, "Demon") + ": Can Kill near Nuns", "impostor", false, demonSpawnRate);
+            demonSpawnRate = CustomOption.Create(170, Types.Impostor, cs(Demon.color, "Demon"),  rates, null, true);
+            demonKillDelay = CustomOption.Create(171, Types.Impostor, cs(Demon.color, "Demon") + ": Delay Time",  10f, 5f, 15f, 1f, demonSpawnRate);
+            demonCanKillNearNuns = CustomOption.Create(172, Types.Impostor, cs(Demon.color, "Demon") + ": Can Kill near Nuns",  false, demonSpawnRate);
 
             // Janitor options
-            janitorSpawnRate = CustomOption.Create(180, cs(Janitor.color, "Janitor"), "impostor", rates, null, true);
-            janitorCooldown = CustomOption.Create(181, cs(Janitor.color, "Janitor") + ": Cooldown", "impostor", 30f, 20f, 40f, 2.5f, janitorSpawnRate);
+            janitorSpawnRate = CustomOption.Create(180, Types.Impostor, cs(Janitor.color, "Janitor"),  rates, null, true);
+            janitorCooldown = CustomOption.Create(181, Types.Impostor, cs(Janitor.color, "Janitor") + ": Cooldown",  30f, 20f, 40f, 2.5f, janitorSpawnRate);
 
             // Illusionist options
-            illusionistSpawnRate = CustomOption.Create(190, cs(Illusionist.color, "Illusionist"), "impostor", rates, null, true);
-            illusionistPlaceHatCooldown = CustomOption.Create(191, cs(Illusionist.color, "Illusionist") + ": Hats Cooldown", "impostor", 20f, 15f, 30f, 1f, illusionistSpawnRate);
-            illusionistLightsOutCooldown = CustomOption.Create(192, cs(Illusionist.color, "Illusionist") + ": Lights Cooldown", "impostor", 30f, 20f, 40f, 1f, illusionistSpawnRate);
-            illusionistLightsOutDuration = CustomOption.Create(193, cs(Illusionist.color, "Illusionist") + ": Blackout Duration", "impostor", 10f, 5f, 15f, 1f, illusionistSpawnRate);
+            illusionistSpawnRate = CustomOption.Create(190, Types.Impostor, cs(Illusionist.color, "Illusionist"),  rates, null, true);
+            illusionistPlaceHatCooldown = CustomOption.Create(191, Types.Impostor, cs(Illusionist.color, "Illusionist") + ": Hats Cooldown",  20f, 15f, 30f, 1f, illusionistSpawnRate);
+            illusionistLightsOutCooldown = CustomOption.Create(192, Types.Impostor, cs(Illusionist.color, "Illusionist") + ": Lights Cooldown",  30f, 20f, 40f, 1f, illusionistSpawnRate);
+            illusionistLightsOutDuration = CustomOption.Create(193, Types.Impostor, cs(Illusionist.color, "Illusionist") + ": Blackout Duration",  10f, 5f, 15f, 1f, illusionistSpawnRate);
 
             // Manipulator options
-            manipulatorSpawnRate = CustomOption.Create(200, cs(Manipulator.color, "Manipulator"), "impostor", rates, null, true);
+            manipulatorSpawnRate = CustomOption.Create(200, Types.Impostor, cs(Manipulator.color, "Manipulator"),  rates, null, true);
 
             // Bomberman options
-            bombermanSpawnRate = CustomOption.Create(210, cs(Bomberman.color, "Bomberman"), "impostor", rates, null, true);
-            bombermanBombCooldown = CustomOption.Create(211, cs(Bomberman.color, "Bomberman") + ": Cooldown", "impostor", 30f, 30f, 60f, 5f, bombermanSpawnRate);
-            bombermanSelfBombDuration = CustomOption.Create(212, cs(Bomberman.color, "Bomberman") + ": Self Bomb Timer", "impostor", 10f, 5f, 15f, 1f, bombermanSpawnRate);
+            bombermanSpawnRate = CustomOption.Create(210, Types.Impostor, cs(Bomberman.color, "Bomberman"),  rates, null, true);
+            bombermanBombCooldown = CustomOption.Create(211, Types.Impostor, cs(Bomberman.color, "Bomberman") + ": Cooldown",  30f, 30f, 60f, 5f, bombermanSpawnRate);
+            bombermanSelfBombDuration = CustomOption.Create(212, Types.Impostor, cs(Bomberman.color, "Bomberman") + ": Self Bomb Timer",  10f, 5f, 15f, 1f, bombermanSpawnRate);
 
             // Chameleon options
-            chameleonSpawnRate = CustomOption.Create(220, cs(Chameleon.color, "Chameleon"), "impostor", rates, null, true);
-            chameleonCooldown = CustomOption.Create(221, cs(Chameleon.color, "Chameleon") + ": Cooldown", "impostor", 30f, 20f, 40f, 2.5f, chameleonSpawnRate);
-            chameleonDuration = CustomOption.Create(222, cs(Chameleon.color, "Chameleon") + ": Duration", "impostor", 10f, 10f, 15f, 1f, chameleonSpawnRate);
+            chameleonSpawnRate = CustomOption.Create(220, Types.Impostor, cs(Chameleon.color, "Chameleon"),  rates, null, true);
+            chameleonCooldown = CustomOption.Create(221, Types.Impostor, cs(Chameleon.color, "Chameleon") + ": Cooldown",  30f, 20f, 40f, 2.5f, chameleonSpawnRate);
+            chameleonDuration = CustomOption.Create(222, Types.Impostor, cs(Chameleon.color, "Chameleon") + ": Duration",  10f, 10f, 15f, 1f, chameleonSpawnRate);
 
             // Gambler options
-            gamblerSpawnRate = CustomOption.Create(230, cs(Gambler.color, "Gambler"), "impostor", rates, null, true);
-            gamblerCanCallEmergency = CustomOption.Create(231, cs(Gambler.color, "Gambler") + ": Can use emergency button", "impostor", false, gamblerSpawnRate);
-            gamblerCanKillThroughShield = CustomOption.Create(232, cs(Gambler.color, "Gambler") + ": Ignore shields", "impostor", false, gamblerSpawnRate);
+            gamblerSpawnRate = CustomOption.Create(230, Types.Impostor, cs(Gambler.color, "Gambler"),  rates, null, true);
+            gamblerCanCallEmergency = CustomOption.Create(231, Types.Impostor, cs(Gambler.color, "Gambler") + ": Can use emergency button",  false, gamblerSpawnRate);
+            gamblerCanKillThroughShield = CustomOption.Create(232, Types.Impostor, cs(Gambler.color, "Gambler") + ": Ignore shields",  false, gamblerSpawnRate);
 
             // Sorcerer Options
-            sorcererSpawnRate = CustomOption.Create(240, cs(Sorcerer.color, "Sorcerer"), "impostor", rates, null, true);
-            sorcererCooldown = CustomOption.Create(241, cs(Sorcerer.color, "Sorcerer") + ": Cooldown", "impostor", 30f, 30f, 40f, 2.5f, sorcererSpawnRate);
-            sorcererSpellDuration = CustomOption.Create(242, cs(Sorcerer.color, "Sorcerer") + ": Spell Duration", "impostor", 3f, 3f, 5f, 1f, sorcererSpawnRate);
-            sorcererCanCallEmergency = CustomOption.Create(243, cs(Sorcerer.color, "Sorcerer") + ": Can use emergency button", "impostor", false, sorcererSpawnRate);
+            sorcererSpawnRate = CustomOption.Create(240, Types.Impostor, cs(Sorcerer.color, "Sorcerer"),  rates, null, true);
+            sorcererCooldown = CustomOption.Create(241, Types.Impostor, cs(Sorcerer.color, "Sorcerer") + ": Cooldown",  30f, 30f, 40f, 2.5f, sorcererSpawnRate);
+            sorcererSpellDuration = CustomOption.Create(242, Types.Impostor, cs(Sorcerer.color, "Sorcerer") + ": Spell Duration",  3f, 3f, 5f, 1f, sorcererSpawnRate);
+            sorcererCanCallEmergency = CustomOption.Create(243, Types.Impostor, cs(Sorcerer.color, "Sorcerer") + ": Can use emergency button",  false, sorcererSpawnRate);
 
             // Medusa options
-            medusaSpawnRate = CustomOption.Create(250, cs(Medusa.color, "Medusa"), "impostor", rates, null, true);
-            medusaCooldown = CustomOption.Create(251, cs(Medusa.color, "Medusa") + ": Cooldown", "impostor", 20f, 20f, 30f, 1f, medusaSpawnRate);
-            medusaDelay = CustomOption.Create(252, cs(Medusa.color, "Medusa") + ": Petrify Delay", "impostor", 10f, 10f, 15f, 1f, medusaSpawnRate);
+            medusaSpawnRate = CustomOption.Create(250, Types.Impostor, cs(Medusa.color, "Medusa"),  rates, null, true);
+            medusaCooldown = CustomOption.Create(251, Types.Impostor, cs(Medusa.color, "Medusa") + ": Cooldown",  20f, 20f, 30f, 1f, medusaSpawnRate);
+            medusaDelay = CustomOption.Create(252, Types.Impostor, cs(Medusa.color, "Medusa") + ": Petrify Delay",  10f, 10f, 15f, 1f, medusaSpawnRate);
 
             // Hypnotist options
-            hypnotistSpawnRate = CustomOption.Create(260, cs(Hypnotist.color, "Hypnotist"), "impostor", rates, null, true);
-            hypnotistCooldown = CustomOption.Create(261, cs(Hypnotist.color, "Hypnotist") + ": Cooldown", "impostor", 20f, 15f, 30f, 1f, hypnotistSpawnRate);
-            hypnotistNumberOfSpirals = CustomOption.Create(262, cs(Hypnotist.color, "Hypnotist") + ": Spiral Number", "impostor", 5f, 1f, 5f, 1f, hypnotistSpawnRate);
-            hypnotistSpiralsDuration = CustomOption.Create(263, cs(Hypnotist.color, "Hypnotist") + ": Spiral Effect Duration", "impostor", 20f, 10f, 30f, 1f, hypnotistSpawnRate);
+            hypnotistSpawnRate = CustomOption.Create(260, Types.Impostor, cs(Hypnotist.color, "Hypnotist"),  rates, null, true);
+            hypnotistCooldown = CustomOption.Create(261, Types.Impostor, cs(Hypnotist.color, "Hypnotist") + ": Cooldown",  20f, 15f, 30f, 1f, hypnotistSpawnRate);
+            hypnotistNumberOfSpirals = CustomOption.Create(262, Types.Impostor, cs(Hypnotist.color, "Hypnotist") + ": Spiral Number",  5f, 1f, 5f, 1f, hypnotistSpawnRate);
+            hypnotistSpiralsDuration = CustomOption.Create(263, Types.Impostor, cs(Hypnotist.color, "Hypnotist") + ": Spiral Effect Duration",  20f, 10f, 30f, 1f, hypnotistSpawnRate);
 
             // Archer options
-            archerSpawnRate = CustomOption.Create(270, cs(Archer.color, "Archer"), "impostor", rates, null, true);
-            archerShotRange = CustomOption.Create(271, cs(Archer.color, "Archer") + ": Arrow Range", "impostor", 15f, 5f, 15f, 1f, archerSpawnRate);
-            archerNoticeRange = CustomOption.Create(272, cs(Archer.color, "Archer") + ": Notify Range", "impostor", 10f, 10f, 30f, 2.5f, archerSpawnRate);
-            archerAimAssistDuration = CustomOption.Create(273, cs(Archer.color, "Archer") + ": Aim Duration", "impostor", 10f, 3f, 10f, 1f, archerSpawnRate);
+            archerSpawnRate = CustomOption.Create(270, Types.Impostor, cs(Archer.color, "Archer"),  rates, null, true);
+            archerShotRange = CustomOption.Create(271, Types.Impostor, cs(Archer.color, "Archer") + ": Arrow Range",  15f, 5f, 15f, 1f, archerSpawnRate);
+            archerNoticeRange = CustomOption.Create(272, Types.Impostor, cs(Archer.color, "Archer") + ": Notify Range",  10f, 10f, 30f, 2.5f, archerSpawnRate);
+            archerAimAssistDuration = CustomOption.Create(273, Types.Impostor, cs(Archer.color, "Archer") + ": Aim Duration",  10f, 3f, 10f, 1f, archerSpawnRate);
 
             // Plumber options
-            plumberSpawnRate = CustomOption.Create(280, cs(Plumber.color, "Plumber"), "impostor", rates, null, true);
-            plumberCooldown = CustomOption.Create(281, cs(Plumber.color, "Plumber") + ": Cooldown", "impostor", 20f, 15f, 30f, 1f, plumberSpawnRate);
+            plumberSpawnRate = CustomOption.Create(280, Types.Impostor, cs(Plumber.color, "Plumber"),  rates, null, true);
+            plumberCooldown = CustomOption.Create(281, Types.Impostor, cs(Plumber.color, "Plumber") + ": Cooldown",  20f, 15f, 30f, 1f, plumberSpawnRate);
 
             // Librarian options
-            librarianSpawnRate = CustomOption.Create(290, cs(Librarian.color, "Librarian"), "impostor", rates, null, true);
-            librarianCooldown = CustomOption.Create(291, cs(Librarian.color, "Librarian") + ": Cooldown", "impostor", 20f, 20f, 30f, 1f, librarianSpawnRate);
+            librarianSpawnRate = CustomOption.Create(290, Types.Impostor, cs(Librarian.color, "Librarian"),  rates, null, true);
+            librarianCooldown = CustomOption.Create(291, Types.Impostor, cs(Librarian.color, "Librarian") + ": Cooldown",  20f, 20f, 30f, 1f, librarianSpawnRate);
 
             // Renegade & Minion options
-            renegadeSpawnRate = CustomOption.Create(300, cs(Renegade.color, "Renegade"), "rebel", rates, null, true);
-            renegadeCanUseVents = CustomOption.Create(301, cs(Renegade.color, "Renegade") + ": Can use Vents", "rebel", true, renegadeSpawnRate);
-            renegadeCanRecruitMinion = CustomOption.Create(302, cs(Renegade.color, "Renegade") + ": Can Recruit a Minion", "rebel", true, renegadeSpawnRate);
+            renegadeSpawnRate = CustomOption.Create(300, Types.Rebel, cs(Renegade.color, "Renegade"),  rates, null, true);
+            renegadeCanUseVents = CustomOption.Create(301, Types.Rebel, cs(Renegade.color, "Renegade") + ": Can use Vents",  true, renegadeSpawnRate);
+            renegadeCanRecruitMinion = CustomOption.Create(302, Types.Rebel, cs(Renegade.color, "Renegade") + ": Can Recruit a Minion",  true, renegadeSpawnRate);
 
             // Bountyhunter options
-            bountyHunterSpawnRate = CustomOption.Create(310, cs(BountyHunter.color, "Bounty Hunter"), "rebel", rates, null, true);
+            bountyHunterSpawnRate = CustomOption.Create(310, Types.Rebel, cs(BountyHunter.color, "Bounty Hunter"),  rates, null, true);
 
             // Trapper options
-            trapperSpawnRate = CustomOption.Create(320, cs(Trapper.color, "Trapper"), "rebel", rates, null, true);
-            trapperCooldown = CustomOption.Create(321, cs(Trapper.color, "Trapper") + ": Cooldown", "rebel", 15f, 15f, 30f, 1f, trapperSpawnRate);
-            trapperMineNumber = CustomOption.Create(322, cs(Trapper.color, "Trapper") + ": Mine Number", "rebel", 3f, 1f, 3f, 1f, trapperSpawnRate);
-            trapperMineDuration = CustomOption.Create(323, cs(Trapper.color, "Trapper") + ": Mine Duration", "rebel", 45f, 30f, 60f, 5f, trapperSpawnRate);
-            trapperTrapNumber = CustomOption.Create(324, cs(Trapper.color, "Trapper") + ": Trap Number", "rebel", 3f, 1f, 5f, 1f, trapperSpawnRate);
-            trapperTrapDuration = CustomOption.Create(325, cs(Trapper.color, "Trapper") + ": Trap Duration", "rebel", 60f, 30f, 120f, 5f, trapperSpawnRate);
+            trapperSpawnRate = CustomOption.Create(320, Types.Rebel, cs(Trapper.color, "Trapper"),  rates, null, true);
+            trapperCooldown = CustomOption.Create(321, Types.Rebel, cs(Trapper.color, "Trapper") + ": Cooldown",  15f, 15f, 30f, 1f, trapperSpawnRate);
+            trapperMineNumber = CustomOption.Create(322, Types.Rebel, cs(Trapper.color, "Trapper") + ": Mine Number",  3f, 1f, 3f, 1f, trapperSpawnRate);
+            trapperMineDuration = CustomOption.Create(323, Types.Rebel, cs(Trapper.color, "Trapper") + ": Mine Duration",  45f, 30f, 60f, 5f, trapperSpawnRate);
+            trapperTrapNumber = CustomOption.Create(324, Types.Rebel, cs(Trapper.color, "Trapper") + ": Trap Number",  3f, 1f, 5f, 1f, trapperSpawnRate);
+            trapperTrapDuration = CustomOption.Create(325, Types.Rebel, cs(Trapper.color, "Trapper") + ": Trap Duration",  60f, 30f, 120f, 5f, trapperSpawnRate);
             
             // Yinyanger options
-            yinyangerSpawnRate = CustomOption.Create(330, cs(Yinyanger.color, "Yinyanger"), "rebel", rates, null, true);
-            yinyangerCooldown = CustomOption.Create(331, cs(Yinyanger.color, "Yinyanger") + ": Cooldown", "rebel", 15f, 15f, 30f, 1f, yinyangerSpawnRate);
+            yinyangerSpawnRate = CustomOption.Create(330, Types.Rebel, cs(Yinyanger.color, "Yinyanger"),  rates, null, true);
+            yinyangerCooldown = CustomOption.Create(331, Types.Rebel, cs(Yinyanger.color, "Yinyanger") + ": Cooldown",  15f, 15f, 30f, 1f, yinyangerSpawnRate);
 
             // Challenger options
-            challengerSpawnRate = CustomOption.Create(340, cs(Challenger.color, "Challenger"), "rebel", rates, null, true);
-            challengerCooldown = CustomOption.Create(341, cs(Challenger.color, "Challenger") + ": Cooldown", "rebel", 15f, 15f, 30f, 1f, challengerSpawnRate);
-            challengerKillsForWin = CustomOption.Create(342, cs(Challenger.color, "Challenger") + ": Kills to Win", "rebel", 3f, 3f, 5f, 1f, challengerSpawnRate);
+            challengerSpawnRate = CustomOption.Create(340, Types.Rebel, cs(Challenger.color, "Challenger"),  rates, null, true);
+            challengerCooldown = CustomOption.Create(341, Types.Rebel, cs(Challenger.color, "Challenger") + ": Cooldown",  15f, 15f, 30f, 1f, challengerSpawnRate);
+            challengerKillsForWin = CustomOption.Create(342, Types.Rebel, cs(Challenger.color, "Challenger") + ": Kills to Win",  3f, 3f, 5f, 1f, challengerSpawnRate);
 
             // Ninja options
-            ninjaSpawnRate = CustomOption.Create(350, cs(Ninja.color, "Ninja"), "rebel", rates, null, true);
+            ninjaSpawnRate = CustomOption.Create(350, Types.Rebel, cs(Ninja.color, "Ninja"),  rates, null, true);
 
             // Berserker options
-            berserkerSpawnRate = CustomOption.Create(360, cs(Berserker.color, "Berserker"), "rebel", rates, null, true);
-            berserkerTimeToKill = CustomOption.Create(361, cs(Berserker.color, "Berserker") + ": Kill Time Limit", "rebel", 30f, 20f, 40f, 2.5f, berserkerSpawnRate);
+            berserkerSpawnRate = CustomOption.Create(360, Types.Rebel, cs(Berserker.color, "Berserker"),  rates, null, true);
+            berserkerTimeToKill = CustomOption.Create(361, Types.Rebel, cs(Berserker.color, "Berserker") + ": Kill Time Limit",  30f, 20f, 40f, 2.5f, berserkerSpawnRate);
 
             // Yandere options
-            yandereSpawnRate = CustomOption.Create(370, cs(Yandere.color, "Yandere"), "rebel", rates, null, true);
-            yandereCooldown = CustomOption.Create(371, cs(Yandere.color, "Yandere") + ": Stare Cooldown", "rebel", 30f, 15f, 30f, 1f, yandereSpawnRate);
-            yandereStareTimes = CustomOption.Create(372, cs(Yandere.color, "Yandere") + ": Stare Times", "rebel", 5f, 3f, 5f, 1f, yandereSpawnRate);
-            yandereStareDuration = CustomOption.Create(373, cs(Yandere.color, "Yandere") + ": Stare Duration", "rebel", 3f, 2f, 4f, 1f, yandereSpawnRate);
+            yandereSpawnRate = CustomOption.Create(370, Types.Rebel, cs(Yandere.color, "Yandere"),  rates, null, true);
+            yandereCooldown = CustomOption.Create(371, Types.Rebel, cs(Yandere.color, "Yandere") + ": Stare Cooldown",  30f, 15f, 30f, 1f, yandereSpawnRate);
+            yandereStareTimes = CustomOption.Create(372, Types.Rebel, cs(Yandere.color, "Yandere") + ": Stare Times",  5f, 3f, 5f, 1f, yandereSpawnRate);
+            yandereStareDuration = CustomOption.Create(373, Types.Rebel, cs(Yandere.color, "Yandere") + ": Stare Duration",  3f, 2f, 4f, 1f, yandereSpawnRate);
 
             // Stranded options
-            strandedSpawnRate = CustomOption.Create(380, cs(Stranded.color, "Stranded"), "rebel", rates, null, true);
+            strandedSpawnRate = CustomOption.Create(380, Types.Rebel, cs(Stranded.color, "Stranded"),  rates, null, true);
 
             // Monja options
-            monjaSpawnRate = CustomOption.Create(390, cs(Monja.color, "Monja"), "rebel", rates, null, true);
+            monjaSpawnRate = CustomOption.Create(390, Types.Rebel, cs(Monja.color, "Monja"),  rates, null, true);
 
             // Joker options
-            jokerSpawnRate = CustomOption.Create(400, cs(Joker.color, "Joker"), "neutral", rates, null, true);
-            jokerCanSabotage = CustomOption.Create(402, cs(Joker.color, "Joker") + ": Can Sabotage", "neutral", true, jokerSpawnRate);
+            jokerSpawnRate = CustomOption.Create(400, Types.Neutral, cs(Joker.color, "Joker"),  rates, null, true);
+            jokerCanSabotage = CustomOption.Create(402, Types.Neutral, cs(Joker.color, "Joker") + ": Can Sabotage",  true, jokerSpawnRate);
 
             // RoleThief options
-            rolethiefSpawnRate = CustomOption.Create(410, cs(RoleThief.color, "Role Thief"), "neutral", rates, null, true);
-            rolethiefCooldown = CustomOption.Create(411, cs(RoleThief.color, "Role Thief") + ": Cooldown", "neutral", 20f, 10f, 30f, 2.5f, rolethiefSpawnRate);
+            rolethiefSpawnRate = CustomOption.Create(410, Types.Neutral, cs(RoleThief.color, "Role Thief"),  rates, null, true);
+            rolethiefCooldown = CustomOption.Create(411, Types.Neutral, cs(RoleThief.color, "Role Thief") + ": Cooldown",  20f, 10f, 30f, 2.5f, rolethiefSpawnRate);
 
             // Pyromaniac options
-            pyromaniacSpawnRate = CustomOption.Create(420, cs(Pyromaniac.color, "Pyromaniac"), "neutral", rates, null, true);
-            pyromaniacCooldown = CustomOption.Create(421, cs(Pyromaniac.color, "Pyromaniac") + ": Cooldown", "neutral", 15f, 10f, 20f, 1f, pyromaniacSpawnRate);
-            pyromaniacDuration = CustomOption.Create(422, cs(Pyromaniac.color, "Pyromaniac") + ": Ignite Duration", "neutral", 3f, 1f, 5f, 1f, pyromaniacSpawnRate);
+            pyromaniacSpawnRate = CustomOption.Create(420, Types.Neutral, cs(Pyromaniac.color, "Pyromaniac"),  rates, null, true);
+            pyromaniacCooldown = CustomOption.Create(421, Types.Neutral, cs(Pyromaniac.color, "Pyromaniac") + ": Cooldown",  15f, 10f, 20f, 1f, pyromaniacSpawnRate);
+            pyromaniacDuration = CustomOption.Create(422, Types.Neutral, cs(Pyromaniac.color, "Pyromaniac") + ": Ignite Duration",  3f, 1f, 5f, 1f, pyromaniacSpawnRate);
 
             // Treasure hunter options
-            treasureHunterSpawnRate = CustomOption.Create(430, cs(TreasureHunter.color, "Treasure Hunter"), "neutral", rates, null, true);
-            treasureHunterTreasureNumber = CustomOption.Create(431, cs(TreasureHunter.color, "Treasure Hunter") + ": Treasures to Win", "neutral", 5f, 5f, 10f, 1f, treasureHunterSpawnRate);
+            treasureHunterSpawnRate = CustomOption.Create(430, Types.Neutral, cs(TreasureHunter.color, "Treasure Hunter"),  rates, null, true);
+            treasureHunterTreasureNumber = CustomOption.Create(431, Types.Neutral, cs(TreasureHunter.color, "Treasure Hunter") + ": Treasures to Win",  5f, 5f, 10f, 1f, treasureHunterSpawnRate);
 
             // Devourer options
-            devourerSpawnRate = CustomOption.Create(440, cs(Devourer.color, "Devourer"), "neutral", rates, null, true);
-            devourerBodiesNumber = CustomOption.Create(441, cs(Devourer.color, "Devourer") + ": Devours to Win", "neutral", 4f, 3f, 7f, 1f, devourerSpawnRate);
+            devourerSpawnRate = CustomOption.Create(440, Types.Neutral, cs(Devourer.color, "Devourer"),  rates, null, true);
+            devourerBodiesNumber = CustomOption.Create(441, Types.Neutral, cs(Devourer.color, "Devourer") + ": Devours to Win",  4f, 3f, 7f, 1f, devourerSpawnRate);
 
             // Poisoner options
-            poisonerSpawnRate = CustomOption.Create(450, cs(Poisoner.color, "Poisoner"), "neutral", rates, null, true);
-            poisonerInfectRange = CustomOption.Create(451, cs(Poisoner.color, "Poisoner") + ": Poison Infect Range", "neutral", 2f, 0.5f, 2f, 0.25f, poisonerSpawnRate);
-            poisonerInfectDuration = CustomOption.Create(452, cs(Poisoner.color, "Poisoner") + ": Time to fully Poison", "neutral", 20f, 15f, 30f, 1f, poisonerSpawnRate);
-            poisonerCanSabotage = CustomOption.Create(453, cs(Poisoner.color, "Poisoner") + ": Can Sabotage", "neutral", true, poisonerSpawnRate);
+            poisonerSpawnRate = CustomOption.Create(450, Types.Neutral, cs(Poisoner.color, "Poisoner"),  rates, null, true);
+            poisonerInfectRange = CustomOption.Create(451, Types.Neutral, cs(Poisoner.color, "Poisoner") + ": Poison Infect Range",  2f, 0.5f, 2f, 0.25f, poisonerSpawnRate);
+            poisonerInfectDuration = CustomOption.Create(452, Types.Neutral, cs(Poisoner.color, "Poisoner") + ": Time to fully Poison",  20f, 15f, 30f, 1f, poisonerSpawnRate);
+            poisonerCanSabotage = CustomOption.Create(453, Types.Neutral, cs(Poisoner.color, "Poisoner") + ": Can Sabotage",  true, poisonerSpawnRate);
 
             // Puppeteer options
-            puppeteerSpawnRate = CustomOption.Create(460, cs(Puppeteer.color, "Puppeteer"), "neutral", rates, null, true);
-            puppeteerNumberOfKills = CustomOption.Create(461, cs(Puppeteer.color, "Puppeteer") + ": Number of Kills", "neutral", 3f, 2f, 4f, 1f, puppeteerSpawnRate);
+            puppeteerSpawnRate = CustomOption.Create(460, Types.Neutral, cs(Puppeteer.color, "Puppeteer"),  rates, null, true);
+            puppeteerNumberOfKills = CustomOption.Create(461, Types.Neutral, cs(Puppeteer.color, "Puppeteer") + ": Number of Kills",  3f, 2f, 4f, 1f, puppeteerSpawnRate);
 
             // Exiler options
-            exilerSpawnRate = CustomOption.Create(470, cs(Exiler.color, "Exiler"), "neutral", rates, null, true);
+            exilerSpawnRate = CustomOption.Create(470, Types.Neutral, cs(Exiler.color, "Exiler"),  rates, null, true);
 
             // Amnesiac options
-            amnesiacSpawnRate = CustomOption.Create(480, cs(Amnesiac.color, "Amnesiac"), "neutral", rates, null, true);
+            amnesiacSpawnRate = CustomOption.Create(480, Types.Neutral, cs(Amnesiac.color, "Amnesiac"),  rates, null, true);
 
             // Seeker options
-            seekerSpawnRate = CustomOption.Create(490, cs(Seeker.color, "Seeker"), "neutral", rates, null, true);
-            seekerCooldown = CustomOption.Create(491, cs(Seeker.color, "Seeker") + ": Cooldown", "neutral", 5f, 5f, 10f, 1f, seekerSpawnRate);
-            seekerPointsNumber = CustomOption.Create(492, cs(Seeker.color, "Seeker") + ": Points to Win", "neutral", 5f, 5f, 10f, 1f, seekerSpawnRate);
+            seekerSpawnRate = CustomOption.Create(490, Types.Neutral, cs(Seeker.color, "Seeker"),  rates, null, true);
+            seekerCooldown = CustomOption.Create(491, Types.Neutral, cs(Seeker.color, "Seeker") + ": Cooldown",  5f, 5f, 10f, 1f, seekerSpawnRate);
+            seekerPointsNumber = CustomOption.Create(492, Types.Neutral, cs(Seeker.color, "Seeker") + ": Points to Win",  5f, 5f, 10f, 1f, seekerSpawnRate);
 
             // Captain options
-            captainSpawnRate = CustomOption.Create(500, cs(Captain.color, "Captain"), "crewmate", rates, null, true);
-            captainCanSpecialVoteOneTime = CustomOption.Create(501, cs(Captain.color, "Captain") + ": Can Special Vote one time", "crewmate", true, captainSpawnRate);
+            captainSpawnRate = CustomOption.Create(500, Types.Crewmate, cs(Captain.color, "Captain"),  rates, null, true);
+            captainCanSpecialVoteOneTime = CustomOption.Create(501, Types.Crewmate, cs(Captain.color, "Captain") + ": Can Special Vote one time",  true, captainSpawnRate);
 
             // Mechanic options
-            mechanicSpawnRate = CustomOption.Create(510, cs(Mechanic.color, "Mechanic"), "crewmate", rates, null, true);
-            mechanicNumberOfRepairs = CustomOption.Create(511, cs(Mechanic.color, "Mechanic") + ": Repairs Number", "crewmate", 2f, 1f, 2f, 1f, mechanicSpawnRate);
-            mechanicRechargeTasksNumber = CustomOption.Create(512, cs(Mechanic.color, "Mechanic") + ": Tasks for recharge batteries", "crewmate", 2f, 1f, 3f, 1f, mechanicSpawnRate);
-            mechanicExpertRepairs = CustomOption.Create(513, cs(Mechanic.color, "Mechanic") + ": Expert Repairs", "crewmate", true, mechanicSpawnRate);
+            mechanicSpawnRate = CustomOption.Create(510, Types.Crewmate, cs(Mechanic.color, "Mechanic"),  rates, null, true);
+            mechanicNumberOfRepairs = CustomOption.Create(511, Types.Crewmate, cs(Mechanic.color, "Mechanic") + ": Repairs Number",  2f, 1f, 2f, 1f, mechanicSpawnRate);
+            mechanicRechargeTasksNumber = CustomOption.Create(512, Types.Crewmate, cs(Mechanic.color, "Mechanic") + ": Tasks for recharge batteries",  2f, 1f, 3f, 1f, mechanicSpawnRate);
+            mechanicExpertRepairs = CustomOption.Create(513, Types.Crewmate, cs(Mechanic.color, "Mechanic") + ": Expert Repairs",  true, mechanicSpawnRate);
 
             // Sheriff options
-            sheriffSpawnRate = CustomOption.Create(520, cs(Sheriff.color, "Sheriff"), "crewmate", rates, null, true);
-            sheriffCanKillNeutrals = CustomOption.Create(521, cs(Sheriff.color, "Sheriff") + ": Can Kill Neutrals", "crewmate", true, sheriffSpawnRate);
+            sheriffSpawnRate = CustomOption.Create(520, Types.Crewmate, cs(Sheriff.color, "Sheriff"),  rates, null, true);
+            sheriffCanKillNeutrals = CustomOption.Create(521, Types.Crewmate, cs(Sheriff.color, "Sheriff") + ": Can Kill Neutrals",  true, sheriffSpawnRate);
 
             // Detective options
-            detectiveSpawnRate = CustomOption.Create(530, cs(Detective.color, "Detective"), "crewmate", rates, null, true);
-            detectiveShowFootprints = CustomOption.Create(531, cs(Detective.color, "Detective") + ": Show Footprints", "crewmate", new string[] { "Button Use", "Always" }, detectiveSpawnRate);
-            detectiveCooldown = CustomOption.Create(532, cs(Detective.color, "Detective") + ": Cooldown", "crewmate", 15f, 10f, 20f, 1f, detectiveSpawnRate);
-            detectiveShowFootPrintDuration = CustomOption.Create(533, cs(Detective.color, "Detective") + ": Show Footprints Duration", "crewmate", 10f, 10f, 15f, 1f, detectiveSpawnRate); 
-            detectiveAnonymousFootprints = CustomOption.Create(534, cs(Detective.color, "Detective") + ": Anonymous Footprints", "crewmate", false, detectiveSpawnRate);
+            detectiveSpawnRate = CustomOption.Create(530, Types.Crewmate, cs(Detective.color, "Detective"),  rates, null, true);
+            detectiveShowFootprints = CustomOption.Create(531, Types.Crewmate, cs(Detective.color, "Detective") + ": Show Footprints",  new string[] { "Button Use", "Always" }, detectiveSpawnRate);
+            detectiveCooldown = CustomOption.Create(532, Types.Crewmate, cs(Detective.color, "Detective") + ": Cooldown",  15f, 10f, 20f, 1f, detectiveSpawnRate);
+            detectiveShowFootPrintDuration = CustomOption.Create(533, Types.Crewmate, cs(Detective.color, "Detective") + ": Show Footprints Duration",  10f, 10f, 15f, 1f, detectiveSpawnRate); 
+            detectiveAnonymousFootprints = CustomOption.Create(534, Types.Crewmate, cs(Detective.color, "Detective") + ": Anonymous Footprints",  false, detectiveSpawnRate);
 
             // Forensic options
-            forensicSpawnRate = CustomOption.Create(540, cs(Forensic.color, "Forensic"), "crewmate", rates, null, true);
-            forensicReportNameDuration = CustomOption.Create(541, cs(Forensic.color, "Forensic") + ": Time to know the name", "crewmate", 10, 2.5f, 10, 2.5f, forensicSpawnRate);
-            forensicReportColorDuration = CustomOption.Create(542, cs(Forensic.color, "Forensic") + ": Time to know the color type", "crewmate", 20, 10, 20, 2.5f, forensicSpawnRate);
-            forensicReportClueDuration = CustomOption.Create(543, cs(Forensic.color, "Forensic") + ": Time to know if the killer has hat, outfit, pet or visor", "crewmate", 30, 20, 30, 2.5f, forensicSpawnRate);
-            forensicDuration = CustomOption.Create(544, cs(Forensic.color, "Forensic") + ": Question Duration", "crewmate", 5f, 5f, 10f, 1f, forensicSpawnRate);
-            forensicOneTimeUse = CustomOption.Create(545, cs(Forensic.color, "Forensic") + ": One question per Ghost", "crewmate", true, forensicSpawnRate);
+            forensicSpawnRate = CustomOption.Create(540, Types.Crewmate, cs(Forensic.color, "Forensic"),  rates, null, true);
+            forensicReportNameDuration = CustomOption.Create(541, Types.Crewmate, cs(Forensic.color, "Forensic") + ": Time to know the name",  10, 2.5f, 10, 2.5f, forensicSpawnRate);
+            forensicReportColorDuration = CustomOption.Create(542, Types.Crewmate, cs(Forensic.color, "Forensic") + ": Time to know the color type",  20, 10, 20, 2.5f, forensicSpawnRate);
+            forensicReportClueDuration = CustomOption.Create(543, Types.Crewmate, cs(Forensic.color, "Forensic") + ": Time to know if the killer has hat, outfit, pet or visor",  30, 20, 30, 2.5f, forensicSpawnRate);
+            forensicDuration = CustomOption.Create(544, Types.Crewmate, cs(Forensic.color, "Forensic") + ": Question Duration",  5f, 5f, 10f, 1f, forensicSpawnRate);
+            forensicOneTimeUse = CustomOption.Create(545, Types.Crewmate, cs(Forensic.color, "Forensic") + ": One question per Ghost",  true, forensicSpawnRate);
 
             // TimeTraveler options
-            timeTravelerSpawnRate = CustomOption.Create(550, cs(TimeTraveler.color, "Time Traveler"), "crewmate", rates, null, true);
-            timeTravelerCooldown = CustomOption.Create(551, cs(TimeTraveler.color, "Time Traveler") + ": Cooldown", "crewmate", 15f, 10f, 20f, 1f, timeTravelerSpawnRate);
-            timeTravelerStopTime = CustomOption.Create(552, cs(TimeTraveler.color, "Time Traveler") + ": Stop Duration", "crewmate", 10f, 5f, 10f, 1f, timeTravelerSpawnRate);
+            timeTravelerSpawnRate = CustomOption.Create(550, Types.Crewmate, cs(TimeTraveler.color, "Time Traveler"),  rates, null, true);
+            timeTravelerCooldown = CustomOption.Create(551, Types.Crewmate, cs(TimeTraveler.color, "Time Traveler") + ": Cooldown",  15f, 10f, 20f, 1f, timeTravelerSpawnRate);
+            timeTravelerStopTime = CustomOption.Create(552, Types.Crewmate, cs(TimeTraveler.color, "Time Traveler") + ": Stop Duration",  10f, 5f, 10f, 1f, timeTravelerSpawnRate);
 
             // Squire options
-            squireSpawnRate = CustomOption.Create(560, cs(Squire.color, "Squire"), "crewmate", rates, null, true);
-            squireShowShielded = CustomOption.Create(561, cs(Squire.color, "Squire") + ": Show Shielded Player to", "crewmate", new string[] { "Squire", "Both", "All" }, squireSpawnRate);
-            squireShowAttemptToShielded = CustomOption.Create(562, cs(Squire.color, "Squire") + ": Play murder attempt sound if shielded", "crewmate", true, squireSpawnRate);
-            squireResetShieldAfterMeeting = CustomOption.Create(563, cs(Squire.color, "Squire") + ": Can shield again after meeting", "crewmate", true, squireSpawnRate);
+            squireSpawnRate = CustomOption.Create(560, Types.Crewmate, cs(Squire.color, "Squire"),  rates, null, true);
+            squireShowShielded = CustomOption.Create(561, Types.Crewmate, cs(Squire.color, "Squire") + ": Show Shielded Player to",  new string[] { "Squire", "Both", "All" }, squireSpawnRate);
+            squireShowAttemptToShielded = CustomOption.Create(562, Types.Crewmate, cs(Squire.color, "Squire") + ": Play murder attempt sound if shielded",  true, squireSpawnRate);
+            squireResetShieldAfterMeeting = CustomOption.Create(563, Types.Crewmate, cs(Squire.color, "Squire") + ": Can shield again after meeting",  true, squireSpawnRate);
 
             // Cheater options
-            cheaterSpawnRate = CustomOption.Create(570, cs(Cheater.color, "Cheater"), "crewmate", rates, null, true);
-            cheaterCanCallEmergency = CustomOption.Create(571, cs(Cheater.color, "Cheater") + ": Can use emergency button", "crewmate", false, cheaterSpawnRate);
-            cheatercanOnlyCheatOthers = CustomOption.Create(572, cs(Cheater.color, "Cheater") + ": Can swap himself", "crewmate", false, cheaterSpawnRate);
+            cheaterSpawnRate = CustomOption.Create(570, Types.Crewmate, cs(Cheater.color, "Cheater"),  rates, null, true);
+            cheaterCanCallEmergency = CustomOption.Create(571, Types.Crewmate, cs(Cheater.color, "Cheater") + ": Can use emergency button",  false, cheaterSpawnRate);
+            cheatercanOnlyCheatOthers = CustomOption.Create(572, Types.Crewmate, cs(Cheater.color, "Cheater") + ": Can swap himself",  false, cheaterSpawnRate);
 
             // FortuneTeller options
-            fortuneTellerSpawnRate = CustomOption.Create(580, cs(FortuneTeller.color, "Fortune Teller"), "crewmate", rates, null, true);
-            fortuneTellerCooldown = CustomOption.Create(581, cs(FortuneTeller.color, "Fortune Teller") + ": Cooldown", "crewmate", 30f, 30f, 40f, 2.5f, fortuneTellerSpawnRate);
-            fortuneTellerDuration = CustomOption.Create(582, cs(FortuneTeller.color, "Fortune Teller") + ": Reveal Time", "crewmate", 3f, 3f, 5f, 1f, fortuneTellerSpawnRate);
-            fortuneTellerNumberOfSee = CustomOption.Create(583, cs(FortuneTeller.color, "Fortune Teller") + ": Reveal Number", "crewmate", 1f, 1f, 2f, 1f, fortuneTellerSpawnRate);
-            fortuneTellerRechargeTasksNumber = CustomOption.Create(584, cs(FortuneTeller.color, "Fortune Teller") + ": Tasks for recharge batteries", "crewmate", 3f, 3f, 4f, 1f, fortuneTellerSpawnRate);
-            fortuneTellerKindOfInfo = CustomOption.Create(585, cs(FortuneTeller.color, "Fortune Teller") + ": Revealed Information", "crewmate", new string[] { "Good / Bad", "Rol Name" }, fortuneTellerSpawnRate);
-            fortuneTellerPlayersWithNotification = CustomOption.Create(586, cs(FortuneTeller.color, "Fortune Teller") + ": Show Notification to", "crewmate", new string[] { "Impostors", "Crewmates", "All", "Nobody" }, fortuneTellerSpawnRate);
-            fortuneTellerCanCallEmergency = CustomOption.Create(587, cs(FortuneTeller.color, "Fortune Teller") + ": Can use emergency button", "crewmate", false, fortuneTellerSpawnRate);
+            fortuneTellerSpawnRate = CustomOption.Create(580, Types.Crewmate, cs(FortuneTeller.color, "Fortune Teller"),  rates, null, true);
+            fortuneTellerCooldown = CustomOption.Create(581, Types.Crewmate, cs(FortuneTeller.color, "Fortune Teller") + ": Cooldown",  30f, 30f, 40f, 2.5f, fortuneTellerSpawnRate);
+            fortuneTellerDuration = CustomOption.Create(582, Types.Crewmate, cs(FortuneTeller.color, "Fortune Teller") + ": Reveal Time",  3f, 3f, 5f, 1f, fortuneTellerSpawnRate);
+            fortuneTellerNumberOfSee = CustomOption.Create(583, Types.Crewmate, cs(FortuneTeller.color, "Fortune Teller") + ": Reveal Number",  1f, 1f, 2f, 1f, fortuneTellerSpawnRate);
+            fortuneTellerRechargeTasksNumber = CustomOption.Create(584, Types.Crewmate, cs(FortuneTeller.color, "Fortune Teller") + ": Tasks for recharge batteries",  3f, 3f, 4f, 1f, fortuneTellerSpawnRate);
+            fortuneTellerKindOfInfo = CustomOption.Create(585, Types.Crewmate, cs(FortuneTeller.color, "Fortune Teller") + ": Revealed Information",  new string[] { "Good / Bad", "Rol Name" }, fortuneTellerSpawnRate);
+            fortuneTellerPlayersWithNotification = CustomOption.Create(586, Types.Crewmate, cs(FortuneTeller.color, "Fortune Teller") + ": Show Notification to",  new string[] { "Impostors", "Crewmates", "All", "Nobody" }, fortuneTellerSpawnRate);
+            fortuneTellerCanCallEmergency = CustomOption.Create(587, Types.Crewmate, cs(FortuneTeller.color, "Fortune Teller") + ": Can use emergency button",  false, fortuneTellerSpawnRate);
 
             // Hacker options
-            hackerSpawnRate = CustomOption.Create(590, cs(Hacker.color, "Hacker"), "crewmate", rates, null, true);
-            hackerCooldown = CustomOption.Create(591, cs(Hacker.color, "Hacker") + ": Cooldown", "crewmate", 20f, 20f, 40f, 5f, hackerSpawnRate);
-            hackerHackeringDuration = CustomOption.Create(592, cs(Hacker.color, "Hacker") + ": Duration", "crewmate", 15f, 10f, 15f, 1f, hackerSpawnRate);
-            hackerToolsNumber = CustomOption.Create(593, cs(Hacker.color, "Hacker") + ": Battery Uses", "crewmate", 3f, 1f, 5f, 1f, hackerSpawnRate);
-            hackerRechargeTasksNumber = CustomOption.Create(594, cs(Hacker.color, "Hacker") + ": Tasks for recharge batteries", "crewmate", 2f, 1f, 3f, 1f, hackerSpawnRate);
+            hackerSpawnRate = CustomOption.Create(590, Types.Crewmate, cs(Hacker.color, "Hacker"),  rates, null, true);
+            hackerCooldown = CustomOption.Create(591, Types.Crewmate, cs(Hacker.color, "Hacker") + ": Cooldown",  20f, 20f, 40f, 5f, hackerSpawnRate);
+            hackerHackeringDuration = CustomOption.Create(592, Types.Crewmate, cs(Hacker.color, "Hacker") + ": Duration",  15f, 10f, 15f, 1f, hackerSpawnRate);
+            hackerToolsNumber = CustomOption.Create(593, Types.Crewmate, cs(Hacker.color, "Hacker") + ": Battery Uses",  3f, 1f, 5f, 1f, hackerSpawnRate);
+            hackerRechargeTasksNumber = CustomOption.Create(594, Types.Crewmate, cs(Hacker.color, "Hacker") + ": Tasks for recharge batteries",  2f, 1f, 3f, 1f, hackerSpawnRate);
 
             // Sleuth options
-            sleuthSpawnRate = CustomOption.Create(600, cs(Sleuth.color, "Sleuth"), "crewmate", rates, null, true);
-            sleuthUpdateIntervall = CustomOption.Create(601, cs(Sleuth.color, "Sleuth") + ": Track Interval", "crewmate", 0f, 0f, 3f, 1f, sleuthSpawnRate);
-            sleuthResetTargetAfterMeeting = CustomOption.Create(602, cs(Sleuth.color, "Sleuth") + ": Can Track again after meeting", "crewmate", true, sleuthSpawnRate);
-            sleuthCorpsesPathfindCooldown = CustomOption.Create(604, cs(Sleuth.color, "Sleuth") + ": Track Corpses Cooldown", "crewmate", 30f, 20f, 40f, 2.5f, sleuthSpawnRate);
-            sleuthCorpsesPathfindDuration = CustomOption.Create(605, cs(Sleuth.color, "Sleuth") + ": Track Corpses Duration", "crewmate", 10f, 5f, 15f, 2.5f, sleuthSpawnRate);
-            sleuthDuration = CustomOption.Create(606, cs(Sleuth.color, "Sleuth") + ": Who's There Duration", "crewmate", 10f, 5f, 15f, 1f, sleuthSpawnRate);
+            sleuthSpawnRate = CustomOption.Create(600, Types.Crewmate, cs(Sleuth.color, "Sleuth"),  rates, null, true);
+            sleuthUpdateIntervall = CustomOption.Create(601, Types.Crewmate, cs(Sleuth.color, "Sleuth") + ": Track Interval",  0f, 0f, 3f, 1f, sleuthSpawnRate);
+            sleuthResetTargetAfterMeeting = CustomOption.Create(602, Types.Crewmate, cs(Sleuth.color, "Sleuth") + ": Can Track again after meeting",  true, sleuthSpawnRate);
+            sleuthCorpsesPathfindCooldown = CustomOption.Create(604, Types.Crewmate, cs(Sleuth.color, "Sleuth") + ": Track Corpses Cooldown",  30f, 20f, 40f, 2.5f, sleuthSpawnRate);
+            sleuthCorpsesPathfindDuration = CustomOption.Create(605, Types.Crewmate, cs(Sleuth.color, "Sleuth") + ": Track Corpses Duration",  10f, 5f, 15f, 2.5f, sleuthSpawnRate);
+            sleuthDuration = CustomOption.Create(606, Types.Crewmate, cs(Sleuth.color, "Sleuth") + ": Who's There Duration",  10f, 5f, 15f, 1f, sleuthSpawnRate);
 
             // Fink options
-            finkSpawnRate = CustomOption.Create(610, cs(Fink.color, "Fink"), "crewmate", rates, null, true);
-            finkLeftTasksForImpostors = CustomOption.Create(611, cs(Fink.color, "Fink") + ": Tasks remaining for being revealed to Impostors", "crewmate", 1f, 1f, 3f, 1f, finkSpawnRate);
-            finkCooldown = CustomOption.Create(612, cs(Fink.color, "Fink") + ": Cooldown", "crewmate", 20f, 20f, 30f, 1f, finkSpawnRate);
-            finkDuration = CustomOption.Create(613, cs(Fink.color, "Fink") + ": Hawkeye Duration", "crewmate", 5f, 3f, 5f, 1f, finkSpawnRate);
+            finkSpawnRate = CustomOption.Create(610, Types.Crewmate, cs(Fink.color, "Fink"),  rates, null, true);
+            finkLeftTasksForImpostors = CustomOption.Create(611, Types.Crewmate, cs(Fink.color, "Fink") + ": Tasks remaining for being revealed to Impostors",  1f, 1f, 3f, 1f, finkSpawnRate);
+            finkCooldown = CustomOption.Create(612, Types.Crewmate, cs(Fink.color, "Fink") + ": Cooldown",  20f, 20f, 30f, 1f, finkSpawnRate);
+            finkDuration = CustomOption.Create(613, Types.Crewmate, cs(Fink.color, "Fink") + ": Hawkeye Duration",  5f, 3f, 5f, 1f, finkSpawnRate);
 
             // Kid options
-            kidSpawnRate = CustomOption.Create(620, cs(Kid.color, "Kid"), "crewmate", rates, null, true);
+            kidSpawnRate = CustomOption.Create(620, Types.Crewmate, cs(Kid.color, "Kid"),  rates, null, true);
 
             // Welder options
-            welderSpawnRate = CustomOption.Create(630, cs(Welder.color, "Welder"), "crewmate", rates, null, true);
-            welderCooldown = CustomOption.Create(631, cs(Welder.color, "Welder") + ": Cooldown", "crewmate", 20f, 10f, 40f, 2.5f, welderSpawnRate);
-            welderTotalWelds = CustomOption.Create(632, cs(Welder.color, "Welder") + ": Seal Number", "crewmate", 5f, 3f, 5f, 1f, welderSpawnRate);
+            welderSpawnRate = CustomOption.Create(630, Types.Crewmate, cs(Welder.color, "Welder"),  rates, null, true);
+            welderCooldown = CustomOption.Create(631, Types.Crewmate, cs(Welder.color, "Welder") + ": Cooldown",  20f, 10f, 40f, 2.5f, welderSpawnRate);
+            welderTotalWelds = CustomOption.Create(632, Types.Crewmate, cs(Welder.color, "Welder") + ": Seal Number",  5f, 3f, 5f, 1f, welderSpawnRate);
 
             // Spiritualist options
-            spiritualistSpawnRate = CustomOption.Create(640, cs(Spiritualist.color, "Spiritualist"), "crewmate", rates, null, true);
+            spiritualistSpawnRate = CustomOption.Create(640, Types.Crewmate, cs(Spiritualist.color, "Spiritualist"),  rates, null, true);
 
             // Vigilant options
-            vigilantSpawnRate = CustomOption.Create(650, cs(Vigilant.color, "Vigilant"), "crewmate", rates, null, true);
-            vigilantCooldown = CustomOption.Create(651, cs(Vigilant.color, "Vigilant") + ": Cooldown", "crewmate", 20f, 10f, 30f, 2.5f, vigilantSpawnRate);
-            vigilantCamDuration = CustomOption.Create(653, cs(Vigilant.color, "Vigilant") + ": Remote Camera Duration", "crewmate", 10f, 5f, 15f, 1f, vigilantSpawnRate);
-            vigilantCamMaxCharges = CustomOption.Create(654, cs(Vigilant.color, "Vigilant") + ": Battery Uses", "crewmate", 5f, 1f, 5f, 1f, vigilantSpawnRate);
-            vigilantCamRechargeTasksNumber = CustomOption.Create(655, cs(Vigilant.color, "Vigilant") + ": Tasks for recharge batteries", "crewmate", 2f, 1f, 3f, 1f, vigilantSpawnRate);
+            vigilantSpawnRate = CustomOption.Create(650, Types.Crewmate, cs(Vigilant.color, "Vigilant"),  rates, null, true);
+            vigilantCooldown = CustomOption.Create(651, Types.Crewmate, cs(Vigilant.color, "Vigilant") + ": Cooldown",  20f, 10f, 30f, 2.5f, vigilantSpawnRate);
+            vigilantCamDuration = CustomOption.Create(653, Types.Crewmate, cs(Vigilant.color, "Vigilant") + ": Remote Camera Duration",  10f, 5f, 15f, 1f, vigilantSpawnRate);
+            vigilantCamMaxCharges = CustomOption.Create(654, Types.Crewmate, cs(Vigilant.color, "Vigilant") + ": Battery Uses",  5f, 1f, 5f, 1f, vigilantSpawnRate);
+            vigilantCamRechargeTasksNumber = CustomOption.Create(655, Types.Crewmate, cs(Vigilant.color, "Vigilant") + ": Tasks for recharge batteries",  2f, 1f, 3f, 1f, vigilantSpawnRate);
 
             // Hunter options
-            hunterSpawnRate = CustomOption.Create(660, cs(Hunter.color, "Hunter"), "crewmate", rates, null, true);
-            hunterResetTargetAfterMeeting = CustomOption.Create(661, cs(Hunter.color, "Hunter") + ": Can mark again after meeting", "crewmate", true, hunterSpawnRate);
+            hunterSpawnRate = CustomOption.Create(660, Types.Crewmate, cs(Hunter.color, "Hunter"),  rates, null, true);
+            hunterResetTargetAfterMeeting = CustomOption.Create(661, Types.Crewmate, cs(Hunter.color, "Hunter") + ": Can mark again after meeting",  true, hunterSpawnRate);
 
             // Jinx
-            jinxSpawnRate = CustomOption.Create(670, cs(Jinx.color, "Jinx"), "crewmate", rates, null, true);
-            jinxCooldown = CustomOption.Create(671, cs(Jinx.color, "Jinx") + ": Cooldown", "crewmate", 20f, 10f, 30f, 2.5f, jinxSpawnRate);
-            jinxJinxsNumber = CustomOption.Create(672, cs(Jinx.color, "Jinx") + ": Jinx Number", "crewmate", 15f, 5f, 15f, 1f, jinxSpawnRate);
+            jinxSpawnRate = CustomOption.Create(670, Types.Crewmate, cs(Jinx.color, "Jinx"),  rates, null, true);
+            jinxCooldown = CustomOption.Create(671, Types.Crewmate, cs(Jinx.color, "Jinx") + ": Cooldown",  20f, 10f, 30f, 2.5f, jinxSpawnRate);
+            jinxJinxsNumber = CustomOption.Create(672, Types.Crewmate, cs(Jinx.color, "Jinx") + ": Jinx Number",  15f, 5f, 15f, 1f, jinxSpawnRate);
 
             // Coward options
-            cowardSpawnRate = CustomOption.Create(680, cs(Coward.color, "Coward"), "crewmate", rates, null, true);
-            cowardNumberOfCalls = CustomOption.Create(681, cs(Coward.color, "Coward") + ": Number Of Meetings", "crewmate", 2f, 1f, 2f, 1f, cowardSpawnRate);
-            cowardRechargeTasksNumber = CustomOption.Create(682, cs(Coward.color, "Coward") + ": Tasks for recharge batteries", "crewmate", 2f, 2f, 3f, 1f, cowardSpawnRate);
+            cowardSpawnRate = CustomOption.Create(680, Types.Crewmate, cs(Coward.color, "Coward"),  rates, null, true);
+            cowardNumberOfCalls = CustomOption.Create(681, Types.Crewmate, cs(Coward.color, "Coward") + ": Number Of Meetings",  2f, 1f, 2f, 1f, cowardSpawnRate);
+            cowardRechargeTasksNumber = CustomOption.Create(682, Types.Crewmate, cs(Coward.color, "Coward") + ": Tasks for recharge batteries",  2f, 2f, 3f, 1f, cowardSpawnRate);
 
             // Bat options
-            batSpawnRate = CustomOption.Create(690, cs(Bat.color, "Bat"), "crewmate", rates, null, true);
-            batCooldown = CustomOption.Create(691, cs(Bat.color, "Bat") + ": Cooldown", "crewmate", 15f, 10f, 20f, 1f, batSpawnRate);
-            batDuration = CustomOption.Create(692, cs(Bat.color, "Bat") + ": Emit Duration", "crewmate", 10f, 5f, 10f, 1f, batSpawnRate);
-            batRange = CustomOption.Create(693, cs(Bat.color, "Bat") + ": Emit Range", "crewmate", 2f, 0.5f, 2f, 0.25f, batSpawnRate);
+            batSpawnRate = CustomOption.Create(690, Types.Crewmate, cs(Bat.color, "Bat"),  rates, null, true);
+            batCooldown = CustomOption.Create(691, Types.Crewmate, cs(Bat.color, "Bat") + ": Cooldown",  15f, 10f, 20f, 1f, batSpawnRate);
+            batDuration = CustomOption.Create(692, Types.Crewmate, cs(Bat.color, "Bat") + ": Emit Duration",  10f, 5f, 10f, 1f, batSpawnRate);
+            batRange = CustomOption.Create(693, Types.Crewmate, cs(Bat.color, "Bat") + ": Emit Range",  2f, 0.5f, 2f, 0.25f, batSpawnRate);
 
             // Necromancer options
-            necromancerSpawnRate = CustomOption.Create(700, cs(Necromancer.color, "Necromancer"), "crewmate", rates, null, true);
-            necromancerReviveCooldown = CustomOption.Create(701, cs(Necromancer.color, "Necromancer") + ": Cooldown", "crewmate", 20f, 20f, 40f, 1f, necromancerSpawnRate);
-            necromancerReviveTimer = CustomOption.Create(702, cs(Necromancer.color, "Necromancer") + ": Revive Duration", "crewmate", 5f, 5f, 10f, 1f, necromancerSpawnRate);
-            necromancerMaxReviveRoomDistance = CustomOption.Create(703, cs(Necromancer.color, "Necromancer") + ": Room Distance", "crewmate", 25f, 25f, 50f, 2.5f, necromancerSpawnRate);
+            necromancerSpawnRate = CustomOption.Create(700, Types.Crewmate, cs(Necromancer.color, "Necromancer"),  rates, null, true);
+            necromancerReviveCooldown = CustomOption.Create(701, Types.Crewmate, cs(Necromancer.color, "Necromancer") + ": Cooldown",  20f, 20f, 40f, 1f, necromancerSpawnRate);
+            necromancerReviveTimer = CustomOption.Create(702, Types.Crewmate, cs(Necromancer.color, "Necromancer") + ": Revive Duration",  5f, 5f, 10f, 1f, necromancerSpawnRate);
+            necromancerMaxReviveRoomDistance = CustomOption.Create(703, Types.Crewmate, cs(Necromancer.color, "Necromancer") + ": Room Distance",  25f, 25f, 50f, 2.5f, necromancerSpawnRate);
 
             // Engineer options
-            engineerSpawnRate = CustomOption.Create(710, cs(Engineer.color, "Engineer"), "crewmate", rates, null, true);
-            engineerCooldown = CustomOption.Create(711, cs(Engineer.color, "Engineer") + ": Cooldown", "crewmate", 10f, 10f, 20f, 1f, engineerSpawnRate);
-            engineerNumberOfTraps = CustomOption.Create(712, cs(Engineer.color, "Engineer") + ": Trap Number", "crewmate", 5f, 3f, 5f, 1f, engineerSpawnRate);
-            engineerTrapsDuration = CustomOption.Create(713, cs(Engineer.color, "Engineer") + ": Trap Duration", "crewmate", 60f, 30f, 120f, 5f, engineerSpawnRate);
-            engineerAccelTrapIncrease = CustomOption.Create(714, cs(Engineer.color, "Engineer") + ": Speed Increase", "crewmate", 1.1f, 1.1f, 1.3f, 0.2f, engineerSpawnRate);
-            engineerDecelTrapDecrease = CustomOption.Create(715, cs(Engineer.color, "Engineer") + ": Speed Decrease", "crewmate", 0.4f, 0.4f, 0.8f, 0.2f, engineerSpawnRate);
+            engineerSpawnRate = CustomOption.Create(710, Types.Crewmate, cs(Engineer.color, "Engineer"),  rates, null, true);
+            engineerCooldown = CustomOption.Create(711, Types.Crewmate, cs(Engineer.color, "Engineer") + ": Cooldown",  10f, 10f, 20f, 1f, engineerSpawnRate);
+            engineerNumberOfTraps = CustomOption.Create(712, Types.Crewmate, cs(Engineer.color, "Engineer") + ": Trap Number",  5f, 3f, 5f, 1f, engineerSpawnRate);
+            engineerTrapsDuration = CustomOption.Create(713, Types.Crewmate, cs(Engineer.color, "Engineer") + ": Trap Duration",  60f, 30f, 120f, 5f, engineerSpawnRate);
+            engineerAccelTrapIncrease = CustomOption.Create(714, Types.Crewmate, cs(Engineer.color, "Engineer") + ": Speed Increase",  1.1f, 1.1f, 1.3f, 0.2f, engineerSpawnRate);
+            engineerDecelTrapDecrease = CustomOption.Create(715, Types.Crewmate, cs(Engineer.color, "Engineer") + ": Speed Decrease",  0.4f, 0.4f, 0.8f, 0.2f, engineerSpawnRate);
 
             // Locksmith options
-            locksmithSpawnRate = CustomOption.Create(720, cs(Locksmith.color, "Locksmith"), "crewmate", rates, null, true);
-            locksmithCooldown = CustomOption.Create(721, cs(Locksmith.color, "Locksmith") + ": Cooldown", "crewmate", 20f, 20f, 40f, 1f, locksmithSpawnRate);
+            locksmithSpawnRate = CustomOption.Create(720, Types.Crewmate, cs(Locksmith.color, "Locksmith"),  rates, null, true);
+            locksmithCooldown = CustomOption.Create(721, Types.Crewmate, cs(Locksmith.color, "Locksmith") + ": Cooldown",  20f, 20f, 40f, 1f, locksmithSpawnRate);
 
             // Task Master
-            taskMasterSpawnRate = CustomOption.Create(730, cs(TaskMaster.color, "Task Master"), "crewmate", rates, null, true);
-            taskMasterExtraCommonTasks = CustomOption.Create(731, cs(TaskMaster.color, "Task Master") + ": Extra Common Tasks", "crewmate", 1f, 1f, 2f, 1f, taskMasterSpawnRate);
-            taskMasterExtraLongTasks = CustomOption.Create(732, cs(TaskMaster.color, "Task Master") + ": Extra Long Tasks", "crewmate", 1f, 1f, 3f, 1f, taskMasterSpawnRate);
-            taskMasterExtraShortTasks = CustomOption.Create(733, cs(TaskMaster.color, "Task Master") + ": Extra Short Tasks", "crewmate", 1f, 1f, 5f, 1f, taskMasterSpawnRate);
-            taskMasterCooldown = CustomOption.Create(734, cs(TaskMaster.color, "Task Master") + ": Speed Cooldown", "crewmate", 20f, 20f, 30f, 1f, taskMasterSpawnRate);
-            taskMasterDuration = CustomOption.Create(735, cs(TaskMaster.color, "Task Master") + ": Speed Duration", "crewmate", 10f, 5f, 10f, 1f, taskMasterSpawnRate);
-            taskMasterRewardType = CustomOption.Create(736, cs(TaskMaster.color, "Task Master") + ": Reward Type", "crewmate", new string[] { "Extra tasks", "Kill button" }, taskMasterSpawnRate);
+            taskMasterSpawnRate = CustomOption.Create(730, Types.Crewmate, cs(TaskMaster.color, "Task Master"),  rates, null, true);
+            taskMasterExtraCommonTasks = CustomOption.Create(731, Types.Crewmate, cs(TaskMaster.color, "Task Master") + ": Extra Common Tasks",  1f, 1f, 2f, 1f, taskMasterSpawnRate);
+            taskMasterExtraLongTasks = CustomOption.Create(732, Types.Crewmate, cs(TaskMaster.color, "Task Master") + ": Extra Long Tasks",  1f, 1f, 3f, 1f, taskMasterSpawnRate);
+            taskMasterExtraShortTasks = CustomOption.Create(733, Types.Crewmate, cs(TaskMaster.color, "Task Master") + ": Extra Short Tasks",  1f, 1f, 5f, 1f, taskMasterSpawnRate);
+            taskMasterCooldown = CustomOption.Create(734, Types.Crewmate, cs(TaskMaster.color, "Task Master") + ": Speed Cooldown",  20f, 20f, 30f, 1f, taskMasterSpawnRate);
+            taskMasterDuration = CustomOption.Create(735, Types.Crewmate, cs(TaskMaster.color, "Task Master") + ": Speed Duration",  10f, 5f, 10f, 1f, taskMasterSpawnRate);
+            taskMasterRewardType = CustomOption.Create(736, Types.Crewmate, cs(TaskMaster.color, "Task Master") + ": Reward Type",  new string[] { "Extra tasks", "Kill button" }, taskMasterSpawnRate);
 
             // Jailer
-            jailerSpawnRate = CustomOption.Create(740, cs(Jailer.color, "Jailer"), "crewmate", rates, null, true);
-            jailerCooldown = CustomOption.Create(741, cs(Jailer.color, "Jailer") + ": Cooldown", "crewmate", 20f, 15f, 30f, 1f, jailerSpawnRate);
-            jailerDuration = CustomOption.Create(742, cs(Jailer.color, "Jailer") + ": Jail Duration", "crewmate", 10f, 5f, 15f, 1f, jailerSpawnRate);
+            jailerSpawnRate = CustomOption.Create(740, Types.Crewmate, cs(Jailer.color, "Jailer"),  rates, null, true);
+            jailerCooldown = CustomOption.Create(741, Types.Crewmate, cs(Jailer.color, "Jailer") + ": Cooldown",  20f, 15f, 30f, 1f, jailerSpawnRate);
+            jailerDuration = CustomOption.Create(742, Types.Crewmate, cs(Jailer.color, "Jailer") + ": Jail Duration",  10f, 5f, 15f, 1f, jailerSpawnRate);
 
             // Modifiers
-            loverPlayer = CustomOption.Create(801, cs(Modifiers.color, "Lovers"), "modifier", rates, null, true);
-            lighterPlayer = CustomOption.Create(802, cs(Modifiers.color, "Lighter"), "modifier", rates, null, true);
-            blindPlayer = CustomOption.Create(803, cs(Modifiers.color, "Blind"), "modifier", rates, null, true);
-            flashPlayer = CustomOption.Create(804, cs(Modifiers.color, "Flash"), "modifier", rates, null, true);
-            bigchungusPlayer = CustomOption.Create(805, cs(Modifiers.color, "Big Chungus"), "modifier", rates, null, true);
-            theChosenOnePlayer = CustomOption.Create(806, cs(Modifiers.color, "The Chosen One"), "modifier", rates, null, true);
-            theChosenOneReportDelay = CustomOption.Create(807, cs(Modifiers.color, "The Chosen One") + ": Report Delay", "modifier", 0f, 0f, 5f, 1f, theChosenOnePlayer);
-            performerPlayer = CustomOption.Create(808, cs(Modifiers.color, "Performer"), "modifier", rates, null, true);
-            performerDuration = CustomOption.Create(809, cs(Modifiers.color, "Performer") + ": Alarm Duration", "modifier", 30f, 15f, 30f, 1f, performerPlayer);
-            proPlayer = CustomOption.Create(810, cs(Modifiers.color, "Pro"), "modifier", rates, null, true);
-            paintballPlayer = CustomOption.Create(811, cs(Modifiers.color, "Paintball"), "modifier", rates, null, true);
-            paintballDuration = CustomOption.Create(812, cs(Modifiers.color, "Paintball") + ": Paint Duration", "modifier", 10f, 5f, 15f, 1f, paintballPlayer);
-            electricianPlayer = CustomOption.Create(813, cs(Modifiers.color, "Electrician"), "modifier", rates, null, true);
-            electricianDuration = CustomOption.Create(814, cs(Modifiers.color, "Electrician") + ": Discharge Duration", "modifier", 5f, 5f, 10f, 1f, electricianPlayer);
+            loverPlayer = CustomOption.Create(801, Types.Modifier, cs(Modifiers.color, "Lovers"),  rates, null, true);
+            lighterPlayer = CustomOption.Create(802, Types.Modifier, cs(Modifiers.color, "Lighter"),  rates, null, true);
+            blindPlayer = CustomOption.Create(803, Types.Modifier, cs(Modifiers.color, "Blind"),  rates, null, true);
+            flashPlayer = CustomOption.Create(804, Types.Modifier, cs(Modifiers.color, "Flash"),  rates, null, true);
+            bigchungusPlayer = CustomOption.Create(805, Types.Modifier, cs(Modifiers.color, "Big Chungus"),  rates, null, true);
+            theChosenOnePlayer = CustomOption.Create(806, Types.Modifier, cs(Modifiers.color, "The Chosen One"),  rates, null, true);
+            theChosenOneReportDelay = CustomOption.Create(807, Types.Modifier, cs(Modifiers.color, "The Chosen One") + ": Report Delay",  0f, 0f, 5f, 1f, theChosenOnePlayer);
+            performerPlayer = CustomOption.Create(808, Types.Modifier, cs(Modifiers.color, "Performer"),  rates, null, true);
+            performerDuration = CustomOption.Create(809, Types.Modifier, cs(Modifiers.color, "Performer") + ": Alarm Duration",  30f, 15f, 30f, 1f, performerPlayer);
+            proPlayer = CustomOption.Create(810, Types.Modifier, cs(Modifiers.color, "Pro"),  rates, null, true);
+            paintballPlayer = CustomOption.Create(811, Types.Modifier, cs(Modifiers.color, "Paintball"),  rates, null, true);
+            paintballDuration = CustomOption.Create(812, Types.Modifier, cs(Modifiers.color, "Paintball") + ": Paint Duration",  10f, 5f, 15f, 1f, paintballPlayer);
+            electricianPlayer = CustomOption.Create(813, Types.Modifier, cs(Modifiers.color, "Electrician"),  rates, null, true);
+            electricianDuration = CustomOption.Create(814, Types.Modifier, cs(Modifiers.color, "Electrician") + ": Discharge Duration",  5f, 5f, 10f, 1f, electricianPlayer);
         }
     }
 }
