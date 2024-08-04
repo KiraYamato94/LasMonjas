@@ -36,6 +36,11 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
 
+**Version 3.8.0 (4th August 2024)**
+- Compatibility patch for Among Us v2024.6.18
+- Dlesk deactivated for now
+- Lobby role/gamemode summary button and custom cosmetics removed for now since they crash the game for some reason I couldn't fix yet (custom nameplates work)
+
 **Version 3.7.3 (25th March 2024)**
 - Readded Dleks
 - Readded Submerged to the modpack
