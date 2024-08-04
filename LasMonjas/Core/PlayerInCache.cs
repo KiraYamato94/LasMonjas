@@ -20,7 +20,7 @@ public class PlayerInCache
     public PlayerControl PlayerControl;
     public PlayerPhysics PlayerPhysics;
     public CustomNetworkTransform NetTransform;
-    public GameData.PlayerInfo Data;
+    public NetworkedPlayerInfo Data;
     public byte PlayerId;
     
     public static implicit operator bool(PlayerInCache player)
@@ -99,8 +99,8 @@ public static class CachedPlayerPatches
         PlayerInCache.AllPlayers.RemoveAll(p => p.PlayerControl.Pointer == __instance.Pointer);
         PlayerInCache.PlayerPtrs.Remove(__instance.Pointer);
     }
-    
-    [HarmonyPatch(typeof(GameData), nameof(GameData.Deserialize))]
+
+    [HarmonyPatch(typeof(NetworkedPlayerInfo), nameof(NetworkedPlayerInfo.Deserialize))]
     [HarmonyPostfix]
     public static void AddCachedDataOnDeserialize()
     {

@@ -5,11 +5,85 @@ using System.Linq;
 using Innersloth.Assets;
 using System;
 using UnityEngine.AddressableAssets;
+using static LasMonjas.Core.CustomNameplates;
+using static Il2CppSystem.Globalization.CultureInfo;
 
 namespace LasMonjas.Core
 {
-    public class CustomNamePlates : NamePlateData
+    public class CustomNameplates : NamePlateData
+    {
+        public TempPlateViewData tpvd;
+        public class TempPlateViewData
+        {
+            public Sprite Image;
+            public NamePlateViewData Create {
+                get {
+                    return new() {
+                        Image = Image
+                    };
+                }
+            }
+        };
+        static Dictionary<string, NamePlateViewData> cache = new();
+        static NamePlateViewData getbycache(string id) {
+            if (!cache.ContainsKey(id) || cache[id] == null) {
+                CustomNameplates cpd = CustomPlate.customPlateData.FirstOrDefault(x => x.ProductId == id);
+                if (cpd != null) {
+                    cache[id] = cpd.tpvd.Create;
+                }
+                else {
+                    cache[id] = FastDestroyableSingleton<HatManager>.Instance.GetNamePlateById(id)?.CreateAddressableAsset()?.GetAsset();
+                }
+            }
+            return cache[id];
+        }
+        [HarmonyPatch(typeof(CosmeticsCache), nameof(CosmeticsCache.GetNameplate))]
+        class CosmeticsCacheGetPlatePatch
+        {
+            public static bool Prefix(CosmeticsCache __instance, string id, ref NamePlateViewData __result) {
+                if (!id.StartsWith("lmj_")) return true;
+                __result = getbycache(id);
+                if (__result == null)
+                    __result = __instance.nameplates["nameplate_NoPlate"].GetAsset();
+                return false;
+            }
+        }
+        [HarmonyPatch(typeof(NameplatesTab), nameof(NameplatesTab.OnEnable))]
+        class NameplatesTabOnEnablePatch
+        {
+            static void makecoro(NameplatesTab __instance, NameplateChip chip) {
+                __instance.StartCoroutine(AddressableAssetExtensions.CoLoadAssetAsync<NamePlateViewData>(__instance, FastDestroyableSingleton<HatManager>.Instance.GetNamePlateById(chip.ProductId).ViewDataRef, (Action<NamePlateViewData>)delegate (NamePlateViewData viewData)
+                {
+                    chip.image.sprite = viewData?.Image;
+                }));
+            }
+            public static void Postfix(NameplatesTab __instance) {
+                __instance.StopAllCoroutines();
+                foreach (NameplateChip chip in __instance.scroller.Inner.GetComponentsInChildren<NameplateChip>()) {
+                    if (chip.ProductId.StartsWith("lmj_")) {
+                        NamePlateViewData npvd = getbycache(chip.ProductId);
+                        chip.image.sprite = npvd.Image;
+                    }
+                    else {
+                        makecoro(__instance, chip);
+                    }
+                }
+            }
+        }
+        [HarmonyPatch(typeof(PlayerVoteArea), nameof(PlayerVoteArea.PreviewNameplate))]
+        class VisorLayerUpdateMaterialPatch
+        {
+            public static void Postfix(PlayerVoteArea __instance, string plateID) {
+                if (!plateID.StartsWith("lmj_")) return;
+                NamePlateViewData npvd = getbycache(plateID);
+                if (npvd != null) {
+                    __instance.Background.sprite = npvd.Image;
+                }
+            }
+        }
+    }
 
+    public class CustomPlate
     {
         public struct AuthorData
         {
@@ -49,120 +123,50 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "Blocky", NamePlateName = "RIP"},
             new AuthorData {AuthorName = "AD", NamePlateName = "Jailed"},
             new AuthorData {AuthorName = "Nyxx", NamePlateName = "Report"},
-        };
-
-        public static bool _customNamePlatesLoaded = false;
-
+        }; 
+        
+        public static bool isAdded = false;
         static readonly List<NamePlateData> namePlateData = new();
-
-        public static readonly List<CustomNamePlates> customPlateData = new();
-
+        public static readonly List<CustomNameplates> customPlateData = new();
         [HarmonyPatch(typeof(HatManager), nameof(HatManager.GetNamePlateById))]
-        class AddCustomNameplates
+        class UnlockedNamePlatesPatch
         {
             public static void Postfix(HatManager __instance) {
-                if (_customNamePlatesLoaded) return;
-                _customNamePlatesLoaded = true;
+
+                if (isAdded) return;
+                isAdded = true;
                 var AllPlates = __instance.allNamePlates.ToList();
+                
+                foreach (var file in authorDatas) {
+                    try {
+                        TempPlateViewData tpvd = new() {
+                            Image = GetSprite(file.NamePlateName)
+                        };
 
-                foreach (var data in authorDatas) {
+                        var assetRef = new AssetReference(tpvd.Create.Pointer);
 
-                    TempPlateViewData tpvd = new() {
-                        Image = GetSprite(data.NamePlateName)
-                    };
-                    var plate = new CustomNamePlates();
-                    plate.tpvd = tpvd;
-                    plate.name = $"{data.NamePlateName} (by { data.AuthorName})";
-                    plate.ProductId = "lmj_" + plate.name.Replace(' ', '_');
-                    plate.BundleId = "lmj_" + plate.name.Replace(' ', '_');
-                    plate.displayOrder = 99;
-                    plate.ChipOffset = new Vector2(0f, 0.2f);
-                    plate.Free = true;
-                    plate.SpritePreview = tpvd.Image;
-                    namePlateData.Add(plate);
-                    customPlateData.Add(plate);
-
+                        var plate = new CustomNameplates {
+                            tpvd = tpvd,
+                            name = file.NamePlateName + "\nby " + file.AuthorName,
+                            ProductId = "lmj_" + file.NamePlateName.Replace(' ', '_'),
+                            BundleId = "lmj_" + file.NamePlateName.Replace(' ', '_'),
+                            displayOrder = 99,
+                            ChipOffset = new Vector2(0f, 0.2f),
+                            Free = true,
+                            ViewDataRef = assetRef,
+                        };
+                        plate.CreateAddressableAsset();
+                        namePlateData.Add(plate);
+                        customPlateData.Add(plate);
+                    }
+                    catch {
+                    }
                 }
                 AllPlates.AddRange(namePlateData);
-                __instance.allNamePlates = AllPlates.ToArray();               
+                __instance.allNamePlates = AllPlates.ToArray();
             }
-        }       
-
+        }
         public static Sprite GetSprite(string name)
                 => AssetLoader.LoadNamePlateAsset(name).Cast<GameObject>().GetComponent<SpriteRenderer>().sprite;
-        
-        public TempPlateViewData tpvd;
-        public class TempPlateViewData
-        {
-            public Sprite Image;
-            public NamePlateViewData Create {
-                get {
-                    return new() {
-                        Image = Image
-                    };
-                }
-            }
-        };
-
-        static Dictionary<string, NamePlateViewData> cache = new();
-        static NamePlateViewData getbycache(string id) {
-            if (!cache.ContainsKey(id) || cache[id] == null) {
-                CustomNamePlates cpd = customPlateData.FirstOrDefault(x => x.ProductId == id);
-                if (cpd != null) {
-                    cache[id] = cpd.tpvd.Create;
-                }
-                else {
-                    cache[id] = FastDestroyableSingleton<HatManager>.Instance.GetNamePlateById(id)?.CreateAddressableAsset()?.GetAsset();
-                }
-            }
-            return cache[id];
-        }
-
-        [HarmonyPatch(typeof(CosmeticsCache), nameof(CosmeticsCache.GetNameplate))]
-        class CosmeticsCacheGetPlatePatch
-        {
-            public static bool Prefix(CosmeticsCache __instance, string id, ref NamePlateViewData __result) {
-                if (!id.StartsWith("lmj_")) return true;
-                __result = getbycache(id);
-                if (__result == null)
-                    __result = __instance.nameplates["nameplate_NoPlate"].GetAsset();
-                return false;
-            }
-        }
-
-        [HarmonyPatch(typeof(NameplatesTab), nameof(NameplatesTab.OnEnable))]
-        class NameplatesTabOnEnablePatch
-        {
-            static void makecoro(NameplatesTab __instance, NameplateChip chip) {
-                __instance.StartCoroutine(AddressableAssetExtensions.CoLoadAssetAsync<NamePlateViewData>(__instance, FastDestroyableSingleton<HatManager>.Instance.GetNamePlateById(chip.ProductId).ViewDataRef, (Action<NamePlateViewData>)delegate (NamePlateViewData viewData)
-                {
-                    chip.image.sprite = viewData?.Image;
-                }));
-            }
-            public static void Postfix(NameplatesTab __instance) {
-                __instance.StopAllCoroutines();
-                foreach (NameplateChip chip in __instance.scroller.Inner.GetComponentsInChildren<NameplateChip>()) {
-                    if (chip.ProductId.StartsWith("lmj_")) {
-                        NamePlateViewData npvd = getbycache(chip.ProductId);
-                        chip.image.sprite = npvd.Image;
-                    }
-                    else {
-                        makecoro(__instance, chip);
-                    }
-                }
-            }
-        }
-
-        [HarmonyPatch(typeof(PlayerVoteArea), nameof(PlayerVoteArea.PreviewNameplate))]
-        class VisorLayerUpdateMaterialPatch
-        {
-            public static void Postfix(PlayerVoteArea __instance, string plateID) {
-                if (!plateID.StartsWith("lmj_")) return;
-                NamePlateViewData npvd = getbycache(plateID);
-                if (npvd != null) {
-                    __instance.Background.sprite = npvd.Image;
-                }
-            }
-        }
     }
 }

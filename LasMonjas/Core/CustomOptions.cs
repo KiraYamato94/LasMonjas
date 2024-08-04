@@ -9,11 +9,25 @@ using System.Reflection;
 using System.Text;
 using AmongUs.GameOptions;
 using Reactor.Utilities.Extensions;
+using static LasMonjas.Core.CustomOption;
+using TMPro;
+using BepInEx.Unity.IL2CPP;
+using BepInEx;
 
 namespace LasMonjas.Core
 {
     public class CustomOption
     {
+        public enum CustomOptionType
+        {
+            General,
+            Impostor,
+            Rebel,
+            Neutral,
+            Crewmate,
+            Modifier,
+        }
+
         public static List<CustomOption> options = new List<CustomOption>();
         public static int preset = 0;
 
@@ -27,9 +41,11 @@ namespace LasMonjas.Core
         public OptionBehaviour optionBehaviour;
         public CustomOption parent;
         public bool isHeader;
-        public string type;
+        public CustomOptionType type;
+        public Action onChange = null;
+        public string heading = "";
 
-        public CustomOption(int id, string name, System.Object[] selections, System.Object defaultValue, CustomOption parent, bool isHeader, String type) {
+        public CustomOption(int id, CustomOptionType type, string name, System.Object[] selections, System.Object defaultValue, CustomOption parent, bool isHeader, Action onChange = null, string heading = "") {
             this.id = id;
             this.name = parent == null ? name : "- " + name;
             this.selections = selections;
@@ -38,6 +54,8 @@ namespace LasMonjas.Core
             this.parent = parent;
             this.isHeader = isHeader;
             this.type = type;
+            this.onChange = onChange;
+            this.heading = heading;
             selection = 0;
             if (id != 0) {
                 entry = LasMonjasPlugin.Instance.Config.Bind($"Preset{preset}", id.ToString(), defaultSelection);
@@ -46,19 +64,19 @@ namespace LasMonjas.Core
             options.Add(this);
         }
 
-        public static CustomOption Create(int id, string name, String type, string[] selections, CustomOption parent = null, bool isHeader = false) {
-            return new CustomOption(id, name, selections, "", parent, isHeader, type);
+        public static CustomOption Create(int id, CustomOptionType type, string name, string[] selections, CustomOption parent = null, bool isHeader = false, Action onChange = null, string heading = "") {
+            return new CustomOption(id, type, name, selections, "", parent, isHeader, onChange, heading);
         }
 
-        public static CustomOption Create(int id, string name, String type, float defaultValue, float min, float max, float step, CustomOption parent = null, bool isHeader = false) {
-            List<float> selections = new List<float>();
+        public static CustomOption Create(int id, CustomOptionType type, string name, float defaultValue, float min, float max, float step, CustomOption parent = null, bool isHeader = false, Action onChange = null, string heading = "") {
+            List<object> selections = new();
             for (float s = min; s <= max; s += step)
                 selections.Add(s);
-            return new CustomOption(id, name, selections.Cast<object>().ToArray(), defaultValue, parent, isHeader, type);
+            return new CustomOption(id, type, name, selections.ToArray(), defaultValue, parent, isHeader, onChange, heading);
         }
 
-        public static CustomOption Create(int id, string name, String type, bool defaultValue, CustomOption parent = null, bool isHeader = false) {
-            return new CustomOption(id, name, new string[] { "Off", "On" }, defaultValue ? "On" : "Off", parent, isHeader, type);
+        public static CustomOption Create(int id, CustomOptionType type, string name, bool defaultValue, CustomOption parent = null, bool isHeader = false, Action onChange = null, string heading = "") {
+            return new CustomOption(id, type, name, new string[] { "Off", "On" }, defaultValue ? "On" : "Off", parent, isHeader, onChange, heading);
         }
 
         public static void switchPreset(int newPreset) {
@@ -105,7 +123,7 @@ namespace LasMonjas.Core
                 stringOption.oldValue = stringOption.Value = selection;
                 stringOption.ValueText.text = selections[selection].ToString();
 
-                if (AmongUsClient.Instance?.AmHost == true && PlayerControl.LocalPlayer) {
+                if (AmongUsClient.Instance?.AmHost == true && PlayerInCache.LocalPlayer.PlayerControl) {
                     if (id == 0 && selection != preset) {
                         switchPreset(selection); // Switch presets
                         ShareOptionSelections();
@@ -132,289 +150,389 @@ namespace LasMonjas.Core
         }
     }
 
-    [HarmonyPatch(typeof(GameOptionsMenu), nameof(GameOptionsMenu.Start))]
-    class GameOptionsMenuStartPatch
+    [HarmonyPatch(typeof(GameSettingMenu), nameof(GameSettingMenu.ChangeTab))]
+    class GameOptionsMenuChangeTabPatch
     {
-        public static void Postfix(GameOptionsMenu __instance) {
-            if (GameObject.Find("LasMonjasSettings") != null) {
-                GameObject.Find("LasMonjasSettings").transform.FindChild("GameGroup").FindChild("Text").GetComponent<TMPro.TextMeshPro>().SetText("Las Monjas - Settings");
-                return;
+        public static void Postfix(GameSettingMenu __instance, int tabNum, bool previewOnly) {
+            if (previewOnly) return;
+            foreach (var tab in GameOptionsMenuStartPatch.currentTabs) {
+                if (tab != null)
+                    tab.SetActive(false);
             }
-
-            if (GameObject.Find("LasMonjasGamemodes") != null) {
-                GameObject.Find("LasMonjasGamemodes").transform.FindChild("GameGroup").FindChild("Text").GetComponent<TMPro.TextMeshPro>().SetText("Las Monjas - Gamemodes");
-                return;
+            foreach (var pbutton in GameOptionsMenuStartPatch.currentButtons) {
+                pbutton.SelectButton(false);
             }
-
-            if (GameObject.Find("LasMonjasImpostors") != null) {
-                GameObject.Find("LasMonjasImpostors").transform.FindChild("GameGroup").FindChild("Text").GetComponent<TMPro.TextMeshPro>().SetText("Las Monjas - Impostors");
-                return;
+            if (tabNum > 2) {
+                tabNum -= 3;
+                GameOptionsMenuStartPatch.currentTabs[tabNum].SetActive(true);
+                GameOptionsMenuStartPatch.currentButtons[tabNum].SelectButton(true);
             }
-
-            if (GameObject.Find("LasMonjasRebels") != null) {
-                GameObject.Find("LasMonjasRebels").transform.FindChild("GameGroup").FindChild("Text").GetComponent<TMPro.TextMeshPro>().SetText("Las Monjas - Rebels");
-                return;
-            }
-
-            if (GameObject.Find("LasMonjasNeutrals") != null) {
-                GameObject.Find("LasMonjasNeutrals").transform.FindChild("GameGroup").FindChild("Text").GetComponent<TMPro.TextMeshPro>().SetText("Las Monjas - Neutrals");
-                return;
-            }
-
-            if (GameObject.Find("LasMonjasCrewmates") != null) {
-                GameObject.Find("LasMonjasCrewmates").transform.FindChild("GameGroup").FindChild("Text").GetComponent<TMPro.TextMeshPro>().SetText("Las Monjas - Crewmates");
-                return;
-            }
-
-            if (GameObject.Find("LasMonjasModifiers") != null) {
-                GameObject.Find("LasMonjasModifiers").transform.FindChild("GameGroup").FindChild("Text").GetComponent<TMPro.TextMeshPro>().SetText("Las Monjas - Modifiers");
-                return;
-            }
-
-            var template = UnityEngine.Object.FindObjectsOfType<StringOption>().FirstOrDefault();
-            if (template == null) return;
-            var gameSettings = GameObject.Find("Game Settings");
-            var gameSettingMenu = UnityEngine.Object.FindObjectsOfType<GameSettingMenu>().FirstOrDefault();
-
-            var lasMonjasSettings = UnityEngine.Object.Instantiate(gameSettings, gameSettings.transform.parent);
-            var lasMonjasMenu = lasMonjasSettings.transform.FindChild("GameGroup").FindChild("SliderInner").GetComponent<GameOptionsMenu>();
-            lasMonjasSettings.name = "LasMonjasSettings";
-
-            var lasMonjasGamemodes = UnityEngine.Object.Instantiate(gameSettings, gameSettings.transform.parent);
-            var lasMonjasGamemodesMenu = lasMonjasGamemodes.transform.FindChild("GameGroup").FindChild("SliderInner").GetComponent<GameOptionsMenu>();
-            lasMonjasGamemodes.name = "LasMonjasGamemodes";
-
-            var lasMonjasImpostors = UnityEngine.Object.Instantiate(gameSettings, gameSettings.transform.parent);
-            var lasMonjasImpostorsMenu = lasMonjasImpostors.transform.FindChild("GameGroup").FindChild("SliderInner").GetComponent<GameOptionsMenu>();
-            lasMonjasImpostors.name = "LasMonjasImpostors";
-
-            var lasMonjasRebels = UnityEngine.Object.Instantiate(gameSettings, gameSettings.transform.parent);
-            var lasMonjasRebelsMenu = lasMonjasRebels.transform.FindChild("GameGroup").FindChild("SliderInner").GetComponent<GameOptionsMenu>();
-            lasMonjasRebels.name = "LasMonjasRebels";
-
-            var lasMonjasNeutrals = UnityEngine.Object.Instantiate(gameSettings, gameSettings.transform.parent);
-            var lasMonjasNeutralsMenu = lasMonjasNeutrals.transform.FindChild("GameGroup").FindChild("SliderInner").GetComponent<GameOptionsMenu>();
-            lasMonjasNeutrals.name = "LasMonjasNeutrals";
-
-            var lasMonjasCrewmates = UnityEngine.Object.Instantiate(gameSettings, gameSettings.transform.parent);
-            var lasMonjasCrewmatesMenu = lasMonjasCrewmates.transform.FindChild("GameGroup").FindChild("SliderInner").GetComponent<GameOptionsMenu>();
-            lasMonjasCrewmates.name = "LasMonjasCrewmates";
-
-            var lasMonjasModifiers = UnityEngine.Object.Instantiate(gameSettings, gameSettings.transform.parent);
-            var lasMonjasModifiersMenu = lasMonjasModifiers.transform.FindChild("GameGroup").FindChild("SliderInner").GetComponent<GameOptionsMenu>();
-            lasMonjasModifiers.name = "LasMonjasModifiers";
-
-            var roleTab = GameObject.Find("RoleTab");
-            var gameTab = GameObject.Find("GameTab");
-
-            var lasMonjasTab = UnityEngine.Object.Instantiate(roleTab, roleTab.transform.parent);
-            var lasMonjasTabHighlight = lasMonjasTab.transform.FindChild("Hat Button").FindChild("Tab Background").GetComponent<SpriteRenderer>();
-            lasMonjasTab.transform.FindChild("Hat Button").FindChild("Icon").GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("LasMonjas.Images.TabIconSettings.png", 100f);
-            lasMonjasTab.name = "LasMonjasSettingsTab";
-
-            var lasMonjasGamemodeTab = UnityEngine.Object.Instantiate(roleTab, roleTab.transform.parent);
-            var lasMonjasGamemodeTabHighlight = lasMonjasGamemodeTab.transform.FindChild("Hat Button").FindChild("Tab Background").GetComponent<SpriteRenderer>();
-            lasMonjasGamemodeTab.transform.FindChild("Hat Button").FindChild("Icon").GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("LasMonjas.Images.TabIconGamemodes.png", 100f);
-            lasMonjasGamemodeTab.name = "LasMonjasGamemodesTab";
-
-            var lasMonjasImpostorTab = UnityEngine.Object.Instantiate(roleTab, roleTab.transform.parent);
-            var lasMonjasImpostorTabHighlight = lasMonjasImpostorTab.transform.FindChild("Hat Button").FindChild("Tab Background").GetComponent<SpriteRenderer>();
-            lasMonjasImpostorTab.transform.FindChild("Hat Button").FindChild("Icon").GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("LasMonjas.Images.TabIconImpostors.png", 100f);
-            lasMonjasImpostorTab.name = "LasMonjasImpostorsTab";
-
-            var lasMonjasRebelTab = UnityEngine.Object.Instantiate(roleTab, roleTab.transform.parent);
-            var lasMonjasRebelTabHighlight = lasMonjasRebelTab.transform.FindChild("Hat Button").FindChild("Tab Background").GetComponent<SpriteRenderer>();
-            lasMonjasRebelTab.transform.FindChild("Hat Button").FindChild("Icon").GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("LasMonjas.Images.TabIconRebels.png", 100f);
-            lasMonjasRebelTab.name = "LasMonjasRebelsTab";
-
-            var lasMonjasNeutralTab = UnityEngine.Object.Instantiate(roleTab, roleTab.transform.parent);
-            var lasMonjasNeutralTabHighlight = lasMonjasNeutralTab.transform.FindChild("Hat Button").FindChild("Tab Background").GetComponent<SpriteRenderer>();
-            lasMonjasNeutralTab.transform.FindChild("Hat Button").FindChild("Icon").GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("LasMonjas.Images.TabIconNeutrals.png", 100f);
-            lasMonjasNeutralTab.name = "LasMonjasNeutralsTab";
-
-            var lasMonjasCrewmateTab = UnityEngine.Object.Instantiate(roleTab, roleTab.transform.parent);
-            var lasMonjasCrewmateTabHighlight = lasMonjasCrewmateTab.transform.FindChild("Hat Button").FindChild("Tab Background").GetComponent<SpriteRenderer>();
-            lasMonjasCrewmateTab.transform.FindChild("Hat Button").FindChild("Icon").GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("LasMonjas.Images.TabIconCrewmates.png", 100f);
-            lasMonjasCrewmateTab.name = "LasMonjasCrewmatesTab";
-
-            var lasMonjasModifiersTab = UnityEngine.Object.Instantiate(roleTab, roleTab.transform.parent);
-            var lasMonjasModifiersTabHighlight = lasMonjasModifiersTab.transform.FindChild("Hat Button").FindChild("Tab Background").GetComponent<SpriteRenderer>();
-            lasMonjasModifiersTab.transform.FindChild("Hat Button").FindChild("Icon").GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("LasMonjas.Images.TabIconModifiers.png", 100f);
-            lasMonjasModifiersTab.name = "LasMonjasModifiersTab";
-
-            // Position of Tab Icons
-            gameTab.transform.position += Vector3.left * 3.5f;
-            roleTab.transform.position += Vector3.left * 3.5f;
-            lasMonjasTab.transform.position += Vector3.left * 2.5f;
-            lasMonjasGamemodeTab.transform.position += Vector3.left * 1.75f;
-            lasMonjasImpostorTab.transform.position += Vector3.left * 1f;
-            lasMonjasRebelTab.transform.position += Vector3.left * 0.25f;
-            lasMonjasNeutralTab.transform.position += Vector3.right * 0.5f;
-            lasMonjasCrewmateTab.transform.position += Vector3.right * 1.25f;
-            lasMonjasModifiersTab.transform.position += Vector3.right * 2f;
-
-            var tabs = new GameObject[] { gameTab, roleTab, lasMonjasTab, lasMonjasGamemodeTab, lasMonjasImpostorTab, lasMonjasRebelTab, lasMonjasNeutralTab, lasMonjasCrewmateTab, lasMonjasModifiersTab };
-            for (int i = 0; i < tabs.Length; i++) {
-                var button = tabs[i].GetComponentInChildren<PassiveButton>();
-                if (button == null) continue;
-                int copiedIndex = i;
-                button.OnClick = new UnityEngine.UI.Button.ButtonClickedEvent();
-                button.OnClick.AddListener((System.Action)(() => {
-                    gameSettingMenu.RegularGameSettings.SetActive(false);
-                    gameSettingMenu.RolesSettings.gameObject.SetActive(false);
-                    lasMonjasSettings.gameObject.SetActive(false);
-                    lasMonjasGamemodes.gameObject.SetActive(false);
-                    lasMonjasImpostors.gameObject.SetActive(false);
-                    lasMonjasRebels.gameObject.SetActive(false);
-                    lasMonjasNeutrals.gameObject.SetActive(false);
-                    lasMonjasCrewmates.gameObject.SetActive(false);
-                    lasMonjasModifiers.gameObject.SetActive(false);
-                    gameSettingMenu.GameSettingsHightlight.enabled = false;
-                    gameSettingMenu.RolesSettingsHightlight.enabled = false;
-                    lasMonjasTabHighlight.enabled = false;
-                    lasMonjasGamemodeTabHighlight.enabled = false;
-                    lasMonjasImpostorTabHighlight.enabled = false;
-                    lasMonjasRebelTabHighlight.enabled = false;
-                    lasMonjasNeutralTabHighlight.enabled = false;
-                    lasMonjasCrewmateTabHighlight.enabled = false;
-                    lasMonjasModifiersTabHighlight.enabled = false;
-                    switch (copiedIndex) {
-                        case 0:
-                            gameSettingMenu.RegularGameSettings.SetActive(true);
-                            gameSettingMenu.GameSettingsHightlight.enabled = true;
-                            break;
-                        case 1:
-                            gameSettingMenu.RolesSettings.gameObject.SetActive(true);
-                            gameSettingMenu.RolesSettingsHightlight.enabled = true;
-                            break;
-                        case 2:
-                            lasMonjasSettings.gameObject.SetActive(true);
-                            lasMonjasTabHighlight.enabled = true;
-                            break;
-                        case 3:
-                            lasMonjasGamemodes.gameObject.SetActive(true);
-                            lasMonjasGamemodeTabHighlight.enabled = true;
-                            break;
-                        case 4:
-                            lasMonjasImpostors.gameObject.SetActive(true);
-                            lasMonjasImpostorTabHighlight.enabled = true;
-                            break;
-                        case 5:
-                            lasMonjasRebels.gameObject.SetActive(true);
-                            lasMonjasRebelTabHighlight.enabled = true;
-                            break;
-                        case 6:
-                            lasMonjasNeutrals.gameObject.SetActive(true);
-                            lasMonjasNeutralTabHighlight.enabled = true;
-                            break;
-                        case 7:
-                            lasMonjasCrewmates.gameObject.SetActive(true);
-                            lasMonjasCrewmateTabHighlight.enabled = true;
-                            break;
-                        case 8:
-                            lasMonjasModifiers.gameObject.SetActive(true);
-                            lasMonjasModifiersTabHighlight.enabled = true;
-                            break;
-                    }
-                }));
-            }
-
-            foreach (OptionBehaviour option in lasMonjasMenu.GetComponentsInChildren<OptionBehaviour>())
-                UnityEngine.Object.Destroy(option.gameObject);
-            List<OptionBehaviour> lasMonjasOptions = new List<OptionBehaviour>();
-
-            foreach (OptionBehaviour option in lasMonjasGamemodesMenu.GetComponentsInChildren<OptionBehaviour>())
-                UnityEngine.Object.Destroy(option.gameObject);
-            List<OptionBehaviour> lasMonjasGamemodesOptions = new List<OptionBehaviour>();
-
-            foreach (OptionBehaviour option in lasMonjasImpostorsMenu.GetComponentsInChildren<OptionBehaviour>())
-                UnityEngine.Object.Destroy(option.gameObject);
-            List<OptionBehaviour> lasMonjasImpostorOptions = new List<OptionBehaviour>();
-
-            foreach (OptionBehaviour option in lasMonjasRebelsMenu.GetComponentsInChildren<OptionBehaviour>())
-                UnityEngine.Object.Destroy(option.gameObject);
-            List<OptionBehaviour> lasMonjasRebelOptions = new List<OptionBehaviour>();
-
-            foreach (OptionBehaviour option in lasMonjasNeutralsMenu.GetComponentsInChildren<OptionBehaviour>())
-                UnityEngine.Object.Destroy(option.gameObject);
-            List<OptionBehaviour> lasMonjasNeutralOptions = new List<OptionBehaviour>();
-
-            foreach (OptionBehaviour option in lasMonjasCrewmatesMenu.GetComponentsInChildren<OptionBehaviour>())
-                UnityEngine.Object.Destroy(option.gameObject);
-            List<OptionBehaviour> lasMonjasCrewmateOptions = new List<OptionBehaviour>();
-
-            foreach (OptionBehaviour option in lasMonjasModifiersMenu.GetComponentsInChildren<OptionBehaviour>())
-                UnityEngine.Object.Destroy(option.gameObject);
-            List<OptionBehaviour> lasMonjasModifiersOptions = new List<OptionBehaviour>();
-
-            for (int i = 0; i < CustomOption.options.Count; i++) {
-                CustomOption option = CustomOption.options[i];
-                if (option.optionBehaviour == null) {
-                    StringOption stringOption;
-                    switch (option.type) {
-                        case "gamemode":
-                            stringOption = UnityEngine.Object.Instantiate(template, lasMonjasGamemodesMenu.transform);
-                            lasMonjasGamemodesOptions.Add(stringOption);
-                            break;
-                        case "impostor":
-                            stringOption = UnityEngine.Object.Instantiate(template, lasMonjasImpostorsMenu.transform);
-                            lasMonjasImpostorOptions.Add(stringOption);
-                            break;
-                        case "rebel":
-                            stringOption = UnityEngine.Object.Instantiate(template, lasMonjasRebelsMenu.transform);
-                            lasMonjasRebelOptions.Add(stringOption);
-                            break;
-                        case "neutral":
-                            stringOption = UnityEngine.Object.Instantiate(template, lasMonjasNeutralsMenu.transform);
-                            lasMonjasNeutralOptions.Add(stringOption);
-                            break;
-                        case "crewmate":
-                            stringOption = UnityEngine.Object.Instantiate(template, lasMonjasCrewmatesMenu.transform);
-                            lasMonjasCrewmateOptions.Add(stringOption);
-                            break;
-                        case "modifier":
-                            stringOption = UnityEngine.Object.Instantiate(template, lasMonjasModifiersMenu.transform);
-                            lasMonjasModifiersOptions.Add(stringOption);
-                            break;
-                        default:
-                            stringOption = UnityEngine.Object.Instantiate(template, lasMonjasMenu.transform);
-                            lasMonjasOptions.Add(stringOption);
-                            break;
-                    }
-                    stringOption.OnValueChanged = new Action<OptionBehaviour>((o) => { });
-                    stringOption.TitleText.text = option.name;
-                    stringOption.Value = stringOption.oldValue = option.selection;
-                    stringOption.ValueText.text = option.selections[option.selection].ToString();
-
-                    option.optionBehaviour = stringOption;
-                }
-                option.optionBehaviour.gameObject.SetActive(true);
-            }
-
-            lasMonjasMenu.Children = lasMonjasOptions.ToArray();
-            lasMonjasSettings.gameObject.SetActive(false);
-
-            lasMonjasGamemodesMenu.Children = lasMonjasGamemodesOptions.ToArray();
-            lasMonjasGamemodes.gameObject.SetActive(false);
-
-            lasMonjasImpostorsMenu.Children = lasMonjasImpostorOptions.ToArray();
-            lasMonjasImpostors.gameObject.SetActive(false);
-
-            lasMonjasRebelsMenu.Children = lasMonjasRebelOptions.ToArray();
-            lasMonjasRebels.gameObject.SetActive(false);
-
-            lasMonjasNeutralsMenu.Children = lasMonjasNeutralOptions.ToArray();
-            lasMonjasNeutrals.gameObject.SetActive(false);
-
-            lasMonjasCrewmatesMenu.Children = lasMonjasCrewmateOptions.ToArray();
-            lasMonjasCrewmates.gameObject.SetActive(false);
-
-            lasMonjasModifiersMenu.Children = lasMonjasModifiersOptions.ToArray();
-            lasMonjasModifiers.gameObject.SetActive(false);
         }
     }
 
-    [HarmonyPatch(typeof(StringOption), nameof(StringOption.OnEnable))]
+    [HarmonyPatch(typeof(LobbyViewSettingsPane), nameof(LobbyViewSettingsPane.SetTab))]
+    class LobbyViewSettingsPaneRefreshTabPatch
+    {
+        public static bool Prefix(LobbyViewSettingsPane __instance) {
+            if ((int)__instance.currentTab < 15) {
+                LobbyViewSettingsPaneChangeTabPatch.Postfix(__instance, __instance.currentTab);
+                return false;
+            }
+            return true;
+        }
+    }
+
+    [HarmonyPatch(typeof(LobbyViewSettingsPane), nameof(LobbyViewSettingsPane.ChangeTab))]
+    class LobbyViewSettingsPaneChangeTabPatch
+    {
+        public static void Postfix(LobbyViewSettingsPane __instance, StringNames category) {
+            int tabNum = (int)category;
+
+            foreach (var pbutton in LobbyViewSettingsPatch.currentButtons) {
+                pbutton.SelectButton(false);
+            }
+            if (tabNum > 20) // StringNames are in the range of 3000+ 
+                return;
+            __instance.taskTabButton.SelectButton(false);
+
+            if (tabNum > 2) {
+                tabNum -= 3;
+                //GameOptionsMenuStartPatch.currentTabs[tabNum].SetActive(true);
+                LobbyViewSettingsPatch.currentButtons[tabNum].SelectButton(true);
+                LobbyViewSettingsPatch.drawTab(__instance, LobbyViewSettingsPatch.currentButtonTypes[tabNum]);
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(LobbyViewSettingsPane), nameof(LobbyViewSettingsPane.Update))]
+    class LobbyViewSettingsPaneUpdatePatch
+    {
+        public static void Postfix(LobbyViewSettingsPane __instance) {
+            if (LobbyViewSettingsPatch.currentButtons.Count == 0) {
+                LobbyViewSettingsPatch.gameModeChangedFlag = true;
+                LobbyViewSettingsPatch.Postfix(__instance);
+
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(LobbyViewSettingsPane), nameof(LobbyViewSettingsPane.Awake))]
+    class LobbyViewSettingsPatch
+    {
+        public static List<PassiveButton> currentButtons = new();
+        public static List<CustomOptionType> currentButtonTypes = new();
+        public static bool gameModeChangedFlag = false;
+
+        public static void createCustomButton(LobbyViewSettingsPane __instance, int targetMenu, string buttonName, string buttonText, CustomOptionType optionType) {
+            buttonName = "View" + buttonName;
+            var buttonTemplate = GameObject.Find("OverviewTab");
+            var lmjSettingsButton = GameObject.Find(buttonName);
+            if (lmjSettingsButton == null) {
+                lmjSettingsButton = GameObject.Instantiate(buttonTemplate, buttonTemplate.transform.parent);
+                lmjSettingsButton.transform.localPosition += Vector3.right * 1.75f * (targetMenu - 2);
+                lmjSettingsButton.name = buttonName;
+                __instance.StartCoroutine(Effects.Lerp(2f, new Action<float>(p => { lmjSettingsButton.transform.FindChild("FontPlacer").GetComponentInChildren<TextMeshPro>().text = buttonText; })));
+                var lmjSettingsPassiveButton = lmjSettingsButton.GetComponent<PassiveButton>();
+                lmjSettingsPassiveButton.OnClick.RemoveAllListeners();
+                lmjSettingsPassiveButton.OnClick.AddListener((System.Action)(() => {
+                    __instance.ChangeTab((StringNames)targetMenu);
+                }));
+                lmjSettingsPassiveButton.OnMouseOut.RemoveAllListeners();
+                lmjSettingsPassiveButton.OnMouseOver.RemoveAllListeners();
+                lmjSettingsPassiveButton.SelectButton(false);
+                currentButtons.Add(lmjSettingsPassiveButton);
+                currentButtonTypes.Add(optionType);
+            }
+        }
+
+        public static void Postfix(LobbyViewSettingsPane __instance) {
+            currentButtons.ForEach(x => x?.Destroy());
+            currentButtons.Clear();
+            currentButtonTypes.Clear();
+
+            removeVanillaTabs(__instance);
+
+            createSettingTabs(__instance);
+
+        }
+
+        public static void removeVanillaTabs(LobbyViewSettingsPane __instance) {
+            GameObject.Find("RolesTabs")?.Destroy();
+            var overview = GameObject.Find("OverviewTab");
+            if (!gameModeChangedFlag) {
+                overview.transform.localScale = new Vector3(0.5f * overview.transform.localScale.x, overview.transform.localScale.y, overview.transform.localScale.z);
+                overview.transform.localPosition += new Vector3(-1.2f, 0f, 0f);
+
+            }
+            overview.transform.Find("FontPlacer").transform.localScale = new Vector3(1.35f, 1f, 1f);
+            overview.transform.Find("FontPlacer").transform.localPosition = new Vector3(-0.6f, -0.1f, 0f);
+            gameModeChangedFlag = false;
+        }
+
+        public static void drawTab(LobbyViewSettingsPane __instance, CustomOptionType optionType) {
+
+            var relevantOptions = options.Where(x => x.type == optionType || optionType == CustomOptionType.General).ToList();
+
+            if ((int)optionType == 99) {
+                // Create 5 Groups with Role settings
+                relevantOptions.Clear();
+                relevantOptions.AddRange(options.Where(x => x.type == CustomOptionType.Impostor && x.isHeader));
+                relevantOptions.AddRange(options.Where(x => x.type == CustomOptionType.Rebel && x.isHeader));
+                relevantOptions.AddRange(options.Where(x => x.type == CustomOptionType.Neutral && x.isHeader));
+                relevantOptions.AddRange(options.Where(x => x.type == CustomOptionType.Crewmate && x.isHeader));
+                relevantOptions.AddRange(options.Where(x => x.type == CustomOptionType.Modifier && x.isHeader));
+            }
+
+            for (int j = 0; j < __instance.settingsInfo.Count; j++) {
+                __instance.settingsInfo[j].gameObject.Destroy();
+            }
+            __instance.settingsInfo.Clear();
+
+            float num = 1.44f;
+            int i = 0;
+            int singles = 0;
+            int headers = 0;
+            int lines = 0;
+            var curType = CustomOptionType.Modifier;
+
+            foreach (var option in relevantOptions) {
+                if (option.isHeader && (int)optionType != 99 || (int)optionType == 99 && curType != option.type) {
+                    curType = option.type;
+                    if (i != 0) num -= 0.59f;
+                    if (i % 2 != 0) singles++;
+                    headers++; // for header
+                    CategoryHeaderMasked categoryHeaderMasked = UnityEngine.Object.Instantiate<CategoryHeaderMasked>(__instance.categoryHeaderOrigin);
+                    categoryHeaderMasked.SetHeader(StringNames.ImpostorsCategory, 61);
+                    categoryHeaderMasked.Title.text = option.heading != "" ? option.heading : option.name;
+                    if ((int)optionType == 99)
+                        categoryHeaderMasked.Title.text = new Dictionary<CustomOptionType, string>() {
+                            { CustomOptionType.Impostor, "Impostor Roles" },
+                            { CustomOptionType.Rebel, "Rebel Roles" },
+                            { CustomOptionType.Neutral, "Neutral Roles" },
+                            { CustomOptionType.Crewmate, "Crewmate Roles" },
+                            { CustomOptionType.Modifier, "Modifiers" } }[curType];
+                    categoryHeaderMasked.Title.outlineColor = Color.white;
+                    categoryHeaderMasked.Title.outlineWidth = 0.2f;
+                    categoryHeaderMasked.transform.SetParent(__instance.settingsContainer);
+                    categoryHeaderMasked.transform.localScale = Vector3.one;
+                    categoryHeaderMasked.transform.localPosition = new Vector3(-9.77f, num, -2f);
+                    __instance.settingsInfo.Add(categoryHeaderMasked.gameObject);
+                    num -= 0.85f;
+                    i = 0;
+                }
+
+                ViewSettingsInfoPanel viewSettingsInfoPanel = UnityEngine.Object.Instantiate<ViewSettingsInfoPanel>(__instance.infoPanelOrigin);
+                viewSettingsInfoPanel.transform.SetParent(__instance.settingsContainer);
+                viewSettingsInfoPanel.transform.localScale = Vector3.one;
+                float num2;
+                if (i % 2 == 0) {
+                    lines++;
+                    num2 = -8.95f;
+                    if (i > 0) {
+                        num -= 0.59f;
+                    }
+                }
+                else {
+                    num2 = -3f;
+                }
+                viewSettingsInfoPanel.transform.localPosition = new Vector3(num2, num, -2f);
+                int value = option.getSelection();
+                viewSettingsInfoPanel.SetInfo(StringNames.ImpostorsCategory, option.selections[value].ToString(), 61);
+                viewSettingsInfoPanel.titleText.text = option.name;
+                if (option.isHeader && (int)optionType != 99 && option.heading == "" && (option.type == CustomOptionType.Rebel || option.type == CustomOptionType.Neutral || option.type == CustomOptionType.Crewmate || option.type == CustomOptionType.Impostor || option.type == CustomOptionType.Modifier)) {
+                    viewSettingsInfoPanel.titleText.text = "Spawn Chance";
+                }
+                if ((int)optionType == 99) {
+                    viewSettingsInfoPanel.titleText.outlineColor = Color.white;
+                    viewSettingsInfoPanel.titleText.outlineWidth = 0.2f;
+                }
+                __instance.settingsInfo.Add(viewSettingsInfoPanel.gameObject);
+
+                i++;
+            }
+            float actual_spacing = (headers * 0.85f + lines * 0.59f) / (headers + lines);
+            __instance.scrollBar.CalculateAndSetYBounds((float)(__instance.settingsInfo.Count + singles * 2 + headers), 2f, 6f, actual_spacing);
+
+        }
+
+        public static void createSettingTabs(LobbyViewSettingsPane __instance) {
+            // Handle different gamemodes and tabs needed therein.
+            int next = 3;
+
+            // create LMJ Settings
+            createCustomButton(__instance, next++, "lmjSettings", "LMJ Settings", CustomOptionType.General);
+            // create Role Settings
+            createCustomButton(__instance, next++, "RoleOverview", "Role Overview", (CustomOptionType)99);
+            // Imp
+            createCustomButton(__instance, next++, "ImpostorSettings", "Impostor Roles", CustomOptionType.Impostor);
+            // Rebel
+            createCustomButton(__instance, next++, "RebelSettings", "Rebel Roles", CustomOptionType.Rebel);
+            // Neutral
+            createCustomButton(__instance, next++, "NeutralSettings", "Neutral Roles", CustomOptionType.Neutral);
+            // Crew
+            createCustomButton(__instance, next++, "CrewmateSettings", "Crewmate Roles", CustomOptionType.Crewmate);
+            // Modifier
+            createCustomButton(__instance, next++, "ModifierSettings", "Modifiers", CustomOptionType.Modifier);
+        }
+    }
+
+    [HarmonyPatch(typeof(GameSettingMenu), nameof(GameSettingMenu.Start))]
+    class GameOptionsMenuStartPatch
+    {
+        public static List<GameObject> currentTabs = new();
+        public static List<PassiveButton> currentButtons = new();
+
+        public static void Postfix(GameSettingMenu __instance) {
+            currentTabs.ForEach(x => x?.Destroy());
+            currentButtons.ForEach(x => x?.Destroy());
+            currentTabs = new();
+            currentButtons = new();
+
+            if (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return;
+
+            removeVanillaTabs(__instance);
+
+            createSettingTabs(__instance);
+
+            var GOMGameObject = GameObject.Find("GAME SETTINGS TAB");
+        }
+
+        private static void createSettings(GameOptionsMenu menu, List<CustomOption> options) {
+            float num = 1.5f;
+            foreach (CustomOption option in options) {
+                if (option.isHeader) {
+                    CategoryHeaderMasked categoryHeaderMasked = UnityEngine.Object.Instantiate<CategoryHeaderMasked>(menu.categoryHeaderOrigin, Vector3.zero, Quaternion.identity, menu.settingsContainer);
+                    categoryHeaderMasked.SetHeader(StringNames.ImpostorsCategory, 20);
+                    categoryHeaderMasked.Title.text = option.heading != "" ? option.heading : option.name;
+                    categoryHeaderMasked.Title.outlineColor = Color.white;
+                    categoryHeaderMasked.Title.outlineWidth = 0.2f;
+                    categoryHeaderMasked.transform.localScale = Vector3.one * 0.63f;
+                    categoryHeaderMasked.transform.localPosition = new Vector3(-0.903f, num, -2f);
+                    num -= 0.63f;
+                }
+                OptionBehaviour optionBehaviour = UnityEngine.Object.Instantiate<StringOption>(menu.stringOptionOrigin, Vector3.zero, Quaternion.identity, menu.settingsContainer);
+                optionBehaviour.transform.localPosition = new Vector3(0.952f, num, -2f);
+                optionBehaviour.SetClickMask(menu.ButtonClickMask);
+
+                // "SetUpFromData"
+                SpriteRenderer[] componentsInChildren = optionBehaviour.GetComponentsInChildren<SpriteRenderer>(true);
+                for (int i = 0; i < componentsInChildren.Length; i++) {
+                    componentsInChildren[i].material.SetInt(PlayerMaterial.MaskLayer, 20);
+                }
+                foreach (TextMeshPro textMeshPro in optionBehaviour.GetComponentsInChildren<TextMeshPro>(true)) {
+                    textMeshPro.fontMaterial.SetFloat("_StencilComp", 3f);
+                    textMeshPro.fontMaterial.SetFloat("_Stencil", (float)20);
+                }
+
+                var stringOption = optionBehaviour as StringOption;
+                stringOption.OnValueChanged = new Action<OptionBehaviour>((o) => { });
+                stringOption.TitleText.text = option.name;
+                if (option.isHeader && option.heading == "" && (option.type == CustomOptionType.Rebel || option.type == CustomOptionType.Neutral || option.type == CustomOptionType.Crewmate || option.type == CustomOptionType.Impostor || option.type == CustomOptionType.Modifier)) {
+                    stringOption.TitleText.text = "Spawn Role";
+                }
+                if (stringOption.TitleText.text.Length > 25)
+                    stringOption.TitleText.fontSize = 2.2f;
+                if (stringOption.TitleText.text.Length > 40)
+                    stringOption.TitleText.fontSize = 2f;
+                stringOption.Value = stringOption.oldValue = option.selection;
+                stringOption.ValueText.text = option.selections[option.selection].ToString();
+                option.optionBehaviour = stringOption;
+
+                menu.Children.Add(optionBehaviour);
+                num -= 0.45f;
+                menu.scrollBar.SetYBoundsMax(-num - 1.65f);
+            }
+
+            for (int i = 0; i < menu.Children.Count; i++) {
+                OptionBehaviour optionBehaviour = menu.Children[i];
+                if (AmongUsClient.Instance && !AmongUsClient.Instance.AmHost) {
+                    optionBehaviour.SetAsPlayer();
+                }
+            }
+        }
+
+        private static void removeVanillaTabs(GameSettingMenu __instance) {
+            GameObject.Find("What Is This?")?.Destroy();
+            GameObject.Find("GamePresetButton")?.Destroy();
+            GameObject.Find("RoleSettingsButton")?.Destroy();
+            __instance.ChangeTab(1, false);
+        }
+
+        public static void createCustomButton(GameSettingMenu __instance, int targetMenu, string buttonName, string buttonText) {
+            var leftPanel = GameObject.Find("LeftPanel");
+            var buttonTemplate = GameObject.Find("GameSettingsButton");
+            if (targetMenu == 3) {
+                buttonTemplate.transform.localPosition -= Vector3.up * 0.85f;
+                buttonTemplate.transform.localScale *= Vector2.one * 0.75f;
+            }
+            var lmjSettingsButton = GameObject.Find(buttonName);
+            if (lmjSettingsButton == null) {
+                lmjSettingsButton = GameObject.Instantiate(buttonTemplate, leftPanel.transform);
+                lmjSettingsButton.transform.localPosition += Vector3.up * 0.5f * (targetMenu - 2);
+                lmjSettingsButton.name = buttonName;
+                __instance.StartCoroutine(Effects.Lerp(2f, new Action<float>(p => { lmjSettingsButton.transform.FindChild("FontPlacer").GetComponentInChildren<TextMeshPro>().text = buttonText; })));
+                var lmjSettingsPassiveButton = lmjSettingsButton.GetComponent<PassiveButton>();
+                lmjSettingsPassiveButton.OnClick.RemoveAllListeners();
+                lmjSettingsPassiveButton.OnClick.AddListener((System.Action)(() => {
+                    __instance.ChangeTab(targetMenu, false);
+                }));
+                lmjSettingsPassiveButton.OnMouseOut.RemoveAllListeners();
+                lmjSettingsPassiveButton.OnMouseOver.RemoveAllListeners();
+                lmjSettingsPassiveButton.SelectButton(false);
+                currentButtons.Add(lmjSettingsPassiveButton);
+            }
+        }
+
+        public static void createGameOptionsMenu(GameSettingMenu __instance, CustomOptionType optionType, string settingName) {
+            var tabTemplate = GameObject.Find("GAME SETTINGS TAB");
+            currentTabs.RemoveAll(x => x == null);
+
+            var lmjSettingsTab = GameObject.Instantiate(tabTemplate, tabTemplate.transform.parent);
+            lmjSettingsTab.name = settingName;
+
+            var lmjSettingsGOM = lmjSettingsTab.GetComponent<GameOptionsMenu>();
+            foreach (var child in lmjSettingsGOM.Children) {
+                child.Destroy();
+            }
+            lmjSettingsGOM.scrollBar.transform.FindChild("SliderInner").DestroyChildren();
+            lmjSettingsGOM.Children.Clear();
+            var relevantOptions = options.Where(x => x.type == optionType).ToList();
+            createSettings(lmjSettingsGOM, relevantOptions);
+
+            currentTabs.Add(lmjSettingsTab);
+            lmjSettingsTab.SetActive(false);
+        }
+
+        private static void createSettingTabs(GameSettingMenu __instance) {
+            int next = 3;
+
+            // create LMJ Settings
+            createCustomButton(__instance, next++, "lmjSettings", "LMJ Settings");
+            createGameOptionsMenu(__instance, CustomOptionType.General, "lmjSettings");
+
+            // Imp
+            createCustomButton(__instance, next++, "ImpostorSettings", "Impostor Roles");
+            createGameOptionsMenu(__instance, CustomOptionType.Impostor, "ImpostorSettings");
+
+            // Rebel
+            createCustomButton(__instance, next++, "RebelSettings", "Rebel Roles");
+            createGameOptionsMenu(__instance, CustomOptionType.Rebel, "RebelSettings");
+
+            // Neutral
+            createCustomButton(__instance, next++, "NeutralSettings", "Neutral Roles");
+            createGameOptionsMenu(__instance, CustomOptionType.Neutral, "NeutralSettings");
+
+            // Crew
+            createCustomButton(__instance, next++, "CrewmateSettings", "Crewmate Roles");
+            createGameOptionsMenu(__instance, CustomOptionType.Crewmate, "CrewmateSettings");
+
+            // Modifier
+            createCustomButton(__instance, next++, "ModifierSettings", "Modifiers");
+            createGameOptionsMenu(__instance, CustomOptionType.Modifier, "ModifierSettings");
+        }
+    }
+
+    [HarmonyPatch(typeof(StringOption), nameof(StringOption.Initialize))]
     public class StringOptionEnablePatch
     {
         public static bool Prefix(StringOption __instance) {
@@ -422,7 +540,7 @@ namespace LasMonjas.Core
             if (option == null) return true;
 
             __instance.OnValueChanged = new Action<OptionBehaviour>((o) => { });
-            __instance.TitleText.text = option.name;
+            //__instance.TitleText.text = option.name;
             __instance.Value = __instance.oldValue = option.selection;
             __instance.ValueText.text = option.selections[option.selection].ToString();
 
@@ -452,11 +570,21 @@ namespace LasMonjas.Core
         }
     }
 
-    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.RpcSyncSettings))]
-    public class RpcSyncSettingsPatch
+    [HarmonyPatch(typeof(StringOption), nameof(StringOption.FixedUpdate))]
+    public class StringOptionFixedUpdate
     {
-        public static void Postfix() {
-            CustomOption.ShareOptionSelections();
+        public static void Postfix(StringOption __instance) {
+            if (!IL2CPPChainloader.Instance.Plugins.TryGetValue("com.DigiWorm.LevelImposter", out PluginInfo _)) return;
+            CustomOption option = CustomOption.options.FirstOrDefault(option => option.optionBehaviour == __instance);
+            if (option == null) return;
+            if (GameOptionsManager.Instance.CurrentGameOptions.MapId == 6)
+                if (option.optionBehaviour != null && option.optionBehaviour is StringOption stringOption) {
+                    stringOption.ValueText.text = option.selections[option.selection].ToString();
+                }
+                else if (option.optionBehaviour != null && option.optionBehaviour is StringOption stringOptionToo) {
+                    stringOptionToo.oldValue = stringOptionToo.Value = option.selection;
+                    stringOptionToo.ValueText.text = option.selections[option.selection].ToString();
+                }
         }
     }
 
@@ -465,6 +593,7 @@ namespace LasMonjas.Core
     {
         public static void Postfix(PlayerPhysics __instance) {
             if (PlayerControl.LocalPlayer != null && AmongUsClient.Instance.AmHost) {
+                GameManager.Instance.LogicOptions.SyncOptions();
                 CustomOption.ShareOptionSelections();
             }
 
@@ -481,183 +610,166 @@ namespace LasMonjas.Core
         }
     }
 
-    [HarmonyPatch(typeof(GameOptionsMenu), nameof(GameOptionsMenu.Update))]
-    class GameOptionsMenuUpdatePatch
+    [HarmonyPatch]
+    class GameOptionsDataPatch
     {
-        private static float timer = 1f;
-        public static void Postfix(GameOptionsMenu __instance) {
+        private static string buildRoleOptions() {
+            var impRoles = buildOptionsOfType(CustomOption.CustomOptionType.Impostor, true) + "\n";
+            var rebelRoles = buildOptionsOfType(CustomOption.CustomOptionType.Rebel, true) + "\n";
+            var neutralRoles = buildOptionsOfType(CustomOption.CustomOptionType.Neutral, true) + "\n";
+            var crewRoles = buildOptionsOfType(CustomOption.CustomOptionType.Crewmate, true) + "\n";
+            var modifiers = buildOptionsOfType(CustomOption.CustomOptionType.Modifier, true);
+            return impRoles + rebelRoles + neutralRoles + crewRoles + modifiers;
+        }
 
-            var gameSettingMenu = UnityEngine.Object.FindObjectsOfType<GameSettingMenu>().FirstOrDefault();
-            if (gameSettingMenu.RegularGameSettings.active || gameSettingMenu.RolesSettings.gameObject.active) return;
-
-            __instance.GetComponentInParent<Scroller>().ContentYBounds.max = -0.5F + __instance.Children.Length * 0.55F;
-            timer += Time.deltaTime;
-            if (timer < 0.1f) return;
-            timer = 0f;
-
-            float offset = 2.75f;
-            foreach (CustomOption option in CustomOption.options) {
-                if (GameObject.Find("LasMonjasSettings") && option.type != "setting")
-                    continue;
-                if (GameObject.Find("LasMonjasGamemodes") && option.type != "gamemode")
-                    continue;
-                if (GameObject.Find("LasMonjasImpostors") && option.type != "impostor")
-                    continue;
-                if (GameObject.Find("LasMonjasRebels") && option.type != "rebel")
-                    continue;
-                if (GameObject.Find("LasMonjasNeutrals") && option.type != "neutral")
-                    continue;
-                if (GameObject.Find("LasMonjasCrewmates") && option.type != "crewmate")
-                    continue;
-                if (GameObject.Find("LasMonjasModifiers") && option.type != "modifier")
-                    continue;
-                if (option?.optionBehaviour != null && option.optionBehaviour.gameObject != null) {
-                    bool enabled = true;
-                    var parent = option.parent;
-                    while (parent != null && enabled) {
-                        enabled = parent.selection != 0;
-                        parent = parent.parent;
-                    }
-                    option.optionBehaviour.gameObject.SetActive(enabled);
-                    if (enabled) {
-                        offset -= option.isHeader ? 0.75f : 0.5f;
-                        option.optionBehaviour.transform.localPosition = new Vector3(option.optionBehaviour.transform.localPosition.x, offset, option.optionBehaviour.transform.localPosition.z);
-                    }
+        private static string buildOptionsOfType(CustomOption.CustomOptionType type, bool headerOnly) {
+            StringBuilder sb = new StringBuilder("\n");
+            var options = CustomOption.options.Where(o => o.type == type);
+            foreach (var option in options) {
+                if (option.parent == null) {
+                    string line = $"{option.name}: {option.selections[option.selection].ToString()}";
+                    sb.AppendLine(line);
                 }
             }
+            if (headerOnly) return sb.ToString();
+            else sb = new StringBuilder();
+
+            foreach (CustomOption option in options) {
+                if (option.parent != null) {
+                    bool isIrrelevant = option.parent.getSelection() == 0 || (option.parent.parent != null && option.parent.parent.getSelection() == 0);
+
+                    Color c = isIrrelevant ? Color.grey : Color.white;  // No use for now
+                    if (isIrrelevant) continue;
+                    sb.AppendLine(Helpers.cs(c, $"{option.name}: {option.selections[option.selection].ToString()}"));
+                }
+                else {
+                    sb.AppendLine($"\n{option.name}: {option.selections[option.selection].ToString()}");
+                }
+            }
+            return sb.ToString();
+        }
+
+
+        public static int maxPage = 8;
+        public static string buildAllOptions(string vanillaSettings = "", bool hideExtras = false) {
+            if (vanillaSettings == "")
+                vanillaSettings = GameOptionsManager.Instance.CurrentGameOptions.ToHudString(PlayerControl.AllPlayerControls.Count);
+            int counter = LasMonjasPlugin.optionsPage;
+            string hudString = counter != 0 && !hideExtras ? Helpers.cs(DateTime.Now.Second % 2 == 0 ? Color.white : Color.red, "(Use scroll wheel if necessary)\n\n") : "";
+
+            maxPage = 8;
+            switch (counter) {
+                case 0:
+                    hudString += (!hideExtras ? "" : "Page 1: Vanilla Settings \n\n") + vanillaSettings;
+                    break;
+                case 1:
+                    hudString += "Page 2: Las Monjas Settings \n" + buildOptionsOfType(CustomOption.CustomOptionType.General, false);
+                    break;
+                case 2:
+                    hudString += "Page 3: Role and Modifier Rates \n" + buildRoleOptions();
+                    break;
+                case 3:
+                    hudString += "Page 4: Impostor Role Settings \n" + buildOptionsOfType(CustomOption.CustomOptionType.Impostor, false);
+                    break;
+                case 4:
+                    hudString += "Page 5: Rebel Role Settings \n" + buildOptionsOfType(CustomOption.CustomOptionType.Rebel, false);
+                    break;
+                case 5:
+                    hudString += "Page 6: Neutral Role Settings \n" + buildOptionsOfType(CustomOption.CustomOptionType.Neutral, false);
+                    break;
+                case 6:
+                    hudString += "Page 7: Crewmate Role Settings \n" + buildOptionsOfType(CustomOption.CustomOptionType.Crewmate, false);
+                    break;
+                case 7:
+                    hudString += "Page 8: Modifier Settings \n" + buildOptionsOfType(CustomOption.CustomOptionType.Modifier, false);
+                    break;
+            }
+
+
+            if (!hideExtras || counter != 0) hudString += $"\n{Language.helpersTexts[5]} ({counter + 1}/{maxPage})";
+            return hudString;
         }
     }
 
-    /*[HarmonyPatch(typeof(Constants), nameof(Constants.ShouldFlipSkeld))]
-    class ConstantsShouldFlipSkeldPatch
+    [HarmonyPatch]
+    public class AddToKillDistanceSetting
     {
-        public static bool Prefix(ref bool __result) {
-            if (PlayerControl.GameOptions == null) return true;
-            __result = GameOptionsManager.Instance.currentGameOptions.MapId == 3;
-            return false;
-        }
-    }*/
+        [HarmonyPatch(typeof(GameOptionsData), nameof(GameOptionsData.AreInvalid))]
+        [HarmonyPrefix]
 
-    [HarmonyPatch(typeof(IGameOptionsExtensions), nameof(IGameOptionsExtensions.ToHudString))]
-    class GameOptionsDataPatch
-    {
-        private static IEnumerable<MethodBase> TargetMethods() {
-            return typeof(GameOptionsData).GetMethods(typeof(string), typeof(int));
+        public static bool Prefix(GameOptionsData __instance, ref int maxExpectedPlayers) {
+            //making the killdistances bound check higher since extra short is added
+            return __instance.MaxPlayers > maxExpectedPlayers || __instance.NumImpostors < 1
+                    || __instance.NumImpostors > 3 || __instance.KillDistance < 0
+                    || __instance.KillDistance >= GameOptionsData.KillDistances.Count
+                    || __instance.PlayerSpeedMod <= 0f || __instance.PlayerSpeedMod > 3f;
         }
 
-        private static void Postfix(ref string __result) {
-            if (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return;
+        [HarmonyPatch(typeof(NormalGameOptionsV07), nameof(NormalGameOptionsV07.AreInvalid))]
+        [HarmonyPrefix]
 
-            StringBuilder sb = new StringBuilder(__result);
-            foreach (CustomOption option in CustomOption.options) {
-                if (option.parent == null) {
-                    sb.AppendLine($"{option.name}: {option.selections[option.selection].ToString()}");
-                }
+        public static bool Prefix(NormalGameOptionsV07 __instance, ref int maxExpectedPlayers) {
+            return __instance.MaxPlayers > maxExpectedPlayers || __instance.NumImpostors < 1
+                    || __instance.NumImpostors > 3 || __instance.KillDistance < 0
+                    || __instance.KillDistance >= GameOptionsData.KillDistances.Count
+                    || __instance.PlayerSpeedMod <= 0f || __instance.PlayerSpeedMod > 3f;
+        }
+
+        [HarmonyPatch(typeof(StringOption), nameof(StringOption.Initialize))]
+        [HarmonyPrefix]
+
+        public static void Prefix(StringOption __instance) {
+            //prevents indexoutofrange exception breaking the setting if long happens to be selected
+            //when host opens the laptop
+            if (__instance.Title == StringNames.GameKillDistance && __instance.Value == 3) {
+                __instance.Value = 1;
+                GameOptionsManager.Instance.currentNormalGameOptions.KillDistance = 1;
+                GameManager.Instance.LogicOptions.SyncOptions();
             }
-            CustomOption parent = null;
-            foreach (CustomOption option in CustomOption.options)
-                if (option.parent != null) {
-                    if (option.parent != parent) {
-                        sb.AppendLine();
-                        parent = option.parent;
-                    }
-                    sb.AppendLine($"{option.name}: {option.selections[option.selection].ToString()}");
-                }
+        }
 
-            var hudString = sb.ToString();
+        [HarmonyPatch(typeof(StringOption), nameof(StringOption.Initialize))]
+        [HarmonyPostfix]
 
-            int defaultSettingsLines = 23;
-            int roleSettingsLines = defaultSettingsLines + 41;
-            int detailedSettingsP1 = roleSettingsLines + 25;
-            int detailedSettingsP2 = detailedSettingsP1 + 26;
-            int detailedSettingsP3 = detailedSettingsP2 + 24;
-            int detailedSettingsP4 = detailedSettingsP3 + 42;
-            int detailedSettingsP5 = detailedSettingsP4 + 40;
-            int detailedSettingsP6 = detailedSettingsP5 + 26;
-            int detailedSettingsP7 = detailedSettingsP6 + 34;
-            int detailedSettingsP8 = detailedSettingsP7 + 24;
-            int end1 = hudString.TakeWhile(c => (defaultSettingsLines -= (c == '\n' ? 1 : 0)) > 0).Count();
-            int end2 = hudString.TakeWhile(c => (roleSettingsLines -= (c == '\n' ? 1 : 0)) > 0).Count();
-            int end3 = hudString.TakeWhile(c => (detailedSettingsP1 -= (c == '\n' ? 1 : 0)) > 0).Count();
-            int end4 = hudString.TakeWhile(c => (detailedSettingsP2 -= (c == '\n' ? 1 : 0)) > 0).Count();
-            int end5 = hudString.TakeWhile(c => (detailedSettingsP3 -= (c == '\n' ? 1 : 0)) > 0).Count();
-            int end6 = hudString.TakeWhile(c => (detailedSettingsP4 -= (c == '\n' ? 1 : 0)) > 0).Count();
-            int end7 = hudString.TakeWhile(c => (detailedSettingsP5 -= (c == '\n' ? 1 : 0)) > 0).Count();
-            int end8 = hudString.TakeWhile(c => (detailedSettingsP6 -= (c == '\n' ? 1 : 0)) > 0).Count();
-            int end9 = hudString.TakeWhile(c => (detailedSettingsP7 -= (c == '\n' ? 1 : 0)) > 0).Count();
-            int end10 = hudString.TakeWhile(c => (detailedSettingsP8 -= (c == '\n' ? 1 : 0)) > 0).Count();
-            int counter = LasMonjasPlugin.optionsPage;
-            switch (counter) {
-                case 0:
-                    hudString = hudString.Substring(0, end1) + "\n";
-                    break;
-                case 1:
-                    hudString = hudString.Substring(end1 + 1, end2 - end1);
-                    int gap = 1;
-                    int index = hudString.TakeWhile(c => (gap -= (c == '\n' ? 1 : 0)) > 0).Count();
-                    hudString = hudString.Insert(index, "\n");
-                    gap = 7;
-                    index = hudString.TakeWhile(c => (gap -= (c == '\n' ? 1 : 0)) > 0).Count();
-                    hudString = hudString.Insert(index, "\n");
-                    gap = 23;
-                    index = hudString.TakeWhile(c => (gap -= (c == '\n' ? 1 : 0)) > 0).Count();
-                    hudString = hudString.Insert(index, "\n");
-                    gap = 34;
-                    index = hudString.TakeWhile(c => (gap -= (c == '\n' ? 1 : 0)) > 0).Count();
-                    hudString = hudString.Insert(index + 1, "\n");
-                    break;
-                case 2:
-                    hudString = hudString.Substring(end2 + 1, end3 - end2);
-                    int gaptwo = 0;
-                    int indextwo = hudString.TakeWhile(c => (gaptwo -= (c == '\n' ? 1 : 0)) > 0).Count();
-                    hudString = hudString.Insert(indextwo, "\n");
-                    break;
-                case 3:
-                    hudString = hudString.Substring(end3 + 1, end4 - end3);
-                    int gapthree = 0;
-                    int indexthree = hudString.TakeWhile(c => (gapthree -= (c == '\n' ? 1 : 0)) > 0).Count();
-                    hudString = hudString.Insert(indexthree, "\n");
-                    break;
-                case 4:
-                    hudString = hudString.Substring(end4 + 1, end5 - end4);
-                    int gapfour = 2;
-                    int indexfour = hudString.TakeWhile(c => (gapfour -= (c == '\n' ? 1 : 0)) > 0).Count();
-                    hudString = hudString.Insert(indexfour, "\n");
-                    gapfour = 10;
-                    indexfour = hudString.TakeWhile(c => (gapfour -= (c == '\n' ? 1 : 0)) > 0).Count();
-                    hudString = hudString.Insert(indexfour, "\n");
-                    gapfour = 13;
-                    indexfour = hudString.TakeWhile(c => (gapfour -= (c == '\n' ? 1 : 0)) > 0).Count();
-                    hudString = hudString.Insert(indexfour, "\n");
-                    gapfour = 18;
-                    indexfour = hudString.TakeWhile(c => (gapfour -= (c == '\n' ? 1 : 0)) > 0).Count();
-                    hudString = hudString.Insert(indexfour, "\n");
-                    gapfour = 24;
-                    indexfour = hudString.TakeWhile(c => (gapfour -= (c == '\n' ? 1 : 0)) > 0).Count();
-                    hudString = hudString.Insert(indexfour, "\n");
-                    break;
-                case 5:
-                    hudString = hudString.Substring(end5 + 1, end6 - end5);
-                    break;
-                case 6:
-                    hudString = hudString.Substring(end6 + 1, end7 - end6);
-                    break;
-                case 7:
-                    hudString = hudString.Substring(end7 + 1, end8 - end7);
-                    break;
-                case 8:
-                    hudString = hudString.Substring(end8 + 1, end9 - end8);
-                    break;
-                case 9:
-                    hudString = hudString.Substring(end9 + 1, end10 - end9);
-                    break;
-                case 10:
-                    hudString = hudString.Substring(end10 + 1);
-                    break;
+        public static void Postfix(StringOption __instance) {
+            if (__instance.Title == StringNames.GameKillDistance && __instance.Values.Count == 3) {
+                __instance.Values = new(
+                        new StringNames[] { (StringNames)49999, StringNames.SettingShort, StringNames.SettingMedium, StringNames.SettingLong });
             }
+        }
 
-            hudString += $"\n{Language.helpersTexts[5]} ({counter + 1}/11)";
-            __result = hudString;
+        [HarmonyPatch(typeof(IGameOptionsExtensions), nameof(IGameOptionsExtensions.AppendItem),
+            new Type[] { typeof(Il2CppSystem.Text.StringBuilder), typeof(StringNames), typeof(string) })]
+        [HarmonyPrefix]
+
+        public static void Prefix(ref StringNames stringName, ref string value) {
+            if (stringName == StringNames.GameKillDistance) {
+                int index;
+                if (GameOptionsManager.Instance.currentGameMode == GameModes.Normal) {
+                    index = GameOptionsManager.Instance.currentNormalGameOptions.KillDistance;
+                }
+                else {
+                    index = GameOptionsManager.Instance.currentHideNSeekGameOptions.KillDistance;
+                }
+                value = GameOptionsData.KillDistanceStrings[index];
+            }
+        }
+
+        [HarmonyPatch(typeof(TranslationController), nameof(TranslationController.GetString),
+            new[] { typeof(StringNames), typeof(Il2CppReferenceArray<Il2CppSystem.Object>) })]
+        [HarmonyPriority(Priority.Last)]
+
+        public static bool Prefix(ref string __result, ref StringNames id) {
+            if ((int)id == 49999) {
+                __result = "Very Short";
+                return false;
+            }
+            return true;
+        }
+
+        public static void addKillDistance() {
+            GameOptionsData.KillDistances = new(new float[] { 0.5f, 1f, 1.8f, 2.5f });
+            GameOptionsData.KillDistanceStrings = new(new string[] { "Very Short", "Short", "Medium", "Long" });
         }
     }
 
@@ -665,30 +777,49 @@ namespace LasMonjas.Core
     public static class GameOptionsNextPagePatch
     {
         public static void Postfix(KeyboardJoystick __instance) {
+            int page = LasMonjasPlugin.optionsPage;
             if (Input.GetKeyDown(KeyCode.Tab)) {
-                LasMonjasPlugin.optionsPage = (LasMonjasPlugin.optionsPage + 1) % 11;
+                LasMonjasPlugin.optionsPage = (LasMonjasPlugin.optionsPage + 1) % 8;
             }
+            if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1)) {
+                LasMonjasPlugin.optionsPage = 0;
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2)) {
+                LasMonjasPlugin.optionsPage = 1;
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Keypad3)) {
+                LasMonjasPlugin.optionsPage = 2;
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha4) || Input.GetKeyDown(KeyCode.Keypad4)) {
+                LasMonjasPlugin.optionsPage = 3;
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha5) || Input.GetKeyDown(KeyCode.Keypad5)) {
+                LasMonjasPlugin.optionsPage = 4;
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha6) || Input.GetKeyDown(KeyCode.Keypad6)) {
+                LasMonjasPlugin.optionsPage = 5;
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha7) || Input.GetKeyDown(KeyCode.Keypad7)) {
+                LasMonjasPlugin.optionsPage = 6;
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha8) || Input.GetKeyDown(KeyCode.Keypad8)) {
+                LasMonjasPlugin.optionsPage = 7;
+            }
+            if (LasMonjasPlugin.optionsPage >= GameOptionsDataPatch.maxPage) LasMonjasPlugin.optionsPage = 0;
         }
     }
 
 
-    [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
-    public class GameSettingsScalePatch
-    {
-        public static void Prefix(HudManager __instance) {
-            if (__instance.GameSettings != null) __instance.GameSettings.fontSize = 1.2f;
-        }
-    }
-
-    // This class is taken from Town of Us Reactivated, https://github.com/eDonnes124/Town-Of-Us-R/blob/master/source/Patches/CustomOption/Patches.cs, Licensed under GPLv3
+    //This class is taken and adapted from Town of Us Reactivated, https://github.com/eDonnes124/Town-Of-Us-R/blob/master/source/Patches/CustomOption/Patches.cs, Licensed under GPLv3
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
     public class HudManagerUpdate
     {
+        private static GameObject GameSettingsObject;
+        private static TextMeshPro GameSettings;
         public static float
-            MinX,//-5.3F
+            MinX,/*-5.3F*/
             OriginalY = 2.9F,
             MinY = 2.9F;
-
 
         public static Scroller Scroller;
         private static Vector3 LastPosition;
@@ -696,7 +827,7 @@ namespace LasMonjas.Core
         private static bool setLastPosition = false;
 
         public static void Prefix(HudManager __instance) {
-            if (__instance.GameSettings?.transform == null) return;
+            if (GameSettings?.transform == null) return;
 
             // Sets the MinX position to the left edge of the screen + 0.1 units
             Rect safeArea = Screen.safeArea;
@@ -713,34 +844,36 @@ namespace LasMonjas.Core
 
             CreateScroller(__instance);
 
-            Scroller.gameObject.SetActive(__instance.GameSettings.gameObject.activeSelf);
+            Scroller.gameObject.SetActive(GameSettings.gameObject.activeSelf);
 
             if (!Scroller.gameObject.active) return;
 
-            var rows = __instance.GameSettings.text.Count(c => c == '\n');
+            var rows = GameSettings.text.Count(c => c == '\n');
             float LobbyTextRowHeight = 0.06F;
             var maxY = Mathf.Max(MinY, rows * LobbyTextRowHeight + (rows - 38) * LobbyTextRowHeight);
 
             Scroller.ContentYBounds = new FloatRange(MinY, maxY);
 
             // Prevent scrolling when the player is interacting with a menu
-            if (PlayerControl.LocalPlayer?.CanMove != true) {
-                __instance.GameSettings.transform.localPosition = LastPosition;
+            if (PlayerInCache.LocalPlayer?.PlayerControl.CanMove != true) {
+                GameSettings.transform.localPosition = LastPosition;
 
                 return;
             }
 
-            if (__instance.GameSettings.transform.localPosition.x != MinX ||
-                __instance.GameSettings.transform.localPosition.y < MinY) return;
+            if (GameSettings.transform.localPosition.x != MinX ||
+                GameSettings.transform.localPosition.y < MinY) return;
 
-            LastPosition = __instance.GameSettings.transform.localPosition;
+            LastPosition = GameSettings.transform.localPosition;
         }
 
         private static void CreateScroller(HudManager __instance) {
             if (Scroller != null) return;
 
+            Transform target = GameSettings.transform;
+
             Scroller = new GameObject("SettingsScroller").AddComponent<Scroller>();
-            Scroller.transform.SetParent(__instance.GameSettings.transform.parent);
+            Scroller.transform.SetParent(GameSettings.transform.parent);
             Scroller.gameObject.layer = 5;
 
             Scroller.transform.localScale = Vector3.one;
@@ -752,8 +885,8 @@ namespace LasMonjas.Core
             Scroller.ContentXBounds = new FloatRange(MinX, MinX);
             Scroller.enabled = true;
 
-            Scroller.Inner = __instance.GameSettings.transform;
-            __instance.GameSettings.transform.SetParent(Scroller.transform);
+            Scroller.Inner = target;
+            target.SetParent(Scroller.transform);
         }
     }
 }

@@ -9,7 +9,7 @@ namespace LasMonjas.Core
 {
     class CustomVisors : VisorData
     {
-        public static Material MagicShader = new Material(Shader.Find("Unlit/PlayerShader"));
+        /*public static Material MagicShader = new Material(Shader.Find("Unlit/PlayerShader"));
         public struct AuthorData
         {
             public string AuthorName;
@@ -88,7 +88,7 @@ namespace LasMonjas.Core
                     plate.displayOrder = 99;
                     plate.ChipOffset = new Vector2(0f, 0.2f);
                     plate.Free = true;
-                    plate.SpritePreview = vvd.IdleFrame;
+                    //plate.SpritePreview = vvd.IdleFrame;
                     visorData.Add(plate);
                     customVisorData.Add(plate);
                     var assetRef = new AssetReference(vvd.Pointer);
@@ -241,6 +241,6 @@ namespace LasMonjas.Core
                 __instance.PopulateFromViewData();
                 return false;
             }
-        }
+        }*/
     }
 }

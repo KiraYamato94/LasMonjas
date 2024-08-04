@@ -12,7 +12,7 @@ namespace LasMonjas.Core
 {
     class CustomHats
     {
-        public static Material MagicShader;
+        /*public static Material MagicShader;
 
         public struct AuthorData
         {
@@ -300,7 +300,8 @@ namespace LasMonjas.Core
                 viewdata.FloorImage = viewdata.MainImage;                
                 
                 HatData newHat = ScriptableObject.CreateInstance<HatData>();
-                newHat.name = $"{sprite.name} (by {author})";
+                //newHat.name = $"{sprite.name} (by {author})";
+                newHat.name = $"{sprite.name} ({author})";
                 newHat.ProductId = "hat_" + sprite.name.Replace(' ', '_');
                 newHat.displayOrder = 99 + HatID;
                 newHat.InFront = true;
@@ -536,6 +537,6 @@ namespace LasMonjas.Core
                 }
                 return false;
             }
-        }
+        }*/
     }
 }
