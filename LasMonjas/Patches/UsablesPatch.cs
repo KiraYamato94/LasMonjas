@@ -1004,13 +1004,13 @@ namespace LasMonjas.Patches
                 if (hand != null) {
                     if (Painter.painterTimer <= 0 && !Helpers.MushroomSabotageActive()) {
                         if (player == Mimic.mimic && Mimic.transformTimer > 0) {
-                            hand.SetPlayerColor(Mimic.transformTarget.CurrentOutfit, PlayerMaterial.MaskType.None);
+                            hand.SetPlayerColor(Mimic.transformTarget.CurrentOutfit, PlayerMaterial.MaskType.None, 1);
                         }
                         else if (player == Puppeteer.puppeteer && Puppeteer.morphed) {
-                            hand.SetPlayerColor(Puppeteer.transformTarget.CurrentOutfit, PlayerMaterial.MaskType.None);
+                            hand.SetPlayerColor(Puppeteer.transformTarget.CurrentOutfit, PlayerMaterial.MaskType.None, 1);
                         }
                         else {
-                            hand.SetPlayerColor(player.CurrentOutfit, PlayerMaterial.MaskType.None);
+                            hand.SetPlayerColor(player.CurrentOutfit, PlayerMaterial.MaskType.None, 1);
                         }
                     }
                     else {
