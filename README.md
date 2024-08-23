@@ -36,6 +36,10 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
 
+**Version 3.8.1 (23rd August 2024)**
+- Compatibility patch for Among Us v2024.8.13
+- Still no custom cosmetics fix :(
+
 **Version 3.8.0 (4th August 2024)**
 - Compatibility patch for Among Us v2024.6.18
 - Dlesk deactivated for now
