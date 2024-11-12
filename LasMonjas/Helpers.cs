@@ -3210,5 +3210,43 @@ namespace LasMonjas
             }
             newPopUp.Show(player, 0);
         }
+
+        public static IEnumerator PerformTimedAction(float duration, Action<float> action) {
+            for (var t = 0f; t < duration; t += Time.deltaTime) {
+                action(t / duration);
+                yield return EndFrame();
+            }
+
+            action(1f);
+            yield break;
+        }
+        public static IEnumerator EndFrame() {
+            yield return new WaitForEndOfFrame();
+        }
+        public static void OverrideOnClickListeners(this PassiveButton passive, Action action, bool enabled = true) {
+            passive.OnClick?.RemoveAllListeners();
+            passive.OnClick = new();
+            passive.OnClick.AddListener(action);
+            passive.enabled = enabled;
+        }
+
+        public static void OverrideOnMouseOverListeners(this PassiveButton passive, Action action, bool enabled = true) {
+            passive.OnMouseOver?.RemoveAllListeners();
+            passive.OnMouseOver = new();
+            passive.OnMouseOver.AddListener(action);
+            passive.enabled = enabled;
+        }
+
+        public static void OverrideOnMouseOutListeners(this PassiveButton passive, Action action, bool enabled = true) {
+            passive.OnMouseOut?.RemoveAllListeners();
+            passive.OnMouseOut = new();
+            passive.OnMouseOut.AddListener(action);
+            passive.enabled = enabled;
+        }
+        public static bool IsNullEmptyOrWhiteSpace(string text) => text is null or "" || text.All(x => x is ' ' or '\n');
+        public static void ForEach<T>(this IEnumerable<T> source, Action<T> action) {
+            foreach (var item in source)
+                action(item);
+        }
     }
 }
