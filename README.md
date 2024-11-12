@@ -36,6 +36,11 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
 
+**Version 3.8.2 (12nd November 2024)**
+- This version can be played on Among Us v2024.10.29
+- Finally custom cosmetics are fixed, Las Monjas hats/visors are back.
+- Added Submerged to the modpack
+
 **Version 3.8.1 (23rd August 2024)**
 - Compatibility patch for Among Us v2024.8.13
 - Still no custom cosmetics fix :(
