@@ -5,6 +5,11 @@ using System.Linq;
 using static Rewired.Controller;
 using UnityEngine.AddressableAssets;
 using PowerTools;
+using AmongUs.Data;
+using Reactor.Utilities.Extensions;
+using Reactor.Utilities;
+using TMPro;
+using static Il2CppSystem.Globalization.CultureInfo;
 
 // Adapted from https://github.com/xxomega77xx/HatPack
 
@@ -12,7 +17,7 @@ namespace LasMonjas.Core
 {
     class CustomHats
     {
-        /*public static Material MagicShader;
+        public static Material MagicShader;
 
         public struct AuthorData
         {
@@ -23,10 +28,6 @@ namespace LasMonjas.Core
             public string LeftImageName;
             public bool NoBounce;
             public bool altShader;
-        }
-        public class HatExtension
-        {
-            public string author { get; set; }            
         }
 
         public static List<AuthorData> authorDatas = new List<AuthorData>()
@@ -223,11 +224,12 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "Dr Blockhead", HatName = "Bucket", NoBounce = true},
         };
 
+        private static bool _customHatsLoaded = false;
+        
         internal static Dictionary<int, AuthorData> IdToData = new Dictionary<int, AuthorData>();
-        public static Dictionary<string, HatExtension> CustomHatRegistry = new Dictionary<string, HatExtension>();
         public static Dictionary<string, HatViewData> CustomHatViewDatas = new Dictionary<string, HatViewData>();
 
-        private static bool _customHatsLoaded = false;
+        
         [HarmonyPatch(typeof(HatManager), nameof(HatManager.GetHatById))]
         public static class AddCustomHats
         {
@@ -300,17 +302,14 @@ namespace LasMonjas.Core
                 viewdata.FloorImage = viewdata.MainImage;                
                 
                 HatData newHat = ScriptableObject.CreateInstance<HatData>();
-                //newHat.name = $"{sprite.name} (by {author})";
-                newHat.name = $"{sprite.name} ({author})";
-                newHat.ProductId = "hat_" + sprite.name.Replace(' ', '_');
+                newHat.name = $"{sprite.name} (by {author})";
+                newHat.ProductId = "lmj_" + sprite.name.Replace(' ', '_');
                 newHat.displayOrder = 99 + HatID;
                 newHat.InFront = true;
                 newHat.NoBounce = bounce;                
                 newHat.Free = true;
                 newHat.ChipOffset = new Vector2(-0.1f, 0.4f);
-                if (altshader == true) { viewdata.MatchPlayerColor = true; }
-                HatExtension extend = new HatExtension(); 
-                CustomHatRegistry.Add(newHat.name, extend);
+                if (altshader == true) { viewdata.MatchPlayerColor = true; }                
                 CustomHatViewDatas.Add(newHat.name, viewdata);
                 var assetRef = new AssetReference(viewdata.Pointer);
 
@@ -321,32 +320,112 @@ namespace LasMonjas.Core
         }
 
         [HarmonyPatch(typeof(HatsTab), nameof(HatsTab.OnEnable))]
-        public static class EnableSprite
+        public static class HatsTabOnEnablePatch
         {
-            public static void Postfix() {
-                GameObject innerHats = GameObject.Find("HatsGroup").transform.GetChild(1).transform.GetChild(0).gameObject;
-                int hat = 0;
-                for (int i = 1; i < innerHats.transform.GetChildCount(); i++) {
-                    if (innerHats.transform.GetChild(i).transform.GetChild(2).transform.GetChild(0).GetComponent<SpriteRenderer>().sprite == null) {
-                        innerHats.transform.GetChild(i).transform.GetChild(2).transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = GetSprite(authorDatas[hat].HatName);
-                        hat += 1;
-                    }
+            private static TMP_Text Template;
+
+            private static float CreateHatPackage(List<HatData> hats, string packageName, float YStart, HatsTab __instance) {
+                
+                var offset = YStart;
+
+                if (Template) {
+                    var title = UnityEngine.Object.Instantiate(Template, __instance.scroller.Inner);
+                    title.transform.localPosition = new(2.25f, YStart, -1f);
+                    title.transform.localScale = Vector3.one * 1.5f;
+                    title.fontSize *= 0.5f;
+                    title.enableAutoSizing = false;
+                    Coroutines.Start(Helpers.PerformTimedAction(0.1f, _ => title.SetText(packageName)));
+                    offset -= 0.8f * __instance.YOffset;
                 }
+
+                for (var i = 0; i < hats.Count; i++) {
+                    var hat = hats[i];
+                    var xpos = __instance.XRange.Lerp(i % __instance.NumPerRow / (__instance.NumPerRow - 1f));
+                    var ypos = offset - (i / __instance.NumPerRow * __instance.YOffset);
+                    var colorChip = UnityEngine.Object.Instantiate(__instance.ColorTabPrefab, __instance.scroller.Inner);
+
+                    if (ActiveInputManager.currentControlType == ActiveInputManager.InputType.Keyboard) {
+                        colorChip.Button.OverrideOnMouseOverListeners(() => __instance.SelectHat(hat));
+                        colorChip.Button.OverrideOnMouseOutListeners(() => __instance.SelectHat(HatManager.Instance.GetHatById(DataManager.Player.Customization.Hat)));
+                        colorChip.Button.OverrideOnClickListeners(__instance.ClickEquip);
+                    }
+                    else
+                        colorChip.Button.OverrideOnClickListeners(() => __instance.SelectHat(hat));
+
+                    colorChip.transform.localPosition = new(xpos, ypos, -1f);
+                    colorChip.Button.ClickMask = __instance.scroller.Hitbox;
+                    colorChip.Inner.SetMaskType(PlayerMaterial.MaskType.SimpleUI);
+                    __instance.UpdateMaterials(colorChip.Inner.FrontLayer, hat);
+                    colorChip.Inner.SetHat(hat, __instance.HasLocalPlayer() ? PlayerInCache.LocalPlayer.Data.DefaultOutfit.ColorId : DataManager.Player.Customization.Color);
+                    colorChip.Inner.transform.localPosition = hat.ChipOffset;
+                    colorChip.Tag = hat;
+                    colorChip.SelectionHighlight.gameObject.SetActive(false);
+                    __instance.ColorChips.Add(colorChip);
+                }
+
+                return offset - ((hats.Count - 1) / __instance.NumPerRow * __instance.YOffset) - 1.75f;
+            }
+
+            public static bool Prefix(HatsTab __instance) {
+                for (var i = 0; i < __instance.scroller.Inner.childCount; i++)
+                    __instance.scroller.Inner.GetChild(i).gameObject.Destroy();
+
+                __instance.ColorChips = new();
+                var array = HatManager.Instance.GetUnlockedHats();
+                var packages = new Dictionary<string, List<HatData>>();
+
+                foreach (var data in array) {
+                    
+                    var package = "Innersloth";
+
+                    if (data.ProductId.StartsWith("lmj_"))
+                        package = "Las Monjas";                    
+
+                    if (!packages.ContainsKey(package))
+                        packages[package] = [];
+
+                    packages[package].Add(data);
+                }
+
+                var YOffset = __instance.YStart;
+                Template = GameObject.Find("HatsGroup").transform.FindChild("Text").GetComponent<TMP_Text>();
+                var keys = packages.Keys.OrderBy(x => x switch
+                {
+                    "Innersloth" => 4,
+                    "Las Monjas" => 1,
+                    _ => 2
+                });
+                keys.ForEach(key => YOffset = CreateHatPackage(packages[key], key, YOffset, __instance));
+                __instance.currentHatIsEquipped = true;
+                __instance.SetScrollerBounds();
+                __instance.scroller.ContentYBounds.max = -(YOffset + 4.1f);
+                return false;
             }
         }
+
         public static Sprite GetSprite(string name)
                 => AssetLoader.LoadHatAsset(name).Cast<GameObject>().GetComponent<SpriteRenderer>().sprite;
 
 
         [HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.HandleAnimation))]
-        private static class PlayerPhysicsHandleAnimationPatch
+        public static class PlayerPhysicsHandleAnimationPatch
         {
-            private static void Postfix(PlayerPhysics __instance) {
-                if (!CustomHatViewDatas.ContainsKey(__instance.myPlayer.cosmetics.hat.Hat.name)) return;
-                AnimationClip currentAnimation = __instance.Animations.Animator.GetCurrentAnimation();
-                if (currentAnimation == __instance.Animations.group.ClimbUpAnim || currentAnimation == __instance.Animations.group.ClimbDownAnim) return;
-                HatParent hp = __instance.myPlayer.cosmetics.hat;
-                if (hp == null || hp.Hat == null) return;                
+            public static void Postfix(PlayerPhysics __instance) {
+                try {
+                    if (!__instance.myPlayer || !CustomHatViewDatas.TryGetValue(__instance.myPlayer.cosmetics.hat.Hat.ProductId, out var viewData))
+                        return;
+
+                    var currentAnimation = __instance.Animations.Animator.GetCurrentAnimation();
+
+                    if (currentAnimation == __instance.Animations.group.ClimbUpAnim || currentAnimation == __instance.Animations.group.ClimbDownAnim)
+                        return;
+
+                    var hp = __instance.myPlayer.cosmetics.hat;
+
+                    if (!hp || !hp.Hat)
+                        return;                    
+                }
+                catch { }
             }
         }
 
@@ -354,7 +433,7 @@ namespace LasMonjas.Core
         public class SetHatPatch
         {
             public static bool Prefix(HatParent __instance, int color) {
-                if (!CustomHatRegistry.ContainsKey(__instance.Hat.name)) return true;
+                if (!__instance.Hat.ProductId.StartsWith("lmj_")) return true;
                 __instance.viewAsset = null;
                 __instance.PopulateFromViewData();
                 __instance.SetMaterialColor(color);
@@ -457,8 +536,8 @@ namespace LasMonjas.Core
         {
             public static bool Prefix(HatParent __instance, int colorId) {
                 if (!__instance.Hat) return false;
-                if (!CustomHatRegistry.ContainsKey(__instance.Hat.name))
-                    return true;
+                if (!__instance.Hat.ProductId.StartsWith("lmj_")) return true;
+               
                 HatViewData hatViewData = CustomHatViewDatas[__instance.Hat.name];
                 __instance.viewAsset = null;
                 __instance.PopulateFromViewData();
@@ -537,6 +616,55 @@ namespace LasMonjas.Core
                 }
                 return false;
             }
-        }*/
+        }
+        [HarmonyPatch(typeof(HatParent), nameof(HatParent.LateUpdate))]
+        public static class HatParentLateUpdatePatch
+        {
+            public static bool Prefix(HatParent __instance) {
+                if (!__instance.Parent || !__instance.Hat)
+                    return false;
+
+                HatViewData hatViewData;
+
+                try {
+                    hatViewData = __instance.viewAsset.GetAsset();
+                    return true;
+                }
+                catch {
+                    try {
+                        CustomHatViewDatas.TryGetValue(__instance.Hat.ProductId, out hatViewData);
+                    }
+                    catch {
+                        return false;
+                    }
+                }
+
+                if (!hatViewData)
+                    return false;
+
+                if (__instance.FrontLayer.sprite != hatViewData.ClimbImage && __instance.FrontLayer.sprite != hatViewData.FloorImage) {
+                    if ((__instance.Hat.InFront || hatViewData.BackImage) && hatViewData.LeftMainImage)
+                        __instance.FrontLayer.sprite = __instance.Parent.flipX ? hatViewData.LeftMainImage : hatViewData.MainImage;
+
+                    if (hatViewData.BackImage && hatViewData.LeftBackImage) {
+                        __instance.BackLayer.sprite = __instance.Parent.flipX ? hatViewData.LeftBackImage : hatViewData.BackImage;
+                        return false;
+                    }
+
+                    if (!hatViewData.BackImage && !__instance.Hat.InFront && hatViewData.LeftMainImage) {
+                        __instance.BackLayer.sprite = __instance.Parent.flipX ? hatViewData.LeftMainImage : hatViewData.MainImage;
+                        return false;
+                    }
+                }
+                else if (__instance.FrontLayer.sprite == hatViewData.ClimbImage || __instance.FrontLayer.sprite == hatViewData.LeftClimbImage) {
+                    __instance.SpriteSyncNode ??= __instance.GetComponent<SpriteAnimNodeSync>();
+
+                    if (__instance.SpriteSyncNode)
+                        __instance.SpriteSyncNode.NodeId = 0;
+                }
+
+                return false;
+            }
+        }
     }
 }

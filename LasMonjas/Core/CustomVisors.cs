@@ -4,12 +4,17 @@ using UnityEngine;
 using System.Linq;
 using System;
 using UnityEngine.AddressableAssets;
+using AmongUs.Data;
+using Innersloth.Assets;
+using Reactor.Utilities.Extensions;
+using Reactor.Utilities;
+using TMPro;
 
 namespace LasMonjas.Core
 {
     class CustomVisors : VisorData
     {
-        /*public static Material MagicShader = new Material(Shader.Find("Unlit/PlayerShader"));
+        public static Material MagicShader = new Material(Shader.Find("Unlit/PlayerShader"));
         public struct AuthorData
         {
             public string AuthorName;
@@ -66,6 +71,7 @@ namespace LasMonjas.Core
         static readonly List<VisorData> visorData = new();
 
         public static readonly List<CustomVisors> customVisorData = new();
+        public static readonly Dictionary<string, VisorViewData> CustomVisorViewDatas = [];
 
         [HarmonyPatch(typeof(HatManager), nameof(HatManager.GetVisorById))]
         class AddCustomVisors
@@ -81,6 +87,7 @@ namespace LasMonjas.Core
                     if (data.altShader) {
                         vvd.MatchPlayerColor = true;
                     }
+
                     var plate = new CustomVisors(vvd);
                     plate.name = $"{data.VisorName} (by {data.AuthorName})";
                     plate.ProductId = "lmj_" + plate.name.Replace(' ', '_');
@@ -88,12 +95,12 @@ namespace LasMonjas.Core
                     plate.displayOrder = 99;
                     plate.ChipOffset = new Vector2(0f, 0.2f);
                     plate.Free = true;
-                    //plate.SpritePreview = vvd.IdleFrame;
                     visorData.Add(plate);
                     customVisorData.Add(plate);
                     var assetRef = new AssetReference(vvd.Pointer);
                     plate.ViewDataRef = assetRef;
                     plate.CreateAddressableAsset();
+                    CustomVisorViewDatas.TryAdd(plate.ProductId, vvd);
                 }
                 AllVisors.AddRange(visorData);
                 __instance.allVisors = AllVisors.ToArray();                
@@ -101,17 +108,107 @@ namespace LasMonjas.Core
         }
 
         [HarmonyPatch(typeof(VisorsTab), nameof(VisorsTab.OnEnable))]
-        public static class EnableSprite
+        public static class VisorsTabOnEnablePatch
         {
-            public static void Postfix() {
-                GameObject innerVisors = GameObject.Find("VisorGroup").transform.GetChild(0).transform.GetChild(0).gameObject;
-                int visor = 0;
-                for (int i = 1; i < innerVisors.transform.GetChildCount(); i++) {
-                    if (innerVisors.transform.GetChild(i).transform.GetChild(2).transform.GetChild(0).GetComponent<SpriteRenderer>().sprite == null) {
-                        innerVisors.transform.GetChild(i).transform.GetChild(2).transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = GetSprite(authorDatas[visor].VisorName);
-                        visor += 1;
-                    }
+            private static TMP_Text Template;
+
+            private static float CreateVisorPackage(List<VisorData> visors, string packageName, float YStart, VisorsTab __instance) {
+                
+                var offset = YStart;
+
+                if (Template) {
+                    var title = UnityEngine.Object.Instantiate(Template, __instance.scroller.Inner);
+                    var material = title.GetComponent<MeshRenderer>().material;
+                    material.SetFloat("_StencilComp", 4f);
+                    material.SetFloat("_Stencil", 1f);
+                    title.transform.localPosition = new(2.25f, YStart, -1f);
+                    title.transform.localScale = Vector3.one * 1.5f;
+                    title.fontSize *= 0.5f;
+                    title.enableAutoSizing = false;
+                    Coroutines.Start(Helpers.PerformTimedAction(0.1f, _ => title.SetText(packageName, true)));
+                    offset -= 0.8f * __instance.YOffset;
                 }
+
+                for (var i = 0; i < visors.Count; i++) {
+                    var visor = visors[i];
+                    var xpos = __instance.XRange.Lerp(i % __instance.NumPerRow / (__instance.NumPerRow - 1f));
+                    var ypos = offset - (i / __instance.NumPerRow * __instance.YOffset);
+                    var colorChip = UnityEngine.Object.Instantiate(__instance.ColorTabPrefab, __instance.scroller.Inner);
+
+                    if (ActiveInputManager.currentControlType == ActiveInputManager.InputType.Keyboard) {
+                        colorChip.Button.OverrideOnMouseOverListeners(() => __instance.SelectVisor(visor));
+                        colorChip.Button.OverrideOnMouseOutListeners(() => __instance.SelectVisor(HatManager.Instance.GetVisorById(DataManager.Player.Customization.Visor)));
+                        colorChip.Button.OverrideOnClickListeners(__instance.ClickEquip);
+                    }
+                    else
+                        colorChip.Button.OverrideOnClickListeners(() => __instance.SelectVisor(visor));
+
+                    colorChip.Button.ClickMask = __instance.scroller.Hitbox;
+                    colorChip.transform.localPosition = new(xpos, ypos, -1f);
+                    colorChip.Inner.SetMaskType(PlayerMaterial.MaskType.SimpleUI);
+                    colorChip.Inner.transform.localPosition = visor.ChipOffset;
+                    colorChip.ProductId = visor.ProductId;
+                    colorChip.Tag = visor;
+                    __instance.UpdateMaterials(colorChip.Inner.FrontLayer, visor);
+                    var colorId = __instance.HasLocalPlayer() ? PlayerInCache.LocalPlayer.Data.DefaultOutfit.ColorId : DataManager.Player.Customization.Color;
+
+                    if (CustomVisorViewDatas.TryGetValue(visor.ProductId, out var data))
+                        ColorChipFix(colorChip, data.IdleFrame, colorId);
+                    else
+                        visor.SetPreview(colorChip.Inner.FrontLayer, colorId);
+
+                    colorChip.SelectionHighlight.gameObject.SetActive(false);
+                    __instance.ColorChips.Add(colorChip);
+                }
+
+                return offset - ((visors.Count - 1) / __instance.NumPerRow * __instance.YOffset) - 1.5f;
+            }
+
+            private static void ColorChipFix(ColorChip chip, Sprite sprite, int colorId) {
+                chip.Inner.FrontLayer.sprite = sprite;
+                AddressableAssetHandler.AddToGameObject(chip.Inner.FrontLayer.gameObject);
+
+                if (Application.isPlaying)
+                    PlayerMaterial.SetColors(colorId, chip.Inner.FrontLayer);
+            }
+
+            public static bool Prefix(VisorsTab __instance) {
+                for (var i = 0; i < __instance.scroller.Inner.childCount; i++)
+                    __instance.scroller.Inner.GetChild(i).gameObject.Destroy();
+
+                __instance.ColorChips = new();
+                var array = HatManager.Instance.GetUnlockedVisors();
+                var packages = new Dictionary<string, List<VisorData>>();
+
+                foreach (var data in array) {
+                    var package = "Innersloth";
+
+                    if (data.ProductId.StartsWith("lmj_"))
+                        package = "Las Monjas";
+
+                    if (!packages.ContainsKey(package))
+                        packages[package] = [];
+
+                    packages[package].Add(data);
+                }
+
+                var yOffset = __instance.YStart;
+                Template = __instance.transform.FindChild("Text").gameObject.GetComponent<TMP_Text>();
+                var keys = packages.Keys.OrderBy(x => x switch {
+                    "Innersloth" => 4,
+                    "Las Monjas" => 1,
+                    _ => 2
+                });
+                keys.ForEach(key => yOffset = CreateVisorPackage(packages[key], key, yOffset, __instance));
+
+                if (array.Length != 0)
+                    __instance.GetDefaultSelectable().PlayerEquippedForeground.SetActive(true);
+
+                __instance.visorId = DataManager.Player.Customization.Visor;
+                __instance.currentVisorIsEquipped = true;
+                __instance.SetScrollerBounds();
+                __instance.scroller.ContentYBounds.max = -(yOffset + 4.1f);
+                return false;
             }
         }
 
@@ -241,6 +338,6 @@ namespace LasMonjas.Core
                 __instance.PopulateFromViewData();
                 return false;
             }
-        }*/
+        }
     }
 }
