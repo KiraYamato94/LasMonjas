@@ -18,6 +18,7 @@ namespace LasMonjas
         public static CustomOption globalSettings;
         public static CustomOption activateSenseiMap;
         public static CustomOption hideVentAnimOnShadows;
+        public static CustomOption activateDleksMap;
 
         // Roles Settings
         public static CustomOption rolesSettings;
@@ -421,6 +422,7 @@ namespace LasMonjas
             globalSettings = CustomOption.Create(2, Types.General, cs(Jailer.color, "Global Settings"), false, null, true);
             activateSenseiMap = CustomOption.Create(3, Types.General, cs(Jailer.color, "Activate Custom Skeld Map"), false, globalSettings);
             hideVentAnimOnShadows = CustomOption.Create(4, Types.General, cs(Jailer.color, "Hide Vent Anim on Shadows"), false, globalSettings);
+            activateDleksMap = CustomOption.Create(5, Types.General, cs(Jailer.color, "Activate Dleks Map"), false, globalSettings);
 
             // Roles Settings
             rolesSettings = CustomOption.Create(10, Types.General, cs(Locksmith.color, "Roles Settings"), false, null, true);

@@ -270,7 +270,7 @@ namespace LasMonjas
     {
         // Main Controls
 
-        ResetVaribles = 100, // 70
+        ResetVaribles = 67, // vanilla max 65
         ShareOptions,
         SetRole,
         SetModifier, 
@@ -282,7 +282,7 @@ namespace LasMonjas
 
         // Role functionality
 
-        MimicTransform = 120, // 80
+        MimicTransform = 77,
         PainterPaint,
         DemonSetBitten,
         PlaceNun,
@@ -4210,6 +4210,9 @@ namespace LasMonjas
                     if (activatedSensei) {
                         player.transform.position = new Vector3(-12f, 7.15f, player.transform.position.z);
                     }
+                    else if (activatedDleks) {
+                        player.transform.position = new Vector3(10.2f, 3.6f, player.transform.position.z);
+                    }
                     else {
                         player.transform.position = new Vector3(-10.2f, 3.6f, player.transform.position.z);
                     }
@@ -4457,6 +4460,9 @@ namespace LasMonjas
                         case 0:
                             if (activatedSensei) {
                                 cell.transform.position = new Vector3(-12f, 7.2f, 0.5f);
+                            }
+                            else if (activatedDleks) {
+                                cell.transform.position = new Vector3(10.25f, 3.38f, 0.5f);
                             }
                             else {
                                 cell.transform.position = new Vector3(-10.25f, 3.38f, 0.5f);
@@ -4790,6 +4796,9 @@ namespace LasMonjas
                         case 0:
                             if (activatedSensei) {
                                 Monja.ritualObject.transform.position = new Vector3(3f, 2.5f, 0.5f);
+                            }
+                            else if (activatedDleks) {
+                                Monja.ritualObject.transform.position = new Vector3(0.9f, 5.25f, 0.5f);
                             }
                             else {
                                 Monja.ritualObject.transform.position = new Vector3(-0.9f, 5.25f, 0.5f);
@@ -5661,13 +5670,13 @@ namespace LasMonjas
                     break;
                 // MJ
                 case 8:
-                    if (MonjaFestival.bigMonjaPlayer != null && killer == MonjaFestival.bigMonjaPlayer) {
+                    /*if (MonjaFestival.bigMonjaPlayer != null && killer == MonjaFestival.bigMonjaPlayer) {
                         MonjaFestival.bigMonjaPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                    }
+                    }*/
                     killer.MurderPlayer(murdered, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
-                    if (MonjaFestival.bigMonjaPlayer != null && killer == MonjaFestival.bigMonjaPlayer) {
+                    /*if (MonjaFestival.bigMonjaPlayer != null && killer == MonjaFestival.bigMonjaPlayer) {
                         MonjaFestival.bigMonjaPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                    }
+                    }*/
                     break;
             }
         }
@@ -5706,6 +5715,9 @@ namespace LasMonjas
                     case 0:
                         if (activatedSensei) {
                             CaptureTheFlag.blueflag.transform.position = new Vector3(7.7f, -1.15f, 0.5f);
+                        }
+                        else if (activatedDleks) {
+                            CaptureTheFlag.blueflag.transform.position = new Vector3(-16.5f, -4.65f, 0.5f);
                         }
                         else {
                             CaptureTheFlag.blueflag.transform.position = new Vector3(16.5f, -4.65f, 0.5f);
@@ -5755,6 +5767,9 @@ namespace LasMonjas
                     case 0:
                         if (activatedSensei) {
                             CaptureTheFlag.redflag.transform.position = new Vector3(-17.5f, -1.35f, 0.5f);
+                        }
+                        else if (activatedDleks) {
+                            CaptureTheFlag.redflag.transform.position = new Vector3(20.5f, -5.35f, 0.5f);
                         }
                         else {
                             CaptureTheFlag.redflag.transform.position = new Vector3(-20.5f, -5.35f, 0.5f);
@@ -5863,6 +5878,9 @@ namespace LasMonjas
                     if (activatedSensei) {
                         capturedThief.transform.position = new Vector3(-12f, 7.15f, capturedThief.transform.position.z);
                     }
+                    else if (activatedDleks) {
+                        capturedThief.transform.position = new Vector3(10.2f, 3.6f, capturedThief.transform.position.z);
+                    }
                     else {
                         capturedThief.transform.position = new Vector3(-10.2f, 3.6f, capturedThief.transform.position.z);
                     }
@@ -5912,6 +5930,9 @@ namespace LasMonjas
                 case 0:
                     if (activatedSensei) {
                         PoliceAndThief.thiefArrested[0].transform.position = new Vector3(13.75f, -0.2f, PoliceAndThief.thiefArrested[0].transform.position.z);
+                    }
+                    else if (activatedDleks) {
+                        PoliceAndThief.thiefArrested[0].transform.position = new Vector3(1.31f, -16.25f, PoliceAndThief.thiefArrested[0].transform.position.z);
                     }
                     else {
                         PoliceAndThief.thiefArrested[0].transform.position = new Vector3(-1.31f, -16.25f, PoliceAndThief.thiefArrested[0].transform.position.z);
@@ -6184,6 +6205,14 @@ namespace LasMonjas
                             myJewel.transform.position = new Vector3(15.7f, -0.33f, thiefDeliverJewel.transform.position.z);
                         }
                     }
+                    else if (activatedDleks) {
+                        if (isDiamond) {
+                            myJewel.transform.position = new Vector3(0f, -19.4f, thiefDeliverJewel.transform.position.z);
+                        }
+                        else {
+                            myJewel.transform.position = new Vector3(-0.4f, -19.4f, thiefDeliverJewel.transform.position.z);
+                        }
+                    }
                     else {
                         if (isDiamond) {
                             myJewel.transform.position = new Vector3(0f, -19.4f, thiefDeliverJewel.transform.position.z);
@@ -6384,6 +6413,85 @@ namespace LasMonjas
                             case 15:
                                 PoliceAndThief.jewel15.transform.SetParent(null);
                                 PoliceAndThief.jewel15.transform.position = new Vector3(7.15f, -14.45f, 1f);
+                                PoliceAndThief.jewel15BeingStealed = null;
+                                break;
+                        }
+                    }
+                    else if (activatedDleks) {
+                        switch (jewelRevertedId) {
+                            case 1:
+                                PoliceAndThief.jewel01.transform.SetParent(null);
+                                PoliceAndThief.jewel01.transform.position = new Vector3(18.65f, -9.9f, 1f);
+                                PoliceAndThief.jewel01BeingStealed = null;
+                                break;
+                            case 2:
+                                PoliceAndThief.jewel02.transform.SetParent(null);
+                                PoliceAndThief.jewel02.transform.position = new Vector3(21.5f, -2, 1f);
+                                PoliceAndThief.jewel02BeingStealed = null;
+                                break;
+                            case 3:
+                                PoliceAndThief.jewel03.transform.SetParent(null);
+                                PoliceAndThief.jewel03.transform.position = new Vector3(5.9f, -8.25f, 1f);
+                                PoliceAndThief.jewel03BeingStealed = null;
+                                break;
+                            case 4:
+                                PoliceAndThief.jewel04.transform.SetParent(null);
+                                PoliceAndThief.jewel04.transform.position = new Vector3(-4.5f, -7.5f, 1f);
+                                PoliceAndThief.jewel04BeingStealed = null;
+                                break;
+                            case 5:
+                                PoliceAndThief.jewel05.transform.SetParent(null);
+                                PoliceAndThief.jewel05.transform.position = new Vector3(-7.85f, -14.45f, 1f);
+                                PoliceAndThief.jewel05BeingStealed = null;
+                                break;
+                            case 6:
+                                PoliceAndThief.jewel06.transform.SetParent(null);
+                                PoliceAndThief.jewel06.transform.position = new Vector3(-6.65f, -4.8f, 1f);
+                                PoliceAndThief.jewel06BeingStealed = null;
+                                break;
+                            case 7:
+                                PoliceAndThief.jewel07.transform.SetParent(null);
+                                PoliceAndThief.jewel07.transform.position = new Vector3(-10.5f, 2.15f, 1f);
+                                PoliceAndThief.jewel07BeingStealed = null;
+                                break;
+                            case 8:
+                                PoliceAndThief.jewel08.transform.SetParent(null);
+                                PoliceAndThief.jewel08.transform.position = new Vector3(5.5f, 3.5f, 1f);
+                                PoliceAndThief.jewel08BeingStealed = null;
+                                break;
+                            case 9:
+                                PoliceAndThief.jewel09.transform.SetParent(null);
+                                PoliceAndThief.jewel09.transform.position = new Vector3(19, -1.2f, 1f);
+                                PoliceAndThief.jewel09BeingStealed = null;
+                                break;
+                            case 10:
+                                PoliceAndThief.jewel10.transform.SetParent(null);
+                                PoliceAndThief.jewel10.transform.position = new Vector3(21.5f, -8.35f, 1f);
+                                PoliceAndThief.jewel10BeingStealed = null;
+                                break;
+                            case 11:
+                                PoliceAndThief.jewel11.transform.SetParent(null);
+                                PoliceAndThief.jewel11.transform.position = new Vector3(12.5f, -3.75f, 1f);
+                                PoliceAndThief.jewel11BeingStealed = null;
+                                break;
+                            case 12:
+                                PoliceAndThief.jewel12.transform.SetParent(null);
+                                PoliceAndThief.jewel12.transform.position = new Vector3(5.9f, -5.25f, 1f);
+                                PoliceAndThief.jewel12BeingStealed = null;
+                                break;
+                            case 13:
+                                PoliceAndThief.jewel13.transform.SetParent(null);
+                                PoliceAndThief.jewel13.transform.position = new Vector3(-2.65f, -16.5f, 1f);
+                                PoliceAndThief.jewel13BeingStealed = null;
+                                break;
+                            case 14:
+                                PoliceAndThief.jewel14.transform.SetParent(null);
+                                PoliceAndThief.jewel14.transform.position = new Vector3(-16.75f, -4.75f, 1f);
+                                PoliceAndThief.jewel14BeingStealed = null;
+                                break;
+                            case 15:
+                                PoliceAndThief.jewel15.transform.SetParent(null);
+                                PoliceAndThief.jewel15.transform.position = new Vector3(-3.8f, 3.5f, 1f);
                                 PoliceAndThief.jewel15BeingStealed = null;
                                 break;
                         }
@@ -7471,6 +7579,28 @@ namespace LasMonjas
                                 break;
                         }
                     }
+                    else if (activatedDleks) {
+                        switch (myKeyItem.name) {
+                            case "keyItem01":
+                                myKeyItem.transform.position = new Vector3(11.85f, 4.5f, -0.2f);
+                                break;
+                            case "keyItem02":
+                                myKeyItem.transform.position = new Vector3(11.5f, 4.5f, -0.2f);
+                                break;
+                            case "keyItem03":
+                                myKeyItem.transform.position = new Vector3(11.15f, 4.5f, -0.2f);
+                                break;
+                            case "keyItem04":
+                                myKeyItem.transform.position = new Vector3(10.8f, 4.5f, -0.2f);
+                                break;
+                            case "keyItem05":
+                                myKeyItem.transform.position = new Vector3(10.45f, 4.5f, -0.2f);
+                                break;
+                            case "keyItem06":
+                                myKeyItem.transform.position = new Vector3(10.1f, 4.5f, -0.2f);
+                                break;
+                        }
+                    }
                     else {
                         switch (myKeyItem.name) {
                             case "keyItem01":
@@ -7964,6 +8094,9 @@ namespace LasMonjas
                         if (activatedSensei) {
                             player.transform.position = new Vector3(-4.85f, 6, player.transform.position.z);
                         }
+                        else if (activatedDleks) {
+                            player.transform.position = new Vector3(17.25f, -13.25f, player.transform.position.z);
+                        }
                         else {
                             player.transform.position = new Vector3(-17.25f, -13.25f, player.transform.position.z);
                         }
@@ -8129,6 +8262,9 @@ namespace LasMonjas
                         if (activatedSensei) {
                             survivorEnter.transform.position = new Vector3(-12f, 7.15f, survivorEnter.transform.position.z);
                         }
+                        else if (activatedDleks) {
+                            survivorEnter.transform.position = new Vector3(10.2f, 3.6f, survivorEnter.transform.position.z);
+                        }
                         else {
                             survivorEnter.transform.position = new Vector3(-10.2f, 3.6f, survivorEnter.transform.position.z);
                         }
@@ -8171,6 +8307,19 @@ namespace LasMonjas
                                     break;
                                 case 3:
                                     survivorEnter.transform.position = new Vector3(-6.75f, 8.25f, survivorEnter.transform.position.z);
+                                    break;
+                            }
+                        }
+                        else if (activatedDleks) {
+                            switch (whichExit) {
+                                case 1:
+                                    survivorEnter.transform.position = new Vector3(10.2f, 1.18f, survivorEnter.transform.position.z);
+                                    break;
+                                case 2:
+                                    survivorEnter.transform.position = new Vector3(17f, -1f, survivorEnter.transform.position.z);
+                                    break;
+                                case 3:
+                                    survivorEnter.transform.position = new Vector3(3.25f, 5.25f, survivorEnter.transform.position.z);
                                     break;
                             }
                         }

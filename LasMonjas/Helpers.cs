@@ -107,7 +107,9 @@ namespace LasMonjas
         public static void handleMedusaPetrifyOnBodyReport() {
             // Murder the petrified players (regardless whether the kill was successful or not)
             foreach (PlayerControl player in Medusa.petrifiedPlayers) {
-                Helpers.checkMurderAttemptAndKill(Medusa.medusa, player, false);
+                if (Medusa.medusa != null) {
+                    Helpers.checkMurderAttemptAndKill(Medusa.medusa, player, false);
+                }
             }
         }
 
@@ -601,14 +603,17 @@ namespace LasMonjas
         }
 
         public static void alphaPlayer(bool invisible, byte playerId) {
+            
             PlayerControl player = playerById(playerId);
 
             if (invisible) {
                 player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0.5f);
                 player.cosmetics.colorBlindText.color = new Color(player.cosmetics.colorBlindText.color.r, player.cosmetics.colorBlindText.color.g, player.cosmetics.colorBlindText.color.b, 0.5f);
-                if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.renderers[0] != null && player.cosmetics.currentPet.shadows[0] != null) {
-                    player.cosmetics.currentPet.renderers[0].color = new Color(player.cosmetics.currentPet.renderers[0].color.r, player.cosmetics.currentPet.renderers[0].color.g, player.cosmetics.currentPet.renderers[0].color.b, 0.5f);
-                    player.cosmetics.currentPet.shadows[0].color = new Color(player.cosmetics.currentPet.shadows[0].color.r, player.cosmetics.currentPet.shadows[0].color.g, player.cosmetics.currentPet.shadows[0].color.b, 0.5f);
+                if (!player.cosmetics.currentPet.data.IsEmpty) {
+                    if (player.cosmetics.currentPet.renderers[0] != null && player.cosmetics.currentPet.shadows[0] != null) {
+                        player.cosmetics.currentPet.renderers[0].color = new Color(player.cosmetics.currentPet.renderers[0].color.r, player.cosmetics.currentPet.renderers[0].color.g, player.cosmetics.currentPet.renderers[0].color.b, 0.5f);
+                        player.cosmetics.currentPet.shadows[0].color = new Color(player.cosmetics.currentPet.shadows[0].color.r, player.cosmetics.currentPet.shadows[0].color.g, player.cosmetics.currentPet.shadows[0].color.b, 0.5f);
+                    }
                 }
                 if (player.cosmetics.hat != null) {
                     player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0.5f);
@@ -623,9 +628,11 @@ namespace LasMonjas
             else {
                 player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 1f);
                 player.cosmetics.colorBlindText.color = new Color(player.cosmetics.colorBlindText.color.r, player.cosmetics.colorBlindText.color.g, player.cosmetics.colorBlindText.color.b, 1);
-                if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.renderers[0] != null && player.cosmetics.currentPet.shadows[0] != null) {
-                    player.cosmetics.currentPet.renderers[0].color = new Color(player.cosmetics.currentPet.renderers[0].color.r, player.cosmetics.currentPet.renderers[0].color.g, player.cosmetics.currentPet.renderers[0].color.b, 1f);
-                    player.cosmetics.currentPet.shadows[0].color = new Color(player.cosmetics.currentPet.shadows[0].color.r, player.cosmetics.currentPet.shadows[0].color.g, player.cosmetics.currentPet.shadows[0].color.b, 1f);
+                if (!player.cosmetics.currentPet.data.IsEmpty) {
+                    if (player.cosmetics.currentPet.renderers[0] != null && player.cosmetics.currentPet.shadows[0] != null) {
+                        player.cosmetics.currentPet.renderers[0].color = new Color(player.cosmetics.currentPet.renderers[0].color.r, player.cosmetics.currentPet.renderers[0].color.g, player.cosmetics.currentPet.renderers[0].color.b, 1f);
+                        player.cosmetics.currentPet.shadows[0].color = new Color(player.cosmetics.currentPet.shadows[0].color.r, player.cosmetics.currentPet.shadows[0].color.g, player.cosmetics.currentPet.shadows[0].color.b, 1f);
+                    }
                 }
                 if (player.cosmetics.hat != null) {
                     player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 1f);
@@ -644,9 +651,11 @@ namespace LasMonjas
 
             player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0f);
             player.cosmetics.colorBlindText.color = new Color(player.cosmetics.colorBlindText.color.r, player.cosmetics.colorBlindText.color.g, player.cosmetics.colorBlindText.color.b, 0);
-            if (player.cosmetics.currentPet != null && player.cosmetics.currentPet.renderers[0] != null && player.cosmetics.currentPet.shadows[0] != null) {
-                player.cosmetics.currentPet.renderers[0].color = new Color(player.cosmetics.currentPet.renderers[0].color.r, player.cosmetics.currentPet.renderers[0].color.g, player.cosmetics.currentPet.renderers[0].color.b, 0f);
-                player.cosmetics.currentPet.shadows[0].color = new Color(player.cosmetics.currentPet.shadows[0].color.r, player.cosmetics.currentPet.shadows[0].color.g, player.cosmetics.currentPet.shadows[0].color.b, 0f);
+            if (!player.cosmetics.currentPet.data.IsEmpty) {
+                if (player.cosmetics.currentPet.renderers[0] != null && player.cosmetics.currentPet.shadows[0] != null) {
+                    player.cosmetics.currentPet.renderers[0].color = new Color(player.cosmetics.currentPet.renderers[0].color.r, player.cosmetics.currentPet.renderers[0].color.g, player.cosmetics.currentPet.renderers[0].color.b, 0f);
+                    player.cosmetics.currentPet.shadows[0].color = new Color(player.cosmetics.currentPet.shadows[0].color.r, player.cosmetics.currentPet.shadows[0].color.g, player.cosmetics.currentPet.shadows[0].color.b, 0f);
+                }
             }
             if (player.cosmetics.hat != null) {
                 player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0f);
@@ -681,6 +690,13 @@ namespace LasMonjas
             }
         }
 
+        public static void activateDleksMap() {
+            if (activatedDleks == false && !CustomOptionHolder.activateSenseiMap.getBool() && CustomOptionHolder.activateDleksMap.getBool() && GameOptionsManager.Instance.currentGameOptions.MapId == 0) {
+                GameObject dleksMap = GameObject.Find("SkeldShip(Clone)");
+                dleksMap.transform.localScale = new Vector3(dleksMap.transform.localScale.x * -1, dleksMap.transform.localScale.y, dleksMap.transform.localScale.z);
+                activatedDleks = true;
+            }
+        }
         public static void activateSenseiMap () {
             bool activeSensei = CustomOptionHolder.activateSenseiMap.getBool();
 
@@ -1515,6 +1531,15 @@ namespace LasMonjas
                         blueFlagPos = new Vector3(7.7f, -1.15f, 0.5f);
                         blueFlagBasePos = new Vector3(7.7f, -1.2f, 1f);
                     }
+                    else if (activatedDleks) {
+                        stealerPlayerPos = new Vector3(-6.35f, -7.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        redTeamPos = new Vector3(20.5f, -5.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        blueTeamPos = new Vector3(-16.5f, -4.45f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        redFlagPos = new Vector3(20.5f, -5.35f, 0.5f);
+                        redFlagBasePos = new Vector3(20.5f, -5.4f, 1f);
+                        blueFlagPos = new Vector3(-16.5f, -4.65f, 0.5f);
+                        blueFlagBasePos = new Vector3(-16.5f, -4.7f, 1f);
+                    }
                     else {
                         stealerPlayerPos = new Vector3(6.35f, -7.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                         redTeamPos = new Vector3(-20.5f, -5.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
@@ -1683,6 +1708,32 @@ namespace LasMonjas
                         jewel13Pos = new Vector3(-19.75f, -1.55f, 1f);
                         jewel14Pos = new Vector3(-12.1f, -13.15f, 1f);
                         jewel15Pos = new Vector3(7.15f, -14.45f, 1f);
+                    }
+                    else if (activatedDleks) {
+                        policeTeamPos = new Vector3(10.2f, 1.18f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        thiefTeamPos = new Vector3(1.31f, -16.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        cellPos = new Vector3(10.25f, 3.38f, 0.5f);
+                        cellButtonPos = new Vector3(10.2f, 0.93f, 0.5f);
+                        jewelButtonPos = new Vector3(-0.20f, -17.15f, 0.5f);
+                        thiefSpaceShipPos = new Vector3(1.345f, -19.16f, 0.6f);
+                        GameObject thiefspaceshiphatchDleks = GameObject.Instantiate(CustomMain.customAssets.thiefspaceshiphatch, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                        thiefspaceshiphatchDleks.name = "thiefspaceshiphatch";
+                        thiefspaceshiphatchDleks.transform.position = new Vector3(1.345f, -19.16f, 0.6f);
+                        jewel01Pos = new Vector3(18.65f, -9.9f, 1f);
+                        jewel02Pos = new Vector3(21.5f, -2, 1f);
+                        jewel03Pos = new Vector3(5.9f, -8.25f, 1f);
+                        jewel04Pos = new Vector3(-4.5f, -7.5f, 1f);
+                        jewel05Pos = new Vector3(-7.85f, -14.45f, 1f);
+                        jewel06Pos = new Vector3(-6.65f, -4.8f, 1f);
+                        jewel07Pos = new Vector3(-10.5f, 2.15f, 1f);
+                        jewel08Pos = new Vector3(5.5f, 3.5f, 1f);
+                        jewel09Pos = new Vector3(19, -1.2f, 1f);
+                        jewel10Pos = new Vector3(21.5f, -8.35f, 1f);
+                        jewel11Pos = new Vector3(12.5f, -3.75f, 1f);
+                        jewel12Pos = new Vector3(5.9f, -5.25f, 1f);
+                        jewel13Pos = new Vector3(-2.65f, -16.5f, 1f);
+                        jewel14Pos = new Vector3(-16.75f, -4.75f, 1f);
+                        jewel15Pos = new Vector3(-3.8f, 3.5f, 1f);
                     }
                     else {
                         policeTeamPos = new Vector3(-10.2f, 1.18f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
@@ -2039,6 +2090,19 @@ namespace LasMonjas
                         flagZoneThreePos = new Vector3(-12.15f, 7.35f, 0.4f);
                         zoneThreePos = new Vector3(-12.15f, 7.35f, 0.5f);
                     }
+                    else if (activatedDleks) {
+                        usurperPlayerPos = new Vector3(1f, 5.35f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        greenTeamPos = new Vector3(7f, -8.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        yellowTeamPos = new Vector3(-6.25f, -3.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        greenTeamFloorPos = new Vector3(7f, -8.5f, 0.5f);
+                        yellowTeamFloorPos = new Vector3(-6.25f, -3.75f, 0.5f);
+                        flagZoneOnePos = new Vector3(9.1f, -2.25f, 0.4f);
+                        zoneOnePos = new Vector3(9.1f, -2.25f, 0.5f);
+                        flagZoneTwoPos = new Vector3(-4.5f, -7.5f, 0.4f);
+                        zoneTwoPos = new Vector3(-4.5f, -7.5f, 0.5f);
+                        flagZoneThreePos = new Vector3(-3.25f, -15.5f, 0.4f);
+                        zoneThreePos = new Vector3(-3.25f, -15.5f, 0.5f);
+                    }
                     else {
                         usurperPlayerPos = new Vector3(-1f, 5.35f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                         greenTeamPos = new Vector3(-7f, -8.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
@@ -2228,6 +2292,10 @@ namespace LasMonjas
                         hotPotatoPlayerPos = new Vector3(-6.5f, -2.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                         notPotatoTeamPos = new Vector3(12.5f, -0.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                     }
+                    else if (activatedDleks) {
+                        hotPotatoPlayerPos = new Vector3(0.75f, -7f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        notPotatoTeamPos = new Vector3(-6.25f, -3.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    }
                     else {
                         hotPotatoPlayerPos = new Vector3(-0.75f, -7f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                         notPotatoTeamPos = new Vector3(6.25f, -3.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
@@ -2306,6 +2374,15 @@ namespace LasMonjas
                         medkitTwoPos = new Vector3(-18.85f, 2f, -0.1f);
                         medkitThreePos = new Vector3(-5.75f, 11.75f, -0.1f);
                         laboratoryPos = new Vector3(-12f, 7.2f, 0.5f);
+                    }
+                    else if (activatedDleks) {
+                        zombieTeamPos = new Vector3(17.25f, -13.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        survivorTeamPos = new Vector3(-11.75f, -4.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        nursePos = new Vector3(10.2f, 3.6f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        medkitOnePos = new Vector3(7.25f, -5f, -0.1f);
+                        medkitTwoPos = new Vector3(-3.75f, 3.5f, -0.1f);
+                        medkitThreePos = new Vector3(13.75f, -3.75f, -0.1f);
+                        laboratoryPos = new Vector3(10.25f, 3.38f, 0.5f);
                     }
                     else {
                         zombieTeamPos = new Vector3(-17.25f, -13.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
@@ -2499,6 +2576,13 @@ namespace LasMonjas
                         limeTeamFloorPos = new Vector3(-17.5f, -1.15f, 0.5f);
                         pinkTeamFloorPos = new Vector3(7.7f, -0.95f, 0.5f);
                     }
+                    else if (activatedDleks) {
+                        serialKillerPos = new Vector3(-6.35f, -7.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        limeTeamPos = new Vector3(17f, -5.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        pinkTeamPos = new Vector3(-12f, -4.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        limeTeamFloorPos = new Vector3(17f, -5.5f, 0.5f);
+                        pinkTeamFloorPos = new Vector3(-12f, -4.75f, 0.5f);
+                    }
                     else {
                         serialKillerPos = new Vector3(6.35f, -7.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                         limeTeamPos = new Vector3(-17f, -5.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
@@ -2636,6 +2720,23 @@ namespace LasMonjas
                         cyanBasePos = new Vector3(7.4f, -5f, 0.5f);
                         greyBasePos = new Vector3(-12f, 7f, 0.5f);
                         allulMonjaPos = new Vector3(9.2f, 5f, 0.5f);
+                    }
+                    else if (activatedDleks) {
+                        bigMonjaPos = new Vector3(-4.5f, -7.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        greenTeamPos = new Vector3(9f, -2.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        cyanTeamPos = new Vector3(-5f, -15.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        bigSpawnOnePos = new Vector3(-9.5f, 0.9f, 1f);
+                        bigSpawnTwoPos = new Vector3(17.15f, -13.25f, 1f);
+                        littleSpawnOnePos = new Vector3(20.5f, -5.5f, 0.5f);
+                        littleSpawnTwoPos = new Vector3(0.75f, 5.25f, 0.5f);
+                        littleSpawnThreePos = new Vector3(2.15f, -9.75f, 0.5f);
+                        littleSpawnFourPos = new Vector3(-16.5f, -4.7f, 0.5f);
+                        greenBasePos = new Vector3(9f, -2.5f, 0.5f);
+                        cyanBasePos = new Vector3(-5f, -15.5f, 0.5f);
+                        greyBasePos = new Vector3(-4.5f, -7.25f, 0.5f);
+                        allulMonjaPos = new Vector3(9.8f, -8.9f, 0.5f);
+                        GameObject skeldBigYVentDleks = GameObject.Find("AdminVent");
+                        skeldBigYVentDleks.transform.position = new Vector3(-2.25f, -15.25f, skeldBigYVentDleks.transform.position.z);
                     }
                     else {
                         bigMonjaPos = new Vector3(4.5f, -7.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
@@ -3243,7 +3344,6 @@ namespace LasMonjas
             passive.OnMouseOut.AddListener(action);
             passive.enabled = enabled;
         }
-        public static bool IsNullEmptyOrWhiteSpace(string text) => text is null or "" || text.All(x => x is ' ' or '\n');
         public static void ForEach<T>(this IEnumerable<T> source, Action<T> action) {
             foreach (var item in source)
                 action(item);

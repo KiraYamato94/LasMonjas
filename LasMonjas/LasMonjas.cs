@@ -6,6 +6,7 @@ using UnityEngine;
 using LasMonjas.Objects;
 using LasMonjas.Core;
 using AmongUs.GameOptions;
+using static UnityEngine.GraphicsBuffer;
 
 namespace LasMonjas
 {
@@ -23,6 +24,8 @@ namespace LasMonjas
         public static bool updatedSenseiMinimap = false;
 
         public static bool updatedSenseiAdminmap = false;
+
+        public static bool activatedDleks = false;
 
         public static bool createdduelarena = false;
 
@@ -191,6 +194,7 @@ namespace LasMonjas
             activatedSensei = false;
             updatedSenseiMinimap = false;
             updatedSenseiAdminmap = false;
+            activatedDleks = false;
             createdduelarena = false;
             createdseekerarena = false;
             createddevourerarena = false;
@@ -672,6 +676,21 @@ namespace LasMonjas
             currentTarget = null;
             cooldown = CustomOptionHolder.medusaCooldown.getFloat();
             delay = CustomOptionHolder.medusaDelay.getFloat();
+        }
+
+        public static void ResetMedusa() {
+            foreach (PlayerControl depetrifiedPlayer in petrifiedPlayers) {
+                if (PlayerInCache.LocalPlayer.PlayerControl == depetrifiedPlayer) {
+                    SoundManager.Instance.PlaySound(CustomMain.customAssets.hackerHack, false, 100f);
+                }
+                depetrifiedPlayer.moveable = true;
+
+                GameObject petrifyZone = GameObject.Find(depetrifiedPlayer.name + "petrifyZone");
+                if (petrifyZone != null) {
+                    UnityEngine.Object.Destroy(petrifyZone);
+                }
+            }
+            petrifiedPlayers = new List<PlayerControl>();
         }
     }
     public static class Hypnotist
@@ -1183,6 +1202,9 @@ namespace LasMonjas
                         if (LasMonjas.activatedSensei) {
                             Jailer.prisonPlayer.transform.position = new Vector3(-0.6f, 3.5f, Jailer.prisonPlayer.transform.position.z);
                         }
+                        else if (LasMonjas.activatedDleks) {
+                            Jailer.prisonPlayer.transform.position = new Vector3(0.75f, 5.25f, Jailer.prisonPlayer.transform.position.z);
+                        }
                         else {
                             Jailer.prisonPlayer.transform.position = new Vector3(-0.75f, 5.25f, Jailer.prisonPlayer.transform.position.z);
                         }
@@ -1345,6 +1367,7 @@ namespace LasMonjas
         public static List<GameObject> groundItems = new List<GameObject>();
         public static byte foundBox = 0;
         public static bool spawnBoxOnCustomSkeld = false;
+        public static bool spawnBoxOnDleks = false;
         public static PlayerControl currentTarget;
         public static float killCooldown = 30f;                
         public static bool triggerStrandedWin = false;
@@ -1395,6 +1418,7 @@ namespace LasMonjas
             currentBox = null;
             triggerStrandedWin = false;
             spawnBoxOnCustomSkeld = CustomOptionHolder.activateSenseiMap.getBool();
+            spawnBoxOnDleks = CustomOptionHolder.activateDleksMap.getBool();
             howManyKills = 0;
             storedAmmo = 0;
             canVent = false;
@@ -1435,6 +1459,38 @@ namespace LasMonjas
                         susBoxPositions.Add(new Vector3(-6.75f, 3.75f, 0.4f));
                         susBoxPositions.Add(new Vector3(-6.75f, 8f, 0.4f));
                         susBoxPositions.Add(new Vector3(-6.75f, 10.85f, 0.4f));
+                    }
+                    else if (spawnBoxOnDleks) {
+                        susBoxPositions.Add(new Vector3(15.75f, -0.9f, 0.4f));
+                        susBoxPositions.Add(new Vector3(7.85f, -11.75f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-4.5f, -9.75f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-5.75f, -15f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-1.75f, -3.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(18.5f, -9.65f, 0.4f));
+                        susBoxPositions.Add(new Vector3(3.5f, 1.15f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-16.75f, -6f, 0.4f));
+                        susBoxPositions.Add(new Vector3(3f, -10f, 0.4f));
+                        susBoxPositions.Add(new Vector3(21.5f, -2.15f, 0.4f));
+                        susBoxPositions.Add(new Vector3(20f, -4f, 0.4f));
+                        susBoxPositions.Add(new Vector3(21.5f, -8f, 0.4f));
+                        susBoxPositions.Add(new Vector3(16.9f, -5.4f, 0.4f));
+                        susBoxPositions.Add(new Vector3(13.5f, -6.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(18f, 2.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(10.1f, 1.15f, 0.4f));
+                        susBoxPositions.Add(new Vector3(9.4f, -4.65f, 0.4f));
+                        susBoxPositions.Add(new Vector3(18.5f, -13.15f, 0.4f));
+                        susBoxPositions.Add(new Vector3(12.1f, -14.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(6.5f, -8.25f, 0.4f));
+                        susBoxPositions.Add(new Vector3(3.55f, -15f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-6.3f, -7.25f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-2.5f, -12.25f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-2.15f, -15f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-9.4f, -12.25f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-11.75f, -6.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-5.2f, -4.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-9.5f, 0f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-6f, 1.15f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-1.75f, 5.5f, 0.4f));
                     }
                     else {
                         susBoxPositions.Add(new Vector3(-15.75f, -0.9f, 0.4f));
@@ -1688,6 +1744,7 @@ namespace LasMonjas
         public static GameObject ritualObject = null;
         public static List<Vector3> itemListPositions = new List<Vector3>();
         public static bool spawnBoxOnCustomSkeld = false;
+        public static bool spawnBoxOnDleks = false;
         public static GameObject item01 = null;
         public static GameObject item02 = null;
         public static GameObject item03 = null;
@@ -1730,6 +1787,7 @@ namespace LasMonjas
             ritualObject = null;
             itemListPositions.Clear();
             spawnBoxOnCustomSkeld = CustomOptionHolder.activateSenseiMap.getBool();
+            spawnBoxOnDleks = CustomOptionHolder.activateDleksMap.getBool();
             item01 = null;
             item02 = null;
             item03 = null;
@@ -1754,6 +1812,23 @@ namespace LasMonjas
                         itemListPositions.Add(new Vector3(7.5f, -1f, 0.4f));
                         itemListPositions.Add(new Vector3(4.6f, -1f, 0.4f));
                         itemListPositions.Add(new Vector3(-6.75f, 10.85f, 0.4f));
+                    } 
+                    else if (spawnBoxOnDleks) {
+                        itemListPositions.Add(new Vector3(18f, 2.5f, 0.4f));
+                        itemListPositions.Add(new Vector3(-4.5f, -9.75f, 0.4f));
+                        itemListPositions.Add(new Vector3(-5.75f, -15f, 0.4f));
+                        itemListPositions.Add(new Vector3(-16.75f, -6f, 0.4f));
+                        itemListPositions.Add(new Vector3(21.5f, -2.15f, 0.4f));
+                        itemListPositions.Add(new Vector3(21.5f, -8f, 0.4f));
+                        itemListPositions.Add(new Vector3(13.5f, -6.5f, 0.4f));
+                        itemListPositions.Add(new Vector3(9.4f, -4.65f, 0.4f));
+                        itemListPositions.Add(new Vector3(18.5f, -13.15f, 0.4f));
+                        itemListPositions.Add(new Vector3(6.5f, -8.25f, 0.4f));
+                        itemListPositions.Add(new Vector3(3.55f, -15f, 0.4f));
+                        itemListPositions.Add(new Vector3(-2.15f, -15f, 0.4f));
+                        itemListPositions.Add(new Vector3(-8, -14.25f, 0.4f));
+                        itemListPositions.Add(new Vector3(-5.2f, -4.5f, 0.4f));
+                        itemListPositions.Add(new Vector3(-10.5f, 2.35f, 0.4f));
                     }
                     else {
                         itemListPositions.Add(new Vector3(-18f, 2.5f, 0.4f));
@@ -2375,6 +2450,9 @@ namespace LasMonjas
                     case 0:
                         if (LasMonjas.activatedSensei) {
                             Jailer.prisonPlayer.transform.position = new Vector3(-0.6f, 3.5f, Jailer.prisonPlayer.transform.position.z);
+                        }
+                        else if (LasMonjas.activatedDleks) {
+                            Jailer.prisonPlayer.transform.position = new Vector3(0.75f, 5.25f, Jailer.prisonPlayer.transform.position.z);
                         }
                         else {
                             Jailer.prisonPlayer.transform.position = new Vector3(-0.75f, 5.25f, Jailer.prisonPlayer.transform.position.z);
@@ -4648,6 +4726,7 @@ namespace LasMonjas
         public static bool zombiePlayer14IsReviving = false;
 
         public static bool zombieSenseiMapLaboratoryMode = false;
+        public static bool zombieDleksMapLaboratoryMode = false;
 
         public static GameObject laboratory = null;
         public static GameObject laboratoryEnterButton = null;
@@ -5021,6 +5100,7 @@ namespace LasMonjas
             infectTime = CustomOptionHolder.zombieLaboratoryInfectTime.getFloat();
             searchBoxTimer = CustomOptionHolder.zombieLaboratorySearchBoxTimer.getFloat();
             zombieSenseiMapLaboratoryMode = CustomOptionHolder.activateSenseiMap.getBool();
+            zombieDleksMapLaboratoryMode = CustomOptionHolder.activateDleksMap.getBool();
             currentKeyItems = 0;
             triggerZombieWin = false;
             triggerSurvivorWin = false;
@@ -5102,6 +5182,71 @@ namespace LasMonjas
                         susBoxPositions.Add(new Vector3(-6.75f, 8f, 0.4f));
                         susBoxPositions.Add(new Vector3(-6.75f, 10.85f, 0.4f));
                         susBoxPositions.Add(new Vector3(-15.5f, -6.75f, 0.4f));
+                    }
+                    else if (zombieDleksMapLaboratoryMode) {
+                        // sus[0-5] = key items
+                        susBoxPositions.Add(new Vector3(15.75f, -0.9f, 0.4f));
+                        susBoxPositions.Add(new Vector3(20, -6.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(7.85f, -11.75f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-4.5f, -9.75f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-5.75f, -15f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-1.75f, -3.5f, 0.4f));
+                        // sus[6-9] = ammo boxes
+                        susBoxPositions.Add(new Vector3(18.5f, -9.65f, 0.4f));
+                        susBoxPositions.Add(new Vector3(3.5f, 1.15f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-16.75f, -6f, 0.4f));
+                        susBoxPositions.Add(new Vector3(3f, -10f, 0.4f));
+                        // sus[10-59] = nothing boxes
+                        susBoxPositions.Add(new Vector3(21.5f, -2.15f, 0.4f));
+                        susBoxPositions.Add(new Vector3(20f, -4f, 0.4f));
+                        susBoxPositions.Add(new Vector3(21f, -5.25f, 0.4f));
+                        susBoxPositions.Add(new Vector3(21.5f, -8f, 0.4f));
+                        susBoxPositions.Add(new Vector3(16.9f, -5.4f, 0.4f));
+                        susBoxPositions.Add(new Vector3(13.9f, -5.25f, 0.4f));
+                        susBoxPositions.Add(new Vector3(13.5f, -6.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(12.5f, -3.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(18f, 2.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(13.65f, 1.15f, 0.4f));
+                        susBoxPositions.Add(new Vector3(7.1f, 1.15f, 0.4f));
+                        susBoxPositions.Add(new Vector3(9.1f, -1.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(9.4f, -4.65f, 0.4f));
+                        susBoxPositions.Add(new Vector3(5.75f, -5.3f, 0.4f));
+                        susBoxPositions.Add(new Vector3(18.5f, -13.15f, 0.4f));
+                        susBoxPositions.Add(new Vector3(13.85f, -11.75f, 0.4f));
+                        susBoxPositions.Add(new Vector3(12.1f, -14.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(9.5f, -11f, 0.4f));
+                        susBoxPositions.Add(new Vector3(9f, -8.25f, 0.4f));
+                        susBoxPositions.Add(new Vector3(6.5f, -8.25f, 0.4f));
+                        susBoxPositions.Add(new Vector3(6.5f, -14.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-0.35f, -9.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(0.65f, -15.75f, 0.4f));
+                        susBoxPositions.Add(new Vector3(3.55f, -15f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-1.05f, -7f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-2.5f, -8.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-6.3f, -7.25f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-2.5f, -12.25f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-5.15f, -12.25f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-2.15f, -15f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-4f, -16f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-8f, -14.25f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-9.4f, -12.25f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-9.4f, -8.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-11.75f, -6.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-14f, -4.75f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-16.75f, -3f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-9.5f, -3.25f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-6.65f, -4.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-5.2f, -4.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-9.5f, 0f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-10.5f, 2.35f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-6f, 1.15f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-1.75f, 1.15f, 0.4f));
+                        susBoxPositions.Add(new Vector3(-1.75f, 5.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(3.5f, 5.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(3.5f, -3.5f, 0.4f));
+                        susBoxPositions.Add(new Vector3(0.8f, -1.45f, 0.4f));
+                        susBoxPositions.Add(new Vector3(0.8f, 3.85f, 0.4f));
+                        susBoxPositions.Add(new Vector3(0.65f, -5.65f, 0.4f));
                     }
                     else {
                         // sus[0-5] = key items
@@ -5714,6 +5859,7 @@ namespace LasMonjas
 
         public static List<Vector3> soloPlayersSpawnPositions = new List<Vector3>();
         public static bool battleRoyaleSenseiMapMode = false;
+        public static bool battleRoyaleDleksMap = false;
 
         public static float killCooldown = 1;
         public static float fighterLifes = 3f;
@@ -5880,6 +6026,7 @@ namespace LasMonjas
 
             killCooldown = CustomOptionHolder.battleRoyaleKillCooldown.getFloat();
             battleRoyaleSenseiMapMode = CustomOptionHolder.activateSenseiMap.getBool();
+            battleRoyaleDleksMap = CustomOptionHolder.activateDleksMap.getBool();
             matchType = CustomOptionHolder.battleRoyaleMatchType.getSelection();
             if (PlayerInCache.AllPlayers.Count >= 11) {
                 serialKillerCooldown = killCooldown / 3;
@@ -5942,6 +6089,23 @@ namespace LasMonjas
                         soloPlayersSpawnPositions.Add(new Vector3(-12f, -12.75f, 0f)); // storage
                         soloPlayersSpawnPositions.Add(new Vector3(-3.75f, 5f, 0f)); // hidden cafeteria room
                         soloPlayersSpawnPositions.Add(new Vector3(-19.5f, -1.5f, 0f)); // reactor
+                    }
+                    else if (battleRoyaleDleksMap) {
+                        soloPlayersSpawnPositions.Add(new Vector3(8.75f, -8.5f, 0f)); // elec
+                        soloPlayersSpawnPositions.Add(new Vector3(9.15f, -4.75f, 0f)); // medbey
+                        soloPlayersSpawnPositions.Add(new Vector3(-6f, -3.5f, 0f)); // o2
+                        soloPlayersSpawnPositions.Add(new Vector3(-6.25f, -8.5f, 0f)); // admin
+                        soloPlayersSpawnPositions.Add(new Vector3(17.75f, 2.5f, 0f)); // upper engine
+                        soloPlayersSpawnPositions.Add(new Vector3(-2.75f, -15.25f, 0f)); // comms
+                        soloPlayersSpawnPositions.Add(new Vector3(17.75f, -13.25f, 0f)); // lower engine
+                        soloPlayersSpawnPositions.Add(new Vector3(-9.75f, 2.75f, 0f)); // weapons
+                        soloPlayersSpawnPositions.Add(new Vector3(13.5f, -6.75f, 0f)); // seguridad
+                        soloPlayersSpawnPositions.Add(new Vector3(-9.5f, -12.25f, 0f)); // shields
+                        soloPlayersSpawnPositions.Add(new Vector3(21.5f, -2.5f, 0f)); // reactor
+                        soloPlayersSpawnPositions.Add(new Vector3(-16.5f, -3.5f, 0f)); // nav
+                        soloPlayersSpawnPositions.Add(new Vector3(0.75f, 5.25f, 0f)); // caftereria upper
+                        soloPlayersSpawnPositions.Add(new Vector3(1.75f, -16f, 0f)); // stoage
+                        soloPlayersSpawnPositions.Add(new Vector3(0.75f, -2.75f, 0f)); // caftereria lower
                     }
                     else {
                         soloPlayersSpawnPositions.Add(new Vector3(-8.75f, -8.5f, 0f)); // elec
@@ -6459,6 +6623,7 @@ namespace LasMonjas
         public static List<GameObject> bigMonjaSpawns = new List<GameObject>();
 
         public static bool monjaFestivalSenseiMapMode = false;
+        public static bool monjaFestivalDleksMap = false;
 
         public static float grabDeliverTime = 1f;
 
@@ -6720,6 +6885,7 @@ namespace LasMonjas
 
             grabDeliverTime = 1f;
             monjaFestivalSenseiMapMode = CustomOptionHolder.activateSenseiMap.getBool();
+            monjaFestivalDleksMap = CustomOptionHolder.activateDleksMap.getBool();
             if (PlayerInCache.AllPlayers.Count >= 11) {
                 bigMonjaPlayerKillCooldown = LasMonjas.gamemodeKillCooldown / 3;
                 bigMonjaPlayerFindDeliverCooldown = grabDeliverTime / 3;
@@ -6788,6 +6954,13 @@ namespace LasMonjas
                         allulMonjaPositions.Add(new Vector3(13.8f, -0.3f, 0.4f));
                         allulMonjaPositions.Add(new Vector3(-19.8f, 5.4f, 0.4f));
                         allulMonjaPositions.Add(new Vector3(-8.4f, -13.8f, 0.4f));
+                    }
+                    else if (monjaFestivalDleksMap) {
+                        allulMonjaPositions.Add(new Vector3(9.8f, -8.9f, 0.4f));
+                        allulMonjaPositions.Add(new Vector3(-5.25f, -4.65f, 0.4f));
+                        allulMonjaPositions.Add(new Vector3(-7.75f, -14.25f, 0.4f));
+                        allulMonjaPositions.Add(new Vector3(12.5f, -3.75f, 0.4f));
+                        allulMonjaPositions.Add(new Vector3(-4.5f, -9.5f, 0.4f));
                     }
                     else {
                         allulMonjaPositions.Add(new Vector3(-9.8f, -8.9f, 0.4f));
