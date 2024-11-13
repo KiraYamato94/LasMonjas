@@ -78,6 +78,52 @@ namespace LasMonjas.Objects
                                 break;
                         }
                     }
+                    else if (activatedDleks) {
+                        switch (TreasureHunter.randomSpawn) {
+                            case 1:
+                                position = new Vector3(-10, 2.5f, 1f);
+                                break;
+                            case 2:
+                                position = new Vector3(-5.25f, -4.75f, 1f);
+                                break;
+                            case 3:
+                                position = new Vector3(-16.85f, -6.25f, 1f);
+                                break;
+                            case 4:
+                                position = new Vector3(-11.35f, -10.25f, 1f);
+                                break;
+                            case 5:
+                                position = new Vector3(-2, -15, 1f);
+                                break;
+                            case 6:
+                                position = new Vector3(-6.5f, -8.75f, 1f);
+                                break;
+                            case 7:
+                                position = new Vector3(1.5f, -17, 1f);
+                                break;
+                            case 8:
+                                position = new Vector3(0.75f, 5.5f, 1f);
+                                break;
+                            case 9:
+                                position = new Vector3(5.9f, -5.25f, 1f);
+                                break;
+                            case 10:
+                                position = new Vector3(14, -6.85f, 1f);
+                                break;
+                            case 11:
+                                position = new Vector3(19.75f, -3.85f, 1f);
+                                break;
+                            case 12:
+                                position = new Vector3(18.25f, 2.5f, 1f);
+                                break;
+                            case 13:
+                                position = new Vector3(19, -9.75f, 1f);
+                                break;
+                            case 14:
+                                position = new Vector3(9.75f, -8.75f, 1f);
+                                break;
+                        }
+                    }
                     else {
                         switch (TreasureHunter.randomSpawn) {
                             case 1:
