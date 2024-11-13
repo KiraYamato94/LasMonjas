@@ -18,6 +18,8 @@ namespace LasMonjas.Patches
 
             Helpers.activateSenseiMap();
 
+            Helpers.activateDleksMap();
+
             GameObject allulfitti = GameObject.Instantiate(CustomMain.customAssets.allulfitti, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
             GameObject allulbanner = GameObject.Instantiate(CustomMain.customAssets.allulbanner, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
             switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
@@ -25,6 +27,10 @@ namespace LasMonjas.Patches
                     if (activatedSensei) {
                         allulfitti.transform.position = new Vector3(-6.8f, -5.2f, 0.5f);
                         allulbanner.SetActive(false);
+                    }
+                    else if (activatedDleks) {
+                        allulfitti.transform.position = new Vector3(13.75f, 2, 0.5f);
+                        allulbanner.transform.position = new Vector3(0.75f, -3.5f, 0.5f);
                     }
                     else {
                         allulfitti.transform.position = new Vector3(-13.75f, 2, 0.5f);
@@ -520,7 +526,10 @@ namespace LasMonjas.Patches
                 //removeAirshipDoors();
 
                 // Activate sensei map
-                Helpers.activateSenseiMap();               
+                Helpers.activateSenseiMap();
+
+                // Activate Dleks map
+                Helpers.activateDleksMap();
 
                 // Create the jail if there's a Jailer
                 if (Jailer.jailer != null && PlayerInCache.LocalPlayer.PlayerControl != null && !createdjail) {
@@ -533,6 +542,9 @@ namespace LasMonjas.Patches
                         case 0:
                             if (activatedSensei) {
                                 cell.transform.position = new Vector3(-12f, 7.2f, 0.5f);
+                            }
+                            else if (activatedDleks) {
+                                cell.transform.position = new Vector3(10.25f, 3.38f, 0.5f);
                             }
                             else {
                                 cell.transform.position = new Vector3(-10.25f, 3.38f, 0.5f);
@@ -613,6 +625,9 @@ namespace LasMonjas.Patches
                         case 0:
                             if (activatedSensei) {
                                 Monja.ritualObject.transform.position = new Vector3(3f, 2.25f, 0.5f);
+                            }
+                            else if (activatedDleks) {                                
+                                Monja.ritualObject.transform.position = new Vector3(0.9f, 5f, 0.5f);
                             }
                             else {
                                 Monja.ritualObject.transform.position = new Vector3(-0.9f, 5f, 0.5f);

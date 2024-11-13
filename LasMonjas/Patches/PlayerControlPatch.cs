@@ -2258,7 +2258,11 @@ namespace LasMonjas.Patches {
 
                     // Medusa remove petrify from list
                     if (Medusa.medusa != null && Medusa.petrifiedPlayers.Count != 0) {
-                        Helpers.unpetrifyForMinigames(target);                        
+                        if (target == Medusa.medusa) {
+                            Medusa.ResetMedusa();
+                        } else {
+                            Helpers.unpetrifyForMinigames(target);
+                        }
                     }
 
                     // Devourer clear List if killed
@@ -2551,6 +2555,9 @@ namespace LasMonjas.Patches {
                                 if (activatedSensei) {
                                     CaptureTheFlag.blueflag.transform.position = new Vector3(7.7f, -1.15f, 0.5f);
                                 }
+                                else if (activatedDleks) {
+                                    CaptureTheFlag.blueflag.transform.position = new Vector3(-16.5f, -4.65f, 0.5f);
+                                }
                                 else {
                                     CaptureTheFlag.blueflag.transform.position = new Vector3(16.5f, -4.65f, 0.5f);
                                 }
@@ -2592,6 +2599,9 @@ namespace LasMonjas.Patches {
                             case 0:
                                 if (activatedSensei) {
                                     CaptureTheFlag.redflag.transform.position = new Vector3(-17.5f, -1.35f, 0.5f);
+                                }
+                                else if (activatedDleks) {
+                                    CaptureTheFlag.redflag.transform.position = new Vector3(20.5f, -5.35f, 0.5f);
                                 }
                                 else {
                                     CaptureTheFlag.redflag.transform.position = new Vector3(-20.5f, -5.35f, 0.5f);
@@ -2646,6 +2656,9 @@ namespace LasMonjas.Patches {
                                     case 0:
                                         if (activatedSensei) {
                                             CaptureTheFlag.stealerPlayer.transform.position = new Vector3(-3.65f, 5f, CaptureTheFlag.stealerPlayer.transform.position.z);
+                                        }
+                                        else if (activatedDleks) {
+                                            CaptureTheFlag.stealerPlayer.transform.position = new Vector3(-6.35f, -7.5f, CaptureTheFlag.stealerPlayer.transform.position.z);
                                         }
                                         else {
                                             CaptureTheFlag.stealerPlayer.transform.position = new Vector3(6.35f, -7.5f, CaptureTheFlag.stealerPlayer.transform.position.z);
@@ -2752,6 +2765,9 @@ namespace LasMonjas.Patches {
                                             if (activatedSensei) {
                                                 player.transform.position = new Vector3(-17.5f, -1.15f, player.transform.position.z);
                                             }
+                                            else if (activatedDleks) {
+                                                player.transform.position = new Vector3(20.5f, -5.15f, player.transform.position.z);
+                                            }
                                             else {
                                                 player.transform.position = new Vector3(-20.5f, -5.15f, player.transform.position.z);
                                             }
@@ -2857,6 +2873,9 @@ namespace LasMonjas.Patches {
                                             if (activatedSensei) {
                                                 player.transform.position = new Vector3(7.7f, -0.95f, player.transform.position.z);
                                             }
+                                            else if (activatedDleks) {
+                                                player.transform.position = new Vector3(-16.5f, -4.45f, player.transform.position.z);
+                                            }
                                             else {
                                                 player.transform.position = new Vector3(16.5f, -4.45f, player.transform.position.z);
                                             }
@@ -2958,6 +2977,9 @@ namespace LasMonjas.Patches {
                                         case 0:
                                             if (activatedSensei) {
                                                 player.transform.position = new Vector3(-12f, 5f, player.transform.position.z);
+                                            }
+                                            else if (activatedDleks) {
+                                                player.transform.position = new Vector3(10.2f, 1.18f, player.transform.position.z);
                                             }
                                             else {
                                                 player.transform.position = new Vector3(-10.2f, 1.18f, player.transform.position.z);
@@ -3103,6 +3125,9 @@ namespace LasMonjas.Patches {
                                             if (activatedSensei) {
                                                 player.transform.position = new Vector3(13.75f, -0.2f, player.transform.position.z);
                                             }
+                                            else if (activatedDleks) {
+                                                player.transform.position = new Vector3(1.31f, -16.25f, player.transform.position.z);
+                                            }
                                             else {
                                                 player.transform.position = new Vector3(-1.31f, -16.25f, player.transform.position.z);
                                             }
@@ -3171,6 +3196,9 @@ namespace LasMonjas.Patches {
                                     case 0:
                                         if (activatedSensei) {
                                             KingOfTheHill.usurperPlayer.transform.position = new Vector3(-6.8f, 10.75f, KingOfTheHill.usurperPlayer.transform.position.z);
+                                        }
+                                        else if (activatedDleks) {
+                                            KingOfTheHill.usurperPlayer.transform.position = new Vector3(1f, 5.35f, KingOfTheHill.usurperPlayer.transform.position.z);
                                         }
                                         else {
                                             KingOfTheHill.usurperPlayer.transform.position = new Vector3(-1f, 5.35f, KingOfTheHill.usurperPlayer.transform.position.z);
@@ -3310,6 +3338,9 @@ namespace LasMonjas.Patches {
                                             if (activatedSensei) {
                                                 player.transform.position = new Vector3(-16.4f, -10.25f, player.transform.position.z);
                                             }
+                                            else if (activatedDleks) {
+                                                player.transform.position = new Vector3(7f, -8.25f, player.transform.position.z);
+                                            }
                                             else {
                                                 player.transform.position = new Vector3(-7f, -8.25f, player.transform.position.z);
                                             }
@@ -3448,6 +3479,9 @@ namespace LasMonjas.Patches {
                                         case 0:
                                             if (activatedSensei) {
                                                 player.transform.position = new Vector3(7f, -14.15f, player.transform.position.z);
+                                            }
+                                            else if (activatedDleks) {
+                                                player.transform.position = new Vector3(-6.25f, -3.5f, player.transform.position.z);
                                             }
                                             else {
                                                 player.transform.position = new Vector3(6.25f, -3.5f, player.transform.position.z);
@@ -3865,6 +3899,14 @@ namespace LasMonjas.Patches {
                                                     player.transform.position = new Vector3(4.75f, -8.5f, player.transform.position.z);
                                                 }
                                             }
+                                            else if (activatedDleks) {
+                                                if (player == ZombieLaboratory.nursePlayer) {
+                                                    player.transform.position = new Vector3(10.2f, 3.6f, player.transform.position.z);
+                                                }
+                                                else {
+                                                    player.transform.position = new Vector3(-11.75f, -4.75f, player.transform.position.z);
+                                                }
+                                            }
                                             else {
                                                 if (player == ZombieLaboratory.nursePlayer) {
                                                     player.transform.position = new Vector3(-10.2f, 3.6f, player.transform.position.z);
@@ -4053,6 +4095,9 @@ namespace LasMonjas.Patches {
                                             if (activatedSensei) {
                                                 player.transform.position = new Vector3(-4.85f, 6, player.transform.position.z);
                                             }
+                                            else if (activatedDleks) {
+                                                player.transform.position = new Vector3(17.25f, -13.25f, player.transform.position.z);
+                                            }
                                             else {
                                                 player.transform.position = new Vector3(-17.25f, -13.25f, player.transform.position.z);
                                             }
@@ -4129,6 +4174,9 @@ namespace LasMonjas.Patches {
                                         case 0:
                                             if (activatedSensei) {
                                                 BattleRoyale.serialKiller.transform.position = new Vector3(-3.65f, 5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                                            }
+                                            else if (activatedDleks) {
+                                                BattleRoyale.serialKiller.transform.position = new Vector3(-6.35f, -7.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                                             }
                                             else {
                                                 BattleRoyale.serialKiller.transform.position = new Vector3(6.35f, -7.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
@@ -4239,6 +4287,9 @@ namespace LasMonjas.Patches {
                                             case 0:
                                                 if (activatedSensei) {
                                                     player.transform.position = new Vector3(-17.5f, -1.15f, player.transform.position.z);
+                                                }
+                                                else if (activatedDleks) {
+                                                    player.transform.position = new Vector3(17f, -5.5f, player.transform.position.z);
                                                 }
                                                 else {
                                                     player.transform.position = new Vector3(-17f, -5.5f, player.transform.position.z);
@@ -4351,6 +4402,9 @@ namespace LasMonjas.Patches {
                                                 if (activatedSensei) {
                                                     player.transform.position = new Vector3(7.7f, -0.95f, player.transform.position.z);
                                                 }
+                                                else if (activatedDleks) {
+                                                    player.transform.position = new Vector3(-12f, -4.75f, player.transform.position.z);
+                                                }
                                                 else {
                                                     player.transform.position = new Vector3(12f, -4.75f, player.transform.position.z);
                                                 }
@@ -4435,6 +4489,9 @@ namespace LasMonjas.Patches {
                                     case 0:
                                         if (activatedSensei) {
                                             MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-12f, 7f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                                        }
+                                        else if (activatedDleks) {
+                                            MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-4.5f, -7.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                                         }
                                         else {
                                             MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(4.5f, -7.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
@@ -4628,6 +4685,9 @@ namespace LasMonjas.Patches {
                                         case 0:
                                             if (activatedSensei) {
                                                 player.transform.position = new Vector3(-10.5f, -10, player.transform.position.z);
+                                            }
+                                            else if (activatedDleks) {
+                                                player.transform.position = new Vector3(9f, -2.5f, player.transform.position.z);
                                             }
                                             else {
                                                 player.transform.position = new Vector3(-9f, -2.5f, player.transform.position.z);
@@ -4823,6 +4883,9 @@ namespace LasMonjas.Patches {
                                         case 0:
                                             if (activatedSensei) {
                                                 player.transform.position = new Vector3(7.4f, -5f, player.transform.position.z);
+                                            }
+                                            else if (activatedDleks) {
+                                                player.transform.position = new Vector3(-5f, -15.5f, player.transform.position.z);
                                             }
                                             else {
                                                 player.transform.position = new Vector3(5f, -15.5f, player.transform.position.z);

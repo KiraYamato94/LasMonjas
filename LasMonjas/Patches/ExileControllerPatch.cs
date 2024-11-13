@@ -123,6 +123,11 @@ namespace LasMonjas.Patches {
             // Reset custom button timers where necessary
             CustomButton.MeetingEndedUpdate();
 
+            // Reset BombArea for Bomberman if meeting is called while Abombg me is active
+            if (Bomberman.bomberman != null && PlayerInCache.LocalPlayer.PlayerControl == Bomberman.bomberman) {
+                Bomberman.bombArea.SetActive(false);
+            }
+            
             // Librarian reset target
             if (Librarian.librarian != null && Librarian.targetLibrary != null) {
                 MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ResetSilenced, Hazel.SendOption.Reliable, -1);
@@ -131,7 +136,7 @@ namespace LasMonjas.Patches {
             }
 
             // BountyHunter exile if the exiled player was the bounty hunter target
-            if (BountyHunter.bountyhunter != null && !BountyHunter.bountyhunter.Data.IsDead && BountyHunter.hasToKill.Data.IsDead) {
+            if (BountyHunter.bountyhunter != null && !BountyHunter.bountyhunter.Data.IsDead && BountyHunter.hasToKill != null && BountyHunter.hasToKill.Data.IsDead) {
                 BountyHunter.bountyhunter.Exiled();
             }
 
@@ -142,6 +147,8 @@ namespace LasMonjas.Patches {
                 Yinyanger.yinyedplayer = null;
                 Yinyanger.yangyedplayer = null;
                 Yinyanger.colision = false;
+                Yinyanger.yinedButtonText.text = $" ";
+                Yinyanger.yanedButtonText.text = $" ";
             }
 
             // Yandere rampage mode
