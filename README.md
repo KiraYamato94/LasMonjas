@@ -36,6 +36,17 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
 
+**Version 3.8.3 (13rd November 2024)**
+- Readded Dleks via lobby option (activate Dleks + selecting skeld map will load Dleks, but Custom Skeld has priority over it)
+- Fixed an issue with custom nameplates that prevented meetings from starting
+- Fixed an issue with kill/revive players if they didn't have a pet
+- Fixed an issue with Bountyhunter if a meeting was called before using it's ability
+- Fixed an issue with Medusa where petrified players wouldn't unpetrify if Medusa was killed
+- Fixed an issue with Chameleon, now it's working propertly
+- Fixed a visual bug with Bomberman where self bomb area didn't disappear after a meeting
+- Fixed a visual bug with Yinyanger where yin/yang button's name didn't reset after a meeting
+- Fixed an issue on Monja Festival where Big Monja could become freezed after killing
+
 **Version 3.8.2 (12nd November 2024)**
 - This version can be played on Among Us v2024.10.29
 - Finally custom cosmetics are fixed, Las Monjas hats/visors are back.
