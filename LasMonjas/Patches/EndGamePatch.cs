@@ -138,14 +138,14 @@ namespace LasMonjas.Patches {
 
             foreach(var playerControl in PlayerInCache.AllPlayers) {
                 var roles = RoleInfo.getRoleInfoForPlayer(playerControl);
-                var (tasksCompleted, tasksTotal) = TasksHandler.taskInfo(playerControl.Data);
+                var (tasksCompleted, tasksTotal) = TasksHandler.taskInfo(playerControl.PlayerControl.Data);
                 int? killCount = GameHistory.deadPlayers.FindAll(x => x.killerIfExisting != null && x.killerIfExisting.PlayerId == playerControl.PlayerId).Count;
 
-                if (gameType >= 2 || killCount == 0 && !(new List<RoleInfo>() { RoleInfo.devourer, RoleInfo.sheriff, RoleInfo.welder, RoleInfo.taskMaster, RoleInfo.renegade, RoleInfo.minion, RoleInfo.bountyHunter, RoleInfo.trapper, RoleInfo.yinyanger, RoleInfo.challenger, RoleInfo.ninja, RoleInfo.berserker, RoleInfo.yandere, RoleInfo.stranded, RoleInfo.monja }.Contains(RoleInfo.getRoleInfoForPlayer(playerControl).FirstOrDefault()) || playerControl.Data.Role.IsImpostor)) {
+                if (gameType >= 2 || killCount == 0 && !(new List<RoleInfo>() { RoleInfo.devourer, RoleInfo.sheriff, RoleInfo.welder, RoleInfo.taskMaster, RoleInfo.renegade, RoleInfo.minion, RoleInfo.bountyHunter, RoleInfo.trapper, RoleInfo.yinyanger, RoleInfo.challenger, RoleInfo.ninja, RoleInfo.berserker, RoleInfo.yandere, RoleInfo.stranded, RoleInfo.monja }.Contains(RoleInfo.getRoleInfoForPlayer(playerControl).FirstOrDefault()) || playerControl.PlayerControl.Data.Role.IsImpostor)) {
                     killCount = null;
                 }
 
-                AdditionalTempData.playerRoles.Add(new AdditionalTempData.PlayerRoleInfo() { PlayerName = playerControl.Data.PlayerName, Roles = roles, TasksTotal = tasksTotal, TasksCompleted = tasksCompleted, Kills = killCount });
+                AdditionalTempData.playerRoles.Add(new AdditionalTempData.PlayerRoleInfo() { PlayerName = playerControl.PlayerControl.Data.PlayerName, Roles = roles, TasksTotal = tasksTotal, TasksCompleted = tasksCompleted, Kills = killCount });
             }
 
             // Remove rebel roles from winners

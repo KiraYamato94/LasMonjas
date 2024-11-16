@@ -108,14 +108,14 @@ namespace LasMonjas.Patches
                             var soloTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
                             soloTeam.Add(PlayerInCache.LocalPlayer.PlayerControl);
                             yourTeam = soloTeam;
-                            PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Engineer);
+                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Engineer);
                         }
 
                         if (Helpers.isRebel(PlayerInCache.LocalPlayer.PlayerControl)) {
                             var soloTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
                             soloTeam.Add(PlayerInCache.LocalPlayer.PlayerControl);
                             yourTeam = soloTeam;
-                            PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Shapeshifter);
+                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Shapeshifter);
                         }                        
 
                         if (MapOptions.activateMusic) {
@@ -130,16 +130,16 @@ namespace LasMonjas.Patches
                             var greyTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
                             greyTeam.Add(PlayerInCache.LocalPlayer.PlayerControl);
                             yourTeam = greyTeam;
-                            PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Shapeshifter);
+                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Shapeshifter);
                         } else {
-                            PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
+                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
                         }
                         break;
                     case 3:
                         // PT
                         SoundManager.Instance.PlaySound(CustomMain.customAssets.policeAndThiefMusic, true, 25f);
                         // Intro police and thiefs teams
-                        PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);                        
+                        PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);                        
                         break;
                     case 4:
                         // KOTH
@@ -149,10 +149,10 @@ namespace LasMonjas.Patches
                             var greyTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
                             greyTeam.Add(PlayerInCache.LocalPlayer.PlayerControl);
                             yourTeam = greyTeam;
-                            PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Shapeshifter);
+                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Shapeshifter);
                         }
                         else {
-                            PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
+                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
                         }
                         break;
                     case 5:
@@ -163,9 +163,9 @@ namespace LasMonjas.Patches
                             var greyTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
                             greyTeam.Add(PlayerInCache.LocalPlayer.PlayerControl);
                             yourTeam = greyTeam;
-                            PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Impostor);
+                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Impostor);
                         } else {
-                            PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
+                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
                         }
                         break;
                     case 6:
@@ -173,10 +173,10 @@ namespace LasMonjas.Patches
                         SoundManager.Instance.PlaySound(CustomMain.customAssets.zombieLaboratoryMusic, true, 25f);
                         // Intro zombie teams                        
                         if (PlayerInCache.LocalPlayer.PlayerControl == ZombieLaboratory.nursePlayer) {                            
-                            PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Scientist);
+                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Scientist);
                         }
                         else {
-                            PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
+                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
                         }
                         break;
                     case 7:
@@ -184,17 +184,17 @@ namespace LasMonjas.Patches
                         SoundManager.Instance.PlaySound(CustomMain.customAssets.battleRoyaleMusic, true, 25f);
                         // Intro Battle Royale
                         if (BattleRoyale.matchType == 0) {
-                            PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
+                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
                         }
                         else {
                             if (PlayerInCache.LocalPlayer.PlayerControl == BattleRoyale.serialKiller) {
                                 var greyTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
                                 greyTeam.Add(PlayerInCache.LocalPlayer.PlayerControl);
                                 yourTeam = greyTeam;
-                                PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Shapeshifter);
+                                PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Shapeshifter);
                             }
                             else {
-                                PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
+                                PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
                             }
                         }
                         break;
@@ -205,10 +205,10 @@ namespace LasMonjas.Patches
                             var greyTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
                             greyTeam.Add(PlayerInCache.LocalPlayer.PlayerControl);
                             yourTeam = greyTeam;
-                            PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Shapeshifter);
+                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Shapeshifter);
                         }
                         else {
-                            PlayerInCache.LocalPlayer.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
+                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
                         }
                         break;
                 }
@@ -309,8 +309,8 @@ namespace LasMonjas.Patches
 
                     if (infos.Any(info => info.roleId == RoleId.Lover)) {
                         PlayerControl otherLover = PlayerInCache.LocalPlayer.PlayerControl == Modifiers.lover1 ? Modifiers.lover2 : Modifiers.lover1;
-                        __instance.RoleBlurbText.text = PlayerInCache.LocalPlayer.Data.Role.IsImpostor ? "<color=#FF00D1FF>Lover</color><color=#FF0000FF>stor</color>" : "<color=#FF00D1FF>Lover</color>";
-                        __instance.RoleBlurbText.color = PlayerInCache.LocalPlayer.Data.Role.IsImpostor ? Color.white : Modifiers.loverscolor;
+                        __instance.RoleBlurbText.text = PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor ? "<color=#FF00D1FF>Lover</color><color=#FF0000FF>stor</color>" : "<color=#FF00D1FF>Lover</color>";
+                        __instance.RoleBlurbText.color = PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor ? Color.white : Modifiers.loverscolor;
                         __instance.ImpostorText.text = Helpers.cs(Modifiers.loverscolor, $"{Language.introTexts[0]} + {otherLover?.Data?.PlayerName ?? ""} ♥");
                         __instance.ImpostorText.gameObject.SetActive(true);
                         __instance.BackgroundBar.material.color = Modifiers.loverscolor;
@@ -732,7 +732,7 @@ namespace LasMonjas.Patches
                             }
                         }
 
-                        if (PlayerInCache.LocalPlayer.Data.Role.IsImpostor) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor) {
                             foreach (GameObject item in whoAmIModeCrewItems) {
                                 item.transform.position = new Vector3(100, 100, 0);
                             }

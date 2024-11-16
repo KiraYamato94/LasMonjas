@@ -256,7 +256,7 @@ namespace LasMonjas.Patches {
             // Show roles after meeting for dead players if the option is active
             if (MapOptions.ghostsSeeRoles && gameType <= 1) {
                 foreach (PlayerControl p in PlayerInCache.AllPlayers) {
-                    if (p == PlayerInCache.LocalPlayer.PlayerControl || PlayerInCache.LocalPlayer.Data.IsDead) {
+                    if (p == PlayerInCache.LocalPlayer.PlayerControl || PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                         Transform playerInfoTransform = p.cosmetics.nameText.transform.parent.FindChild("Info");
                         TMPro.TextMeshPro playerInfo = playerInfoTransform != null ? playerInfoTransform.GetComponent<TMPro.TextMeshPro>() : null;
                         if (playerInfo == null) {
@@ -269,7 +269,7 @@ namespace LasMonjas.Patches {
                         string roleNames = RoleInfo.GetRolesString(p, true);
 
                         string playerInfoText = "";
-                        if (PlayerInCache.LocalPlayer.Data.IsDead) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                             playerInfoText = $"{roleNames}";
                         }
 

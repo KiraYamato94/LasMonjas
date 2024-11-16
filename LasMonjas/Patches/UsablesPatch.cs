@@ -107,7 +107,7 @@ namespace LasMonjas.Patches
         public static bool Prefix(Vent __instance) {
             bool canUse;
             bool couldUse;
-            __instance.CanUse(PlayerInCache.LocalPlayer.Data, out canUse, out couldUse);
+            __instance.CanUse(PlayerInCache.LocalPlayer.PlayerControl.Data, out canUse, out couldUse);
             bool canMoveInVents = true;
             if (!canUse) return false;
 
@@ -264,7 +264,7 @@ namespace LasMonjas.Patches
     class KillButtonDoClickPatch
     {
         public static bool Prefix(KillButton __instance) {
-            if (__instance.isActiveAndEnabled && __instance.currentTarget && !__instance.isCoolingDown && !PlayerInCache.LocalPlayer.Data.IsDead && PlayerInCache.LocalPlayer.PlayerControl.CanMove) {
+            if (__instance.isActiveAndEnabled && __instance.currentTarget && !__instance.isCoolingDown && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && PlayerInCache.LocalPlayer.PlayerControl.CanMove) {
                 // Use an unchecked kill command, to allow shorter kill cooldowns etc. without getting kicked
                 MurderAttemptResult res = Helpers.checkMurderAttemptAndKill(PlayerInCache.LocalPlayer.PlayerControl, __instance.currentTarget);
                 // Handle Jinx kill
@@ -316,17 +316,17 @@ namespace LasMonjas.Patches
             else {
 
                 // Block sabotage button if Bomberman bomb, lights out, duel or special condition 1vs1 is active
-                bool blockSabotage = (PlayerInCache.LocalPlayer.Data.Role.IsImpostor || (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead) || (Poisoner.canSabotage && Poisoner.poisoner != null && Poisoner.poisoner == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead)) && (alivePlayers <= 2 || Bomberman.activeBomb || Challenger.isDueling || Seeker.isMinigaming || Illusionist.lightsOutTimer > 0);
+                bool blockSabotage = (PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor || (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) || (Poisoner.canSabotage && Poisoner.poisoner != null && Poisoner.poisoner == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead)) && (alivePlayers <= 2 || Bomberman.activeBomb || Challenger.isDueling || Seeker.isMinigaming || Illusionist.lightsOutTimer > 0);
                 if (blockSabotage) return false;
 
                 // Joker sabotage
-                if (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && !Seeker.isMinigaming && Illusionist.lightsOutTimer <= 0) {
+                if (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && !Seeker.isMinigaming && Illusionist.lightsOutTimer <= 0) {
                     MapBehaviour.Instance.ShowSabotageMap();
                     return false;
                 }
 
                 // Poisoner sabotage
-                if (Poisoner.canSabotage && Poisoner.poisoner != null && Poisoner.poisoner == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && !Seeker.isMinigaming && Illusionist.lightsOutTimer <= 0) {
+                if (Poisoner.canSabotage && Poisoner.poisoner != null && Poisoner.poisoner == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && !Seeker.isMinigaming && Illusionist.lightsOutTimer <= 0) {
                     MapBehaviour.Instance.ShowSabotageMap();
                     return false;
                 }
@@ -350,12 +350,12 @@ namespace LasMonjas.Patches
             else {
 
                 // Block sabotage button if Bomberman bomb, lights out, duel or special condition 1vs1 is active
-                bool blockSabotage = (PlayerInCache.LocalPlayer.Data.Role.IsImpostor || (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead) || (Poisoner.canSabotage && Poisoner.poisoner != null && Poisoner.poisoner == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead)) && (alivePlayers <= 2 || Bomberman.activeBomb || Challenger.isDueling || Seeker.isMinigaming || Illusionist.lightsOutTimer > 0);
+                bool blockSabotage = (PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor || (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) || (Poisoner.canSabotage && Poisoner.poisoner != null && Poisoner.poisoner == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead)) && (alivePlayers <= 2 || Bomberman.activeBomb || Challenger.isDueling || Seeker.isMinigaming || Illusionist.lightsOutTimer > 0);
                 if (blockSabotage) {
                     HudManager.Instance.SabotageButton.SetDisabled();
                 }
 
-                if (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && !Seeker.isMinigaming && Illusionist.lightsOutTimer <= 0) {
+                if (Joker.canSabotage && Joker.joker != null && Joker.joker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && !Seeker.isMinigaming && Illusionist.lightsOutTimer <= 0) {
                     if (MapBehaviour.Instance != null && !MapBehaviour.Instance.IsOpen && MeetingHud.Instance == null) {
                         HudManager.Instance.SabotageButton.Show();
                     }
@@ -364,7 +364,7 @@ namespace LasMonjas.Patches
                     }
                 }
 
-                if (Poisoner.canSabotage && Poisoner.poisoner != null && Poisoner.poisoner == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && !Seeker.isMinigaming && Illusionist.lightsOutTimer <= 0) {
+                if (Poisoner.canSabotage && Poisoner.poisoner != null && Poisoner.poisoner == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !Bomberman.activeBomb && !Challenger.isDueling && !Seeker.isMinigaming && Illusionist.lightsOutTimer <= 0) {
                     if (MapBehaviour.Instance != null && !MapBehaviour.Instance.IsOpen && MeetingHud.Instance == null) {
                         HudManager.Instance.SabotageButton.Show();
                     }
@@ -805,7 +805,7 @@ namespace LasMonjas.Patches
                     }
                 }
 
-                if (nightVision && !PlayerInCache.LocalPlayer.Data.Role.IsImpostor) {
+                if (nightVision && !PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor) {
                     if (Modifiers.lighter != null && PlayerInCache.LocalPlayer.PlayerControl == Modifiers.lighter) return false;
                     foreach (PlayerTask task in PlayerInCache.LocalPlayer.PlayerControl.myTasks) {
                         isLightsOut = false;
@@ -916,7 +916,7 @@ namespace LasMonjas.Patches
 
             public static bool Prefix(PlanetSurveillanceMinigame __instance) {
 
-                if (nightVision && !PlayerInCache.LocalPlayer.Data.Role.IsImpostor) {
+                if (nightVision && !PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor) {
                     if (Modifiers.lighter != null && PlayerInCache.LocalPlayer.PlayerControl == Modifiers.lighter) return false;
                     foreach (PlayerTask task in PlayerInCache.LocalPlayer.PlayerControl.myTasks) {
                         isLightsOut = false;

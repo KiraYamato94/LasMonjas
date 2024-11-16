@@ -77,7 +77,7 @@ namespace LasMonjas.Patches {
         public static void ghostsSeePlayerRoles() {
             if (gameType <= 1) {
                 foreach (PlayerControl p in PlayerInCache.AllPlayers) {
-                    if (p == PlayerInCache.LocalPlayer.PlayerControl || PlayerInCache.LocalPlayer.Data.IsDead) {
+                    if (p == PlayerInCache.LocalPlayer.PlayerControl || PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
 
                         PlayerVoteArea playerVoteArea = MeetingHud.Instance?.playerStates?.FirstOrDefault(x => x.TargetPlayerId == p.PlayerId);
                         Transform meetingInfoTransform = playerVoteArea != null ? playerVoteArea.NameText.transform.parent.FindChild("Info") : null;
@@ -99,7 +99,7 @@ namespace LasMonjas.Patches {
 
                         string playerInfoText = "";
                         string meetingInfoText = "";
-                        if (MapOptions.ghostsSeeRoles && PlayerInCache.LocalPlayer.Data.IsDead) {
+                        if (MapOptions.ghostsSeeRoles && PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                             playerInfoText = $"{roleNames}";
                             meetingInfoText = playerInfoText;
                         }
@@ -110,7 +110,7 @@ namespace LasMonjas.Patches {
             }
         }
         static void ventColorUpdate() {
-            if (PlayerInCache.LocalPlayer.Data.Role.IsImpostor && ShipStatus.Instance?.AllVents != null) {
+            if (PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor && ShipStatus.Instance?.AllVents != null) {
                 foreach (Vent vent in ShipStatus.Instance.AllVents) {
                     try {
                         if (vent?.myRend?.material != null) {
@@ -128,7 +128,7 @@ namespace LasMonjas.Patches {
             }
         }
         static void impostorSetTarget() {
-            if (!PlayerInCache.LocalPlayer.Data.Role.IsImpostor || Archer.archer != null && PlayerInCache.LocalPlayer.PlayerControl == Archer.archer || Demon.demon != null && PlayerInCache.LocalPlayer.PlayerControl == Demon.demon || !PlayerInCache.LocalPlayer.PlayerControl.CanMove || PlayerInCache.LocalPlayer.Data.IsDead || gameType >= 2) { // !isImpostor || !canMove || isDead
+            if (!PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor || Archer.archer != null && PlayerInCache.LocalPlayer.PlayerControl == Archer.archer || Demon.demon != null && PlayerInCache.LocalPlayer.PlayerControl == Demon.demon || !PlayerInCache.LocalPlayer.PlayerControl.CanMove || PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead || gameType >= 2) { // !isImpostor || !canMove || isDead
                 HudManager.Instance.KillButton.SetTarget(null);
                 return;
             }
@@ -360,7 +360,7 @@ namespace LasMonjas.Patches {
             if (Detective.timer <= 0f) {
                 Detective.timer = Detective.footprintIntervall;
                 foreach (PlayerControl player in PlayerInCache.AllPlayers) {
-                    if (player != null && player != PlayerInCache.LocalPlayer.PlayerControl && !player.Data.IsDead && !player.inVent && !PlayerInCache.LocalPlayer.Data.IsDead) {
+                    if (player != null && player != PlayerInCache.LocalPlayer.PlayerControl && !player.Data.IsDead && !player.inVent && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                         new Footprint(Detective.footprintDuration, Detective.anonymousFootprints, player);
                     }
                 }
@@ -521,7 +521,7 @@ namespace LasMonjas.Patches {
             var (playerCompleted, playerTotal) = TasksHandler.taskInfo(Fink.fink.Data);
             int numberOfTasks = playerTotal - playerCompleted;
             if (numberOfTasks <= Fink.taskCountForImpostors) {
-                if (numberOfTasks <= Fink.taskCountForImpostors && PlayerInCache.LocalPlayer.Data.Role.IsImpostor) {
+                if (numberOfTasks <= Fink.taskCountForImpostors && PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor) {
                     if (Fink.localArrows.Count == 0) {
                         Fink.localArrows.Add(new Arrow(Fink.color));
                         SoundManager.Instance.PlaySound(CustomMain.customAssets.bountyExilerTarget, false, 5f);
@@ -576,7 +576,7 @@ namespace LasMonjas.Patches {
         }
         static void necromancerUpdate() {            
             if (Necromancer.revivedPlayer != null) {
-                if (!Necromancer.revivedPlayer.Data.IsDead && (PlayerInCache.LocalPlayer.Data.Role.IsImpostor || PlayerInCache.LocalPlayer.PlayerControl == Renegade.renegade || PlayerInCache.LocalPlayer.PlayerControl == Minion.minion || PlayerInCache.LocalPlayer.PlayerControl == BountyHunter.bountyhunter || PlayerInCache.LocalPlayer.PlayerControl == Trapper.trapper || PlayerInCache.LocalPlayer.PlayerControl == Yinyanger.yinyanger || PlayerInCache.LocalPlayer.PlayerControl == Challenger.challenger || PlayerInCache.LocalPlayer.PlayerControl == Ninja.ninja || PlayerInCache.LocalPlayer.PlayerControl == Berserker.berserker || PlayerInCache.LocalPlayer.PlayerControl == Yandere.yandere || PlayerInCache.LocalPlayer.PlayerControl == Stranded.stranded || PlayerInCache.LocalPlayer.PlayerControl == Monja.monja)) {
+                if (!Necromancer.revivedPlayer.Data.IsDead && (PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor || PlayerInCache.LocalPlayer.PlayerControl == Renegade.renegade || PlayerInCache.LocalPlayer.PlayerControl == Minion.minion || PlayerInCache.LocalPlayer.PlayerControl == BountyHunter.bountyhunter || PlayerInCache.LocalPlayer.PlayerControl == Trapper.trapper || PlayerInCache.LocalPlayer.PlayerControl == Yinyanger.yinyanger || PlayerInCache.LocalPlayer.PlayerControl == Challenger.challenger || PlayerInCache.LocalPlayer.PlayerControl == Ninja.ninja || PlayerInCache.LocalPlayer.PlayerControl == Berserker.berserker || PlayerInCache.LocalPlayer.PlayerControl == Yandere.yandere || PlayerInCache.LocalPlayer.PlayerControl == Stranded.stranded || PlayerInCache.LocalPlayer.PlayerControl == Monja.monja)) {
                     if (Necromancer.localNecromancerArrows.Count == 0) Necromancer.localNecromancerArrows.Add(new Arrow(Color.green));
                     if (Necromancer.localNecromancerArrows.Count != 0 && Necromancer.localNecromancerArrows[0] != null) {
                         Necromancer.localNecromancerArrows[0].arrow.SetActive(true);

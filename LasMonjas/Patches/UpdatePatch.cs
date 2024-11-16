@@ -28,7 +28,7 @@ namespace LasMonjas.Patches {
                 if (Puppeteer.morphed && Puppeteer.puppeteer == player && Puppeteer.transformTarget != null) playerName = Puppeteer.transformTarget.Data.PlayerName;
 
                 player.cosmetics.nameText.text = Helpers.hidePlayerName(PlayerInCache.LocalPlayer.PlayerControl, player) ? "" : playerName;
-                if (PlayerInCache.LocalPlayer.Data.Role.IsImpostor && player.Data.Role.IsImpostor) {
+                if (PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor && player.Data.Role.IsImpostor) {
                     player.cosmetics.nameText.color = Palette.ImpostorRed;
                 } else {
                     player.cosmetics.nameText.color = Color.white;
@@ -39,7 +39,7 @@ namespace LasMonjas.Patches {
                     PlayerControl playerControl = playersById.ContainsKey((byte)player.TargetPlayerId) ? playersById[(byte)player.TargetPlayerId] : null;
                     if (playerControl != null) {
                         player.NameText.text = playerControl.Data.PlayerName;
-                        if (PlayerInCache.LocalPlayer.Data.Role.IsImpostor && playerControl.Data.Role.IsImpostor) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor && playerControl.Data.Role.IsImpostor) {
                             player.NameText.color = Palette.ImpostorRed;
                         } else {
                             player.NameText.color = Color.white;
@@ -47,7 +47,7 @@ namespace LasMonjas.Patches {
                     }
                 }
             }
-            if (PlayerInCache.LocalPlayer.Data.Role.IsImpostor) {
+            if (PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor) {
                 List<PlayerControl> impostors = PlayerControl.AllPlayerControls.ToArray().ToList();
                 impostors.RemoveAll(x => !x.Data.Role.IsImpostor);
                 foreach (PlayerControl player in impostors)
@@ -450,7 +450,7 @@ namespace LasMonjas.Patches {
                 case 7:
                     // BR Lives
                     if (BattleRoyale.matchType == 0) {
-                        if (PlayerInCache.LocalPlayer.Data.IsDead) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                             if (BattleRoyale.soloPlayer01 != null) {
                                 BattleRoyale.soloPlayer01.cosmetics.nameText.text += Helpers.cs(Sheriff.color, " (" + BattleRoyale.soloPlayer01Lifes + "♥)");
                             }
@@ -749,7 +749,7 @@ namespace LasMonjas.Patches {
             }
 
             // If bomb, lights actives or special 1vs1 condition, prevent sabotage open map
-            if (GameOptionsManager.Instance.currentGameMode == GameModes.Normal && gameType <= 1 && PlayerInCache.LocalPlayer.Data.Role.IsImpostor && MapBehaviour.Instance != null && MapBehaviour.Instance.IsOpen && (alivePlayers <= 2 || Bomberman.activeBomb || Challenger.isDueling || Seeker.isMinigaming || Illusionist.lightsOutTimer > 0 || Monja.awakened)) {
+            if (GameOptionsManager.Instance.currentGameMode == GameModes.Normal && gameType <= 1 && PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor && MapBehaviour.Instance != null && MapBehaviour.Instance.IsOpen && (alivePlayers <= 2 || Bomberman.activeBomb || Challenger.isDueling || Seeker.isMinigaming || Illusionist.lightsOutTimer > 0 || Monja.awakened)) {
                 MapBehaviour.Instance.Close();
             }
         }
@@ -795,7 +795,7 @@ namespace LasMonjas.Patches {
             }
         }
         static void updateImpostorKillButton(HudManager __instance) {
-            if (!PlayerInCache.LocalPlayer.Data.Role.IsImpostor || MeetingHud.Instance || MapBehaviour.Instance != null && MapBehaviour.Instance.IsOpen) return;
+            if (!PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor || MeetingHud.Instance || MapBehaviour.Instance != null && MapBehaviour.Instance.IsOpen) return;
             bool enabled = true;
             if (Demon.demon != null && Demon.demon == PlayerInCache.LocalPlayer.PlayerControl && !Challenger.isDueling && !Seeker.isMinigaming)
                 enabled = false;
@@ -1452,7 +1452,12 @@ namespace LasMonjas.Patches {
             switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                 case 0:
                     emerButton = GameObject.Find("EmergencyConsole");
-                    body.transform.position = emerButton.transform.position + new Vector3(2.02f, 0f, -0.5f); 
+                    if (activatedDleks) {
+                        body.transform.position = emerButton.transform.position + new Vector3(-2.02f, 0f, -0.5f);
+                    }
+                    else {
+                        body.transform.position = emerButton.transform.position + new Vector3(2.02f, 0f, -0.5f);
+                    }
                     break;
                 case 1:
                     emerButton = GameObject.Find("EmergencyConsole");
@@ -1837,7 +1842,7 @@ namespace LasMonjas.Patches {
                     foreach (CustomButton button in CustomButton.buttons) {
                         if (button.isEffectActive) continue;
 
-                        if (!PlayerInCache.LocalPlayer.Data.Role.IsImpostor) {
+                        if (!PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor) {
                             if (button.Timer > 1f)
                                 button.Timer -= Time.fixedDeltaTime * 0.5f;
                         }
@@ -1893,6 +1898,9 @@ namespace LasMonjas.Patches {
                         if (activatedSensei) {
                             CaptureTheFlag.blueflag.transform.position = new Vector3(7.7f, -1.15f, 0.5f);
                         }
+                        else if (activatedDleks) {
+                            CaptureTheFlag.blueflag.transform.position = new Vector3(-16.5f, -4.65f, 0.5f);
+                        }
                         else {
                             CaptureTheFlag.blueflag.transform.position = new Vector3(16.5f, -4.65f, 0.5f);
                         }
@@ -1933,6 +1941,9 @@ namespace LasMonjas.Patches {
                     case 0:
                         if (activatedSensei) {
                             CaptureTheFlag.redflag.transform.position = new Vector3(-17.5f, -1.35f, 0.5f);
+                        }
+                        else if (activatedDleks) {
+                            CaptureTheFlag.redflag.transform.position = new Vector3(20.5f, -5.35f, 0.5f);
                         }
                         else {
                             CaptureTheFlag.redflag.transform.position = new Vector3(-20.5f, -5.35f, 0.5f);
@@ -3407,7 +3418,6 @@ namespace LasMonjas.Patches {
 
         static void Postfix(HudManager __instance) {
             if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) return;
-
 
             CustomButton.HudUpdate();
             resetNameTagsAndColors();

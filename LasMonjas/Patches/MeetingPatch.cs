@@ -299,7 +299,7 @@ namespace LasMonjas.Patches {
                     int copiedIndex = i;
 
                     button.GetComponent<PassiveButton>().OnClick.RemoveAllListeners();
-                    if (!PlayerInCache.LocalPlayer.Data.IsDead) button.GetComponent<PassiveButton>().OnClick.AddListener((System.Action)(() => {
+                    if (!PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) button.GetComponent<PassiveButton>().OnClick.AddListener((System.Action)(() => {
                         if (selectedButton != button) {
                             selectedButton = button;
                             buttons.ForEach(x => x.GetComponent<SpriteRenderer>().color = x == selectedButton ? Color.red : Color.white);
