@@ -4,6 +4,9 @@ using UnityEngine;
 using AmongUs.GameOptions;
 using LasMonjas.Core;
 using System;
+using System.Collections;
+using Hazel;
+using UnityEngine.EventSystems;
 
 namespace LasMonjas.Patches
 {
@@ -206,8 +209,24 @@ namespace LasMonjas.Patches
             __result = false;
         }
 
+        [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.UpdateSystem), new Type[] { typeof(SystemTypes), typeof(PlayerControl), typeof(MessageReader) })]
+        class UpdateSystemMessagReaderPatch
+        {
+            public static bool Prefix(ShipStatus __instance,
+                [HarmonyArgument(0)] SystemTypes systemType,
+                [HarmonyArgument(1)] PlayerControl player,
+                [HarmonyArgument(2)] MessageReader msgReader) {
+                int position = msgReader.Position;
+                amount = msgReader.ReadByte();
+                msgReader.Position = position;
+                return UpdateSystemPatch.Prefix(__instance, systemType, player, amount);
+            }
+            static byte amount;
+        }
+
         [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.UpdateSystem), new Type[] { typeof(SystemTypes), typeof(PlayerControl), typeof(byte) })]
-        class RepairSystemPatch {
+        class UpdateSystemPatch
+        {
             public static bool Prefix(ShipStatus __instance, [HarmonyArgument(0)] SystemTypes systemType, [HarmonyArgument(1)] PlayerControl player, [HarmonyArgument(2)] byte amount) {
 
                 // Mechanic expert repairs
@@ -241,17 +260,21 @@ namespace LasMonjas.Patches
                                 ShipStatus.Instance.RpcUpdateSystem(SystemTypes.Comms, 18);
                             }
                             break;
-                        /*case SystemTypes.Electrical:
+                        case SystemTypes.Electrical:
                             if (amount >= 0 && amount <= 4) {
-                                SwitchSystem switchSystem = ShipStatus.Instance.Systems[SystemTypes.Electrical].Cast<SwitchSystem>();
-                                switchSystem.ActualSwitches = 0;
-                                switchSystem.ExpectedSwitches = 0;
+                                Reactor.Utilities.Coroutines.Start(FixLights());
                             }
-                            break;*/
+                            break;
                     }
                 }
                 return true;
-            }
+            }            
+        }
+        public static IEnumerator FixLights() {
+            yield return new WaitForSeconds(0.1f);
+            MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.MechanicFixLights, Hazel.SendOption.Reliable, -1);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+            RPCProcedure.mechanicFixLights();
         }
 
         [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.IsFlashlightEnabled))]
