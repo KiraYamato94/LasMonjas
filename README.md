@@ -36,6 +36,10 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
 
+**Version 3.8.4 (16th November 2024)**
+- Fixed hats / visor tab not showing anything inside a custom lobby (thanks mini)
+- Fixed Mechanic's Expert Repairs ability, it works like intented again
+
 **Version 3.8.3 (13rd November 2024)**
 - Readded Dleks via lobby option (activate Dleks + selecting skeld map will load Dleks, but Custom Skeld has priority over it)
 - Fixed an issue with custom nameplates that prevented meetings from starting
