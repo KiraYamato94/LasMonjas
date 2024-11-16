@@ -160,8 +160,8 @@ namespace LasMonjas.Core {
 
         public void Update()
         {
-            var localPlayer = PlayerInCache.LocalPlayer;
-            var moveable = localPlayer.PlayerControl.moveable; 
+            var localPlayer = PlayerInCache.LocalPlayer.PlayerControl;
+            var moveable = localPlayer.moveable; 
             
             if (localPlayer.Data == null || MeetingHud.Instance || ExileController.Instance || !HasButton()) {
                 setActive(false);
@@ -195,7 +195,7 @@ namespace LasMonjas.Core {
             if (Timer >= 0) {
                 if (HasEffect && isEffectActive)
                     Timer -= Time.deltaTime;
-                else if (!localPlayer.PlayerControl.inVent && moveable)
+                else if (!localPlayer.inVent && moveable)
                     Timer -= Time.deltaTime;
             }
             
