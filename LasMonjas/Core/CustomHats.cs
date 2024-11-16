@@ -356,7 +356,7 @@ namespace LasMonjas.Core
                     colorChip.Button.ClickMask = __instance.scroller.Hitbox;
                     colorChip.Inner.SetMaskType(PlayerMaterial.MaskType.SimpleUI);
                     __instance.UpdateMaterials(colorChip.Inner.FrontLayer, hat);
-                    colorChip.Inner.SetHat(hat, __instance.HasLocalPlayer() ? PlayerInCache.LocalPlayer.Data.DefaultOutfit.ColorId : DataManager.Player.Customization.Color);
+                    colorChip.Inner.SetHat(hat, __instance.HasLocalPlayer() ? PlayerInCache.LocalPlayer.PlayerControl.Data.DefaultOutfit.ColorId : DataManager.Player.Customization.Color);
                     colorChip.Inner.transform.localPosition = hat.ChipOffset;
                     colorChip.Tag = hat;
                     colorChip.SelectionHighlight.gameObject.SetActive(false);

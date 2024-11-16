@@ -150,7 +150,7 @@ namespace LasMonjas.Core
                     colorChip.ProductId = visor.ProductId;
                     colorChip.Tag = visor;
                     __instance.UpdateMaterials(colorChip.Inner.FrontLayer, visor);
-                    var colorId = __instance.HasLocalPlayer() ? PlayerInCache.LocalPlayer.Data.DefaultOutfit.ColorId : DataManager.Player.Customization.Color;
+                    var colorId = __instance.HasLocalPlayer() ? PlayerInCache.LocalPlayer.PlayerControl.Data.DefaultOutfit.ColorId : DataManager.Player.Customization.Color;
 
                     if (CustomVisorViewDatas.TryGetValue(visor.ProductId, out var data))
                         ColorChipFix(colorChip, data.IdleFrame, colorId);
