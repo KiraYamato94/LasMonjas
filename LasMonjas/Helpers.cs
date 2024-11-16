@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -281,7 +281,7 @@ namespace LasMonjas
         public static bool roleCanUseVents(this PlayerControl player) {
             bool roleCouldUse = false;
             if (GameOptionsManager.Instance.currentGameMode == GameModes.HideNSeek) {
-                if (!PlayerInCache.LocalPlayer.Data.Role.IsImpostor) {
+                if (!PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor) {
                     roleCouldUse = true;
                 }
             } else if (GameOptionsManager.Instance.currentGameMode == GameModes.Normal) {
@@ -674,7 +674,7 @@ namespace LasMonjas
             player.SetKillTimer(GameOptionsManager.Instance.currentGameOptions.GetFloat(FloatOptionNames.KillCooldown));
 
             foreach (var localPlayer in PlayerInCache.AllPlayers) {
-                if (localPlayer.Data.Role.IsImpostor && PlayerInCache.LocalPlayer.Data.Role.IsImpostor) {
+                if (localPlayer.PlayerControl.Data.Role.IsImpostor && PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor) {
                     player.cosmetics.nameText.color = Palette.ImpostorRed;
                 }
             }
@@ -684,7 +684,7 @@ namespace LasMonjas
             RoleManager.Instance.SetRole(player, RoleTypes.Crewmate);
 
             foreach (var localPlayer in PlayerInCache.AllPlayers) {
-                if (!localPlayer.Data.Role.IsImpostor && !PlayerInCache.LocalPlayer.Data.Role.IsImpostor) {
+                if (!localPlayer.PlayerControl.Data.Role.IsImpostor && !PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor) {
                     player.cosmetics.nameText.color = Palette.CrewmateBlue;
                 }
             }

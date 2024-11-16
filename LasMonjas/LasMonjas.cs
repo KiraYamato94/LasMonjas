@@ -2021,7 +2021,7 @@ namespace LasMonjas
         }
 
         public static bool sprayedEveryoneAlive() {
-            return PlayerInCache.AllPlayers.All(x => { return x.PlayerControl == Pyromaniac.pyromaniac || x.Data.IsDead || x.Data.Disconnected || Pyromaniac.sprayedPlayers.Any(y => y.PlayerId == x.PlayerId); });
+            return PlayerInCache.AllPlayers.All(x => { return x.PlayerControl == Pyromaniac.pyromaniac || x.PlayerControl.Data.IsDead || x.PlayerControl.Data.Disconnected || Pyromaniac.sprayedPlayers.Any(y => y.PlayerId == x.PlayerId); });
         }
 
         public static void clearAndReload() {
@@ -2138,7 +2138,7 @@ namespace LasMonjas
         }
 
         public static bool poisonedEveryoneAlive() {
-            return PlayerInCache.AllPlayers.All(x => { return x.PlayerControl == Poisoner.poisoner || x.Data.IsDead || x.Data.Disconnected || Poisoner.poisonedPlayers.Any(y => y.PlayerId == x.PlayerId); });
+            return PlayerInCache.AllPlayers.All(x => { return x.PlayerControl == Poisoner.poisoner || x.PlayerControl.Data.IsDead || x.PlayerControl.Data.Disconnected || Poisoner.poisonedPlayers.Any(y => y.PlayerId == x.PlayerId); });
         }
 
         public static void clearAndReload() {

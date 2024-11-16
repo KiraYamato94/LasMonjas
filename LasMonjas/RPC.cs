@@ -1472,7 +1472,7 @@ namespace LasMonjas
             Illusionist.lightsOutTimer = Illusionist.lightsOutDuration;
             // If the local player is impostor indicate lights out
             SoundManager.Instance.PlaySound(CustomMain.customAssets.illusionistLightsOut, false, 100f);
-            if (PlayerInCache.LocalPlayer.Data.Role.IsImpostor && PlayerInCache.LocalPlayer.PlayerControl != Illusionist.illusionist) {
+            if (PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor && PlayerInCache.LocalPlayer.PlayerControl != Illusionist.illusionist) {
                 new CustomMessage(Language.statusRolesTexts[5], Illusionist.lightsOutDuration, new Vector2(0f, -1.3f), 1);
             }
         }
@@ -2277,7 +2277,7 @@ namespace LasMonjas
                 foreach (Vent vent in ShipStatus.Instance.AllVents) {
                     bool canUse;
                     bool couldUse;
-                    vent.CanUse(PlayerInCache.LocalPlayer.Data, out canUse, out couldUse);
+                    vent.CanUse(PlayerInCache.LocalPlayer.PlayerControl.Data, out canUse, out couldUse);
                     if (canUse) {
                         PlayerInCache.LocalPlayer.PlayerControl.MyPhysics.RpcExitVent(vent.Id);
                         vent.SetButtons(false);
@@ -2552,7 +2552,7 @@ namespace LasMonjas
                 foreach (Vent vent in ShipStatus.Instance.AllVents) {
                     bool canUse;
                     bool couldUse;
-                    vent.CanUse(PlayerInCache.LocalPlayer.Data, out canUse, out couldUse);
+                    vent.CanUse(PlayerInCache.LocalPlayer.PlayerControl.Data, out canUse, out couldUse);
                     if (canUse) {
                         PlayerInCache.LocalPlayer.PlayerControl.MyPhysics.RpcExitVent(vent.Id);
                         vent.SetButtons(false);
@@ -3379,7 +3379,7 @@ namespace LasMonjas
                 foreach (Vent vent in ShipStatus.Instance.AllVents) {
                     bool canUse;
                     bool couldUse;
-                    vent.CanUse(PlayerInCache.LocalPlayer.Data, out canUse, out couldUse);
+                    vent.CanUse(PlayerInCache.LocalPlayer.PlayerControl.Data, out canUse, out couldUse);
                     if (canUse) {
                         PlayerInCache.LocalPlayer.PlayerControl.MyPhysics.RpcExitVent(vent.Id);
                         vent.SetButtons(false);
@@ -3651,7 +3651,7 @@ namespace LasMonjas
                 foreach (Vent vent in ShipStatus.Instance.AllVents) {
                     bool canUse;
                     bool couldUse;
-                    vent.CanUse(PlayerInCache.LocalPlayer.Data, out canUse, out couldUse);
+                    vent.CanUse(PlayerInCache.LocalPlayer.PlayerControl.Data, out canUse, out couldUse);
                     if (canUse) {
                         PlayerInCache.LocalPlayer.PlayerControl.MyPhysics.RpcExitVent(vent.Id);
                         vent.SetButtons(false);
@@ -3674,7 +3674,7 @@ namespace LasMonjas
         }
 
         public static void shieldedMurderAttempt() {
-            if (Squire.shielded != null && Squire.shielded == PlayerInCache.LocalPlayer.PlayerControl && Squire.showAttemptToShielded || Squire.showAttemptToShielded && (PlayerInCache.LocalPlayer.Data.Role.IsImpostor || Sheriff.sheriff != null && Sheriff.sheriff == PlayerInCache.LocalPlayer.PlayerControl || Renegade.renegade != null && Renegade.renegade == PlayerInCache.LocalPlayer.PlayerControl || Minion.minion != null && Minion.minion == PlayerInCache.LocalPlayer.PlayerControl || BountyHunter.bountyhunter != null && BountyHunter.bountyhunter == PlayerInCache.LocalPlayer.PlayerControl || Trapper.trapper != null && Trapper.trapper == PlayerInCache.LocalPlayer.PlayerControl || Yinyanger.yinyanger != null && Yinyanger.yinyanger == PlayerInCache.LocalPlayer.PlayerControl || Challenger.challenger != null && Challenger.challenger == PlayerInCache.LocalPlayer.PlayerControl || Ninja.ninja != null && Ninja.ninja == PlayerInCache.LocalPlayer.PlayerControl || Berserker.berserker != null && Berserker.berserker == PlayerInCache.LocalPlayer.PlayerControl || Yandere.yandere != null && Yandere.yandere == PlayerInCache.LocalPlayer.PlayerControl || Stranded.stranded != null && Stranded.stranded == PlayerInCache.LocalPlayer.PlayerControl || Monja.monja != null && Monja.monja == PlayerInCache.LocalPlayer.PlayerControl)) {
+            if (Squire.shielded != null && Squire.shielded == PlayerInCache.LocalPlayer.PlayerControl && Squire.showAttemptToShielded || Squire.showAttemptToShielded && (PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor || Sheriff.sheriff != null && Sheriff.sheriff == PlayerInCache.LocalPlayer.PlayerControl || Renegade.renegade != null && Renegade.renegade == PlayerInCache.LocalPlayer.PlayerControl || Minion.minion != null && Minion.minion == PlayerInCache.LocalPlayer.PlayerControl || BountyHunter.bountyhunter != null && BountyHunter.bountyhunter == PlayerInCache.LocalPlayer.PlayerControl || Trapper.trapper != null && Trapper.trapper == PlayerInCache.LocalPlayer.PlayerControl || Yinyanger.yinyanger != null && Yinyanger.yinyanger == PlayerInCache.LocalPlayer.PlayerControl || Challenger.challenger != null && Challenger.challenger == PlayerInCache.LocalPlayer.PlayerControl || Ninja.ninja != null && Ninja.ninja == PlayerInCache.LocalPlayer.PlayerControl || Berserker.berserker != null && Berserker.berserker == PlayerInCache.LocalPlayer.PlayerControl || Yandere.yandere != null && Yandere.yandere == PlayerInCache.LocalPlayer.PlayerControl || Stranded.stranded != null && Stranded.stranded == PlayerInCache.LocalPlayer.PlayerControl || Monja.monja != null && Monja.monja == PlayerInCache.LocalPlayer.PlayerControl)) {
                 SoundManager.Instance.PlaySound(CustomMain.customAssets.squireShieldClip, false, 100f);
                 return;
             }
@@ -3768,7 +3768,7 @@ namespace LasMonjas
 
         public static void finkHawkEye() {
             Fink.finkTimer = Fink.duration;
-            if (PlayerInCache.LocalPlayer.Data.Role.IsImpostor || Renegade.renegade != null && PlayerInCache.LocalPlayer.PlayerControl == Renegade.renegade || Minion.minion != null && PlayerInCache.LocalPlayer.PlayerControl == Minion.minion) {
+            if (PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor || Renegade.renegade != null && PlayerInCache.LocalPlayer.PlayerControl == Renegade.renegade || Minion.minion != null && PlayerInCache.LocalPlayer.PlayerControl == Minion.minion) {
                 if (MapBehaviour.Instance) {
                     MapBehaviour.Instance.Close();
                 }
@@ -3911,7 +3911,7 @@ namespace LasMonjas
 
         public static void spiritualistPinkScreen(byte playerId) {
             foreach (PlayerControl player in PlayerInCache.AllPlayers) {
-                if (PlayerInCache.LocalPlayer.Data.Role.IsImpostor || Renegade.renegade != null && Renegade.renegade == PlayerInCache.LocalPlayer.PlayerControl || Minion.minion != null && Minion.minion == PlayerInCache.LocalPlayer.PlayerControl || BountyHunter.bountyhunter != null && BountyHunter.bountyhunter == PlayerInCache.LocalPlayer.PlayerControl || Trapper.trapper != null && Trapper.trapper == PlayerInCache.LocalPlayer.PlayerControl || Yinyanger.yinyanger != null && Yinyanger.yinyanger == PlayerInCache.LocalPlayer.PlayerControl || Challenger.challenger != null && Challenger.challenger == PlayerInCache.LocalPlayer.PlayerControl || Ninja.ninja != null && Ninja.ninja == PlayerInCache.LocalPlayer.PlayerControl || Berserker.berserker != null && Berserker.berserker == PlayerInCache.LocalPlayer.PlayerControl || Yandere.yandere != null && Yandere.yandere == PlayerInCache.LocalPlayer.PlayerControl || Stranded.stranded != null && Stranded.stranded == PlayerInCache.LocalPlayer.PlayerControl || Monja.monja != null && Monja.monja == PlayerInCache.LocalPlayer.PlayerControl) {
+                if (PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor || Renegade.renegade != null && Renegade.renegade == PlayerInCache.LocalPlayer.PlayerControl || Minion.minion != null && Minion.minion == PlayerInCache.LocalPlayer.PlayerControl || BountyHunter.bountyhunter != null && BountyHunter.bountyhunter == PlayerInCache.LocalPlayer.PlayerControl || Trapper.trapper != null && Trapper.trapper == PlayerInCache.LocalPlayer.PlayerControl || Yinyanger.yinyanger != null && Yinyanger.yinyanger == PlayerInCache.LocalPlayer.PlayerControl || Challenger.challenger != null && Challenger.challenger == PlayerInCache.LocalPlayer.PlayerControl || Ninja.ninja != null && Ninja.ninja == PlayerInCache.LocalPlayer.PlayerControl || Berserker.berserker != null && Berserker.berserker == PlayerInCache.LocalPlayer.PlayerControl || Yandere.yandere != null && Yandere.yandere == PlayerInCache.LocalPlayer.PlayerControl || Stranded.stranded != null && Stranded.stranded == PlayerInCache.LocalPlayer.PlayerControl || Monja.monja != null && Monja.monja == PlayerInCache.LocalPlayer.PlayerControl) {
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
                 }
                 if (player.PlayerId == playerId && playerId == PlayerInCache.LocalPlayer.PlayerControl.PlayerId) {

@@ -942,7 +942,7 @@ namespace LasMonjas
                         mimicTransformButton.EffectDuration = 1f;
                     }
                 },
-                () => { return Mimic.mimic != null && Mimic.mimic == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Mimic.mimic != null && Mimic.mimic == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return (Mimic.currentTarget || Mimic.pickTarget) && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming && !Helpers.MushroomSabotageActive(); },
                 () => {
                     mimicTransformButton.Timer = mimicTransformButton.MaxTimer;
@@ -992,7 +992,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.painterPaint(colorNumber);
                 },
-                () => { return Painter.painter != null && Painter.painter == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Painter.painter != null && Painter.painter == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming && !Helpers.MushroomSabotageActive(); },
                 () => {
                     painterPaintButton.Timer = painterPaintButton.MaxTimer;
@@ -1062,7 +1062,7 @@ namespace LasMonjas
                         demonKillButton.HasEffect = false;
                     }
                 },
-                () => { return Demon.demon != null && Demon.demon == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Demon.demon != null && Demon.demon == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (Demon.targetNearNun && Demon.canKillNearNun || alivePlayers <= 2) {
                         demonKillButton.actionButton.graphic.sprite = __instance.KillButton.graphic.sprite;
@@ -1110,7 +1110,7 @@ namespace LasMonjas
                     writer.EndMessage();
                     RPCProcedure.placeNun(buff);
                 },
-                () => { return !Demon.localPlacedNun && !PlayerInCache.LocalPlayer.Data.IsDead && Demon.demon != null && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
+                () => { return !Demon.localPlacedNun && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && Demon.demon != null && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => { return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Demon.localPlacedNun; },
                 () => { },
                 Demon.getNunButtonSprite(),
@@ -1158,7 +1158,7 @@ namespace LasMonjas
                         }
                     }
                 },
-                () => { return Janitor.janitor != null && Janitor.janitor == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Janitor.janitor != null && Janitor.janitor == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     bool canClean = false;
                     foreach (Collider2D collider2D in Physics2D.OverlapCircleAll(PlayerInCache.LocalPlayer.PlayerControl.GetTruePosition(), 1f, Constants.PlayersOnlyMask))
@@ -1223,7 +1223,7 @@ namespace LasMonjas
                         }
                     }
                 },
-                () => { return Janitor.janitor != null && Janitor.janitor == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Janitor.janitor != null && Janitor.janitor == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (Janitor.dragginBody)
                         janitorDragBodyButton.actionButton.graphic.sprite = Janitor.getMoveBodyButtonSprite();
@@ -1290,7 +1290,7 @@ namespace LasMonjas
                     writer.EndMessage();
                     RPCProcedure.placeHat(buff);
                 },
-                () => { return Illusionist.illusionist != null && Illusionist.illusionist == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && !Hats.hasHatLimitReached(); },
+                () => { return Illusionist.illusionist != null && Illusionist.illusionist == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !Hats.hasHatLimitReached(); },
                 () => { return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming && !Hats.hasHatLimitReached() && (Jailer.prisonPlayer == null || Jailer.prisonPlayer != null && Jailer.prisonPlayer.PlayerId != Illusionist.illusionist.PlayerId); },
                 () => { placeHatButton.Timer = placeHatButton.MaxTimer; },
                 Illusionist.getPlaceHatButtonSprite(),
@@ -1325,7 +1325,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.lightsOut();
                 },
-                () => { return Illusionist.illusionist != null && Illusionist.illusionist == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && Hats.hasHatLimitReached() && Hats.hatsConvertedToVents && GameOptionsManager.Instance.currentGameOptions.MapId != 5; },
+                () => { return Illusionist.illusionist != null && Illusionist.illusionist == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && Hats.hasHatLimitReached() && Hats.hatsConvertedToVents && GameOptionsManager.Instance.currentGameOptions.MapId != 5; },
                 () => {
                     bool sabotageActive = false;
                     if (Bomberman.activeBomb == true || Illusionist.lightsOutTimer > 0) {
@@ -1359,7 +1359,7 @@ namespace LasMonjas
                         Manipulator.manipulator.killTimer = manipulatorManipulateButton.Timer = manipulatorManipulateButton.MaxTimer;
                     }
                 },
-                () => { return Manipulator.manipulator != null && Manipulator.manipulator == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Manipulator.manipulator != null && Manipulator.manipulator == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return Manipulator.manipulatedVictim == null && Manipulator.currentTarget != null && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => {
                     Manipulator.manipulatedVictim = null;
@@ -1440,7 +1440,7 @@ namespace LasMonjas
                         Manipulator.manipulatedVictimTarget = null;
                     }                    
                 },
-                () => { return Manipulator.manipulatedVictim != null && Manipulator.manipulatedVictim == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Manipulator.manipulatedVictim != null && Manipulator.manipulatedVictim == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return Manipulator.manipulatedVictimTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => { manipulatedKillButton.Timer = manipulatedKillButton.MaxTimer; },
                 Manipulator.getKillOrDieButtonSprite(),
@@ -1516,7 +1516,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.placeBomb(buff);
                 },
-                () => { return Bomberman.bomberman != null && Bomberman.bomberman == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Bomberman.bomberman != null && Bomberman.bomberman == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     bool closetoPlayer = false;
                     foreach (PlayerControl player in PlayerInCache.AllPlayers) {
@@ -1551,7 +1551,7 @@ namespace LasMonjas
                     RPCProcedure.fixBomb();
                     bombButton.Timer = bombButton.MaxTimer;
                 },
-                () => { return !PlayerInCache.LocalPlayer.Data.IsDead && PlayerInCache.LocalPlayer.PlayerControl != Bomberman.bomberman && Bomberman.activeBomb && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
+                () => { return !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && PlayerInCache.LocalPlayer.PlayerControl != Bomberman.bomberman && Bomberman.activeBomb && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => {
                     bool CanUse = false;
                     if (Bomberman.bombObject != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, Bomberman.bombObject.transform.position) < 0.5f) {
@@ -1572,7 +1572,7 @@ namespace LasMonjas
                     bombermanSelfBombButton.HasEffect = true;
                     Bomberman.bombArea.SetActive(true);
                 },
-                () => { return Bomberman.bomberman != null && Bomberman.bomberman == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Bomberman.bomberman != null && Bomberman.bomberman == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
                 },
@@ -1603,7 +1603,7 @@ namespace LasMonjas
                         return;
                     }
 
-                    if (!MeetingHud.Instance && !Seeker.isMinigaming && !Challenger.isDueling && !Monja.awakened && !PlayerInCache.LocalPlayer.Data.IsDead) {
+                    if (!MeetingHud.Instance && !Seeker.isMinigaming && !Challenger.isDueling && !Monja.awakened && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                         SoundManager.Instance.PlaySound(CustomMain.customAssets.bombermanBombClip, false, 5f);
                         foreach (PlayerControl player in PlayerInCache.AllPlayers) {
                             if (Vector2.Distance(player.transform.position, Bomberman.bomberman.transform.position) < 3f && !player.Data.IsDead) {
@@ -1662,7 +1662,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.chameleonInvisible();
                 },
-                () => { return Chameleon.chameleon != null && Chameleon.chameleon == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && PlayerInCache.LocalPlayer.Data.Role.IsImpostor; },
+                () => { return Chameleon.chameleon != null && Chameleon.chameleon == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor; },
                 () => { return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => {
                     chameleonInvisibleButton.Timer = chameleonInvisibleButton.MaxTimer;
@@ -1687,7 +1687,7 @@ namespace LasMonjas
                         Sorcerer.spellTarget = Sorcerer.currentTarget;
                     }
                 },
-                () => { return Sorcerer.sorcerer != null && Sorcerer.sorcerer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Sorcerer.sorcerer != null && Sorcerer.sorcerer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (sorcererSpellButton.isEffectActive && Sorcerer.spellTarget != Sorcerer.currentTarget) {
                         Sorcerer.spellTarget = null;
@@ -1743,7 +1743,7 @@ namespace LasMonjas
                         Medusa.medusa.killTimer = medusaPetrifyButton.Timer = medusaPetrifyButton.MaxTimer;
                     }
                 },
-                () => { return Medusa.medusa != null && Medusa.medusa == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Medusa.medusa != null && Medusa.medusa == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     return PlayerInCache.LocalPlayer.PlayerControl.CanMove && Medusa.currentTarget != null && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
                 },
@@ -1803,7 +1803,7 @@ namespace LasMonjas
 
                     unpetrifyButton.Timer = unpetrifyButton.MaxTimer;
                 },
-                () => { return !PlayerInCache.LocalPlayer.Data.IsDead && Medusa.medusa != null && !PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
+                () => { return !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && Medusa.medusa != null && !PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => {
                     bool CanUse = false;
                     Medusa.localPetrifiedPlayer = null;
@@ -1855,7 +1855,7 @@ namespace LasMonjas
                     RPCProcedure.placeSpiralTrap(buff);
                 },
                 () => {
-                    return Hypnotist.hypnotist != null && Hypnotist.hypnotist == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return Hypnotist.hypnotist != null && Hypnotist.hypnotist == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => {
                     bool closetoTrap = false;
@@ -1900,7 +1900,7 @@ namespace LasMonjas
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.archerPickBow, false, 100f);
 
                 },
-                () => { return Archer.archer != null && Archer.archer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Archer.archer != null && Archer.archer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (Archer.bow != null) {
                         var targetPosition = Archer.archer.transform.position + new Vector3(0.8f * (float)Math.Cos(Archer.mouseArcherAngle), 0.8f * (float)Math.Sin(Archer.mouseArcherAngle));
@@ -1987,7 +1987,7 @@ namespace LasMonjas
                     archerShowWeaponButton.Timer = archerShowWeaponButton.MaxTimer;
                     target = null;
                 },
-                () => { return Archer.archer != null && Archer.archer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Archer.archer != null && Archer.archer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (Archer.weaponEquiped) {
 
@@ -2159,7 +2159,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.plumberMakeVent(ventId, buff);
                 },
-                () => { return Plumber.plumber != null && Plumber.plumber == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Plumber.plumber != null && Plumber.plumber == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     bool canUse = true;
                     foreach (Vent vent in ShipStatus.Instance.AllVents) {
@@ -2213,7 +2213,7 @@ namespace LasMonjas
                        librarianSilenceButton.Timer = librarianSilenceButton.MaxTimer;
                    }
                },
-               () => { return Librarian.librarian != null && Librarian.librarian == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+               () => { return Librarian.librarian != null && Librarian.librarian == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                () => { return Librarian.currentTarget != null && Librarian.targetLibrary == null && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
                },
                () => { librarianSilenceButton.Timer = librarianSilenceButton.MaxTimer; },
@@ -2258,7 +2258,7 @@ namespace LasMonjas
                     renegadeKillButton.Timer = renegadeKillButton.MaxTimer;
                     Renegade.currentTarget = null; 
                 },
-                () => { return Renegade.renegade != null && Renegade.renegade == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Renegade.renegade != null && Renegade.renegade == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return Renegade.currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => { renegadeKillButton.Timer = renegadeKillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -2282,7 +2282,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.renegadeRecruitMinion(Renegade.currentTarget.PlayerId);
                 },
-                () => { return Renegade.canRecruitMinion && Renegade.renegade != null && Renegade.renegade == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && !Renegade.usedRecruit; },
+                () => { return Renegade.canRecruitMinion && Renegade.renegade != null && Renegade.renegade == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !Renegade.usedRecruit; },
                 () => { return Renegade.canRecruitMinion && Renegade.currentTarget != null && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Renegade.usedRecruit && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => { renegadeMinionButton.Timer = renegadeMinionButton.MaxTimer; },
                 Renegade.getMinionButtonSprite(),
@@ -2318,7 +2318,7 @@ namespace LasMonjas
                     minionKillButton.Timer = minionKillButton.MaxTimer;
                     Minion.currentTarget = null; 
                 },
-                () => { return Minion.minion != null && Minion.minion == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Minion.minion != null && Minion.minion == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return Minion.currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => { minionKillButton.Timer = minionKillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -2358,7 +2358,7 @@ namespace LasMonjas
                     bountyHunterKillButton.Timer = bountyHunterKillButton.MaxTimer;
                     BountyHunter.currentTarget = null;
                 },
-                () => { return BountyHunter.bountyhunter != null && BountyHunter.bountyhunter == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return BountyHunter.bountyhunter != null && BountyHunter.bountyhunter == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return BountyHunter.usedTarget && BountyHunter.currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => { bountyHunterKillButton.Timer = bountyHunterKillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -2402,7 +2402,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.setRandomTarget(finaltarget.PlayerId, 0);
                 },
-                () => { return BountyHunter.bountyhunter != null && BountyHunter.bountyhunter == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return BountyHunter.bountyhunter != null && BountyHunter.bountyhunter == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return !BountyHunter.usedTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => { bountyHunterSetKillButton.Timer = bountyHunterSetKillButton.MaxTimer; },
                 BountyHunter.getButtonSprite(),
@@ -2457,7 +2457,7 @@ namespace LasMonjas
                             currentAlivePlayers += 1;
                         }
                     }
-                    return currentAlivePlayers > 2 && Trapper.trapper != null && Trapper.trapper == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return currentAlivePlayers > 2 && Trapper.trapper != null && Trapper.trapper == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => {
                     bool closetoPlayer = false;
@@ -2524,7 +2524,7 @@ namespace LasMonjas
                             currentAlivePlayers += 1;
                         }
                     }
-                    return currentAlivePlayers > 2 && Trapper.trapper != null && Trapper.trapper == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return currentAlivePlayers > 2 && Trapper.trapper != null && Trapper.trapper == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => {
                     bool closetoPlayer = false;
@@ -2579,7 +2579,7 @@ namespace LasMonjas
                             currentAlivePlayers += 1;
                         }
                     }
-                    return currentAlivePlayers <= 2 && Trapper.trapper != null && Trapper.trapper == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return currentAlivePlayers <= 2 && Trapper.trapper != null && Trapper.trapper == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { return Trapper.currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => { trapperKillButton.Timer = trapperKillButton.MaxTimer; },
@@ -2619,7 +2619,7 @@ namespace LasMonjas
                             currentAlivePlayers += 1;
                         }
                     }
-                    return currentAlivePlayers > 2 && Yinyanger.yinyanger == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return currentAlivePlayers > 2 && Yinyanger.yinyanger == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => {
                     bool closetoYanged = false;
@@ -2677,7 +2677,7 @@ namespace LasMonjas
                             currentAlivePlayers += 1;
                         }
                     }
-                    return currentAlivePlayers > 2 && Yinyanger.yinyanger == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return currentAlivePlayers > 2 && Yinyanger.yinyanger == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => {
                     bool closetoYined = false;
@@ -2730,7 +2730,7 @@ namespace LasMonjas
                             currentAlivePlayers += 1;
                         }
                     }
-                    return currentAlivePlayers <= 2 && Yinyanger.yinyanger != null && Yinyanger.yinyanger == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return currentAlivePlayers <= 2 && Yinyanger.yinyanger != null && Yinyanger.yinyanger == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { return Yinyanger.currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => { yinyangerKillButton.Timer = yinyangerKillButton.MaxTimer; },
@@ -2770,7 +2770,7 @@ namespace LasMonjas
                             currentAlivePlayers += 1;
                         }
                     }
-                    return currentAlivePlayers > 2 && Yinyanger.yinyanger == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return currentAlivePlayers > 2 && Yinyanger.yinyanger == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => {
                     bool canUse = false;
@@ -2877,7 +2877,7 @@ namespace LasMonjas
                             currentAlivePlayers += 1;
                         }
                     }
-                    return currentAlivePlayers > 2 && !Challenger.isDueling && !Seeker.isMinigaming && Challenger.challenger != null && Challenger.challenger == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return currentAlivePlayers > 2 && !Challenger.isDueling && !Seeker.isMinigaming && Challenger.challenger != null && Challenger.challenger == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => {
                     bool sabotageActive = false;
@@ -2935,7 +2935,7 @@ namespace LasMonjas
                             currentAlivePlayers += 1;
                         }
                     }
-                    return currentAlivePlayers <= 2 && Challenger.challenger != null && Challenger.challenger == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return currentAlivePlayers <= 2 && Challenger.challenger != null && Challenger.challenger == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { return Challenger.currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => { challengerKillButton.Timer = challengerKillButton.MaxTimer; },
@@ -2953,7 +2953,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.challengerSelectAttack(1);
                 },
-                () => { return Challenger.challenger == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && Challenger.isDueling; },
+                () => { return Challenger.challenger == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && Challenger.isDueling; },
                 () => { return !Challenger.challengerRock && !Challenger.challengerPaper && !Challenger.challengerScissors && PlayerInCache.LocalPlayer.PlayerControl.CanMove && Challenger.isDueling && !Challenger.timeOutDuel; },
                 () => { },
                 Challenger.getRockButtonSprite(),
@@ -2971,7 +2971,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.challengerSelectAttack(2);
                 },
-                () => { return Challenger.challenger == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && Challenger.isDueling; },
+                () => { return Challenger.challenger == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && Challenger.isDueling; },
                 () => { return !Challenger.challengerRock && !Challenger.challengerPaper && !Challenger.challengerScissors && PlayerInCache.LocalPlayer.PlayerControl.CanMove && Challenger.isDueling && !Challenger.timeOutDuel; },
                 () => { },
                 Challenger.getPaperButtonSprite(),
@@ -2989,7 +2989,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.challengerSelectAttack(3);
                 },
-                () => { return Challenger.challenger == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && Challenger.isDueling; },
+                () => { return Challenger.challenger == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && Challenger.isDueling; },
                 () => { return !Challenger.challengerRock && !Challenger.challengerPaper && !Challenger.challengerScissors && PlayerInCache.LocalPlayer.PlayerControl.CanMove && Challenger.isDueling && !Challenger.timeOutDuel; },
                 () => { },
                 Challenger.getScissorsButtonSprite(),
@@ -3007,7 +3007,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.challengerSelectAttack(4);
                 },
-                () => { return Challenger.rivalPlayer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && Challenger.isDueling; },
+                () => { return Challenger.rivalPlayer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && Challenger.isDueling; },
                 () => { return !Challenger.rivalRock && !Challenger.rivalPaper && !Challenger.rivalScissors && PlayerInCache.LocalPlayer.PlayerControl.CanMove && Challenger.isDueling && !Challenger.timeOutDuel; },
                 () => { },
                 Challenger.getRockButtonSprite(),
@@ -3025,7 +3025,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.challengerSelectAttack(5);
                 },
-                () => { return Challenger.rivalPlayer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && Challenger.isDueling; },
+                () => { return Challenger.rivalPlayer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && Challenger.isDueling; },
                 () => { return !Challenger.rivalRock && !Challenger.rivalPaper && !Challenger.rivalScissors && PlayerInCache.LocalPlayer.PlayerControl.CanMove && Challenger.isDueling && !Challenger.timeOutDuel; },
                 () => { },
                 Challenger.getPaperButtonSprite(),
@@ -3043,7 +3043,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.challengerSelectAttack(6);
                 },
-                () => { return Challenger.rivalPlayer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && Challenger.isDueling; },
+                () => { return Challenger.rivalPlayer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && Challenger.isDueling; },
                 () => { return !Challenger.rivalRock && !Challenger.rivalPaper && !Challenger.rivalScissors && PlayerInCache.LocalPlayer.PlayerControl.CanMove && Challenger.isDueling && !Challenger.timeOutDuel; },
                 () => { },
                 Challenger.getScissorsButtonSprite(),
@@ -3081,7 +3081,7 @@ namespace LasMonjas
                     ninjaKillButton.Timer = ninjaKillButton.MaxTimer;
                     ninjaMarkButton.Timer = ninjaMarkButton.MaxTimer;
                 },
-                () => { return Ninja.ninja != null && Ninja.ninja == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Ninja.ninja != null && Ninja.ninja == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return Ninja.currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => { ninjaKillButton.Timer = ninjaKillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -3133,7 +3133,7 @@ namespace LasMonjas
                         ninjaMarkButton.Timer = ninjaMarkButton.MaxTimer;
                     }
                 },
-                () => { return Ninja.ninja != null && Ninja.ninja == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Ninja.ninja != null && Ninja.ninja == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (Ninja.markedTarget == null) {
                         ninjaMarkButton.actionButton.graphic.sprite = Ninja.getMarkSprite();
@@ -3209,7 +3209,7 @@ namespace LasMonjas
                         berserkerKillButton.Timer = berserkerKillButton.MaxTimer;
                     }
                 },
-                () => { return Berserker.berserker != null && Berserker.berserker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Berserker.berserker != null && Berserker.berserker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return Berserker.currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => {
                     if (Berserker.killedFirstTime) {
@@ -3271,7 +3271,7 @@ namespace LasMonjas
                         RPCProcedure.setRandomTarget(finaltarget.PlayerId, 2);
                     }
                 },
-                () => { return Yandere.yandere != null && Yandere.yandere == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Yandere.yandere != null && Yandere.yandere == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (yandereStareButton.isEffectActive && Yandere.stalkTarget != Yandere.currentTarget) {
                         Yandere.stalkTarget = null;
@@ -3337,7 +3337,7 @@ namespace LasMonjas
                     yandereKillButton.Timer = yandereKillButton.MaxTimer - 10f;
 
                 },
-                () => { return Yandere.yandere != null && Yandere.yandere == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Yandere.yandere != null && Yandere.yandere == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return (Yandere.rampageMode || Yandere.currenStareTimes == Yandere.stareTimes) && Yandere.currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => { yandereKillButton.Timer = yandereKillButton.MaxTimer;
                 },
@@ -3361,7 +3361,7 @@ namespace LasMonjas
                     Stranded.selectedBox = Stranded.currentBox;
 
                 },
-                () => { return Stranded.stranded != null && Stranded.stranded == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Stranded.stranded != null && Stranded.stranded == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (strandedFindBoxButton.isEffectActive && Stranded.selectedBox != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, Stranded.selectedBox.transform.position) > 0.5f) {
                         Stranded.selectedBox = null;
@@ -3395,7 +3395,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
                 },
                 () => { strandedFindBoxButton.Timer = strandedFindBoxButton.MaxTimer; },
                 Stranded.getSurvivorTakeBoxButtonSprite(),
@@ -3474,7 +3474,7 @@ namespace LasMonjas
                     strandedKillButton.Timer = strandedKillButton.MaxTimer;
 
                 },
-                () => { return Stranded.stranded != null && Stranded.stranded == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Stranded.stranded != null && Stranded.stranded == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     int currentAlivePlayers = 0;
                     foreach (PlayerControl player in PlayerInCache.AllPlayers) {
@@ -3522,7 +3522,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.strandedInvisible();
                 },
-                () => { return Stranded.stranded != null && Stranded.stranded == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Stranded.stranded != null && Stranded.stranded == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return PlayerInCache.LocalPlayer.PlayerControl.CanMove && Stranded.canTurnInvisible && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => {
                     strandedInvisibleButton.Timer = strandedInvisibleButton.MaxTimer;
@@ -3568,7 +3568,7 @@ namespace LasMonjas
                     }
                     monjaFindDeliverButton.Timer = monjaFindDeliverButton.MaxTimer;
                 },
-                () => { return Monja.monja != null && Monja.monja == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Monja.monja != null && Monja.monja == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     bool CanUse = false;
                     bool sabotageActive = false;
@@ -3628,7 +3628,7 @@ namespace LasMonjas
 
                         }
                     }
-                    return CanUse && !sabotageActive && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && !sabotageActive && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { monjaFindDeliverButton.Timer = monjaFindDeliverButton.MaxTimer; },
                 Monja.getAwakeButtonSprite(),
@@ -3674,7 +3674,7 @@ namespace LasMonjas
                     Monja.currentTarget = null;
                     monjaKillButton.Timer = 0.1f;
                 },
-                () => { return Monja.monja != null && Monja.monja == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Monja.monja != null && Monja.monja == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return Monja.currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && (Monja.awakened || alivePlayers <= 2) && !Seeker.isMinigaming; },
                 () => { monjaKillButton.Timer = monjaKillButton.MaxTimer;
                 },
@@ -3712,7 +3712,7 @@ namespace LasMonjas
 
                     RPCProcedure.roleThiefSteal(RoleThief.currentTarget.PlayerId);
                 },
-                () => { return RoleThief.rolethief != null && RoleThief.rolethief == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return RoleThief.rolethief != null && RoleThief.rolethief == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return RoleThief.currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => { roleThiefStealButton.Timer = roleThiefStealButton.MaxTimer; },
                 RoleThief.getButtonSprite(),
@@ -3736,7 +3736,7 @@ namespace LasMonjas
                         pyromaniacButton.HasEffect = true;
                     }
                 },
-                () => { return Pyromaniac.pyromaniac != null && Pyromaniac.pyromaniac == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Pyromaniac.pyromaniac != null && Pyromaniac.pyromaniac == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     bool dousedEveryoneAlive = Pyromaniac.sprayedEveryoneAlive();
                     if (dousedEveryoneAlive) pyromaniacButton.actionButton.graphic.sprite = Pyromaniac.getIgniteSprite();
@@ -3832,7 +3832,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.placeTreasure();
                 },
-                () => { return TreasureHunter.treasureHunter != null && TreasureHunter.treasureHunter == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return TreasureHunter.treasureHunter != null && TreasureHunter.treasureHunter == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return PlayerInCache.LocalPlayer.PlayerControl.CanMove && TreasureHunter.canPlace == true && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => {
                     treasureHunterButton.Timer = treasureHunterButton.MaxTimer;
@@ -3884,7 +3884,7 @@ namespace LasMonjas
                         }
                     }
                 },
-                () => { return Devourer.devourer != null && Devourer.devourer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Devourer.devourer != null && Devourer.devourer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     bool canEat = false;
                     foreach (Collider2D collider2D in Physics2D.OverlapCircleAll(PlayerInCache.LocalPlayer.PlayerControl.GetTruePosition(), 1f, Constants.PlayersOnlyMask))
@@ -3930,7 +3930,7 @@ namespace LasMonjas
                     Devourer.currentTarget = null;
                     devourerEatButton.Timer = devourerEatButton.MaxTimer;
                 },
-                () => { return Devourer.devourer != null && Devourer.devourer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Devourer.devourer != null && Devourer.devourer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     return PlayerInCache.LocalPlayer.PlayerControl.CanMove && Devourer.currentTarget != null && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
                 },
@@ -4090,7 +4090,7 @@ namespace LasMonjas
                         puppeteerSampleButton.Timer = puppeteerSampleButton.MaxTimer;
                     }
                 },
-                () => { return Puppeteer.puppeteer != null && Puppeteer.puppeteer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Puppeteer.puppeteer != null && Puppeteer.puppeteer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return Puppeteer.currentTarget && !Puppeteer.pickTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Puppeteer.morphed && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => {
                     puppeteerSampleButton.Timer = puppeteerSampleButton.MaxTimer;
@@ -4132,7 +4132,7 @@ namespace LasMonjas
                         puppeteerTransformButton.Timer = puppeteerTransformButton.MaxTimer;
                     }
                 },
-                () => { return Puppeteer.puppeteer != null && Puppeteer.puppeteer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Puppeteer.puppeteer != null && Puppeteer.puppeteer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { 
                     if (Puppeteer.morphed) {
                         puppeteerTransformButton.actionButton.graphic.sprite = Puppeteer.getUncoverSprite();
@@ -4184,7 +4184,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.setRandomTarget(finaltarget.PlayerId, 1);
                 },
-                () => { return Exiler.exiler != null && Exiler.exiler == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Exiler.exiler != null && Exiler.exiler == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return !Exiler.usedTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => { exilerSetTargetButton.Timer = exilerSetTargetButton.MaxTimer; },
                 Exiler.getTargetButtonSprite(),
@@ -4234,7 +4234,7 @@ namespace LasMonjas
                         }
                     }
                 },
-                () => { return Amnesiac.amnesiac != null && Amnesiac.amnesiac == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Amnesiac.amnesiac != null && Amnesiac.amnesiac == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     bool canRemember = false;
                     foreach (Collider2D collider2D in Physics2D.OverlapCircleAll(PlayerInCache.LocalPlayer.PlayerControl.GetTruePosition(), 1f, Constants.PlayersOnlyMask))
@@ -4272,7 +4272,7 @@ namespace LasMonjas
 
                     seekerMinigameButton.Timer = seekerMinigameButton.MaxTimer;
                 },
-                () => { return !Seeker.isMinigaming && Seeker.seeker != null && Seeker.seeker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead;
+                () => { return !Seeker.isMinigaming && Seeker.seeker != null && Seeker.seeker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => {
                     bool canUse = true;
@@ -4343,7 +4343,7 @@ namespace LasMonjas
                     seekerPerformMinigameButton.Timer = seekerPerformMinigameButton.MaxTimer;
                 },
                 () => {
-                    return !Seeker.isMinigaming && Seeker.seeker != null && Seeker.seeker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return !Seeker.isMinigaming && Seeker.seeker != null && Seeker.seeker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => {
                     bool canUse = true;
@@ -4385,7 +4385,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.seekerSelectAttack(1);
                 },
-                () => { return Seeker.seeker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && Seeker.isMinigaming; },
+                () => { return Seeker.seeker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && Seeker.isMinigaming; },
                 () => { return Seeker.seekerSelectedHiding == 0 && PlayerInCache.LocalPlayer.PlayerControl.CanMove && Seeker.isMinigaming && !Seeker.timeOutMinigame; },
                 () => { },
                 Seeker.getSearchMonjaButtonSprite(),
@@ -4403,7 +4403,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.seekerSelectAttack(2);
                 },
-                () => { return Seeker.seeker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && Seeker.isMinigaming; },
+                () => { return Seeker.seeker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && Seeker.isMinigaming; },
                 () => { return Seeker.seekerSelectedHiding == 0 && PlayerInCache.LocalPlayer.PlayerControl.CanMove && Seeker.isMinigaming && !Seeker.timeOutMinigame; },
                 () => { },
                 Seeker.getSearchCuloButtonSprite(),
@@ -4421,7 +4421,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.seekerSelectAttack(3);
                 },
-                () => { return Seeker.seeker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && Seeker.isMinigaming; },
+                () => { return Seeker.seeker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && Seeker.isMinigaming; },
                 () => { return Seeker.seekerSelectedHiding == 0 && PlayerInCache.LocalPlayer.PlayerControl.CanMove && Seeker.isMinigaming && !Seeker.timeOutMinigame; },
                 () => { },
                 Seeker.getSearchDioButtonSprite(),
@@ -4439,7 +4439,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.seekerSelectAttack(4);
                 },
-                () => { return Seeker.hidedPlayerOne == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && Seeker.isMinigaming; },
+                () => { return Seeker.hidedPlayerOne == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && Seeker.isMinigaming; },
                 () => { return Seeker.hidedPlayerOneSelectedHiding == 0 && PlayerInCache.LocalPlayer.PlayerControl.CanMove && Seeker.isMinigaming && !Seeker.timeOutMinigame; },
                 () => { },
                 Seeker.getMonjaButtonSprite(),
@@ -4457,7 +4457,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.seekerSelectAttack(5);
                 },
-                () => { return Seeker.hidedPlayerOne == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && Seeker.isMinigaming; },
+                () => { return Seeker.hidedPlayerOne == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && Seeker.isMinigaming; },
                 () => { return Seeker.hidedPlayerOneSelectedHiding == 0 && PlayerInCache.LocalPlayer.PlayerControl.CanMove && Seeker.isMinigaming && !Seeker.timeOutMinigame; },
                 () => { },
                 Seeker.getCuloButtonSprite(),
@@ -4475,7 +4475,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.seekerSelectAttack(6);
                 },
-                () => { return Seeker.hidedPlayerOne == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && Seeker.isMinigaming; },
+                () => { return Seeker.hidedPlayerOne == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && Seeker.isMinigaming; },
                 () => { return Seeker.hidedPlayerOneSelectedHiding == 0 && PlayerInCache.LocalPlayer.PlayerControl.CanMove && Seeker.isMinigaming && !Seeker.timeOutMinigame; },
                 () => { },
                 Seeker.getDioButtonSprite(),
@@ -4493,7 +4493,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.seekerSelectAttack(7);
                 },
-                () => { return Seeker.hidedPlayerTwo == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && Seeker.isMinigaming; },
+                () => { return Seeker.hidedPlayerTwo == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && Seeker.isMinigaming; },
                 () => { return Seeker.hidedPlayerTwoSelectedHiding == 0 && PlayerInCache.LocalPlayer.PlayerControl.CanMove && Seeker.isMinigaming && !Seeker.timeOutMinigame; },
                 () => { },
                 Seeker.getMonjaButtonSprite(),
@@ -4511,7 +4511,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.seekerSelectAttack(8);
                 },
-                () => { return Seeker.hidedPlayerTwo == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && Seeker.isMinigaming; },
+                () => { return Seeker.hidedPlayerTwo == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && Seeker.isMinigaming; },
                 () => { return Seeker.hidedPlayerTwoSelectedHiding == 0 && PlayerInCache.LocalPlayer.PlayerControl.CanMove && Seeker.isMinigaming && !Seeker.timeOutMinigame; },
                 () => { },
                 Seeker.getCuloButtonSprite(),
@@ -4529,7 +4529,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.seekerSelectAttack(9);
                 },
-                () => { return Seeker.hidedPlayerTwo == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && Seeker.isMinigaming; },
+                () => { return Seeker.hidedPlayerTwo == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && Seeker.isMinigaming; },
                 () => { return Seeker.hidedPlayerTwoSelectedHiding == 0 && PlayerInCache.LocalPlayer.PlayerControl.CanMove && Seeker.isMinigaming && !Seeker.timeOutMinigame; },
                 () => { },
                 Seeker.getDioButtonSprite(),
@@ -4547,7 +4547,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.seekerSelectAttack(10);
                 },
-                () => { return Seeker.hidedPlayerThree == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && Seeker.isMinigaming; },
+                () => { return Seeker.hidedPlayerThree == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && Seeker.isMinigaming; },
                 () => { return Seeker.hidedPlayerThreeSelectedHiding == 0 && PlayerInCache.LocalPlayer.PlayerControl.CanMove && Seeker.isMinigaming && !Seeker.timeOutMinigame; },
                 () => { },
                 Seeker.getMonjaButtonSprite(),
@@ -4565,7 +4565,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.seekerSelectAttack(11);
                 },
-                () => { return Seeker.hidedPlayerThree == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && Seeker.isMinigaming; },
+                () => { return Seeker.hidedPlayerThree == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && Seeker.isMinigaming; },
                 () => { return Seeker.hidedPlayerThreeSelectedHiding == 0 && PlayerInCache.LocalPlayer.PlayerControl.CanMove && Seeker.isMinigaming && !Seeker.timeOutMinigame; },
                 () => { },
                 Seeker.getCuloButtonSprite(),
@@ -4583,7 +4583,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.seekerSelectAttack(12);
                 },
-                () => { return Seeker.hidedPlayerThree == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && Seeker.isMinigaming; },
+                () => { return Seeker.hidedPlayerThree == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && Seeker.isMinigaming; },
                 () => { return Seeker.hidedPlayerThreeSelectedHiding == 0 && PlayerInCache.LocalPlayer.PlayerControl.CanMove && Seeker.isMinigaming && !Seeker.timeOutMinigame; },
                 () => { },
                 Seeker.getDioButtonSprite(),
@@ -4663,7 +4663,7 @@ namespace LasMonjas
                             currentAlivePlayers += 1;
                         }
                     }
-                    return currentAlivePlayers <= 2 && Captain.captain != null && Captain.captain == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return currentAlivePlayers <= 2 && Captain.captain != null && Captain.captain == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => { captainCallButton.Timer = captainCallButton.MaxTimer; },
@@ -4731,7 +4731,7 @@ namespace LasMonjas
                         RPCProcedure.fixBomb();
                     }
                 },
-                () => { return Mechanic.mechanic != null && Mechanic.mechanic == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Mechanic.mechanic != null && Mechanic.mechanic == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     bool sabotageActive = false;
                     if (Bomberman.activeBomb == true) {
@@ -4793,7 +4793,7 @@ namespace LasMonjas
                     sheriffKillButton.Timer = sheriffKillButton.MaxTimer;
                     Sheriff.currentTarget = null;
                 },
-                () => { return Sheriff.sheriff != null && Sheriff.sheriff == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Sheriff.sheriff != null && Sheriff.sheriff == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return Sheriff.currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => { sheriffKillButton.Timer = sheriffKillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -4830,7 +4830,7 @@ namespace LasMonjas
 
                     Detective.detectiveTimer = Detective.duration;
                 },
-                () => { return Detective.detective != null && Detective.detective == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && Detective.showFootPrints == 0; },
+                () => { return Detective.detective != null && Detective.detective == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && Detective.showFootPrints == 0; },
                 () => { return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => {
                     detectiveButton.Timer = detectiveButton.MaxTimer;
@@ -4856,7 +4856,7 @@ namespace LasMonjas
                         forensicButton.HasEffect = true;
                     }
                 },
-                () => { return Forensic.forensic != null && Forensic.forensic == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Forensic.forensic != null && Forensic.forensic == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (forensicButton.isEffectActive && Forensic.target != Forensic.soulTarget) {
                         Forensic.soulTarget = null;
@@ -4981,7 +4981,7 @@ namespace LasMonjas
                     }                    
                     timeTravelerTeleportButton.Timer = timeTravelerTeleportButton.MaxTimer;
                 },
-                () => { return TimeTraveler.timeTraveler != null && TimeTraveler.timeTraveler == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return TimeTraveler.timeTraveler != null && TimeTraveler.timeTraveler == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (TimeTraveler.markedLocation) {
                         timeTravelerTeleportButton.actionButton.graphic.sprite = TimeTraveler.getMarkedTeleportButtonSprite();
@@ -5038,7 +5038,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.timeTravelerStopTime();
                 },
-                () => { return TimeTraveler.timeTraveler != null && TimeTraveler.timeTraveler == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && TimeTraveler.shielded; },
+                () => { return TimeTraveler.timeTraveler != null && TimeTraveler.timeTraveler == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && TimeTraveler.shielded; },
                 () => {
                     bool sabotageActive = false;
                     if (Bomberman.activeBomb == true || Illusionist.lightsOutTimer > 0) {
@@ -5076,7 +5076,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.squireSetShielded(Squire.currentTarget.PlayerId);
                 },
-                () => { return Squire.squire != null && Squire.squire == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Squire.squire != null && Squire.squire == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return !Squire.usedShield && Squire.currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => { if (Squire.resetShieldAfterMeeting) Squire.resetShield(); },
                 Squire.getButtonSprite(),
@@ -5093,7 +5093,7 @@ namespace LasMonjas
                         fortuneTellerRevealButton.HasEffect = true;
                     }
                 },
-                () => { return FortuneTeller.fortuneTeller != null && FortuneTeller.fortuneTeller == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return FortuneTeller.fortuneTeller != null && FortuneTeller.fortuneTeller == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (fortuneTellerRevealButton.isEffectActive && FortuneTeller.revealTarget != FortuneTeller.currentTarget) {
                         FortuneTeller.revealTarget = null;
@@ -5175,7 +5175,7 @@ namespace LasMonjas
 
                     Hacker.hackerTimer = Hacker.duration;
                 },
-                () => { return Hacker.hacker != null && Hacker.hacker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Hacker.hacker != null && Hacker.hacker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => {
                     hackerButton.Timer = hackerButton.MaxTimer;
@@ -5224,7 +5224,7 @@ namespace LasMonjas
                    AmongUsClient.Instance.FinishRpcImmediately(usedAdminWriter);
                    RPCProcedure.hackerAbilityUses(0);
                },
-               () => { return Hacker.hacker != null && Hacker.hacker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+               () => { return Hacker.hacker != null && Hacker.hacker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                () => {
                    if (Hacker.hackerAdminTableChargesText != null) Hacker.hackerAdminTableChargesText.text = $"{Hacker.chargesAdminTable} / {Hacker.toolsNumber}";
                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming && Hacker.chargesAdminTable > 0;
@@ -5288,7 +5288,7 @@ namespace LasMonjas
                    AmongUsClient.Instance.FinishRpcImmediately(usedVitalsWriter);
                    RPCProcedure.hackerAbilityUses(1);
                },
-               () => { return Hacker.hacker != null && Hacker.hacker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && GameOptionsManager.Instance.currentGameOptions.MapId != 0 && GameOptionsManager.Instance.currentGameOptions.MapId != 1 && GameOptionsManager.Instance.currentGameOptions.MapId != 3; },
+               () => { return Hacker.hacker != null && Hacker.hacker == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && GameOptionsManager.Instance.currentGameOptions.MapId != 0 && GameOptionsManager.Instance.currentGameOptions.MapId != 1 && GameOptionsManager.Instance.currentGameOptions.MapId != 3; },
                () => {
                 if (Hacker.hackerVitalsChargesText != null) Hacker.hackerVitalsChargesText.text = $"{Hacker.chargesVitals} / {Hacker.toolsNumber}";
                 return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming && Hacker.chargesVitals > 0;
@@ -5336,7 +5336,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.sleuthUsedLocate(Sleuth.currentTarget.PlayerId);
                 },
-                () => { return Sleuth.sleuth != null && Sleuth.sleuth == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Sleuth.sleuth != null && Sleuth.sleuth == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return PlayerInCache.LocalPlayer.PlayerControl.CanMove && Sleuth.currentTarget != null && !Sleuth.usedLocate && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => { if (Sleuth.resetTargetAfterMeeting) Sleuth.resetLocated(); },
                 Sleuth.getLocateButtonSprite(),
@@ -5372,7 +5372,7 @@ namespace LasMonjas
 
                     Sleuth.corpsesPathfindTimer = Sleuth.corpsesPathfindDuration;
                 },
-                () => { return Sleuth.sleuth != null && Sleuth.sleuth == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Sleuth.sleuth != null && Sleuth.sleuth == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => {
                     sleuthLocateCorpsesButton.Timer = sleuthLocateCorpsesButton.MaxTimer;
@@ -5419,7 +5419,7 @@ namespace LasMonjas
 
                     Sleuth.timer = Sleuth.duration;
                 },
-                () => { return Sleuth.sleuth != null && Sleuth.sleuth == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Sleuth.sleuth != null && Sleuth.sleuth == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => {
                     sleuthWhosThereButton.Timer = sleuthWhosThereButton.MaxTimer;
@@ -5477,7 +5477,7 @@ namespace LasMonjas
                     Fink.finkCamera.GetComponent<Camera>().orthographicSize = 4;
                     Fink.finkShadow.SetActive(false);
                 },
-                () => { return Fink.fink != null && Fink.fink == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Fink.fink != null && Fink.fink == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     bool sabotageActive = false;
                     if (Bomberman.activeBomb == true || Illusionist.lightsOutTimer > 0) {
@@ -5536,7 +5536,7 @@ namespace LasMonjas
                     }
                     welderSealButton.Timer = welderSealButton.MaxTimer;
                 },
-                () => { return Welder.welder != null && Welder.welder == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Welder.welder != null && Welder.welder == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     bool canSeal = true;
                     if (Welder.ventTarget != null) {
@@ -5608,7 +5608,7 @@ namespace LasMonjas
                     }
                     welderBombVentButton.Timer = welderBombVentButton.MaxTimer;
                 },
-                () => { return Welder.welder != null && Welder.welder == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Welder.welder != null && Welder.welder == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     bool canBombVent = true;
                     if (Welder.ventTarget != null) {
@@ -5650,7 +5650,7 @@ namespace LasMonjas
                 () => {
                     spiritualistReviveButton.HasEffect = true;
                 },
-                () => { return Spiritualist.spiritualist != null && Spiritualist.spiritualist == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Spiritualist.spiritualist != null && Spiritualist.spiritualist == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (spiritualistReviveButton.isEffectActive && !Spiritualist.canRevive) {
                         spiritualistReviveButton.Timer = 0f;
@@ -5749,7 +5749,7 @@ namespace LasMonjas
                         Spiritualist.revivedPlayerTarget = null;
                     }
                 },
-                () => { return Spiritualist.revivedPlayer != null && Spiritualist.revivedPlayer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Spiritualist.revivedPlayer != null && Spiritualist.revivedPlayer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return Spiritualist.revivedPlayerTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => { spiritualistRevivedKillButton.Timer = spiritualistRevivedKillButton.MaxTimer; },
                 Spiritualist.getRevivedPlayerRevengeButtonSprite(),
@@ -5795,7 +5795,7 @@ namespace LasMonjas
                     }
                     vigilantButton.Timer = vigilantButton.MaxTimer;
                 },
-                () => { return Vigilant.vigilant != null && Vigilant.vigilant == PlayerInCache.LocalPlayer.PlayerControl && Vigilant.placedCameras < 4 && !PlayerInCache.LocalPlayer.Data.IsDead && GameOptionsManager.Instance.currentGameOptions.MapId != 1; },
+                () => { return Vigilant.vigilant != null && Vigilant.vigilant == PlayerInCache.LocalPlayer.PlayerControl && Vigilant.placedCameras < 4 && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && GameOptionsManager.Instance.currentGameOptions.MapId != 1; },
                 () => {
                     return Vigilant.remainingCameras > 0 && Vigilant.remainingCameras <= Vigilant.totalCameras && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
                 },
@@ -5890,7 +5890,7 @@ namespace LasMonjas
 
                     PlayerInCache.LocalPlayer.PlayerControl.NetTransform.Halt();
                 },
-                () => { return Vigilant.vigilant != null && Vigilant.vigilant == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && Vigilant.placedCameras >= 4 && GameOptionsManager.Instance.currentGameOptions.MapId != 1; },
+                () => { return Vigilant.vigilant != null && Vigilant.vigilant == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && Vigilant.placedCameras >= 4 && GameOptionsManager.Instance.currentGameOptions.MapId != 1; },
                 () => {
                     if (Vigilant.vigilantButtonCameraUsesText != null) Vigilant.vigilantButtonCameraUsesText.text = $"{Vigilant.charges} / {Vigilant.maxCharges}";
                     return PlayerInCache.LocalPlayer.PlayerControl.CanMove && Vigilant.charges > 0 && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming;
@@ -5942,7 +5942,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.hunterUsedHunted(Hunter.currentTarget.PlayerId);
                 },
-                () => { return Hunter.hunter != null && Hunter.hunter == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Hunter.hunter != null && Hunter.hunter == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return PlayerInCache.LocalPlayer.PlayerControl.CanMove && Hunter.currentTarget != null && !Hunter.usedHunted && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => { if (Hunter.resetTargetAfterMeeting) Hunter.resetHunted(); },
                 Hunter.getButtonSprite(),
@@ -5979,7 +5979,7 @@ namespace LasMonjas
                     }
 
                 },
-                () => { return Jinx.jinx != null && Jinx.jinx == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && Jinx.jinxs < Jinx.jinxNumber; },
+                () => { return Jinx.jinx != null && Jinx.jinx == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && Jinx.jinxs < Jinx.jinxNumber; },
                 () => {
                     if (Jinx.jinxButtonJinxsText != null) Jinx.jinxButtonJinxsText.text = $"{Jinx.jinxNumber - Jinx.jinxs} / {Jinx.jinxNumber}";
 
@@ -6026,7 +6026,7 @@ namespace LasMonjas
                         }
                     })));
                 },
-                () => { return Coward.coward != null && Coward.coward == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Coward.coward != null && Coward.coward == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     bool sabotageActive = false;
                     if (Bomberman.activeBomb == true || Illusionist.lightsOutTimer > 0) {
@@ -6081,7 +6081,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.batFrequency();
                 },
-                () => { return Bat.bat != null && Bat.bat == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Bat.bat != null && Bat.bat == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => {
                     batButton.Timer = batButton.MaxTimer;
@@ -6196,7 +6196,7 @@ namespace LasMonjas
                         }
                     }
                 },
-                () => { return Necromancer.necromancer != null && Necromancer.necromancer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Necromancer.necromancer != null && Necromancer.necromancer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (Necromancer.dragginBody) {
                         necromancerDragBodyButton.actionButton.graphic.sprite = Necromancer.getMoveBodyButtonSprite();
@@ -6252,7 +6252,7 @@ namespace LasMonjas
                 () => {
                     necromancerReviveButton.HasEffect = true;
                 },
-                () => { return Necromancer.necromancer != null && Necromancer.necromancer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Necromancer.necromancer != null && Necromancer.necromancer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
 
                     bool canUse = false;
@@ -6355,7 +6355,7 @@ namespace LasMonjas
                     RPCProcedure.placeEngineerTrap(Engineer.trapType, buff);
                 },
                 () => {
-                    return Engineer.engineer != null && Engineer.engineer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return Engineer.engineer != null && Engineer.engineer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => {
                     if (Input.GetKeyDown(KeyCode.Q)) {
@@ -6420,7 +6420,7 @@ namespace LasMonjas
 
                     locksmithOpenDoorButton.Timer = locksmithOpenDoorButton.MaxTimer;
                 },
-                () => { return Locksmith.locksmith != null && Locksmith.locksmith == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead && GameOptionsManager.Instance.currentGameOptions.MapId != 1; },
+                () => { return Locksmith.locksmith != null && Locksmith.locksmith == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && GameOptionsManager.Instance.currentGameOptions.MapId != 1; },
                 () => { return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => { locksmithOpenDoorButton.Timer = locksmithOpenDoorButton.MaxTimer; },
                 Locksmith.getlocksmithButtonSprite(),
@@ -6459,7 +6459,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writterSpeed);
                     RPCProcedure.taskMasterActivateSpeed();                    
                 },
-                () => { return TaskMaster.taskMaster != null && TaskMaster.taskMaster == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return TaskMaster.taskMaster != null && TaskMaster.taskMaster == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => {
                     taskMasterButton.Timer = taskMasterButton.MaxTimer;
@@ -6513,7 +6513,7 @@ namespace LasMonjas
                     taskMasterKillButton.Timer = taskMasterKillButton.MaxTimer;
                     TaskMaster.currentTarget = null;
                 },
-                () => { return TaskMaster.hasKillButton && TaskMaster.rewardType == 1 && TaskMaster.taskMaster != null && TaskMaster.taskMaster == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return TaskMaster.hasKillButton && TaskMaster.rewardType == 1 && TaskMaster.taskMaster != null && TaskMaster.taskMaster == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return TaskMaster.currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => { taskMasterKillButton.Timer = taskMasterKillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -6542,7 +6542,7 @@ namespace LasMonjas
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.jailedSetJailed(Jailer.currentTarget.PlayerId);
                 },
-                () => { return Jailer.jailer != null && Jailer.jailer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return Jailer.jailer != null && Jailer.jailer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return !Jailer.usedJail && Jailer.currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
                 () => { 
                     jailerJailButton.Timer = jailerJailButton.MaxTimer; 
@@ -6564,8 +6564,8 @@ namespace LasMonjas
             zoomOutButton = new CustomButton(
                 () => { Helpers.toggleZoom();
                 },
-                () => { if (PlayerInCache.LocalPlayer.PlayerControl == null || !PlayerInCache.LocalPlayer.Data.IsDead || TimeTraveler.isStoppingTime || (gameType >= 2 && gameType != 5)) return false;
-                    var (playerCompleted, playerTotal) = TasksHandler.taskInfo(PlayerInCache.LocalPlayer.Data);
+                () => { if (PlayerInCache.LocalPlayer.PlayerControl == null || !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead || TimeTraveler.isStoppingTime || (gameType >= 2 && gameType != 5)) return false;
+                    var (playerCompleted, playerTotal) = TasksHandler.taskInfo(PlayerInCache.LocalPlayer.PlayerControl.Data);
                     int numberOfLeftTasks = playerTotal - playerCompleted;
                     return numberOfLeftTasks <= 0;
                 },
@@ -6597,7 +6597,7 @@ namespace LasMonjas
 
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.mimicPuppeteerTransform, false, 100f);
                 },
-                () => { return gameType == 1 && !whoAmIFoundRole && !PlayerInCache.LocalPlayer.Data.IsDead && GameOptionsManager.Instance.currentGameOptions.GameMode != GameModes.HideNSeek; },
+                () => { return gameType == 1 && !whoAmIFoundRole && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && GameOptionsManager.Instance.currentGameOptions.GameMode != GameModes.HideNSeek; },
                 () => {
                     bool CanUse = false;
                     if (whoAmIModeGlobalItems.Count != 0) {
@@ -6607,7 +6607,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && !whoAmIFoundRole && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead; 
+                    return CanUse && !whoAmIFoundRole && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; 
                 },
                 () => { whoAmIButton.Timer = whoAmIButton.MaxTimer; },
                 Helpers.loadSpriteFromResources("LasMonjas.Images.WhoAmIRememberButton.png", 90f),
@@ -6658,7 +6658,7 @@ namespace LasMonjas
                     CaptureTheFlag.redplayer01currentTarget = null;
                 },
                 () => { return CaptureTheFlag.redplayer01 != null && CaptureTheFlag.redplayer01 == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return CaptureTheFlag.redplayer01currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !CaptureTheFlag.redplayer01IsReviving && PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.redPlayerWhoHasBlueFlag; },
+                () => { return CaptureTheFlag.redplayer01currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !CaptureTheFlag.redplayer01IsReviving && PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.redPlayerWhoHasBlueFlag; },
                 () => { redplayer01KillButton.Timer = redplayer01KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -6698,13 +6698,13 @@ namespace LasMonjas
                     else
                         redplayer01TakeFlagButton.actionButton.graphic.sprite = CaptureTheFlag.getTakeBlueFlagButtonSprite();
                     bool CanUse = false;
-                    if (CaptureTheFlag.blueflag != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.blueflag.transform.position) < 0.5f && !PlayerInCache.LocalPlayer.Data.IsDead && CaptureTheFlag.redPlayerWhoHasBlueFlag == null) {
+                    if (CaptureTheFlag.blueflag != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.blueflag.transform.position) < 0.5f && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && CaptureTheFlag.redPlayerWhoHasBlueFlag == null) {
                         CanUse = true;
                     }
                     else if (CaptureTheFlag.redflagbase != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.redflagbase.transform.position) < 0.5f && PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
                         CanUse = true;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { redplayer01TakeFlagButton.Timer = redplayer01TakeFlagButton.MaxTimer; },
                 CaptureTheFlag.getTakeBlueFlagButtonSprite(),
@@ -6727,7 +6727,7 @@ namespace LasMonjas
                     CaptureTheFlag.redplayer02currentTarget = null;
                 },
                 () => { return CaptureTheFlag.redplayer02 != null && CaptureTheFlag.redplayer02 == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return CaptureTheFlag.redplayer02currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !CaptureTheFlag.redplayer02IsReviving && PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.redPlayerWhoHasBlueFlag; },
+                () => { return CaptureTheFlag.redplayer02currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !CaptureTheFlag.redplayer02IsReviving && PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.redPlayerWhoHasBlueFlag; },
                 () => { redplayer02KillButton.Timer = redplayer02KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -6767,13 +6767,13 @@ namespace LasMonjas
                     else
                         redplayer02TakeFlagButton.actionButton.graphic.sprite = CaptureTheFlag.getTakeBlueFlagButtonSprite();
                     bool CanUse = false;
-                    if (CaptureTheFlag.blueflag != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.blueflag.transform.position) < 0.5f && !PlayerInCache.LocalPlayer.Data.IsDead && CaptureTheFlag.redPlayerWhoHasBlueFlag == null) {
+                    if (CaptureTheFlag.blueflag != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.blueflag.transform.position) < 0.5f && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && CaptureTheFlag.redPlayerWhoHasBlueFlag == null) {
                         CanUse = true;
                     }
                     else if (CaptureTheFlag.redflagbase != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.redflagbase.transform.position) < 0.5f && PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
                         CanUse = true;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { redplayer02TakeFlagButton.Timer = redplayer02TakeFlagButton.MaxTimer; },
                 CaptureTheFlag.getTakeBlueFlagButtonSprite(),
@@ -6796,7 +6796,7 @@ namespace LasMonjas
                     CaptureTheFlag.redplayer03currentTarget = null;
                 },
                 () => { return CaptureTheFlag.redplayer03 != null && CaptureTheFlag.redplayer03 == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return CaptureTheFlag.redplayer03currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !CaptureTheFlag.redplayer03IsReviving && PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.redPlayerWhoHasBlueFlag; },
+                () => { return CaptureTheFlag.redplayer03currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !CaptureTheFlag.redplayer03IsReviving && PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.redPlayerWhoHasBlueFlag; },
                 () => { redplayer03KillButton.Timer = redplayer03KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -6836,13 +6836,13 @@ namespace LasMonjas
                     else
                         redplayer03TakeFlagButton.actionButton.graphic.sprite = CaptureTheFlag.getTakeBlueFlagButtonSprite();
                     bool CanUse = false;
-                    if (CaptureTheFlag.blueflag != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.blueflag.transform.position) < 0.5f && !PlayerInCache.LocalPlayer.Data.IsDead && CaptureTheFlag.redPlayerWhoHasBlueFlag == null) {
+                    if (CaptureTheFlag.blueflag != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.blueflag.transform.position) < 0.5f && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && CaptureTheFlag.redPlayerWhoHasBlueFlag == null) {
                         CanUse = true;
                     }
                     else if (CaptureTheFlag.redflagbase != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.redflagbase.transform.position) < 0.5f && PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
                         CanUse = true;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { redplayer03TakeFlagButton.Timer = redplayer03TakeFlagButton.MaxTimer; },
                 CaptureTheFlag.getTakeBlueFlagButtonSprite(),
@@ -6865,7 +6865,7 @@ namespace LasMonjas
                     CaptureTheFlag.redplayer04currentTarget = null;
                 },
                 () => { return CaptureTheFlag.redplayer04 != null && CaptureTheFlag.redplayer04 == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return CaptureTheFlag.redplayer04currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !CaptureTheFlag.redplayer04IsReviving && PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.redPlayerWhoHasBlueFlag; },
+                () => { return CaptureTheFlag.redplayer04currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !CaptureTheFlag.redplayer04IsReviving && PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.redPlayerWhoHasBlueFlag; },
                 () => { redplayer04KillButton.Timer = redplayer04KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -6905,13 +6905,13 @@ namespace LasMonjas
                     else
                         redplayer04TakeFlagButton.actionButton.graphic.sprite = CaptureTheFlag.getTakeBlueFlagButtonSprite();
                     bool CanUse = false;
-                    if (CaptureTheFlag.blueflag != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.blueflag.transform.position) < 0.5f && !PlayerInCache.LocalPlayer.Data.IsDead && CaptureTheFlag.redPlayerWhoHasBlueFlag == null) {
+                    if (CaptureTheFlag.blueflag != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.blueflag.transform.position) < 0.5f && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && CaptureTheFlag.redPlayerWhoHasBlueFlag == null) {
                         CanUse = true;
                     }
                     else if (CaptureTheFlag.redflagbase != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.redflagbase.transform.position) < 0.5f && PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
                         CanUse = true;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { redplayer04TakeFlagButton.Timer = redplayer04TakeFlagButton.MaxTimer; },
                 CaptureTheFlag.getTakeBlueFlagButtonSprite(),
@@ -6934,7 +6934,7 @@ namespace LasMonjas
                     CaptureTheFlag.redplayer05currentTarget = null;
                 },
                 () => { return CaptureTheFlag.redplayer05 != null && CaptureTheFlag.redplayer05 == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return CaptureTheFlag.redplayer05currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !CaptureTheFlag.redplayer05IsReviving && PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.redPlayerWhoHasBlueFlag; },
+                () => { return CaptureTheFlag.redplayer05currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !CaptureTheFlag.redplayer05IsReviving && PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.redPlayerWhoHasBlueFlag; },
                 () => { redplayer05KillButton.Timer = redplayer05KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -6974,13 +6974,13 @@ namespace LasMonjas
                     else
                         redplayer05TakeFlagButton.actionButton.graphic.sprite = CaptureTheFlag.getTakeBlueFlagButtonSprite();
                     bool CanUse = false;
-                    if (CaptureTheFlag.blueflag != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.blueflag.transform.position) < 0.5f && !PlayerInCache.LocalPlayer.Data.IsDead && CaptureTheFlag.redPlayerWhoHasBlueFlag == null) {
+                    if (CaptureTheFlag.blueflag != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.blueflag.transform.position) < 0.5f && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && CaptureTheFlag.redPlayerWhoHasBlueFlag == null) {
                         CanUse = true;
                     }
                     else if (CaptureTheFlag.redflagbase != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.redflagbase.transform.position) < 0.5f && PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
                         CanUse = true;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { redplayer05TakeFlagButton.Timer = redplayer05TakeFlagButton.MaxTimer; },
                 CaptureTheFlag.getTakeBlueFlagButtonSprite(),
@@ -7003,7 +7003,7 @@ namespace LasMonjas
                     CaptureTheFlag.redplayer06currentTarget = null;
                 },
                 () => { return CaptureTheFlag.redplayer06 != null && CaptureTheFlag.redplayer06 == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return CaptureTheFlag.redplayer06currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !CaptureTheFlag.redplayer06IsReviving && PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.redPlayerWhoHasBlueFlag; },
+                () => { return CaptureTheFlag.redplayer06currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !CaptureTheFlag.redplayer06IsReviving && PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.redPlayerWhoHasBlueFlag; },
                 () => { redplayer06KillButton.Timer = redplayer06KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -7043,13 +7043,13 @@ namespace LasMonjas
                     else
                         redplayer06TakeFlagButton.actionButton.graphic.sprite = CaptureTheFlag.getTakeBlueFlagButtonSprite();
                     bool CanUse = false;
-                    if (CaptureTheFlag.blueflag != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.blueflag.transform.position) < 0.5f && !PlayerInCache.LocalPlayer.Data.IsDead && CaptureTheFlag.redPlayerWhoHasBlueFlag == null) {
+                    if (CaptureTheFlag.blueflag != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.blueflag.transform.position) < 0.5f && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && CaptureTheFlag.redPlayerWhoHasBlueFlag == null) {
                         CanUse = true;
                     }
                     else if (CaptureTheFlag.redflagbase != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.redflagbase.transform.position) < 0.5f && PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
                         CanUse = true;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { redplayer06TakeFlagButton.Timer = redplayer06TakeFlagButton.MaxTimer; },
                 CaptureTheFlag.getTakeBlueFlagButtonSprite(),
@@ -7072,7 +7072,7 @@ namespace LasMonjas
                     CaptureTheFlag.redplayer07currentTarget = null;
                 },
                 () => { return CaptureTheFlag.redplayer07 != null && CaptureTheFlag.redplayer07 == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return CaptureTheFlag.redplayer07currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !CaptureTheFlag.redplayer07IsReviving && PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.redPlayerWhoHasBlueFlag; },
+                () => { return CaptureTheFlag.redplayer07currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !CaptureTheFlag.redplayer07IsReviving && PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.redPlayerWhoHasBlueFlag; },
                 () => { redplayer07KillButton.Timer = redplayer07KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -7112,13 +7112,13 @@ namespace LasMonjas
                     else
                         redplayer07TakeFlagButton.actionButton.graphic.sprite = CaptureTheFlag.getTakeBlueFlagButtonSprite();
                     bool CanUse = false;
-                    if (CaptureTheFlag.blueflag != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.blueflag.transform.position) < 0.5f && !PlayerInCache.LocalPlayer.Data.IsDead && CaptureTheFlag.redPlayerWhoHasBlueFlag == null) {
+                    if (CaptureTheFlag.blueflag != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.blueflag.transform.position) < 0.5f && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && CaptureTheFlag.redPlayerWhoHasBlueFlag == null) {
                         CanUse = true;
                     }
                     else if (CaptureTheFlag.redflagbase != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.redflagbase.transform.position) < 0.5f && PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
                         CanUse = true;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { redplayer07TakeFlagButton.Timer = redplayer07TakeFlagButton.MaxTimer; },
                 CaptureTheFlag.getTakeBlueFlagButtonSprite(),
@@ -7141,7 +7141,7 @@ namespace LasMonjas
                     CaptureTheFlag.blueplayer01currentTarget = null;
                 },
                 () => { return CaptureTheFlag.blueplayer01 != null && CaptureTheFlag.blueplayer01 == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return CaptureTheFlag.blueplayer01currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !CaptureTheFlag.blueplayer01IsReviving && PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.bluePlayerWhoHasRedFlag; },
+                () => { return CaptureTheFlag.blueplayer01currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !CaptureTheFlag.blueplayer01IsReviving && PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.bluePlayerWhoHasRedFlag; },
                 () => { blueplayer01KillButton.Timer = blueplayer01KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -7181,13 +7181,13 @@ namespace LasMonjas
                     else
                         blueplayer01TakeFlagButton.actionButton.graphic.sprite = CaptureTheFlag.getTakeRedFlagButtonSprite();
                     bool CanUse = false;
-                    if (CaptureTheFlag.redflag != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.redflag.transform.position) < 0.5f && !PlayerInCache.LocalPlayer.Data.IsDead && CaptureTheFlag.bluePlayerWhoHasRedFlag == null) {
+                    if (CaptureTheFlag.redflag != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.redflag.transform.position) < 0.5f && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && CaptureTheFlag.bluePlayerWhoHasRedFlag == null) {
                         CanUse = true;
                     }
                     else if (CaptureTheFlag.blueflagbase != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.blueflagbase.transform.position) < 0.5f && PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
                         CanUse = true;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { blueplayer01TakeFlagButton.Timer = blueplayer01TakeFlagButton.MaxTimer; },
                 CaptureTheFlag.getTakeRedFlagButtonSprite(),
@@ -7210,7 +7210,7 @@ namespace LasMonjas
                     CaptureTheFlag.blueplayer02currentTarget = null;
                 },
                 () => { return CaptureTheFlag.blueplayer02 != null && CaptureTheFlag.blueplayer02 == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return CaptureTheFlag.blueplayer02currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !CaptureTheFlag.blueplayer02IsReviving && PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.bluePlayerWhoHasRedFlag; },
+                () => { return CaptureTheFlag.blueplayer02currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !CaptureTheFlag.blueplayer02IsReviving && PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.bluePlayerWhoHasRedFlag; },
                 () => { blueplayer02KillButton.Timer = blueplayer02KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -7250,13 +7250,13 @@ namespace LasMonjas
                     else
                         blueplayer02TakeFlagButton.actionButton.graphic.sprite = CaptureTheFlag.getTakeRedFlagButtonSprite();
                     bool CanUse = false;
-                    if (CaptureTheFlag.redflag != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.redflag.transform.position) < 0.5f && !PlayerInCache.LocalPlayer.Data.IsDead && CaptureTheFlag.bluePlayerWhoHasRedFlag == null) {
+                    if (CaptureTheFlag.redflag != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.redflag.transform.position) < 0.5f && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && CaptureTheFlag.bluePlayerWhoHasRedFlag == null) {
                         CanUse = true;
                     }
                     else if (CaptureTheFlag.blueflagbase != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.blueflagbase.transform.position) < 0.5f && PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
                         CanUse = true;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { blueplayer02TakeFlagButton.Timer = blueplayer02TakeFlagButton.MaxTimer; },
                 CaptureTheFlag.getTakeRedFlagButtonSprite(),
@@ -7279,7 +7279,7 @@ namespace LasMonjas
                     CaptureTheFlag.blueplayer03currentTarget = null;
                 },
                 () => { return CaptureTheFlag.blueplayer03 != null && CaptureTheFlag.blueplayer03 == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return CaptureTheFlag.blueplayer03currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !CaptureTheFlag.blueplayer03IsReviving && PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.bluePlayerWhoHasRedFlag; },
+                () => { return CaptureTheFlag.blueplayer03currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !CaptureTheFlag.blueplayer03IsReviving && PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.bluePlayerWhoHasRedFlag; },
                 () => { blueplayer03KillButton.Timer = blueplayer03KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -7319,13 +7319,13 @@ namespace LasMonjas
                     else
                         blueplayer03TakeFlagButton.actionButton.graphic.sprite = CaptureTheFlag.getTakeRedFlagButtonSprite();
                     bool CanUse = false;
-                    if (CaptureTheFlag.redflag != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.redflag.transform.position) < 0.5f && !PlayerInCache.LocalPlayer.Data.IsDead && CaptureTheFlag.bluePlayerWhoHasRedFlag == null) {
+                    if (CaptureTheFlag.redflag != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.redflag.transform.position) < 0.5f && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && CaptureTheFlag.bluePlayerWhoHasRedFlag == null) {
                         CanUse = true;
                     }
                     else if (CaptureTheFlag.blueflagbase != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.blueflagbase.transform.position) < 0.5f && PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
                         CanUse = true;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { blueplayer03TakeFlagButton.Timer = blueplayer03TakeFlagButton.MaxTimer; },
                 CaptureTheFlag.getTakeRedFlagButtonSprite(),
@@ -7348,7 +7348,7 @@ namespace LasMonjas
                     CaptureTheFlag.blueplayer04currentTarget = null;
                 },
                 () => { return CaptureTheFlag.blueplayer04 != null && CaptureTheFlag.blueplayer04 == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return CaptureTheFlag.blueplayer04currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !CaptureTheFlag.blueplayer04IsReviving && PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.bluePlayerWhoHasRedFlag; },
+                () => { return CaptureTheFlag.blueplayer04currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !CaptureTheFlag.blueplayer04IsReviving && PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.bluePlayerWhoHasRedFlag; },
                 () => { blueplayer04KillButton.Timer = blueplayer04KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -7388,13 +7388,13 @@ namespace LasMonjas
                     else
                         blueplayer04TakeFlagButton.actionButton.graphic.sprite = CaptureTheFlag.getTakeRedFlagButtonSprite();
                     bool CanUse = false;
-                    if (CaptureTheFlag.redflag != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.redflag.transform.position) < 0.5f && !PlayerInCache.LocalPlayer.Data.IsDead && CaptureTheFlag.bluePlayerWhoHasRedFlag == null) {
+                    if (CaptureTheFlag.redflag != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.redflag.transform.position) < 0.5f && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && CaptureTheFlag.bluePlayerWhoHasRedFlag == null) {
                         CanUse = true;
                     }
                     else if (CaptureTheFlag.blueflagbase != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.blueflagbase.transform.position) < 0.5f && PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
                         CanUse = true;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { blueplayer04TakeFlagButton.Timer = blueplayer04TakeFlagButton.MaxTimer; },
                 CaptureTheFlag.getTakeRedFlagButtonSprite(),
@@ -7417,7 +7417,7 @@ namespace LasMonjas
                     CaptureTheFlag.blueplayer05currentTarget = null;
                 },
                 () => { return CaptureTheFlag.blueplayer05 != null && CaptureTheFlag.blueplayer05 == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return CaptureTheFlag.blueplayer05currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !CaptureTheFlag.blueplayer05IsReviving && PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.bluePlayerWhoHasRedFlag; },
+                () => { return CaptureTheFlag.blueplayer05currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !CaptureTheFlag.blueplayer05IsReviving && PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.bluePlayerWhoHasRedFlag; },
                 () => { blueplayer05KillButton.Timer = blueplayer05KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -7457,13 +7457,13 @@ namespace LasMonjas
                     else
                         blueplayer05TakeFlagButton.actionButton.graphic.sprite = CaptureTheFlag.getTakeRedFlagButtonSprite();
                     bool CanUse = false;
-                    if (CaptureTheFlag.redflag != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.redflag.transform.position) < 0.5f && !PlayerInCache.LocalPlayer.Data.IsDead && CaptureTheFlag.bluePlayerWhoHasRedFlag == null) {
+                    if (CaptureTheFlag.redflag != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.redflag.transform.position) < 0.5f && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && CaptureTheFlag.bluePlayerWhoHasRedFlag == null) {
                         CanUse = true;
                     }
                     else if (CaptureTheFlag.blueflagbase != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.blueflagbase.transform.position) < 0.5f && PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
                         CanUse = true;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { blueplayer05TakeFlagButton.Timer = blueplayer05TakeFlagButton.MaxTimer; },
                 CaptureTheFlag.getTakeRedFlagButtonSprite(),
@@ -7486,7 +7486,7 @@ namespace LasMonjas
                     CaptureTheFlag.blueplayer06currentTarget = null;
                 },
                 () => { return CaptureTheFlag.blueplayer06 != null && CaptureTheFlag.blueplayer06 == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return CaptureTheFlag.blueplayer06currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !CaptureTheFlag.blueplayer06IsReviving && PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.bluePlayerWhoHasRedFlag; },
+                () => { return CaptureTheFlag.blueplayer06currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !CaptureTheFlag.blueplayer06IsReviving && PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.bluePlayerWhoHasRedFlag; },
                 () => { blueplayer06KillButton.Timer = blueplayer06KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -7526,13 +7526,13 @@ namespace LasMonjas
                     else
                         blueplayer06TakeFlagButton.actionButton.graphic.sprite = CaptureTheFlag.getTakeRedFlagButtonSprite();
                     bool CanUse = false;
-                    if (CaptureTheFlag.redflag != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.redflag.transform.position) < 0.5f && !PlayerInCache.LocalPlayer.Data.IsDead && CaptureTheFlag.bluePlayerWhoHasRedFlag == null) {
+                    if (CaptureTheFlag.redflag != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.redflag.transform.position) < 0.5f && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && CaptureTheFlag.bluePlayerWhoHasRedFlag == null) {
                         CanUse = true;
                     }
                     else if (CaptureTheFlag.blueflagbase != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.blueflagbase.transform.position) < 0.5f && PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
                         CanUse = true;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { blueplayer06TakeFlagButton.Timer = blueplayer06TakeFlagButton.MaxTimer; },
                 CaptureTheFlag.getTakeRedFlagButtonSprite(),
@@ -7555,7 +7555,7 @@ namespace LasMonjas
                     CaptureTheFlag.blueplayer07currentTarget = null;
                 },
                 () => { return CaptureTheFlag.blueplayer07 != null && CaptureTheFlag.blueplayer07 == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return CaptureTheFlag.blueplayer07currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !CaptureTheFlag.blueplayer07IsReviving && PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.bluePlayerWhoHasRedFlag; },
+                () => { return CaptureTheFlag.blueplayer07currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !CaptureTheFlag.blueplayer07IsReviving && PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.bluePlayerWhoHasRedFlag; },
                 () => { blueplayer07KillButton.Timer = blueplayer07KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -7595,13 +7595,13 @@ namespace LasMonjas
                     else
                         blueplayer07TakeFlagButton.actionButton.graphic.sprite = CaptureTheFlag.getTakeRedFlagButtonSprite();
                     bool CanUse = false;
-                    if (CaptureTheFlag.redflag != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.redflag.transform.position) < 0.5f && !PlayerInCache.LocalPlayer.Data.IsDead && CaptureTheFlag.bluePlayerWhoHasRedFlag == null) {
+                    if (CaptureTheFlag.redflag != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.redflag.transform.position) < 0.5f && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && CaptureTheFlag.bluePlayerWhoHasRedFlag == null) {
                         CanUse = true;
                     }
                     else if (CaptureTheFlag.blueflagbase != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, CaptureTheFlag.blueflagbase.transform.position) < 0.5f && PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
                         CanUse = true;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { blueplayer07TakeFlagButton.Timer = blueplayer07TakeFlagButton.MaxTimer; },
                 CaptureTheFlag.getTakeRedFlagButtonSprite(),
@@ -7637,7 +7637,7 @@ namespace LasMonjas
                             canUse = false;
                         }
                     }
-                    return canUse && CaptureTheFlag.stealerPlayercurrentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !CaptureTheFlag.stealerPlayerIsReviving;
+                    return canUse && CaptureTheFlag.stealerPlayercurrentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !CaptureTheFlag.stealerPlayerIsReviving;
                 },
                 () => { stealerPlayerKillButton.Timer = stealerPlayerKillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -7663,10 +7663,10 @@ namespace LasMonjas
                 () => { return PoliceAndThief.policeplayer01 != null && PoliceAndThief.policeplayer01 == PlayerInCache.LocalPlayer.PlayerControl; },
                 () => {
                     bool CanUse = true;
-                    if ((PoliceAndThief.cellbuttontwo != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.cellbuttontwo.transform.position) <= 3f || PoliceAndThief.cellbutton != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.cellbutton.transform.position) <= 3f) && !PlayerInCache.LocalPlayer.Data.IsDead) {
+                    if ((PoliceAndThief.cellbuttontwo != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.cellbuttontwo.transform.position) <= 3f || PoliceAndThief.cellbutton != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.cellbutton.transform.position) <= 3f) && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                         CanUse = false;
                     }
-                    return CanUse && PoliceAndThief.policeplayer01currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.policeplayer01IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PoliceAndThief.policeplayer01currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.policeplayer01IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { policeplayer01KillButton.Timer = policeplayer01KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -7683,7 +7683,7 @@ namespace LasMonjas
                         policeplayer01JailButton.HasEffect = true;
                     }
                 },
-                () => { return PoliceAndThief.policeplayer01 != null && PoliceAndThief.policeplayer01 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return PoliceAndThief.policeplayer01 != null && PoliceAndThief.policeplayer01 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (policeplayer01JailButton.isEffectActive && PoliceAndThief.policeplayer01targetedPlayer != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.policeplayer01targetedPlayer.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         PoliceAndThief.policeplayer01targetedPlayer = null;
@@ -7691,7 +7691,7 @@ namespace LasMonjas
                         policeplayer01JailButton.isEffectActive = false;
                     }
                     bool CanUse = true;
-                    if ((PoliceAndThief.jewelbuttontwo != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.jewelbuttontwo.transform.position) <= 3f || PoliceAndThief.jewelbutton != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.jewelbutton.transform.position) <= 3f) && !PlayerInCache.LocalPlayer.Data.IsDead) {
+                    if ((PoliceAndThief.jewelbuttontwo != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.jewelbuttontwo.transform.position) <= 3f || PoliceAndThief.jewelbutton != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.jewelbutton.transform.position) <= 3f) && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                         CanUse = false;
                     }
                     return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.policeplayer01IsReviving && PoliceAndThief.policeplayer01currentTarget != null;
@@ -7725,7 +7725,7 @@ namespace LasMonjas
                 () => {
                     PoliceAndThief.policeplayer01lightTimer = 10;
                 },
-                () => { return PoliceAndThief.policeplayer01 != null && PoliceAndThief.policeplayer01 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return PoliceAndThief.policeplayer01 != null && PoliceAndThief.policeplayer01 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.policeplayer01IsReviving; },
                 () => {
                     policeplayer01LightButton.Timer = policeplayer01LightButton.MaxTimer;
@@ -7757,10 +7757,10 @@ namespace LasMonjas
                 () => { return PoliceAndThief.policeplayer02 != null && PoliceAndThief.policeplayer02 == PlayerInCache.LocalPlayer.PlayerControl; },
                 () => {
                     bool CanUse = true;
-                    if ((PoliceAndThief.cellbuttontwo != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.cellbuttontwo.transform.position) <= 3f || PoliceAndThief.cellbutton != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.cellbutton.transform.position) <= 3f) && !PlayerInCache.LocalPlayer.Data.IsDead) {
+                    if ((PoliceAndThief.cellbuttontwo != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.cellbuttontwo.transform.position) <= 3f || PoliceAndThief.cellbutton != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.cellbutton.transform.position) <= 3f) && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                         CanUse = false;
                     }
-                    return CanUse && PoliceAndThief.policeplayer02currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.policeplayer02IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PoliceAndThief.policeplayer02currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.policeplayer02IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { policeplayer02KillButton.Timer = policeplayer02KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -7816,10 +7816,10 @@ namespace LasMonjas
                         }
                     }
                     bool CanUse = true;
-                    if ((PoliceAndThief.jewelbuttontwo != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.jewelbuttontwo.transform.position) <= 3f || PoliceAndThief.jewelbutton != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.jewelbutton.transform.position) <= 3f) && !PlayerInCache.LocalPlayer.Data.IsDead) {
+                    if ((PoliceAndThief.jewelbuttontwo != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.jewelbuttontwo.transform.position) <= 3f || PoliceAndThief.jewelbutton != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.jewelbutton.transform.position) <= 3f) && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                         CanUse = false;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.policeplayer02IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.policeplayer02IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { policeplayer02TaseButton.Timer = policeplayer02TaseButton.MaxTimer; },
                 PoliceAndThief.getTaserThiefButtonSprite(),
@@ -7833,7 +7833,7 @@ namespace LasMonjas
                 () => {
                     PoliceAndThief.policeplayer02lightTimer = 10;
                 },
-                () => { return PoliceAndThief.policeplayer02 != null && PoliceAndThief.policeplayer02 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return PoliceAndThief.policeplayer02 != null && PoliceAndThief.policeplayer02 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.policeplayer02IsReviving; },
                 () => {
                     policeplayer02LightButton.Timer = policeplayer02LightButton.MaxTimer;
@@ -7865,10 +7865,10 @@ namespace LasMonjas
                 () => { return PoliceAndThief.policeplayer03 != null && PoliceAndThief.policeplayer03 == PlayerInCache.LocalPlayer.PlayerControl; },
                 () => {
                     bool CanUse = true;
-                    if ((PoliceAndThief.cellbuttontwo != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.cellbuttontwo.transform.position) <= 3f || PoliceAndThief.cellbutton != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.cellbutton.transform.position) <= 3f) && !PlayerInCache.LocalPlayer.Data.IsDead) {
+                    if ((PoliceAndThief.cellbuttontwo != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.cellbuttontwo.transform.position) <= 3f || PoliceAndThief.cellbutton != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.cellbutton.transform.position) <= 3f) && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                         CanUse = false;
                     }
-                    return CanUse && PoliceAndThief.policeplayer03currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.policeplayer03IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PoliceAndThief.policeplayer03currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.policeplayer03IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { policeplayer03KillButton.Timer = policeplayer03KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -7885,7 +7885,7 @@ namespace LasMonjas
                         policeplayer03JailButton.HasEffect = true;
                     }
                 },
-                () => { return PoliceAndThief.policeplayer03 != null && PoliceAndThief.policeplayer03 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return PoliceAndThief.policeplayer03 != null && PoliceAndThief.policeplayer03 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (policeplayer03JailButton.isEffectActive && PoliceAndThief.policeplayer03targetedPlayer != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.policeplayer03targetedPlayer.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         PoliceAndThief.policeplayer03targetedPlayer = null;
@@ -7894,7 +7894,7 @@ namespace LasMonjas
                     }
 
                     bool CanUse = true;
-                    if ((PoliceAndThief.jewelbuttontwo != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.jewelbuttontwo.transform.position) <= 3f || PoliceAndThief.jewelbutton != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.jewelbutton.transform.position) <= 3f) && !PlayerInCache.LocalPlayer.Data.IsDead) {
+                    if ((PoliceAndThief.jewelbuttontwo != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.jewelbuttontwo.transform.position) <= 3f || PoliceAndThief.jewelbutton != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.jewelbutton.transform.position) <= 3f) && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                         CanUse = false;
                     }
                     return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.policeplayer03IsReviving && PoliceAndThief.policeplayer03currentTarget != null;
@@ -7928,7 +7928,7 @@ namespace LasMonjas
                 () => {
                     PoliceAndThief.policeplayer03lightTimer = 10;
                 },
-                () => { return PoliceAndThief.policeplayer03 != null && PoliceAndThief.policeplayer03 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return PoliceAndThief.policeplayer03 != null && PoliceAndThief.policeplayer03 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.policeplayer03IsReviving; },
                 () => {
                     policeplayer03LightButton.Timer = policeplayer03LightButton.MaxTimer;
@@ -7960,10 +7960,10 @@ namespace LasMonjas
                 () => { return PoliceAndThief.policeplayer04 != null && PoliceAndThief.policeplayer04 == PlayerInCache.LocalPlayer.PlayerControl; },
                 () => {
                     bool CanUse = true;
-                    if ((PoliceAndThief.cellbuttontwo != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.cellbuttontwo.transform.position) <= 3f || PoliceAndThief.cellbutton != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.cellbutton.transform.position) <= 3f) && !PlayerInCache.LocalPlayer.Data.IsDead) {
+                    if ((PoliceAndThief.cellbuttontwo != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.cellbuttontwo.transform.position) <= 3f || PoliceAndThief.cellbutton != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.cellbutton.transform.position) <= 3f) && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                         CanUse = false;
                     }
-                    return CanUse && PoliceAndThief.policeplayer04currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.policeplayer04IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PoliceAndThief.policeplayer04currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.policeplayer04IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { policeplayer04KillButton.Timer = policeplayer04KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -8019,10 +8019,10 @@ namespace LasMonjas
                         }
                     }
                     bool CanUse = true;
-                    if ((PoliceAndThief.jewelbuttontwo != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.jewelbuttontwo.transform.position) <= 3f || PoliceAndThief.jewelbutton != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.jewelbutton.transform.position) <= 3f) && !PlayerInCache.LocalPlayer.Data.IsDead) {
+                    if ((PoliceAndThief.jewelbuttontwo != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.jewelbuttontwo.transform.position) <= 3f || PoliceAndThief.jewelbutton != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.jewelbutton.transform.position) <= 3f) && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                         CanUse = false;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.policeplayer04IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.policeplayer04IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { policeplayer04TaseButton.Timer = policeplayer04TaseButton.MaxTimer; },
                 PoliceAndThief.getTaserThiefButtonSprite(),
@@ -8036,7 +8036,7 @@ namespace LasMonjas
                 () => {
                     PoliceAndThief.policeplayer04lightTimer = 10;
                 },
-                () => { return PoliceAndThief.policeplayer04 != null && PoliceAndThief.policeplayer04 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return PoliceAndThief.policeplayer04 != null && PoliceAndThief.policeplayer04 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.policeplayer04IsReviving; },
                 () => {
                     policeplayer04LightButton.Timer = policeplayer04LightButton.MaxTimer;
@@ -8068,10 +8068,10 @@ namespace LasMonjas
                 () => { return PoliceAndThief.policeplayer05 != null && PoliceAndThief.policeplayer05 == PlayerInCache.LocalPlayer.PlayerControl; },
                 () => {
                     bool CanUse = true;
-                    if ((PoliceAndThief.cellbuttontwo != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.cellbuttontwo.transform.position) <= 3f || PoliceAndThief.cellbutton != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.cellbutton.transform.position) <= 3f) && !PlayerInCache.LocalPlayer.Data.IsDead) {
+                    if ((PoliceAndThief.cellbuttontwo != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.cellbuttontwo.transform.position) <= 3f || PoliceAndThief.cellbutton != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.cellbutton.transform.position) <= 3f) && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                         CanUse = false;
                     }
-                    return CanUse && PoliceAndThief.policeplayer05currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.policeplayer05IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PoliceAndThief.policeplayer05currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.policeplayer05IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { policeplayer05KillButton.Timer = policeplayer05KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -8088,7 +8088,7 @@ namespace LasMonjas
                         policeplayer05JailButton.HasEffect = true;
                     }
                 },
-                () => { return PoliceAndThief.policeplayer05 != null && PoliceAndThief.policeplayer05 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return PoliceAndThief.policeplayer05 != null && PoliceAndThief.policeplayer05 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (policeplayer05JailButton.isEffectActive && PoliceAndThief.policeplayer05targetedPlayer != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.policeplayer05targetedPlayer.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         PoliceAndThief.policeplayer05targetedPlayer = null;
@@ -8097,7 +8097,7 @@ namespace LasMonjas
                     }
 
                     bool CanUse = true;
-                    if ((PoliceAndThief.jewelbuttontwo != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.jewelbuttontwo.transform.position) <= 3f || PoliceAndThief.jewelbutton != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.jewelbutton.transform.position) <= 3f) && !PlayerInCache.LocalPlayer.Data.IsDead) {
+                    if ((PoliceAndThief.jewelbuttontwo != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.jewelbuttontwo.transform.position) <= 3f || PoliceAndThief.jewelbutton != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.jewelbutton.transform.position) <= 3f) && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                         CanUse = false;
                     }
                     return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.policeplayer05IsReviving && PoliceAndThief.policeplayer05currentTarget != null;
@@ -8131,7 +8131,7 @@ namespace LasMonjas
                 () => {
                     PoliceAndThief.policeplayer05lightTimer = 10;
                 },
-                () => { return PoliceAndThief.policeplayer05 != null && PoliceAndThief.policeplayer05 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return PoliceAndThief.policeplayer05 != null && PoliceAndThief.policeplayer05 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.policeplayer05IsReviving; },
                 () => {
                     policeplayer05LightButton.Timer = policeplayer05LightButton.MaxTimer;
@@ -8163,10 +8163,10 @@ namespace LasMonjas
                 () => { return PoliceAndThief.policeplayer06 != null && PoliceAndThief.policeplayer06 == PlayerInCache.LocalPlayer.PlayerControl; },
                 () => {
                     bool CanUse = true;
-                    if ((PoliceAndThief.cellbuttontwo != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.cellbuttontwo.transform.position) <= 3f || PoliceAndThief.cellbutton != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.cellbutton.transform.position) <= 3f) && !PlayerInCache.LocalPlayer.Data.IsDead) {
+                    if ((PoliceAndThief.cellbuttontwo != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.cellbuttontwo.transform.position) <= 3f || PoliceAndThief.cellbutton != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.cellbutton.transform.position) <= 3f) && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                         CanUse = false;
                     }
-                    return CanUse && PoliceAndThief.policeplayer06currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.policeplayer06IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PoliceAndThief.policeplayer06currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.policeplayer06IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { policeplayer06KillButton.Timer = policeplayer06KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -8183,7 +8183,7 @@ namespace LasMonjas
                         policeplayer06JailButton.HasEffect = true;
                     }
                 },
-                () => { return PoliceAndThief.policeplayer06 != null && PoliceAndThief.policeplayer06 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return PoliceAndThief.policeplayer06 != null && PoliceAndThief.policeplayer06 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (policeplayer06JailButton.isEffectActive && PoliceAndThief.policeplayer06targetedPlayer != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.policeplayer06targetedPlayer.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         PoliceAndThief.policeplayer06targetedPlayer = null;
@@ -8192,7 +8192,7 @@ namespace LasMonjas
                     }
 
                     bool CanUse = true;
-                    if ((PoliceAndThief.jewelbuttontwo != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.jewelbuttontwo.transform.position) <= 3f || PoliceAndThief.jewelbutton != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.jewelbutton.transform.position) <= 3f) && !PlayerInCache.LocalPlayer.Data.IsDead) {
+                    if ((PoliceAndThief.jewelbuttontwo != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.jewelbuttontwo.transform.position) <= 3f || PoliceAndThief.jewelbutton != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.jewelbutton.transform.position) <= 3f) && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                         CanUse = false;
                     }
                     return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.policeplayer06IsReviving && PoliceAndThief.policeplayer06currentTarget != null;
@@ -8226,7 +8226,7 @@ namespace LasMonjas
                 () => {
                     PoliceAndThief.policeplayer06lightTimer = 10;
                 },
-                () => { return PoliceAndThief.policeplayer06 != null && PoliceAndThief.policeplayer06 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return PoliceAndThief.policeplayer06 != null && PoliceAndThief.policeplayer06 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.policeplayer06IsReviving; },
                 () => {
                     policeplayer06LightButton.Timer = policeplayer06LightButton.MaxTimer;
@@ -8268,7 +8268,7 @@ namespace LasMonjas
                             canUse = true;
                             break;
                     }
-                    return canUse && PoliceAndThief.thiefplayer01currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !PoliceAndThief.thiefplayer01IsReviving && !PoliceAndThief.thiefplayer01IsStealing; },
+                    return canUse && PoliceAndThief.thiefplayer01currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !PoliceAndThief.thiefplayer01IsReviving && !PoliceAndThief.thiefplayer01IsStealing; },
                 () => { thiefplayer01KillButton.Timer = thiefplayer01KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -8305,7 +8305,7 @@ namespace LasMonjas
                             CanUse = true;
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer01IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer01IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { thiefplayer01FreeThiefButton.Timer = thiefplayer01FreeThiefButton.MaxTimer; },
                 PoliceAndThief.getFreeThiefButtonSprite(),
@@ -8416,7 +8416,7 @@ namespace LasMonjas
                         }
 
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer01IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer01IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { thiefplayer01TakeDeliverJewelButton.Timer = thiefplayer01TakeDeliverJewelButton.MaxTimer; },
                 PoliceAndThief.getTakeJewelButtonSprite(),
@@ -8451,7 +8451,7 @@ namespace LasMonjas
                             canUse = true;
                             break;
                     }
-                    return canUse && PoliceAndThief.thiefplayer02currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer02IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead && !PoliceAndThief.thiefplayer02IsStealing; },
+                    return canUse && PoliceAndThief.thiefplayer02currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer02IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !PoliceAndThief.thiefplayer02IsStealing; },
                 () => { thiefplayer02KillButton.Timer = thiefplayer02KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -8488,7 +8488,7 @@ namespace LasMonjas
                             CanUse = true;
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer02IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer02IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { thiefplayer02FreeThiefButton.Timer = thiefplayer02FreeThiefButton.MaxTimer; },
                 PoliceAndThief.getFreeThiefButtonSprite(),
@@ -8599,7 +8599,7 @@ namespace LasMonjas
                         }
 
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer02IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer02IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { thiefplayer02TakeDeliverJewelButton.Timer = thiefplayer02TakeDeliverJewelButton.MaxTimer; },
                 PoliceAndThief.getTakeJewelButtonSprite(),
@@ -8634,7 +8634,7 @@ namespace LasMonjas
                             canUse = true;
                             break;
                     }
-                    return canUse && PoliceAndThief.thiefplayer03currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer03IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead && !PoliceAndThief.thiefplayer03IsStealing; },
+                    return canUse && PoliceAndThief.thiefplayer03currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer03IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !PoliceAndThief.thiefplayer03IsStealing; },
                 () => { thiefplayer03KillButton.Timer = thiefplayer03KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -8671,7 +8671,7 @@ namespace LasMonjas
                             CanUse = true;
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer03IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer03IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { thiefplayer03FreeThiefButton.Timer = thiefplayer03FreeThiefButton.MaxTimer; },
                 PoliceAndThief.getFreeThiefButtonSprite(),
@@ -8782,7 +8782,7 @@ namespace LasMonjas
                         }
 
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer03IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer03IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { thiefplayer03TakeDeliverJewelButton.Timer = thiefplayer03TakeDeliverJewelButton.MaxTimer; },
                 PoliceAndThief.getTakeJewelButtonSprite(),
@@ -8817,7 +8817,7 @@ namespace LasMonjas
                             canUse = true;
                             break;
                     }
-                    return canUse && PoliceAndThief.thiefplayer04currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer04IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead && !PoliceAndThief.thiefplayer04IsStealing; },
+                    return canUse && PoliceAndThief.thiefplayer04currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer04IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !PoliceAndThief.thiefplayer04IsStealing; },
                 () => { thiefplayer04KillButton.Timer = thiefplayer04KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -8854,7 +8854,7 @@ namespace LasMonjas
                             CanUse = true;
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer04IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer04IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { thiefplayer04FreeThiefButton.Timer = thiefplayer04FreeThiefButton.MaxTimer; },
                 PoliceAndThief.getFreeThiefButtonSprite(),
@@ -8965,7 +8965,7 @@ namespace LasMonjas
                         }
 
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer04IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer04IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { thiefplayer04TakeDeliverJewelButton.Timer = thiefplayer04TakeDeliverJewelButton.MaxTimer; },
                 PoliceAndThief.getTakeJewelButtonSprite(),
@@ -9000,7 +9000,7 @@ namespace LasMonjas
                             canUse = true;
                             break;
                     }
-                    return canUse && PoliceAndThief.thiefplayer05currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer05IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead && !PoliceAndThief.thiefplayer05IsStealing; },
+                    return canUse && PoliceAndThief.thiefplayer05currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer05IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !PoliceAndThief.thiefplayer05IsStealing; },
                 () => { thiefplayer05KillButton.Timer = thiefplayer05KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -9037,7 +9037,7 @@ namespace LasMonjas
                             CanUse = true;
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer05IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer05IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { thiefplayer05FreeThiefButton.Timer = thiefplayer05FreeThiefButton.MaxTimer; },
                 PoliceAndThief.getFreeThiefButtonSprite(),
@@ -9148,7 +9148,7 @@ namespace LasMonjas
                         }
 
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer05IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer05IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { thiefplayer05TakeDeliverJewelButton.Timer = thiefplayer05TakeDeliverJewelButton.MaxTimer; },
                 PoliceAndThief.getTakeJewelButtonSprite(),
@@ -9183,7 +9183,7 @@ namespace LasMonjas
                             canUse = true;
                             break;
                     }
-                    return canUse && PoliceAndThief.thiefplayer06currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer06IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead && !PoliceAndThief.thiefplayer06IsStealing; },
+                    return canUse && PoliceAndThief.thiefplayer06currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer06IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !PoliceAndThief.thiefplayer06IsStealing; },
                 () => { thiefplayer06KillButton.Timer = thiefplayer06KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -9220,7 +9220,7 @@ namespace LasMonjas
                             CanUse = true;
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer06IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer06IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { thiefplayer06FreeThiefButton.Timer = thiefplayer06FreeThiefButton.MaxTimer; },
                 PoliceAndThief.getFreeThiefButtonSprite(),
@@ -9331,7 +9331,7 @@ namespace LasMonjas
                         }
 
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer06IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer06IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { thiefplayer06TakeDeliverJewelButton.Timer = thiefplayer06TakeDeliverJewelButton.MaxTimer; },
                 PoliceAndThief.getTakeJewelButtonSprite(),
@@ -9366,7 +9366,7 @@ namespace LasMonjas
                             canUse = true;
                             break;
                     }
-                    return canUse && PoliceAndThief.thiefplayer07currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer07IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead && !PoliceAndThief.thiefplayer07IsStealing; },
+                    return canUse && PoliceAndThief.thiefplayer07currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer07IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !PoliceAndThief.thiefplayer07IsStealing; },
                 () => { thiefplayer07KillButton.Timer = thiefplayer07KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -9403,7 +9403,7 @@ namespace LasMonjas
                             CanUse = true;
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer07IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer07IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { thiefplayer07FreeThiefButton.Timer = thiefplayer07FreeThiefButton.MaxTimer; },
                 PoliceAndThief.getFreeThiefButtonSprite(),
@@ -9514,7 +9514,7 @@ namespace LasMonjas
                         }
 
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer07IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer07IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { thiefplayer07TakeDeliverJewelButton.Timer = thiefplayer07TakeDeliverJewelButton.MaxTimer; },
                 PoliceAndThief.getTakeJewelButtonSprite(),
@@ -9549,7 +9549,7 @@ namespace LasMonjas
                             canUse = true;
                             break;
                     }
-                    return canUse && PoliceAndThief.thiefplayer08currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer08IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead && !PoliceAndThief.thiefplayer08IsStealing; },
+                    return canUse && PoliceAndThief.thiefplayer08currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer08IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !PoliceAndThief.thiefplayer08IsStealing; },
                 () => { thiefplayer08KillButton.Timer = thiefplayer08KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -9586,7 +9586,7 @@ namespace LasMonjas
                             CanUse = true;
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer08IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer08IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { thiefplayer08FreeThiefButton.Timer = thiefplayer08FreeThiefButton.MaxTimer; },
                 PoliceAndThief.getFreeThiefButtonSprite(),
@@ -9697,7 +9697,7 @@ namespace LasMonjas
                         }
 
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer08IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer08IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { thiefplayer08TakeDeliverJewelButton.Timer = thiefplayer08TakeDeliverJewelButton.MaxTimer; },
                 PoliceAndThief.getTakeJewelButtonSprite(),
@@ -9732,7 +9732,7 @@ namespace LasMonjas
                             canUse = true;
                             break;
                     }
-                    return canUse && PoliceAndThief.thiefplayer09currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer09IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead && !PoliceAndThief.thiefplayer09IsStealing; },
+                    return canUse && PoliceAndThief.thiefplayer09currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer09IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !PoliceAndThief.thiefplayer09IsStealing; },
                 () => { thiefplayer09KillButton.Timer = thiefplayer09KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -9769,7 +9769,7 @@ namespace LasMonjas
                             CanUse = true;
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer09IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer09IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { thiefplayer09FreeThiefButton.Timer = thiefplayer09FreeThiefButton.MaxTimer; },
                 PoliceAndThief.getFreeThiefButtonSprite(),
@@ -9880,7 +9880,7 @@ namespace LasMonjas
                         }
 
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer09IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PoliceAndThief.thiefplayer09IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { thiefplayer09TakeDeliverJewelButton.Timer = thiefplayer09TakeDeliverJewelButton.MaxTimer; },
                 PoliceAndThief.getTakeJewelButtonSprite(),
@@ -9916,7 +9916,7 @@ namespace LasMonjas
                             KingOfTheHill.localArrows[3].arrow.SetActive(false);
                         }
                     }
-                    return KingOfTheHill.greenplayer01currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.greenplayer01IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return KingOfTheHill.greenplayer01currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.greenplayer01IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { greenplayer01KillButton.Timer = greenplayer01KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -9952,7 +9952,7 @@ namespace LasMonjas
                             KingOfTheHill.localArrows[3].arrow.SetActive(false);
                         }
                     }
-                    return KingOfTheHill.greenplayer02currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.greenplayer02IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return KingOfTheHill.greenplayer02currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.greenplayer02IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { greenplayer02KillButton.Timer = greenplayer02KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -9988,7 +9988,7 @@ namespace LasMonjas
                             KingOfTheHill.localArrows[3].arrow.SetActive(false);
                         }
                     }
-                    return KingOfTheHill.greenplayer03currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.greenplayer03IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return KingOfTheHill.greenplayer03currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.greenplayer03IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { greenplayer03KillButton.Timer = greenplayer03KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -10024,7 +10024,7 @@ namespace LasMonjas
                             KingOfTheHill.localArrows[3].arrow.SetActive(false);
                         }
                     }
-                    return KingOfTheHill.greenplayer04currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.greenplayer04IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return KingOfTheHill.greenplayer04currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.greenplayer04IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { greenplayer04KillButton.Timer = greenplayer04KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -10060,7 +10060,7 @@ namespace LasMonjas
                             KingOfTheHill.localArrows[3].arrow.SetActive(false);
                         }
                     }
-                    return KingOfTheHill.greenplayer05currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.greenplayer05IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return KingOfTheHill.greenplayer05currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.greenplayer05IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { greenplayer05KillButton.Timer = greenplayer05KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -10096,7 +10096,7 @@ namespace LasMonjas
                             KingOfTheHill.localArrows[3].arrow.SetActive(false);
                         }
                     }
-                    return KingOfTheHill.greenplayer06currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.greenplayer06IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return KingOfTheHill.greenplayer06currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.greenplayer06IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { greenplayer06KillButton.Timer = greenplayer06KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -10132,7 +10132,7 @@ namespace LasMonjas
                             KingOfTheHill.localArrows[3].arrow.SetActive(false);
                         }
                     }
-                    return KingOfTheHill.yellowplayer01currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.yellowplayer01IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return KingOfTheHill.yellowplayer01currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.yellowplayer01IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { yellowplayer01KillButton.Timer = yellowplayer01KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -10168,7 +10168,7 @@ namespace LasMonjas
                             KingOfTheHill.localArrows[3].arrow.SetActive(false);
                         }
                     }
-                    return KingOfTheHill.yellowplayer02currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.yellowplayer02IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return KingOfTheHill.yellowplayer02currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.yellowplayer02IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { yellowplayer02KillButton.Timer = yellowplayer02KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -10204,7 +10204,7 @@ namespace LasMonjas
                             KingOfTheHill.localArrows[3].arrow.SetActive(false);
                         }
                     }
-                    return KingOfTheHill.yellowplayer03currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.yellowplayer03IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return KingOfTheHill.yellowplayer03currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.yellowplayer03IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { yellowplayer03KillButton.Timer = yellowplayer03KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -10240,7 +10240,7 @@ namespace LasMonjas
                             KingOfTheHill.localArrows[3].arrow.SetActive(false);
                         }
                     }
-                    return KingOfTheHill.yellowplayer04currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.yellowplayer04IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return KingOfTheHill.yellowplayer04currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.yellowplayer04IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { yellowplayer04KillButton.Timer = yellowplayer04KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -10276,7 +10276,7 @@ namespace LasMonjas
                             KingOfTheHill.localArrows[3].arrow.SetActive(false);
                         }
                     }
-                    return KingOfTheHill.yellowplayer05currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.yellowplayer05IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return KingOfTheHill.yellowplayer05currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.yellowplayer05IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { yellowplayer05KillButton.Timer = yellowplayer05KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -10312,7 +10312,7 @@ namespace LasMonjas
                             KingOfTheHill.localArrows[3].arrow.SetActive(false);
                         }
                     }
-                    return KingOfTheHill.yellowplayer06currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.yellowplayer06IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return KingOfTheHill.yellowplayer06currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.yellowplayer06IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { yellowplayer06KillButton.Timer = yellowplayer06KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -10361,7 +10361,7 @@ namespace LasMonjas
                             canUse = false;
                         }
                     }
-                    return canUse && KingOfTheHill.usurperPlayercurrentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.usurperPlayerIsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return canUse && KingOfTheHill.usurperPlayercurrentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.usurperPlayerIsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { usurperPlayerKillButton.Timer = usurperPlayerKillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -10407,13 +10407,13 @@ namespace LasMonjas
                                 }
                             }
                         }
-                        if (greenKingplayerCaptureZoneButton.isEffectActive && (KingOfTheHill.whichGreenKingplayerzone == 0 || PlayerInCache.LocalPlayer.Data.IsDead)) {
+                        if (greenKingplayerCaptureZoneButton.isEffectActive && (KingOfTheHill.whichGreenKingplayerzone == 0 || PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead)) {
                             greenKingplayerCaptureZoneButton.Timer = 0f;
                             greenKingplayerCaptureZoneButton.isEffectActive = false;
                         }
 
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.greenKingIsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.greenKingIsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { greenKingplayerCaptureZoneButton.Timer = greenKingplayerCaptureZoneButton.MaxTimer; },
                 KingOfTheHill.getPlaceGreenFlagButtonSprite(),
@@ -10473,12 +10473,12 @@ namespace LasMonjas
                                 }
                             }
                         }
-                        if (yellowKingplayerCaptureZoneButton.isEffectActive && (KingOfTheHill.whichYellowKingplayerzone == 0 || PlayerInCache.LocalPlayer.Data.IsDead)) {
+                        if (yellowKingplayerCaptureZoneButton.isEffectActive && (KingOfTheHill.whichYellowKingplayerzone == 0 || PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead)) {
                             yellowKingplayerCaptureZoneButton.Timer = 0f;
                             yellowKingplayerCaptureZoneButton.isEffectActive = false;
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.yellowKingIsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !KingOfTheHill.yellowKingIsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { yellowKingplayerCaptureZoneButton.Timer = yellowKingplayerCaptureZoneButton.MaxTimer; },
                 KingOfTheHill.getPlaceYellowFlagButtonSprite(),
@@ -10514,7 +10514,7 @@ namespace LasMonjas
 
                     RPCProcedure.hotPotatoTransfer(targetId);
                 },
-                () => { return HotPotato.hotPotatoPlayer != null && HotPotato.hotPotatoPlayer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return HotPotato.hotPotatoPlayer != null && HotPotato.hotPotatoPlayer == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => { return HotPotato.hotPotatoPlayerCurrentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && HotPotato.timeforTransfer >= 1;
                 },
                 () => { hotPotatoButton.Timer = hotPotatoButton.MaxTimer; },
@@ -10531,7 +10531,7 @@ namespace LasMonjas
                     ZombieLaboratory.zombiePlayer01infectedTarget = ZombieLaboratory.zombiePlayer01currentTarget;
                     zombie01InfectButton.HasEffect = true;
                 },
-                () => { return ZombieLaboratory.zombiePlayer01 != null && ZombieLaboratory.zombiePlayer01 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return ZombieLaboratory.zombiePlayer01 != null && ZombieLaboratory.zombiePlayer01 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (zombie01InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer01infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer01infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer01infectedTarget = null;
@@ -10608,7 +10608,7 @@ namespace LasMonjas
                     ZombieLaboratory.zombiePlayer02infectedTarget = ZombieLaboratory.zombiePlayer02currentTarget;
                     zombie02InfectButton.HasEffect = true;
                 },
-                () => { return ZombieLaboratory.zombiePlayer02 != null && ZombieLaboratory.zombiePlayer02 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return ZombieLaboratory.zombiePlayer02 != null && ZombieLaboratory.zombiePlayer02 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (zombie02InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer02infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer02infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer02infectedTarget = null;
@@ -10685,7 +10685,7 @@ namespace LasMonjas
                     ZombieLaboratory.zombiePlayer03infectedTarget = ZombieLaboratory.zombiePlayer03currentTarget;
                     zombie03InfectButton.HasEffect = true;
                 },
-                () => { return ZombieLaboratory.zombiePlayer03 != null && ZombieLaboratory.zombiePlayer03 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return ZombieLaboratory.zombiePlayer03 != null && ZombieLaboratory.zombiePlayer03 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (zombie03InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer03infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer03infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer03infectedTarget = null;
@@ -10762,7 +10762,7 @@ namespace LasMonjas
                     ZombieLaboratory.zombiePlayer04infectedTarget = ZombieLaboratory.zombiePlayer04currentTarget;
                     zombie04InfectButton.HasEffect = true;
                 },
-                () => { return ZombieLaboratory.zombiePlayer04 != null && ZombieLaboratory.zombiePlayer04 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return ZombieLaboratory.zombiePlayer04 != null && ZombieLaboratory.zombiePlayer04 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (zombie04InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer04infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer04infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer04infectedTarget = null;
@@ -10839,7 +10839,7 @@ namespace LasMonjas
                     ZombieLaboratory.zombiePlayer05infectedTarget = ZombieLaboratory.zombiePlayer05currentTarget;
                     zombie05InfectButton.HasEffect = true;
                 },
-                () => { return ZombieLaboratory.zombiePlayer05 != null && ZombieLaboratory.zombiePlayer05 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return ZombieLaboratory.zombiePlayer05 != null && ZombieLaboratory.zombiePlayer05 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (zombie05InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer05infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer05infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer05infectedTarget = null;
@@ -10916,7 +10916,7 @@ namespace LasMonjas
                     ZombieLaboratory.zombiePlayer06infectedTarget = ZombieLaboratory.zombiePlayer06currentTarget;
                     zombie06InfectButton.HasEffect = true;
                 },
-                () => { return ZombieLaboratory.zombiePlayer06 != null && ZombieLaboratory.zombiePlayer06 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return ZombieLaboratory.zombiePlayer06 != null && ZombieLaboratory.zombiePlayer06 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (zombie06InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer06infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer06infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer06infectedTarget = null;
@@ -10993,7 +10993,7 @@ namespace LasMonjas
                     ZombieLaboratory.zombiePlayer07infectedTarget = ZombieLaboratory.zombiePlayer07currentTarget;
                     zombie07InfectButton.HasEffect = true;
                 },
-                () => { return ZombieLaboratory.zombiePlayer07 != null && ZombieLaboratory.zombiePlayer07 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return ZombieLaboratory.zombiePlayer07 != null && ZombieLaboratory.zombiePlayer07 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (zombie07InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer07infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer07infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer07infectedTarget = null;
@@ -11070,7 +11070,7 @@ namespace LasMonjas
                     ZombieLaboratory.zombiePlayer08infectedTarget = ZombieLaboratory.zombiePlayer08currentTarget;
                     zombie08InfectButton.HasEffect = true;
                 },
-                () => { return ZombieLaboratory.zombiePlayer08 != null && ZombieLaboratory.zombiePlayer08 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return ZombieLaboratory.zombiePlayer08 != null && ZombieLaboratory.zombiePlayer08 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (zombie08InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer08infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer08infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer08infectedTarget = null;
@@ -11147,7 +11147,7 @@ namespace LasMonjas
                     ZombieLaboratory.zombiePlayer09infectedTarget = ZombieLaboratory.zombiePlayer09currentTarget;
                     zombie09InfectButton.HasEffect = true;
                 },
-                () => { return ZombieLaboratory.zombiePlayer09 != null && ZombieLaboratory.zombiePlayer09 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return ZombieLaboratory.zombiePlayer09 != null && ZombieLaboratory.zombiePlayer09 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (zombie09InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer09infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer09infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer09infectedTarget = null;
@@ -11224,7 +11224,7 @@ namespace LasMonjas
                     ZombieLaboratory.zombiePlayer10infectedTarget = ZombieLaboratory.zombiePlayer10currentTarget;
                     zombie10InfectButton.HasEffect = true;
                 },
-                () => { return ZombieLaboratory.zombiePlayer10 != null && ZombieLaboratory.zombiePlayer10 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return ZombieLaboratory.zombiePlayer10 != null && ZombieLaboratory.zombiePlayer10 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (zombie10InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer10infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer10infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer10infectedTarget = null;
@@ -11301,7 +11301,7 @@ namespace LasMonjas
                     ZombieLaboratory.zombiePlayer11infectedTarget = ZombieLaboratory.zombiePlayer11currentTarget;
                     zombie11InfectButton.HasEffect = true;
                 },
-                () => { return ZombieLaboratory.zombiePlayer11 != null && ZombieLaboratory.zombiePlayer11 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return ZombieLaboratory.zombiePlayer11 != null && ZombieLaboratory.zombiePlayer11 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (zombie11InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer11infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer11infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer11infectedTarget = null;
@@ -11378,7 +11378,7 @@ namespace LasMonjas
                     ZombieLaboratory.zombiePlayer12infectedTarget = ZombieLaboratory.zombiePlayer12currentTarget;
                     zombie12InfectButton.HasEffect = true;
                 },
-                () => { return ZombieLaboratory.zombiePlayer12 != null && ZombieLaboratory.zombiePlayer12 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return ZombieLaboratory.zombiePlayer12 != null && ZombieLaboratory.zombiePlayer12 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (zombie12InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer12infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer12infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer12infectedTarget = null;
@@ -11455,7 +11455,7 @@ namespace LasMonjas
                     ZombieLaboratory.zombiePlayer13infectedTarget = ZombieLaboratory.zombiePlayer13currentTarget;
                     zombie13InfectButton.HasEffect = true;
                 },
-                () => { return ZombieLaboratory.zombiePlayer13 != null && ZombieLaboratory.zombiePlayer13 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return ZombieLaboratory.zombiePlayer13 != null && ZombieLaboratory.zombiePlayer13 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (zombie13InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer13infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer13infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer13infectedTarget = null;
@@ -11532,7 +11532,7 @@ namespace LasMonjas
                     ZombieLaboratory.zombiePlayer14infectedTarget = ZombieLaboratory.zombiePlayer14currentTarget;
                     zombie14InfectButton.HasEffect = true;
                 },
-                () => { return ZombieLaboratory.zombiePlayer14 != null && ZombieLaboratory.zombiePlayer14 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return ZombieLaboratory.zombiePlayer14 != null && ZombieLaboratory.zombiePlayer14 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
                     if (zombie14InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer14infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer14infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer14infectedTarget = null;
@@ -11624,7 +11624,7 @@ namespace LasMonjas
                             canUse = false;
                         }
                     }
-                    return canUse && ZombieLaboratory.zombiePlayer01currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !ZombieLaboratory.zombiePlayer01IsReviving; },
+                    return canUse && ZombieLaboratory.zombiePlayer01currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !ZombieLaboratory.zombiePlayer01IsReviving; },
                 () => { zombie01KillButton.Timer = zombie01KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -11653,7 +11653,7 @@ namespace LasMonjas
                             canUse = false;
                         }
                     }
-                    return canUse && ZombieLaboratory.zombiePlayer02currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !ZombieLaboratory.zombiePlayer02IsReviving; },
+                    return canUse && ZombieLaboratory.zombiePlayer02currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !ZombieLaboratory.zombiePlayer02IsReviving; },
                 () => { zombie02KillButton.Timer = zombie02KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -11682,7 +11682,7 @@ namespace LasMonjas
                             canUse = false;
                         }
                     }
-                    return canUse && ZombieLaboratory.zombiePlayer03currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !ZombieLaboratory.zombiePlayer03IsReviving; },
+                    return canUse && ZombieLaboratory.zombiePlayer03currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !ZombieLaboratory.zombiePlayer03IsReviving; },
                 () => { zombie03KillButton.Timer = zombie03KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -11711,7 +11711,7 @@ namespace LasMonjas
                             canUse = false;
                         }
                     }
-                    return canUse && ZombieLaboratory.zombiePlayer04currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !ZombieLaboratory.zombiePlayer04IsReviving; },
+                    return canUse && ZombieLaboratory.zombiePlayer04currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !ZombieLaboratory.zombiePlayer04IsReviving; },
                 () => { zombie04KillButton.Timer = zombie04KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -11740,7 +11740,7 @@ namespace LasMonjas
                             canUse = false;
                         }
                     }
-                    return canUse && ZombieLaboratory.zombiePlayer05currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !ZombieLaboratory.zombiePlayer05IsReviving; },
+                    return canUse && ZombieLaboratory.zombiePlayer05currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !ZombieLaboratory.zombiePlayer05IsReviving; },
                 () => { zombie05KillButton.Timer = zombie05KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -11769,7 +11769,7 @@ namespace LasMonjas
                             canUse = false;
                         }
                     }
-                    return canUse && ZombieLaboratory.zombiePlayer06currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !ZombieLaboratory.zombiePlayer06IsReviving; },
+                    return canUse && ZombieLaboratory.zombiePlayer06currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !ZombieLaboratory.zombiePlayer06IsReviving; },
                 () => { zombie06KillButton.Timer = zombie06KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -11798,7 +11798,7 @@ namespace LasMonjas
                             canUse = false;
                         }
                     }
-                    return canUse && ZombieLaboratory.zombiePlayer07currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !ZombieLaboratory.zombiePlayer07IsReviving; },
+                    return canUse && ZombieLaboratory.zombiePlayer07currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !ZombieLaboratory.zombiePlayer07IsReviving; },
                 () => { zombie07KillButton.Timer = zombie07KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -11827,7 +11827,7 @@ namespace LasMonjas
                             canUse = false;
                         }
                     }
-                    return canUse && ZombieLaboratory.zombiePlayer08currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !ZombieLaboratory.zombiePlayer08IsReviving; },
+                    return canUse && ZombieLaboratory.zombiePlayer08currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !ZombieLaboratory.zombiePlayer08IsReviving; },
                 () => { zombie08KillButton.Timer = zombie08KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -11856,7 +11856,7 @@ namespace LasMonjas
                             canUse = false;
                         }
                     }
-                    return canUse && ZombieLaboratory.zombiePlayer09currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !ZombieLaboratory.zombiePlayer09IsReviving; },
+                    return canUse && ZombieLaboratory.zombiePlayer09currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !ZombieLaboratory.zombiePlayer09IsReviving; },
                 () => { zombie09KillButton.Timer = zombie09KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -11885,7 +11885,7 @@ namespace LasMonjas
                             canUse = false;
                         }
                     }
-                    return canUse && ZombieLaboratory.zombiePlayer10currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !ZombieLaboratory.zombiePlayer10IsReviving; },
+                    return canUse && ZombieLaboratory.zombiePlayer10currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !ZombieLaboratory.zombiePlayer10IsReviving; },
                 () => { zombie10KillButton.Timer = zombie10KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -11914,7 +11914,7 @@ namespace LasMonjas
                             canUse = false;
                         }
                     }
-                    return canUse && ZombieLaboratory.zombiePlayer11currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !ZombieLaboratory.zombiePlayer11IsReviving; },
+                    return canUse && ZombieLaboratory.zombiePlayer11currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !ZombieLaboratory.zombiePlayer11IsReviving; },
                 () => { zombie11KillButton.Timer = zombie11KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -11943,7 +11943,7 @@ namespace LasMonjas
                             canUse = false;
                         }
                     }
-                    return canUse && ZombieLaboratory.zombiePlayer12currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !ZombieLaboratory.zombiePlayer12IsReviving; },
+                    return canUse && ZombieLaboratory.zombiePlayer12currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !ZombieLaboratory.zombiePlayer12IsReviving; },
                 () => { zombie12KillButton.Timer = zombie12KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -11972,7 +11972,7 @@ namespace LasMonjas
                             canUse = false;
                         }
                     }
-                    return canUse && ZombieLaboratory.zombiePlayer13currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !ZombieLaboratory.zombiePlayer13IsReviving; },
+                    return canUse && ZombieLaboratory.zombiePlayer13currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !ZombieLaboratory.zombiePlayer13IsReviving; },
                 () => { zombie13KillButton.Timer = zombie13KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -12001,7 +12001,7 @@ namespace LasMonjas
                             canUse = false;
                         }
                     }
-                    return canUse && ZombieLaboratory.zombiePlayer14currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !ZombieLaboratory.zombiePlayer14IsReviving; },
+                    return canUse && ZombieLaboratory.zombiePlayer14currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !ZombieLaboratory.zombiePlayer14IsReviving; },
                 () => { zombie14KillButton.Timer = zombie14KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -12068,7 +12068,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => {
                     nurseEnterExitButton.Timer = nurseEnterExitButton.MaxTimer;
@@ -12136,7 +12136,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && (ZombieLaboratory.nursePlayercurrentTarget || !ZombieLaboratory.nursePlayerHasMedKit) && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && (ZombieLaboratory.nursePlayercurrentTarget || !ZombieLaboratory.nursePlayerHasMedKit) && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { nurseMedKitButton.Timer = nurseMedKitButton.MaxTimer; },
                 ZombieLaboratory.getPickMedkitButtonSprite(),
@@ -12161,7 +12161,7 @@ namespace LasMonjas
                             CanUse = true;
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => {
                     nurseCreateCureButton.Timer = nurseCreateCureButton.MaxTimer;
@@ -12194,7 +12194,7 @@ namespace LasMonjas
                     else {
                         survivor01KillButton.actionButton.graphic.sprite = ZombieLaboratory.getSurvivorEmptyShootButtonSprite();
                     }
-                    return ZombieLaboratory.survivorPlayer01currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !ZombieLaboratory.survivorPlayer01IsReviving && ZombieLaboratory.survivorPlayer01CanKill && !ZombieLaboratory.survivorPlayer01HasKeyItem;
+                    return ZombieLaboratory.survivorPlayer01currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !ZombieLaboratory.survivorPlayer01IsReviving && ZombieLaboratory.survivorPlayer01CanKill && !ZombieLaboratory.survivorPlayer01HasKeyItem;
                 },
                 () => { survivor01KillButton.Timer = survivor01KillButton.MaxTimer; },
                 ZombieLaboratory.getSurvivorEmptyShootButtonSprite(),
@@ -12282,7 +12282,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer01IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer01IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { survivor01FindDeliverButton.Timer = survivor01FindDeliverButton.MaxTimer; },
                 ZombieLaboratory.getSurvivorTakeBoxButtonSprite(),
@@ -12359,7 +12359,7 @@ namespace LasMonjas
                             CanUse = true;
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer01IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer01IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => {
                     survivor01EnterExitButton.Timer = survivor01EnterExitButton.MaxTimer;
@@ -12406,7 +12406,7 @@ namespace LasMonjas
                     else {
                         survivor02KillButton.actionButton.graphic.sprite = ZombieLaboratory.getSurvivorEmptyShootButtonSprite();
                     }
-                    return ZombieLaboratory.survivorPlayer02currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !ZombieLaboratory.survivorPlayer02IsReviving && ZombieLaboratory.survivorPlayer02CanKill && !ZombieLaboratory.survivorPlayer02HasKeyItem;
+                    return ZombieLaboratory.survivorPlayer02currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !ZombieLaboratory.survivorPlayer02IsReviving && ZombieLaboratory.survivorPlayer02CanKill && !ZombieLaboratory.survivorPlayer02HasKeyItem;
                 },
                 () => { survivor02KillButton.Timer = survivor02KillButton.MaxTimer; },
                 ZombieLaboratory.getSurvivorEmptyShootButtonSprite(),
@@ -12494,7 +12494,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer02IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer02IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { survivor02FindDeliverButton.Timer = survivor02FindDeliverButton.MaxTimer; },
                 ZombieLaboratory.getSurvivorTakeBoxButtonSprite(),
@@ -12570,7 +12570,7 @@ namespace LasMonjas
                             CanUse = true;
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer02IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer02IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => {
                     survivor02EnterExitButton.Timer = survivor02EnterExitButton.MaxTimer;
@@ -12617,7 +12617,7 @@ namespace LasMonjas
                     else {
                         survivor03KillButton.actionButton.graphic.sprite = ZombieLaboratory.getSurvivorEmptyShootButtonSprite();
                     }
-                    return ZombieLaboratory.survivorPlayer03currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !ZombieLaboratory.survivorPlayer03IsReviving && ZombieLaboratory.survivorPlayer03CanKill && !ZombieLaboratory.survivorPlayer03HasKeyItem;
+                    return ZombieLaboratory.survivorPlayer03currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !ZombieLaboratory.survivorPlayer03IsReviving && ZombieLaboratory.survivorPlayer03CanKill && !ZombieLaboratory.survivorPlayer03HasKeyItem;
                 },
                 () => { survivor03KillButton.Timer = survivor03KillButton.MaxTimer; },
                 ZombieLaboratory.getSurvivorEmptyShootButtonSprite(),
@@ -12705,7 +12705,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer03IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer03IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { survivor03FindDeliverButton.Timer = survivor03FindDeliverButton.MaxTimer; },
                 ZombieLaboratory.getSurvivorTakeBoxButtonSprite(),
@@ -12781,7 +12781,7 @@ namespace LasMonjas
                             CanUse = true;
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer03IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer03IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => {
                     survivor03EnterExitButton.Timer = survivor03EnterExitButton.MaxTimer;
@@ -12828,7 +12828,7 @@ namespace LasMonjas
                     else {
                         survivor04KillButton.actionButton.graphic.sprite = ZombieLaboratory.getSurvivorEmptyShootButtonSprite();
                     }
-                    return ZombieLaboratory.survivorPlayer04currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !ZombieLaboratory.survivorPlayer04IsReviving && ZombieLaboratory.survivorPlayer04CanKill && !ZombieLaboratory.survivorPlayer04HasKeyItem;
+                    return ZombieLaboratory.survivorPlayer04currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !ZombieLaboratory.survivorPlayer04IsReviving && ZombieLaboratory.survivorPlayer04CanKill && !ZombieLaboratory.survivorPlayer04HasKeyItem;
                 },
                 () => { survivor04KillButton.Timer = survivor04KillButton.MaxTimer; },
                 ZombieLaboratory.getSurvivorEmptyShootButtonSprite(),
@@ -12916,7 +12916,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer04IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer04IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { survivor04FindDeliverButton.Timer = survivor04FindDeliverButton.MaxTimer; },
                 ZombieLaboratory.getSurvivorTakeBoxButtonSprite(),
@@ -12992,7 +12992,7 @@ namespace LasMonjas
                             CanUse = true;
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer04IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer04IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => {
                     survivor04EnterExitButton.Timer = survivor04EnterExitButton.MaxTimer;
@@ -13039,7 +13039,7 @@ namespace LasMonjas
                     else {
                         survivor05KillButton.actionButton.graphic.sprite = ZombieLaboratory.getSurvivorEmptyShootButtonSprite();
                     }
-                    return ZombieLaboratory.survivorPlayer05currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !ZombieLaboratory.survivorPlayer05IsReviving && ZombieLaboratory.survivorPlayer05CanKill && !ZombieLaboratory.survivorPlayer05HasKeyItem;
+                    return ZombieLaboratory.survivorPlayer05currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !ZombieLaboratory.survivorPlayer05IsReviving && ZombieLaboratory.survivorPlayer05CanKill && !ZombieLaboratory.survivorPlayer05HasKeyItem;
                 },
                 () => { survivor05KillButton.Timer = survivor05KillButton.MaxTimer; },
                 ZombieLaboratory.getSurvivorEmptyShootButtonSprite(),
@@ -13127,7 +13127,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer05IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer05IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { survivor05FindDeliverButton.Timer = survivor05FindDeliverButton.MaxTimer; },
                 ZombieLaboratory.getSurvivorTakeBoxButtonSprite(),
@@ -13203,7 +13203,7 @@ namespace LasMonjas
                             CanUse = true;
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer05IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer05IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => {
                     survivor05EnterExitButton.Timer = survivor05EnterExitButton.MaxTimer;
@@ -13250,7 +13250,7 @@ namespace LasMonjas
                     else {
                         survivor06KillButton.actionButton.graphic.sprite = ZombieLaboratory.getSurvivorEmptyShootButtonSprite();
                     }
-                    return ZombieLaboratory.survivorPlayer06currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !ZombieLaboratory.survivorPlayer06IsReviving && ZombieLaboratory.survivorPlayer06CanKill && !ZombieLaboratory.survivorPlayer06HasKeyItem;
+                    return ZombieLaboratory.survivorPlayer06currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !ZombieLaboratory.survivorPlayer06IsReviving && ZombieLaboratory.survivorPlayer06CanKill && !ZombieLaboratory.survivorPlayer06HasKeyItem;
                 },
                 () => { survivor06KillButton.Timer = survivor06KillButton.MaxTimer; },
                 ZombieLaboratory.getSurvivorEmptyShootButtonSprite(),
@@ -13338,7 +13338,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer06IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer06IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { survivor06FindDeliverButton.Timer = survivor06FindDeliverButton.MaxTimer; },
                 ZombieLaboratory.getSurvivorTakeBoxButtonSprite(),
@@ -13414,7 +13414,7 @@ namespace LasMonjas
                             CanUse = true;
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer06IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer06IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => {
                     survivor06EnterExitButton.Timer = survivor06EnterExitButton.MaxTimer;
@@ -13461,7 +13461,7 @@ namespace LasMonjas
                     else {
                         survivor07KillButton.actionButton.graphic.sprite = ZombieLaboratory.getSurvivorEmptyShootButtonSprite();
                     }
-                    return ZombieLaboratory.survivorPlayer07currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !ZombieLaboratory.survivorPlayer07IsReviving && ZombieLaboratory.survivorPlayer07CanKill && !ZombieLaboratory.survivorPlayer07HasKeyItem;
+                    return ZombieLaboratory.survivorPlayer07currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !ZombieLaboratory.survivorPlayer07IsReviving && ZombieLaboratory.survivorPlayer07CanKill && !ZombieLaboratory.survivorPlayer07HasKeyItem;
                 },
                 () => { survivor07KillButton.Timer = survivor07KillButton.MaxTimer; },
                 ZombieLaboratory.getSurvivorEmptyShootButtonSprite(),
@@ -13549,7 +13549,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer07IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer07IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { survivor07FindDeliverButton.Timer = survivor07FindDeliverButton.MaxTimer; },
                 ZombieLaboratory.getSurvivorTakeBoxButtonSprite(),
@@ -13625,7 +13625,7 @@ namespace LasMonjas
                             CanUse = true;
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer07IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer07IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => {
                     survivor07EnterExitButton.Timer = survivor07EnterExitButton.MaxTimer;
@@ -13672,7 +13672,7 @@ namespace LasMonjas
                     else {
                         survivor08KillButton.actionButton.graphic.sprite = ZombieLaboratory.getSurvivorEmptyShootButtonSprite();
                     }
-                    return ZombieLaboratory.survivorPlayer08currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !ZombieLaboratory.survivorPlayer08IsReviving && ZombieLaboratory.survivorPlayer08CanKill && !ZombieLaboratory.survivorPlayer08HasKeyItem;
+                    return ZombieLaboratory.survivorPlayer08currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !ZombieLaboratory.survivorPlayer08IsReviving && ZombieLaboratory.survivorPlayer08CanKill && !ZombieLaboratory.survivorPlayer08HasKeyItem;
                 },
                 () => { survivor08KillButton.Timer = survivor08KillButton.MaxTimer; },
                 ZombieLaboratory.getSurvivorEmptyShootButtonSprite(),
@@ -13760,7 +13760,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer08IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer08IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { survivor08FindDeliverButton.Timer = survivor08FindDeliverButton.MaxTimer; },
                 ZombieLaboratory.getSurvivorTakeBoxButtonSprite(),
@@ -13836,7 +13836,7 @@ namespace LasMonjas
                             CanUse = true;
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer08IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer08IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => {
                     survivor08EnterExitButton.Timer = survivor08EnterExitButton.MaxTimer;
@@ -13883,7 +13883,7 @@ namespace LasMonjas
                     else {
                         survivor09KillButton.actionButton.graphic.sprite = ZombieLaboratory.getSurvivorEmptyShootButtonSprite();
                     }
-                    return ZombieLaboratory.survivorPlayer09currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !ZombieLaboratory.survivorPlayer09IsReviving && ZombieLaboratory.survivorPlayer09CanKill && !ZombieLaboratory.survivorPlayer09HasKeyItem;
+                    return ZombieLaboratory.survivorPlayer09currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !ZombieLaboratory.survivorPlayer09IsReviving && ZombieLaboratory.survivorPlayer09CanKill && !ZombieLaboratory.survivorPlayer09HasKeyItem;
                 },
                 () => { survivor09KillButton.Timer = survivor09KillButton.MaxTimer; },
                 ZombieLaboratory.getSurvivorEmptyShootButtonSprite(),
@@ -13971,7 +13971,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer09IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer09IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { survivor09FindDeliverButton.Timer = survivor09FindDeliverButton.MaxTimer; },
                 ZombieLaboratory.getSurvivorTakeBoxButtonSprite(),
@@ -14047,7 +14047,7 @@ namespace LasMonjas
                             CanUse = true;
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer09IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer09IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => {
                     survivor09EnterExitButton.Timer = survivor09EnterExitButton.MaxTimer;
@@ -14094,7 +14094,7 @@ namespace LasMonjas
                     else {
                         survivor10KillButton.actionButton.graphic.sprite = ZombieLaboratory.getSurvivorEmptyShootButtonSprite();
                     }
-                    return ZombieLaboratory.survivorPlayer10currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !ZombieLaboratory.survivorPlayer10IsReviving && ZombieLaboratory.survivorPlayer10CanKill && !ZombieLaboratory.survivorPlayer10HasKeyItem;
+                    return ZombieLaboratory.survivorPlayer10currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !ZombieLaboratory.survivorPlayer10IsReviving && ZombieLaboratory.survivorPlayer10CanKill && !ZombieLaboratory.survivorPlayer10HasKeyItem;
                 },
                 () => { survivor10KillButton.Timer = survivor10KillButton.MaxTimer; },
                 ZombieLaboratory.getSurvivorEmptyShootButtonSprite(),
@@ -14182,7 +14182,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer10IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer10IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { survivor10FindDeliverButton.Timer = survivor10FindDeliverButton.MaxTimer; },
                 ZombieLaboratory.getSurvivorTakeBoxButtonSprite(),
@@ -14258,7 +14258,7 @@ namespace LasMonjas
                             CanUse = true;
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer10IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer10IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => {
                     survivor10EnterExitButton.Timer = survivor10EnterExitButton.MaxTimer;
@@ -14305,7 +14305,7 @@ namespace LasMonjas
                     else {
                         survivor11KillButton.actionButton.graphic.sprite = ZombieLaboratory.getSurvivorEmptyShootButtonSprite();
                     }
-                    return ZombieLaboratory.survivorPlayer11currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !ZombieLaboratory.survivorPlayer11IsReviving && ZombieLaboratory.survivorPlayer11CanKill && !ZombieLaboratory.survivorPlayer11HasKeyItem;
+                    return ZombieLaboratory.survivorPlayer11currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !ZombieLaboratory.survivorPlayer11IsReviving && ZombieLaboratory.survivorPlayer11CanKill && !ZombieLaboratory.survivorPlayer11HasKeyItem;
                 },
                 () => { survivor11KillButton.Timer = survivor11KillButton.MaxTimer; },
                 ZombieLaboratory.getSurvivorEmptyShootButtonSprite(),
@@ -14393,7 +14393,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer11IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer11IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { survivor11FindDeliverButton.Timer = survivor11FindDeliverButton.MaxTimer; },
                 ZombieLaboratory.getSurvivorTakeBoxButtonSprite(),
@@ -14469,7 +14469,7 @@ namespace LasMonjas
                             CanUse = true;
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer11IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer11IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => {
                     survivor11EnterExitButton.Timer = survivor11EnterExitButton.MaxTimer;
@@ -14516,7 +14516,7 @@ namespace LasMonjas
                     else {
                         survivor12KillButton.actionButton.graphic.sprite = ZombieLaboratory.getSurvivorEmptyShootButtonSprite();
                     }
-                    return ZombieLaboratory.survivorPlayer12currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !ZombieLaboratory.survivorPlayer12IsReviving && ZombieLaboratory.survivorPlayer12CanKill && !ZombieLaboratory.survivorPlayer12HasKeyItem;
+                    return ZombieLaboratory.survivorPlayer12currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !ZombieLaboratory.survivorPlayer12IsReviving && ZombieLaboratory.survivorPlayer12CanKill && !ZombieLaboratory.survivorPlayer12HasKeyItem;
                 },
                 () => { survivor12KillButton.Timer = survivor12KillButton.MaxTimer; },
                 ZombieLaboratory.getSurvivorEmptyShootButtonSprite(),
@@ -14604,7 +14604,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer12IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer12IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { survivor12FindDeliverButton.Timer = survivor12FindDeliverButton.MaxTimer; },
                 ZombieLaboratory.getSurvivorTakeBoxButtonSprite(),
@@ -14680,7 +14680,7 @@ namespace LasMonjas
                             CanUse = true;
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer12IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer12IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => {
                     survivor12EnterExitButton.Timer = survivor12EnterExitButton.MaxTimer;
@@ -14727,7 +14727,7 @@ namespace LasMonjas
                     else {
                         survivor13KillButton.actionButton.graphic.sprite = ZombieLaboratory.getSurvivorEmptyShootButtonSprite();
                     }
-                    return ZombieLaboratory.survivorPlayer13currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !ZombieLaboratory.survivorPlayer13IsReviving && ZombieLaboratory.survivorPlayer13CanKill && !ZombieLaboratory.survivorPlayer13HasKeyItem;
+                    return ZombieLaboratory.survivorPlayer13currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !ZombieLaboratory.survivorPlayer13IsReviving && ZombieLaboratory.survivorPlayer13CanKill && !ZombieLaboratory.survivorPlayer13HasKeyItem;
                 },
                 () => { survivor13KillButton.Timer = survivor13KillButton.MaxTimer; },
                 ZombieLaboratory.getSurvivorEmptyShootButtonSprite(),
@@ -14815,7 +14815,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer13IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer13IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { survivor13FindDeliverButton.Timer = survivor13FindDeliverButton.MaxTimer; },
                 ZombieLaboratory.getSurvivorTakeBoxButtonSprite(),
@@ -14891,7 +14891,7 @@ namespace LasMonjas
                             CanUse = true;
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer13IsReviving && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !ZombieLaboratory.survivorPlayer13IsReviving && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => {
                     survivor13EnterExitButton.Timer = survivor13EnterExitButton.MaxTimer;
@@ -14959,7 +14959,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                             BattleRoyale.soloPlayer01Wep.SetActive(false);
                         }
 
@@ -14978,7 +14978,7 @@ namespace LasMonjas
                                 BattleRoyale.soloPlayer01Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, 1f);
                         }
                     }
-                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { soloPlayer01KillButton.Timer = soloPlayer01KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -15028,7 +15028,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                             BattleRoyale.soloPlayer02Wep.SetActive(false);
                         }
 
@@ -15047,7 +15047,7 @@ namespace LasMonjas
                                 BattleRoyale.soloPlayer02Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, 1f);
                         }
                     }
-                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { soloPlayer02KillButton.Timer = soloPlayer02KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -15097,7 +15097,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                             BattleRoyale.soloPlayer03Wep.SetActive(false);
                         }
 
@@ -15116,7 +15116,7 @@ namespace LasMonjas
                                 BattleRoyale.soloPlayer03Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, 1f);
                         }
                     }
-                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { soloPlayer03KillButton.Timer = soloPlayer03KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -15166,7 +15166,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                             BattleRoyale.soloPlayer04Wep.SetActive(false);
                         }
 
@@ -15185,7 +15185,7 @@ namespace LasMonjas
                                 BattleRoyale.soloPlayer04Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, 1f);
                         }
                     }
-                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { soloPlayer04KillButton.Timer = soloPlayer04KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -15235,7 +15235,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                             BattleRoyale.soloPlayer05Wep.SetActive(false);
                         }
 
@@ -15254,7 +15254,7 @@ namespace LasMonjas
                                 BattleRoyale.soloPlayer05Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, 1f);
                         }
                     }
-                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { soloPlayer05KillButton.Timer = soloPlayer05KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -15304,7 +15304,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                             BattleRoyale.soloPlayer06Wep.SetActive(false);
                         }
 
@@ -15323,7 +15323,7 @@ namespace LasMonjas
                                 BattleRoyale.soloPlayer06Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, 1f);
                         }
                     }
-                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { soloPlayer06KillButton.Timer = soloPlayer06KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -15373,7 +15373,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                             BattleRoyale.soloPlayer07Wep.SetActive(false);
                         }
 
@@ -15392,7 +15392,7 @@ namespace LasMonjas
                                 BattleRoyale.soloPlayer07Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, 1f);
                         }
                     }
-                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { soloPlayer07KillButton.Timer = soloPlayer07KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -15442,7 +15442,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                             BattleRoyale.soloPlayer08Wep.SetActive(false);
                         }
 
@@ -15461,7 +15461,7 @@ namespace LasMonjas
                                 BattleRoyale.soloPlayer08Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, 1f);
                         }
                     }
-                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { soloPlayer08KillButton.Timer = soloPlayer08KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -15511,7 +15511,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                             BattleRoyale.soloPlayer09Wep.SetActive(false);
                         }
 
@@ -15530,7 +15530,7 @@ namespace LasMonjas
                                 BattleRoyale.soloPlayer09Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, 1f);
                         }
                     }
-                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { soloPlayer09KillButton.Timer = soloPlayer09KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -15580,7 +15580,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                             BattleRoyale.soloPlayer10Wep.SetActive(false);
                         }
 
@@ -15599,7 +15599,7 @@ namespace LasMonjas
                                 BattleRoyale.soloPlayer10Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, 1f);
                         }
                     }
-                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { soloPlayer10KillButton.Timer = soloPlayer10KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -15649,7 +15649,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                             BattleRoyale.soloPlayer11Wep.SetActive(false);
                         }
 
@@ -15668,7 +15668,7 @@ namespace LasMonjas
                                 BattleRoyale.soloPlayer11Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, 1f);
                         }
                     }
-                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { soloPlayer11KillButton.Timer = soloPlayer11KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -15718,7 +15718,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                             BattleRoyale.soloPlayer12Wep.SetActive(false);
                         }
 
@@ -15737,7 +15737,7 @@ namespace LasMonjas
                                 BattleRoyale.soloPlayer12Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, 1f);
                         }
                     }
-                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { soloPlayer12KillButton.Timer = soloPlayer12KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -15787,7 +15787,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                             BattleRoyale.soloPlayer13Wep.SetActive(false);
                         }
 
@@ -15806,7 +15806,7 @@ namespace LasMonjas
                                 BattleRoyale.soloPlayer13Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, 1f);
                         }
                     }
-                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { soloPlayer13KillButton.Timer = soloPlayer13KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -15856,7 +15856,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                             BattleRoyale.soloPlayer14Wep.SetActive(false);
                         }
 
@@ -15875,7 +15875,7 @@ namespace LasMonjas
                                 BattleRoyale.soloPlayer14Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, 1f);
                         }
                     }
-                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { soloPlayer14KillButton.Timer = soloPlayer14KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -15925,7 +15925,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
                             BattleRoyale.soloPlayer15Wep.SetActive(false);
                         }
 
@@ -15944,7 +15944,7 @@ namespace LasMonjas
                                 BattleRoyale.soloPlayer15Wep.GetComponent<SpriteRenderer>().transform.localScale = new Vector3(1f, 1f);
                         }
                     }
-                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { soloPlayer15KillButton.Timer = soloPlayer15KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -16008,7 +16008,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead && BattleRoyale.matchType != 2) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && BattleRoyale.matchType != 2) {
                             BattleRoyale.limePlayer01Wep.SetActive(false);
                         }
 
@@ -16031,7 +16031,7 @@ namespace LasMonjas
                     if (BattleRoyale.limePlayer01IsReviving) {
                         CanUse = false;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { limePlayer01KillButton.Timer = limePlayer01KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -16095,7 +16095,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead && BattleRoyale.matchType != 2) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && BattleRoyale.matchType != 2) {
                             BattleRoyale.limePlayer02Wep.SetActive(false);
                         }
 
@@ -16118,7 +16118,7 @@ namespace LasMonjas
                     if (BattleRoyale.limePlayer02IsReviving) {
                         CanUse = false;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { limePlayer02KillButton.Timer = limePlayer02KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -16182,7 +16182,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead && BattleRoyale.matchType != 2) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && BattleRoyale.matchType != 2) {
                             BattleRoyale.limePlayer03Wep.SetActive(false);
                         }
 
@@ -16205,7 +16205,7 @@ namespace LasMonjas
                     if (BattleRoyale.limePlayer03IsReviving) {
                         CanUse = false;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { limePlayer03KillButton.Timer = limePlayer03KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -16269,7 +16269,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead && BattleRoyale.matchType != 2) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && BattleRoyale.matchType != 2) {
                             BattleRoyale.limePlayer04Wep.SetActive(false);
                         }
 
@@ -16292,7 +16292,7 @@ namespace LasMonjas
                     if (BattleRoyale.limePlayer04IsReviving) {
                         CanUse = false;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { limePlayer04KillButton.Timer = limePlayer04KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -16356,7 +16356,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead && BattleRoyale.matchType != 2) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && BattleRoyale.matchType != 2) {
                             BattleRoyale.limePlayer05Wep.SetActive(false);
                         }
 
@@ -16379,7 +16379,7 @@ namespace LasMonjas
                     if (BattleRoyale.limePlayer05IsReviving) {
                         CanUse = false;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { limePlayer05KillButton.Timer = limePlayer05KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -16443,7 +16443,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead && BattleRoyale.matchType != 2) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && BattleRoyale.matchType != 2) {
                             BattleRoyale.limePlayer06Wep.SetActive(false);
                         }
 
@@ -16466,7 +16466,7 @@ namespace LasMonjas
                     if (BattleRoyale.limePlayer06IsReviving) {
                         CanUse = false;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { limePlayer06KillButton.Timer = limePlayer06KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -16530,7 +16530,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead && BattleRoyale.matchType != 2) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && BattleRoyale.matchType != 2) {
                             BattleRoyale.limePlayer07Wep.SetActive(false);
                         }
 
@@ -16553,7 +16553,7 @@ namespace LasMonjas
                     if (BattleRoyale.limePlayer07IsReviving) {
                         CanUse = false;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { limePlayer07KillButton.Timer = limePlayer07KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -16617,7 +16617,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead && BattleRoyale.matchType != 2) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && BattleRoyale.matchType != 2) {
                             BattleRoyale.pinkPlayer01Wep.SetActive(false);
                         }
 
@@ -16640,7 +16640,7 @@ namespace LasMonjas
                     if (BattleRoyale.pinkPlayer01IsReviving) {
                         CanUse = false;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { pinkPlayer01KillButton.Timer = pinkPlayer01KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -16704,7 +16704,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead && BattleRoyale.matchType != 2) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && BattleRoyale.matchType != 2) {
                             BattleRoyale.pinkPlayer02Wep.SetActive(false);
                         }
 
@@ -16727,7 +16727,7 @@ namespace LasMonjas
                     if (BattleRoyale.pinkPlayer02IsReviving) {
                         CanUse = false;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { pinkPlayer02KillButton.Timer = pinkPlayer02KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -16791,7 +16791,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead && BattleRoyale.matchType != 2) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && BattleRoyale.matchType != 2) {
                             BattleRoyale.pinkPlayer03Wep.SetActive(false);
                         }
 
@@ -16814,7 +16814,7 @@ namespace LasMonjas
                     if (BattleRoyale.pinkPlayer03IsReviving) {
                         CanUse = false;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { pinkPlayer03KillButton.Timer = pinkPlayer03KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -16878,7 +16878,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead && BattleRoyale.matchType != 2) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && BattleRoyale.matchType != 2) {
                             BattleRoyale.pinkPlayer04Wep.SetActive(false);
                         }
 
@@ -16901,7 +16901,7 @@ namespace LasMonjas
                     if (BattleRoyale.pinkPlayer04IsReviving) {
                         CanUse = false;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { pinkPlayer04KillButton.Timer = pinkPlayer04KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -16965,7 +16965,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead && BattleRoyale.matchType != 2) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && BattleRoyale.matchType != 2) {
                             BattleRoyale.pinkPlayer05Wep.SetActive(false);
                         }
 
@@ -16988,7 +16988,7 @@ namespace LasMonjas
                     if (BattleRoyale.pinkPlayer05IsReviving) {
                         CanUse = false;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { pinkPlayer05KillButton.Timer = pinkPlayer05KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -17052,7 +17052,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead && BattleRoyale.matchType != 2) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && BattleRoyale.matchType != 2) {
                             BattleRoyale.pinkPlayer06Wep.SetActive(false);
                         }
 
@@ -17075,7 +17075,7 @@ namespace LasMonjas
                     if (BattleRoyale.pinkPlayer06IsReviving) {
                         CanUse = false;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { pinkPlayer06KillButton.Timer = pinkPlayer06KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -17139,7 +17139,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead && BattleRoyale.matchType != 2) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && BattleRoyale.matchType != 2) {
                             BattleRoyale.pinkPlayer07Wep.SetActive(false);
                         }
 
@@ -17162,7 +17162,7 @@ namespace LasMonjas
                     if (BattleRoyale.pinkPlayer07IsReviving) {
                         CanUse = false;
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { pinkPlayer07KillButton.Timer = pinkPlayer07KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -17232,7 +17232,7 @@ namespace LasMonjas
                     }
                     else {
 
-                        if (PlayerInCache.LocalPlayer.Data.IsDead && BattleRoyale.matchType != 2) {
+                        if (PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && BattleRoyale.matchType != 2) {
                             BattleRoyale.serialKillerWep.SetActive(false);
                         }
 
@@ -17261,7 +17261,7 @@ namespace LasMonjas
                             canSpawnKill = false;
                         }
                     }
-                    return CanUse && canSpawnKill && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead;
+                    return CanUse && canSpawnKill && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead;
                 },
                 () => { serialKillerKillButton.Timer = serialKillerKillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
@@ -17285,7 +17285,7 @@ namespace LasMonjas
                     MonjaFestival.greenPlayer01currentTarget = null;
                 },
                 () => { return MonjaFestival.greenPlayer01 != null && MonjaFestival.greenPlayer01 == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return MonjaFestival.greenPlayer01currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.greenPlayer01IsReviving && MonjaFestival.greenPlayer01Items == 0; },
+                () => { return MonjaFestival.greenPlayer01currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.greenPlayer01IsReviving && MonjaFestival.greenPlayer01Items == 0; },
                 () => { greenmonja01KillButton.Timer = greenmonja01KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -17307,7 +17307,7 @@ namespace LasMonjas
                     MonjaFestival.greenPlayer02currentTarget = null;
                 },
                 () => { return MonjaFestival.greenPlayer02 != null && MonjaFestival.greenPlayer02 == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return MonjaFestival.greenPlayer02currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.greenPlayer02IsReviving && MonjaFestival.greenPlayer02Items == 0; },
+                () => { return MonjaFestival.greenPlayer02currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.greenPlayer02IsReviving && MonjaFestival.greenPlayer02Items == 0; },
                 () => { greenmonja02KillButton.Timer = greenmonja02KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -17329,7 +17329,7 @@ namespace LasMonjas
                     MonjaFestival.greenPlayer03currentTarget = null;
                 },
                 () => { return MonjaFestival.greenPlayer03 != null && MonjaFestival.greenPlayer03 == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return MonjaFestival.greenPlayer03currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.greenPlayer03IsReviving && MonjaFestival.greenPlayer03Items == 0; },
+                () => { return MonjaFestival.greenPlayer03currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.greenPlayer03IsReviving && MonjaFestival.greenPlayer03Items == 0; },
                 () => { greenmonja03KillButton.Timer = greenmonja03KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -17351,7 +17351,7 @@ namespace LasMonjas
                     MonjaFestival.greenPlayer04currentTarget = null;
                 },
                 () => { return MonjaFestival.greenPlayer04 != null && MonjaFestival.greenPlayer04 == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return MonjaFestival.greenPlayer04currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.greenPlayer04IsReviving && MonjaFestival.greenPlayer04Items == 0; },
+                () => { return MonjaFestival.greenPlayer04currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.greenPlayer04IsReviving && MonjaFestival.greenPlayer04Items == 0; },
                 () => { greenmonja04KillButton.Timer = greenmonja04KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -17373,7 +17373,7 @@ namespace LasMonjas
                     MonjaFestival.greenPlayer05currentTarget = null;
                 },
                 () => { return MonjaFestival.greenPlayer05 != null && MonjaFestival.greenPlayer05 == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return MonjaFestival.greenPlayer05currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.greenPlayer05IsReviving && MonjaFestival.greenPlayer05Items == 0; },
+                () => { return MonjaFestival.greenPlayer05currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.greenPlayer05IsReviving && MonjaFestival.greenPlayer05Items == 0; },
                 () => { greenmonja05KillButton.Timer = greenmonja05KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -17395,7 +17395,7 @@ namespace LasMonjas
                     MonjaFestival.greenPlayer06currentTarget = null;
                 },
                 () => { return MonjaFestival.greenPlayer06 != null && MonjaFestival.greenPlayer06 == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return MonjaFestival.greenPlayer06currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.greenPlayer06IsReviving && MonjaFestival.greenPlayer06Items == 0; },
+                () => { return MonjaFestival.greenPlayer06currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.greenPlayer06IsReviving && MonjaFestival.greenPlayer06Items == 0; },
                 () => { greenmonja06KillButton.Timer = greenmonja06KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -17417,7 +17417,7 @@ namespace LasMonjas
                     MonjaFestival.greenPlayer07currentTarget = null;
                 },
                 () => { return MonjaFestival.greenPlayer07 != null && MonjaFestival.greenPlayer07 == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return MonjaFestival.greenPlayer07currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.greenPlayer07IsReviving && MonjaFestival.greenPlayer07Items == 0; },
+                () => { return MonjaFestival.greenPlayer07currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.greenPlayer07IsReviving && MonjaFestival.greenPlayer07Items == 0; },
                 () => { greenmonja07KillButton.Timer = greenmonja07KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -17439,7 +17439,7 @@ namespace LasMonjas
                     MonjaFestival.cyanPlayer01currentTarget = null;
                 },
                 () => { return MonjaFestival.cyanPlayer01 != null && MonjaFestival.cyanPlayer01 == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return MonjaFestival.cyanPlayer01currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.cyanPlayer01IsReviving && MonjaFestival.cyanPlayer01Items == 0; },
+                () => { return MonjaFestival.cyanPlayer01currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.cyanPlayer01IsReviving && MonjaFestival.cyanPlayer01Items == 0; },
                 () => { cyanmonja01KillButton.Timer = cyanmonja01KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -17461,7 +17461,7 @@ namespace LasMonjas
                     MonjaFestival.cyanPlayer02currentTarget = null;
                 },
                 () => { return MonjaFestival.cyanPlayer02 != null && MonjaFestival.cyanPlayer02 == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return MonjaFestival.cyanPlayer02currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.cyanPlayer02IsReviving && MonjaFestival.cyanPlayer02Items == 0; },
+                () => { return MonjaFestival.cyanPlayer02currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.cyanPlayer02IsReviving && MonjaFestival.cyanPlayer02Items == 0; },
                 () => { cyanmonja02KillButton.Timer = cyanmonja02KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -17483,7 +17483,7 @@ namespace LasMonjas
                     MonjaFestival.cyanPlayer03currentTarget = null;
                 },
                 () => { return MonjaFestival.cyanPlayer03 != null && MonjaFestival.cyanPlayer03 == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return MonjaFestival.cyanPlayer03currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.cyanPlayer03IsReviving && MonjaFestival.cyanPlayer03Items == 0; },
+                () => { return MonjaFestival.cyanPlayer03currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.cyanPlayer03IsReviving && MonjaFestival.cyanPlayer03Items == 0; },
                 () => { cyanmonja03KillButton.Timer = cyanmonja03KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -17505,7 +17505,7 @@ namespace LasMonjas
                     MonjaFestival.cyanPlayer04currentTarget = null;
                 },
                 () => { return MonjaFestival.cyanPlayer04 != null && MonjaFestival.cyanPlayer04 == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return MonjaFestival.cyanPlayer04currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.cyanPlayer04IsReviving && MonjaFestival.cyanPlayer04Items == 0; },
+                () => { return MonjaFestival.cyanPlayer04currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.cyanPlayer04IsReviving && MonjaFestival.cyanPlayer04Items == 0; },
                 () => { cyanmonja04KillButton.Timer = cyanmonja04KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -17527,7 +17527,7 @@ namespace LasMonjas
                     MonjaFestival.cyanPlayer05currentTarget = null;
                 },
                 () => { return MonjaFestival.cyanPlayer05 != null && MonjaFestival.cyanPlayer05 == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return MonjaFestival.cyanPlayer05currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.cyanPlayer05IsReviving && MonjaFestival.cyanPlayer05Items == 0; },
+                () => { return MonjaFestival.cyanPlayer05currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.cyanPlayer05IsReviving && MonjaFestival.cyanPlayer05Items == 0; },
                 () => { cyanmonja05KillButton.Timer = cyanmonja05KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -17549,7 +17549,7 @@ namespace LasMonjas
                     MonjaFestival.cyanPlayer06currentTarget = null;
                 },
                 () => { return MonjaFestival.cyanPlayer06 != null && MonjaFestival.cyanPlayer06 == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return MonjaFestival.cyanPlayer06currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.cyanPlayer06IsReviving && MonjaFestival.cyanPlayer06Items == 0; },
+                () => { return MonjaFestival.cyanPlayer06currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.cyanPlayer06IsReviving && MonjaFestival.cyanPlayer06Items == 0; },
                 () => { cyanmonja06KillButton.Timer = cyanmonja06KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -17571,7 +17571,7 @@ namespace LasMonjas
                     MonjaFestival.cyanPlayer07currentTarget = null;
                 },
                 () => { return MonjaFestival.cyanPlayer07 != null && MonjaFestival.cyanPlayer07 == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return MonjaFestival.cyanPlayer07currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.cyanPlayer07IsReviving && MonjaFestival.cyanPlayer07Items == 0; },
+                () => { return MonjaFestival.cyanPlayer07currentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.cyanPlayer07IsReviving && MonjaFestival.cyanPlayer07Items == 0; },
                 () => { cyanmonja07KillButton.Timer = cyanmonja07KillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -17593,7 +17593,7 @@ namespace LasMonjas
                     MonjaFestival.bigMonjaPlayercurrentTarget = null;
                 },
                 () => { return MonjaFestival.bigMonjaPlayer != null && MonjaFestival.bigMonjaPlayer == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return MonjaFestival.bigMonjaPlayercurrentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.bigMonjaIsReviving; },
+                () => { return MonjaFestival.bigMonjaPlayercurrentTarget && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.bigMonjaIsReviving; },
                 () => { bigmonjaKillButton.Timer = bigmonjaKillButton.MaxTimer; },
                 __instance.KillButton.graphic.sprite,
                 CustomButton.ButtonPositions.upperRowRight,
@@ -17613,7 +17613,7 @@ namespace LasMonjas
                     RPCProcedure.monjaFestivalBigMonjaInvisible();
                 },
                 () => { return MonjaFestival.bigMonjaPlayer != null && MonjaFestival.bigMonjaPlayer == PlayerInCache.LocalPlayer.PlayerControl; },
-                () => { return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead; },
+                () => { return PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {},
                 Stranded.getInvisibleButtonSprite(),
                 CustomButton.ButtonPositions.upperRowCenter,
@@ -17710,7 +17710,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.greenPlayer01IsReviving;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.greenPlayer01IsReviving;
                 },
                 () => { greenmonja01PickDeliverButton.Timer = greenmonja01PickDeliverButton.MaxTimer; },
                 MonjaFestival.getgreenPickButtonSprite(),
@@ -17893,7 +17893,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.greenPlayer02IsReviving;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.greenPlayer02IsReviving;
                 },
                 () => { greenmonja02PickDeliverButton.Timer = greenmonja02PickDeliverButton.MaxTimer; },
                 MonjaFestival.getgreenPickButtonSprite(),
@@ -18076,7 +18076,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.greenPlayer03IsReviving;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.greenPlayer03IsReviving;
                 },
                 () => { greenmonja03PickDeliverButton.Timer = greenmonja03PickDeliverButton.MaxTimer; },
                 MonjaFestival.getgreenPickButtonSprite(),
@@ -18259,7 +18259,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.greenPlayer04IsReviving;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.greenPlayer04IsReviving;
                 },
                 () => { greenmonja04PickDeliverButton.Timer = greenmonja04PickDeliverButton.MaxTimer; },
                 MonjaFestival.getgreenPickButtonSprite(),
@@ -18442,7 +18442,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.greenPlayer05IsReviving;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.greenPlayer05IsReviving;
                 },
                 () => { greenmonja05PickDeliverButton.Timer = greenmonja05PickDeliverButton.MaxTimer; },
                 MonjaFestival.getgreenPickButtonSprite(),
@@ -18625,7 +18625,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.greenPlayer06IsReviving;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.greenPlayer06IsReviving;
                 },
                 () => { greenmonja06PickDeliverButton.Timer = greenmonja06PickDeliverButton.MaxTimer; },
                 MonjaFestival.getgreenPickButtonSprite(),
@@ -18808,7 +18808,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.greenPlayer07IsReviving;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.greenPlayer07IsReviving;
                 },
                 () => { greenmonja07PickDeliverButton.Timer = greenmonja07PickDeliverButton.MaxTimer; },
                 MonjaFestival.getgreenPickButtonSprite(),
@@ -18991,7 +18991,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.cyanPlayer01IsReviving;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.cyanPlayer01IsReviving;
                 },
                 () => { cyanmonja01PickDeliverButton.Timer = cyanmonja01PickDeliverButton.MaxTimer; },
                 MonjaFestival.getcyanPickButtonSprite(),
@@ -19174,7 +19174,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.cyanPlayer02IsReviving;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.cyanPlayer02IsReviving;
                 },
                 () => { cyanmonja02PickDeliverButton.Timer = cyanmonja02PickDeliverButton.MaxTimer; },
                 MonjaFestival.getcyanPickButtonSprite(),
@@ -19357,7 +19357,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.cyanPlayer03IsReviving;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.cyanPlayer03IsReviving;
                 },
                 () => { cyanmonja03PickDeliverButton.Timer = cyanmonja03PickDeliverButton.MaxTimer; },
                 MonjaFestival.getcyanPickButtonSprite(),
@@ -19540,7 +19540,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.cyanPlayer04IsReviving;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.cyanPlayer04IsReviving;
                 },
                 () => { cyanmonja04PickDeliverButton.Timer = cyanmonja04PickDeliverButton.MaxTimer; },
                 MonjaFestival.getcyanPickButtonSprite(),
@@ -19724,7 +19724,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.cyanPlayer05IsReviving;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.cyanPlayer05IsReviving;
                 },
                 () => { cyanmonja05PickDeliverButton.Timer = cyanmonja05PickDeliverButton.MaxTimer; },
                 MonjaFestival.getcyanPickButtonSprite(),
@@ -19907,7 +19907,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.cyanPlayer06IsReviving;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.cyanPlayer06IsReviving;
                 },
                 () => { cyanmonja06PickDeliverButton.Timer = cyanmonja06PickDeliverButton.MaxTimer; },
                 MonjaFestival.getcyanPickButtonSprite(),
@@ -20090,7 +20090,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.cyanPlayer07IsReviving;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.cyanPlayer07IsReviving;
                 },
                 () => { cyanmonja07PickDeliverButton.Timer = cyanmonja07PickDeliverButton.MaxTimer; },
                 MonjaFestival.getcyanPickButtonSprite(),
@@ -20278,7 +20278,7 @@ namespace LasMonjas
                             }
                         }
                     }
-                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.Data.IsDead && !MonjaFestival.bigMonjaIsReviving;
+                    return CanUse && PlayerInCache.LocalPlayer.PlayerControl.CanMove && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !MonjaFestival.bigMonjaIsReviving;
                 },
                 () => { bigmonjaPickDeliverButton.Timer = bigmonjaPickDeliverButton.MaxTimer; },
                 MonjaFestival.getgreyPickButtonSprite(),
