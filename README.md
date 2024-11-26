@@ -36,6 +36,9 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
 
+**Version 3.8.6 (26th November 2024)**
+- Little cosmetic update: 5 new hats and 1 new nameplate
+
 **Version 3.8.5 (16th November 2024)**
 - Fixed an issue related to MEU / MNA / MAS modded server, the mod works again on them (thanks mini again)
 
