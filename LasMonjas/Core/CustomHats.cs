@@ -108,6 +108,7 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "Muaresito", HatName = "Sussykill", NoBounce = true, altShader = true},
             new AuthorData {AuthorName = "Muaresito", HatName = "Stuffwell", NoBounce = true, altShader = true},
             new AuthorData {AuthorName = "Muaresito", HatName = "Sussybara", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "Muaresito", HatName = "Sin Embargo", NoBounce = true, altShader = true},
             new AuthorData {AuthorName = "Xago", HatName = "World Destroyer", NoBounce = true},
             new AuthorData {AuthorName = "Xago", HatName = "Amazing Robot", NoBounce = true},
             new AuthorData {AuthorName = "Xago", HatName = "Fourze", NoBounce = true},
@@ -159,6 +160,7 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "Jesushi", HatName = "Crown", NoBounce = true},
             new AuthorData {AuthorName = "Booman", HatName = "Sniper", NoBounce = true},
             new AuthorData {AuthorName = "Booman", HatName = "Rocketman", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "Booman", HatName = "Wooden Box", NoBounce = true, altShader = true},
             new AuthorData {AuthorName = "Boa", HatName = "Cat Princess", FloorHatName ="Cat Princess_climb", ClimbHatName = "Cat Princess_climb", LeftImageName = "Cat Princess", NoBounce = true},
             new AuthorData {AuthorName = "Xeno<33", HatName = "3rd Eye", NoBounce = true, altShader = true},
             new AuthorData {AuthorName = "Xeno<33", HatName = "Candles", NoBounce = false},
@@ -220,6 +222,9 @@ namespace LasMonjas.Core
             new AuthorData {AuthorName = "Sonrio", HatName = "Puppetist", NoBounce = true, altShader = true},
             new AuthorData {AuthorName = "Sonrio", HatName = "Calling All Crewmates", NoBounce = true},
             new AuthorData {AuthorName = "Sonrio", HatName = "Fighter", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "Sonrio", HatName = "Woomy Girl", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "Sonrio", HatName = "Woomy Boy", NoBounce = true, altShader = true},
+            new AuthorData {AuthorName = "Sonrio", HatName = "Tanuki", NoBounce = true, altShader = true},
             new AuthorData {AuthorName = "Dr Blockhead", HatName = "Got Any Grapes", NoBounce = true},
             new AuthorData {AuthorName = "Dr Blockhead", HatName = "Bucket", NoBounce = true},
         };
@@ -308,7 +313,7 @@ namespace LasMonjas.Core
                 newHat.InFront = true;
                 newHat.NoBounce = bounce;                
                 newHat.Free = true;
-                newHat.ChipOffset = new Vector2(-0.1f, 0.4f);
+                newHat.ChipOffset = new Vector2(-0.1f, 0.2f);
                 if (altshader == true) { viewdata.MatchPlayerColor = true; }                
                 CustomHatViewDatas.Add(newHat.name, viewdata);
                 var assetRef = new AssetReference(viewdata.Pointer);
