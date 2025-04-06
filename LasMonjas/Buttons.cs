@@ -7685,7 +7685,7 @@ namespace LasMonjas
                 },
                 () => { return PoliceAndThief.policeplayer01 != null && PoliceAndThief.policeplayer01 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
-                    if (policeplayer01JailButton.isEffectActive && PoliceAndThief.policeplayer01targetedPlayer != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.policeplayer01targetedPlayer.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
+                    if (policeplayer01JailButton.isEffectActive && PoliceAndThief.policeplayer01targetedPlayer != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.policeplayer01targetedPlayer.transform.position) > LegacyGameOptions.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         PoliceAndThief.policeplayer01targetedPlayer = null;
                         policeplayer01JailButton.Timer = 0f;
                         policeplayer01JailButton.isEffectActive = false;
@@ -7887,7 +7887,7 @@ namespace LasMonjas
                 },
                 () => { return PoliceAndThief.policeplayer03 != null && PoliceAndThief.policeplayer03 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
-                    if (policeplayer03JailButton.isEffectActive && PoliceAndThief.policeplayer03targetedPlayer != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.policeplayer03targetedPlayer.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
+                    if (policeplayer03JailButton.isEffectActive && PoliceAndThief.policeplayer03targetedPlayer != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.policeplayer03targetedPlayer.transform.position) > LegacyGameOptions.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         PoliceAndThief.policeplayer03targetedPlayer = null;
                         policeplayer03JailButton.Timer = 0f;
                         policeplayer03JailButton.isEffectActive = false;
@@ -8090,7 +8090,7 @@ namespace LasMonjas
                 },
                 () => { return PoliceAndThief.policeplayer05 != null && PoliceAndThief.policeplayer05 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
-                    if (policeplayer05JailButton.isEffectActive && PoliceAndThief.policeplayer05targetedPlayer != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.policeplayer05targetedPlayer.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
+                    if (policeplayer05JailButton.isEffectActive && PoliceAndThief.policeplayer05targetedPlayer != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.policeplayer05targetedPlayer.transform.position) > LegacyGameOptions.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         PoliceAndThief.policeplayer05targetedPlayer = null;
                         policeplayer05JailButton.Timer = 0f;
                         policeplayer05JailButton.isEffectActive = false;
@@ -8185,7 +8185,7 @@ namespace LasMonjas
                 },
                 () => { return PoliceAndThief.policeplayer06 != null && PoliceAndThief.policeplayer06 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
-                    if (policeplayer06JailButton.isEffectActive && PoliceAndThief.policeplayer06targetedPlayer != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.policeplayer06targetedPlayer.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
+                    if (policeplayer06JailButton.isEffectActive && PoliceAndThief.policeplayer06targetedPlayer != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, PoliceAndThief.policeplayer06targetedPlayer.transform.position) > LegacyGameOptions.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         PoliceAndThief.policeplayer06targetedPlayer = null;
                         policeplayer06JailButton.Timer = 0f;
                         policeplayer06JailButton.isEffectActive = false;
@@ -10533,7 +10533,7 @@ namespace LasMonjas
                 },
                 () => { return ZombieLaboratory.zombiePlayer01 != null && ZombieLaboratory.zombiePlayer01 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
-                    if (zombie01InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer01infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer01infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
+                    if (zombie01InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer01infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer01infectedTarget.transform.position) > LegacyGameOptions.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer01infectedTarget = null;
                         zombie01InfectButton.Timer = 0f;
                         zombie01InfectButton.isEffectActive = false;
@@ -10610,7 +10610,7 @@ namespace LasMonjas
                 },
                 () => { return ZombieLaboratory.zombiePlayer02 != null && ZombieLaboratory.zombiePlayer02 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
-                    if (zombie02InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer02infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer02infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
+                    if (zombie02InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer02infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer02infectedTarget.transform.position) > LegacyGameOptions.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer02infectedTarget = null;
                         zombie02InfectButton.Timer = 0f;
                         zombie02InfectButton.isEffectActive = false;
@@ -10687,7 +10687,7 @@ namespace LasMonjas
                 },
                 () => { return ZombieLaboratory.zombiePlayer03 != null && ZombieLaboratory.zombiePlayer03 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
-                    if (zombie03InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer03infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer03infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
+                    if (zombie03InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer03infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer03infectedTarget.transform.position) > LegacyGameOptions.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer03infectedTarget = null;
                         zombie03InfectButton.Timer = 0f;
                         zombie03InfectButton.isEffectActive = false;
@@ -10764,7 +10764,7 @@ namespace LasMonjas
                 },
                 () => { return ZombieLaboratory.zombiePlayer04 != null && ZombieLaboratory.zombiePlayer04 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
-                    if (zombie04InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer04infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer04infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
+                    if (zombie04InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer04infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer04infectedTarget.transform.position) > LegacyGameOptions.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer04infectedTarget = null;
                         zombie04InfectButton.Timer = 0f;
                         zombie04InfectButton.isEffectActive = false;
@@ -10841,7 +10841,7 @@ namespace LasMonjas
                 },
                 () => { return ZombieLaboratory.zombiePlayer05 != null && ZombieLaboratory.zombiePlayer05 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
-                    if (zombie05InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer05infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer05infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
+                    if (zombie05InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer05infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer05infectedTarget.transform.position) > LegacyGameOptions.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer05infectedTarget = null;
                         zombie05InfectButton.Timer = 0f;
                         zombie05InfectButton.isEffectActive = false;
@@ -10918,7 +10918,7 @@ namespace LasMonjas
                 },
                 () => { return ZombieLaboratory.zombiePlayer06 != null && ZombieLaboratory.zombiePlayer06 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
-                    if (zombie06InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer06infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer06infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
+                    if (zombie06InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer06infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer06infectedTarget.transform.position) > LegacyGameOptions.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer06infectedTarget = null;
                         zombie06InfectButton.Timer = 0f;
                         zombie06InfectButton.isEffectActive = false;
@@ -10995,7 +10995,7 @@ namespace LasMonjas
                 },
                 () => { return ZombieLaboratory.zombiePlayer07 != null && ZombieLaboratory.zombiePlayer07 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
-                    if (zombie07InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer07infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer07infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
+                    if (zombie07InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer07infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer07infectedTarget.transform.position) > LegacyGameOptions.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer07infectedTarget = null;
                         zombie07InfectButton.Timer = 0f;
                         zombie07InfectButton.isEffectActive = false;
@@ -11072,7 +11072,7 @@ namespace LasMonjas
                 },
                 () => { return ZombieLaboratory.zombiePlayer08 != null && ZombieLaboratory.zombiePlayer08 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
-                    if (zombie08InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer08infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer08infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
+                    if (zombie08InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer08infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer08infectedTarget.transform.position) > LegacyGameOptions.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer08infectedTarget = null;
                         zombie08InfectButton.Timer = 0f;
                         zombie08InfectButton.isEffectActive = false;
@@ -11149,7 +11149,7 @@ namespace LasMonjas
                 },
                 () => { return ZombieLaboratory.zombiePlayer09 != null && ZombieLaboratory.zombiePlayer09 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
-                    if (zombie09InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer09infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer09infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
+                    if (zombie09InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer09infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer09infectedTarget.transform.position) > LegacyGameOptions.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer09infectedTarget = null;
                         zombie09InfectButton.Timer = 0f;
                         zombie09InfectButton.isEffectActive = false;
@@ -11226,7 +11226,7 @@ namespace LasMonjas
                 },
                 () => { return ZombieLaboratory.zombiePlayer10 != null && ZombieLaboratory.zombiePlayer10 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
-                    if (zombie10InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer10infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer10infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
+                    if (zombie10InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer10infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer10infectedTarget.transform.position) > LegacyGameOptions.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer10infectedTarget = null;
                         zombie10InfectButton.Timer = 0f;
                         zombie10InfectButton.isEffectActive = false;
@@ -11303,7 +11303,7 @@ namespace LasMonjas
                 },
                 () => { return ZombieLaboratory.zombiePlayer11 != null && ZombieLaboratory.zombiePlayer11 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
-                    if (zombie11InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer11infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer11infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
+                    if (zombie11InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer11infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer11infectedTarget.transform.position) > LegacyGameOptions.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer11infectedTarget = null;
                         zombie11InfectButton.Timer = 0f;
                         zombie11InfectButton.isEffectActive = false;
@@ -11380,7 +11380,7 @@ namespace LasMonjas
                 },
                 () => { return ZombieLaboratory.zombiePlayer12 != null && ZombieLaboratory.zombiePlayer12 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
-                    if (zombie12InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer12infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer12infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
+                    if (zombie12InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer12infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer12infectedTarget.transform.position) > LegacyGameOptions.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer12infectedTarget = null;
                         zombie12InfectButton.Timer = 0f;
                         zombie12InfectButton.isEffectActive = false;
@@ -11457,7 +11457,7 @@ namespace LasMonjas
                 },
                 () => { return ZombieLaboratory.zombiePlayer13 != null && ZombieLaboratory.zombiePlayer13 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
-                    if (zombie13InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer13infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer13infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
+                    if (zombie13InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer13infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer13infectedTarget.transform.position) > LegacyGameOptions.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer13infectedTarget = null;
                         zombie13InfectButton.Timer = 0f;
                         zombie13InfectButton.isEffectActive = false;
@@ -11534,7 +11534,7 @@ namespace LasMonjas
                 },
                 () => { return ZombieLaboratory.zombiePlayer14 != null && ZombieLaboratory.zombiePlayer14 == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead; },
                 () => {
-                    if (zombie14InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer14infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer14infectedTarget.transform.position) > GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
+                    if (zombie14InfectButton.isEffectActive && ZombieLaboratory.zombiePlayer14infectedTarget != null && Vector2.Distance(PlayerInCache.LocalPlayer.PlayerControl.transform.position, ZombieLaboratory.zombiePlayer14infectedTarget.transform.position) > LegacyGameOptions.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)]) {
                         ZombieLaboratory.zombiePlayer14infectedTarget = null;
                         zombie14InfectButton.Timer = 0f;
                         zombie14InfectButton.isEffectActive = false;

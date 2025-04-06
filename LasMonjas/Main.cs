@@ -16,6 +16,7 @@ using Reactor.Networking.Attributes;
 using AmongUs.Data;
 using AmongUs.GameOptions;
 using System;
+using AmongUs.Data.Player;
 
 namespace LasMonjas
 {
@@ -103,8 +104,8 @@ namespace LasMonjas
     }
 
     // Deactivate bans, since I always leave my local testing game and ban myself
-    [HarmonyPatch(typeof(StatsManager), nameof(StatsManager.AmBanned), MethodType.Getter)]
-    public static class AmBannedPatch
+    [HarmonyPatch(typeof(PlayerBanData), nameof(PlayerBanData.IsBanned), MethodType.Getter)]
+    public static class IsBannedPatch
     {
         public static void Postfix(out bool __result)
         {

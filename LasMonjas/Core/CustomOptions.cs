@@ -290,15 +290,20 @@ namespace LasMonjas.Core
 
             float num = 1.44f;
             int i = 0;
-            int singles = 0;
+            int singles = 1;
             int headers = 0;
             int lines = 0;
             var curType = CustomOptionType.Modifier;
+            int numBonus = 0;
 
             foreach (var option in relevantOptions) {
                 if (option.isHeader && (int)optionType != 99 || (int)optionType == 99 && curType != option.type) {
                     curType = option.type;
-                    if (i != 0) num -= 0.59f;
+                    if (i != 0)
+                    {
+                        num -= 0.85f;
+                        numBonus++;
+                    }
                     if (i % 2 != 0) singles++;
                     headers++; // for header
                     CategoryHeaderMasked categoryHeaderMasked = UnityEngine.Object.Instantiate<CategoryHeaderMasked>(__instance.categoryHeaderOrigin);
@@ -311,13 +316,13 @@ namespace LasMonjas.Core
                             { CustomOptionType.Neutral, "Neutral Roles" },
                             { CustomOptionType.Crewmate, "Crewmate Roles" },
                             { CustomOptionType.Modifier, "Modifiers" } }[curType];
-                    categoryHeaderMasked.Title.outlineColor = Color.white;
-                    categoryHeaderMasked.Title.outlineWidth = 0.2f;
+                    //categoryHeaderMasked.Title.outlineColor = Color.white;
+                    //categoryHeaderMasked.Title.outlineWidth = 0.2f;
                     categoryHeaderMasked.transform.SetParent(__instance.settingsContainer);
                     categoryHeaderMasked.transform.localScale = Vector3.one;
                     categoryHeaderMasked.transform.localPosition = new Vector3(-9.77f, num, -2f);
                     __instance.settingsInfo.Add(categoryHeaderMasked.gameObject);
-                    num -= 0.85f;
+                    num -= 1.05f;
                     i = 0;
                 }
 
@@ -329,7 +334,7 @@ namespace LasMonjas.Core
                     lines++;
                     num2 = -8.95f;
                     if (i > 0) {
-                        num -= 0.59f;
+                        num -= 0.85f;
                     }
                 }
                 else {
@@ -342,17 +347,16 @@ namespace LasMonjas.Core
                 if (option.isHeader && (int)optionType != 99 && option.heading == "" && (option.type == CustomOptionType.Rebel || option.type == CustomOptionType.Neutral || option.type == CustomOptionType.Crewmate || option.type == CustomOptionType.Impostor || option.type == CustomOptionType.Modifier)) {
                     viewSettingsInfoPanel.titleText.text = "Spawn Chance";
                 }
-                if ((int)optionType == 99) {
+                /*if ((int)optionType == 99) {
                     viewSettingsInfoPanel.titleText.outlineColor = Color.white;
                     viewSettingsInfoPanel.titleText.outlineWidth = 0.2f;
-                }
+                }*/
                 __instance.settingsInfo.Add(viewSettingsInfoPanel.gameObject);
 
                 i++;
             }
-            float actual_spacing = (headers * 0.85f + lines * 0.59f) / (headers + lines);
-            __instance.scrollBar.CalculateAndSetYBounds((float)(__instance.settingsInfo.Count + singles * 2 + headers), 2f, 6f, actual_spacing);
-
+            float actual_spacing = (headers * 1.05f + lines * 0.85f) / (headers + lines) * 1.01f;
+            __instance.scrollBar.CalculateAndSetYBounds((float)(__instance.settingsInfo.Count + singles * 2 + headers), 2f, 5f, actual_spacing);
         }
 
         public static void createSettingTabs(LobbyViewSettingsPane __instance) {
@@ -404,8 +408,8 @@ namespace LasMonjas.Core
                     CategoryHeaderMasked categoryHeaderMasked = UnityEngine.Object.Instantiate<CategoryHeaderMasked>(menu.categoryHeaderOrigin, Vector3.zero, Quaternion.identity, menu.settingsContainer);
                     categoryHeaderMasked.SetHeader(StringNames.ImpostorsCategory, 20);
                     categoryHeaderMasked.Title.text = option.heading != "" ? option.heading : option.name;
-                    categoryHeaderMasked.Title.outlineColor = Color.white;
-                    categoryHeaderMasked.Title.outlineWidth = 0.2f;
+                    //categoryHeaderMasked.Title.outlineColor = Color.white;
+                    //categoryHeaderMasked.Title.outlineWidth = 0.2f;
                     categoryHeaderMasked.transform.localScale = Vector3.one * 0.63f;
                     categoryHeaderMasked.transform.localPosition = new Vector3(-0.903f, num, -2f);
                     num -= 0.63f;
@@ -611,7 +615,7 @@ namespace LasMonjas.Core
     }
 
     [HarmonyPatch]
-    class GameOptionsDataPatch
+    class LegacyGameOptionsPatch
     {
         private static string buildRoleOptions() {
             var impRoles = buildOptionsOfType(CustomOption.CustomOptionType.Impostor, true) + "\n";
@@ -694,14 +698,14 @@ namespace LasMonjas.Core
     [HarmonyPatch]
     public class AddToKillDistanceSetting
     {
-        [HarmonyPatch(typeof(GameOptionsData), nameof(GameOptionsData.AreInvalid))]
+        [HarmonyPatch(typeof(LegacyGameOptions), nameof(LegacyGameOptions.AreInvalid))]
         [HarmonyPrefix]
 
-        public static bool Prefix(GameOptionsData __instance, ref int maxExpectedPlayers) {
+        public static bool Prefix(LegacyGameOptions __instance, ref int maxExpectedPlayers) {
             //making the killdistances bound check higher since extra short is added
             return __instance.MaxPlayers > maxExpectedPlayers || __instance.NumImpostors < 1
                     || __instance.NumImpostors > 3 || __instance.KillDistance < 0
-                    || __instance.KillDistance >= GameOptionsData.KillDistances.Count
+                    || __instance.KillDistance >= LegacyGameOptions.KillDistances.Count
                     || __instance.PlayerSpeedMod <= 0f || __instance.PlayerSpeedMod > 3f;
         }
 
@@ -711,7 +715,7 @@ namespace LasMonjas.Core
         public static bool Prefix(NormalGameOptionsV07 __instance, ref int maxExpectedPlayers) {
             return __instance.MaxPlayers > maxExpectedPlayers || __instance.NumImpostors < 1
                     || __instance.NumImpostors > 3 || __instance.KillDistance < 0
-                    || __instance.KillDistance >= GameOptionsData.KillDistances.Count
+                    || __instance.KillDistance >= LegacyGameOptions.KillDistances.Count
                     || __instance.PlayerSpeedMod <= 0f || __instance.PlayerSpeedMod > 3f;
         }
 
@@ -751,7 +755,7 @@ namespace LasMonjas.Core
                 else {
                     index = GameOptionsManager.Instance.currentHideNSeekGameOptions.KillDistance;
                 }
-                value = GameOptionsData.KillDistanceStrings[index];
+                value = LegacyGameOptions.KillDistanceStrings[index];
             }
         }
 
@@ -768,8 +772,8 @@ namespace LasMonjas.Core
         }
 
         public static void addKillDistance() {
-            GameOptionsData.KillDistances = new(new float[] { 0.5f, 1f, 1.8f, 2.5f });
-            GameOptionsData.KillDistanceStrings = new(new string[] { "Very Short", "Short", "Medium", "Long" });
+            LegacyGameOptions.KillDistances = new(new float[] { 0.5f, 1f, 1.8f, 2.5f });
+            LegacyGameOptions.KillDistanceStrings = new(new string[] { "Very Short", "Short", "Medium", "Long" });
         }
     }
 
@@ -805,7 +809,7 @@ namespace LasMonjas.Core
             if (Input.GetKeyDown(KeyCode.Alpha8) || Input.GetKeyDown(KeyCode.Keypad8)) {
                 LasMonjasPlugin.optionsPage = 7;
             }
-            if (LasMonjasPlugin.optionsPage >= GameOptionsDataPatch.maxPage) LasMonjasPlugin.optionsPage = 0;
+            if (LasMonjasPlugin.optionsPage >= LegacyGameOptionsPatch.maxPage) LasMonjasPlugin.optionsPage = 0;
         }
     }
 
@@ -814,8 +818,7 @@ namespace LasMonjas.Core
     [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
     public class HudManagerUpdate
     {
-        private static GameObject GameSettingsObject;
-        private static TextMeshPro GameSettings;
+        private static TextMeshPro GameSettings = null;
         public static float
             MinX,/*-5.3F*/
             OriginalY = 2.9F,

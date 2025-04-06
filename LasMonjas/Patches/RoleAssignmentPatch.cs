@@ -10,11 +10,12 @@ using LasMonjas.Core;
 
 namespace LasMonjas.Patches
 {
-    [HarmonyPatch(typeof(RoleOptionsData), nameof(RoleOptionsData.GetNumPerGame))]
+    [HarmonyPatch(typeof(RoleOptionsCollectionV08), nameof(RoleOptionsCollectionV08.GetNumPerGame))]
     class RoleOptionsDataGetNumPerGamePatch
     {
-        public static void Postfix(ref int __result) {
-            if (GameOptionsManager.Instance.CurrentGameOptions.GameMode == GameModes.Normal) __result = 0; // Deactivate Vanilla Roles
+        public static void Postfix(ref int __result)
+        {
+            if (GameOptionsManager.Instance.CurrentGameOptions.GameMode == GameModes.Normal) __result = 0; // Deactivate Vanilla Roles if the mod roles are active
         }
     }
 
