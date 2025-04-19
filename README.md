@@ -36,6 +36,9 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
 
+**Version 3.8.7 (19th April 2025)**
+- Compatibility patch for Among Us v16.0.2 (or 2025.3.31)
+
 **Version 3.8.6 (26th November 2024)**
 - Little cosmetic update: 5 new hats and 1 new nameplate
 
