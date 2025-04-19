@@ -16,6 +16,7 @@ using Reactor.Networking.Attributes;
 using AmongUs.Data;
 using AmongUs.GameOptions;
 using System;
+using AmongUs.Data.Player;
 
 namespace LasMonjas
 {
@@ -27,7 +28,7 @@ namespace LasMonjas
     {
         public const string Id = "me.allul.lasmonjas";
 
-        public const string VersionString = "3.8.6";
+        public const string VersionString = "3.8.7";
 
         public static System.Version Version = System.Version.Parse(VersionString);
         internal static BepInEx.Logging.ManualLogSource Logger;
@@ -103,7 +104,7 @@ namespace LasMonjas
     }
 
     // Deactivate bans, since I always leave my local testing game and ban myself
-    [HarmonyPatch(typeof(StatsManager), nameof(StatsManager.AmBanned), MethodType.Getter)]
+    [HarmonyPatch(typeof(PlayerBanData), nameof(PlayerBanData.IsBanned), MethodType.Getter)]
     public static class AmBannedPatch
     {
         public static void Postfix(out bool __result)
