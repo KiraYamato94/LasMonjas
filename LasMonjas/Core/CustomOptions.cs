@@ -611,7 +611,7 @@ namespace LasMonjas.Core
     }
 
     [HarmonyPatch]
-    class GameOptionsDataPatch
+    class LegacyGameOptionsPatch
     {
         private static string buildRoleOptions() {
             var impRoles = buildOptionsOfType(CustomOption.CustomOptionType.Impostor, true) + "\n";
@@ -694,14 +694,14 @@ namespace LasMonjas.Core
     [HarmonyPatch]
     public class AddToKillDistanceSetting
     {
-        [HarmonyPatch(typeof(GameOptionsData), nameof(GameOptionsData.AreInvalid))]
+        [HarmonyPatch(typeof(LegacyGameOptions), nameof(LegacyGameOptions.AreInvalid))]
         [HarmonyPrefix]
 
-        public static bool Prefix(GameOptionsData __instance, ref int maxExpectedPlayers) {
+        public static bool Prefix(LegacyGameOptions __instance, ref int maxExpectedPlayers) {
             //making the killdistances bound check higher since extra short is added
             return __instance.MaxPlayers > maxExpectedPlayers || __instance.NumImpostors < 1
                     || __instance.NumImpostors > 3 || __instance.KillDistance < 0
-                    || __instance.KillDistance >= GameOptionsData.KillDistances.Count
+                    || __instance.KillDistance >= LegacyGameOptions.KillDistances.Count
                     || __instance.PlayerSpeedMod <= 0f || __instance.PlayerSpeedMod > 3f;
         }
 
@@ -711,7 +711,7 @@ namespace LasMonjas.Core
         public static bool Prefix(NormalGameOptionsV07 __instance, ref int maxExpectedPlayers) {
             return __instance.MaxPlayers > maxExpectedPlayers || __instance.NumImpostors < 1
                     || __instance.NumImpostors > 3 || __instance.KillDistance < 0
-                    || __instance.KillDistance >= GameOptionsData.KillDistances.Count
+                    || __instance.KillDistance >= LegacyGameOptions.KillDistances.Count
                     || __instance.PlayerSpeedMod <= 0f || __instance.PlayerSpeedMod > 3f;
         }
 
@@ -751,7 +751,7 @@ namespace LasMonjas.Core
                 else {
                     index = GameOptionsManager.Instance.currentHideNSeekGameOptions.KillDistance;
                 }
-                value = GameOptionsData.KillDistanceStrings[index];
+                value = LegacyGameOptions.KillDistanceStrings[index];
             }
         }
 
@@ -768,8 +768,8 @@ namespace LasMonjas.Core
         }
 
         public static void addKillDistance() {
-            GameOptionsData.KillDistances = new(new float[] { 0.5f, 1f, 1.8f, 2.5f });
-            GameOptionsData.KillDistanceStrings = new(new string[] { "Very Short", "Short", "Medium", "Long" });
+            LegacyGameOptions.KillDistances = new(new float[] { 0.5f, 1f, 1.8f, 2.5f });
+            LegacyGameOptions.KillDistanceStrings = new(new string[] { "Very Short", "Short", "Medium", "Long" });
         }
     }
 
@@ -805,7 +805,7 @@ namespace LasMonjas.Core
             if (Input.GetKeyDown(KeyCode.Alpha8) || Input.GetKeyDown(KeyCode.Keypad8)) {
                 LasMonjasPlugin.optionsPage = 7;
             }
-            if (LasMonjasPlugin.optionsPage >= GameOptionsDataPatch.maxPage) LasMonjasPlugin.optionsPage = 0;
+            if (LasMonjasPlugin.optionsPage >= LegacyGameOptionsPatch.maxPage) LasMonjasPlugin.optionsPage = 0;
         }
     }
 
