@@ -17,7 +17,7 @@ namespace LasMonjas.Patches {
 
         static PlayerControl setTarget(bool onlyCrewmates = false, bool targetPlayersInVents = false, List<PlayerControl> untargetablePlayers = null, PlayerControl targetingPlayer = null) {
             PlayerControl result = null;
-            float num = GameOptionsData.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)];
+            float num = LegacyGameOptions.KillDistances[Mathf.Clamp(GameOptionsManager.Instance.currentGameOptions.GetInt(Int32OptionNames.KillDistance), 0, 2)];
             if (!ShipStatus.Instance) return result;
             if (targetingPlayer == null) targetingPlayer = PlayerInCache.LocalPlayer.PlayerControl;
             if (targetingPlayer.Data.IsDead) return result;

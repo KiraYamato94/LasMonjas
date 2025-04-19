@@ -10,7 +10,7 @@ using LasMonjas.Core;
 using static LasMonjas.GameHistory;
 
 namespace LasMonjas.Patches {
-    [HarmonyPatch(typeof(ExileController), nameof(ExileController.Begin))]
+    [HarmonyPatch(typeof(ExileController), nameof(ExileController.BeginForGameplay))]
     [HarmonyPriority(Priority.First)]
     class ExileControllerBeginPatch {
         public static NetworkedPlayerInfo lastExiled; 

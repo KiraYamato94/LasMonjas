@@ -127,7 +127,7 @@ namespace LasMonjas.Patches {
         private static GameOverReason gameOverReason;
         public static void Prefix(AmongUsClient __instance, [HarmonyArgument(0)]ref EndGameResult endGameResult) {
             gameOverReason = endGameResult.GameOverReason;
-            if ((int)endGameResult.GameOverReason >= 10) endGameResult.GameOverReason = GameOverReason.ImpostorByKill;
+            if ((int)endGameResult.GameOverReason >= 10) endGameResult.GameOverReason = GameOverReason.ImpostorsByKill;
 
             // Reset zoomed out ghosts
             Helpers.toggleZoom(reset: true);
@@ -1188,7 +1188,7 @@ namespace LasMonjas.Patches {
         }
         private static bool CheckAndEndGameForTaskWin(LogicGameFlowNormal __instance) {
             if (GameData.Instance.TotalTasks <= GameData.Instance.CompletedTasks && gameType <= 1) {
-                GameManager.Instance.RpcEndGame(GameOverReason.HumansByTask, false);
+                GameManager.Instance.RpcEndGame(GameOverReason.CrewmatesByTask, false);
                 return true;
             }
             return false;
@@ -1198,13 +1198,13 @@ namespace LasMonjas.Patches {
                 GameOverReason endReason;
                 switch (GameData.LastDeathReason) {
                     case DeathReason.Exile:
-                        endReason = GameOverReason.ImpostorByVote;
+                        endReason = GameOverReason.ImpostorsByVote;
                         break;
                     case DeathReason.Kill:
-                        endReason = GameOverReason.ImpostorByKill;
+                        endReason = GameOverReason.ImpostorsByKill;
                         break;
                     default:
-                        endReason = GameOverReason.ImpostorByVote;
+                        endReason = GameOverReason.ImpostorsByVote;
                         break;
                 }
                 GameManager.Instance.RpcEndGame(endReason, false);
@@ -1214,13 +1214,13 @@ namespace LasMonjas.Patches {
         }
         private static bool CheckAndEndGameForCrewmateWin(LogicGameFlowNormal __instance, PlayerStatistics statistics) {
             if (gameType <= 1 && statistics.TeamImpostorsAlive == 0 && statistics.TeamRenegadeAlive == 0 && statistics.TeamBountyHunterAlive == 0 && statistics.TeamTrapperAlive == 0 && statistics.TeamYinyangerAlive == 0 && statistics.TeamChallengerAlive == 0 && statistics.TeamNinjaAlive == 0 && statistics.TeamBerserkerAlive == 0 && statistics.TeamYandereAlive == 0 && statistics.TeamStrandedAlive == 0 && statistics.TeamMonjaAlive == 0) {
-                GameManager.Instance.RpcEndGame(GameOverReason.HumansByVote, false);
+                GameManager.Instance.RpcEndGame(GameOverReason.CrewmatesByVote, false);
                 return true;
             }
             return false;
         }
         private static void EndGameForSabotage(LogicGameFlowNormal __instance) {
-            GameManager.Instance.RpcEndGame(GameOverReason.ImpostorBySabotage, false);
+            GameManager.Instance.RpcEndGame(GameOverReason.ImpostorsBySabotage, false);
             return;
         }
         private static bool CheckAndEndGameForDrawFlagWin(LogicGameFlowNormal __instance) {
