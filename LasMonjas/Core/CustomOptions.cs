@@ -96,7 +96,7 @@ namespace LasMonjas.Core
         public static void ShareOptionSelections() {
             if (PlayerControl.AllPlayerControls.Count <= 1 || AmongUsClient.Instance?.AmHost == false && PlayerControl.LocalPlayer == null) return;
 
-            MessageWriter messageWriter = AmongUsClient.Instance.StartRpc(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ShareOptions, Hazel.SendOption.Reliable);
+            MessageWriter messageWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ShareOptions, Hazel.SendOption.Reliable);
             messageWriter.WritePacked((uint)CustomOption.options.Count);
             foreach (CustomOption option in CustomOption.options) {
                 messageWriter.WritePacked((uint)option.id);
