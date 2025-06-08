@@ -1105,7 +1105,7 @@ namespace LasMonjas
 
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.nunPlace, false, 100f);
                     
-                    MessageWriter writer = AmongUsClient.Instance.StartRpc(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.PlaceNun, Hazel.SendOption.Reliable);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.PlaceNun, Hazel.SendOption.Reliable);
                     writer.WriteBytesAndSize(buff);
                     writer.EndMessage();
                     RPCProcedure.placeNun(buff);
@@ -1285,7 +1285,7 @@ namespace LasMonjas
                     Buffer.BlockCopy(BitConverter.GetBytes(pos.x), 0, buff, 0 * sizeof(float), sizeof(float));
                     Buffer.BlockCopy(BitConverter.GetBytes(pos.y), 0, buff, 1 * sizeof(float), sizeof(float));
 
-                    MessageWriter writer = AmongUsClient.Instance.StartRpc(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.PlaceHat, Hazel.SendOption.Reliable);
+                    MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.PlaceHat, Hazel.SendOption.Reliable);
                     writer.WriteBytesAndSize(buff);
                     writer.EndMessage();
                     RPCProcedure.placeHat(buff);
@@ -5526,7 +5526,7 @@ namespace LasMonjas
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.mechanicWelderAction, false, 100f);
 
                     if (Welder.ventTarget != null) {
-                        MessageWriter writer = AmongUsClient.Instance.StartRpc(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.SealVent, Hazel.SendOption.Reliable);
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.SealVent, Hazel.SendOption.Reliable);
                         writer.WritePacked(Welder.ventTarget.Id);
                         writer.Write(0);
                         writer.EndMessage();
@@ -5599,7 +5599,7 @@ namespace LasMonjas
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.bombermanPlaceBombClip, false, 100f);
 
                     if (Welder.ventTarget != null) {
-                        MessageWriter writer = AmongUsClient.Instance.StartRpc(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.SealVent, Hazel.SendOption.Reliable);
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.SealVent, Hazel.SendOption.Reliable);
                         writer.WritePacked(Welder.ventTarget.Id);
                         writer.Write(1);
                         writer.EndMessage();
@@ -5788,7 +5788,7 @@ namespace LasMonjas
                         Buffer.BlockCopy(BitConverter.GetBytes(pos.x), 0, buff, 0 * sizeof(float), sizeof(float));
                         Buffer.BlockCopy(BitConverter.GetBytes(pos.y), 0, buff, 1 * sizeof(float), sizeof(float));
 
-                        MessageWriter writer = AmongUsClient.Instance.StartRpc(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.PlaceCamera, Hazel.SendOption.Reliable);
+                        MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.PlaceCamera, Hazel.SendOption.Reliable);
                         writer.WriteBytesAndSize(buff);
                         writer.EndMessage();
                         RPCProcedure.placeCamera(buff);
