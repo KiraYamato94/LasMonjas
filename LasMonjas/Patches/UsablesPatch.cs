@@ -115,7 +115,7 @@ namespace LasMonjas.Patches
 
             if (__instance.name.StartsWith("Hat_")) {
                 __instance.SetButtons(isEnter && canMoveInVents);
-                MessageWriter writer = AmongUsClient.Instance.StartRpc(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.UseUncheckedVent, Hazel.SendOption.Reliable);
+                MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.UseUncheckedVent, Hazel.SendOption.Reliable);
                 writer.WritePacked(__instance.Id);
                 writer.Write(PlayerInCache.LocalPlayer.PlayerControl.PlayerId);
                 writer.Write(isEnter ? byte.MaxValue : (byte)0);

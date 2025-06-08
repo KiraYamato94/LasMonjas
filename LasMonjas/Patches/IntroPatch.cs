@@ -290,36 +290,43 @@ namespace LasMonjas.Patches
             }
         }
 
-        [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.ShowRole))]
+        //[HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.ShowRole))]
+        [HarmonyPatch(typeof(IntroCutscene._ShowRole_d__41), nameof(IntroCutscene._ShowRole_d__41.MoveNext))]
         class ShowRolePatch
         {
-            public static void Postfix(IntroCutscene __instance) {
+            //public static void Postfix(IntroCutscene __instance) {
+            private static int last;
+            public static void Postfix(IntroCutscene._ShowRole_d__41 __instance) {
+                if (__instance.__4__this.GetInstanceID() == last)
+                    return;
 
+                last = __instance.__4__this.GetInstanceID(); 
+                
                 List<RoleInfo> infos = RoleInfo.getRoleInfoForPlayer(PlayerInCache.LocalPlayer.PlayerControl);
                 RoleInfo roleInfo = infos.Where(info => info.roleId != RoleId.Lover).FirstOrDefault();
 
-                Color color = new Color(__instance.YouAreText.color.r, __instance.YouAreText.color.g, __instance.YouAreText.color.b, 0f);
-                __instance.StartCoroutine(Effects.Lerp(0.5f, new Action<float>((t) => {
+                Color color = new Color(__instance.__4__this.YouAreText.color.r, __instance.__4__this.YouAreText.color.g, __instance.__4__this.YouAreText.color.b, 0f);
+                __instance.__4__this.StartCoroutine(Effects.Lerp(0.5f, new Action<float>((t) => {
 
                     if (roleInfo != null) {
-                        __instance.RoleText.text = roleInfo.name;
-                        __instance.RoleBlurbText.text = roleInfo.introDescription;
+                        __instance.__4__this.RoleText.text = roleInfo.name;
+                        __instance.__4__this.RoleBlurbText.text = roleInfo.introDescription;
                         color = roleInfo.color;
                     }
 
                     if (infos.Any(info => info.roleId == RoleId.Lover)) {
                         PlayerControl otherLover = PlayerInCache.LocalPlayer.PlayerControl == Modifiers.lover1 ? Modifiers.lover2 : Modifiers.lover1;
-                        __instance.RoleBlurbText.text = PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor ? "<color=#FF00D1FF>Lover</color><color=#FF0000FF>stor</color>" : "<color=#FF00D1FF>Lover</color>";
-                        __instance.RoleBlurbText.color = PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor ? Color.white : Modifiers.loverscolor;
-                        __instance.ImpostorText.text = Helpers.cs(Modifiers.loverscolor, $"{Language.introTexts[0]} + {otherLover?.Data?.PlayerName ?? ""} ♥");
-                        __instance.ImpostorText.gameObject.SetActive(true);
-                        __instance.BackgroundBar.material.color = Modifiers.loverscolor;
+                        __instance.__4__this.RoleBlurbText.text = PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor ? "<color=#FF00D1FF>Lover</color><color=#FF0000FF>stor</color>" : "<color=#FF00D1FF>Lover</color>";
+                        __instance.__4__this.RoleBlurbText.color = PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor ? Color.white : Modifiers.loverscolor;
+                        __instance.__4__this.ImpostorText.text = Helpers.cs(Modifiers.loverscolor, $"{Language.introTexts[0]} + {otherLover?.Data?.PlayerName ?? ""} ♥");
+                        __instance.__4__this.ImpostorText.gameObject.SetActive(true);
+                        __instance.__4__this.BackgroundBar.material.color = Modifiers.loverscolor;
                     }
 
                     color.a = t;
-                    __instance.YouAreText.color = color;
-                    __instance.RoleText.color = color;
-                    __instance.RoleBlurbText.color = color;
+                    __instance.__4__this.YouAreText.color = color;
+                    __instance.__4__this.RoleText.color = color;
+                    __instance.__4__this.RoleBlurbText.color = color;
                 })));
 
                 // MiraHQ special roles
