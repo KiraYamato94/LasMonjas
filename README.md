@@ -541,7 +541,7 @@ Known 1.3.3 BETA issues:
 -----------------------
 
 # Custom Servers
-I recommend to play this mod only on custom servers (for example [Impostor](https://github.com/Impostor/Impostor), note that modded handshake is required to play the mod [Example Modded Handshake by js6pak](https://github.com/NuclearPowered/Reactor.Impostor)), if you own an Impostor server, make sure AntiCheat and BanIpFromGame are set to false in the config.json file. This mod adds three custom server regions to play with, Modded NA (MNA), Modded EU (MEU) and Modded Asia (MAS) (thanks to miniduikboot and GD), and also has [Unify by Daemon](https://github.com/MoltenMods/Unify) implemented, which you can use to select the custom region to join a custom server by entering the IP or domain name and the port of the server.
+**You can't play on official servers with this mode, use only custom servers** (for example [Impostor](https://github.com/Impostor/Impostor), note that modded handshake is required to play the mod [Example Modded Handshake by js6pak](https://github.com/NuclearPowered/Reactor.Impostor)), if you own an Impostor server, make sure AntiCheat and BanIpFromGame are set to false in the config.json file. This mod adds three custom server regions to play with, Modded NA (MNA), Modded EU (MEU) and Modded Asia (MAS) (thanks to miniduikboot and GD), and also has [Unify by Daemon](https://github.com/MoltenMods/Unify) implemented, which you can use to select the custom region to join a custom server by entering the IP or domain name and the port of the server.
 
 -----------------------
 
