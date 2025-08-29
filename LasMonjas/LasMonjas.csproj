@@ -34,8 +34,8 @@
         <Reference Include="$(AmongUs)\BepInEx\plugins\Reactor.dll" />
     </ItemGroup>-->
 
-    <Target Name="CopyCustomContent" AfterTargets="AfterBuild">
+	<!--<Target Name="CopyCustomContent" AfterTargets="AfterBuild">
         <Message Text="Second occurrence" />
         <Copy SourceFiles="$(ProjectDir)\bin\$(Configuration)\net6.0\LasMonjas.dll" DestinationFolder="$(AmongUs)/BepInEx/plugins/" />
-    </Target>
+    </Target>-->
 </Project>
