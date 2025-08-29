@@ -1,5 +1,5 @@
 # Las Monjas
-![LasMonjas_banner](./gitHubImages/LasMonjas_banner.png)
+![LasMonjas_banner](./Images/LasMonjas_banner.png)
 
 Las Monjas is a Spanish mod (available on English, Spanish, Chinese and Japanese) for Among Us made by fans for fans without being affiliated with Among Us or Innersloth Team, all rights reserved to them. This mod features the following:
 
@@ -17,7 +17,7 @@ Las Monjas is a Spanish mod (available on English, Spanish, Chinese and Japanese
 -----------------------
 
 Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqnD4NU)
-<p align="center"> <img src="./gitHubImages/LasMonjas_discord.png" width="640" height="320"> </p>
+<p align="center"> <img src="./Images/LasMonjas_discord.png" width="640" height="320"> </p>
 
 -----------------------
 

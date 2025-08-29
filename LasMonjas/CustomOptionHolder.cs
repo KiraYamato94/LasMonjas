@@ -5,7 +5,7 @@ using Types = LasMonjas.Core.CustomOption.CustomOptionType;
 namespace LasMonjas
 {
     public class CustomOptionHolder {
-        public static string[] rates = new string[]{"0%", "100%"}; 
+        public static string[] rates = new string[] { "0%", "10%", "20%", "30%", "40%", "50%", "60%", "70%", "80%", "90%", "100%" };
         public static string[] presets = new string[]{"Roles", "Gamemodes", "Minigame Roles", "Preset 4", "Preset 5" };
 
         // Presets
@@ -411,6 +411,7 @@ namespace LasMonjas
         }
 
         public static void Load() {
+            CustomOption.vanillaSettings = LasMonjasPlugin.Instance.Config.Bind("Preset0", "VanillaOptions", "");
 
             // Game Options
             presetSelection = CustomOption.Create(0, Types.General, cs(new Color(204f / 255f, 204f / 255f, 0, 1f), "Preset"), presets, null, true);

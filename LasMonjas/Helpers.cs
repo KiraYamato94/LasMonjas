@@ -25,6 +25,7 @@ namespace LasMonjas
         JinxKill
     }
     public static class Helpers {
+        public static string previousEndGameSummary = "";
 
         private static readonly Dictionary<string, Sprite> _CachedSprites = new();
         public static Sprite loadSpriteFromResources(string path, float pixelsPerUnit) {
@@ -3347,6 +3348,12 @@ namespace LasMonjas
         public static void ForEach<T>(this IEnumerable<T> source, Action<T> action) {
             foreach (var item in source)
                 action(item);
+        }
+
+        public static void AddModSettingsChangeMessage(this NotificationPopper popper, StringNames key, string value, string option, bool playSound = true)
+        {
+            string str = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.LobbyChangeSettingNotification, "<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">" + option + "</font>", "<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">" + value + "</font>");
+            popper.SettingsChangeMessageLogic(key, str, playSound);
         }
     }
 }

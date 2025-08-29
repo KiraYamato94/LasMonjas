@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using InnerNet;
 using TMPro;
 using UnityEngine;
 
@@ -20,16 +21,24 @@ namespace LasMonjas.Patches {
 
             static void Postfix(PingTracker __instance) {
 
-                __instance.text.alignment = TextAlignmentOptions.Top;
                 var position = __instance.GetComponent<AspectPosition>();
-                position.Alignment = AspectPosition.EdgeAlignments.Top; 
-                __instance.text.text += "\n<color=#CC00FFFF>Las Monjas "+ LasMonjasPlugin.Version.ToString() + "</color>";
-                position.DistanceFromEdge = new Vector3(0f, 0.1f, 0);
-                __instance.transform.localPosition = new Vector3(1.25f, 3f, __instance.transform.localPosition.z);
+                __instance.text.text = $"<size=120%><color=#CC00FFFF>Las Monjas</color> v{LasMonjasPlugin.Version.ToString()}</size>" +
+                    (MeetingHud.Instance == null ? "\n<size=85%>Modded by <color=#CC00FFFF>Allul</color></color>" : "") +
+                    $"\n{__instance.text.text}";
+                if (AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Started)
+                {
+                    __instance.text.alignment = TextAlignmentOptions.Top;
+                    position.Alignment = AspectPosition.EdgeAlignments.Top;
+                    position.DistanceFromEdge = new Vector3(1.5f, 0.11f, 0);
+                }
+                else
+                {
+                    position.Alignment = AspectPosition.EdgeAlignments.LeftTop;
+                    __instance.text.alignment = TextAlignmentOptions.TopLeft;
+                    position.DistanceFromEdge = new Vector3(0.5f, 0.11f);
+                }
             }
         }
-
-        //
 
         [HarmonyPatch(typeof(MainMenuManager), nameof(MainMenuManager.Start))]
         [HarmonyPriority(Priority.First)]

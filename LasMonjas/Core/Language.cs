@@ -1,16 +1,6 @@
-﻿using Il2CppSystem.Runtime.Remoting.Messaging;
-using Il2CppSystem;
-using LasMonjas.Objects;
-using LasMonjas.Patches;
-using Sentry.Protocol;
-using System.Diagnostics.Metrics;
+﻿using LasMonjas.Patches;
 using System.Linq;
 using UnityEngine;
-using static Rewired.Controller;
-using static Rewired.Utils.Classes.Utility.ObjectInstanceTracker;
-using static UnityEngine.ParticleSystem.PlaybackState;
-using UnityEngine.Profiling;
-using System.Collections.Generic;
 
 namespace LasMonjas.Core
 {
@@ -23,6 +13,8 @@ namespace LasMonjas.Core
         public static string[] clientOptionNames;
 
         public static string[] customOptionNames;
+
+        public static string[] customOptionText;
 
         public static string[] roleInfoRoleNames;
 
@@ -69,6 +61,166 @@ namespace LasMonjas.Core
         public static string[] statusBattleRoyaleTexts;
 
         public static string[] statusMonjaFestivalTexts;
+
+        public static void LoadFirstLanguage()
+        {
+            switch (LasMonjasPlugin.modLanguage.Value)
+            {
+                // English
+                case 1:
+                    customOptionText = new string[] {
+                        "Off",
+                        "On",
+                        "Host Info: Pasting vanilla settings failed, LMJ Options applied!",
+                        "Host Info: You tried to paste invalid settings:",
+                        "(empty clipboard)",
+                        "LMJ Settings",
+                        "Role Overview",
+                        "Impostor Roles",
+                        "Rebel Roles",
+                        "Neutral Roles",
+                        "Crewmate Roles",
+                        "Modifiers",
+                        "Spawn Chance",
+                        "Welcome to <color=#CC00FFFF>Las Monjas</color>! Thanks for playing!\n\n" +
+                    "On Lobby:\n" +
+                    "Type <color=#4F7D00FF>/language</color> plus <color=#4F7D00FF>english</color>, <color=#4F7D00FF>spanish</color>, <color=#4F7D00FF>japanese</color> or <color=#4F7D00FF>chinese</color> to change the mod's language.\n" +
+                    "Type <color=#4E61FFFF>/help</color> plus a <color=#4E61FFFF>role name</color> to get its summary.\n\n" +
+                    "On Meetings:\n" +
+                    "Type <color=#00BDFFFF>/myrole</color> to get your role's summary.\n" +
+                    "Type <color=#F08048FF>/mymodifier</color> to get your modifier's summary",
+                        "Page 1: Vanilla Settings",
+                        "Page 2: Las Monjas Settings",
+                        "Page 3: Role and Modifier Rates",
+                        "Page 4: Impostor Role Settings",
+                        "Page 5: Rebel Role Settings",
+                        "Page 6: Neutral Role Settings",
+                        "Page 7: Crewmate Role Settings",
+                        "Page 8: Modifier Settings",
+                        "Press TAB or Page Number for more...",
+                        "Very Short",
+                        "Short",
+                        "Medium",
+                        "Long",
+                    };
+                    break;
+                // Spanish
+                case 2:
+                    customOptionText = new string[] {
+                        "Off",
+                        "On",
+                        "Host Info: Pasting vanilla settings failed, LMJ Options applied!",
+                        "Host Info: You tried to paste invalid settings:",
+                        "(empty clipboard)",
+                        "LMJ Settings",
+                        "Role Overview",
+                        "Impostor Roles",
+                        "Rebel Roles",
+                        "Neutral Roles",
+                        "Crewmate Roles",
+                        "Modifiers",
+                        "Spawn Chance",
+                        "Welcome to <color=#CC00FFFF>Las Monjas</color>! Thanks for playing!\n\n" +
+                    "On Lobby:\n" +
+                    "Type <color=#4F7D00FF>/language</color> plus <color=#4F7D00FF>english</color>, <color=#4F7D00FF>spanish</color>, <color=#4F7D00FF>japanese</color> or <color=#4F7D00FF>chinese</color> to change the mod's language.\n" +
+                    "Type <color=#4E61FFFF>/help</color> plus a <color=#4E61FFFF>role name</color> to get its summary.\n\n" +
+                    "On Meetings:\n" +
+                    "Type <color=#00BDFFFF>/myrole</color> to get your role's summary.\n" +
+                    "Type <color=#F08048FF>/mymodifier</color> to get your modifier's summary",
+                        "Page 1: Vanilla Settings",
+                        "Page 2: Las Monjas Settings",
+                        "Page 3: Role and Modifier Rates",
+                        "Page 4: Impostor Role Settings",
+                        "Page 5: Rebel Role Settings",
+                        "Page 6: Neutral Role Settings",
+                        "Page 7: Crewmate Role Settings",
+                        "Page 8: Modifier Settings",
+                        "Press TAB or Page Number for more...",
+                        "Very Short",
+                        "Short",
+                        "Medium",
+                        "Long",
+                    };
+                    break;
+                // Japanese
+                case 3:
+                    customOptionText = new string[] {
+                        "Off",
+                        "On",
+                        "Host Info: Pasting vanilla settings failed, LMJ Options applied!",
+                        "Host Info: You tried to paste invalid settings:",
+                        "(empty clipboard)",
+                        "LMJ Settings",
+                        "Role Overview",
+                        "Impostor Roles",
+                        "Rebel Roles",
+                        "Neutral Roles",
+                        "Crewmate Roles",
+                        "Modifiers",
+                        "Spawn Chance",
+                        "Welcome to <color=#CC00FFFF>Las Monjas</color>! Thanks for playing!\n\n" +
+                    "On Lobby:\n" +
+                    "Type <color=#4F7D00FF>/language</color> plus <color=#4F7D00FF>english</color>, <color=#4F7D00FF>spanish</color>, <color=#4F7D00FF>japanese</color> or <color=#4F7D00FF>chinese</color> to change the mod's language.\n" +
+                    "Type <color=#4E61FFFF>/help</color> plus a <color=#4E61FFFF>role name</color> to get its summary.\n\n" +
+                    "On Meetings:\n" +
+                    "Type <color=#00BDFFFF>/myrole</color> to get your role's summary.\n" +
+                    "Type <color=#F08048FF>/mymodifier</color> to get your modifier's summary",
+                        "Page 1: Vanilla Settings",
+                        "Page 2: Las Monjas Settings",
+                        "Page 3: Role and Modifier Rates",
+                        "Page 4: Impostor Role Settings",
+                        "Page 5: Rebel Role Settings",
+                        "Page 6: Neutral Role Settings",
+                        "Page 7: Crewmate Role Settings",
+                        "Page 8: Modifier Settings",
+                        "Press TAB or Page Number for more...",
+                        "Very Short",
+                        "Short",
+                        "Medium",
+                        "Long",
+                    };
+                    break;
+                // Chinese
+                case 4:
+                    customOptionText = new string[] {
+                        "关闭",
+                        "开启",
+                        "房主信息: 原版游戏设置粘贴应用失败, LMJ设置已应用!",
+                        "房主信息: 你尝试粘贴无效设置:",
+                        "(粘贴板为空)",
+                        "LMJ设置",
+                        "职业总览",
+                        "内鬼职业",
+                        "背叛者职业",
+                        "中立职业",
+                        "船员职业",
+                        "附加职业",
+                        "生成概率",
+                        "欢迎来到<color=#CC00FFFF>Las Monjas</color>! 感谢您的游玩!\n\n" +
+                    "在大厅中:\n" +
+                    "输入<color=#4F7D00FF>/language</color> 加上<color=#4F7D00FF>english</color>, <color=#4F7D00FF>spanish</color>, <color=#4F7D00FF>japanese</color> or <color=#4F7D00FF>chinese</color> 可以更改当前模组的语言.\n" +
+                    "输入<color=#4E61FFFF>/help</color> 加上一个<color=#4E61FFFF>职业名</color>可以获取到这个职业的介绍.\n\n" +
+                    "在游戏会议中:\n" +
+                    "输入<color=#00BDFFFF>/myrole</color>可以获取到你当前职业的职业介绍.\n" +
+                    "输入<color=#F08048FF>/mymodifier</color>可以获取到你当前附加职业的职业介绍\n" +
+                    "欢迎来到https://amongusclub.cn/进行交流讨论",
+                        "第1页: 原版游戏设置",
+                        "第2页: Las Monjas模组设置",
+                        "第3页: 主职业和附加职业概率",
+                        "第4页: 内鬼阵营职业设置",
+                        "第5页: 背叛者阵营职业设置",
+                        "第6页: 中立阵营职业设置",
+                        "第7页: 船员阵营职业设置",
+                        "第8页: 附加职业设置",
+                        "按下TAB键或数字键查看更多...",
+                        "非常短",
+                        "短",
+                        "中等",
+                        "长",
+                    };
+                    break;
+            }
+        }
 
         public static void LoadLanguage() {
             switch (LasMonjasPlugin.modLanguage.Value) {
@@ -2200,7 +2352,7 @@ namespace LasMonjas.Core
                         "グリーンチーム: ",
                         "シアンチーム: ",
                         "ビッグもんじゃ: ",
-                    };
+};
                     endGameTexts = new string[] {
                         "キッド・ウィンズ",
                         "爆弾が爆発した",
@@ -2457,7 +2609,7 @@ namespace LasMonjas.Core
                         CustomOptionHolder.cs(Jailer.color, "全局设置"),
                         "- " + CustomOptionHolder.cs(Jailer.color, "激活千年隼地图"),
                         "- " + CustomOptionHolder.cs(Jailer.color, "隐藏视野范围外的管道动画"),
-                        "- " + CustomOptionHolder.cs(Jailer.color, "啟用地圖 Dleks"),
+                        "- " + CustomOptionHolder.cs(Jailer.color, "启用Dleks地图"),
                         CustomOptionHolder.cs(Locksmith.color, "地图设置"),
                         "- " + CustomOptionHolder.cs(Locksmith.color, "移除刷卡任务"),
                         "- " + CustomOptionHolder.cs(Locksmith.color, "照明破坏时监控使用夜间模式"),

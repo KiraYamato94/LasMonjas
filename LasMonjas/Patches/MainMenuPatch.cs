@@ -123,7 +123,7 @@ xiaojinna, Dawn66642, MC-AS-Huier - Partial Chinese translation.</size>";
                     ShortTitle = "LMJ Credits",
                     SubTitle = "",
                     PinState = false,
-                    Date = "14.02.2022",
+                    Date = "02.14.2022",
                     Text = creditsString,
                 };
                 __instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) => {

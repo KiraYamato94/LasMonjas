@@ -1,0 +1,37 @@
+name: AutoBuild .NET
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.nuget/packages
+            ~/.cache/bepinex
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 6.x
+
+      - name: Build
+        run: dotnet build LasMonjas/LasMonjas.csproj --configuration Release
+
+      - name: Upload LasMonjas
+        uses: actions/upload-artifact@v4
+        with:
+          name: LasMonjas.dll
+          path: LasMonjas/bin/Release/net6.0/LasMonjas.dll

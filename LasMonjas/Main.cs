@@ -70,6 +70,7 @@ namespace LasMonjas
         }
 
         public override void Load() {
+            Instance = this;
             Logger = Log;
             AssetLoader.LoadAssets();
             ShowRoleSummary = Config.Bind("Custom", "Show Role Summary", true);
@@ -81,6 +82,7 @@ namespace LasMonjas
             IpCustom = Config.Bind("Custom", "Custom Server IP", "127.0.0.1");
             PortCustom = Config.Bind("Custom", "Custom Server Port", (ushort)22023);
             modLanguage = Config.Bind("Custom", "Mod Language", 1);
+            Language.LoadFirstLanguage();
 
             defaultRegions = ServerManager.DefaultRegions;
 
@@ -89,7 +91,6 @@ namespace LasMonjas
 
             UpdateRegions();
 
-            Instance = this;
             CustomOptionHolder.Load();
             CustomColors.Load();
 
@@ -112,6 +113,7 @@ namespace LasMonjas
             __result = false;
         }
     }
+
     [HarmonyPatch(typeof(ChatController), nameof(ChatController.Awake))]
     public static class ChatControllerAwakePatch {
         private static void Prefix() {
