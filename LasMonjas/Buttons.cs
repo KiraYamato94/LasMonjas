@@ -1107,7 +1107,7 @@ namespace LasMonjas
                     
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.PlaceNun, Hazel.SendOption.Reliable);
                     writer.WriteBytesAndSize(buff);
-                    writer.EndMessage();
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.placeNun(buff);
                 },
                 () => { return !Demon.localPlacedNun && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && Demon.demon != null && !Challenger.isDueling && !Monja.awakened && !Seeker.isMinigaming; },
@@ -1287,7 +1287,7 @@ namespace LasMonjas
 
                     MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.PlaceHat, Hazel.SendOption.Reliable);
                     writer.WriteBytesAndSize(buff);
-                    writer.EndMessage();
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.placeHat(buff);
                 },
                 () => { return Illusionist.illusionist != null && Illusionist.illusionist == PlayerInCache.LocalPlayer.PlayerControl && !PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead && !Hats.hasHatLimitReached(); },
@@ -5529,7 +5529,7 @@ namespace LasMonjas
                         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.SealVent, Hazel.SendOption.Reliable);
                         writer.WritePacked(Welder.ventTarget.Id);
                         writer.Write(0);
-                        writer.EndMessage();
+                        AmongUsClient.Instance.FinishRpcImmediately(writer);
                         RPCProcedure.sealVent(Welder.ventTarget.Id, 0);
                         Welder.ventsSealed.Add(Welder.ventTarget);
                         Welder.ventTarget = null;
@@ -5602,7 +5602,7 @@ namespace LasMonjas
                         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.SealVent, Hazel.SendOption.Reliable);
                         writer.WritePacked(Welder.ventTarget.Id);
                         writer.Write(1);
-                        writer.EndMessage();
+                        AmongUsClient.Instance.FinishRpcImmediately(writer); 
                         RPCProcedure.sealVent(Welder.ventTarget.Id, 1);
                         Welder.ventTarget = null;
                     }
@@ -5790,7 +5790,7 @@ namespace LasMonjas
 
                         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.PlaceCamera, Hazel.SendOption.Reliable);
                         writer.WriteBytesAndSize(buff);
-                        writer.EndMessage();
+                        AmongUsClient.Instance.FinishRpcImmediately(writer);
                         RPCProcedure.placeCamera(buff);
                     }
                     vigilantButton.Timer = vigilantButton.MaxTimer;

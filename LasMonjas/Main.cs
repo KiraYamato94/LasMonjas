@@ -28,7 +28,7 @@ namespace LasMonjas
     {
         public const string Id = "me.allul.lasmonjas";
 
-        public const string VersionString = "3.8.8";
+        public const string VersionString = "3.9.0";
 
         public static System.Version Version = System.Version.Parse(VersionString);
         internal static BepInEx.Logging.ManualLogSource Logger;
@@ -69,7 +69,8 @@ namespace LasMonjas
             }
         }
 
-        public override void Load() {
+        public override void Load() {            
+            
             Logger = Log;
             AssetLoader.LoadAssets();
             ShowRoleSummary = Config.Bind("Custom", "Show Role Summary", true);

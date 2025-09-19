@@ -1302,11 +1302,18 @@ namespace LasMonjas
         public static void uncheckedMurderPlayer(byte sourceId, byte targetId, byte showAnimation) {
             if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) return; 
             PlayerControl source = Helpers.playerById(sourceId);
+            Vector3 sourcePos = source.NetTransform.transform.position;
             PlayerControl target = Helpers.playerById(targetId);
             if (source != null && target != null) {
-                if (showAnimation == 0) KillAnimationCoPerformKillPatch.hideNextAnimation = true;
+                if (showAnimation == 0) 
+                    KillAnimationCoPerformKillPatch.hideNextAnimation = true;
                 source.MurderPlayer(target, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
-            }
+                HudManager.Instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) => { // Delayed action
+                    if (p == 1f) {
+                        source.NetTransform.RpcSnapTo(sourcePos);
+                    }
+                })));                 
+            }           
         }
 
         public static void uncheckedCmdReportDeadBody(byte sourceId, byte targetId) {
@@ -8981,7 +8988,8 @@ namespace LasMonjas
                     RPCProcedure.resetVariables();
                     break;
                 case (byte)CustomRPC.ShareOptions:
-                    RPCProcedure.ShareOptions((int)reader.ReadPackedUInt32(), reader);
+                    //RPCProcedure.ShareOptions((int)reader.ReadPackedUInt32(), reader);
+                    RPCProcedure.ShareOptions(reader.ReadByte(), reader);
                     break;
                 case (byte)CustomRPC.SetRole:
                     byte roleId = reader.ReadByte();

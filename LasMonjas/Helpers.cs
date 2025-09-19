@@ -573,7 +573,7 @@ namespace LasMonjas
         }
 
         public static AudioClip GetIntroSound(RoleTypes roleType) {
-            return RoleManager.Instance.AllRoles.Where((role) => role.Role == roleType).FirstOrDefault().IntroSound;
+            return RoleManager.Instance.AllRoles.ToArray().Where((role) => role.Role == roleType).FirstOrDefault().IntroSound;
         }
 
         public static void playEndMusic(int whichTeamMusic) {
@@ -3347,6 +3347,10 @@ namespace LasMonjas
         public static void ForEach<T>(this IEnumerable<T> source, Action<T> action) {
             foreach (var item in source)
                 action(item);
+        }
+        public static void AddModSettingsChangeMessage(this NotificationPopper popper, StringNames key, string value, string option, bool playSound = true) {
+            string str = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.LobbyChangeSettingNotification, "<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">" + option + "</font>", "<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">" + value + "</font>");
+            popper.SettingsChangeMessageLogic(key, str, playSound);
         }
     }
 }
