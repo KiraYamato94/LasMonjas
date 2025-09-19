@@ -2017,7 +2017,7 @@ namespace LasMonjas.Patches {
         }
     }
 
-    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CmdReportDeadBody))]
+    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.ReportDeadBody))]
     class PlayerControlCmdReportDeadBodyPatch {
         public static void Prefix(PlayerControl __instance) {
             // Bomberman bomb reset when report body
@@ -2067,80 +2067,81 @@ namespace LasMonjas.Patches {
         }
     }
 
-    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerInCache.LocalPlayer.PlayerControl.CmdReportDeadBody))]
+    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerInCache.LocalPlayer.PlayerControl.ReportDeadBody))]
     class BodyReportPatch
     {
         static void Postfix(PlayerControl __instance, [HarmonyArgument(0)] NetworkedPlayerInfo target) {
             // Forensic report
             bool isForensicReport = Forensic.forensic != null && Forensic.forensic == PlayerInCache.LocalPlayer.PlayerControl && __instance.PlayerId == Forensic.forensic.PlayerId;
             if (isForensicReport) {
+                
                 DeadPlayer deadPlayer = deadPlayers?.Where(x => x.player?.PlayerId == target?.PlayerId)?.FirstOrDefault();
 
                 if (deadPlayer != null && deadPlayer.killerIfExisting != null) {
                     float timeSinceDeath = ((float)(DateTime.UtcNow - deadPlayer.timeOfDeath).TotalMilliseconds);
                     string msg = "";
 
-                    if (isForensicReport) {
-                        if (deadPlayer.player == RoleThief.rolethief && deadPlayer.killerIfExisting.Data.PlayerName == RoleThief.rolethief.Data.PlayerName) {
-                            msg = $"{Language.helpersTexts[2]} ({Language.roleInfoRoleNames[27]}): {Language.playerControlTexts[0]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
-                        }
-                        else if (deadPlayer.player == BountyHunter.bountyhunter && deadPlayer.killerIfExisting.Data.PlayerName == BountyHunter.bountyhunter.Data.PlayerName) {
-                            msg = $"{Language.helpersTexts[2]} ({Language.roleInfoRoleNames[17]}): {Language.playerControlTexts[0]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
-                        }
-                        else if (deadPlayer.player == Modifiers.lover1 && deadPlayer.killerIfExisting.Data.PlayerName == Modifiers.lover1.Data.PlayerName || deadPlayer.player == Modifiers.lover2 && deadPlayer.killerIfExisting.Data.PlayerName == Modifiers.lover2.Data.PlayerName) {
-                            msg = $"{Language.helpersTexts[2]} ({Language.roleInfoRoleNames[72]}): {Language.playerControlTexts[0]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
-                        }
-                        else if (deadPlayer.player == Sheriff.sheriff && deadPlayer.killerIfExisting.Data.PlayerName == Sheriff.sheriff.Data.PlayerName) {
-                            msg = $"{Language.helpersTexts[2]} ({Language.roleInfoRoleNames[38]}): {Language.playerControlTexts[0]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
-                        }
-                        else if (timeSinceDeath < Forensic.reportNameDuration * 1000) {
-                            msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[1]} {deadPlayer.killerIfExisting.Data.PlayerName}! ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
-                        }
-                        else if (timeSinceDeath < Forensic.reportColorDuration * 1000) {
-                            var typeOfColor = Helpers.isLighterColor(deadPlayer.killerIfExisting.Data.DefaultOutfit.ColorId) ? Language.playerControlTexts[2] : Language.playerControlTexts[3];
-                            msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[4]} {typeOfColor} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
-                        }
-                        else if (timeSinceDeath < Forensic.reportClueDuration * 1000) {
-                            int randomClue = rnd.Next(1, 5);
-                            switch (randomClue) {
-                                case 1:
-                                    if (deadPlayer.killerIfExisting.Data.DefaultOutfit.HatId != null) {
-                                        msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[5]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
-                                    }
-                                    else {
-                                        msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[6]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
-                                    }
-                                    break;
-                                case 2:
-                                    if (deadPlayer.killerIfExisting.Data.DefaultOutfit.SkinId != null) {
-                                        msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[7]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
-                                    }
-                                    else {
-                                        msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[8]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
-                                    }
-                                    break;
-                                case 3:
-                                    if (deadPlayer.killerIfExisting.Data.DefaultOutfit.PetId != null) {
-                                        msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[9]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
-                                    }
-                                    else {
-                                        msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[10]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
-                                    }
-                                    break;
-                                case 4:
-                                    if (deadPlayer.killerIfExisting.Data.DefaultOutfit.VisorId != null) {
-                                        msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[11]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
-                                    }
-                                    else {
-                                        msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[12]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
-                                    }
-                                    break;
-                            }
-                        }
-                        else {
-                            msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[13]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+
+                    if (deadPlayer.player == RoleThief.rolethief && deadPlayer.killerIfExisting.Data.PlayerName == RoleThief.rolethief.Data.PlayerName) {
+                        msg = $"{Language.helpersTexts[2]} ({Language.roleInfoRoleNames[27]}): {Language.playerControlTexts[0]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                    }
+                    else if (deadPlayer.player == BountyHunter.bountyhunter && deadPlayer.killerIfExisting.Data.PlayerName == BountyHunter.bountyhunter.Data.PlayerName) {
+                        msg = $"{Language.helpersTexts[2]} ({Language.roleInfoRoleNames[17]}): {Language.playerControlTexts[0]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                    }
+                    else if (deadPlayer.player == Modifiers.lover1 && deadPlayer.killerIfExisting.Data.PlayerName == Modifiers.lover1.Data.PlayerName || deadPlayer.player == Modifiers.lover2 && deadPlayer.killerIfExisting.Data.PlayerName == Modifiers.lover2.Data.PlayerName) {
+                        msg = $"{Language.helpersTexts[2]} ({Language.roleInfoRoleNames[72]}): {Language.playerControlTexts[0]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                    }
+                    else if (deadPlayer.player == Sheriff.sheriff && deadPlayer.killerIfExisting.Data.PlayerName == Sheriff.sheriff.Data.PlayerName) {
+                        msg = $"{Language.helpersTexts[2]} ({Language.roleInfoRoleNames[38]}): {Language.playerControlTexts[0]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                    }
+                    else if (timeSinceDeath < Forensic.reportNameDuration * 1000) {
+                        msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[1]} {deadPlayer.killerIfExisting.Data.PlayerName}! ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                    }
+                    else if (timeSinceDeath < Forensic.reportColorDuration * 1000) {
+                        var typeOfColor = Helpers.isLighterColor(deadPlayer.killerIfExisting.Data.DefaultOutfit.ColorId) ? Language.playerControlTexts[2] : Language.playerControlTexts[3];
+                        msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[4]} {typeOfColor} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                    }
+                    else if (timeSinceDeath < Forensic.reportClueDuration * 1000) {
+                        int randomClue = rnd.Next(1, 5);
+                        switch (randomClue) {
+                            case 1:
+                                if (deadPlayer.killerIfExisting.Data.DefaultOutfit.HatId != null) {
+                                    msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[5]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                                }
+                                else {
+                                    msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[6]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                                }
+                                break;
+                            case 2:
+                                if (deadPlayer.killerIfExisting.Data.DefaultOutfit.SkinId != null) {
+                                    msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[7]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                                }
+                                else {
+                                    msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[8]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                                }
+                                break;
+                            case 3:
+                                if (deadPlayer.killerIfExisting.Data.DefaultOutfit.PetId != null) {
+                                    msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[9]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                                }
+                                else {
+                                    msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[10]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                                }
+                                break;
+                            case 4:
+                                if (deadPlayer.killerIfExisting.Data.DefaultOutfit.VisorId != null) {
+                                    msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[11]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                                }
+                                else {
+                                    msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[12]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                                }
+                                break;
                         }
                     }
+                    else {
+                        msg = $"{Language.helpersTexts[2]}: {Language.playerControlTexts[13]} ({Language.playerControlTexts[14]} {Math.Round(timeSinceDeath / 1000)})";
+                    }
+                    
 
                     if (!string.IsNullOrWhiteSpace(msg)) {
                         if (AmongUsClient.Instance.AmClient && FastDestroyableSingleton<HudManager>.Instance) {

@@ -118,8 +118,8 @@ namespace LasMonjas.Patches
                 MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.UseUncheckedVent, Hazel.SendOption.Reliable);
                 writer.WritePacked(__instance.Id);
                 writer.Write(PlayerInCache.LocalPlayer.PlayerControl.PlayerId);
-                writer.Write(isEnter ? byte.MaxValue : (byte)0);
-                writer.EndMessage();
+                writer.Write(isEnter ? byte.MaxValue : (byte)0);                
+                AmongUsClient.Instance.FinishRpcImmediately(writer); 
                 RPCProcedure.useUncheckedVent(__instance.Id, PlayerInCache.LocalPlayer.PlayerControl.PlayerId, isEnter ? byte.MaxValue : (byte)0);
                 return false;
             }
