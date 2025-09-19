@@ -36,6 +36,11 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
 
+**Version 3.9.0 (19th September 2025)**
+- Compatibility patch for AU 17.0.0 (2025.9.9)
+- Few fixes from pull 23 (thx FangkuaiYa)
+- Steam and Epic separate downloads, the ingame downloader can be used on both platforms but Las Monjas downloader always makes a clean installation of the Steam one, so don't use it if you have the game on Epic
+
 **Version 3.8.8 (8th June 2025)**
 - Compatibility patch for Among Us v16.0.5 (or 2025.5.20)
 
