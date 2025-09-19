@@ -44,8 +44,9 @@ namespace LasMonjas.Core
         public CustomOptionType type;
         public Action onChange = null;
         public string heading = "";
+        public bool invertedParent;
 
-        public CustomOption(int id, CustomOptionType type, string name, System.Object[] selections, System.Object defaultValue, CustomOption parent, bool isHeader, Action onChange = null, string heading = "") {
+        public CustomOption(int id, CustomOptionType type, string name, System.Object[] selections, System.Object defaultValue, CustomOption parent, bool isHeader, Action onChange = null, string heading = "", bool invertedParent = false) {
             this.id = id;
             this.name = parent == null ? name : "- " + name;
             this.selections = selections;
@@ -56,6 +57,7 @@ namespace LasMonjas.Core
             this.type = type;
             this.onChange = onChange;
             this.heading = heading;
+            this.invertedParent = invertedParent;
             selection = 0;
             if (id != 0) {
                 entry = LasMonjasPlugin.Instance.Config.Bind($"Preset{preset}", id.ToString(), defaultSelection);
@@ -64,19 +66,19 @@ namespace LasMonjas.Core
             options.Add(this);
         }
 
-        public static CustomOption Create(int id, CustomOptionType type, string name, string[] selections, CustomOption parent = null, bool isHeader = false, Action onChange = null, string heading = "") {
-            return new CustomOption(id, type, name, selections, "", parent, isHeader, onChange, heading);
+        public static CustomOption Create(int id, CustomOptionType type, string name, string[] selections, CustomOption parent = null, bool isHeader = false, Action onChange = null, string heading = "", bool invertedParent = false) {
+            return new CustomOption(id, type, name, selections, "", parent, isHeader, onChange, heading, invertedParent);
         }
 
-        public static CustomOption Create(int id, CustomOptionType type, string name, float defaultValue, float min, float max, float step, CustomOption parent = null, bool isHeader = false, Action onChange = null, string heading = "") {
+        public static CustomOption Create(int id, CustomOptionType type, string name, float defaultValue, float min, float max, float step, CustomOption parent = null, bool isHeader = false, Action onChange = null, string heading = "", bool invertedParent = false) {
             List<object> selections = new();
             for (float s = min; s <= max; s += step)
                 selections.Add(s);
-            return new CustomOption(id, type, name, selections.ToArray(), defaultValue, parent, isHeader, onChange, heading);
+            return new CustomOption(id, type, name, selections.ToArray(), defaultValue, parent, isHeader, onChange, heading, invertedParent);
         }
 
-        public static CustomOption Create(int id, CustomOptionType type, string name, bool defaultValue, CustomOption parent = null, bool isHeader = false, Action onChange = null, string heading = "") {
-            return new CustomOption(id, type, name, new string[] { "Off", "On" }, defaultValue ? "On" : "Off", parent, isHeader, onChange, heading);
+        public static CustomOption Create(int id, CustomOptionType type, string name, bool defaultValue, CustomOption parent = null, bool isHeader = false, Action onChange = null, string heading = "", bool invertedParent = false) {
+            return new CustomOption(id, type, name, new string[] { "Off", "On" }, defaultValue ? "On" : "Off", parent, isHeader, onChange, heading, invertedParent);
         }
 
         public static void switchPreset(int newPreset) {
@@ -91,18 +93,53 @@ namespace LasMonjas.Core
                     stringOption.ValueText.text = option.selections[option.selection].ToString();
                 }
             }
+            // make sure to reload all tabs, even the ones in the background, because they might have changed when the preset was switched!
+            if (AmongUsClient.Instance?.AmHost == true) {
+                foreach (var entry in GameOptionsMenuStartPatch.currentGOMs) {
+                    CustomOptionType optionType = (CustomOptionType)entry.Key;
+                    GameOptionsMenu gom = entry.Value;
+                    if (gom != null) {
+                        GameOptionsMenuStartPatch.updateGameOptionsMenu(optionType, gom);
+                    }
+                }
+            }
+        }
+
+        public static void ShareOptionChange(uint optionId) {
+            var option = options.FirstOrDefault(x => x.id == optionId);
+            if (option == null) return;
+            var writer = AmongUsClient.Instance!.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ShareOptions, SendOption.Reliable, -1);
+            writer.Write((byte)1);
+            writer.WritePacked((uint)option.id);
+            writer.WritePacked(Convert.ToUInt32(option.selection));
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
         }
 
         public static void ShareOptionSelections() {
             if (PlayerControl.AllPlayerControls.Count <= 1 || AmongUsClient.Instance?.AmHost == false && PlayerControl.LocalPlayer == null) return;
 
+            var optionsList = new List<CustomOption>(CustomOption.options);
+            while (optionsList.Any()) {
+                byte amount = (byte)Math.Min(optionsList.Count, 200); // takes less than 3 bytes per option on average
+                var writer = AmongUsClient.Instance!.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ShareOptions, SendOption.Reliable, -1);
+                writer.Write(amount);
+                for (int i = 0; i < amount; i++) {
+                    var option = optionsList[0];
+                    optionsList.RemoveAt(0);
+                    writer.WritePacked((uint)option.id);
+                    writer.WritePacked(Convert.ToUInt32(option.selection));
+                }
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
+            }
+            
+            /* old method
             MessageWriter messageWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ShareOptions, Hazel.SendOption.Reliable);
             messageWriter.WritePacked((uint)CustomOption.options.Count);
             foreach (CustomOption option in CustomOption.options) {
                 messageWriter.WritePacked((uint)option.id);
                 messageWriter.WritePacked((uint)Convert.ToUInt32(option.selection));
             }
-            messageWriter.EndMessage();
+            messageWriter.EndMessage();*/
         }
 
         public int getSelection() {
@@ -117,13 +154,28 @@ namespace LasMonjas.Core
             return (float)selections[selection];
         }
 
-        public void updateSelection(int newSelection) {
-            selection = Mathf.Clamp((newSelection + selections.Length) % selections.Length, 0, selections.Length - 1);
+        public void updateSelection(int newSelection, bool notifyUsers = true) {
+            newSelection = Mathf.Clamp((newSelection + selections.Length) % selections.Length, 0, selections.Length - 1);
+            if (AmongUsClient.Instance?.AmClient == true && notifyUsers && selection != newSelection) {
+                DestroyableSingleton<HudManager>.Instance.Notifier.AddModSettingsChangeMessage((StringNames)(this.id + 6000), selections[newSelection].ToString(), name.Replace("- ", ""), true);
+                try {
+                    selection = newSelection;
+                    if (GameStartManager.Instance != null && GameStartManager.Instance.LobbyInfoPane != null && GameStartManager.Instance.LobbyInfoPane.LobbyViewSettingsPane != null && GameStartManager.Instance.LobbyInfoPane.LobbyViewSettingsPane.gameObject.activeSelf) {
+                        LobbyViewSettingsPaneChangeTabPatch.Postfix(GameStartManager.Instance.LobbyInfoPane.LobbyViewSettingsPane, GameStartManager.Instance.LobbyInfoPane.LobbyViewSettingsPane.currentTab);
+                    }
+                }
+                catch { }
+            }
+            selection = newSelection;
+            try {
+                if (onChange != null) onChange();
+            }
+            catch { }
+
             if (optionBehaviour != null && optionBehaviour is StringOption stringOption) {
                 stringOption.oldValue = stringOption.Value = selection;
                 stringOption.ValueText.text = selections[selection].ToString();
-
-                if (AmongUsClient.Instance?.AmHost == true && PlayerInCache.LocalPlayer.PlayerControl) {
+                if (AmongUsClient.Instance?.AmHost == true && PlayerControl.LocalPlayer) {
                     if (id == 0 && selection != preset) {
                         switchPreset(selection); // Switch presets
                         ShareOptionSelections();
@@ -138,15 +190,14 @@ namespace LasMonjas.Core
                 switchPreset(selection);
                 ShareOptionSelections();// Share all selections
             }
-        }
-        public static void ShareOptionChange(uint optionId) {
-            var option = options.FirstOrDefault(x => x.id == optionId);
-            if (option == null) return;
-            var writer = AmongUsClient.Instance!.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ShareOptions, SendOption.Reliable, -1);
-            writer.Write((byte)1);
-            writer.WritePacked((uint)option.id);
-            writer.WritePacked(Convert.ToUInt32(option.selection));
-            AmongUsClient.Instance.FinishRpcImmediately(writer);
+
+            if (AmongUsClient.Instance?.AmHost == true) {
+                var currentTab = GameOptionsMenuStartPatch.currentTabs.FirstOrDefault(x => x.active).GetComponent<GameOptionsMenu>();
+                if (currentTab != null) {
+                    var optionType = options.First(x => x.optionBehaviour == currentTab.Children[0]).type;
+                    GameOptionsMenuStartPatch.updateGameOptionsMenu(optionType, currentTab);
+                }
+            }
         }
     }
 
@@ -294,11 +345,15 @@ namespace LasMonjas.Core
             int headers = 0;
             int lines = 0;
             var curType = CustomOptionType.Modifier;
+            int numBonus = 0;
 
             foreach (var option in relevantOptions) {
                 if (option.isHeader && (int)optionType != 99 || (int)optionType == 99 && curType != option.type) {
                     curType = option.type;
-                    if (i != 0) num -= 0.59f;
+                    if (i != 0) {
+                        num -= 0.85f;
+                        numBonus++;
+                    }
                     if (i % 2 != 0) singles++;
                     headers++; // for header
                     CategoryHeaderMasked categoryHeaderMasked = UnityEngine.Object.Instantiate<CategoryHeaderMasked>(__instance.categoryHeaderOrigin);
@@ -317,7 +372,7 @@ namespace LasMonjas.Core
                     categoryHeaderMasked.transform.localScale = Vector3.one;
                     categoryHeaderMasked.transform.localPosition = new Vector3(-9.77f, num, -2f);
                     __instance.settingsInfo.Add(categoryHeaderMasked.gameObject);
-                    num -= 0.85f;
+                    num -= 1.05f;
                     i = 0;
                 }
 
@@ -329,7 +384,7 @@ namespace LasMonjas.Core
                     lines++;
                     num2 = -8.95f;
                     if (i > 0) {
-                        num -= 0.59f;
+                        num -= 0.85f;
                     }
                 }
                 else {
@@ -350,8 +405,8 @@ namespace LasMonjas.Core
 
                 i++;
             }
-            float actual_spacing = (headers * 0.85f + lines * 0.59f) / (headers + lines);
-            __instance.scrollBar.CalculateAndSetYBounds((float)(__instance.settingsInfo.Count + singles * 2 + headers), 2f, 6f, actual_spacing);
+            float actual_spacing = (headers * 1.05f + lines * 0.85f) / (headers + lines) * 1.01f;
+            __instance.scrollBar.CalculateAndSetYBounds((float)(__instance.settingsInfo.Count + singles * 2 + headers), 2f, 5f, actual_spacing);
 
         }
 
@@ -381,12 +436,14 @@ namespace LasMonjas.Core
     {
         public static List<GameObject> currentTabs = new();
         public static List<PassiveButton> currentButtons = new();
+        public static Dictionary<byte, GameOptionsMenu> currentGOMs = new();
 
         public static void Postfix(GameSettingMenu __instance) {
             currentTabs.ForEach(x => x?.Destroy());
             currentButtons.ForEach(x => x?.Destroy());
             currentTabs = new();
             currentButtons = new();
+            currentGOMs.Clear();
 
             if (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return;
 
@@ -410,6 +467,8 @@ namespace LasMonjas.Core
                     categoryHeaderMasked.transform.localPosition = new Vector3(-0.903f, num, -2f);
                     num -= 0.63f;
                 }
+                else if (option.parent != null && (option.parent.selection == 0 && !option.invertedParent || option.parent.parent != null && option.parent.parent.selection == 0 && !option.parent.invertedParent)) continue;  // Hides options, for which the parent is disabled!
+                else if (option.parent != null && option.parent.selection != 0 && option.invertedParent) continue;
                 OptionBehaviour optionBehaviour = UnityEngine.Object.Instantiate<StringOption>(menu.stringOptionOrigin, Vector3.zero, Quaternion.identity, menu.settingsContainer);
                 optionBehaviour.transform.localPosition = new Vector3(0.952f, num, -2f);
                 optionBehaviour.SetClickMask(menu.ButtonClickMask);
@@ -491,6 +550,15 @@ namespace LasMonjas.Core
             lmjSettingsTab.name = settingName;
 
             var lmjSettingsGOM = lmjSettingsTab.GetComponent<GameOptionsMenu>();
+
+            updateGameOptionsMenu(optionType, lmjSettingsGOM);
+
+            currentTabs.Add(lmjSettingsTab);
+            lmjSettingsTab.SetActive(false);
+            currentGOMs.Add((byte)optionType, lmjSettingsGOM);
+        }
+
+        public static void updateGameOptionsMenu(CustomOptionType optionType, GameOptionsMenu lmjSettingsGOM) {
             foreach (var child in lmjSettingsGOM.Children) {
                 child.Destroy();
             }
@@ -498,9 +566,6 @@ namespace LasMonjas.Core
             lmjSettingsGOM.Children.Clear();
             var relevantOptions = options.Where(x => x.type == optionType).ToList();
             createSettings(lmjSettingsGOM, relevantOptions);
-
-            currentTabs.Add(lmjSettingsTab);
-            lmjSettingsTab.SetActive(false);
         }
 
         private static void createSettingTabs(GameSettingMenu __instance) {
@@ -569,35 +634,17 @@ namespace LasMonjas.Core
             return false;
         }
     }
-
-    [HarmonyPatch(typeof(StringOption), nameof(StringOption.FixedUpdate))]
-    public class StringOptionFixedUpdate
-    {
-        public static void Postfix(StringOption __instance) {
-            if (!IL2CPPChainloader.Instance.Plugins.TryGetValue("com.DigiWorm.LevelImposter", out PluginInfo _)) return;
-            CustomOption option = CustomOption.options.FirstOrDefault(option => option.optionBehaviour == __instance);
-            if (option == null) return;
-            if (GameOptionsManager.Instance.CurrentGameOptions.MapId == 6)
-                if (option.optionBehaviour != null && option.optionBehaviour is StringOption stringOption) {
-                    stringOption.ValueText.text = option.selections[option.selection].ToString();
-                }
-                else if (option.optionBehaviour != null && option.optionBehaviour is StringOption stringOptionToo) {
-                    stringOptionToo.oldValue = stringOptionToo.Value = option.selection;
-                    stringOptionToo.ValueText.text = option.selections[option.selection].ToString();
-                }
-        }
-    }
-
-    [HarmonyPatch(typeof(PlayerPhysics), nameof(PlayerPhysics.CoSpawnPlayer))]
+    
+    [HarmonyPatch(typeof(PlayerPhysics._CoSpawnPlayer_d__42), nameof(PlayerPhysics._CoSpawnPlayer_d__42.MoveNext))]
     public class AmongUsClientOnPlayerJoinedPatch
     {
-        public static void Postfix(PlayerPhysics __instance) {
+        public static void Postfix(PlayerPhysics._CoSpawnPlayer_d__42 __instance) {
             if (PlayerControl.LocalPlayer != null && AmongUsClient.Instance.AmHost) {
                 GameManager.Instance.LogicOptions.SyncOptions();
                 CustomOption.ShareOptionSelections();
             }
 
-            if (__instance.myPlayer == PlayerInCache.LocalPlayer.PlayerControl && MapOptions.showChatIntro) {
+            if (__instance.__4__this.myPlayer == PlayerInCache.LocalPlayer.PlayerControl && MapOptions.showChatIntro) {
                 ChatController chat = HudManager.Instance.Chat;
                 chat.AddChat(PlayerInCache.LocalPlayer.PlayerControl, "Welcome to <color=#CC00FFFF>Las Monjas</color>! Thanks for playing!\n\n" +
                     "On Lobby:\n" +
@@ -605,7 +652,9 @@ namespace LasMonjas.Core
                     "Type <color=#4E61FFFF>/help</color> plus a <color=#4E61FFFF>role name</color> to get its summary.\n\n" +
                     "On Meetings:\n" +
                     "Type <color=#00BDFFFF>/myrole</color> to get your role's summary.\n" +
-                    "Type <color=#F08048FF>/mymodifier</color> to get your modifier's summary");
+                    "Type <color=#F08048FF>/mymodifier</color> to get your modifier's summary.\n\n" +
+                    "Before starting the game, please change the preset option and change it back to the desired one to avoid desyncs on players."
+                    );
             }
         }
     }
@@ -636,7 +685,7 @@ namespace LasMonjas.Core
 
             foreach (CustomOption option in options) {
                 if (option.parent != null) {
-                    bool isIrrelevant = option.parent.getSelection() == 0 || (option.parent.parent != null && option.parent.parent.getSelection() == 0);
+                    bool isIrrelevant = (option.parent.getSelection() == 0 && !option.invertedParent) || (option.parent.parent != null && option.parent.parent.getSelection() == 0 && !option.parent.invertedParent);
 
                     Color c = isIrrelevant ? Color.grey : Color.white;  // No use for now
                     if (isIrrelevant) continue;

@@ -1489,7 +1489,7 @@ namespace LasMonjas.Core
                         "Mi rol era ",
                         "Mi asesino tiene un ",
                         "Segundos desde muerte: ",
-                        "Me asesino fue el "
+                        "Mi asesino fue el "
                     };
                     helpersTexts = new string[] {
                         " y recluta un Minion",
@@ -2457,7 +2457,7 @@ namespace LasMonjas.Core
                         CustomOptionHolder.cs(Jailer.color, "全局设置"),
                         "- " + CustomOptionHolder.cs(Jailer.color, "激活千年隼地图"),
                         "- " + CustomOptionHolder.cs(Jailer.color, "隐藏视野范围外的管道动画"),
-                        "- " + CustomOptionHolder.cs(Jailer.color, "啟用地圖 Dleks"),
+                        "- " + CustomOptionHolder.cs(Jailer.color, "启用Dleks地图"),
                         CustomOptionHolder.cs(Locksmith.color, "地图设置"),
                         "- " + CustomOptionHolder.cs(Locksmith.color, "移除刷卡任务"),
                         "- " + CustomOptionHolder.cs(Locksmith.color, "照明破坏时监控使用夜间模式"),
