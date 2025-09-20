@@ -1310,7 +1310,7 @@ namespace LasMonjas
                 source.MurderPlayer(target, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
                 HudManager.Instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) => { // Delayed action
                     if (p == 1f) {
-                        source.NetTransform.RpcSnapTo(sourcePos);
+                        source.NetTransform.SnapTo(sourcePos);
                     }
                 })));                 
             }           
