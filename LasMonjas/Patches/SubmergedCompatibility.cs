@@ -109,7 +109,7 @@ namespace LasMonjas.Patches
 
             FloorHandlerType = Types.First(t => t.Name == "FloorHandler");
             GetFloorHandlerMethod = AccessTools.Method(FloorHandlerType, "GetFloorHandler", new Type[] { typeof(PlayerControl) });
-            RpcRequestChangeFloorMethod = AccessTools.Method(FloorHandlerType, "RpcRequestChangeFloor");
+            RpcRequestChangeFloorMethod = AccessTools.Method(FloorHandlerType, "RequestChangeFloor");
 
             VentPatchDataType = Types.First(t => t.Name == "VentPatchData");
             InTransitionField = AccessTools.Property(VentPatchDataType, "InTransition");
