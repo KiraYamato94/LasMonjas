@@ -36,6 +36,9 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
 
+**Version 3.9.2 (10th June 2026)**
+- Compatibility patch for AU 17.4 (2026.6.5)
+
 **Version 3.9.1 (26th October 2025)**
 - Compatibility patch for Submerged newest update (v2025.10.22)
 
