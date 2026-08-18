@@ -140,6 +140,7 @@ namespace LasMonjas.Patches
                     GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.SetRoleRate(RoleTypes.Tracker, 0, 0);
                     GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.SetRoleRate(RoleTypes.Detective, 0, 0);
                     GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.SetRoleRate(RoleTypes.Viper, 0, 0);
+                    GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.SetRoleRate(RoleTypes.Judge, 0, 0);
                     
                     // Randomize at 50% custom skeld for H&S Skeld
                     if (GameOptionsManager.Instance.currentGameMode == GameModes.HideNSeek && GameOptionsManager.Instance.currentGameOptions.MapId == 0) {

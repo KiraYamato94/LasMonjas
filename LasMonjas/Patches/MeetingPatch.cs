@@ -22,16 +22,16 @@ namespace LasMonjas.Patches {
                 Dictionary<byte, int> dictionary = new Dictionary<byte, int>();
                 for (int i = 0; i < __instance.playerStates.Length; i++) {
                     PlayerVoteArea playerVoteArea = __instance.playerStates[i];
-                    if (playerVoteArea.VotedFor != 252 && playerVoteArea.VotedFor != 255 && playerVoteArea.VotedFor != 254) {
-                        PlayerControl player = Helpers.playerById((byte)playerVoteArea.TargetPlayerId);
+                    if (playerVoteArea.VotedForId != 252 && playerVoteArea.VotedForId != 255 && playerVoteArea.VotedForId != 254) {
+                        PlayerControl player = Helpers.playerById((byte)playerVoteArea.PlayerId);
                         if (player == null || player.Data == null || player.Data.IsDead || player.Data.Disconnected) continue;
 
                         int currentVotes;
-                        int additionalVotes = (Captain.captain != null && Captain.captain.PlayerId == playerVoteArea.TargetPlayerId) ? 2 : 1; // Captain additional vote
-                        if (dictionary.TryGetValue(playerVoteArea.VotedFor, out currentVotes))
-                            dictionary[playerVoteArea.VotedFor] = currentVotes + additionalVotes;
+                        int additionalVotes = (Captain.captain != null && Captain.captain.PlayerId == playerVoteArea.PlayerId) ? 2 : 1; // Captain additional vote
+                        if (dictionary.TryGetValue(playerVoteArea.VotedForId, out currentVotes))
+                            dictionary[playerVoteArea.VotedForId] = currentVotes + additionalVotes;
                         else
-                            dictionary[playerVoteArea.VotedFor] = additionalVotes;
+                            dictionary[playerVoteArea.VotedForId] = additionalVotes;
                     }
                 }
                 // Cheater cheat votes
@@ -39,16 +39,16 @@ namespace LasMonjas.Patches {
                     PlayerVoteArea cheated1 = null;
                     PlayerVoteArea cheated2 = null;
                     foreach (PlayerVoteArea playerVoteArea in __instance.playerStates) {
-                        if (playerVoteArea.TargetPlayerId == Cheater.playerId1) cheated1 = playerVoteArea;
-                        if (playerVoteArea.TargetPlayerId == Cheater.playerId2) cheated2 = playerVoteArea;
+                        if (playerVoteArea.PlayerId == Cheater.playerId1) cheated1 = playerVoteArea;
+                        if (playerVoteArea.PlayerId == Cheater.playerId2) cheated2 = playerVoteArea;
                     }
 
                     if (cheated1 != null && cheated2 != null) {
-                        if (!dictionary.ContainsKey(cheated1.TargetPlayerId)) dictionary[cheated1.TargetPlayerId] = 0;
-                        if (!dictionary.ContainsKey(cheated2.TargetPlayerId)) dictionary[cheated2.TargetPlayerId] = 0;
-                        int tmp = dictionary[cheated1.TargetPlayerId];
-                        dictionary[cheated1.TargetPlayerId] = dictionary[cheated2.TargetPlayerId];
-                        dictionary[cheated2.TargetPlayerId] = tmp;
+                        if (!dictionary.ContainsKey(cheated1.PlayerId)) dictionary[cheated1.PlayerId] = 0;
+                        if (!dictionary.ContainsKey(cheated2.PlayerId)) dictionary[cheated2.PlayerId] = 0;
+                        int tmp = dictionary[cheated1.PlayerId];
+                        dictionary[cheated1.PlayerId] = dictionary[cheated2.PlayerId];
+                        dictionary[cheated2.PlayerId] = tmp;
                     }
                 }
 
@@ -73,17 +73,19 @@ namespace LasMonjas.Patches {
                     {
                         PlayerVoteArea playerVoteArea = __instance.playerStates[i];
                         if (forceTargetPlayerId != byte.MaxValue)
-                            playerVoteArea.VotedFor = forceTargetPlayerId;
+                            playerVoteArea.VotedForId = forceTargetPlayerId;
                         array[i] = new MeetingHud.VoterState {
-                            VoterId = playerVoteArea.TargetPlayerId,
-                            VotedForId = playerVoteArea.VotedFor
+                            VoterId = playerVoteArea.PlayerId,
+                            VotedForId = playerVoteArea.VotedForId
                         };
                     }
-
-                    if (forceTargetPlayerId != byte.MaxValue)
+                    bool forcedCaptain = false;
+                    if (forceTargetPlayerId != byte.MaxValue) {
                         exiled = GameData.Instance.AllPlayers.ToArray().FirstOrDefault(v => v.PlayerId == forceTargetPlayerId && !v.IsDead);
+                        forcedCaptain = true;
+                    }
 
-                    __instance.RpcVotingComplete(array, exiled, tie);
+                    __instance.RpcVotingComplete(array, exiled, tie, forcedCaptain, 0);
                 }
                 return false;
             }
@@ -121,8 +123,8 @@ namespace LasMonjas.Patches {
                 PlayerVoteArea cheated1 = null;
                 PlayerVoteArea cheated2 = null;
                 foreach (PlayerVoteArea playerVoteArea in __instance.playerStates) {
-                    if (playerVoteArea.TargetPlayerId == Cheater.playerId1) cheated1 = playerVoteArea;
-                    if (playerVoteArea.TargetPlayerId == Cheater.playerId2) cheated2 = playerVoteArea;
+                    if (playerVoteArea.PlayerId == Cheater.playerId1) cheated1 = playerVoteArea;
+                    if (playerVoteArea.PlayerId == Cheater.playerId2) cheated2 = playerVoteArea;
                 }
                 bool doCheat = cheated1 != null && cheated2 != null && Cheater.cheater != null && !Cheater.cheater.Data.IsDead;
                 if (doCheat) {
@@ -135,10 +137,10 @@ namespace LasMonjas.Patches {
                 int num = 0;
                 for (int i = 0; i < __instance.playerStates.Length; i++) {
                     PlayerVoteArea playerVoteArea = __instance.playerStates[i];
-                    byte targetPlayerId = playerVoteArea.TargetPlayerId;
+                    byte targetPlayerId = playerVoteArea.PlayerId;
                     // Cheater change playerVoteArea that gets the votes
-                    if (doCheat && playerVoteArea.TargetPlayerId == cheated1.TargetPlayerId) playerVoteArea = cheated2;
-                    else if (doCheat && playerVoteArea.TargetPlayerId == cheated2.TargetPlayerId) playerVoteArea = cheated1;
+                    if (doCheat && playerVoteArea.PlayerId == cheated1.PlayerId) playerVoteArea = cheated2;
+                    else if (doCheat && playerVoteArea.PlayerId == cheated2.PlayerId) playerVoteArea = cheated1;
 
                     playerVoteArea.ClearForResults();
                     int num2 = 0;
@@ -195,7 +197,7 @@ namespace LasMonjas.Patches {
 
 
         static void cheaterOnClick(int i, MeetingHud __instance) {
-            if (__instance.state == MeetingHud.VoteStates.Results) return;
+            if (__instance.state == MeetingHud.MeetingStates.Results) return;
             if (__instance.playerStates[i].AmDead) return;
 
             int selectedCount = selections.Where(b => b).Count();
@@ -227,11 +229,11 @@ namespace LasMonjas.Patches {
 
                     if (firstPlayer != null && secondPlayer != null) {
                         MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.CheaterCheat, Hazel.SendOption.Reliable, -1);
-                        writer.Write((byte)firstPlayer.TargetPlayerId);
-                        writer.Write((byte)secondPlayer.TargetPlayerId);
+                        writer.Write((byte)firstPlayer.PlayerId);
+                        writer.Write((byte)secondPlayer.PlayerId);
                         AmongUsClient.Instance.FinishRpcImmediately(writer);
 
-                        RPCProcedure.cheaterCheat((byte)firstPlayer.TargetPlayerId, (byte)secondPlayer.TargetPlayerId);
+                        RPCProcedure.cheaterCheat((byte)firstPlayer.PlayerId, (byte)secondPlayer.PlayerId);
                     }
                 }
             }
@@ -239,7 +241,7 @@ namespace LasMonjas.Patches {
 
         private static GameObject gamblerUI;
         static void gamblerOnClick(int buttonTarget, MeetingHud __instance) {
-            if (gamblerUI != null || !(__instance.state == MeetingHud.VoteStates.Voted || __instance.state == MeetingHud.VoteStates.NotVoted)) return;
+            if (gamblerUI != null || !(__instance.state == MeetingHud.MeetingStates.Voted || __instance.state == MeetingHud.MeetingStates.NotVoted)) return;
             __instance.playerStates.ToList().ForEach(x => x.gameObject.SetActive(false));
 
             Transform PhoneUI = UnityEngine.Object.FindObjectsOfType<Transform>().FirstOrDefault(x => x.name == "PhoneUI"); 
@@ -305,8 +307,8 @@ namespace LasMonjas.Patches {
                             buttons.ForEach(x => x.GetComponent<SpriteRenderer>().color = x == selectedButton ? Color.red : Color.white);
                         }
                         else {
-                            PlayerControl target = Helpers.playerById((byte)__instance.playerStates[buttonTarget].TargetPlayerId);
-                            if (!(__instance.state == MeetingHud.VoteStates.Voted || __instance.state == MeetingHud.VoteStates.NotVoted) || target == null) return;
+                            PlayerControl target = Helpers.playerById((byte)__instance.playerStates[buttonTarget].PlayerId);
+                            if (!(__instance.state == MeetingHud.MeetingStates.Voted || __instance.state == MeetingHud.MeetingStates.NotVoted) || target == null) return;
 
                             if (!Gambler.canKillThroughShield && target == Squire.shielded) { // If can't bypass shields, notifiy everyone about the kill attempt and close the window without lossing a shoot opportunity
                                 __instance.playerStates.ToList().ForEach(x => x.gameObject.SetActive(true));
@@ -345,10 +347,10 @@ namespace LasMonjas.Patches {
 
         static void captainOnClick(int buttonTarget, MeetingHud __instance) {
             if (Captain.captain != null && (Captain.captain.Data.IsDead || Captain.specialVoteTargetPlayerId != byte.MaxValue)) return;
-            if (!(__instance.state == MeetingHud.VoteStates.Voted || __instance.state == MeetingHud.VoteStates.NotVoted || __instance.state == MeetingHud.VoteStates.Results)) return;
+            if (!(__instance.state == MeetingHud.MeetingStates.Voted || __instance.state == MeetingHud.MeetingStates.NotVoted || __instance.state == MeetingHud.MeetingStates.Results)) return;
             if (__instance.playerStates[buttonTarget].AmDead) return;
 
-            byte targetId = __instance.playerStates[buttonTarget].TargetPlayerId;
+            byte targetId = __instance.playerStates[buttonTarget].PlayerId;
             MessageWriter writer = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.CaptainSpecialVote, Hazel.SendOption.Reliable, -1);
             writer.Write(PlayerInCache.LocalPlayer.PlayerControl.PlayerId);
             writer.Write(targetId);
@@ -360,7 +362,7 @@ namespace LasMonjas.Patches {
                 PlayerVoteArea voteArea = __instance.playerStates[i];
                 voteArea.ClearButtons();
                 Transform t = voteArea.transform.FindChild("SpecialVoteButton");
-                if (t != null && voteArea.TargetPlayerId != targetId)
+                if (t != null && voteArea.PlayerId != targetId)
                     t.gameObject.SetActive(false);
             }
             if (AmongUsClient.Instance.AmHost) {
@@ -390,7 +392,7 @@ namespace LasMonjas.Patches {
 
                 for (int i = 0; i < __instance.playerStates.Length; i++) {
                     PlayerVoteArea playerVoteArea = __instance.playerStates[i];
-                    if (playerVoteArea.AmDead || (playerVoteArea.TargetPlayerId == Cheater.cheater.PlayerId && !Cheater.canOnlyCheatOthers)) continue;
+                    if (playerVoteArea.AmDead || (playerVoteArea.PlayerId == Cheater.cheater.PlayerId && !Cheater.canOnlyCheatOthers)) continue;
 
                     GameObject template = playerVoteArea.Buttons.transform.Find("CancelButton").gameObject;
                     GameObject checkbox = UnityEngine.Object.Instantiate(template);
@@ -413,7 +415,7 @@ namespace LasMonjas.Patches {
             // Add overlay for spelled players
             if (Sorcerer.sorcerer != null && Sorcerer.spelledPlayers != null) {
                 foreach (PlayerVoteArea pva in __instance.playerStates) {
-                    if (Sorcerer.spelledPlayers.Any(x => x.PlayerId == pva.TargetPlayerId)) {
+                    if (Sorcerer.spelledPlayers.Any(x => x.PlayerId == pva.PlayerId)) {
                         SpriteRenderer rend = (new GameObject()).AddComponent<SpriteRenderer>();
                         rend.transform.SetParent(pva.transform);
                         rend.gameObject.layer = pva.Megaphone.gameObject.layer;
@@ -427,7 +429,7 @@ namespace LasMonjas.Patches {
             if (Gambler.gambler != null && PlayerInCache.LocalPlayer.PlayerControl == Gambler.gambler && !Gambler.gambler.Data.IsDead) {
                 for (int i = 0; i < __instance.playerStates.Length; i++) {
                     PlayerVoteArea playerVoteArea = __instance.playerStates[i];
-                    if (playerVoteArea.AmDead || playerVoteArea.TargetPlayerId == PlayerInCache.LocalPlayer.PlayerControl.PlayerId) continue;
+                    if (playerVoteArea.AmDead || playerVoteArea.PlayerId == PlayerInCache.LocalPlayer.PlayerControl.PlayerId) continue;
 
                     GameObject template = playerVoteArea.Buttons.transform.Find("CancelButton").gameObject;
                     GameObject targetBox = UnityEngine.Object.Instantiate(template, playerVoteArea.transform);
@@ -446,7 +448,7 @@ namespace LasMonjas.Patches {
             if (Captain.captain != null && PlayerInCache.LocalPlayer.PlayerControl == Captain.captain && !Captain.captain.Data.IsDead && !Captain.usedSpecialVote && Captain.canUseSpecialVote) {
                 for (int i = 0; i < __instance.playerStates.Length; i++) {
                     PlayerVoteArea playerVoteArea = __instance.playerStates[i];
-                    if (playerVoteArea.AmDead || playerVoteArea.TargetPlayerId == PlayerInCache.LocalPlayer.PlayerControl.PlayerId) continue;
+                    if (playerVoteArea.AmDead || playerVoteArea.PlayerId == PlayerInCache.LocalPlayer.PlayerControl.PlayerId) continue;
 
                     GameObject template = playerVoteArea.Buttons.transform.Find("CancelButton").gameObject;
                     GameObject targetBox = UnityEngine.Object.Instantiate(template, playerVoteArea.transform);
@@ -578,7 +580,7 @@ namespace LasMonjas.Patches {
 
                 // Librarian text overlay on target
                 if (Librarian.librarian != null && Librarian.targetLibrary) {
-                    var playerState = __instance.playerStates.FirstOrDefault(x => x.TargetPlayerId == Librarian.targetLibrary.PlayerId);
+                    var playerState = __instance.playerStates.FirstOrDefault(x => x.PlayerId == Librarian.targetLibrary.PlayerId);
                     playerState.Overlay.gameObject.SetActive(true);
                     playerState.Overlay.sprite = Librarian.getLibrarianOverlaySprite();
                 }

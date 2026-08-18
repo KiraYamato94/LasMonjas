@@ -36,7 +36,7 @@ namespace LasMonjas.Patches {
             }
             if (MeetingHud.Instance != null) {
                 foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates) {
-                    PlayerControl playerControl = playersById.ContainsKey((byte)player.TargetPlayerId) ? playersById[(byte)player.TargetPlayerId] : null;
+                    PlayerControl playerControl = playersById.ContainsKey((byte)player.PlayerId) ? playersById[(byte)player.PlayerId] : null;
                     if (playerControl != null) {
                         player.NameText.text = playerControl.Data.PlayerName;
                         if (PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor && playerControl.Data.Role.IsImpostor) {
@@ -54,7 +54,7 @@ namespace LasMonjas.Patches {
                     player.cosmetics.nameText.color = Palette.ImpostorRed;
                 if (MeetingHud.Instance != null)
                     foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates) {
-                        PlayerControl playerControl = Helpers.playerById((byte)player.TargetPlayerId);
+                        PlayerControl playerControl = Helpers.playerById((byte)player.PlayerId);
                         if (playerControl != null && playerControl.Data.Role.IsImpostor)
                             player.NameText.color =  Palette.ImpostorRed;
                     }
@@ -64,7 +64,7 @@ namespace LasMonjas.Patches {
             p.cosmetics.nameText.color = color;
             if (MeetingHud.Instance != null)
                 foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
-                    if (player.NameText != null && p.PlayerId == player.TargetPlayerId)
+                    if (player.NameText != null && p.PlayerId == player.PlayerId)
                         player.NameText.color = color;
         }
         static void setNameColors() {
@@ -374,7 +374,7 @@ namespace LasMonjas.Patches {
 
                         if (MeetingHud.Instance != null)
                             foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates)
-                                if (Modifiers.lover1.PlayerId == player.TargetPlayerId || Modifiers.lover2.PlayerId == player.TargetPlayerId)
+                                if (Modifiers.lover1.PlayerId == player.PlayerId || Modifiers.lover2.PlayerId == player.PlayerId)
                                     player.NameText.text += suffix;
                     }
 
@@ -382,7 +382,7 @@ namespace LasMonjas.Patches {
                     if (Forensic.forensic != null && PlayerInCache.LocalPlayer.PlayerControl == Forensic.forensic) {
                         if (MeetingHud.Instance != null) {
                             foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates) {
-                                var target = Helpers.playerById(player.TargetPlayerId);
+                                var target = Helpers.playerById(player.PlayerId);
                                 if (target != null) player.NameText.text += $" ({(Helpers.isLighterColor(target.Data.DefaultOutfit.ColorId) ? "L" : "D")})";
                             }
                         }
@@ -1777,7 +1777,7 @@ namespace LasMonjas.Patches {
                     p.cosmetics.nameText.text = result;
                     if (MeetingHud.Instance != null) {
                         foreach (PlayerVoteArea player in MeetingHud.Instance.playerStates) {
-                            if (p.PlayerId == player.TargetPlayerId) {
+                            if (p.PlayerId == player.PlayerId) {
                                 player.NameText.text = result;
                                 player.NameText.color = si.color;
                                 break;

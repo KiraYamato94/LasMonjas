@@ -79,7 +79,7 @@ namespace LasMonjas.Patches {
                 foreach (PlayerControl p in PlayerInCache.AllPlayers) {
                     if (p == PlayerInCache.LocalPlayer.PlayerControl || PlayerInCache.LocalPlayer.PlayerControl.Data.IsDead) {
 
-                        PlayerVoteArea playerVoteArea = MeetingHud.Instance?.playerStates?.FirstOrDefault(x => x.TargetPlayerId == p.PlayerId);
+                        PlayerVoteArea playerVoteArea = MeetingHud.Instance?.playerStates?.FirstOrDefault(x => x.PlayerId == p.PlayerId);
                         Transform meetingInfoTransform = playerVoteArea != null ? playerVoteArea.NameText.transform.parent.FindChild("Info") : null;
                         TMPro.TextMeshPro meetingInfo = meetingInfoTransform != null ? meetingInfoTransform.GetComponent<TMPro.TextMeshPro>() : null;
                         if (meetingInfo == null && playerVoteArea != null) {
@@ -104,7 +104,7 @@ namespace LasMonjas.Patches {
                             meetingInfoText = playerInfoText;
                         }
 
-                        if (meetingInfo != null) meetingInfo.text = MeetingHud.Instance.state == MeetingHud.VoteStates.Results ? "" : meetingInfoText;
+                        if (meetingInfo != null) meetingInfo.text = MeetingHud.Instance.state == MeetingHud.MeetingStates.Results ? "" : meetingInfoText;
                     }
                 }
             }
