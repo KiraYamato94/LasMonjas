@@ -36,6 +36,10 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
 
+**Version 3.9.3 (18th August 2026)**
+- Compatibility patch for Among Us 2026.8.18 (v18)
+- Added vanilla Judge's animation to the Captain's force vote out ability
+
 **Version 3.9.2 (10th June 2026)**
 - Compatibility patch for AU 17.4 (2026.6.5)
 
