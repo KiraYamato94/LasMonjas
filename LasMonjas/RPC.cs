@@ -1583,17 +1583,18 @@ namespace LasMonjas
             if (Constants.ShouldPlaySfx()) SoundManager.Instance.PlaySound(target.KillSfx, false, 0.8f);
             if (MeetingHud.Instance) {
                 foreach (PlayerVoteArea pva in MeetingHud.Instance.playerStates) {
-                    if (pva.TargetPlayerId == playerId || pva.TargetPlayerId == partnerId) {
-                        pva.SetDead(pva.DidReport, true);
+                    if (pva.PlayerId == playerId || pva.PlayerId == partnerId) {
+                        //pva.SetDead(pva.DidReport, true);
+                        pva.SetDead(true);
                         pva.Overlay.gameObject.SetActive(true);
                     }
 
                     //Give players back their vote if target is shot dead
-                    if (pva.VotedFor != playerId || pva.VotedFor != partnerId) continue;
+                    if (pva.VotedForId != playerId || pva.VotedForId != partnerId) continue;
                     pva.UnsetVote();
-                    var voteAreaPlayer = Helpers.playerById(pva.TargetPlayerId);
+                    var voteAreaPlayer = Helpers.playerById(pva.PlayerId);
                     if (!voteAreaPlayer.AmOwner) continue;
-                    MeetingHud.Instance.ClearVote();
+                    MeetingHud.Instance.ClearVote(pva.PlayerId, true);
                 }
                 if (AmongUsClient.Instance.AmHost)
                     MeetingHud.Instance.CheckForEndVoting();
