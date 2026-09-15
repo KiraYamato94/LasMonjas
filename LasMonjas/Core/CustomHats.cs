@@ -2,14 +2,12 @@
 using HarmonyLib;
 using UnityEngine;
 using System.Linq;
-using static Rewired.Controller;
 using UnityEngine.AddressableAssets;
 using PowerTools;
 using AmongUs.Data;
 using Reactor.Utilities.Extensions;
 using Reactor.Utilities;
 using TMPro;
-using static Il2CppSystem.Globalization.CultureInfo;
 
 // Adapted from https://github.com/xxomega77xx/HatPack
 
@@ -19,215 +17,214 @@ namespace LasMonjas.Core
     {
         public static Material MagicShader;
 
-        public struct AuthorData
-        {
-            public string AuthorName;
-            public string HatName;
-            public string FloorHatName;
-            public string ClimbHatName;
-            public string LeftImageName;
-            public bool NoBounce;
-            public bool altShader;
-        }
+        public record AuthorData(
+            string AuthorName,
+            string HatName,
+            bool NoBounce = false,
+            bool AltShader = false,
+            string FloorHatName = null,
+            string ClimbHatName = null,
+            string LeftImageName = null
+        );
 
         public static List<AuthorData> authorDatas = new List<AuthorData>()
         {
-            new AuthorData {AuthorName = "Allul", HatName = "Monja", NoBounce = true},
-            new AuthorData {AuthorName = "Allul", HatName = "Minion Monja", FloorHatName ="Minion Monja Climb", ClimbHatName = "Minion Monja Climb", LeftImageName = "Minion Monja", NoBounce = true},
-            new AuthorData {AuthorName = "Sensei", HatName = "Cursed Monja", NoBounce = true},
-            new AuthorData {AuthorName = "Sensei", HatName = "Abombg Man", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Sensei", HatName = "Among Ass", NoBounce = false, altShader = true},
-            new AuthorData {AuthorName = "Sensei", HatName = "Time To Duel", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Sensei", HatName = "Medusa", NoBounce = false},
-            new AuthorData {AuthorName = "Sensei", HatName = "Mega Hat", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Sensei", HatName = "Egyptian", NoBounce = true },
-            new AuthorData {AuthorName = "Sensei", HatName = "Joker", NoBounce = true },
-            new AuthorData {AuthorName = "Sensei", HatName = "SrCobra", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Sensei", HatName = "Dinoseto", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Sensei", HatName = "Super Red Sus", NoBounce = false},
-            new AuthorData {AuthorName = "Sensei", HatName = "Super Green Sus", NoBounce = false},
-            new AuthorData {AuthorName = "Sensei", HatName = "Super Yellow Sus", NoBounce = false},
-            new AuthorData {AuthorName = "Sensei", HatName = "Super Purple Sus", NoBounce = false},
-            new AuthorData {AuthorName = "Sensei", HatName = "Chadsito", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Sensei", HatName = "Scars", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Sensei", HatName = "Sus Man", NoBounce = true},
-            new AuthorData {AuthorName = "Sensei", HatName = "Take It Easy", NoBounce = true},
-            new AuthorData {AuthorName = "Sensei", HatName = "Moon Face", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Sensei", HatName = "Pepper Carrot", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Sensei", HatName = "Battle Armor", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Sensei", HatName = "Space Captain", NoBounce = true},
-            new AuthorData {AuthorName = "Sensei", HatName = "Dontaegamez", NoBounce = true},
-            new AuthorData {AuthorName = "Sensei", HatName = "Blocky", NoBounce = true},
-            new AuthorData {AuthorName = "Sensei", HatName = "Glitch", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Sensei", HatName = "Boot", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Sensei", HatName = "Monja Cloth", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Sensei", HatName = "Majin Sus", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Sensei", HatName = "El Mauro", NoBounce = true},
-            new AuthorData {AuthorName = "Sensei", HatName = "Angry Dontae", NoBounce = true},
-            new AuthorData {AuthorName = "Sensei", HatName = "Blocky 16bits", NoBounce = true},
-            new AuthorData {AuthorName = "Sensei", HatName = "Fascinante", NoBounce = true},
-            new AuthorData {AuthorName = "Sensei", HatName = "Pingas", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Sensei", HatName = "Suavemente", NoBounce = true},
-            new AuthorData {AuthorName = "Sensei", HatName = "Suscolo", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Cell", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Ghost", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Goodbye", NoBounce = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Muaresito Joy", NoBounce = false},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Avatar", NoBounce = false, altShader = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Scallop Walker", NoBounce = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Unknown Race", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Kill Palex", NoBounce = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Olmaito", NoBounce = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Susking", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Tree Brows", NoBounce = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Susboy", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Xabasus", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Bee", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Bounty Hunter", NoBounce = false},
-            new AuthorData {AuthorName = "Muaresito", HatName = "King Skull", NoBounce = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Josefa", NoBounce = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Monjart", NoBounce = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Susnic", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Homunculus", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "2nd Actor Hair", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "4th Anniversary", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Exsusdia", NoBounce = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "True Exsusdia", NoBounce = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Worker Hat", NoBounce = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Raul", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Chainsus Man", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "4M0NJ-4S Tank", NoBounce = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Too much tasks", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Octosus", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Sustrio", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Penguin", NoBounce = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Happy 1st Birthday Monjas", NoBounce = false},
-            new AuthorData {AuthorName = "Muaresito", HatName = "1st Monjiversario", NoBounce = false, altShader = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Carmina Vacaloura", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Bunny Hood", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Sussykill", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Stuffwell", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Sussybara", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Muaresito", HatName = "Sin Embargo", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Xago", HatName = "World Destroyer", NoBounce = true},
-            new AuthorData {AuthorName = "Xago", HatName = "Amazing Robot", NoBounce = true},
-            new AuthorData {AuthorName = "Xago", HatName = "Fourze", NoBounce = true},
-            new AuthorData {AuthorName = "Xago", HatName = "Zargothrax", NoBounce = true},
-            new AuthorData {AuthorName = "Xago", HatName = "Chaos Wizard", NoBounce = true},
-            new AuthorData {AuthorName = "Xago", HatName = "Robot Armor", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Xago", HatName = "Canon Robot", NoBounce = true},
-            new AuthorData {AuthorName = "Hige", HatName = "Punsus", NoBounce = true},
-            new AuthorData {AuthorName = "IceCreamGuy", HatName = "Ice Cream Man", NoBounce = false},
-            new AuthorData {AuthorName = "IceCreamGuy", HatName = "Devious Bling", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "IceCreamGuy", HatName = "Hungry Hat", NoBounce = true},
-            new AuthorData {AuthorName = "Sen", HatName = "Artist", FloorHatName ="Artist_climb", ClimbHatName = "Artist_climb", LeftImageName = "Artist", NoBounce = true},
-            new AuthorData {AuthorName = "lotty", HatName = "Bubbles", NoBounce = true},
-            new AuthorData {AuthorName = "lotty", HatName = "Black Cat", NoBounce = false},
-            new AuthorData {AuthorName = "lotty", HatName = "White Cat", NoBounce = false},
-            new AuthorData {AuthorName = "lotty", HatName = "Clown", NoBounce = true},
-            new AuthorData {AuthorName = "lotty", HatName = "Raccoon", NoBounce = false},
-            new AuthorData {AuthorName = "lotty", HatName = "Impostor Raccoon", NoBounce = false},
-            new AuthorData {AuthorName = "lotty", HatName = "Periodt", NoBounce = true},
-            new AuthorData {AuthorName = "lotty", HatName = "GD", NoBounce = false},
-            new AuthorData {AuthorName = "lotty", HatName = "Card", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "lotty", HatName = "Flower Crown", NoBounce = true},
-            new AuthorData {AuthorName = "lotty", HatName = "Good Noodle", NoBounce = true},
-            new AuthorData {AuthorName = "lotty", HatName = "Long Wiggle", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "lotty", HatName = "Neon Devil Horns", NoBounce = true},
-            new AuthorData {AuthorName = "lotty", HatName = "Purple Halo", NoBounce = true},
-            new AuthorData {AuthorName = "lotty", HatName = "Sword", NoBounce = true},
-            new AuthorData {AuthorName = "lotty", HatName = "uwu", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "lotty", HatName = "Shark", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "lotty", HatName = "All Ears", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "lotty", HatName = "Babies", NoBounce = false},
-            new AuthorData {AuthorName = "lotty", HatName = "Beans", NoBounce = true},
-            new AuthorData {AuthorName = "lotty", HatName = "Cat", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "lotty", HatName = "Dress", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "lotty", HatName = "Ghost Hat", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "lotty", HatName = "Rainbow", NoBounce = false},
-            new AuthorData {AuthorName = "lotty", HatName = "Shark Plush", NoBounce = false},
-            new AuthorData {AuthorName = "lotty", HatName = "Top Hat", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "lotty", HatName = "Umbrella", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "lotty", HatName = "Axolotl", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "lotty", HatName = "(je)Sushi", NoBounce = false},
-            new AuthorData {AuthorName = "lotty", HatName = "Angry Chicken", NoBounce = false},
-            new AuthorData {AuthorName = "lotty", HatName = "Best Friend", NoBounce = true},
-            new AuthorData {AuthorName = "lotty", HatName = "Bug Girl", NoBounce = true},
-            new AuthorData {AuthorName = "lotty", HatName = "Cat Thief", NoBounce = true},
-            new AuthorData {AuthorName = "ERIKHAPPY", HatName = "Blue Scarf", NoBounce = true},
-            new AuthorData {AuthorName = "ERIKHAPPY", HatName = "Egg", NoBounce = false},
-            new AuthorData {AuthorName = "Jesushi", HatName = "Jester", NoBounce = true},
-            new AuthorData {AuthorName = "Jesushi", HatName = "Crown", NoBounce = true},
-            new AuthorData {AuthorName = "Booman", HatName = "Sniper", NoBounce = true},
-            new AuthorData {AuthorName = "Booman", HatName = "Rocketman", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Booman", HatName = "Wooden Box", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Boa", HatName = "Cat Princess", FloorHatName ="Cat Princess_climb", ClimbHatName = "Cat Princess_climb", LeftImageName = "Cat Princess", NoBounce = true},
-            new AuthorData {AuthorName = "Xeno<33", HatName = "3rd Eye", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Xeno<33", HatName = "Candles", NoBounce = false},
-            new AuthorData {AuthorName = "Xeno<33", HatName = "Double Visor", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Xeno<33", HatName = "Green Hat", NoBounce = true},
-            new AuthorData {AuthorName = "Xeno<33", HatName = "Idea", NoBounce = false},
-            new AuthorData {AuthorName = "Xeno<33", HatName = "Sheep", NoBounce = false},
-            new AuthorData {AuthorName = "Xeno<33", HatName = "Sus Guy", NoBounce = true},
-            new AuthorData {AuthorName = "Xeno<33", HatName = "UFO", NoBounce = true},
-            new AuthorData {AuthorName = "Xeno<33", HatName = "Electric Rat", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Xeno<33", HatName = "Royal Blonde Hair", NoBounce = true},
-            new AuthorData {AuthorName = "Xeno<33", HatName = "Blue Hat", NoBounce = true},
-            new AuthorData {AuthorName = "Xeno<33", HatName = "Cloak", NoBounce = true},
-            new AuthorData {AuthorName = "Xeno<33", HatName = "Empty Charge", NoBounce = false},
-            new AuthorData {AuthorName = "Xeno<33", HatName = "Charging", NoBounce = false},
-            new AuthorData {AuthorName = "Xeno<33", HatName = "Full Charge", NoBounce = false},
-            new AuthorData {AuthorName = "Xeno<33", HatName = "Funny Ghost", NoBounce = true},
-            new AuthorData {AuthorName = "Xeno<33", HatName = "Mushrooms", NoBounce = false},
-            new AuthorData {AuthorName = "Xeno<33", HatName = "Pink Flower", NoBounce = true},
-            new AuthorData {AuthorName = "Xeno<33", HatName = "Purple Animatronic", NoBounce = true},
-            new AuthorData {AuthorName = "Xeno<33", HatName = "Watermelon", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Xeno<33", HatName = "Pet Cat", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Xeno<33", HatName = "Ganso", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Xeno<33", HatName = "Ninja", NoBounce = true},
-            new AuthorData {AuthorName = "Xeno<33", HatName = "Susnana", NoBounce = true},
-            new AuthorData {AuthorName = "Xeno<33", HatName = "Ghostly", NoBounce = true},
-            new AuthorData {AuthorName = "Xeno<33", HatName = "Suspucha", NoBounce = true},
-            new AuthorData {AuthorName = "Xeno<33", HatName = "Kitty Hat", NoBounce = true},
-            new AuthorData {AuthorName = "Dontae", HatName = "Tea Cup", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Nyxx", HatName = "Headphone gamer", NoBounce = true},
-            new AuthorData {AuthorName = "Nyxx", HatName = "Heart Tiera", NoBounce = true},
-            new AuthorData {AuthorName = "Nyxx", HatName = "Rubber Ring", NoBounce = true},
-            new AuthorData {AuthorName = "Nyxx", HatName = "Shsusrek", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Nyxx", HatName = "Strawberry", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Nyxx", HatName = "Sustalian", NoBounce = true},
-            new AuthorData {AuthorName = "Nyxx", HatName = "Love You", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Nyxx", HatName = "Ponycorn", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Nyxx", HatName = "Fox", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Nyxx", HatName = "Mantis", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Nyxx", HatName = "Magic Hat", NoBounce = true},
-            new AuthorData {AuthorName = "Nyxx", HatName = "Nurse", NoBounce = true},
-            new AuthorData {AuthorName = "Nyxx", HatName = "Sustich", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Nyxx", HatName = "Dog", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Nyxx", HatName = "Bunny", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Nyxx", HatName = "Cactus", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Nyxx", HatName = "Lasus", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Nyxx", HatName = "Susken", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Nyxx", HatName = "Cat Face", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Nyxx", HatName = "Fluffy Scarf", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Nyxx", HatName = "Flower Lady", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Nyxx", HatName = "Halo", NoBounce = true},
-            new AuthorData {AuthorName = "Nyxx", HatName = "On Fire", NoBounce = true},
-            new AuthorData {AuthorName = "Nyxx", HatName = "Frog Hat", NoBounce = true},
-            new AuthorData {AuthorName = "Nyxx", HatName = "Magician Hat", NoBounce = true},
-            new AuthorData {AuthorName = "Ravengirl", HatName = "Flag", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Sonrio", HatName = "Flaming", NoBounce = true},
-            new AuthorData {AuthorName = "Sonrio", HatName = "Freezing", NoBounce = true},
-            new AuthorData {AuthorName = "Sonrio", HatName = "Night Friday", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Sonrio", HatName = "Puppetist", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Sonrio", HatName = "Calling All Crewmates", NoBounce = true},
-            new AuthorData {AuthorName = "Sonrio", HatName = "Fighter", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Sonrio", HatName = "Woomy Girl", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Sonrio", HatName = "Woomy Boy", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Sonrio", HatName = "Tanuki", NoBounce = true, altShader = true},
-            new AuthorData {AuthorName = "Dr Blockhead", HatName = "Got Any Grapes", NoBounce = true},
-            new AuthorData {AuthorName = "Dr Blockhead", HatName = "Bucket", NoBounce = true},
-        };
+            new ("Allul", "Monja", true),
+            new ("Allul", "Minion Monja", true, false, "Minion Monja Climb","Minion Monja Climb", "Minion Monja"),
+            new ("Sensei", "Cursed Monja", true),
+            new ("Sensei", "Abombg Man", true, true),
+            new ("Sensei", "Among Ass", false, true),
+            new ("Sensei", "Time To Duel", true, true),
+            new ("Sensei", "Medusa"),
+            new ("Sensei", "Mega Hat", true, true),
+            new ("Sensei", "Egyptian", true),
+            new ("Sensei", "Joker", true),
+            new ("Sensei", "SrCobra", true, true),
+            new ("Sensei", "Dinoseto", true, true),
+            new ("Sensei", "Super Red Sus"),
+            new ("Sensei", "Super Green Sus"),
+            new ("Sensei", "Super Yellow Sus"),
+            new ("Sensei", "Super Purple Sus"),
+            new ("Sensei", "Chadsito", true, true),
+            new ("Sensei", "Scars", true, true),
+            new ("Sensei", "Sus Man", true),
+            new ("Sensei", "Take It Easy", true),
+            new ("Sensei", "Moon Face", true, true),
+            new ("Sensei", "Pepper Carrot", true, true),
+            new ("Sensei", "Battle Armor", true, true),
+            new ("Sensei", "Space Captain", true),
+            new ("Sensei", "Dontaegamez", true),
+            new ("Sensei", "Blocky", true),
+            new ("Sensei", "Glitch", true, true),
+            new ("Sensei", "Boot", true, true),
+            new ("Sensei", "Monja Cloth", true, true),
+            new ("Sensei", "Majin Sus", true, true),
+            new ("Sensei", "El Mauro", true),
+            new ("Sensei", "Angry Dontae", true),
+            new ("Sensei", "Blocky 16bits", true),
+            new ("Sensei", "Fascinante", true),
+            new ("Sensei", "Pingas", true, true),
+            new ("Sensei", "Suavemente", true),
+            new ("Sensei", "Suscolo", true, true),
+            new ("Muaresito", "Cell", true, true),
+            new ("Muaresito", "Ghost", true, true),
+            new ("Muaresito", "Goodbye", true),
+            new ("Muaresito", "Muaresito Joy", true),
+            new ("Muaresito", "Avatar", true, true),
+            new ("Muaresito", "Scallop Walker", true),
+            new ("Muaresito", "Unknown Race", true, true),
+            new ("Muaresito", "Kill Palex", true),
+            new ("Muaresito", "Olmaito", true),
+            new ("Muaresito", "Susking", true, true),
+            new ("Muaresito", "Tree Brows", true),
+            new ("Muaresito", "Susboy", true, true),
+            new ("Muaresito", "Xabasus", true, true),
+            new ("Muaresito", "Bee", true, true),
+            new ("Muaresito", "Bounty Hunter"),
+            new ("Muaresito", "King Skull", true),
+            new ("Muaresito", "Josefa", true),
+            new ("Muaresito", "Monjart", true),
+            new ("Muaresito", "Susnic", true, true),
+            new ("Muaresito", "Homunculus", true, true),
+            new ("Muaresito", "2nd Actor Hair", true, true),
+            new ("Muaresito", "4th Anniversary", true, true),
+            new ("Muaresito", "Exsusdia", true),
+            new ("Muaresito", "True Exsusdia", true),
+            new ("Muaresito", "Worker Hat", true),
+            new ("Muaresito", "Raul", true, true),
+            new ("Muaresito", "Chainsus Man", true, true),
+            new ("Muaresito", "4M0NJ-4S Tank", true),
+            new ("Muaresito", "Too much tasks", true, true),
+            new ("Muaresito", "Octosus", true, true),
+            new ("Muaresito", "Sustrio", true, true),
+            new ("Muaresito", "Penguin", true),
+            new ("Muaresito", "Happy 1st Birthday Monjas"),
+            new ("Muaresito", "1st Monjiversario", false, true),
+            new ("Muaresito", "Carmina Vacaloura", true, true),
+            new ("Muaresito", "Bunny Hood", true, true),
+            new ("Muaresito", "Sussykill", true, true),
+            new ("Muaresito", "Stuffwell", true, true),
+            new ("Muaresito", "Sussybara", true, true),
+            new ("Muaresito", "Sin Embargo", true, true),
+            new ("Xago", "World Destroyer", true),
+            new ("Xago", "Amazing Robot", true),
+            new ("Xago", "Fourze", true),
+            new ("Xago", "Zargothrax", true),
+            new ("Xago", "Chaos Wizard", true),
+            new ("Xago", "Robot Armor", true, true),
+            new ("Xago", "Canon Robot", true),
+            new ("Hige", "Punsus", true),
+            new ("IceCreamGuy", "Ice Cream Man"),
+            new ("IceCreamGuy", "Devious Bling", true, true),
+            new ("IceCreamGuy", "Hungry Hat", true),
+            new ("Sen", "Artist", true, false, "Artist_climb", "Artist_climb", "Artist"),
+            new ("lotty", "Bubbles", true),
+            new ("lotty", "Black Cat"),
+            new ("lotty", "White Cat"),
+            new ("lotty", "Clown", true),
+            new ("lotty", "Raccoon"),
+            new ("lotty", "Impostor Raccoon"),
+            new ("lotty", "Periodt", true),
+            new ("lotty", "GD"),
+            new ("lotty", "Card", true, true),
+            new ("lotty", "Flower Crown", true),
+            new ("lotty", "Good Noodle", true),
+            new ("lotty", "Long Wiggle", true, true),
+            new ("lotty", "Neon Devil Horns", true),
+            new ("lotty", "Purple Halo", true),
+            new ("lotty", "Sword", true),
+            new ("lotty", "uwu", true, true),
+            new ("lotty", "Shark", true, true),
+            new ("lotty", "All Ears", true, true),
+            new ("lotty", "Babies"),
+            new ("lotty", "Beans", true),
+            new ("lotty", "Cat", true, true),
+            new ("lotty", "Dress", true, true),
+            new ("lotty", "Ghost Hat", true, true),
+            new ("lotty", "Rainbow"),
+            new ("lotty", "Shark Plush"),
+            new ("lotty", "Top Hat", true, true),
+            new ("lotty", "Umbrella", true, true),
+            new ("lotty", "Axolotl", true, true),
+            new ("lotty", "(je)Sushi"),
+            new ("lotty", "Angry Chicken"),
+            new ("lotty", "Best Friend", true),
+            new ("lotty", "Bug Girl", true),
+            new ("lotty", "Cat Thief", true),
+            new ("ERIKHAPPY", "Blue Scarf", true),
+            new ("ERIKHAPPY", "Egg"),
+            new ("Jesushi", "Jester", true),
+            new ("Jesushi", "Crown", true),
+            new ("Booman", "Sniper", true),
+            new ("Booman", "Rocketman", true, true),
+            new ("Booman", "Wooden Box", true, true),
+            new ("Dontae", "Tea Cup", true, true),
+            new ("Boa", "Cat Princess", true, false, "Cat Princess_climb","Cat Princess_climb", "Cat Princess"),
+            new ("Xeno<33", "3rd Eye", true, true),
+            new ("Xeno<33", "Candles"),
+            new ("Xeno<33", "Double Visor", true, true),
+            new ("Xeno<33", "Green Hat", true),
+            new ("Xeno<33", "Idea"),
+            new ("Xeno<33", "Sheep"),
+            new ("Xeno<33", "Sus Guy", true),
+            new ("Xeno<33", "UFO", true),
+            new ("Xeno<33", "Electric Rat", true, true),
+            new ("Xeno<33", "Royal Blonde Hair", true),
+            new ("Xeno<33", "Blue Hat", true),
+            new ("Xeno<33", "Cloak", true),
+            new ("Xeno<33", "Empty Charge"),
+            new ("Xeno<33", "Charging"),
+            new ("Xeno<33", "Full Charge"),
+            new ("Xeno<33", "Funny Ghost", true),
+            new ("Xeno<33", "Mushrooms"),
+            new ("Xeno<33", "Pink Flower", true),
+            new ("Xeno<33", "Purple Animatronic", true),
+            new ("Xeno<33", "Watermelon", true, true),
+            new ("Xeno<33", "Pet Cat", true, true),
+            new ("Xeno<33", "Ganso", true, true),
+            new ("Xeno<33", "Ninja", true),
+            new ("Xeno<33", "Susnana", true),
+            new ("Xeno<33", "Ghostly", true),
+            new ("Xeno<33", "Suspucha", true),
+            new ("Xeno<33", "Kitty Hat", true),
+            new ("Nyxx", "Headphone gamer", true),
+            new ("Nyxx", "Heart Tiera", true),
+            new ("Nyxx", "Rubber Ring", true),
+            new ("Nyxx", "Shsusrek", true, true),
+            new ("Nyxx", "Strawberry", true, true),
+            new ("Nyxx", "Sustalian", true),
+            new ("Nyxx", "Love You", true, true),
+            new ("Nyxx", "Ponycorn", true, true),
+            new ("Nyxx", "Fox", true, true),
+            new ("Nyxx", "Mantis", true, true),
+            new ("Nyxx", "Magic Hat", true),
+            new ("Nyxx", "Nurse", true),
+            new ("Nyxx", "Sustich", true, true),
+            new ("Nyxx", "Dog", true, true),
+            new ("Nyxx", "Bunny", true, true),
+            new ("Nyxx", "Cactus", true, true),
+            new ("Nyxx", "Lasus", true, true),
+            new ("Nyxx", "Susken", true, true),
+            new ("Nyxx", "Cat Face", true, true),
+            new ("Nyxx", "Fluffy Scarf", true, true),
+            new ("Nyxx", "Flower Lady", true, true),
+            new ("Nyxx", "Halo", true),
+            new ("Nyxx", "On Fire", true),
+            new ("Nyxx", "Frog Hat", true),
+            new ("Nyxx", "Magician Hat", true),
+            new ("Sonrio", "Flaming", true),
+            new ("Sonrio", "Freezing", true),
+            new ("Sonrio", "Night Friday", true, true),
+            new ("Sonrio", "Puppetist", true, true),
+            new ("Sonrio", "Calling All Crewmates", true),
+            new ("Sonrio", "Fighter", true, true),
+            new ("Sonrio", "Woomy Girl", true, true),
+            new ("Sonrio", "Woomy Boy", true, true),
+            new ("Sonrio", "Tanuki", true, true),
+            new ("Ravengirl", "Flag", true, true),
+            new ("Dr Blockhead", "Got Any Grapes", true),
+            new ("Dr Blockhead", "Bucket", true),
+        }; 
 
         private static bool _customHatsLoaded = false;
         
@@ -245,57 +242,36 @@ namespace LasMonjas.Core
 
                     foreach (var data in authorDatas) {
                         HatID++;
-
-                        if (data.FloorHatName != null && data.ClimbHatName != null && data.LeftImageName != null) {
-                            if (data.NoBounce) {
-                                if (data.altShader == true) {
-                                    allHats.Add(CreateHat(GetSprite(data.HatName), data.AuthorName, GetSprite(data.ClimbHatName), GetSprite(data.FloorHatName), GetSprite(data.LeftImageName), true, true));
-                                }
-                                else {
-                                    allHats.Add(CreateHat(GetSprite(data.HatName), data.AuthorName, GetSprite(data.ClimbHatName), GetSprite(data.FloorHatName), GetSprite(data.LeftImageName), true, false));
-                                }
-                            }
-                            else {
-                                if (data.altShader == true) {
-                                    allHats.Add(CreateHat(GetSprite(data.HatName), data.AuthorName, GetSprite(data.ClimbHatName), GetSprite(data.FloorHatName), GetSprite(data.LeftImageName), false, true));
-                                }
-                                else {
-                                    allHats.Add(CreateHat(GetSprite(data.HatName), data.AuthorName, GetSprite(data.ClimbHatName), GetSprite(data.FloorHatName), GetSprite(data.LeftImageName)));
-                                }
-                            }
-
-                        }
-                        else {
-                            if (data.NoBounce) {
-                                if (data.altShader == true) {
-                                    allHats.Add(CreateHat(GetSprite(data.HatName), data.AuthorName, null, null, null, true, true));
-                                }
-                                else {
-                                    allHats.Add(CreateHat(GetSprite(data.HatName), data.AuthorName, null, null, null, true, false));
-                                }
-                            }
-                            else {
-                                if (data.altShader == true) {
-                                    allHats.Add(CreateHat(GetSprite(data.HatName), data.AuthorName, null, null, null, false, true));
-                                }
-                                else {
-                                    allHats.Add(CreateHat(GetSprite(data.HatName), data.AuthorName, null, null, null, false, false));
-                                }
-                            }
-
-                        }
+                        allHats.Add(CreateHatFromData(data));
                         IdToData.Add(HatManager.Instance.allHats.Count + HatID, data);
-
-                        _customHatsLoaded = true;
                     }
+
                     _customHatsLoaded = true;
                     __instance.allHats = allHats.ToArray();
                 }
             }
 
             public static int HatID = 0;
+
+            private static HatData CreateHatFromData(AuthorData data) {
+                Sprite main = GetSprite(data.HatName);
+                //Sprite floor = string.IsNullOrEmpty(data.FloorHatName) ? null : GetSprite(data.FloorHatName);
+                //Sprite climb = string.IsNullOrEmpty(data.ClimbHatName) ? null : GetSprite(data.ClimbHatName);
+                //Sprite left = string.IsNullOrEmpty(data.LeftImageName) ? null : GetSprite(data.LeftImageName);
+
+                return CreateHat(
+                    main,
+                    data.AuthorName,
+                    data.NoBounce,
+                    data.AltShader/*,
+                    floor,
+                    climb,
+                    left*/
+                    );
+
+            }
             
-            private static HatData CreateHat(Sprite sprite, string author, Sprite climb = null, Sprite floor = null, Sprite leftimage = null, bool bounce = false, bool altshader = false) {
+            private static HatData CreateHat(Sprite sprite, string author, bool bounce = false, bool altshader = false/*, Sprite floor = null, Sprite climb = null, Sprite left = null*/) {
                 //Borrowed from Other Roles to get hats alt shaders to work
                 if (MagicShader == null) {
                     Material hatShader = FastDestroyableSingleton<HatManager>.Instance.PlayerMaterial;
@@ -314,7 +290,7 @@ namespace LasMonjas.Core
                 newHat.NoBounce = bounce;                
                 newHat.Free = true;
                 newHat.ChipOffset = new Vector2(-0.1f, 0.2f);
-                if (altshader == true) { viewdata.MatchPlayerColor = true; }                
+                if (altshader) { viewdata.MatchPlayerColor = true; }                
                 CustomHatViewDatas.Add(newHat.name, viewdata);
                 var assetRef = new AssetReference(viewdata.Pointer);
 
@@ -384,10 +360,9 @@ namespace LasMonjas.Core
                     var package = "Innersloth";
 
                     if (data.ProductId.StartsWith("lmj_"))
-                        package = "Las Monjas";                    
-
-                    if (!packages.ContainsKey(package))
-                        packages[package] = [];
+                        package = "Las Monjas";
+                  
+                        packages.TryAdd(package, []); 
 
                     packages[package].Add(data);
                 }
@@ -445,6 +420,7 @@ namespace LasMonjas.Core
                 return false;
             }
         }
+
         [HarmonyPatch(typeof(HatParent), nameof(HatParent.UpdateMaterial))]
         public class UpdateMaterialPatch
         {

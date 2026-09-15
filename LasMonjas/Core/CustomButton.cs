@@ -45,9 +45,9 @@ namespace LasMonjas.Core {
             public static readonly Vector3 topRowCenter = new Vector3(-1f, 2f, 0f);
             public static readonly Vector3 topRowUpper = new Vector3(-2f, 2f, 0f);
 
-            //                              TopRowUpper/Defuse  TopRowCenter/Depetrified   TopRowRight/Nun
-            //              UpperFarLeft        UpperLeft          UpperCenter/Vent    UpperRight/Kill
-            //  LowerLeft   LowerCenter    LowerRight/Sabotage         Report               Use
+            //                             TopRowUpper/Defuse    TopRowCenter/Depetrified   TopRowRight/Nun
+            //              UpperFarLeft   UpperLeft             UpperCenter/Vent           UpperRight/Kill Button
+            //  LowerLeft   LowerCenter    LowerRight/Sabotage   Report Button              Use/Pet Button
         }
 
         public CustomButton(Action OnClick, Func<bool> HasButton, Func<bool> CouldUse, Action OnMeetingEnds, Sprite Sprite, Vector3 PositionOffset, HudManager hudManager, KeyCode? hotkey, bool HasEffect, float EffectDuration, Action OnEffectEnds, bool mirror = false, string buttonText = "") {
@@ -97,77 +97,65 @@ namespace LasMonjas.Core {
             }
         }
 
-        public static void HudUpdate()
-        {
+        private static void ForEachButton(Action<CustomButton> action) {
             buttons.RemoveAll(item => item.actionButton == null);
-        
-            for (int i = 0; i < buttons.Count; i++)
-            {
-                try
-                {
-                    buttons[i].Update();
+
+            foreach (var button in buttons) {
+                try {
+                    action(button);
                 }
-                catch (NullReferenceException)
-                {
-                    //System.Console.WriteLine("[WARNING] NullReferenceException from HudUpdate().HasButton(), if theres only one warning its fine");
-                }
+                catch (NullReferenceException) { }
             }
         }
 
+        public static void HudUpdate() {
+            ForEachButton(button => button.Update());
+        }        
+
         public static void MeetingEndedUpdate() {
-            buttons.RemoveAll(item => item.actionButton == null);
-            for (int i = 0; i < buttons.Count; i++)
-            {
-                try
-                {
-                    buttons[i].OnMeetingEnds();
-                    buttons[i].Update();
-                }
-                catch (NullReferenceException)
-                {
-                    //System.Console.WriteLine("[WARNING] NullReferenceException from MeetingEndedUpdate().HasButton(), if theres only one warning its fine");
-                }
-            }
+            ForEachButton(button => {
+                button.OnMeetingEnds();
+                button.Update();
+            });
         }
 
         public static void ResetAllCooldowns() {
             for (int i = 0; i < buttons.Count; i++)
             {
-                try
-                {
-                    if (PlayerInCache.LocalPlayer.PlayerControl == RoleThief.rolethief || PlayerInCache.LocalPlayer.PlayerControl == RPCProcedure.oldRoleThief)
-                    buttons[i].Timer = buttons[i].MaxTimer;
-                    buttons[i].isEffectActive = false;
-                    buttons[i].Update();
+                try {
+                    if (PlayerInCache.LocalPlayer.PlayerControl == RoleThief.rolethief || PlayerInCache.LocalPlayer.PlayerControl == RPCProcedure.oldRoleThief) {
+                        buttons[i].Timer = buttons[i].MaxTimer;
+                        buttons[i].isEffectActive = false;
+                        buttons[i].Update();
+                    }
                 }
-                catch (NullReferenceException)
-                {
-                    //System.Console.WriteLine("[WARNING] NullReferenceException from MeetingEndedUpdate().HasButton(), if theres only one warning its fine");
-                }
+                catch (NullReferenceException) { }
             }
         }
 
         public void setActive(bool isActive) {
-            if (isActive) {
-                actionButtonGameObject.SetActive(true);
-                actionButtonRenderer.enabled = true;
-            }
-            else {
-                actionButtonGameObject.SetActive(false);
-                actionButtonRenderer.enabled = false;
-            }
+            actionButtonGameObject.SetActive(isActive);
+            actionButtonRenderer.enabled = isActive;
         }
 
         public void Update()
         {
             var localPlayer = PlayerInCache.LocalPlayer.PlayerControl;
-            var moveable = localPlayer.moveable; 
+            var moveable = localPlayer.moveable;
+
+            bool isRoleSummaryButton = this == HudManagerStartPatch.roleSummaryButton;
             
-            if (localPlayer.Data == null || MeetingHud.Instance || ExileController.Instance || !HasButton()) {
+            if (!isRoleSummaryButton && (localPlayer.Data == null || MeetingHud.Instance || ExileController.Instance || !HasButton())) {
                 setActive(false);
                 return;
             }
-            setActive(hudManager.UseButton.isActiveAndEnabled || hudManager.PetButton.isActiveAndEnabled);
+
+            if (isRoleSummaryButton) {
+                setActive(true);
+            }
+            else {
+                setActive(hudManager.UseButton.isActiveAndEnabled || hudManager.PetButton.isActiveAndEnabled);
+            }
 
             actionButtonRenderer.sprite = Sprite;
             if (showButtonText && buttonText != ""){

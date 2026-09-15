@@ -5,14 +5,11 @@ using System;
 using System.Linq;
 using HarmonyLib;
 using Hazel;
-using System.Reflection;
 using System.Text;
 using AmongUs.GameOptions;
 using Reactor.Utilities.Extensions;
 using static LasMonjas.Core.CustomOption;
 using TMPro;
-using BepInEx.Unity.IL2CPP;
-using BepInEx;
 
 namespace LasMonjas.Core
 {
@@ -131,15 +128,6 @@ namespace LasMonjas.Core
                 }
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
             }
-            
-            /* old method
-            MessageWriter messageWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId, (byte)CustomRPC.ShareOptions, Hazel.SendOption.Reliable);
-            messageWriter.WritePacked((uint)CustomOption.options.Count);
-            foreach (CustomOption option in CustomOption.options) {
-                messageWriter.WritePacked((uint)option.id);
-                messageWriter.WritePacked((uint)Convert.ToUInt32(option.selection));
-            }
-            messageWriter.EndMessage();*/
         }
 
         public int getSelection() {
@@ -638,13 +626,23 @@ namespace LasMonjas.Core
     [HarmonyPatch(typeof(PlayerPhysics._CoSpawnPlayer_d__42), nameof(PlayerPhysics._CoSpawnPlayer_d__42.MoveNext))]
     public class AmongUsClientOnPlayerJoinedPatch
     {
+        public static bool introChatShown = false; 
+        
         public static void Postfix(PlayerPhysics._CoSpawnPlayer_d__42 __instance) {
             if (PlayerControl.LocalPlayer != null && AmongUsClient.Instance.AmHost) {
-                GameManager.Instance.LogicOptions.SyncOptions();
-                CustomOption.ShareOptionSelections();
+
+                // Delay sync options
+                HudManager.Instance.StartCoroutine(Effects.Lerp(2f, new Action<float>((p) => {
+                    if (p == 1) {
+                        GameManager.Instance.LogicOptions.SyncOptions();
+                        CustomOption.ShareOptionSelections();
+                    }
+                }))
+                );
             }
 
-            if (__instance.__4__this.myPlayer == PlayerInCache.LocalPlayer.PlayerControl && MapOptions.showChatIntro) {
+            if (!introChatShown && MapOptions.showChatIntro) {
+                introChatShown = true;
                 ChatController chat = HudManager.Instance.Chat;
                 chat.AddChat(PlayerInCache.LocalPlayer.PlayerControl, "Welcome to <color=#CC00FFFF>Las Monjas</color>! Thanks for playing!\n\n" +
                     "On Lobby:\n" +
@@ -653,7 +651,8 @@ namespace LasMonjas.Core
                     "On Meetings:\n" +
                     "Type <color=#00BDFFFF>/myrole</color> to get your role's summary.\n" +
                     "Type <color=#F08048FF>/mymodifier</color> to get your modifier's summary.\n\n" +
-                    "Before starting the game, please change the preset option and change it back to the desired one to avoid desyncs on players."
+                    "Also the top right role summary button is always available to check.\n\n" +
+                    "If any player experiences desyncs with mod options, try changing the preset and change it back again before starting the game."
                     );
             }
         }
@@ -697,47 +696,6 @@ namespace LasMonjas.Core
             }
             return sb.ToString();
         }
-
-
-        public static int maxPage = 8;
-        public static string buildAllOptions(string vanillaSettings = "", bool hideExtras = false) {
-            if (vanillaSettings == "")
-                vanillaSettings = GameOptionsManager.Instance.CurrentGameOptions.ToHudString(PlayerControl.AllPlayerControls.Count);
-            int counter = LasMonjasPlugin.optionsPage;
-            string hudString = counter != 0 && !hideExtras ? Helpers.cs(DateTime.Now.Second % 2 == 0 ? Color.white : Color.red, "(Use scroll wheel if necessary)\n\n") : "";
-
-            maxPage = 8;
-            switch (counter) {
-                case 0:
-                    hudString += (!hideExtras ? "" : "Page 1: Vanilla Settings \n\n") + vanillaSettings;
-                    break;
-                case 1:
-                    hudString += "Page 2: Las Monjas Settings \n" + buildOptionsOfType(CustomOption.CustomOptionType.General, false);
-                    break;
-                case 2:
-                    hudString += "Page 3: Role and Modifier Rates \n" + buildRoleOptions();
-                    break;
-                case 3:
-                    hudString += "Page 4: Impostor Role Settings \n" + buildOptionsOfType(CustomOption.CustomOptionType.Impostor, false);
-                    break;
-                case 4:
-                    hudString += "Page 5: Rebel Role Settings \n" + buildOptionsOfType(CustomOption.CustomOptionType.Rebel, false);
-                    break;
-                case 5:
-                    hudString += "Page 6: Neutral Role Settings \n" + buildOptionsOfType(CustomOption.CustomOptionType.Neutral, false);
-                    break;
-                case 6:
-                    hudString += "Page 7: Crewmate Role Settings \n" + buildOptionsOfType(CustomOption.CustomOptionType.Crewmate, false);
-                    break;
-                case 7:
-                    hudString += "Page 8: Modifier Settings \n" + buildOptionsOfType(CustomOption.CustomOptionType.Modifier, false);
-                    break;
-            }
-
-
-            if (!hideExtras || counter != 0) hudString += $"\n{Language.helpersTexts[5]} ({counter + 1}/{maxPage})";
-            return hudString;
-        }
     }
 
     [HarmonyPatch]
@@ -768,8 +726,7 @@ namespace LasMonjas.Core
         [HarmonyPrefix]
 
         public static void Prefix(StringOption __instance) {
-            //prevents indexoutofrange exception breaking the setting if long happens to be selected
-            //when host opens the laptop
+            //prevents indexoutofrange exception breaking the setting if long happens to be selected when host opens the laptop
             if (__instance.Title == StringNames.GameKillDistance && __instance.Value == 3) {
                 __instance.Value = 1;
                 GameOptionsManager.Instance.currentNormalGameOptions.KillDistance = 1;
@@ -819,123 +776,6 @@ namespace LasMonjas.Core
         public static void addKillDistance() {
             LegacyGameOptions.KillDistances = new(new float[] { 0.5f, 1f, 1.8f, 2.5f });
             LegacyGameOptions.KillDistanceStrings = new(new string[] { "Very Short", "Short", "Medium", "Long" });
-        }
-    }
-
-    [HarmonyPatch(typeof(KeyboardJoystick), nameof(KeyboardJoystick.Update))]
-    public static class GameOptionsNextPagePatch
-    {
-        public static void Postfix(KeyboardJoystick __instance) {
-            int page = LasMonjasPlugin.optionsPage;
-            if (Input.GetKeyDown(KeyCode.Tab)) {
-                LasMonjasPlugin.optionsPage = (LasMonjasPlugin.optionsPage + 1) % 8;
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1)) {
-                LasMonjasPlugin.optionsPage = 0;
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2)) {
-                LasMonjasPlugin.optionsPage = 1;
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Keypad3)) {
-                LasMonjasPlugin.optionsPage = 2;
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha4) || Input.GetKeyDown(KeyCode.Keypad4)) {
-                LasMonjasPlugin.optionsPage = 3;
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha5) || Input.GetKeyDown(KeyCode.Keypad5)) {
-                LasMonjasPlugin.optionsPage = 4;
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha6) || Input.GetKeyDown(KeyCode.Keypad6)) {
-                LasMonjasPlugin.optionsPage = 5;
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha7) || Input.GetKeyDown(KeyCode.Keypad7)) {
-                LasMonjasPlugin.optionsPage = 6;
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha8) || Input.GetKeyDown(KeyCode.Keypad8)) {
-                LasMonjasPlugin.optionsPage = 7;
-            }
-            if (LasMonjasPlugin.optionsPage >= LegacyGameOptionsPatch.maxPage) LasMonjasPlugin.optionsPage = 0;
-        }
-    }
-
-
-    //This class is taken and adapted from Town of Us Reactivated, https://github.com/eDonnes124/Town-Of-Us-R/blob/master/source/Patches/CustomOption/Patches.cs, Licensed under GPLv3
-    [HarmonyPatch(typeof(HudManager), nameof(HudManager.Update))]
-    public class HudManagerUpdate
-    {
-        private static GameObject GameSettingsObject;
-        private static TextMeshPro GameSettings;
-        public static float
-            MinX,/*-5.3F*/
-            OriginalY = 2.9F,
-            MinY = 2.9F;
-
-        public static Scroller Scroller;
-        private static Vector3 LastPosition;
-        private static float lastAspect;
-        private static bool setLastPosition = false;
-
-        public static void Prefix(HudManager __instance) {
-            if (GameSettings?.transform == null) return;
-
-            // Sets the MinX position to the left edge of the screen + 0.1 units
-            Rect safeArea = Screen.safeArea;
-            float aspect = Mathf.Min((Camera.main).aspect, safeArea.width / safeArea.height);
-            float safeOrthographicSize = CameraSafeArea.GetSafeOrthographicSize(Camera.main);
-            MinX = 0.1f - safeOrthographicSize * aspect;
-
-            if (!setLastPosition || aspect != lastAspect) {
-                LastPosition = new Vector3(MinX, MinY);
-                lastAspect = aspect;
-                setLastPosition = true;
-                if (Scroller != null) Scroller.ContentXBounds = new FloatRange(MinX, MinX);
-            }
-
-            CreateScroller(__instance);
-
-            Scroller.gameObject.SetActive(GameSettings.gameObject.activeSelf);
-
-            if (!Scroller.gameObject.active) return;
-
-            var rows = GameSettings.text.Count(c => c == '\n');
-            float LobbyTextRowHeight = 0.06F;
-            var maxY = Mathf.Max(MinY, rows * LobbyTextRowHeight + (rows - 38) * LobbyTextRowHeight);
-
-            Scroller.ContentYBounds = new FloatRange(MinY, maxY);
-
-            // Prevent scrolling when the player is interacting with a menu
-            if (PlayerInCache.LocalPlayer?.PlayerControl.CanMove != true) {
-                GameSettings.transform.localPosition = LastPosition;
-
-                return;
-            }
-
-            if (GameSettings.transform.localPosition.x != MinX ||
-                GameSettings.transform.localPosition.y < MinY) return;
-
-            LastPosition = GameSettings.transform.localPosition;
-        }
-
-        private static void CreateScroller(HudManager __instance) {
-            if (Scroller != null) return;
-
-            Transform target = GameSettings.transform;
-
-            Scroller = new GameObject("SettingsScroller").AddComponent<Scroller>();
-            Scroller.transform.SetParent(GameSettings.transform.parent);
-            Scroller.gameObject.layer = 5;
-
-            Scroller.transform.localScale = Vector3.one;
-            Scroller.allowX = false;
-            Scroller.allowY = true;
-            Scroller.active = true;
-            Scroller.velocity = new Vector2(0, 0);
-            Scroller.ScrollbarYBounds = new FloatRange(0, 0);
-            Scroller.ContentXBounds = new FloatRange(MinX, MinX);
-            Scroller.enabled = true;
-
-            Scroller.Inner = target;
-            target.SetParent(Scroller.transform);
         }
     }
 }

@@ -14,56 +14,54 @@ namespace LasMonjas.Core
 {
     class CustomVisors : VisorData
     {
-        public static Material MagicShader = new Material(Shader.Find("Unlit/PlayerShader"));
-        public struct AuthorData
-        {
-            public string AuthorName;
-            public string VisorName;
-            public bool altShader;
-        }
+        public record AuthorData(
+            string AuthorName,
+            string VisorName,
+            bool altShader = false
+        );
 
         public static List<AuthorData> authorDatas = new List<AuthorData>()
         {
-            new AuthorData {AuthorName = "Sensei", VisorName = "Alien"},
-            new AuthorData {AuthorName = "Sensei", VisorName = "Fortune Teller"},
-            new AuthorData {AuthorName = "Sensei", VisorName = "Over 9 Sus", altShader = true},
-            new AuthorData {AuthorName = "Sensei", VisorName = "PC Error"},
-            new AuthorData {AuthorName = "Sensei", VisorName = "The Eye"},
-            new AuthorData {AuthorName = "Sensei", VisorName = "Visor Cleaner"},
-            new AuthorData {AuthorName = "Muaresito", VisorName = "Muaresito Joy"},
-            new AuthorData {AuthorName = "Muaresito", VisorName = "Olmaito"},
-            new AuthorData {AuthorName = "Muaresito", VisorName = "Impostor Bros"},
-            new AuthorData {AuthorName = "Muaresito", VisorName = "Juice"},
-            new AuthorData {AuthorName = "Muaresito", VisorName = "Josefa Shoe"},
-            new AuthorData {AuthorName = "Muaresito", VisorName = "Menacing"},
-            new AuthorData {AuthorName = "Muaresito", VisorName = "Susonal"},
-            new AuthorData {AuthorName = "Muaresito", VisorName = "Loading"},
-            new AuthorData {AuthorName = "Muaresito", VisorName = "Furbysor"},
-            new AuthorData {AuthorName = "Xago", VisorName = "Zargothrax"},
-            new AuthorData {AuthorName = "IceCreamGuy", VisorName = "Mungus"},
-            new AuthorData {AuthorName = "ERIKHAPPY", VisorName = "Bubble Gum"},
-            new AuthorData {AuthorName = "lotty", VisorName = "Flower", altShader = true},
-            new AuthorData {AuthorName = "lotty", VisorName = "Disco Ball"},
-            new AuthorData {AuthorName = "lotty", VisorName = "Eye see you"},
-            new AuthorData {AuthorName = "lotty", VisorName = "Not Sus"},
-            new AuthorData {AuthorName = "lotty", VisorName = "Shopping"},
-            new AuthorData {AuthorName = "lotty", VisorName = "Inu"},
-            new AuthorData {AuthorName = "lotty", VisorName = "Butterfly"},
-            new AuthorData {AuthorName = "lotty", VisorName = "Confetti"},
-            new AuthorData {AuthorName = "lotty", VisorName = "Kek Smile"},
-            new AuthorData {AuthorName = "lotty", VisorName = "Golf Club"},
-            new AuthorData {AuthorName = "Xeno<33", VisorName = "Wand"},
-            new AuthorData {AuthorName = "Xeno<33", VisorName = "Play A Game", altShader = true},
-            new AuthorData {AuthorName = "Nyxx", VisorName = "Sunglasses"},
-            new AuthorData {AuthorName = "Nyxx", VisorName = "Ball", altShader = true},
-            new AuthorData {AuthorName = "Nyxx", VisorName = "Floating Hearts"},
-            new AuthorData {AuthorName = "Nyxx", VisorName = "Heart", altShader = true},
-            new AuthorData {AuthorName = "Nyxx", VisorName = "Selfie", altShader = true},
-            new AuthorData {AuthorName = "Nyxx", VisorName = "Ribbon"},
-            new AuthorData {AuthorName = "Sonrio", VisorName = "Thunder"},
-            new AuthorData {AuthorName = "Sonrio", VisorName = "Warning", altShader = true},
-            new AuthorData {AuthorName = "Dr Blockhead", VisorName = "Pencil", altShader = true},
-            new AuthorData {AuthorName = "Dr Blockhead", VisorName = "Bowling Ball", altShader = true},
+            new ("Sensei", "Alien"),
+            new ("Sensei", "Fortune Teller"),
+            new ("Sensei", "Over 9 Sus", true),
+            new ("Sensei", "PC Error"),
+            new ("Sensei", "The Eye"),
+            new ("Sensei", "Visor Cleaner"),
+            new ("Muaresito", "Muaresito Joy"),
+            new ("Muaresito", "Olmaito"),
+            new ("Muaresito", "Impostor Bros"),
+            new ("Muaresito", "Juice"),
+            new ("Muaresito", "Josefa Shoe"),
+            new ("Muaresito", "Menacing"),
+            new ("Muaresito", "Susonal"),
+            new ("Muaresito", "Loading"),
+            new ("Muaresito", "Furbysor"),
+            new ("Xago", "Zargothrax"),
+            new ("IceCreamGuy", "Mungus"),
+            new ("ERIKHAPPY", "Bubble Gum"),
+            new ("lotty", "Flower", true),
+            new ("lotty", "Disco Ball"),
+            new ("lotty", "Eye see you"),
+            new ("lotty", "Not Sus"),
+            new ("lotty", "Shopping"),
+            new ("lotty", "Inu"),
+            new ("lotty", "Butterfly"),
+            new ("lotty", "Confetti"),
+            new ("lotty", "Kek Smile"),
+            new ("lotty", "Golf Club"),
+            new ("Xeno<33", "Wand"),
+            new ("Xeno<33", "Play A Game", true),
+            new ("Nyxx", "Sunglasses"),
+            new ("Nyxx", "Ball", true),
+            new ("Nyxx", "Floating Hearts"),
+            new ("Nyxx", "Heart", true),
+            new ("Nyxx", "Selfie", true),
+            new ("Nyxx", "Ribbon"),
+            new ("Sonrio", "Thunder"),
+            new ("Sonrio", "Warning", true),
+            new ("Dr Blockhead", "Pencil", true),
+            new ("Dr Blockhead", "Bowling Ball", true),
         };
 
         public static bool _customVisorLoaded = false;
@@ -88,19 +86,19 @@ namespace LasMonjas.Core
                         vvd.MatchPlayerColor = true;
                     }
 
-                    var plate = new CustomVisors(vvd);
-                    plate.name = $"{data.VisorName} (by {data.AuthorName})";
-                    plate.ProductId = "lmj_" + plate.name.Replace(' ', '_');
-                    plate.BundleId = "lmj_" + plate.name.Replace(' ', '_');
-                    plate.displayOrder = 99;
-                    plate.ChipOffset = new Vector2(0f, 0.2f);
-                    plate.Free = true;
-                    visorData.Add(plate);
-                    customVisorData.Add(plate);
+                    var visor = new CustomVisors(vvd);
+                    visor.name = $"{data.VisorName} (by {data.AuthorName})";
+                    visor.ProductId = "lmj_" + visor.name.Replace(' ', '_');
+                    visor.BundleId = "lmj_" + visor.name.Replace(' ', '_');
+                    visor.displayOrder = 99;
+                    visor.ChipOffset = new Vector2(0f, 0.2f);
+                    visor.Free = true;
+                    visorData.Add(visor);
+                    customVisorData.Add(visor);
                     var assetRef = new AssetReference(vvd.Pointer);
-                    plate.ViewDataRef = assetRef;
-                    plate.CreateAddressableAsset();
-                    CustomVisorViewDatas.TryAdd(plate.ProductId, vvd);
+                    visor.ViewDataRef = assetRef;
+                    visor.CreateAddressableAsset();
+                    CustomVisorViewDatas.TryAdd(visor.ProductId, vvd);
                 }
                 AllVisors.AddRange(visorData);
                 __instance.allVisors = AllVisors.ToArray();                
@@ -186,10 +184,9 @@ namespace LasMonjas.Core
                     if (data.ProductId.StartsWith("lmj_"))
                         package = "Las Monjas";
 
-                    if (!packages.ContainsKey(package))
-                        packages[package] = [];
+                    packages.TryAdd(package, []);
 
-                    packages[package].Add(data);
+                    packages[package].Add(data); 
                 }
 
                 var yOffset = __instance.YStart;
@@ -220,12 +217,14 @@ namespace LasMonjas.Core
             visorViewData = hvd;
         }
 
-        static Dictionary<string, VisorViewData> cache = new();
+        static readonly Dictionary<string, VisorViewData> cache = new();
         static VisorViewData getbycache(string id) {
-            if (!cache.ContainsKey(id)) {
-                cache[id] = customVisorData.FirstOrDefault(x => x.ProductId == id).visorViewData;
+            if (!cache.TryGetValue(id, out var value) || value == null) {
+                value = customVisorData.FirstOrDefault(x => x.ProductId == id)?.visorViewData;
+
+                cache[id] = value;
             }
-            return cache[id];
+            return value; 
         }
 
         [HarmonyPatch(typeof(CosmeticsCache), nameof(CosmeticsCache.GetVisor))]

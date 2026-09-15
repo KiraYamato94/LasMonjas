@@ -7,10 +7,6 @@ namespace LasMonjas.Core
     public static class AssetLoader
     {
         private static readonly Assembly allulCustomBundle = Assembly.GetExecutingAssembly();
-        private static readonly Assembly allulCustomLobby = Assembly.GetExecutingAssembly();
-        private static readonly Assembly allulCustomMusic = Assembly.GetExecutingAssembly();
-        private static readonly Assembly allulCustomMap = Assembly.GetExecutingAssembly();
-        private static readonly Assembly allulCustomGamemodeMusic = Assembly.GetExecutingAssembly();
 
         private static AssetBundle AssetBundleHats;
         private static AssetBundle AssetBundleNamePlates;
@@ -187,7 +183,7 @@ namespace LasMonjas.Core
             CustomMain.customAssets.floorAllulMonja = assetBundleBundle.LoadAsset<GameObject>("MonjaFestival_AllulMonja.prefab").DontUnload();
 
             // Custom Lobby Assets
-            var resourceStreamLobby = allulCustomLobby.GetManifestResourceStream("LasMonjas.Images.AllulAssets.allulcustomlobby");
+            var resourceStreamLobby = allulCustomBundle.GetManifestResourceStream("LasMonjas.Images.AllulAssets.allulcustomlobby");
             var assetBundleLobby = AssetBundle.LoadFromMemory(resourceStreamLobby.ReadFully());
 
             CustomMain.customAssets.customLobby = assetBundleLobby.LoadAsset<GameObject>("allul_customLobby.prefab").DontDestroy();
@@ -195,7 +191,7 @@ namespace LasMonjas.Core
             CustomMain.customAssets.allulbanner = assetBundleLobby.LoadAsset<GameObject>("Allulbanner.prefab").DontDestroy();
 
             // Custom Map Assets
-            var resourceStreamMap = allulCustomMap.GetManifestResourceStream("LasMonjas.Images.AllulAssets.allulcustommap");
+            var resourceStreamMap = allulCustomBundle.GetManifestResourceStream("LasMonjas.Images.AllulAssets.allulcustommap");
             var assetBundleMap = AssetBundle.LoadFromMemory(resourceStreamMap.ReadFully());
 
             CustomMain.customAssets.customMap = assetBundleMap.LoadAsset<GameObject>("HalconUI.prefab").DontUnload();
@@ -203,7 +199,7 @@ namespace LasMonjas.Core
             CustomMain.customAssets.customComms = assetBundleMap.LoadAsset<GameObject>("new_comms.prefab").DontUnload();
 
             // Custom Music Assets
-            var resourceStream = allulCustomMusic.GetManifestResourceStream("LasMonjas.Images.AllulAssets.allulcustommusic");
+            var resourceStream = allulCustomBundle.GetManifestResourceStream("LasMonjas.Images.AllulAssets.allulcustommusic");
             var assetBundleMusic = AssetBundle.LoadFromMemory(resourceStream.ReadFully());
 
             CustomMain.customAssets.lobbyMusic = assetBundleMusic.LoadAsset<AudioClip>("Lobby_Hyperfun.mp3").DontUnload();
@@ -224,7 +220,7 @@ namespace LasMonjas.Core
             CustomMain.customAssets.performerMusic = assetBundleMusic.LoadAsset<AudioClip>("PerformerTheme_Spazzmatica Polka.mp3").DontUnload();
 
             // Custom Gamemode Music Assets
-            var resourceGamemodeMusicStream = allulCustomGamemodeMusic.GetManifestResourceStream("LasMonjas.Images.AllulAssets.allulcustomgamemodemusic");
+            var resourceGamemodeMusicStream = allulCustomBundle.GetManifestResourceStream("LasMonjas.Images.AllulAssets.allulcustomgamemodemusic");
             var assetBundleGamemodeMusic = AssetBundle.LoadFromMemory(resourceGamemodeMusicStream.ReadFully());
 
             CustomMain.customAssets.captureTheFlagMusic = assetBundleGamemodeMusic.LoadAsset<AudioClip>("CaptureTheFlagMusic_BeachfrontCelebration.mp3").DontUnload();
@@ -254,11 +250,8 @@ namespace LasMonjas.Core
             assetBundleGamemodeMusic.Unload(false);
         }
 
-        public static UnityEngine.Object LoadHatAsset(string name)
-            => AssetBundleHats.LoadAsset(name);
-        public static UnityEngine.Object LoadNamePlateAsset(string name)
-             => AssetBundleNamePlates.LoadAsset(name);
-        public static UnityEngine.Object LoadVisorsAsset(string name)
-              => AssetBundleVisors.LoadAsset(name);
+        public static UnityEngine.Object LoadHatAsset(string name) => AssetBundleHats.LoadAsset(name);
+        public static UnityEngine.Object LoadNamePlateAsset(string name) => AssetBundleNamePlates.LoadAsset(name);
+        public static UnityEngine.Object LoadVisorsAsset(string name) => AssetBundleVisors.LoadAsset(name);
     }
 }
