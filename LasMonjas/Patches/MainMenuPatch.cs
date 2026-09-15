@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using Object = UnityEngine.Object;
 using AmongUs.Data;
 using Assets.InnerNet;
+using LasMonjas.Core;
 
 namespace LasMonjas.Patches
 {
@@ -14,6 +15,8 @@ namespace LasMonjas.Patches
         private static AnnouncementPopUp popUp;
 
         private static void Postfix(MainMenuManager __instance) {
+            AmongUsClientOnPlayerJoinedPatch.introChatShown = false;
+            
             // Check the music option after loading main menu screen, so when you join the Lobby it starts playing if enabled
             MapOptions.checkMusic();
 
@@ -116,14 +119,14 @@ xiaojinna, Dawn66642, MC-AS-Huier - Partial Chinese translation.</size>";
                 creditsString += "</align>";
 
                 Assets.InnerNet.Announcement creditsAnnouncement = new() {
-                    Id = "lmjrCredits",
+                    Id = "lmjCredits",
                     Language = 0,
                     Number = 500,
                     Title = "Las Monjas\nSpecial Thanks",
                     ShortTitle = "LMJ Credits",
                     SubTitle = "",
                     PinState = false,
-                    Date = "02.14.2022",
+                    Date = new DateTime(2022, 2, 14).ToString(),
                     Text = creditsString,
                 };
                 __instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) => {

@@ -1,6 +1,5 @@
 ﻿using HarmonyLib;
 using LasMonjas.Core;
-using Steamworks;
 using System;
 using System.Collections.Generic;
 using TMPro;
@@ -21,7 +20,7 @@ namespace LasMonjas.Patches
         Null
     }
 
-    /*public static class LobbyRoleInfo
+    public static class LobbyRoleInfo
     {
         public static GameObject RolesSummaryUI { get; set; }
         public static readonly List<string> Teams = new() { "Impostors", "Rebels", "Neutrals", "Crewmates", "Modifiers", "Gamemodes" };
@@ -98,8 +97,11 @@ namespace LasMonjas.Patches
                 Transform buttonTransform = Object.Instantiate(buttonTemplate, container.transform);
                 buttonTransform.name = team + " Button";
                 buttonTransform.GetComponent<BoxCollider2D>().size = new Vector2(2.5f, 0.55f);
-                buttonTransform.GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("LasMonjas.Images.RolePlate.png", 215f);
+                buttonTransform.transform.GetChild(1).GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("LasMonjas.Images.RolePlate2.png", 100f);
                 buttons.Add(buttonTransform);
+                buttonTransform.GetComponent<AspectPosition>().Alignment = AspectPosition.EdgeAlignments.Top;
+                buttonTransform.GetComponent<AspectPosition>().enabled = false;
+                buttonTransform.transform.GetChild(2).gameObject.SetActive(false);
                 buttonTransform.localPosition = new Vector3(0, 2.2f - i * 1f, -5);
                 buttonTransform.localScale = new Vector3(2f, 1.5f, 1f);
 
@@ -108,6 +110,7 @@ namespace LasMonjas.Patches
                 label.alignment = TextAlignmentOptions.Center;
                 label.transform.localPosition = new Vector3(0, 0, label.transform.localPosition.z);
                 label.transform.localScale = new Vector3(1.6f, 2.3f, 1f);
+
 
                 PassiveButton button = buttonTransform.GetComponent<PassiveButton>();
                 button.OnClick.RemoveAllListeners();
@@ -119,12 +122,12 @@ namespace LasMonjas.Patches
 
                 button.OnMouseOver.RemoveAllListeners();
                 button.OnMouseOver.AddListener((Action)(() => {
-                    buttonTransform.GetComponent<SpriteRenderer>().color = Color.yellow;
-                }));
+                    buttonTransform.transform.GetChild(3).GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("LasMonjas.Images.RolePlate.png", 100f);
+                })); 
 
                 button.OnMouseOut.RemoveAllListeners();
                 button.OnMouseOut.AddListener((Action)(() => {
-                    buttonTransform.GetComponent<SpriteRenderer>().color = Color.white;
+                    buttonTransform.transform.GetChild(1).GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("LasMonjas.Images.RolePlate2.png", 100f);
                 }));
             }
         }
@@ -149,16 +152,20 @@ namespace LasMonjas.Patches
 
             List<Transform> buttons = new();
             int count = 0;
-            bool gameStarted = AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started;
             foreach (RoleInfo roleInfo in RoleInfo.allRoleInfos) {
                 if (roleInfo.TeamId != teamId) continue;
+
+                if (roleInfo == RoleInfo.minion || roleInfo == RoleInfo.badlover || roleInfo == RoleInfo.impostor || roleInfo == RoleInfo.crewmate) continue; // exclude these roles
 
                 Transform buttonTransform = Object.Instantiate(buttonTemplate, container.transform);
                 buttonTransform.name = Helpers.cs(roleInfo.color, roleInfo.name) + " Button";
                 buttonTransform.GetComponent<BoxCollider2D>().size = new Vector2(2.5f, 0.55f);
                 TextMeshPro label = Object.Instantiate(textTemplate, buttonTransform);
-                buttonTransform.GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("LasMonjas.Images.RolePlate2.png", 215f);
+                buttonTransform.transform.GetChild(1).GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("LasMonjas.Images.RolePlate2.png", 100f);
                 buttons.Add(buttonTransform);
+                buttonTransform.GetComponent<AspectPosition>().Alignment = AspectPosition.EdgeAlignments.Top;
+                buttonTransform.GetComponent<AspectPosition>().enabled = false;
+                buttonTransform.transform.GetChild(2).gameObject.SetActive(false);
                 int row = count / 3, col = count % 3;
                 buttonTransform.localPosition = new Vector3(-3.205f + col * 3.2f, 2.9f - row * 0.75f, -5);
                 buttonTransform.localScale = new Vector3(1.125f, 1.125f, 1f);
@@ -175,11 +182,11 @@ namespace LasMonjas.Patches
                 }));
                 button.OnMouseOut.RemoveAllListeners();
                 button.OnMouseOver.AddListener((Action)(() => {
-                    buttonTransform.GetComponent<SpriteRenderer>().color = Color.yellow;
+                    buttonTransform.transform.GetChild(3).GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("LasMonjas.Images.RolePlate.png", 100f);
                 }));
                 button.OnMouseOut.RemoveAllListeners();
                 button.OnMouseOut.AddListener((Action)(() => {
-                    buttonTransform.GetComponent<SpriteRenderer>().color = Color.white;
+                    buttonTransform.transform.GetChild(1).GetComponent<SpriteRenderer>().sprite = Helpers.loadSpriteFromResources("LasMonjas.Images.RolePlate2.png", 100f);
                 }));
                 count++;
             }
@@ -215,5 +222,5 @@ namespace LasMonjas.Patches
             infoTitleText.alignment = TextAlignmentOptions.Center;
             infoTitleText.fontStyle = FontStyles.Bold;
         }
-    }*/
+    }
 }

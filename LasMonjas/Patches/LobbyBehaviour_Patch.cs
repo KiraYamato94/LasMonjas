@@ -7,7 +7,6 @@ using System.Linq;
 using AmongUs.GameOptions;
 using static LasMonjas.LasMonjas;
 using LasMonjas.Core;
-using Rewired.Utils.Platforms.Windows;
 
 namespace LasMonjas.Patches
 {
@@ -126,9 +125,7 @@ namespace LasMonjas.Patches
                     }
 
                     // Reset rolesummary values
-                    /*if (LobbyRoleInfo.RolesSummaryUI != null) {
-                        LobbyRoleInfo.RolesSummaryUI.SetActive(false);
-                    }*/
+                    Helpers.ResetRoleSummaryUI();
 
                     // Ensure vanilla roles are disabled when playing with mod roles
                     GameOptionsManager.Instance.CurrentGameOptions.RoleOptions.SetRoleRate(RoleTypes.Scientist, 0, 0);

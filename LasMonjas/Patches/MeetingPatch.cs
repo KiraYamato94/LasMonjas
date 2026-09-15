@@ -274,8 +274,8 @@ namespace LasMonjas.Patches {
             foreach (PlayerControl player in PlayerInCache.AllPlayers) {
                 foreach (RoleInfo roleInfo in RoleInfo.allRoleInfos) {
                     // Not gambled roles
-                    if (/* Special roles*/ roleInfo.roleId == RoleId.Lover || roleInfo.roleId == RoleId.Kid || (roleInfo == RoleInfo.vigilantMira && GameOptionsManager.Instance.currentGameOptions.MapId != 1) || (roleInfo == RoleInfo.vigilant && GameOptionsManager.Instance.currentGameOptions.MapId == 1)
-                        /* Impostor roles*/ || roleInfo.roleId == RoleId.Mimic || roleInfo.roleId == RoleId.Painter || roleInfo.roleId == RoleId.Demon || roleInfo.roleId == RoleId.Janitor || roleInfo.roleId == RoleId.Illusionist || roleInfo.roleId == RoleId.Manipulator || roleInfo.roleId == RoleId.Bomberman || roleInfo.roleId == RoleId.Chameleon || roleInfo.roleId == RoleId.Gambler || roleInfo.roleId == RoleId.Sorcerer || roleInfo.roleId == RoleId.Medusa || roleInfo.roleId == RoleId.Hypnotist || roleInfo.roleId == RoleId.Archer || roleInfo.roleId == RoleId.Plumber || roleInfo.roleId == RoleId.Librarian || roleInfo.roleId == RoleId.Impostor
+                    if (/* Special roles*/ roleInfo.roleId == RoleId.Lover || roleInfo.roleId == RoleId.Kid
+                        /* Impostor roles*/ || roleInfo.TeamId == Team.Impostor
                         /* Modifiers*/ || roleInfo.roleId == RoleId.BigChungus)
                         continue;
 
@@ -524,7 +524,7 @@ namespace LasMonjas.Patches {
 
                 // Add 20 seconds for Berserker
                 if (Berserker.killedFirstTime) {
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+                    if (Helpers.isSubmergedMap()) {
                         Berserker.timeToKill += 35;
                     }
                     else {
@@ -567,6 +567,9 @@ namespace LasMonjas.Patches {
                     }
                     Hypnotist.hypnotizedPlayers.Clear();
                 }
+
+                // Reset RolesSummaryUI if is open when a meeting is called
+                Helpers.ResetRoleSummaryUI();
 
                 // Reset zoomed out ghosts
                 Helpers.toggleZoom(reset: true);

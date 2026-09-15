@@ -52,7 +52,7 @@ namespace LasMonjas.Patches
             }
 
             // Submerged check
-            if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+            if (Helpers.isSubmergedMap()) {
                 // as submerged does, only change stuff for vents 9 and 14 of submerged. Code partially provided by AlexejheroYTB
                 if (SubmergedCompatibility.getInTransition()) {
                     __result = float.MaxValue;
@@ -300,6 +300,14 @@ namespace LasMonjas.Patches
                     }
                 }
             }
+        }
+    }
+
+    [HarmonyPatch(typeof(MapBehaviour), nameof(MapBehaviour.Show))]
+    class MapBehaviourCloseRoleSummaryButton
+    {
+        static void Postfix() {
+            Helpers.ResetRoleSummaryUI();
         }
     }
 
@@ -713,6 +721,20 @@ namespace LasMonjas.Patches
         private static int page = 0;
         private static float timer = 0f;
 
+        private static void ResetNightVision(bool remove, bool enablePets = false) {
+            foreach (GameObject gameObjecttwo in nightOverlay) {
+                gameObjecttwo.GetComponent<SpriteRenderer>().sprite = null;
+            }
+            foreach (PlayerControl player in PlayerInCache.AllPlayers) {
+                player.setDefaultLook();
+                if (enablePets && player.cosmetics.currentPet) {
+                    player.cosmetics.currentPet.gameObject.SetActive(true);
+                }
+            }
+            canNightOverlay = true;
+            removeNightOverlay = remove;
+        }
+
         [HarmonyPatch(typeof(SurveillanceMinigame), nameof(SurveillanceMinigame.Begin))]
         class SurveillanceMinigameBeginPatch
         {
@@ -827,15 +849,7 @@ namespace LasMonjas.Patches
                     }
 
                     if (removeNightOverlay && !isLightsOut) {
-                        foreach (GameObject gameObjecttwo in nightOverlay) {
-                            gameObjecttwo.GetComponent<SpriteRenderer>().sprite = null;
-                        }
-                        foreach (PlayerControl player in PlayerInCache.AllPlayers) {
-                            player.setDefaultLook();
-                            if (player.cosmetics.currentPet) player.cosmetics.currentPet.gameObject.SetActive(true);
-                        }
-                        canNightOverlay = true;
-                        removeNightOverlay = false;
+                        ResetNightVision(false, true);
                     }
                 }
 
@@ -850,14 +864,7 @@ namespace LasMonjas.Patches
             public static bool Prefix(SurveillanceMinigame __instance) {
 
                 if (nightVision) {
-                    foreach (GameObject gameObjecttwo in nightOverlay) {
-                        gameObjecttwo.GetComponent<SpriteRenderer>().sprite = null;
-                    }
-                    foreach (PlayerControl player in PlayerInCache.AllPlayers) {
-                        player.setDefaultLook();
-                    }
-                    canNightOverlay = true;
-                    removeNightOverlay = true;
+                    ResetNightVision(true);
                 }
                 return true;
             }
@@ -871,14 +878,7 @@ namespace LasMonjas.Patches
             public static bool Prefix(SurveillanceMinigame __instance) {
 
                 if (nightVision) {
-                    foreach (GameObject gameObjecttwo in nightOverlay) {
-                        gameObjecttwo.GetComponent<SpriteRenderer>().sprite = null;
-                    }
-                    foreach (PlayerControl player in PlayerInCache.AllPlayers) {
-                        player.setDefaultLook();
-                    }
-                    canNightOverlay = true;
-                    removeNightOverlay = true;
+                    ResetNightVision(true);
                 }
                 return true;
             }
@@ -937,14 +937,7 @@ namespace LasMonjas.Patches
                     }
 
                     if (removeNightOverlay && !isLightsOut) {
-                        foreach (GameObject gameObjecttwo in nightOverlay) {
-                            gameObjecttwo.GetComponent<SpriteRenderer>().sprite = null;
-                        }
-                        foreach (PlayerControl player in PlayerInCache.AllPlayers) {
-                            player.setDefaultLook();
-                        }
-                        canNightOverlay = true;
-                        removeNightOverlay = false;
+                        ResetNightVision(false); 
                     }
                 }
 
@@ -959,14 +952,7 @@ namespace LasMonjas.Patches
             public static bool Prefix(PlanetSurveillanceMinigame __instance) {
 
                 if (nightVision) {
-                    foreach (GameObject gameObjecttwo in nightOverlay) {
-                        gameObjecttwo.GetComponent<SpriteRenderer>().sprite = null;
-                    }
-                    foreach (PlayerControl player in PlayerInCache.AllPlayers) {
-                        player.setDefaultLook();
-                    }
-                    canNightOverlay = true;
-                    removeNightOverlay = true;
+                    ResetNightVision(true); 
                 }
                 return true;
             }
@@ -980,14 +966,7 @@ namespace LasMonjas.Patches
             public static bool Prefix(PlanetSurveillanceMinigame __instance) {
 
                 if (nightVision) {
-                    foreach (GameObject gameObjecttwo in nightOverlay) {
-                        gameObjecttwo.GetComponent<SpriteRenderer>().sprite = null;
-                    }
-                    foreach (PlayerControl player in PlayerInCache.AllPlayers) {
-                        player.setDefaultLook();
-                    }
-                    canNightOverlay = true;
-                    removeNightOverlay = true;
+                    ResetNightVision(true); 
                 }
                 return true;
             }

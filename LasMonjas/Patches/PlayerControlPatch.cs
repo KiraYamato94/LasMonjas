@@ -9,7 +9,6 @@ using LasMonjas.Objects;
 using UnityEngine;
 using LasMonjas.Core;
 using AmongUs.GameOptions;
-using static UnityEngine.GraphicsBuffer;
 
 namespace LasMonjas.Patches {
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.FixedUpdate))]
@@ -192,7 +191,7 @@ namespace LasMonjas.Patches {
                 Manipulator.resetManipulate();
             }
             if (Manipulator.manipulatedVictim == null) {
-                PlayerControl target = null;
+                PlayerControl target;
 
                 target = setTarget(true, false); 
                 Manipulator.currentTarget = target;
@@ -219,7 +218,7 @@ namespace LasMonjas.Patches {
         }
         static void medusaSetTarget() {
             if (Medusa.medusa == null || Medusa.medusa != PlayerInCache.LocalPlayer.PlayerControl) return;
-            PlayerControl target = null;
+            PlayerControl target;
 
             target = setTarget(true, false);
             Medusa.currentTarget = target;
@@ -625,8 +624,7 @@ namespace LasMonjas.Patches {
             if (TaskMaster.taskMaster == null || TaskMaster.taskMaster != PlayerInCache.LocalPlayer.PlayerControl || TaskMaster.rewardType != 1) return;
             TaskMaster.currentTarget = setTarget();
             setPlayerOutline(TaskMaster.currentTarget, TaskMaster.color);
-        }
-        
+        }       
         static void jailerSetTarget() {
             if (Jailer.jailer == null || Jailer.jailer != PlayerInCache.LocalPlayer.PlayerControl) return;
             Jailer.currentTarget = setTarget();
@@ -739,6 +737,33 @@ namespace LasMonjas.Patches {
             }
         }
 
+        private static void gamemodeIndividualRevivingTargetStatus(List<PlayerControl> untargetablePlayers, PlayerControl player, bool isReviving) {
+            if (player == null) return;
+
+            if (isReviving) {
+                if (!untargetablePlayers.Contains(player)) {
+                    untargetablePlayers.Add(player);
+                }
+            }
+            else {
+                untargetablePlayers.Remove(player);
+            }
+        }
+        
+        private static void gamemodeTeamsRevivingTargetStatus(PlayerControl player, bool isReviving, params List<PlayerControl>[] playerLists) {
+            if (player == null) return;
+
+            foreach (var list in playerLists) {
+                if (isReviving) {
+                    if (!list.Contains(player)) {
+                        list.Add(player);
+                    }
+                }
+                else {
+                    list.Remove(player);
+                }
+            }
+        }
         static void captureTheFlagSetTarget() {
 
             if (gameType != 2)
@@ -757,186 +782,32 @@ namespace LasMonjas.Patches {
             }
 
             // Prevent killing reviving players
-            if (CaptureTheFlag.blueplayer01IsReviving) {
-                untargetableRedPlayers.Add(CaptureTheFlag.blueplayer01);
-                untargetableAllPlayers.Add(CaptureTheFlag.blueplayer01);
+            foreach (PlayerControl player in CaptureTheFlag.redteamFlag) {
+                gamemodeTeamsRevivingTargetStatus(player, CaptureTheFlag.revivingPlayers.Contains(player), untargetableBluePlayers, untargetableAllPlayers);
             }
-            else {
-                untargetableRedPlayers.Remove(CaptureTheFlag.blueplayer01);
-                untargetableAllPlayers.Remove(CaptureTheFlag.blueplayer01);
+            foreach (PlayerControl player in CaptureTheFlag.blueteamFlag) {
+                gamemodeTeamsRevivingTargetStatus(player, CaptureTheFlag.revivingPlayers.Contains(player), untargetableRedPlayers, untargetableAllPlayers);
             }
-            if (CaptureTheFlag.blueplayer02IsReviving) {
-                untargetableRedPlayers.Add(CaptureTheFlag.blueplayer02);
-                untargetableAllPlayers.Add(CaptureTheFlag.blueplayer02);
-            }
-            else {
-                untargetableRedPlayers.Remove(CaptureTheFlag.blueplayer02);
-                untargetableAllPlayers.Remove(CaptureTheFlag.blueplayer02);
-            }
-            if (CaptureTheFlag.blueplayer03IsReviving) {
-                untargetableRedPlayers.Add(CaptureTheFlag.blueplayer03);
-                untargetableAllPlayers.Add(CaptureTheFlag.blueplayer03);
-            }
-            else {
-                untargetableRedPlayers.Remove(CaptureTheFlag.blueplayer03);
-                untargetableAllPlayers.Remove(CaptureTheFlag.blueplayer03);
-            }
-            if (CaptureTheFlag.blueplayer04IsReviving) {
-                untargetableRedPlayers.Add(CaptureTheFlag.blueplayer04);
-                untargetableAllPlayers.Add(CaptureTheFlag.blueplayer04);
-            }
-            else {
-                untargetableRedPlayers.Remove(CaptureTheFlag.blueplayer04);
-                untargetableAllPlayers.Remove(CaptureTheFlag.blueplayer04);
-            }
-            if (CaptureTheFlag.blueplayer05IsReviving) {
-                untargetableRedPlayers.Add(CaptureTheFlag.blueplayer05);
-                untargetableAllPlayers.Add(CaptureTheFlag.blueplayer05);
-            }
-            else {
-                untargetableRedPlayers.Remove(CaptureTheFlag.blueplayer05);
-                untargetableAllPlayers.Remove(CaptureTheFlag.blueplayer05);
-            }
-            if (CaptureTheFlag.blueplayer06IsReviving) {
-                untargetableRedPlayers.Add(CaptureTheFlag.blueplayer06);
-                untargetableAllPlayers.Add(CaptureTheFlag.blueplayer06);
-            }
-            else {
-                untargetableRedPlayers.Remove(CaptureTheFlag.blueplayer06);
-                untargetableAllPlayers.Remove(CaptureTheFlag.blueplayer06);
-            }
-            if (CaptureTheFlag.blueplayer07IsReviving) {
-                untargetableRedPlayers.Add(CaptureTheFlag.blueplayer07);
-                untargetableAllPlayers.Add(CaptureTheFlag.blueplayer07);
-            }
-            else {
-                untargetableRedPlayers.Remove(CaptureTheFlag.blueplayer07);
-                untargetableAllPlayers.Remove(CaptureTheFlag.blueplayer07);
-            }
-            if (CaptureTheFlag.stealerPlayerIsReviving) {
-                untargetableRedPlayers.Add(CaptureTheFlag.stealerPlayer);
-                untargetableBluePlayers.Add(CaptureTheFlag.stealerPlayer);
-            }
-            else {
-                untargetableRedPlayers.Remove(CaptureTheFlag.stealerPlayer);
-                untargetableBluePlayers.Remove(CaptureTheFlag.stealerPlayer);
+            gamemodeTeamsRevivingTargetStatus(CaptureTheFlag.stealerPlayer, CaptureTheFlag.revivingPlayers.Contains(CaptureTheFlag.stealerPlayer), untargetableRedPlayers, untargetableBluePlayers);
+
+            for (int i = 0; i < CaptureTheFlag.redteamFlag.Count; i++) {
+                if (CaptureTheFlag.redteamFlag[i] != null && CaptureTheFlag.redteamFlag[i] != PlayerInCache.LocalPlayer.PlayerControl) continue; // skip if not the local player
+
+                CaptureTheFlag.redTeamCurrentargets[i] = setTarget(untargetablePlayers: untargetableRedPlayers);
+                setPlayerOutline(CaptureTheFlag.redTeamCurrentargets[i], Palette.ImpostorRed);
+
+                break;
             }
 
-            if (CaptureTheFlag.redplayer01 != null && CaptureTheFlag.redplayer01 == PlayerInCache.LocalPlayer.PlayerControl) {
-                CaptureTheFlag.redplayer01currentTarget = setTarget(untargetablePlayers: untargetableRedPlayers);
-                setPlayerOutline(CaptureTheFlag.redplayer01currentTarget, Palette.ImpostorRed);
-            }
-            if (CaptureTheFlag.redplayer02 != null && CaptureTheFlag.redplayer02 == PlayerInCache.LocalPlayer.PlayerControl) {
-                CaptureTheFlag.redplayer02currentTarget = setTarget(untargetablePlayers: untargetableRedPlayers);
-                setPlayerOutline(CaptureTheFlag.redplayer02currentTarget, Palette.ImpostorRed);
-            }
-            if (CaptureTheFlag.redplayer03 != null && CaptureTheFlag.redplayer03 == PlayerInCache.LocalPlayer.PlayerControl) {
-                CaptureTheFlag.redplayer03currentTarget = setTarget(untargetablePlayers: untargetableRedPlayers);
-                setPlayerOutline(CaptureTheFlag.redplayer03currentTarget, Palette.ImpostorRed);
-            }
-            if (CaptureTheFlag.redplayer04 != null && CaptureTheFlag.redplayer04 == PlayerInCache.LocalPlayer.PlayerControl) {
-                CaptureTheFlag.redplayer04currentTarget = setTarget(untargetablePlayers: untargetableRedPlayers);
-                setPlayerOutline(CaptureTheFlag.redplayer04currentTarget, Palette.ImpostorRed);
-            }
-            if (CaptureTheFlag.redplayer05 != null && CaptureTheFlag.redplayer05 == PlayerInCache.LocalPlayer.PlayerControl) {
-                CaptureTheFlag.redplayer05currentTarget = setTarget(untargetablePlayers: untargetableRedPlayers);
-                setPlayerOutline(CaptureTheFlag.redplayer05currentTarget, Palette.ImpostorRed);
-            }
-            if (CaptureTheFlag.redplayer06 != null && CaptureTheFlag.redplayer06 == PlayerInCache.LocalPlayer.PlayerControl) {
-                CaptureTheFlag.redplayer06currentTarget = setTarget(untargetablePlayers: untargetableRedPlayers);
-                setPlayerOutline(CaptureTheFlag.redplayer06currentTarget, Palette.ImpostorRed);
-            }
-            if (CaptureTheFlag.redplayer07 != null && CaptureTheFlag.redplayer07 == PlayerInCache.LocalPlayer.PlayerControl) {
-                CaptureTheFlag.redplayer07currentTarget = setTarget(untargetablePlayers: untargetableRedPlayers);
-                setPlayerOutline(CaptureTheFlag.redplayer07currentTarget, Palette.ImpostorRed);
+            for (int i = 0; i < CaptureTheFlag.blueteamFlag.Count; i++) {
+                if (CaptureTheFlag.blueteamFlag[i] != null && CaptureTheFlag.blueteamFlag[i] != PlayerInCache.LocalPlayer.PlayerControl) continue; // skip if not the local player
+
+                CaptureTheFlag.blueTeamCurrentargets[i] = setTarget(untargetablePlayers: untargetableBluePlayers);
+                setPlayerOutline(CaptureTheFlag.blueTeamCurrentargets[i], Color.blue);
+
+                break;
             }
 
-            // Prevent killing reviving players
-            if (CaptureTheFlag.redplayer01IsReviving) {
-                untargetableBluePlayers.Add(CaptureTheFlag.redplayer01);
-                untargetableAllPlayers.Add(CaptureTheFlag.redplayer01);
-            }
-            else {
-                untargetableBluePlayers.Remove(CaptureTheFlag.redplayer01);
-                untargetableAllPlayers.Remove(CaptureTheFlag.redplayer01);
-            }
-            if (CaptureTheFlag.redplayer02IsReviving) {
-                untargetableBluePlayers.Add(CaptureTheFlag.redplayer02);
-                untargetableAllPlayers.Add(CaptureTheFlag.redplayer02);
-            }
-            else {
-                untargetableBluePlayers.Remove(CaptureTheFlag.redplayer02);
-                untargetableAllPlayers.Remove(CaptureTheFlag.redplayer02);
-            }
-            if (CaptureTheFlag.redplayer03IsReviving) {
-                untargetableBluePlayers.Add(CaptureTheFlag.redplayer03);
-                untargetableAllPlayers.Add(CaptureTheFlag.redplayer03);
-            }
-            else {
-                untargetableBluePlayers.Remove(CaptureTheFlag.redplayer03);
-                untargetableAllPlayers.Remove(CaptureTheFlag.redplayer03);
-            }
-            if (CaptureTheFlag.redplayer04IsReviving) {
-                untargetableBluePlayers.Add(CaptureTheFlag.redplayer04);
-                untargetableAllPlayers.Add(CaptureTheFlag.redplayer04);
-            }
-            else {
-                untargetableBluePlayers.Remove(CaptureTheFlag.redplayer04);
-                untargetableAllPlayers.Remove(CaptureTheFlag.redplayer04);
-            }
-            if (CaptureTheFlag.redplayer05IsReviving) {
-                untargetableBluePlayers.Add(CaptureTheFlag.redplayer05);
-                untargetableAllPlayers.Add(CaptureTheFlag.redplayer05);
-            }
-            else {
-                untargetableBluePlayers.Remove(CaptureTheFlag.redplayer05);
-                untargetableAllPlayers.Remove(CaptureTheFlag.redplayer05);
-            }
-            if (CaptureTheFlag.redplayer06IsReviving) {
-                untargetableBluePlayers.Add(CaptureTheFlag.redplayer06);
-                untargetableAllPlayers.Add(CaptureTheFlag.redplayer06);
-            }
-            else {
-                untargetableBluePlayers.Remove(CaptureTheFlag.redplayer06);
-                untargetableAllPlayers.Remove(CaptureTheFlag.redplayer06);
-            }
-            if (CaptureTheFlag.redplayer07IsReviving) {
-                untargetableBluePlayers.Add(CaptureTheFlag.redplayer07);
-                untargetableAllPlayers.Add(CaptureTheFlag.redplayer07);
-            }
-            else {
-                untargetableBluePlayers.Remove(CaptureTheFlag.redplayer07);
-                untargetableAllPlayers.Remove(CaptureTheFlag.redplayer07);
-            }
-
-            if (CaptureTheFlag.blueplayer01 != null && CaptureTheFlag.blueplayer01 == PlayerInCache.LocalPlayer.PlayerControl) {
-                CaptureTheFlag.blueplayer01currentTarget = setTarget(untargetablePlayers: untargetableBluePlayers);
-                setPlayerOutline(CaptureTheFlag.blueplayer01currentTarget, Color.blue);
-            }
-            if (CaptureTheFlag.blueplayer02 != null && CaptureTheFlag.blueplayer02 == PlayerInCache.LocalPlayer.PlayerControl) {
-                CaptureTheFlag.blueplayer02currentTarget = setTarget(untargetablePlayers: untargetableBluePlayers);
-                setPlayerOutline(CaptureTheFlag.blueplayer02currentTarget, Color.blue);
-            }
-            if (CaptureTheFlag.blueplayer03 != null && CaptureTheFlag.blueplayer03 == PlayerInCache.LocalPlayer.PlayerControl) {
-                CaptureTheFlag.blueplayer03currentTarget = setTarget(untargetablePlayers: untargetableBluePlayers);
-                setPlayerOutline(CaptureTheFlag.blueplayer03currentTarget, Color.blue);
-            }
-            if (CaptureTheFlag.blueplayer04 != null && CaptureTheFlag.blueplayer04 == PlayerInCache.LocalPlayer.PlayerControl) {
-                CaptureTheFlag.blueplayer04currentTarget = setTarget(untargetablePlayers: untargetableBluePlayers);
-                setPlayerOutline(CaptureTheFlag.blueplayer04currentTarget, Color.blue);
-            }
-            if (CaptureTheFlag.blueplayer05 != null && CaptureTheFlag.blueplayer05 == PlayerInCache.LocalPlayer.PlayerControl) {
-                CaptureTheFlag.blueplayer05currentTarget = setTarget(untargetablePlayers: untargetableBluePlayers);
-                setPlayerOutline(CaptureTheFlag.blueplayer05currentTarget, Color.blue);
-            }
-            if (CaptureTheFlag.blueplayer06 != null && CaptureTheFlag.blueplayer06 == PlayerInCache.LocalPlayer.PlayerControl) {
-                CaptureTheFlag.blueplayer06currentTarget = setTarget(untargetablePlayers: untargetableBluePlayers);
-                setPlayerOutline(CaptureTheFlag.blueplayer06currentTarget, Color.blue);
-            }
-            if (CaptureTheFlag.blueplayer07 != null && CaptureTheFlag.blueplayer07 == PlayerInCache.LocalPlayer.PlayerControl) {
-                CaptureTheFlag.blueplayer07currentTarget = setTarget(untargetablePlayers: untargetableBluePlayers);
-                setPlayerOutline(CaptureTheFlag.blueplayer07currentTarget, Color.blue);
-            }
             if (CaptureTheFlag.stealerPlayer != null && CaptureTheFlag.stealerPlayer == PlayerInCache.LocalPlayer.PlayerControl) {
                 CaptureTheFlag.stealerPlayercurrentTarget = setTarget(untargetablePlayers: untargetableAllPlayers);
                 setPlayerOutline(CaptureTheFlag.stealerPlayercurrentTarget, Color.grey);
@@ -954,84 +825,17 @@ namespace LasMonjas.Patches {
             }
 
             // Prevent killing reviving players
-            if (PoliceAndThief.thiefplayer01IsReviving) {
-                untargetablePolice.Add(PoliceAndThief.thiefplayer01);
-            }
-            else {
-                untargetablePolice.Remove(PoliceAndThief.thiefplayer01);
-            }
-            if (PoliceAndThief.thiefplayer02IsReviving) {
-                untargetablePolice.Add(PoliceAndThief.thiefplayer02);
-            }
-            else {
-                untargetablePolice.Remove(PoliceAndThief.thiefplayer02);
-            }
-            if (PoliceAndThief.thiefplayer03IsReviving) {
-                untargetablePolice.Add(PoliceAndThief.thiefplayer03);
-            }
-            else {
-                untargetablePolice.Remove(PoliceAndThief.thiefplayer03);
-            }
-            if (PoliceAndThief.thiefplayer04IsReviving) {
-                untargetablePolice.Add(PoliceAndThief.thiefplayer04);
-            }
-            else {
-                untargetablePolice.Remove(PoliceAndThief.thiefplayer04);
-            }
-            if (PoliceAndThief.thiefplayer05IsReviving) {
-                untargetablePolice.Add(PoliceAndThief.thiefplayer05);
-            }
-            else {
-                untargetablePolice.Remove(PoliceAndThief.thiefplayer05);
-            }
-            if (PoliceAndThief.thiefplayer06IsReviving) {
-                untargetablePolice.Add(PoliceAndThief.thiefplayer06);
-            }
-            else {
-                untargetablePolice.Remove(PoliceAndThief.thiefplayer06);
-            }
-            if (PoliceAndThief.thiefplayer07IsReviving) {
-                untargetablePolice.Add(PoliceAndThief.thiefplayer07);
-            }
-            else {
-                untargetablePolice.Remove(PoliceAndThief.thiefplayer07);
-            }
-            if (PoliceAndThief.thiefplayer08IsReviving) {
-                untargetablePolice.Add(PoliceAndThief.thiefplayer08);
-            }
-            else {
-                untargetablePolice.Remove(PoliceAndThief.thiefplayer08);
-            }
-            if (PoliceAndThief.thiefplayer09IsReviving) {
-                untargetablePolice.Add(PoliceAndThief.thiefplayer09);
-            }
-            else {
-                untargetablePolice.Remove(PoliceAndThief.thiefplayer09);
+            foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
+                gamemodeIndividualRevivingTargetStatus(untargetablePolice, player, PoliceAndThief.revivingPlayers.Contains(player));
             }
 
-            if (PoliceAndThief.policeplayer01 != null && PoliceAndThief.policeplayer01 == PlayerInCache.LocalPlayer.PlayerControl) {
-                PoliceAndThief.policeplayer01currentTarget = setTarget(untargetablePlayers: untargetablePolice);
-                setPlayerOutline(PoliceAndThief.policeplayer01currentTarget, Cheater.color);
-            }
-            if (PoliceAndThief.policeplayer02 != null && PoliceAndThief.policeplayer02 == PlayerInCache.LocalPlayer.PlayerControl) {
-                PoliceAndThief.policeplayer02currentTarget = setTarget(untargetablePlayers: untargetablePolice);
-                setPlayerOutline(PoliceAndThief.policeplayer02currentTarget, Cheater.color);
-            }
-            if (PoliceAndThief.policeplayer03 != null && PoliceAndThief.policeplayer03 == PlayerInCache.LocalPlayer.PlayerControl) {
-                PoliceAndThief.policeplayer03currentTarget = setTarget(untargetablePlayers: untargetablePolice);
-                setPlayerOutline(PoliceAndThief.policeplayer03currentTarget, Cheater.color);
-            }
-            if (PoliceAndThief.policeplayer04 != null && PoliceAndThief.policeplayer04 == PlayerInCache.LocalPlayer.PlayerControl) {
-                PoliceAndThief.policeplayer04currentTarget = setTarget(untargetablePlayers: untargetablePolice);
-                setPlayerOutline(PoliceAndThief.policeplayer04currentTarget, Cheater.color);
-            }
-            if (PoliceAndThief.policeplayer05 != null && PoliceAndThief.policeplayer05 == PlayerInCache.LocalPlayer.PlayerControl) {
-                PoliceAndThief.policeplayer05currentTarget = setTarget(untargetablePlayers: untargetablePolice);
-                setPlayerOutline(PoliceAndThief.policeplayer05currentTarget, Cheater.color);
-            }
-            if (PoliceAndThief.policeplayer06 != null && PoliceAndThief.policeplayer06 == PlayerInCache.LocalPlayer.PlayerControl) {
-                PoliceAndThief.policeplayer06currentTarget = setTarget(untargetablePlayers: untargetablePolice);
-                setPlayerOutline(PoliceAndThief.policeplayer06currentTarget, Cheater.color);
+            for (int i = 0; i < PoliceAndThief.policeTeam.Count; i++) {
+                if (PoliceAndThief.policeTeam[i] != null && PoliceAndThief.policeTeam[i] != PlayerInCache.LocalPlayer.PlayerControl) continue; // skip if not the local player
+
+                PoliceAndThief.policeTeamCurrentargets[i] = setTarget(untargetablePlayers: untargetablePolice);
+                setPlayerOutline(PoliceAndThief.policeTeamCurrentargets[i], Cheater.color);
+
+                break;
             }
 
             var untargetableThiefs = new List<PlayerControl>();
@@ -1039,79 +843,17 @@ namespace LasMonjas.Patches {
                 untargetableThiefs.Add(player);
             }
 
-            // Prevent killing reviving players
-            if (PoliceAndThief.policeplayer01IsReviving) {
-                untargetableThiefs.Add(PoliceAndThief.policeplayer01);
-            }
-            else {
-                untargetableThiefs.Remove(PoliceAndThief.policeplayer01);
-            }
-            if (PoliceAndThief.policeplayer02IsReviving) {
-                untargetableThiefs.Add(PoliceAndThief.policeplayer02);
-            }
-            else {
-                untargetableThiefs.Remove(PoliceAndThief.policeplayer02);
-            }
-            if (PoliceAndThief.policeplayer03IsReviving) {
-                untargetableThiefs.Add(PoliceAndThief.policeplayer03);
-            }
-            else {
-                untargetableThiefs.Remove(PoliceAndThief.policeplayer03);
-            }
-            if (PoliceAndThief.policeplayer04IsReviving) {
-                untargetableThiefs.Add(PoliceAndThief.policeplayer04);
-            }
-            else {
-                untargetableThiefs.Remove(PoliceAndThief.policeplayer04);
-            }
-            if (PoliceAndThief.policeplayer05IsReviving) {
-                untargetableThiefs.Add(PoliceAndThief.policeplayer05);
-            }
-            else {
-                untargetableThiefs.Remove(PoliceAndThief.policeplayer05);
-            }
-            if (PoliceAndThief.policeplayer06IsReviving) {
-                untargetableThiefs.Add(PoliceAndThief.policeplayer06);
-            }
-            else {
-                untargetableThiefs.Remove(PoliceAndThief.policeplayer06);
+            foreach (PlayerControl player in PoliceAndThief.policeTeam) {
+                gamemodeIndividualRevivingTargetStatus(untargetableThiefs, player, PoliceAndThief.revivingPlayers.Contains(player));
             }
 
-            if (PoliceAndThief.thiefplayer01 != null && PoliceAndThief.thiefplayer01 == PlayerInCache.LocalPlayer.PlayerControl) {
-                PoliceAndThief.thiefplayer01currentTarget = setTarget(untargetablePlayers: untargetableThiefs);
-                setPlayerOutline(PoliceAndThief.thiefplayer01currentTarget, Mechanic.color);
-            }
-            if (PoliceAndThief.thiefplayer02 != null && PoliceAndThief.thiefplayer02 == PlayerInCache.LocalPlayer.PlayerControl) {
-                PoliceAndThief.thiefplayer02currentTarget = setTarget(untargetablePlayers: untargetableThiefs);
-                setPlayerOutline(PoliceAndThief.thiefplayer02currentTarget, Mechanic.color);
-            }
-            if (PoliceAndThief.thiefplayer03 != null && PoliceAndThief.thiefplayer03 == PlayerInCache.LocalPlayer.PlayerControl) {
-                PoliceAndThief.thiefplayer03currentTarget = setTarget(untargetablePlayers: untargetableThiefs);
-                setPlayerOutline(PoliceAndThief.thiefplayer03currentTarget, Mechanic.color);
-            }
-            if (PoliceAndThief.thiefplayer04 != null && PoliceAndThief.thiefplayer04 == PlayerInCache.LocalPlayer.PlayerControl) {
-                PoliceAndThief.thiefplayer04currentTarget = setTarget(untargetablePlayers: untargetableThiefs);
-                setPlayerOutline(PoliceAndThief.thiefplayer04currentTarget, Mechanic.color);
-            }
-            if (PoliceAndThief.thiefplayer05 != null && PoliceAndThief.thiefplayer05 == PlayerInCache.LocalPlayer.PlayerControl) {
-                PoliceAndThief.thiefplayer05currentTarget = setTarget(untargetablePlayers: untargetableThiefs);
-                setPlayerOutline(PoliceAndThief.thiefplayer05currentTarget, Mechanic.color);
-            }
-            if (PoliceAndThief.thiefplayer06 != null && PoliceAndThief.thiefplayer06 == PlayerInCache.LocalPlayer.PlayerControl) {
-                PoliceAndThief.thiefplayer06currentTarget = setTarget(untargetablePlayers: untargetableThiefs);
-                setPlayerOutline(PoliceAndThief.thiefplayer06currentTarget, Mechanic.color);
-            }
-            if (PoliceAndThief.thiefplayer07 != null && PoliceAndThief.thiefplayer07 == PlayerInCache.LocalPlayer.PlayerControl) {
-                PoliceAndThief.thiefplayer07currentTarget = setTarget(untargetablePlayers: untargetableThiefs);
-                setPlayerOutline(PoliceAndThief.thiefplayer07currentTarget, Mechanic.color);
-            }
-            if (PoliceAndThief.thiefplayer08 != null && PoliceAndThief.thiefplayer08 == PlayerInCache.LocalPlayer.PlayerControl) {
-                PoliceAndThief.thiefplayer08currentTarget = setTarget(untargetablePlayers: untargetableThiefs);
-                setPlayerOutline(PoliceAndThief.thiefplayer08currentTarget, Mechanic.color);
-            }
-            if (PoliceAndThief.thiefplayer09 != null && PoliceAndThief.thiefplayer09 == PlayerInCache.LocalPlayer.PlayerControl) {
-                PoliceAndThief.thiefplayer09currentTarget = setTarget(untargetablePlayers: untargetableThiefs);
-                setPlayerOutline(PoliceAndThief.thiefplayer09currentTarget, Mechanic.color);
+            for (int i = 0; i < PoliceAndThief.thiefTeam.Count; i++) {
+                if (PoliceAndThief.thiefTeam[i] != null && PoliceAndThief.thiefTeam[i] != PlayerInCache.LocalPlayer.PlayerControl) continue; // skip if not the local player
+
+                PoliceAndThief.thiefTeamCurrentargets[i] = setTarget(untargetablePlayers: untargetableThiefs);
+                setPlayerOutline(PoliceAndThief.thiefTeamCurrentargets[i], Mechanic.color);
+
+                break;
             }
         }
 
@@ -1133,185 +875,30 @@ namespace LasMonjas.Patches {
             }
 
             // Prevent killing reviving players
-            if (KingOfTheHill.yellowplayer01IsReviving) {
-                untargetableGreenPlayers.Add(KingOfTheHill.yellowplayer01);
-                untargetableAllPlayers.Add(KingOfTheHill.yellowplayer01);
+            foreach (PlayerControl player in KingOfTheHill.greenTeam) {
+                gamemodeTeamsRevivingTargetStatus(player, KingOfTheHill.revivingPlayers.Contains(player), untargetableYellowPlayers, untargetableAllPlayers);
             }
-            else {
-                untargetableGreenPlayers.Remove(KingOfTheHill.yellowplayer01);
-                untargetableAllPlayers.Remove(KingOfTheHill.yellowplayer01);
+            foreach (PlayerControl player in KingOfTheHill.yellowTeam) {
+                gamemodeTeamsRevivingTargetStatus(player, KingOfTheHill.revivingPlayers.Contains(player), untargetableGreenPlayers, untargetableAllPlayers);
             }
-            if (KingOfTheHill.yellowplayer02IsReviving) {
-                untargetableGreenPlayers.Add(KingOfTheHill.yellowplayer02);
-                untargetableAllPlayers.Add(KingOfTheHill.yellowplayer02);
-            }
-            else {
-                untargetableGreenPlayers.Remove(KingOfTheHill.yellowplayer02);
-                untargetableAllPlayers.Remove(KingOfTheHill.yellowplayer02);
-            }
-            if (KingOfTheHill.yellowplayer03IsReviving) {
-                untargetableGreenPlayers.Add(KingOfTheHill.yellowplayer03);
-                untargetableAllPlayers.Add(KingOfTheHill.yellowplayer03);
-            }
-            else {
-                untargetableGreenPlayers.Remove(KingOfTheHill.yellowplayer03);
-                untargetableAllPlayers.Remove(KingOfTheHill.yellowplayer03);
-            }
-            if (KingOfTheHill.yellowplayer04IsReviving) {
-                untargetableGreenPlayers.Add(KingOfTheHill.yellowplayer04);
-                untargetableAllPlayers.Add(KingOfTheHill.yellowplayer04);
-            }
-            else {
-                untargetableGreenPlayers.Remove(KingOfTheHill.yellowplayer04);
-                untargetableAllPlayers.Remove(KingOfTheHill.yellowplayer04);
-            }
-            if (KingOfTheHill.yellowplayer05IsReviving) {
-                untargetableGreenPlayers.Add(KingOfTheHill.yellowplayer05);
-                untargetableAllPlayers.Add(KingOfTheHill.yellowplayer05);
-            }
-            else {
-                untargetableGreenPlayers.Remove(KingOfTheHill.yellowplayer05);
-                untargetableAllPlayers.Remove(KingOfTheHill.yellowplayer05);
-            }
-            if (KingOfTheHill.yellowplayer06IsReviving) {
-                untargetableGreenPlayers.Add(KingOfTheHill.yellowplayer06);
-                untargetableAllPlayers.Add(KingOfTheHill.yellowplayer06);
-            }
-            else {
-                untargetableGreenPlayers.Remove(KingOfTheHill.yellowplayer06);
-                untargetableAllPlayers.Remove(KingOfTheHill.yellowplayer06);
-            }
-            if (KingOfTheHill.yellowKingIsReviving) {
-                untargetableGreenPlayers.Add(KingOfTheHill.yellowKingplayer);
-                untargetableAllPlayers.Add(KingOfTheHill.yellowKingplayer);
-            }
-            else {
-                untargetableGreenPlayers.Remove(KingOfTheHill.yellowKingplayer);
-                untargetableAllPlayers.Remove(KingOfTheHill.yellowKingplayer);
-            }
-            if (KingOfTheHill.usurperPlayerIsReviving) {
-                untargetableGreenPlayers.Add(KingOfTheHill.usurperPlayer);
-                untargetableYellowPlayers.Add(KingOfTheHill.usurperPlayer);
-            }
-            else {
-                untargetableGreenPlayers.Remove(KingOfTheHill.usurperPlayer);
-                untargetableYellowPlayers.Remove(KingOfTheHill.usurperPlayer);
+            gamemodeTeamsRevivingTargetStatus(KingOfTheHill.usurperPlayer, KingOfTheHill.revivingPlayers.Contains(KingOfTheHill.usurperPlayer), untargetableGreenPlayers, untargetableYellowPlayers);
+
+            for (int i = 0; i < KingOfTheHill.greenTeam.Count; i++) {
+                if (KingOfTheHill.greenTeam[i] != null && KingOfTheHill.greenTeam[i] != PlayerInCache.LocalPlayer.PlayerControl) continue; // skip if not the local player
+
+                KingOfTheHill.greenTeamCurrentargets[i] = setTarget(untargetablePlayers: untargetableGreenPlayers);
+                setPlayerOutline(KingOfTheHill.greenTeamCurrentargets[i], Color.green);
+
+                break;
             }
 
-            if (KingOfTheHill.greenKingplayer != null && KingOfTheHill.greenKingplayer == PlayerInCache.LocalPlayer.PlayerControl) {
-                KingOfTheHill.greenKingplayercurrentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
-                setPlayerOutline(KingOfTheHill.greenKingplayercurrentTarget, Color.green);
-            }
-            if (KingOfTheHill.greenplayer01 != null && KingOfTheHill.greenplayer01 == PlayerInCache.LocalPlayer.PlayerControl) {
-                KingOfTheHill.greenplayer01currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
-                setPlayerOutline(KingOfTheHill.greenplayer01currentTarget, Color.green);
-            }
-            if (KingOfTheHill.greenplayer02 != null && KingOfTheHill.greenplayer02 == PlayerInCache.LocalPlayer.PlayerControl) {
-                KingOfTheHill.greenplayer02currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
-                setPlayerOutline(KingOfTheHill.greenplayer02currentTarget, Color.green);
-            }
-            if (KingOfTheHill.greenplayer03 != null && KingOfTheHill.greenplayer03 == PlayerInCache.LocalPlayer.PlayerControl) {
-                KingOfTheHill.greenplayer03currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
-                setPlayerOutline(KingOfTheHill.greenplayer03currentTarget, Color.green);
-            }
-            if (KingOfTheHill.greenplayer04 != null && KingOfTheHill.greenplayer04 == PlayerInCache.LocalPlayer.PlayerControl) {
-                KingOfTheHill.greenplayer04currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
-                setPlayerOutline(KingOfTheHill.greenplayer04currentTarget, Color.green);
-            }
-            if (KingOfTheHill.greenplayer05 != null && KingOfTheHill.greenplayer05 == PlayerInCache.LocalPlayer.PlayerControl) {
-                KingOfTheHill.greenplayer05currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
-                setPlayerOutline(KingOfTheHill.greenplayer05currentTarget, Color.green);
-            }
-            if (KingOfTheHill.greenplayer06 != null && KingOfTheHill.greenplayer06 == PlayerInCache.LocalPlayer.PlayerControl) {
-                KingOfTheHill.greenplayer06currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
-                setPlayerOutline(KingOfTheHill.greenplayer06currentTarget, Color.green);
-            }
+            for (int i = 0; i < KingOfTheHill.yellowTeam.Count; i++) {
+                if (KingOfTheHill.yellowTeam[i] != null && KingOfTheHill.yellowTeam[i] != PlayerInCache.LocalPlayer.PlayerControl) continue; // skip if not the local player
 
-            // Prevent killing reviving players
-            if (KingOfTheHill.greenplayer01IsReviving) {
-                untargetableYellowPlayers.Add(KingOfTheHill.greenplayer01);
-                untargetableAllPlayers.Add(KingOfTheHill.greenplayer01);
-            }
-            else {
-                untargetableYellowPlayers.Remove(KingOfTheHill.greenplayer01);
-                untargetableAllPlayers.Remove(KingOfTheHill.greenplayer01);
-            }
-            if (KingOfTheHill.greenplayer02IsReviving) {
-                untargetableYellowPlayers.Add(KingOfTheHill.greenplayer02);
-                untargetableAllPlayers.Add(KingOfTheHill.greenplayer02);
-            }
-            else {
-                untargetableYellowPlayers.Remove(KingOfTheHill.greenplayer02);
-                untargetableAllPlayers.Remove(KingOfTheHill.greenplayer02);
-            }
-            if (KingOfTheHill.greenplayer03IsReviving) {
-                untargetableYellowPlayers.Add(KingOfTheHill.greenplayer03);
-                untargetableAllPlayers.Add(KingOfTheHill.greenplayer03);
-            }
-            else {
-                untargetableYellowPlayers.Remove(KingOfTheHill.greenplayer03);
-                untargetableAllPlayers.Remove(KingOfTheHill.greenplayer03);
-            }
-            if (KingOfTheHill.greenplayer04IsReviving) {
-                untargetableYellowPlayers.Add(KingOfTheHill.greenplayer04);
-                untargetableAllPlayers.Add(KingOfTheHill.greenplayer04);
-            }
-            else {
-                untargetableYellowPlayers.Remove(KingOfTheHill.greenplayer04);
-                untargetableAllPlayers.Remove(KingOfTheHill.greenplayer04);
-            }
-            if (KingOfTheHill.greenplayer05IsReviving) {
-                untargetableYellowPlayers.Add(KingOfTheHill.greenplayer05);
-                untargetableAllPlayers.Add(KingOfTheHill.greenplayer05);
-            }
-            else {
-                untargetableYellowPlayers.Remove(KingOfTheHill.greenplayer05);
-                untargetableAllPlayers.Remove(KingOfTheHill.greenplayer05);
-            }
-            if (KingOfTheHill.greenplayer06IsReviving) {
-                untargetableYellowPlayers.Add(KingOfTheHill.greenplayer06);
-                untargetableAllPlayers.Add(KingOfTheHill.greenplayer06);
-            }
-            else {
-                untargetableYellowPlayers.Remove(KingOfTheHill.greenplayer06);
-                untargetableAllPlayers.Remove(KingOfTheHill.greenplayer06);
-            }
-            if (KingOfTheHill.greenKingIsReviving) {
-                untargetableYellowPlayers.Add(KingOfTheHill.greenKingplayer);
-                untargetableAllPlayers.Add(KingOfTheHill.greenKingplayer);
-            }
-            else {
-                untargetableYellowPlayers.Remove(KingOfTheHill.greenKingplayer);
-                untargetableAllPlayers.Remove(KingOfTheHill.greenKingplayer);
-            }
+                KingOfTheHill.yellowTeamCurrentargets[i] = setTarget(untargetablePlayers: untargetableYellowPlayers);
+                setPlayerOutline(KingOfTheHill.yellowTeamCurrentargets[i], Color.yellow);
 
-            if (KingOfTheHill.yellowKingplayer != null && KingOfTheHill.yellowKingplayer == PlayerInCache.LocalPlayer.PlayerControl) {
-                KingOfTheHill.yellowKingplayercurrentTarget = setTarget(untargetablePlayers: untargetableYellowPlayers);
-                setPlayerOutline(KingOfTheHill.yellowKingplayercurrentTarget, Color.yellow);
-            }
-            if (KingOfTheHill.yellowplayer01 != null && KingOfTheHill.yellowplayer01 == PlayerInCache.LocalPlayer.PlayerControl) {
-                KingOfTheHill.yellowplayer01currentTarget = setTarget(untargetablePlayers: untargetableYellowPlayers);
-                setPlayerOutline(KingOfTheHill.yellowplayer01currentTarget, Color.yellow);
-            }
-            if (KingOfTheHill.yellowplayer02 != null && KingOfTheHill.yellowplayer02 == PlayerInCache.LocalPlayer.PlayerControl) {
-                KingOfTheHill.yellowplayer02currentTarget = setTarget(untargetablePlayers: untargetableYellowPlayers);
-                setPlayerOutline(KingOfTheHill.yellowplayer02currentTarget, Color.yellow);
-            }
-            if (KingOfTheHill.yellowplayer03 != null && KingOfTheHill.yellowplayer03 == PlayerInCache.LocalPlayer.PlayerControl) {
-                KingOfTheHill.yellowplayer03currentTarget = setTarget(untargetablePlayers: untargetableYellowPlayers);
-                setPlayerOutline(KingOfTheHill.yellowplayer03currentTarget, Color.yellow);
-            }
-            if (KingOfTheHill.yellowplayer04 != null && KingOfTheHill.yellowplayer04 == PlayerInCache.LocalPlayer.PlayerControl) {
-                KingOfTheHill.yellowplayer04currentTarget = setTarget(untargetablePlayers: untargetableYellowPlayers);
-                setPlayerOutline(KingOfTheHill.yellowplayer04currentTarget, Color.yellow);
-            }
-            if (KingOfTheHill.yellowplayer05 != null && KingOfTheHill.yellowplayer05 == PlayerInCache.LocalPlayer.PlayerControl) {
-                KingOfTheHill.yellowplayer05currentTarget = setTarget(untargetablePlayers: untargetableYellowPlayers);
-                setPlayerOutline(KingOfTheHill.yellowplayer05currentTarget, Color.yellow);
-            }
-            if (KingOfTheHill.yellowplayer06 != null && KingOfTheHill.yellowplayer06 == PlayerInCache.LocalPlayer.PlayerControl) {
-                KingOfTheHill.yellowplayer06currentTarget = setTarget(untargetablePlayers: untargetableYellowPlayers);
-                setPlayerOutline(KingOfTheHill.yellowplayer06currentTarget, Color.yellow);
+                break;
             }
 
             if (KingOfTheHill.usurperPlayer != null && KingOfTheHill.usurperPlayer == PlayerInCache.LocalPlayer.PlayerControl) {
@@ -1354,285 +941,36 @@ namespace LasMonjas.Patches {
             }
 
             // Prevent killing reviving players
-            if (ZombieLaboratory.survivorPlayer01IsReviving) {
-                untargetableZombiePlayers.Add(ZombieLaboratory.survivorPlayer01);
+            foreach (PlayerControl player in ZombieLaboratory.survivorTeam) {
+                if (player == ZombieLaboratory.nursePlayer) continue; // skip Nurse
+                gamemodeIndividualRevivingTargetStatus(untargetableZombiePlayers, player, ZombieLaboratory.revivingPlayers.Contains(player));
             }
-            else {
-                untargetableZombiePlayers.Remove(ZombieLaboratory.survivorPlayer01);
-            }
-            if (ZombieLaboratory.survivorPlayer02IsReviving) {
-                untargetableZombiePlayers.Add(ZombieLaboratory.survivorPlayer02);
-            }
-            else {
-                untargetableZombiePlayers.Remove(ZombieLaboratory.survivorPlayer02);
-            }
-            if (ZombieLaboratory.survivorPlayer03IsReviving) {
-                untargetableZombiePlayers.Add(ZombieLaboratory.survivorPlayer03);
-            }
-            else {
-                untargetableZombiePlayers.Remove(ZombieLaboratory.survivorPlayer03);
-            }
-            if (ZombieLaboratory.survivorPlayer04IsReviving) {
-                untargetableZombiePlayers.Add(ZombieLaboratory.survivorPlayer04);
-            }
-            else {
-                untargetableZombiePlayers.Remove(ZombieLaboratory.survivorPlayer04);
-            }
-            if (ZombieLaboratory.survivorPlayer05IsReviving) {
-                untargetableZombiePlayers.Add(ZombieLaboratory.survivorPlayer05);
-            }
-            else {
-                untargetableZombiePlayers.Remove(ZombieLaboratory.survivorPlayer05);
-            }
-            if (ZombieLaboratory.survivorPlayer06IsReviving) {
-                untargetableZombiePlayers.Add(ZombieLaboratory.survivorPlayer06);
-            }
-            else {
-                untargetableZombiePlayers.Remove(ZombieLaboratory.survivorPlayer06);
-            }
-            if (ZombieLaboratory.survivorPlayer07IsReviving) {
-                untargetableZombiePlayers.Add(ZombieLaboratory.survivorPlayer07);
-            }
-            else {
-                untargetableZombiePlayers.Remove(ZombieLaboratory.survivorPlayer07);
-            }
-            if (ZombieLaboratory.survivorPlayer08IsReviving) {
-                untargetableZombiePlayers.Add(ZombieLaboratory.survivorPlayer08);
-            }
-            else {
-                untargetableZombiePlayers.Remove(ZombieLaboratory.survivorPlayer08);
-            }
-            if (ZombieLaboratory.survivorPlayer09IsReviving) {
-                untargetableZombiePlayers.Add(ZombieLaboratory.survivorPlayer09);
-            }
-            else {
-                untargetableZombiePlayers.Remove(ZombieLaboratory.survivorPlayer09);
-            }
-            if (ZombieLaboratory.survivorPlayer10IsReviving) {
-                untargetableZombiePlayers.Add(ZombieLaboratory.survivorPlayer10);
-            }
-            else {
-                untargetableZombiePlayers.Remove(ZombieLaboratory.survivorPlayer10);
-            }
-            if (ZombieLaboratory.survivorPlayer11IsReviving) {
-                untargetableZombiePlayers.Add(ZombieLaboratory.survivorPlayer11);
-            }
-            else {
-                untargetableZombiePlayers.Remove(ZombieLaboratory.survivorPlayer11);
-            }
-            if (ZombieLaboratory.survivorPlayer12IsReviving) {
-                untargetableZombiePlayers.Add(ZombieLaboratory.survivorPlayer12);
-            }
-            else {
-                untargetableZombiePlayers.Remove(ZombieLaboratory.survivorPlayer12);
-            }
-            if (ZombieLaboratory.survivorPlayer13IsReviving) {
-                untargetableZombiePlayers.Add(ZombieLaboratory.survivorPlayer13);
-            }
-            else {
-                untargetableZombiePlayers.Remove(ZombieLaboratory.survivorPlayer13);
+            foreach (PlayerControl player in ZombieLaboratory.zombieTeam) {
+                gamemodeIndividualRevivingTargetStatus(untargetableSurvivorsPlayers, player, ZombieLaboratory.revivingPlayers.Contains(player));
             }
 
             if (ZombieLaboratory.nursePlayer != null && ZombieLaboratory.nursePlayer == PlayerInCache.LocalPlayer.PlayerControl) {
                 ZombieLaboratory.nursePlayercurrentTarget = setTarget();
                 setPlayerOutline(ZombieLaboratory.nursePlayercurrentTarget, Locksmith.color);
             }
-            if (ZombieLaboratory.survivorPlayer01 != null && ZombieLaboratory.survivorPlayer01 == PlayerInCache.LocalPlayer.PlayerControl) {
-                ZombieLaboratory.survivorPlayer01currentTarget = setTarget(untargetablePlayers: untargetableSurvivorsPlayers);
-                setPlayerOutline(ZombieLaboratory.survivorPlayer01currentTarget, Color.cyan);
-            }
-            if (ZombieLaboratory.survivorPlayer02 != null && ZombieLaboratory.survivorPlayer02 == PlayerInCache.LocalPlayer.PlayerControl) {
-                ZombieLaboratory.survivorPlayer02currentTarget = setTarget(untargetablePlayers: untargetableSurvivorsPlayers);
-                setPlayerOutline(ZombieLaboratory.survivorPlayer02currentTarget, Color.cyan);
-            }
-            if (ZombieLaboratory.survivorPlayer03 != null && ZombieLaboratory.survivorPlayer03 == PlayerInCache.LocalPlayer.PlayerControl) {
-                ZombieLaboratory.survivorPlayer03currentTarget = setTarget(untargetablePlayers: untargetableSurvivorsPlayers);
-                setPlayerOutline(ZombieLaboratory.survivorPlayer03currentTarget, Color.cyan);
-            }
-            if (ZombieLaboratory.survivorPlayer04 != null && ZombieLaboratory.survivorPlayer04 == PlayerInCache.LocalPlayer.PlayerControl) {
-                ZombieLaboratory.survivorPlayer04currentTarget = setTarget(untargetablePlayers: untargetableSurvivorsPlayers);
-                setPlayerOutline(ZombieLaboratory.survivorPlayer04currentTarget, Color.cyan);
-            }
-            if (ZombieLaboratory.survivorPlayer05 != null && ZombieLaboratory.survivorPlayer05 == PlayerInCache.LocalPlayer.PlayerControl) {
-                ZombieLaboratory.survivorPlayer05currentTarget = setTarget(untargetablePlayers: untargetableSurvivorsPlayers);
-                setPlayerOutline(ZombieLaboratory.survivorPlayer05currentTarget, Color.cyan);
-            }
-            if (ZombieLaboratory.survivorPlayer06 != null && ZombieLaboratory.survivorPlayer06 == PlayerInCache.LocalPlayer.PlayerControl) {
-                ZombieLaboratory.survivorPlayer06currentTarget = setTarget(untargetablePlayers: untargetableSurvivorsPlayers);
-                setPlayerOutline(ZombieLaboratory.survivorPlayer06currentTarget, Color.cyan);
-            }
-            if (ZombieLaboratory.survivorPlayer07 != null && ZombieLaboratory.survivorPlayer07 == PlayerInCache.LocalPlayer.PlayerControl) {
-                ZombieLaboratory.survivorPlayer07currentTarget = setTarget(untargetablePlayers: untargetableSurvivorsPlayers);
-                setPlayerOutline(ZombieLaboratory.survivorPlayer07currentTarget, Color.cyan);
-            }
-            if (ZombieLaboratory.survivorPlayer08 != null && ZombieLaboratory.survivorPlayer08 == PlayerInCache.LocalPlayer.PlayerControl) {
-                ZombieLaboratory.survivorPlayer08currentTarget = setTarget(untargetablePlayers: untargetableSurvivorsPlayers);
-                setPlayerOutline(ZombieLaboratory.survivorPlayer08currentTarget, Color.cyan);
-            }
-            if (ZombieLaboratory.survivorPlayer09 != null && ZombieLaboratory.survivorPlayer09 == PlayerInCache.LocalPlayer.PlayerControl) {
-                ZombieLaboratory.survivorPlayer09currentTarget = setTarget(untargetablePlayers: untargetableSurvivorsPlayers);
-                setPlayerOutline(ZombieLaboratory.survivorPlayer09currentTarget, Color.cyan);
-            }
-            if (ZombieLaboratory.survivorPlayer10 != null && ZombieLaboratory.survivorPlayer10 == PlayerInCache.LocalPlayer.PlayerControl) {
-                ZombieLaboratory.survivorPlayer10currentTarget = setTarget(untargetablePlayers: untargetableSurvivorsPlayers);
-                setPlayerOutline(ZombieLaboratory.survivorPlayer10currentTarget, Color.cyan);
-            }
-            if (ZombieLaboratory.survivorPlayer11 != null && ZombieLaboratory.survivorPlayer11 == PlayerInCache.LocalPlayer.PlayerControl) {
-                ZombieLaboratory.survivorPlayer11currentTarget = setTarget(untargetablePlayers: untargetableSurvivorsPlayers);
-                setPlayerOutline(ZombieLaboratory.survivorPlayer11currentTarget, Color.cyan);
-            }
-            if (ZombieLaboratory.survivorPlayer12 != null && ZombieLaboratory.survivorPlayer12 == PlayerInCache.LocalPlayer.PlayerControl) {
-                ZombieLaboratory.survivorPlayer12currentTarget = setTarget(untargetablePlayers: untargetableSurvivorsPlayers);
-                setPlayerOutline(ZombieLaboratory.survivorPlayer12currentTarget, Color.cyan);
-            }
-            if (ZombieLaboratory.survivorPlayer13 != null && ZombieLaboratory.survivorPlayer13 == PlayerInCache.LocalPlayer.PlayerControl) {
-                ZombieLaboratory.survivorPlayer13currentTarget = setTarget(untargetablePlayers: untargetableSurvivorsPlayers);
-                setPlayerOutline(ZombieLaboratory.survivorPlayer13currentTarget, Color.cyan);
+
+            for (int i = 0; i < ZombieLaboratory.survivorTeam.Count; i++) {
+                if (ZombieLaboratory.survivorTeam[i] != null && ZombieLaboratory.survivorTeam[i] != PlayerInCache.LocalPlayer.PlayerControl) continue; // skip if not the local player
+
+                ZombieLaboratory.survivorTeamCurrentargets[i] = setTarget(untargetablePlayers: untargetableSurvivorsPlayers);
+                setPlayerOutline(ZombieLaboratory.survivorTeamCurrentargets[i], Color.green);
+
+                break;
             }
 
-            // Prevent killing reviving players
-            if (ZombieLaboratory.zombiePlayer01IsReviving) {
-                untargetableSurvivorsPlayers.Add(ZombieLaboratory.zombiePlayer01);
-            }
-            else {
-                untargetableSurvivorsPlayers.Remove(ZombieLaboratory.zombiePlayer01);
-            }
-            if (ZombieLaboratory.zombiePlayer02IsReviving) {
-                untargetableSurvivorsPlayers.Add(ZombieLaboratory.zombiePlayer02);
-            }
-            else {
-                untargetableSurvivorsPlayers.Remove(ZombieLaboratory.zombiePlayer02);
-            }
-            if (ZombieLaboratory.zombiePlayer03IsReviving) {
-                untargetableSurvivorsPlayers.Add(ZombieLaboratory.zombiePlayer03);
-            }
-            else {
-                untargetableSurvivorsPlayers.Remove(ZombieLaboratory.zombiePlayer03);
-            }
-            if (ZombieLaboratory.zombiePlayer04IsReviving) {
-                untargetableSurvivorsPlayers.Add(ZombieLaboratory.zombiePlayer04);
-            }
-            else {
-                untargetableSurvivorsPlayers.Remove(ZombieLaboratory.zombiePlayer04);
-            }
-            if (ZombieLaboratory.zombiePlayer05IsReviving) {
-                untargetableSurvivorsPlayers.Add(ZombieLaboratory.zombiePlayer05);
-            }
-            else {
-                untargetableSurvivorsPlayers.Remove(ZombieLaboratory.zombiePlayer05);
-            }
-            if (ZombieLaboratory.zombiePlayer06IsReviving) {
-                untargetableSurvivorsPlayers.Add(ZombieLaboratory.zombiePlayer06);
-            }
-            else {
-                untargetableSurvivorsPlayers.Remove(ZombieLaboratory.zombiePlayer06);
-            }
-            if (ZombieLaboratory.zombiePlayer07IsReviving) {
-                untargetableSurvivorsPlayers.Add(ZombieLaboratory.zombiePlayer07);
-            }
-            else {
-                untargetableSurvivorsPlayers.Remove(ZombieLaboratory.zombiePlayer07);
-            }
-            if (ZombieLaboratory.zombiePlayer08IsReviving) {
-                untargetableSurvivorsPlayers.Add(ZombieLaboratory.zombiePlayer08);
-            }
-            else {
-                untargetableSurvivorsPlayers.Remove(ZombieLaboratory.zombiePlayer08);
-            }
-            if (ZombieLaboratory.zombiePlayer09IsReviving) {
-                untargetableSurvivorsPlayers.Add(ZombieLaboratory.zombiePlayer09);
-            }
-            else {
-                untargetableSurvivorsPlayers.Remove(ZombieLaboratory.zombiePlayer09);
-            }
-            if (ZombieLaboratory.zombiePlayer10IsReviving) {
-                untargetableSurvivorsPlayers.Add(ZombieLaboratory.zombiePlayer10);
-            }
-            else {
-                untargetableSurvivorsPlayers.Remove(ZombieLaboratory.zombiePlayer10);
-            }
-            if (ZombieLaboratory.zombiePlayer11IsReviving) {
-                untargetableSurvivorsPlayers.Add(ZombieLaboratory.zombiePlayer11);
-            }
-            else {
-                untargetableSurvivorsPlayers.Remove(ZombieLaboratory.zombiePlayer11);
-            }
-            if (ZombieLaboratory.zombiePlayer12IsReviving) {
-                untargetableSurvivorsPlayers.Add(ZombieLaboratory.zombiePlayer12);
-            }
-            else {
-                untargetableSurvivorsPlayers.Remove(ZombieLaboratory.zombiePlayer12);
-            }
-            if (ZombieLaboratory.zombiePlayer13IsReviving) {
-                untargetableSurvivorsPlayers.Add(ZombieLaboratory.zombiePlayer13);
-            }
-            else {
-                untargetableSurvivorsPlayers.Remove(ZombieLaboratory.zombiePlayer13);
-            }
-            if (ZombieLaboratory.zombiePlayer14IsReviving) {
-                untargetableSurvivorsPlayers.Add(ZombieLaboratory.zombiePlayer14);
-            }
-            else {
-                untargetableSurvivorsPlayers.Remove(ZombieLaboratory.zombiePlayer14);
-            }
+            for (int i = 0; i < ZombieLaboratory.zombieTeam.Count; i++) {
+                if (ZombieLaboratory.zombieTeam[i] != null && ZombieLaboratory.zombieTeam[i] != PlayerInCache.LocalPlayer.PlayerControl) continue; // skip if not the local player
 
-            if (ZombieLaboratory.zombiePlayer01 != null && ZombieLaboratory.zombiePlayer01 == PlayerInCache.LocalPlayer.PlayerControl) {
-                ZombieLaboratory.zombiePlayer01currentTarget = setTarget(untargetablePlayers: untargetableZombiePlayers);
-                setPlayerOutline(ZombieLaboratory.zombiePlayer01currentTarget, Sheriff.color);
-            }
-            if (ZombieLaboratory.zombiePlayer02 != null && ZombieLaboratory.zombiePlayer02 == PlayerInCache.LocalPlayer.PlayerControl) {
-                ZombieLaboratory.zombiePlayer02currentTarget = setTarget(untargetablePlayers: untargetableZombiePlayers);
-                setPlayerOutline(ZombieLaboratory.zombiePlayer02currentTarget, Sheriff.color);
-            }
-            if (ZombieLaboratory.zombiePlayer03 != null && ZombieLaboratory.zombiePlayer03 == PlayerInCache.LocalPlayer.PlayerControl) {
-                ZombieLaboratory.zombiePlayer03currentTarget = setTarget(untargetablePlayers: untargetableZombiePlayers);
-                setPlayerOutline(ZombieLaboratory.zombiePlayer03currentTarget, Sheriff.color);
-            }
-            if (ZombieLaboratory.zombiePlayer04 != null && ZombieLaboratory.zombiePlayer04 == PlayerInCache.LocalPlayer.PlayerControl) {
-                ZombieLaboratory.zombiePlayer04currentTarget = setTarget(untargetablePlayers: untargetableZombiePlayers);
-                setPlayerOutline(ZombieLaboratory.zombiePlayer04currentTarget, Sheriff.color);
-            }
-            if (ZombieLaboratory.zombiePlayer05 != null && ZombieLaboratory.zombiePlayer05 == PlayerInCache.LocalPlayer.PlayerControl) {
-                ZombieLaboratory.zombiePlayer05currentTarget = setTarget(untargetablePlayers: untargetableZombiePlayers);
-                setPlayerOutline(ZombieLaboratory.zombiePlayer05currentTarget, Sheriff.color);
-            }
-            if (ZombieLaboratory.zombiePlayer06 != null && ZombieLaboratory.zombiePlayer06 == PlayerInCache.LocalPlayer.PlayerControl) {
-                ZombieLaboratory.zombiePlayer06currentTarget = setTarget(untargetablePlayers: untargetableZombiePlayers);
-                setPlayerOutline(ZombieLaboratory.zombiePlayer06currentTarget, Sheriff.color);
-            }
-            if (ZombieLaboratory.zombiePlayer07 != null && ZombieLaboratory.zombiePlayer07 == PlayerInCache.LocalPlayer.PlayerControl) {
-                ZombieLaboratory.zombiePlayer07currentTarget = setTarget(untargetablePlayers: untargetableZombiePlayers);
-                setPlayerOutline(ZombieLaboratory.zombiePlayer07currentTarget, Sheriff.color);
-            }
-            if (ZombieLaboratory.zombiePlayer08 != null && ZombieLaboratory.zombiePlayer08 == PlayerInCache.LocalPlayer.PlayerControl) {
-                ZombieLaboratory.zombiePlayer08currentTarget = setTarget(untargetablePlayers: untargetableZombiePlayers);
-                setPlayerOutline(ZombieLaboratory.zombiePlayer08currentTarget, Sheriff.color);
-            }
-            if (ZombieLaboratory.zombiePlayer09 != null && ZombieLaboratory.zombiePlayer09 == PlayerInCache.LocalPlayer.PlayerControl) {
-                ZombieLaboratory.zombiePlayer09currentTarget = setTarget(untargetablePlayers: untargetableZombiePlayers);
-                setPlayerOutline(ZombieLaboratory.zombiePlayer09currentTarget, Sheriff.color);
-            }
-            if (ZombieLaboratory.zombiePlayer10 != null && ZombieLaboratory.zombiePlayer10 == PlayerInCache.LocalPlayer.PlayerControl) {
-                ZombieLaboratory.zombiePlayer10currentTarget = setTarget(untargetablePlayers: untargetableZombiePlayers);
-                setPlayerOutline(ZombieLaboratory.zombiePlayer10currentTarget, Sheriff.color);
-            }
-            if (ZombieLaboratory.zombiePlayer11 != null && ZombieLaboratory.zombiePlayer11 == PlayerInCache.LocalPlayer.PlayerControl) {
-                ZombieLaboratory.zombiePlayer11currentTarget = setTarget(untargetablePlayers: untargetableZombiePlayers);
-                setPlayerOutline(ZombieLaboratory.zombiePlayer11currentTarget, Sheriff.color);
-            }
-            if (ZombieLaboratory.zombiePlayer12 != null && ZombieLaboratory.zombiePlayer12 == PlayerInCache.LocalPlayer.PlayerControl) {
-                ZombieLaboratory.zombiePlayer12currentTarget = setTarget(untargetablePlayers: untargetableZombiePlayers);
-                setPlayerOutline(ZombieLaboratory.zombiePlayer12currentTarget, Sheriff.color);
-            }
-            if (ZombieLaboratory.zombiePlayer13 != null && ZombieLaboratory.zombiePlayer13 == PlayerInCache.LocalPlayer.PlayerControl) {
-                ZombieLaboratory.zombiePlayer13currentTarget = setTarget(untargetablePlayers: untargetableZombiePlayers);
-                setPlayerOutline(ZombieLaboratory.zombiePlayer13currentTarget, Sheriff.color);
-            }
-            if (ZombieLaboratory.zombiePlayer14 != null && ZombieLaboratory.zombiePlayer14 == PlayerInCache.LocalPlayer.PlayerControl) {
-                ZombieLaboratory.zombiePlayer14currentTarget = setTarget(untargetablePlayers: untargetableZombiePlayers);
-                setPlayerOutline(ZombieLaboratory.zombiePlayer14currentTarget, Sheriff.color);
-            }
+                ZombieLaboratory.zombieTeamCurrentargets[i] = setTarget(untargetablePlayers: untargetableZombiePlayers);
+                setPlayerOutline(ZombieLaboratory.zombieTeamCurrentargets[i], Sheriff.color);
 
+                break;
+            }
         }
 
         static void monjaFestivalSetTarget() {
@@ -1653,185 +991,30 @@ namespace LasMonjas.Patches {
             }
 
             // Prevent killing reviving players
-            if (MonjaFestival.cyanPlayer01IsReviving) {
-                untargetableGreenPlayers.Add(MonjaFestival.cyanPlayer01);
-                untargetableAllPlayers.Add(MonjaFestival.cyanPlayer01);
+            foreach (PlayerControl player in MonjaFestival.cyanTeam) {
+                gamemodeIndividualRevivingTargetStatus(untargetableGreenPlayers, player, MonjaFestival.revivingPlayers.Contains(player));
             }
-            else {
-                untargetableGreenPlayers.Remove(MonjaFestival.cyanPlayer01);
-                untargetableAllPlayers.Remove(MonjaFestival.cyanPlayer01);
+            foreach (PlayerControl player in MonjaFestival.greenTeam) {
+                gamemodeIndividualRevivingTargetStatus(untargetableCyanPlayers, player, MonjaFestival.revivingPlayers.Contains(player));
             }
-            if (MonjaFestival.cyanPlayer02IsReviving) {
-                untargetableGreenPlayers.Add(MonjaFestival.cyanPlayer02);
-                untargetableAllPlayers.Add(MonjaFestival.cyanPlayer02);
-            }
-            else {
-                untargetableGreenPlayers.Remove(MonjaFestival.cyanPlayer02);
-                untargetableAllPlayers.Remove(MonjaFestival.cyanPlayer02);
-            }
-            if (MonjaFestival.cyanPlayer03IsReviving) {
-                untargetableGreenPlayers.Add(MonjaFestival.cyanPlayer03);
-                untargetableAllPlayers.Add(MonjaFestival.cyanPlayer03);
-            }
-            else {
-                untargetableGreenPlayers.Remove(MonjaFestival.cyanPlayer03);
-                untargetableAllPlayers.Remove(MonjaFestival.cyanPlayer03);
-            }
-            if (MonjaFestival.cyanPlayer04IsReviving) {
-                untargetableGreenPlayers.Add(MonjaFestival.cyanPlayer04);
-                untargetableAllPlayers.Add(MonjaFestival.cyanPlayer04);
-            }
-            else {
-                untargetableGreenPlayers.Remove(MonjaFestival.cyanPlayer04);
-                untargetableAllPlayers.Remove(MonjaFestival.cyanPlayer04);
-            }
-            if (MonjaFestival.cyanPlayer05IsReviving) {
-                untargetableGreenPlayers.Add(MonjaFestival.cyanPlayer05);
-                untargetableAllPlayers.Add(MonjaFestival.cyanPlayer05);
-            }
-            else {
-                untargetableGreenPlayers.Remove(MonjaFestival.cyanPlayer05);
-                untargetableAllPlayers.Remove(MonjaFestival.cyanPlayer05);
-            }
-            if (MonjaFestival.cyanPlayer06IsReviving) {
-                untargetableGreenPlayers.Add(MonjaFestival.cyanPlayer06);
-                untargetableAllPlayers.Add(MonjaFestival.cyanPlayer06);
-            }
-            else {
-                untargetableGreenPlayers.Remove(MonjaFestival.cyanPlayer06);
-                untargetableAllPlayers.Remove(MonjaFestival.cyanPlayer06);
-            }
-            if (MonjaFestival.cyanPlayer07IsReviving) {
-                untargetableGreenPlayers.Add(MonjaFestival.cyanPlayer07);
-                untargetableAllPlayers.Add(MonjaFestival.cyanPlayer07);
-            }
-            else {
-                untargetableGreenPlayers.Remove(MonjaFestival.cyanPlayer07);
-                untargetableAllPlayers.Remove(MonjaFestival.cyanPlayer07);
-            }
-            if (MonjaFestival.bigMonjaIsReviving) {
-                untargetableGreenPlayers.Add(MonjaFestival.bigMonjaPlayer);
-                untargetableCyanPlayers.Add(MonjaFestival.bigMonjaPlayer);
-            }
-            else {
-                untargetableGreenPlayers.Remove(MonjaFestival.bigMonjaPlayer);
-                untargetableCyanPlayers.Remove(MonjaFestival.bigMonjaPlayer);
+            gamemodeTeamsRevivingTargetStatus(MonjaFestival.bigMonjaPlayer, MonjaFestival.revivingPlayers.Contains(MonjaFestival.bigMonjaPlayer), untargetableGreenPlayers, untargetableCyanPlayers);
+
+            for (int i = 0; i < MonjaFestival.greenTeam.Count; i++) {
+                if (MonjaFestival.greenTeam[i] != null && MonjaFestival.greenTeam[i] != PlayerInCache.LocalPlayer.PlayerControl) continue; // skip if not the local player
+
+                MonjaFestival.greenTeamCurrentargets[i] = setTarget(untargetablePlayers: untargetableGreenPlayers);
+                setPlayerOutline(MonjaFestival.greenTeamCurrentargets[i], Color.green);
+
+                break;
             }
 
-            if (MonjaFestival.greenPlayer01 != null && MonjaFestival.greenPlayer01 == PlayerInCache.LocalPlayer.PlayerControl) {
-                MonjaFestival.greenPlayer01currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
-                setPlayerOutline(MonjaFestival.greenPlayer01currentTarget, Color.green);
-            }
-            if (MonjaFestival.greenPlayer02 != null && MonjaFestival.greenPlayer02 == PlayerInCache.LocalPlayer.PlayerControl) {
-                MonjaFestival.greenPlayer02currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
-                setPlayerOutline(MonjaFestival.greenPlayer02currentTarget, Color.green);
-            }
-            if (MonjaFestival.greenPlayer03 != null && MonjaFestival.greenPlayer03 == PlayerInCache.LocalPlayer.PlayerControl) {
-                MonjaFestival.greenPlayer03currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
-                setPlayerOutline(MonjaFestival.greenPlayer03currentTarget, Color.green);
-            }
-            if (MonjaFestival.greenPlayer04 != null && MonjaFestival.greenPlayer04 == PlayerInCache.LocalPlayer.PlayerControl) {
-                MonjaFestival.greenPlayer04currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
-                setPlayerOutline(MonjaFestival.greenPlayer04currentTarget, Color.green);
-            }
-            if (MonjaFestival.greenPlayer05 != null && MonjaFestival.greenPlayer05 == PlayerInCache.LocalPlayer.PlayerControl) {
-                MonjaFestival.greenPlayer05currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
-                setPlayerOutline(MonjaFestival.greenPlayer05currentTarget, Color.green);
-            }
-            if (MonjaFestival.greenPlayer06 != null && MonjaFestival.greenPlayer06 == PlayerInCache.LocalPlayer.PlayerControl) {
-                MonjaFestival.greenPlayer06currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
-                setPlayerOutline(MonjaFestival.greenPlayer06currentTarget, Color.green);
-            }
-            if (MonjaFestival.greenPlayer07 != null && MonjaFestival.greenPlayer07 == PlayerInCache.LocalPlayer.PlayerControl) {
-                MonjaFestival.greenPlayer07currentTarget = setTarget(untargetablePlayers: untargetableGreenPlayers);
-                setPlayerOutline(MonjaFestival.greenPlayer07currentTarget, Color.green);
-            }
+            for (int i = 0; i < MonjaFestival.cyanTeam.Count; i++) {
+                if (MonjaFestival.cyanTeam[i] != null && MonjaFestival.cyanTeam[i] != PlayerInCache.LocalPlayer.PlayerControl) continue; // skip if not the local player
 
-            // Prevent killing reviving players
-            if (MonjaFestival.greenPlayer01IsReviving) {
-                untargetableCyanPlayers.Add(MonjaFestival.greenPlayer01);
-                untargetableAllPlayers.Add(MonjaFestival.greenPlayer01);
-            }
-            else {
-                untargetableCyanPlayers.Remove(MonjaFestival.greenPlayer01);
-                untargetableAllPlayers.Remove(MonjaFestival.greenPlayer01);
-            }
-            if (MonjaFestival.greenPlayer02IsReviving) {
-                untargetableCyanPlayers.Add(MonjaFestival.greenPlayer02);
-                untargetableAllPlayers.Add(MonjaFestival.greenPlayer02);
-            }
-            else {
-                untargetableCyanPlayers.Remove(MonjaFestival.greenPlayer02);
-                untargetableAllPlayers.Remove(MonjaFestival.greenPlayer02);
-            }
-            if (MonjaFestival.greenPlayer03IsReviving) {
-                untargetableCyanPlayers.Add(MonjaFestival.greenPlayer03);
-                untargetableAllPlayers.Add(MonjaFestival.greenPlayer03);
-            }
-            else {
-                untargetableCyanPlayers.Remove(MonjaFestival.greenPlayer03);
-                untargetableAllPlayers.Remove(MonjaFestival.greenPlayer03);
-            }
-            if (MonjaFestival.greenPlayer04IsReviving) {
-                untargetableCyanPlayers.Add(MonjaFestival.greenPlayer04);
-                untargetableAllPlayers.Add(MonjaFestival.greenPlayer04);
-            }
-            else {
-                untargetableCyanPlayers.Remove(MonjaFestival.greenPlayer04);
-                untargetableAllPlayers.Remove(MonjaFestival.greenPlayer04);
-            }
-            if (MonjaFestival.greenPlayer05IsReviving) {
-                untargetableCyanPlayers.Add(MonjaFestival.greenPlayer05);
-                untargetableAllPlayers.Add(MonjaFestival.greenPlayer05);
-            }
-            else {
-                untargetableCyanPlayers.Remove(MonjaFestival.greenPlayer05);
-                untargetableAllPlayers.Remove(MonjaFestival.greenPlayer05);
-            }
-            if (MonjaFestival.greenPlayer06IsReviving) {
-                untargetableCyanPlayers.Add(MonjaFestival.greenPlayer06);
-                untargetableAllPlayers.Add(MonjaFestival.greenPlayer06);
-            }
-            else {
-                untargetableCyanPlayers.Remove(MonjaFestival.greenPlayer06);
-                untargetableAllPlayers.Remove(MonjaFestival.greenPlayer06);
-            }
-            if (MonjaFestival.greenPlayer07IsReviving) {
-                untargetableCyanPlayers.Add(MonjaFestival.greenPlayer07);
-                untargetableAllPlayers.Add(MonjaFestival.greenPlayer07);
-            }
-            else {
-                untargetableCyanPlayers.Remove(MonjaFestival.greenPlayer07);
-                untargetableAllPlayers.Remove(MonjaFestival.greenPlayer07);
-            }
+                MonjaFestival.cyanTeamCurrentargets[i] = setTarget(untargetablePlayers: untargetableCyanPlayers);
+                setPlayerOutline(MonjaFestival.cyanTeamCurrentargets[i], Color.cyan);
 
-            if (MonjaFestival.cyanPlayer01 != null && MonjaFestival.cyanPlayer01 == PlayerInCache.LocalPlayer.PlayerControl) {
-                MonjaFestival.cyanPlayer01currentTarget = setTarget(untargetablePlayers: untargetableCyanPlayers);
-                setPlayerOutline(MonjaFestival.cyanPlayer01currentTarget, Color.cyan);
-            }
-            if (MonjaFestival.cyanPlayer02 != null && MonjaFestival.cyanPlayer02 == PlayerInCache.LocalPlayer.PlayerControl) {
-                MonjaFestival.cyanPlayer02currentTarget = setTarget(untargetablePlayers: untargetableCyanPlayers);
-                setPlayerOutline(MonjaFestival.cyanPlayer02currentTarget, Color.cyan);
-            }
-            if (MonjaFestival.cyanPlayer03 != null && MonjaFestival.cyanPlayer03 == PlayerInCache.LocalPlayer.PlayerControl) {
-                MonjaFestival.cyanPlayer03currentTarget = setTarget(untargetablePlayers: untargetableCyanPlayers);
-                setPlayerOutline(MonjaFestival.cyanPlayer03currentTarget, Color.cyan);
-            }
-            if (MonjaFestival.cyanPlayer04 != null && MonjaFestival.cyanPlayer04 == PlayerInCache.LocalPlayer.PlayerControl) {
-                MonjaFestival.cyanPlayer04currentTarget = setTarget(untargetablePlayers: untargetableCyanPlayers);
-                setPlayerOutline(MonjaFestival.cyanPlayer04currentTarget, Color.cyan);
-            }
-            if (MonjaFestival.cyanPlayer05 != null && MonjaFestival.cyanPlayer05 == PlayerInCache.LocalPlayer.PlayerControl) {
-                MonjaFestival.cyanPlayer05currentTarget = setTarget(untargetablePlayers: untargetableCyanPlayers);
-                setPlayerOutline(MonjaFestival.cyanPlayer05currentTarget, Color.cyan);
-            }
-            if (MonjaFestival.cyanPlayer06 != null && MonjaFestival.cyanPlayer06 == PlayerInCache.LocalPlayer.PlayerControl) {
-                MonjaFestival.cyanPlayer06currentTarget = setTarget(untargetablePlayers: untargetableCyanPlayers);
-                setPlayerOutline(MonjaFestival.cyanPlayer06currentTarget, Color.cyan);
-            }
-            if (MonjaFestival.cyanPlayer07 != null && MonjaFestival.cyanPlayer07 == PlayerInCache.LocalPlayer.PlayerControl) {
-                MonjaFestival.cyanPlayer07currentTarget = setTarget(untargetablePlayers: untargetableCyanPlayers);
-                setPlayerOutline(MonjaFestival.cyanPlayer07currentTarget, Color.cyan);
+                break;
             }
 
             if (MonjaFestival.bigMonjaPlayer != null && MonjaFestival.bigMonjaPlayer == PlayerInCache.LocalPlayer.PlayerControl) {
@@ -2241,7 +1424,7 @@ namespace LasMonjas.Patches {
                     if (Janitor.janitor != null && target == Janitor.janitor && Janitor.dragginBody) {
                         Janitor.janitorResetValuesAtDead();
                     }
-                                       
+
                     // Manipulator reset manipulated if killed
                     if (Manipulator.manipulatedVictim != null && target == Manipulator.manipulatedVictim) {
                         Manipulator.manipulatedVictim = null;
@@ -2261,7 +1444,8 @@ namespace LasMonjas.Patches {
                     if (Medusa.medusa != null && Medusa.petrifiedPlayers.Count != 0) {
                         if (target == Medusa.medusa) {
                             Medusa.ResetMedusa();
-                        } else {
+                        }
+                        else {
                             Helpers.unpetrifyForMinigames(target);
                         }
                     }
@@ -2378,7 +1562,7 @@ namespace LasMonjas.Patches {
                             if (p == 1f) {
                                 // revive puppeteer
                                 target.Revive();
-                                if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+                                if (Helpers.isSubmergedMap()) {
                                     if (Puppeteer.puppeteer.transform.position.y > 0) {
                                         Puppeteer.puppeteer.transform.position = new Vector3(5.5f, 31.5f, -5);
                                     }
@@ -2466,7 +1650,7 @@ namespace LasMonjas.Patches {
                     }
 
                     // Vigilant delete doorlog item when killed
-                    if (Vigilant.vigilantMira != null && target == Vigilant.vigilantMira) {
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 1 && Vigilant.vigilant != null && target == Vigilant.vigilant) {
                         GameObject vigilantdoorlog = GameObject.Find("VigilantDoorLog");
                         if (vigilantdoorlog != null) {
                             vigilantdoorlog.SetActive(false);
@@ -2485,7 +1669,7 @@ namespace LasMonjas.Patches {
                     if (Spiritualist.revivedPlayerKiller != null && target == Spiritualist.revivedPlayerKiller) {
                         RPCProcedure.murderSpiritualistRevivedPlayer();
                     }
-                    
+
                     // Necromancer dead
                     if (Necromancer.necromancer != null && target == Necromancer.necromancer && Necromancer.dragginBody) {
                         Necromancer.necromancerResetValuesAtDead();
@@ -2544,50 +1728,16 @@ namespace LasMonjas.Patches {
                     break;
                 case 2:
                     // CTF revive
+                    var ctfBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
+                    Helpers.GamemodesDisableDeadBodyReportOnClic(ctfBody);
+
                     // Capture the flag reset flag position if killed while having it
                     if (CaptureTheFlag.redPlayerWhoHasBlueFlag != null && target == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
                         CaptureTheFlag.blueflagtaken = false;
                         Helpers.showGamemodesPopUp(0, Helpers.playerById(CaptureTheFlag.redPlayerWhoHasBlueFlag.PlayerId));
                         CaptureTheFlag.redPlayerWhoHasBlueFlag = null;
                         CaptureTheFlag.blueflag.transform.parent = CaptureTheFlag.blueflagbase.transform.parent;
-                        switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
-                            // Skeld
-                            case 0:
-                                if (activatedSensei) {
-                                    CaptureTheFlag.blueflag.transform.position = new Vector3(7.7f, -1.15f, 0.5f);
-                                }
-                                else if (activatedDleks) {
-                                    CaptureTheFlag.blueflag.transform.position = new Vector3(-16.5f, -4.65f, 0.5f);
-                                }
-                                else {
-                                    CaptureTheFlag.blueflag.transform.position = new Vector3(16.5f, -4.65f, 0.5f);
-                                }
-                                break;
-                            // MiraHQ
-                            case 1:
-                                CaptureTheFlag.blueflag.transform.position = new Vector3(23.25f, 5.05f, 0.5f);
-                                break;
-                            // Polus
-                            case 2:
-                                CaptureTheFlag.blueflag.transform.position = new Vector3(5.4f, -9.65f, 0.5f);
-                                break;
-                            // Dleks
-                            case 3:
-                                CaptureTheFlag.blueflag.transform.position = new Vector3(-16.5f, -4.65f, 0.5f);
-                                break;
-                            // Airship
-                            case 4:
-                                CaptureTheFlag.blueflag.transform.position = new Vector3(33.6f, 1.25f, 0.5f);
-                                break;
-                            // Fungle
-                            case 5:
-                                CaptureTheFlag.blueflag.transform.position = new Vector3(19.25f, 2.15f, 0.5f);
-                                break;
-                            // Submerged
-                            case 6:
-                                CaptureTheFlag.blueflag.transform.position = new Vector3(12.5f, -31.45f, -0.011f);
-                                break;
-                        }
+                        CaptureTheFlag.blueflag.transform.position = Helpers.CTFblueFlagPos;
                     }
 
                     if (CaptureTheFlag.bluePlayerWhoHasRedFlag != null && target == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
@@ -2595,683 +1745,82 @@ namespace LasMonjas.Patches {
                         Helpers.showGamemodesPopUp(0, Helpers.playerById(CaptureTheFlag.bluePlayerWhoHasRedFlag.PlayerId));
                         CaptureTheFlag.bluePlayerWhoHasRedFlag = null;
                         CaptureTheFlag.redflag.transform.parent = CaptureTheFlag.redflagbase.transform.parent;
-                        switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
-                            // Skeld
-                            case 0:
-                                if (activatedSensei) {
-                                    CaptureTheFlag.redflag.transform.position = new Vector3(-17.5f, -1.35f, 0.5f);
-                                }
-                                else if (activatedDleks) {
-                                    CaptureTheFlag.redflag.transform.position = new Vector3(20.5f, -5.35f, 0.5f);
-                                }
-                                else {
-                                    CaptureTheFlag.redflag.transform.position = new Vector3(-20.5f, -5.35f, 0.5f);
-                                }
-                                break;
-                            // MiraHQ
-                            case 1:
-                                CaptureTheFlag.redflag.transform.position = new Vector3(2.525f, 10.55f, 0.5f);
-                                break;
-                            // Polus
-                            case 2:
-                                CaptureTheFlag.redflag.transform.position = new Vector3(36.4f, -21.7f, 0.5f);
-                                break;
-                            // Dlesk
-                            case 3:
-                                CaptureTheFlag.redflag.transform.position = new Vector3(20.5f, -5.35f, 0.5f);
-                                break;
-                            // Airship
-                            case 4:
-                                CaptureTheFlag.redflag.transform.position = new Vector3(-17.5f, -1.2f, 0.5f);
-                                break;
-                            // Fungle
-                            case 5:
-                                CaptureTheFlag.redflag.transform.position = new Vector3(-23f, -0.65f, 0.5f);
-                                break;
-                            // Submerged
-                            case 6:
-                                CaptureTheFlag.redflag.transform.position = new Vector3(-8.35f, 28.05f, 0.03f);
-                                break;
-                        }
+                        CaptureTheFlag.redflag.transform.position = Helpers.CTFredFlagPos;
                     }
 
                     // Capture the flag revive player
                     if (CaptureTheFlag.stealerPlayer != null && CaptureTheFlag.stealerPlayer.PlayerId == target.PlayerId) {
-                        var ctfBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
-                        ctfBody.transform.position = new Vector3(50, 50, 1);
-                        CaptureTheFlag.stealerPlayerIsReviving = true;
+                        CaptureTheFlag.revivingPlayers.Add(CaptureTheFlag.stealerPlayer);
                         CaptureTheFlag.stealerPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                        Helpers.alphaPlayer(true, CaptureTheFlag.stealerPlayer.PlayerId);
-                        HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
-                            if (p == 1f && CaptureTheFlag.stealerPlayer != null) {
-                                CaptureTheFlag.stealerPlayerIsReviving = false;
-                                Helpers.alphaPlayer(false, CaptureTheFlag.stealerPlayer.PlayerId);
-                                CaptureTheFlag.stealerPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                            }
-                        })));
-                        HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
-                            if (p == 1f && CaptureTheFlag.stealerPlayer != null) {
-                                CaptureTheFlag.stealerPlayer.Revive();
-                                switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
-                                    // Skeld
-                                    case 0:
-                                        if (activatedSensei) {
-                                            CaptureTheFlag.stealerPlayer.transform.position = new Vector3(-3.65f, 5f, CaptureTheFlag.stealerPlayer.transform.position.z);
-                                        }
-                                        else if (activatedDleks) {
-                                            CaptureTheFlag.stealerPlayer.transform.position = new Vector3(-6.35f, -7.5f, CaptureTheFlag.stealerPlayer.transform.position.z);
-                                        }
-                                        else {
-                                            CaptureTheFlag.stealerPlayer.transform.position = new Vector3(6.35f, -7.5f, CaptureTheFlag.stealerPlayer.transform.position.z);
-                                        }
-                                        break;
-                                    // MiraHQ
-                                    case 1:
-                                        CaptureTheFlag.stealerPlayer.transform.position = new Vector3(17.75f, 24f, CaptureTheFlag.stealerPlayer.transform.position.z);
-                                        break;
-                                    // Polus
-                                    case 2:
-                                        CaptureTheFlag.stealerPlayer.transform.position = new Vector3(31.75f, -13f, CaptureTheFlag.stealerPlayer.transform.position.z);
-                                        break;
-                                    // Dleks
-                                    case 3:
-                                        CaptureTheFlag.stealerPlayer.transform.position = new Vector3(-6.35f, -7.5f, CaptureTheFlag.stealerPlayer.transform.position.z);
-                                        break;
-                                    // Airship
-                                    case 4:
-                                        CaptureTheFlag.stealerPlayer.transform.position = new Vector3(10.25f, -15.35f, CaptureTheFlag.stealerPlayer.transform.position.z);
-                                        break;
-                                    // Fungle
-                                    case 5:
-                                        CaptureTheFlag.stealerPlayer.transform.position = new Vector3(2.85f, -5.75f, CaptureTheFlag.stealerPlayer.transform.position.z);
-                                        break;
-                                    // Submerged
-                                    case 6:
-                                        if (CaptureTheFlag.stealerPlayer.transform.position.y > 0) {
-                                            CaptureTheFlag.stealerPlayer.transform.position = new Vector3(1f, 10f, CaptureTheFlag.stealerPlayer.transform.position.z);
-                                        }
-                                        else {
-                                            CaptureTheFlag.stealerPlayer.transform.position = new Vector3(0f, -33.5f, CaptureTheFlag.stealerPlayer.transform.position.z);
-                                        }
-                                        break;
-                                }
-                                DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                                if (ctfBody != null) UnityEngine.Object.Destroy(ctfBody.gameObject);
-                                if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
-                            }
-
-                        })));
-
+                        Helpers.alphaPlayer(CaptureTheFlag.stealerPlayer.PlayerId, 0.5f);
+                        Helpers.GamemodesGenericBecomeAliveAndTargetable(CaptureTheFlag.stealerPlayer, CaptureTheFlag.revivingPlayers, LasMonjas.gamemodeReviveTime, true);
+                        Helpers.GamemodesGenericRevive(CaptureTheFlag.stealerPlayer, ctfBody, LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, Helpers.CTFstealerPlayerPos, Helpers.CTFstealerPlayerPos, new Vector3(0f, -33.5f, CaptureTheFlag.stealerPlayer.transform.position.z));
                     }
 
                     foreach (PlayerControl player in CaptureTheFlag.redteamFlag) {
                         if (player.PlayerId == target.PlayerId) {
-                            var ctfBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
-                            ctfBody.transform.position = new Vector3(50, 50, 1);
-                            if (CaptureTheFlag.redplayer01 != null && target.PlayerId == CaptureTheFlag.redplayer01.PlayerId) {
-                                CaptureTheFlag.redplayer01IsReviving = true;
-                            }
-                            else if (CaptureTheFlag.redplayer02 != null && target.PlayerId == CaptureTheFlag.redplayer02.PlayerId) {
-                                CaptureTheFlag.redplayer02IsReviving = true;
-                            }
-                            else if (CaptureTheFlag.redplayer03 != null && target.PlayerId == CaptureTheFlag.redplayer03.PlayerId) {
-                                CaptureTheFlag.redplayer03IsReviving = true;
-                            }
-                            else if (CaptureTheFlag.redplayer04 != null && target.PlayerId == CaptureTheFlag.redplayer04.PlayerId) {
-                                CaptureTheFlag.redplayer04IsReviving = true;
-                            }
-                            else if (CaptureTheFlag.redplayer05 != null && target.PlayerId == CaptureTheFlag.redplayer05.PlayerId) {
-                                CaptureTheFlag.redplayer05IsReviving = true;
-                            }
-                            else if (CaptureTheFlag.redplayer06 != null && target.PlayerId == CaptureTheFlag.redplayer06.PlayerId) {
-                                CaptureTheFlag.redplayer06IsReviving = true;
-                            }
-                            else if (CaptureTheFlag.redplayer07 != null && target.PlayerId == CaptureTheFlag.redplayer07.PlayerId) {
-                                CaptureTheFlag.redplayer07IsReviving = true;
-                            }
-                            Helpers.alphaPlayer(true, player.PlayerId);
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
-                                if (p == 1f && player != null) {
-                                    if (CaptureTheFlag.redplayer01 != null && target.PlayerId == CaptureTheFlag.redplayer01.PlayerId) {
-                                        CaptureTheFlag.redplayer01IsReviving = false;
-                                    }
-                                    else if (CaptureTheFlag.redplayer02 != null && target.PlayerId == CaptureTheFlag.redplayer02.PlayerId) {
-                                        CaptureTheFlag.redplayer02IsReviving = false;
-                                    }
-                                    else if (CaptureTheFlag.redplayer03 != null && target.PlayerId == CaptureTheFlag.redplayer03.PlayerId) {
-                                        CaptureTheFlag.redplayer03IsReviving = false;
-                                    }
-                                    else if (CaptureTheFlag.redplayer04 != null && target.PlayerId == CaptureTheFlag.redplayer04.PlayerId) {
-                                        CaptureTheFlag.redplayer04IsReviving = false;
-                                    }
-                                    else if (CaptureTheFlag.redplayer05 != null && target.PlayerId == CaptureTheFlag.redplayer05.PlayerId) {
-                                        CaptureTheFlag.redplayer05IsReviving = false;
-                                    }
-                                    else if (CaptureTheFlag.redplayer06 != null && target.PlayerId == CaptureTheFlag.redplayer06.PlayerId) {
-                                        CaptureTheFlag.redplayer06IsReviving = false;
-                                    }
-                                    else if (CaptureTheFlag.redplayer07 != null && target.PlayerId == CaptureTheFlag.redplayer07.PlayerId) {
-                                        CaptureTheFlag.redplayer07IsReviving = false;
-                                    }
-                                    Helpers.alphaPlayer(false, player.PlayerId);
-                                }
-                            })));
-
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
-                                if (p == 1f && player != null) {
-                                    player.Revive();
-                                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
-                                        // Skeld
-                                        case 0:
-                                            if (activatedSensei) {
-                                                player.transform.position = new Vector3(-17.5f, -1.15f, player.transform.position.z);
-                                            }
-                                            else if (activatedDleks) {
-                                                player.transform.position = new Vector3(20.5f, -5.15f, player.transform.position.z);
-                                            }
-                                            else {
-                                                player.transform.position = new Vector3(-20.5f, -5.15f, player.transform.position.z);
-                                            }
-                                            break;
-                                        // MiraHQ
-                                        case 1:
-                                            player.transform.position = new Vector3(2.53f, 10.75f, player.transform.position.z);
-                                            break;
-                                        // Polus
-                                        case 2:
-                                            player.transform.position = new Vector3(36.4f, -21.5f, player.transform.position.z);
-                                            break;
-                                        // Dleks
-                                        case 3:
-                                            player.transform.position = new Vector3(20.5f, -5.15f, player.transform.position.z);
-                                            break;
-                                        // Airship
-                                        case 4:
-                                            player.transform.position = new Vector3(-17.5f, -1.1f, player.transform.position.z);
-                                            break;
-                                        // Fungle
-                                        case 5:
-                                            player.transform.position = new Vector3(-23f, -0.45f, player.transform.position.z);
-                                            break;
-                                        // Submerged
-                                        case 6:
-                                            if (player.transform.position.y > 0) {
-                                                player.transform.position = new Vector3(-8.35f, 28.25f, player.transform.position.z);
-                                            }
-                                            else {
-                                                player.transform.position = new Vector3(-14f, -27.5f, player.transform.position.z);
-                                            }
-                                            break;
-                                    }
-                                    DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                                    if (ctfBody != null) UnityEngine.Object.Destroy(ctfBody.gameObject);
-                                    if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
-                                }
-
-                            })));
-
+                            CaptureTheFlag.revivingPlayers.Add(player);
+                            Helpers.alphaPlayer(player.PlayerId, 0.5f);
+                            Helpers.GamemodesGenericBecomeAliveAndTargetable(player, CaptureTheFlag.revivingPlayers, LasMonjas.gamemodeReviveTime);
+                            Helpers.GamemodesGenericRevive(player, ctfBody, LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, Helpers.CTFredTeamPos, Helpers.CTFredTeamPos, new Vector3(-14f, -27.5f, player.transform.position.z));
                         }
                     }
                     foreach (PlayerControl player in CaptureTheFlag.blueteamFlag) {
                         if (player.PlayerId == target.PlayerId) {
-                            var ctfBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
-                            ctfBody.transform.position = new Vector3(50, 50, 1);
-                            if (CaptureTheFlag.blueplayer01 != null && target.PlayerId == CaptureTheFlag.blueplayer01.PlayerId) {
-                                CaptureTheFlag.blueplayer01IsReviving = true;
-                            }
-                            else if (CaptureTheFlag.blueplayer02 != null && target.PlayerId == CaptureTheFlag.blueplayer02.PlayerId) {
-                                CaptureTheFlag.blueplayer02IsReviving = true;
-                            }
-                            else if (CaptureTheFlag.blueplayer03 != null && target.PlayerId == CaptureTheFlag.blueplayer03.PlayerId) {
-                                CaptureTheFlag.blueplayer03IsReviving = true;
-                            }
-                            else if (CaptureTheFlag.blueplayer04 != null && target.PlayerId == CaptureTheFlag.blueplayer04.PlayerId) {
-                                CaptureTheFlag.blueplayer04IsReviving = true;
-                            }
-                            else if (CaptureTheFlag.blueplayer05 != null && target.PlayerId == CaptureTheFlag.blueplayer05.PlayerId) {
-                                CaptureTheFlag.blueplayer05IsReviving = true;
-                            }
-                            else if (CaptureTheFlag.blueplayer06 != null && target.PlayerId == CaptureTheFlag.blueplayer06.PlayerId) {
-                                CaptureTheFlag.blueplayer06IsReviving = true;
-                            }
-                            else if (CaptureTheFlag.blueplayer07 != null && target.PlayerId == CaptureTheFlag.blueplayer07.PlayerId) {
-                                CaptureTheFlag.blueplayer07IsReviving = true;
-                            }
-                            Helpers.alphaPlayer(true, player.PlayerId);
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
-                                if (p == 1f && player != null) {
-                                    if (CaptureTheFlag.blueplayer01 != null && target.PlayerId == CaptureTheFlag.blueplayer01.PlayerId) {
-                                        CaptureTheFlag.blueplayer01IsReviving = false;
-                                    }
-                                    else if (CaptureTheFlag.blueplayer02 != null && target.PlayerId == CaptureTheFlag.blueplayer02.PlayerId) {
-                                        CaptureTheFlag.blueplayer02IsReviving = false;
-                                    }
-                                    else if (CaptureTheFlag.blueplayer03 != null && target.PlayerId == CaptureTheFlag.blueplayer03.PlayerId) {
-                                        CaptureTheFlag.blueplayer03IsReviving = false;
-                                    }
-                                    else if (CaptureTheFlag.blueplayer04 != null && target.PlayerId == CaptureTheFlag.blueplayer04.PlayerId) {
-                                        CaptureTheFlag.blueplayer04IsReviving = false;
-                                    }
-                                    else if (CaptureTheFlag.blueplayer05 != null && target.PlayerId == CaptureTheFlag.blueplayer05.PlayerId) {
-                                        CaptureTheFlag.blueplayer05IsReviving = false;
-                                    }
-                                    else if (CaptureTheFlag.blueplayer06 != null && target.PlayerId == CaptureTheFlag.blueplayer06.PlayerId) {
-                                        CaptureTheFlag.blueplayer06IsReviving = false;
-                                    }
-                                    else if (CaptureTheFlag.blueplayer07 != null && target.PlayerId == CaptureTheFlag.blueplayer07.PlayerId) {
-                                        CaptureTheFlag.blueplayer07IsReviving = false;
-                                    }
-                                    Helpers.alphaPlayer(false, player.PlayerId);
-                                }
-                            })));
-
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
-                                if (p == 1f && player != null) {
-                                    player.Revive();
-                                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
-                                        // Skeld
-                                        case 0:
-                                            if (activatedSensei) {
-                                                player.transform.position = new Vector3(7.7f, -0.95f, player.transform.position.z);
-                                            }
-                                            else if (activatedDleks) {
-                                                player.transform.position = new Vector3(-16.5f, -4.45f, player.transform.position.z);
-                                            }
-                                            else {
-                                                player.transform.position = new Vector3(16.5f, -4.45f, player.transform.position.z);
-                                            }
-                                            break;
-                                        // MiraHQ
-                                        case 1:
-                                            player.transform.position = new Vector3(23.25f, 5.25f, player.transform.position.z);
-                                            break;
-                                        // Polus
-                                        case 2:
-                                            player.transform.position = new Vector3(5.4f, -9.45f, player.transform.position.z);
-                                            break;
-                                        // Dleks
-                                        case 3:
-                                            player.transform.position = new Vector3(-16.5f, -4.45f, player.transform.position.z);
-                                            break;
-                                        // Airship
-                                        case 4:
-                                            player.transform.position = new Vector3(33.6f, 1.45f, player.transform.position.z);
-                                            break;
-                                        // Fungle
-                                        case 5:
-                                            player.transform.position = new Vector3(19.25f, 2.35f, player.transform.position.z);
-                                            break;
-                                        // Submerged
-                                        case 6:
-                                            if (player.transform.position.y > 0) {
-                                                player.transform.position = new Vector3(14.25f, 24.25f, player.transform.position.z);
-                                            }
-                                            else {
-                                                player.transform.position = new Vector3(12.5f, -31.25f, player.transform.position.z);
-                                            }
-                                            break;
-                                    }
-                                    DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                                    if (ctfBody != null) UnityEngine.Object.Destroy(ctfBody.gameObject);
-                                    if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
-                                }
-
-                            })));
-
+                            CaptureTheFlag.revivingPlayers.Add(player);
+                            Helpers.alphaPlayer(player.PlayerId, 0.5f);
+                            Helpers.GamemodesGenericBecomeAliveAndTargetable(player, CaptureTheFlag.revivingPlayers, LasMonjas.gamemodeReviveTime);
+                            Helpers.GamemodesGenericRevive(player, ctfBody, LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, Helpers.CTFblueTeamPos, new Vector3(14.25f, 24.25f, player.transform.position.z), Helpers.CTFblueTeamPos);
                         }
                     }
                     break;
                 case 3:
                     // PT
+                    var ptBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
+                    Helpers.GamemodesDisableDeadBodyReportOnClic(ptBody);
+
                     foreach (PlayerControl player in PoliceAndThief.policeTeam) {
                         if (player.PlayerId == target.PlayerId) {
-                            var ptBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
-                            ptBody.transform.position = new Vector3(50, 50, 1);
-                            if (PoliceAndThief.policeplayer01 != null && target.PlayerId == PoliceAndThief.policeplayer01.PlayerId) {
-                                PoliceAndThief.policeplayer01IsReviving = true;
-                            }
-                            else if (PoliceAndThief.policeplayer02 != null && target.PlayerId == PoliceAndThief.policeplayer02.PlayerId) {
-                                PoliceAndThief.policeplayer02IsReviving = true;
-                            }
-                            else if (PoliceAndThief.policeplayer03 != null && target.PlayerId == PoliceAndThief.policeplayer03.PlayerId) {
-                                PoliceAndThief.policeplayer03IsReviving = true;
-                            }
-                            else if (PoliceAndThief.policeplayer04 != null && target.PlayerId == PoliceAndThief.policeplayer04.PlayerId) {
-                                PoliceAndThief.policeplayer04IsReviving = true;
-                            }
-                            else if (PoliceAndThief.policeplayer05 != null && target.PlayerId == PoliceAndThief.policeplayer05.PlayerId) {
-                                PoliceAndThief.policeplayer05IsReviving = true;
-                            }
-                            else if (PoliceAndThief.policeplayer06 != null && target.PlayerId == PoliceAndThief.policeplayer06.PlayerId) {
-                                PoliceAndThief.policeplayer06IsReviving = true;
-                            }
-                            Helpers.alphaPlayer(true, player.PlayerId);
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
-                                if (p == 1f && player != null) {
-                                    if (PoliceAndThief.policeplayer01 != null && target.PlayerId == PoliceAndThief.policeplayer01.PlayerId) {
-                                        PoliceAndThief.policeplayer01IsReviving = false;
-                                    }
-                                    else if (PoliceAndThief.policeplayer02 != null && target.PlayerId == PoliceAndThief.policeplayer02.PlayerId) {
-                                        PoliceAndThief.policeplayer02IsReviving = false;
-                                    }
-                                    else if (PoliceAndThief.policeplayer03 != null && target.PlayerId == PoliceAndThief.policeplayer03.PlayerId) {
-                                        PoliceAndThief.policeplayer03IsReviving = false;
-                                    }
-                                    else if (PoliceAndThief.policeplayer04 != null && target.PlayerId == PoliceAndThief.policeplayer04.PlayerId) {
-                                        PoliceAndThief.policeplayer04IsReviving = false;
-                                    }
-                                    else if (PoliceAndThief.policeplayer05 != null && target.PlayerId == PoliceAndThief.policeplayer05.PlayerId) {
-                                        PoliceAndThief.policeplayer05IsReviving = false;
-                                    }
-                                    else if (PoliceAndThief.policeplayer06 != null && target.PlayerId == PoliceAndThief.policeplayer06.PlayerId) {
-                                        PoliceAndThief.policeplayer06IsReviving = false;
-                                    }
-                                    Helpers.alphaPlayer(false, player.PlayerId);
-                                }
-                            })));
-
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
-                                if (p == 1f && player != null) {
-                                    player.Revive();
-                                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
-                                        // Skeld
-                                        case 0:
-                                            if (activatedSensei) {
-                                                player.transform.position = new Vector3(-12f, 5f, player.transform.position.z);
-                                            }
-                                            else if (activatedDleks) {
-                                                player.transform.position = new Vector3(10.2f, 1.18f, player.transform.position.z);
-                                            }
-                                            else {
-                                                player.transform.position = new Vector3(-10.2f, 1.18f, player.transform.position.z);
-                                            }
-                                            break;
-                                        // MiraHQ
-                                        case 1:
-                                            player.transform.position = new Vector3(1.8f, -1f, player.transform.position.z);
-                                            break;
-                                        // Polus
-                                        case 2:
-                                            player.transform.position = new Vector3(8.18f, -7.4f, player.transform.position.z);
-                                            break;
-                                        // Dleks
-                                        case 3:
-                                            player.transform.position = new Vector3(10.2f, 1.18f, player.transform.position.z);
-                                            break;
-                                        // Airship
-                                        case 4:
-                                            player.transform.position = new Vector3(-18.5f, 0.75f, player.transform.position.z);
-                                            break; 
-                                        // Fungle
-                                        case 5:
-                                            player.transform.position = new Vector3(-22.5f, -0.5f, player.transform.position.z);
-                                            break;
-                                        // Submerged
-                                        case 6:
-                                            if (player.transform.position.y > 0) {
-                                                player.transform.position = new Vector3(-8.45f, 27f, player.transform.position.z);
-                                            }
-                                            else {
-                                                player.transform.position = new Vector3(-9.25f, -41.25f, player.transform.position.z);
-                                            }
-                                            break;
-                                    }
-                                    DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                                    if (ptBody != null) UnityEngine.Object.Destroy(ptBody.gameObject);
-                                    if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
-                                }
-
-                            })));
-
+                            PoliceAndThief.revivingPlayers.Add(player);
+                            Helpers.alphaPlayer(player.PlayerId, 0.5f);
+                            Helpers.GamemodesGenericBecomeAliveAndTargetable(player, PoliceAndThief.revivingPlayers, LasMonjas.gamemodeInvincibilityTime);
+                            Helpers.GamemodesGenericRevive(player, ptBody, LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, Helpers.PATpoliceTeamPos, Helpers.PATpoliceTeamPos, new Vector3(-9.25f, -41.25f, player.transform.position.z));
                         }
                     }
                     foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
                         if (player.PlayerId == target.PlayerId) {
-                            var ptBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
-                            ptBody.transform.position = new Vector3(50, 50, 1);
-                            if (PoliceAndThief.thiefplayer01 != null && target.PlayerId == PoliceAndThief.thiefplayer01.PlayerId) {
-                                if (PoliceAndThief.thiefplayer01IsStealing) {
-                                    RPCProcedure.policeandThiefRevertedJewelPosition(target.PlayerId, PoliceAndThief.thiefplayer01JewelId);
-                                }
-                                PoliceAndThief.thiefplayer01IsReviving = true;
+                            PoliceAndThief.revivingPlayers.Add(player);
+                            if (PoliceAndThief.stealingPlayers.Contains(player)) {
+                                RPCProcedure.policeandThiefRevertedJewelPosition(target.PlayerId, Helpers.PoliceAndThiefsGetJewelId(target));
                             }
-                            else if (PoliceAndThief.thiefplayer02 != null && target.PlayerId == PoliceAndThief.thiefplayer02.PlayerId) {
-                                if (PoliceAndThief.thiefplayer02IsStealing) {
-                                    RPCProcedure.policeandThiefRevertedJewelPosition(target.PlayerId, PoliceAndThief.thiefplayer02JewelId);
-                                }
-                                PoliceAndThief.thiefplayer02IsReviving = true;
-                            }
-                            else if (PoliceAndThief.thiefplayer03 != null && target.PlayerId == PoliceAndThief.thiefplayer03.PlayerId) {
-                                if (PoliceAndThief.thiefplayer03IsStealing) {
-                                    RPCProcedure.policeandThiefRevertedJewelPosition(target.PlayerId, PoliceAndThief.thiefplayer03JewelId);
-                                }
-                                PoliceAndThief.thiefplayer03IsReviving = true;
-                            }
-                            else if (PoliceAndThief.thiefplayer04 != null && target.PlayerId == PoliceAndThief.thiefplayer04.PlayerId) {
-                                if (PoliceAndThief.thiefplayer04IsStealing) {
-                                    RPCProcedure.policeandThiefRevertedJewelPosition(target.PlayerId, PoliceAndThief.thiefplayer04JewelId);
-                                }
-                                PoliceAndThief.thiefplayer04IsReviving = true;
-                            }
-                            else if (PoliceAndThief.thiefplayer05 != null && target.PlayerId == PoliceAndThief.thiefplayer05.PlayerId) {
-                                if (PoliceAndThief.thiefplayer05IsStealing) {
-                                    RPCProcedure.policeandThiefRevertedJewelPosition(target.PlayerId, PoliceAndThief.thiefplayer05JewelId);
-                                }
-                                PoliceAndThief.thiefplayer05IsReviving = true;
-                            }
-                            else if (PoliceAndThief.thiefplayer06 != null && target.PlayerId == PoliceAndThief.thiefplayer06.PlayerId) {
-                                if (PoliceAndThief.thiefplayer06IsStealing) {
-                                    RPCProcedure.policeandThiefRevertedJewelPosition(target.PlayerId, PoliceAndThief.thiefplayer06JewelId);
-                                }
-                                PoliceAndThief.thiefplayer06IsReviving = true;
-                            }
-                            else if (PoliceAndThief.thiefplayer07 != null && target.PlayerId == PoliceAndThief.thiefplayer07.PlayerId) {
-                                if (PoliceAndThief.thiefplayer07IsStealing) {
-                                    RPCProcedure.policeandThiefRevertedJewelPosition(target.PlayerId, PoliceAndThief.thiefplayer07JewelId);
-                                }
-                                PoliceAndThief.thiefplayer07IsReviving = true;
-                            }
-                            else if (PoliceAndThief.thiefplayer08 != null && target.PlayerId == PoliceAndThief.thiefplayer08.PlayerId) {
-                                if (PoliceAndThief.thiefplayer08IsStealing) {
-                                    RPCProcedure.policeandThiefRevertedJewelPosition(target.PlayerId, PoliceAndThief.thiefplayer08JewelId);
-                                }
-                                PoliceAndThief.thiefplayer08IsReviving = true;
-                            }
-                            else if (PoliceAndThief.thiefplayer09 != null && target.PlayerId == PoliceAndThief.thiefplayer09.PlayerId) {
-                                if (PoliceAndThief.thiefplayer09IsStealing) {
-                                    RPCProcedure.policeandThiefRevertedJewelPosition(target.PlayerId, PoliceAndThief.thiefplayer09JewelId);
-                                }
-                                PoliceAndThief.thiefplayer09IsReviving = true;
-                            }
-                            Helpers.alphaPlayer(true, player.PlayerId);
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime * 1.25f, new Action<float>((p) => {
-                                if (p == 1f && player != null) {
-                                    if (PoliceAndThief.thiefplayer01 != null && target.PlayerId == PoliceAndThief.thiefplayer01.PlayerId) {
-                                        PoliceAndThief.thiefplayer01IsReviving = false;
-                                    }
-                                    else if (PoliceAndThief.thiefplayer02 != null && target.PlayerId == PoliceAndThief.thiefplayer02.PlayerId) {
-                                        PoliceAndThief.thiefplayer02IsReviving = false;
-                                    }
-                                    else if (PoliceAndThief.thiefplayer03 != null && target.PlayerId == PoliceAndThief.thiefplayer03.PlayerId) {
-                                        PoliceAndThief.thiefplayer03IsReviving = false;
-                                    }
-                                    else if (PoliceAndThief.thiefplayer04 != null && target.PlayerId == PoliceAndThief.thiefplayer04.PlayerId) {
-                                        PoliceAndThief.thiefplayer04IsReviving = false;
-                                    }
-                                    else if (PoliceAndThief.thiefplayer05 != null && target.PlayerId == PoliceAndThief.thiefplayer05.PlayerId) {
-                                        PoliceAndThief.thiefplayer05IsReviving = false;
-                                    }
-                                    else if (PoliceAndThief.thiefplayer06 != null && target.PlayerId == PoliceAndThief.thiefplayer06.PlayerId) {
-                                        PoliceAndThief.thiefplayer06IsReviving = false;
-                                    }
-                                    else if (PoliceAndThief.thiefplayer07 != null && target.PlayerId == PoliceAndThief.thiefplayer07.PlayerId) {
-                                        PoliceAndThief.thiefplayer07IsReviving = false;
-                                    }
-                                    else if (PoliceAndThief.thiefplayer08 != null && target.PlayerId == PoliceAndThief.thiefplayer08.PlayerId) {
-                                        PoliceAndThief.thiefplayer08IsReviving = false;
-                                    }
-                                    else if (PoliceAndThief.thiefplayer09 != null && target.PlayerId == PoliceAndThief.thiefplayer09.PlayerId) {
-                                        PoliceAndThief.thiefplayer09IsReviving = false;
-                                    }
-                                    Helpers.alphaPlayer(false, player.PlayerId);
-                                }
-                            })));
-
-                            HudManager.Instance.StartCoroutine(Effects.Lerp((LasMonjas.gamemodeReviveTime * 1.25f) - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
-                                if (p == 1f && player != null) {
-                                    player.Revive();
-                                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
-                                        // Skeld
-                                        case 0:
-                                            if (activatedSensei) {
-                                                player.transform.position = new Vector3(13.75f, -0.2f, player.transform.position.z);
-                                            }
-                                            else if (activatedDleks) {
-                                                player.transform.position = new Vector3(1.31f, -16.25f, player.transform.position.z);
-                                            }
-                                            else {
-                                                player.transform.position = new Vector3(-1.31f, -16.25f, player.transform.position.z);
-                                            }
-                                            break;
-                                        // MiraHQ
-                                        case 1:
-                                            player.transform.position = new Vector3(17.75f, 11.5f, player.transform.position.z);
-                                            break;
-                                        // Polus
-                                        case 2:
-                                            player.transform.position = new Vector3(30f, -15.75f, player.transform.position.z);
-                                            break;
-                                        // Dleks
-                                        case 3:
-                                            player.transform.position = new Vector3(1.31f, -16.25f, player.transform.position.z);
-                                            break;
-                                        // Airship
-                                        case 4:
-                                            player.transform.position = new Vector3(7.15f, -14.5f, player.transform.position.z);
-                                            break;
-                                        // Fungle
-                                        case 5:
-                                            player.transform.position = new Vector3(20f, 11f, player.transform.position.z);
-                                            break;
-                                        // Submerged
-                                        case 6:
-                                            if (player.transform.position.y > 0) {
-                                                player.transform.position = new Vector3(1f, 10f, player.transform.position.z);
-                                            }
-                                            else {
-                                                player.transform.position = new Vector3(12.5f, -31.75f, player.transform.position.z);
-                                            }
-                                            break;
-                                    }
-                                    DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                                    if (ptBody != null) UnityEngine.Object.Destroy(ptBody.gameObject);
-                                    if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
-                                }
-
-                            })));
-
+                            Helpers.alphaPlayer(player.PlayerId, 0.5f);
+                            Helpers.GamemodesGenericBecomeAliveAndTargetable(player, PoliceAndThief.revivingPlayers, LasMonjas.gamemodeReviveTime * 1.25f);
+                            Helpers.GamemodesGenericRevive(player, ptBody, (LasMonjas.gamemodeReviveTime * 1.25f) - LasMonjas.gamemodeInvincibilityTime, Helpers.PATthiefTeamPos, Helpers.PATthiefTeamPos, new Vector3(12.5f, -31.75f, player.transform.position.z));
                         }
                     }
                     break;
                 case 4:
                     // KOTH
+                    var kothBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
+                    Helpers.GamemodesDisableDeadBodyReportOnClic(kothBody);
+
                     if (KingOfTheHill.usurperPlayer != null && KingOfTheHill.usurperPlayer.PlayerId == target.PlayerId) {
-                        var kothBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
-                        kothBody.transform.position = new Vector3(50, 50, 1);
-                        KingOfTheHill.usurperPlayerIsReviving = true;
+                        KingOfTheHill.revivingPlayers.Add(KingOfTheHill.usurperPlayer);
                         KingOfTheHill.usurperPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                        Helpers.alphaPlayer(true, KingOfTheHill.usurperPlayer.PlayerId);
-                        HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
-                            if (p == 1f && KingOfTheHill.usurperPlayer != null) {
-                                KingOfTheHill.usurperPlayerIsReviving = false;
-                                KingOfTheHill.usurperPlayer.cosmetics.nameText.color = new Color(KingOfTheHill.usurperPlayer.cosmetics.nameText.color.r, KingOfTheHill.usurperPlayer.cosmetics.nameText.color.g, KingOfTheHill.usurperPlayer.cosmetics.nameText.color.b, 1f);
-                                Helpers.alphaPlayer(false, KingOfTheHill.usurperPlayer.PlayerId);
-                                KingOfTheHill.usurperPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                            }
-                        })));
-                        HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
-                            if (p == 1f && KingOfTheHill.usurperPlayer != null) {
-                                KingOfTheHill.usurperPlayer.Revive();
-                                switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
-                                    // Skeld
-                                    case 0:
-                                        if (activatedSensei) {
-                                            KingOfTheHill.usurperPlayer.transform.position = new Vector3(-6.8f, 10.75f, KingOfTheHill.usurperPlayer.transform.position.z);
-                                        }
-                                        else if (activatedDleks) {
-                                            KingOfTheHill.usurperPlayer.transform.position = new Vector3(1f, 5.35f, KingOfTheHill.usurperPlayer.transform.position.z);
-                                        }
-                                        else {
-                                            KingOfTheHill.usurperPlayer.transform.position = new Vector3(-1f, 5.35f, KingOfTheHill.usurperPlayer.transform.position.z);
-                                        }
-                                        break;
-                                    // MiraHQ
-                                    case 1:
-                                        KingOfTheHill.usurperPlayer.transform.position = new Vector3(2.5f, 11f, KingOfTheHill.usurperPlayer.transform.position.z);
-                                        break;
-                                    // Polus
-                                    case 2:
-                                        KingOfTheHill.usurperPlayer.transform.position = new Vector3(20.5f, -12f, KingOfTheHill.usurperPlayer.transform.position.z);
-                                        break;
-                                    // Dleks
-                                    case 3:
-                                        KingOfTheHill.usurperPlayer.transform.position = new Vector3(1f, 5.35f, KingOfTheHill.usurperPlayer.transform.position.z);
-                                        break;
-                                    // Airship
-                                    case 4:
-                                        KingOfTheHill.usurperPlayer.transform.position = new Vector3(12.25f, 2f, KingOfTheHill.usurperPlayer.transform.position.z);
-                                        break;
-                                    // Fungle
-                                    case 5:
-                                        KingOfTheHill.usurperPlayer.transform.position = new Vector3(-3.25f, -10.5f, KingOfTheHill.usurperPlayer.transform.position.z);
-                                        break;
-                                    // Submerged
-                                    case 6:
-                                        if (KingOfTheHill.usurperPlayer.transform.position.y > 0) {
-                                            KingOfTheHill.usurperPlayer.transform.position = new Vector3(5.75f, 31.25f, KingOfTheHill.usurperPlayer.transform.position.z);
-                                        }
-                                        else {
-                                            KingOfTheHill.usurperPlayer.transform.position = new Vector3(-4.25f, -33.5f, KingOfTheHill.usurperPlayer.transform.position.z);
-                                        }
-                                        break;
-                                }
-                                DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                                if (kothBody != null) UnityEngine.Object.Destroy(kothBody.gameObject);
-                                if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
-                            }
-
-                        })));
-
+                        Helpers.alphaPlayer(KingOfTheHill.usurperPlayer.PlayerId, 0.5f);
+                        Helpers.GamemodesGenericBecomeAliveAndTargetable(KingOfTheHill.usurperPlayer, KingOfTheHill.revivingPlayers, LasMonjas.gamemodeReviveTime, true);
+                        Helpers.GamemodesGenericRevive(KingOfTheHill.usurperPlayer, kothBody, LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, Helpers.KOTHusurperPlayerPos, Helpers.KOTHusurperPlayerPos, new Vector3(-4.25f, -33.5f, KingOfTheHill.usurperPlayer.transform.position.z));
                     }
 
                     foreach (PlayerControl player in KingOfTheHill.greenTeam) {
                         if (player.PlayerId == target.PlayerId) {
-                            var kothBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
-                            kothBody.transform.position = new Vector3(50, 50, 1);
-
                             // Restore zones
                             if (KingOfTheHill.greenKingplayer != null && target.PlayerId == KingOfTheHill.greenKingplayer.PlayerId) {
-                                if (KingOfTheHill.greenKinghaszoneone) {
-                                    KingOfTheHill.greenKinghaszoneone = false;
-                                    KingOfTheHill.flagzoneone.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.whiteflag.GetComponent<SpriteRenderer>().sprite;
-                                    KingOfTheHill.zoneone.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.whitebase.GetComponent<SpriteRenderer>().sprite;
-                                    KingOfTheHill.zoneonecolor = Color.white;
-                                }
-                                if (KingOfTheHill.greenKinghaszonetwo) {
-                                    KingOfTheHill.greenKinghaszonetwo = false;
-                                    KingOfTheHill.flagzonetwo.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.whiteflag.GetComponent<SpriteRenderer>().sprite;
-                                    KingOfTheHill.zonetwo.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.whitebase.GetComponent<SpriteRenderer>().sprite;
-                                    KingOfTheHill.zonetwocolor = Color.white;
-                                }
-                                if (KingOfTheHill.greenKinghaszonethree) {
-                                    KingOfTheHill.greenKinghaszonethree = false;
-                                    KingOfTheHill.flagzonethree.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.whiteflag.GetComponent<SpriteRenderer>().sprite;
-                                    KingOfTheHill.zonethree.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.whitebase.GetComponent<SpriteRenderer>().sprite;
-                                    KingOfTheHill.zonethreecolor = Color.white;
-                                }
-                                Helpers.showGamemodesPopUp(1, Helpers.playerById(KingOfTheHill.greenKingplayer.PlayerId));                                
+                                KingOfTheHill.resetCapturedZones(ref KingOfTheHill.greenKinghaszoneone, KingOfTheHill.flagzoneone, KingOfTheHill.zoneone, ref KingOfTheHill.zoneonecolor);
+                                KingOfTheHill.resetCapturedZones(ref KingOfTheHill.greenKinghaszonetwo, KingOfTheHill.flagzonetwo, KingOfTheHill.zonetwo, ref KingOfTheHill.zonetwocolor);
+                                KingOfTheHill.resetCapturedZones(ref KingOfTheHill.greenKinghaszonethree, KingOfTheHill.flagzonethree, KingOfTheHill.zonethree, ref KingOfTheHill.zonethreecolor);
+                                Helpers.showGamemodesPopUp(1, Helpers.playerById(KingOfTheHill.greenKingplayer.PlayerId));
                                 KingOfTheHill.totalGreenKingzonescaptured = 0;
-                                KingOfTheHill.greenKingIsReviving = true;
                                 // Hide aura while dead
                                 DeadPlayer kinggreenPlayer = deadPlayers?.Where(x => x.player?.PlayerId == target?.PlayerId)?.FirstOrDefault();
                                 if (kinggreenPlayer != null && kinggreenPlayer.killerIfExisting != null) {
@@ -3285,134 +1834,21 @@ namespace LasMonjas.Patches {
                                     }
                                 }
                             }
-                            else if (KingOfTheHill.greenplayer01 != null && target.PlayerId == KingOfTheHill.greenplayer01.PlayerId) {
-                                KingOfTheHill.greenplayer01IsReviving = true;
-                            }
-                            else if (KingOfTheHill.greenplayer02 != null && target.PlayerId == KingOfTheHill.greenplayer02.PlayerId) {
-                                KingOfTheHill.greenplayer02IsReviving = true;
-                            }
-                            else if (KingOfTheHill.greenplayer03 != null && target.PlayerId == KingOfTheHill.greenplayer03.PlayerId) {
-                                KingOfTheHill.greenplayer03IsReviving = true;
-                            }
-                            else if (KingOfTheHill.greenplayer04 != null && target.PlayerId == KingOfTheHill.greenplayer04.PlayerId) {
-                                KingOfTheHill.greenplayer04IsReviving = true;
-                            }
-                            else if (KingOfTheHill.greenplayer05 != null && target.PlayerId == KingOfTheHill.greenplayer05.PlayerId) {
-                                KingOfTheHill.greenplayer05IsReviving = true;
-                            }
-                            else if (KingOfTheHill.greenplayer06 != null && target.PlayerId == KingOfTheHill.greenplayer06.PlayerId) {
-                                KingOfTheHill.greenplayer06IsReviving = true;
-                            }
-                            Helpers.alphaPlayer(true, player.PlayerId);
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
-                                if (p == 1f && player != null) {
-                                    if (KingOfTheHill.greenKingplayer != null && target.PlayerId == KingOfTheHill.greenKingplayer.PlayerId) {
-                                        KingOfTheHill.greenKingIsReviving = false;
-                                    }
-                                    else if (KingOfTheHill.greenplayer01 != null && target.PlayerId == KingOfTheHill.greenplayer01.PlayerId) {
-                                        KingOfTheHill.greenplayer01IsReviving = false;
-                                    }
-                                    else if (KingOfTheHill.greenplayer02 != null && target.PlayerId == KingOfTheHill.greenplayer02.PlayerId) {
-                                        KingOfTheHill.greenplayer02IsReviving = false;
-                                    }
-                                    else if (KingOfTheHill.greenplayer03 != null && target.PlayerId == KingOfTheHill.greenplayer03.PlayerId) {
-                                        KingOfTheHill.greenplayer03IsReviving = false;
-                                    }
-                                    else if (KingOfTheHill.greenplayer04 != null && target.PlayerId == KingOfTheHill.greenplayer04.PlayerId) {
-                                        KingOfTheHill.greenplayer04IsReviving = false;
-                                    }
-                                    else if (KingOfTheHill.greenplayer05 != null && target.PlayerId == KingOfTheHill.greenplayer05.PlayerId) {
-                                        KingOfTheHill.greenplayer05IsReviving = false;
-                                    }
-                                    else if (KingOfTheHill.greenplayer06 != null && target.PlayerId == KingOfTheHill.greenplayer06.PlayerId) {
-                                        KingOfTheHill.greenplayer06IsReviving = false;
-                                    }
-                                    Helpers.alphaPlayer(false, player.PlayerId);
-                                }
-                            })));
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
-                                if (p == 1f && player != null) {
-                                    player.Revive();
-                                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
-                                        // Skeld
-                                        case 0:
-                                            if (activatedSensei) {
-                                                player.transform.position = new Vector3(-16.4f, -10.25f, player.transform.position.z);
-                                            }
-                                            else if (activatedDleks) {
-                                                player.transform.position = new Vector3(7f, -8.25f, player.transform.position.z);
-                                            }
-                                            else {
-                                                player.transform.position = new Vector3(-7f, -8.25f, player.transform.position.z);
-                                            }
-                                            break;
-                                        // MiraHQ
-                                        case 1:
-                                            player.transform.position = new Vector3(-4.45f, 1.75f, player.transform.position.z);
-                                            break;
-                                        // Polus
-                                        case 2:
-                                            player.transform.position = new Vector3(2.25f, -23.75f, player.transform.position.z);
-                                            break;
-                                        // Dleks
-                                        case 3:
-                                            player.transform.position = new Vector3(7f, -8.25f, player.transform.position.z);
-                                            break;
-                                        // Airship
-                                        case 4:
-                                            player.transform.position = new Vector3(-13.9f, -14.45f, player.transform.position.z);
-                                            break;
-                                        // Fungle
-                                        case 5:
-                                            player.transform.position = new Vector3(-17.5f, 7f, player.transform.position.z);
-                                            break;
-                                        // Submerged
-                                        case 6:
-                                            if (player.transform.position.y > 0) {
-                                                player.transform.position = new Vector3(-12.25f, 18.5f, player.transform.position.z);
-                                            }
-                                            else {
-                                                player.transform.position = new Vector3(-14.5f, -34.35f, player.transform.position.z);
-                                            }
-                                            break;
-                                    }
-                                    DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                                    if (kothBody != null) UnityEngine.Object.Destroy(kothBody.gameObject);
-                                    if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
-                                }
-
-                            })));
-
+                            KingOfTheHill.revivingPlayers.Add(player);
+                            Helpers.alphaPlayer(player.PlayerId, 0.5f);
+                            Helpers.GamemodesGenericBecomeAliveAndTargetable(player, KingOfTheHill.revivingPlayers, LasMonjas.gamemodeReviveTime);
+                            Helpers.GamemodesGenericRevive(player, kothBody, LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, Helpers.KOTHgreenTeamPos, Helpers.KOTHgreenTeamPos, new Vector3(-14.5f, -34.35f, player.transform.position.z));
                         }
                     }
                     foreach (PlayerControl player in KingOfTheHill.yellowTeam) {
                         if (player.PlayerId == target.PlayerId) {
-                            var kothBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
-                            kothBody.transform.position = new Vector3(50, 50, 1);
-
                             // Restore zones
                             if (KingOfTheHill.yellowKingplayer != null && target.PlayerId == KingOfTheHill.yellowKingplayer.PlayerId) {
-                                if (KingOfTheHill.yellowKinghaszoneone) {
-                                    KingOfTheHill.yellowKinghaszoneone = false;
-                                    KingOfTheHill.flagzoneone.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.whiteflag.GetComponent<SpriteRenderer>().sprite;
-                                    KingOfTheHill.zoneone.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.whitebase.GetComponent<SpriteRenderer>().sprite;
-                                    KingOfTheHill.zoneonecolor = Color.white;
-                                }
-                                if (KingOfTheHill.yellowKinghaszonetwo) {
-                                    KingOfTheHill.yellowKinghaszonetwo = false;
-                                    KingOfTheHill.flagzonetwo.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.whiteflag.GetComponent<SpriteRenderer>().sprite;
-                                    KingOfTheHill.zonetwo.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.whitebase.GetComponent<SpriteRenderer>().sprite;
-                                    KingOfTheHill.zonetwocolor = Color.white;
-                                }
-                                if (KingOfTheHill.yellowKinghaszonethree) {
-                                    KingOfTheHill.yellowKinghaszonethree = false;
-                                    KingOfTheHill.flagzonethree.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.whiteflag.GetComponent<SpriteRenderer>().sprite;
-                                    KingOfTheHill.zonethree.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.whitebase.GetComponent<SpriteRenderer>().sprite;
-                                    KingOfTheHill.zonethreecolor = Color.white;
-                                }
-                                Helpers.showGamemodesPopUp(2, Helpers.playerById(KingOfTheHill.yellowKingplayer.PlayerId));                                
+                                KingOfTheHill.resetCapturedZones(ref KingOfTheHill.yellowKinghaszoneone, KingOfTheHill.flagzoneone, KingOfTheHill.zoneone, ref KingOfTheHill.zoneonecolor);
+                                KingOfTheHill.resetCapturedZones(ref KingOfTheHill.yellowKinghaszonetwo, KingOfTheHill.flagzonetwo, KingOfTheHill.zonetwo, ref KingOfTheHill.zonetwocolor);
+                                KingOfTheHill.resetCapturedZones(ref KingOfTheHill.yellowKinghaszonethree, KingOfTheHill.flagzonethree, KingOfTheHill.zonethree, ref KingOfTheHill.zonethreecolor);
+                                Helpers.showGamemodesPopUp(2, Helpers.playerById(KingOfTheHill.yellowKingplayer.PlayerId));
                                 KingOfTheHill.totalYellowKingzonescaptured = 0;
-                                KingOfTheHill.yellowKingIsReviving = true;
                                 // Hide aura while dead
                                 DeadPlayer kingyellowPlayer = deadPlayers?.Where(x => x.player?.PlayerId == target?.PlayerId)?.FirstOrDefault();
                                 if (kingyellowPlayer != null && kingyellowPlayer.killerIfExisting != null) {
@@ -3426,176 +1862,26 @@ namespace LasMonjas.Patches {
                                     }
                                 }
                             }
-                            else if (KingOfTheHill.yellowplayer01 != null && target.PlayerId == KingOfTheHill.yellowplayer01.PlayerId) {
-                                KingOfTheHill.yellowplayer01IsReviving = true;
-                            }
-                            else if (KingOfTheHill.yellowplayer02 != null && target.PlayerId == KingOfTheHill.yellowplayer02.PlayerId) {
-                                KingOfTheHill.yellowplayer02IsReviving = true;
-                            }
-                            else if (KingOfTheHill.yellowplayer03 != null && target.PlayerId == KingOfTheHill.yellowplayer03.PlayerId) {
-                                KingOfTheHill.yellowplayer03IsReviving = true;
-                            }
-                            else if (KingOfTheHill.yellowplayer04 != null && target.PlayerId == KingOfTheHill.yellowplayer04.PlayerId) {
-                                KingOfTheHill.yellowplayer04IsReviving = true;
-                            }
-                            else if (KingOfTheHill.yellowplayer05 != null && target.PlayerId == KingOfTheHill.yellowplayer05.PlayerId) {
-                                KingOfTheHill.yellowplayer05IsReviving = true;
-                            }
-                            else if (KingOfTheHill.yellowplayer06 != null && target.PlayerId == KingOfTheHill.yellowplayer06.PlayerId) {
-                                KingOfTheHill.yellowplayer06IsReviving = true;
-                            }
-                            Helpers.alphaPlayer(true, player.PlayerId);
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
-                                if (p == 1f && player != null) {
-                                    if (KingOfTheHill.yellowKingplayer != null && target.PlayerId == KingOfTheHill.yellowKingplayer.PlayerId) {
-                                        KingOfTheHill.yellowKingIsReviving = false;
-                                    }
-                                    else if (KingOfTheHill.yellowplayer01 != null && target.PlayerId == KingOfTheHill.yellowplayer01.PlayerId) {
-                                        KingOfTheHill.yellowplayer01IsReviving = false;
-                                    }
-                                    else if (KingOfTheHill.yellowplayer02 != null && target.PlayerId == KingOfTheHill.yellowplayer02.PlayerId) {
-                                        KingOfTheHill.yellowplayer02IsReviving = false;
-                                    }
-                                    else if (KingOfTheHill.yellowplayer03 != null && target.PlayerId == KingOfTheHill.yellowplayer03.PlayerId) {
-                                        KingOfTheHill.yellowplayer03IsReviving = false;
-                                    }
-                                    else if (KingOfTheHill.yellowplayer04 != null && target.PlayerId == KingOfTheHill.yellowplayer04.PlayerId) {
-                                        KingOfTheHill.yellowplayer04IsReviving = false;
-                                    }
-                                    else if (KingOfTheHill.yellowplayer05 != null && target.PlayerId == KingOfTheHill.yellowplayer05.PlayerId) {
-                                        KingOfTheHill.yellowplayer05IsReviving = false;
-                                    }
-                                    else if (KingOfTheHill.yellowplayer06 != null && target.PlayerId == KingOfTheHill.yellowplayer06.PlayerId) {
-                                        KingOfTheHill.yellowplayer06IsReviving = false;
-                                    }
-                                    Helpers.alphaPlayer(false, player.PlayerId);
-                                }
-                            })));
-
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
-                                if (p == 1f && player != null) {
-                                    player.Revive();
-                                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
-                                        // Skeld
-                                        case 0:
-                                            if (activatedSensei) {
-                                                player.transform.position = new Vector3(7f, -14.15f, player.transform.position.z);
-                                            }
-                                            else if (activatedDleks) {
-                                                player.transform.position = new Vector3(-6.25f, -3.5f, player.transform.position.z);
-                                            }
-                                            else {
-                                                player.transform.position = new Vector3(6.25f, -3.5f, player.transform.position.z);
-                                            }
-                                            break;
-                                        // MiraHQ
-                                        case 1:
-                                            player.transform.position = new Vector3(19.5f, 4.7f, player.transform.position.z);
-                                            break;
-                                        // Polus
-                                        case 2:
-                                            player.transform.position = new Vector3(36.35f, -6.15f, player.transform.position.z);
-                                            break;
-                                        // Dleks
-                                        case 3:
-                                            player.transform.position = new Vector3(-6.25f, -3.5f, player.transform.position.z);
-                                            break;
-                                        // Airship
-                                        case 4:
-                                            player.transform.position = new Vector3(37.35f, -3.25f, player.transform.position.z);
-                                            break;
-                                        // Fungle
-                                        case 5:
-                                            player.transform.position = new Vector3(21.5f, -6.85f, player.transform.position.z);
-                                            break;
-                                        // Submerged
-                                        case 6:
-                                            if (player.transform.position.y > 0) {
-                                                player.transform.position = new Vector3(0f, 33.5f, player.transform.position.z);
-                                            }
-                                            else {
-                                                player.transform.position = new Vector3(-8.5f, -39.5f, player.transform.position.z);
-                                            }
-                                            break;
-                                    }
-                                    DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                                    if (kothBody != null) UnityEngine.Object.Destroy(kothBody.gameObject);
-                                    if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
-                                }
-
-                            })));
-
+                            KingOfTheHill.revivingPlayers.Add(player);
+                            Helpers.alphaPlayer(player.PlayerId, 0.5f);
+                            Helpers.GamemodesGenericBecomeAliveAndTargetable(player, KingOfTheHill.revivingPlayers, LasMonjas.gamemodeReviveTime);
+                            Helpers.GamemodesGenericRevive(player, kothBody, LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, Helpers.KOTHyellowTeamPos, new Vector3(0f, 33.5f, player.transform.position.z), Helpers.KOTHyellowTeamPos);
                         }
                     }
                     break;
                 case 5:
                     // HP
-                    if (HotPotato.hotPotatoPlayer != null && HotPotato.hotPotatoPlayer.PlayerId == target.PlayerId) {
+                    var hpBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
+                    Helpers.GamemodesDisableDeadBodyReportOnClic(hpBody);
 
-                        var hpBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
-                        hpBody.transform.position = new Vector3(50, 50, 1);
+                    if (HotPotato.hotPotatoPlayer != null && HotPotato.hotPotatoPlayer.PlayerId == target.PlayerId) {
 
                         HotPotato.timeforTransfer = HotPotato.savedtimeforTransfer + 4f;
 
                         HudManager.Instance.StartCoroutine(Effects.Lerp(1, new Action<float>((p) => { // Delayed action
                             if (p == 1f) {
 
-                                if (HotPotato.explodedPotato01 == null) {
-                                    HotPotato.explodedPotato01 = HotPotato.hotPotatoPlayer;
-                                    HotPotato.explodedPotatoTeam.Add(HotPotato.explodedPotato01);
-                                }
-                                else if (HotPotato.explodedPotato02 == null) {
-                                    HotPotato.explodedPotato02 = HotPotato.hotPotatoPlayer;
-                                    HotPotato.explodedPotatoTeam.Add(HotPotato.explodedPotato02);
-                                }
-                                else if (HotPotato.explodedPotato03 == null) {
-                                    HotPotato.explodedPotato03 = HotPotato.hotPotatoPlayer;
-                                    HotPotato.explodedPotatoTeam.Add(HotPotato.explodedPotato03);
-                                }
-                                else if (HotPotato.explodedPotato04 == null) {
-                                    HotPotato.explodedPotato04 = HotPotato.hotPotatoPlayer;
-                                    HotPotato.explodedPotatoTeam.Add(HotPotato.explodedPotato04);
-                                }
-                                else if (HotPotato.explodedPotato05 == null) {
-                                    HotPotato.explodedPotato05 = HotPotato.hotPotatoPlayer;
-                                    HotPotato.explodedPotatoTeam.Add(HotPotato.explodedPotato05);
-                                }
-                                else if (HotPotato.explodedPotato06 == null) {
-                                    HotPotato.explodedPotato06 = HotPotato.hotPotatoPlayer;
-                                    HotPotato.explodedPotatoTeam.Add(HotPotato.explodedPotato06);
-                                }
-                                else if (HotPotato.explodedPotato07 == null) {
-                                    HotPotato.explodedPotato07 = HotPotato.hotPotatoPlayer;
-                                    HotPotato.explodedPotatoTeam.Add(HotPotato.explodedPotato07);
-                                }
-                                else if (HotPotato.explodedPotato08 == null) {
-                                    HotPotato.explodedPotato08 = HotPotato.hotPotatoPlayer;
-                                    HotPotato.explodedPotatoTeam.Add(HotPotato.explodedPotato08);
-                                }
-                                else if (HotPotato.explodedPotato09 == null) {
-                                    HotPotato.explodedPotato09 = HotPotato.hotPotatoPlayer;
-                                    HotPotato.explodedPotatoTeam.Add(HotPotato.explodedPotato09);
-                                }
-                                else if (HotPotato.explodedPotato10 == null) {
-                                    HotPotato.explodedPotato10 = HotPotato.hotPotatoPlayer;
-                                    HotPotato.explodedPotatoTeam.Add(HotPotato.explodedPotato10);
-                                }
-                                else if (HotPotato.explodedPotato11 == null) {
-                                    HotPotato.explodedPotato11 = HotPotato.hotPotatoPlayer;
-                                    HotPotato.explodedPotatoTeam.Add(HotPotato.explodedPotato11);
-                                }
-                                else if (HotPotato.explodedPotato12 == null) {
-                                    HotPotato.explodedPotato12 = HotPotato.hotPotatoPlayer;
-                                    HotPotato.explodedPotatoTeam.Add(HotPotato.explodedPotato12);
-                                }
-                                else if (HotPotato.explodedPotato13 == null) {
-                                    HotPotato.explodedPotato13 = HotPotato.hotPotatoPlayer;
-                                    HotPotato.explodedPotatoTeam.Add(HotPotato.explodedPotato13);
-                                }
-                                else if (HotPotato.explodedPotato14 == null) {
-                                    HotPotato.explodedPotato14 = HotPotato.hotPotatoPlayer;
-                                    HotPotato.explodedPotatoTeam.Add(HotPotato.explodedPotato14);
-                                }
+                                Helpers.AddExplodedPotato(HotPotato.hotPotatoPlayer);
 
                                 int notPotatosAlives = -1;
                                 HotPotato.notPotatoTeamAlive.Clear();
@@ -3612,57 +1898,15 @@ namespace LasMonjas.Patches {
                                     return;
                                 }
 
-                                HotPotato.hotPotatoPlayer = HotPotato.notPotatoTeam[0];
-
-                                // If hot potato timed out, assing new potato
-                                if (HotPotato.notPotato01 != null && HotPotato.notPotatoTeam[0] == HotPotato.notPotato01) {
-                                    HotPotato.notPotato01 = null;
-                                }
-                                else if (HotPotato.notPotato02 != null && HotPotato.notPotatoTeam[0] == HotPotato.notPotato02) {
-                                    HotPotato.notPotato02 = null;
-                                }
-                                else if (HotPotato.notPotato03 != null && HotPotato.notPotatoTeam[0] == HotPotato.notPotato03) {
-                                    HotPotato.notPotato03 = null;
-                                }
-                                else if (HotPotato.notPotato04 != null && HotPotato.notPotatoTeam[0] == HotPotato.notPotato04) {
-                                    HotPotato.notPotato04 = null;
-                                }
-                                else if (HotPotato.notPotato05 != null && HotPotato.notPotatoTeam[0] == HotPotato.notPotato05) {
-                                    HotPotato.notPotato05 = null;
-                                }
-                                else if (HotPotato.notPotato06 != null && HotPotato.notPotatoTeam[0] == HotPotato.notPotato06) {
-                                    HotPotato.notPotato06 = null;
-                                }
-                                else if (HotPotato.notPotato07 != null && HotPotato.notPotatoTeam[0] == HotPotato.notPotato07) {
-                                    HotPotato.notPotato07 = null;
-                                }
-                                else if (HotPotato.notPotato08 != null && HotPotato.notPotatoTeam[0] == HotPotato.notPotato08) {
-                                    HotPotato.notPotato08 = null;
-                                }
-                                else if (HotPotato.notPotato09 != null && HotPotato.notPotatoTeam[0] == HotPotato.notPotato09) {
-                                    HotPotato.notPotato09 = null;
-                                }
-                                else if (HotPotato.notPotato10 != null && HotPotato.notPotatoTeam[0] == HotPotato.notPotato10) {
-                                    HotPotato.notPotato10 = null;
-                                }
-                                else if (HotPotato.notPotato11 != null && HotPotato.notPotatoTeam[0] == HotPotato.notPotato11) {
-                                    HotPotato.notPotato11 = null;
-                                }
-                                else if (HotPotato.notPotato12 != null && HotPotato.notPotatoTeam[0] == HotPotato.notPotato12) {
-                                    HotPotato.notPotato12 = null;
-                                }
-                                else if (HotPotato.notPotato13 != null && HotPotato.notPotatoTeam[0] == HotPotato.notPotato13) {
-                                    HotPotato.notPotato13 = null;
-                                }
-                                else if (HotPotato.notPotato14 != null && HotPotato.notPotatoTeam[0] == HotPotato.notPotato14) {
-                                    HotPotato.notPotato14 = null;
-                                }
+                                PlayerControl nextPotato = HotPotato.notPotatoTeam[0];
+                                Helpers.RemoveNotPotato(nextPotato);
+                                HotPotato.hotPotatoPlayer = nextPotato;
 
                                 HotPotato.notPotatoTeam.RemoveAt(0);
 
                                 HotPotato.hotPotatoPlayer.NetTransform.Halt();
                                 HotPotato.hotPotatoPlayer.moveable = false;
-                                HotPotato.hotPotatoPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                                Helpers.RestoreBodyTypeWithDelay(HotPotato.hotPotatoPlayer);
                                 HotPotato.hotPotato.transform.position = HotPotato.hotPotatoPlayer.transform.position + new Vector3(0, 0.5f, -0.25f);
                                 HotPotato.hotPotato.transform.parent = HotPotato.hotPotatoPlayer.transform;
 
@@ -3680,1258 +1924,151 @@ namespace LasMonjas.Patches {
                     break;
                 case 6:
                     // ZL
+                    var zlBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
+                    Helpers.GamemodesDisableDeadBodyReportOnClic(zlBody);
+
                     foreach (PlayerControl player in ZombieLaboratory.survivorTeam) {
                         if (player.PlayerId == target.PlayerId) {
-                            var zlBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
-                            zlBody.transform.position = new Vector3(50, 50, 1);
-                            if (ZombieLaboratory.survivorPlayer01 != null && target.PlayerId == ZombieLaboratory.survivorPlayer01.PlayerId) {
-                                ZombieLaboratory.survivorPlayer01IsReviving = true;
-                                ZombieLaboratory.survivorPlayer01CanKill = false;
-                                if (ZombieLaboratory.survivorPlayer01IsInfected) {
-                                    ZombieLaboratory.survivorPlayer01IsInfected = false;
-                                    ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer01);
-                                }
-                                if (ZombieLaboratory.survivorPlayer01HasKeyItem) {
-                                    ZombieLaboratory.survivorPlayer01HasKeyItem = false;
-                                    RPCProcedure.zombieLaboratoryRevertedKeyPosition(target.PlayerId, ZombieLaboratory.survivorPlayer01FoundBox);
-                                }
+                            ZombieLaboratory.revivingPlayers.Add(player);
+                            ZombieLaboratory.hasAmmoPlayers.Remove(player);
+                            if (ZombieLaboratory.infectedPlayers.Contains(player)) {
+                                ZombieLaboratory.infectedPlayers.Remove(player);
                             }
-                            else if (ZombieLaboratory.survivorPlayer02 != null && target.PlayerId == ZombieLaboratory.survivorPlayer02.PlayerId) {
-                                ZombieLaboratory.survivorPlayer02IsReviving = true;
-                                ZombieLaboratory.survivorPlayer02CanKill = false;
-                                if (ZombieLaboratory.survivorPlayer02IsInfected) {
-                                    ZombieLaboratory.survivorPlayer02IsInfected = false;
-                                    ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer02);
-                                }
-                                if (ZombieLaboratory.survivorPlayer02HasKeyItem) {
-                                    ZombieLaboratory.survivorPlayer02HasKeyItem = false;
-                                    RPCProcedure.zombieLaboratoryRevertedKeyPosition(target.PlayerId, ZombieLaboratory.survivorPlayer02FoundBox);
-                                }
+                            if (ZombieLaboratory.hasKeyItemPlayers.Contains(player)) {
+                                ZombieLaboratory.hasKeyItemPlayers.Remove(player);
+                                RPCProcedure.zombieLaboratoryRevertedKeyPosition(target.PlayerId, Helpers.ZombieLaboratoryGetFoundBox(target));
                             }
-                            else if (ZombieLaboratory.survivorPlayer03 != null && target.PlayerId == ZombieLaboratory.survivorPlayer03.PlayerId) {
-                                ZombieLaboratory.survivorPlayer03IsReviving = true;
-                                ZombieLaboratory.survivorPlayer03CanKill = false;
-                                if (ZombieLaboratory.survivorPlayer03IsInfected) {
-                                    ZombieLaboratory.survivorPlayer03IsInfected = false;
-                                    ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer03);
-                                }
-                                if (ZombieLaboratory.survivorPlayer03HasKeyItem) {
-                                    ZombieLaboratory.survivorPlayer03HasKeyItem = false;
-                                    RPCProcedure.zombieLaboratoryRevertedKeyPosition(target.PlayerId, ZombieLaboratory.survivorPlayer03FoundBox);
-                                }
-                            }
-                            else if (ZombieLaboratory.survivorPlayer04 != null && target.PlayerId == ZombieLaboratory.survivorPlayer04.PlayerId) {
-                                ZombieLaboratory.survivorPlayer04IsReviving = true;
-                                ZombieLaboratory.survivorPlayer04CanKill = false;
-                                if (ZombieLaboratory.survivorPlayer04IsInfected) {
-                                    ZombieLaboratory.survivorPlayer04IsInfected = false;
-                                    ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer04);
-                                }
-                                if (ZombieLaboratory.survivorPlayer04HasKeyItem) {
-                                    ZombieLaboratory.survivorPlayer04HasKeyItem = false;
-                                    RPCProcedure.zombieLaboratoryRevertedKeyPosition(target.PlayerId, ZombieLaboratory.survivorPlayer04FoundBox);
-                                }
-                            }
-                            else if (ZombieLaboratory.survivorPlayer05 != null && target.PlayerId == ZombieLaboratory.survivorPlayer05.PlayerId) {
-                                ZombieLaboratory.survivorPlayer05IsReviving = true;
-                                ZombieLaboratory.survivorPlayer05CanKill = false;
-                                if (ZombieLaboratory.survivorPlayer05IsInfected) {
-                                    ZombieLaboratory.survivorPlayer05IsInfected = false;
-                                    ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer05);
-                                }
-                                if (ZombieLaboratory.survivorPlayer05HasKeyItem) {
-                                    ZombieLaboratory.survivorPlayer05HasKeyItem = false;
-                                    RPCProcedure.zombieLaboratoryRevertedKeyPosition(target.PlayerId, ZombieLaboratory.survivorPlayer05FoundBox);
-                                }
-                            }
-                            else if (ZombieLaboratory.survivorPlayer06 != null && target.PlayerId == ZombieLaboratory.survivorPlayer06.PlayerId) {
-                                ZombieLaboratory.survivorPlayer06IsReviving = true;
-                                ZombieLaboratory.survivorPlayer06CanKill = false;
-                                if (ZombieLaboratory.survivorPlayer06IsInfected) {
-                                    ZombieLaboratory.survivorPlayer06IsInfected = false;
-                                    ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer06);
-                                }
-                                if (ZombieLaboratory.survivorPlayer06HasKeyItem) {
-                                    ZombieLaboratory.survivorPlayer06HasKeyItem = false;
-                                    RPCProcedure.zombieLaboratoryRevertedKeyPosition(target.PlayerId, ZombieLaboratory.survivorPlayer06FoundBox);
-                                }
-                            }
-                            else if (ZombieLaboratory.survivorPlayer07 != null && target.PlayerId == ZombieLaboratory.survivorPlayer07.PlayerId) {
-                                ZombieLaboratory.survivorPlayer07IsReviving = true;
-                                ZombieLaboratory.survivorPlayer07CanKill = false;
-                                if (ZombieLaboratory.survivorPlayer07IsInfected) {
-                                    ZombieLaboratory.survivorPlayer07IsInfected = false;
-                                    ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer07);
-                                }
-                                if (ZombieLaboratory.survivorPlayer07HasKeyItem) {
-                                    ZombieLaboratory.survivorPlayer07HasKeyItem = false;
-                                    RPCProcedure.zombieLaboratoryRevertedKeyPosition(target.PlayerId, ZombieLaboratory.survivorPlayer07FoundBox);
-                                }
-                            }
-                            else if (ZombieLaboratory.survivorPlayer08 != null && target.PlayerId == ZombieLaboratory.survivorPlayer08.PlayerId) {
-                                ZombieLaboratory.survivorPlayer08IsReviving = true;
-                                ZombieLaboratory.survivorPlayer08CanKill = false;
-                                if (ZombieLaboratory.survivorPlayer08IsInfected) {
-                                    ZombieLaboratory.survivorPlayer08IsInfected = false;
-                                    ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer08);
-                                }
-                                if (ZombieLaboratory.survivorPlayer08HasKeyItem) {
-                                    ZombieLaboratory.survivorPlayer08HasKeyItem = false;
-                                    RPCProcedure.zombieLaboratoryRevertedKeyPosition(target.PlayerId, ZombieLaboratory.survivorPlayer08FoundBox);
-                                }
-                            }
-                            else if (ZombieLaboratory.survivorPlayer09 != null && target.PlayerId == ZombieLaboratory.survivorPlayer09.PlayerId) {
-                                ZombieLaboratory.survivorPlayer09IsReviving = true;
-                                ZombieLaboratory.survivorPlayer09CanKill = false;
-                                if (ZombieLaboratory.survivorPlayer09IsInfected) {
-                                    ZombieLaboratory.survivorPlayer09IsInfected = false;
-                                    ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer09);
-                                }
-                                if (ZombieLaboratory.survivorPlayer09HasKeyItem) {
-                                    ZombieLaboratory.survivorPlayer09HasKeyItem = false;
-                                    RPCProcedure.zombieLaboratoryRevertedKeyPosition(target.PlayerId, ZombieLaboratory.survivorPlayer09FoundBox);
-                                }
-                            }
-                            else if (ZombieLaboratory.survivorPlayer10 != null && target.PlayerId == ZombieLaboratory.survivorPlayer10.PlayerId) {
-                                ZombieLaboratory.survivorPlayer10IsReviving = true;
-                                ZombieLaboratory.survivorPlayer10CanKill = false;
-                                if (ZombieLaboratory.survivorPlayer10IsInfected) {
-                                    ZombieLaboratory.survivorPlayer10IsInfected = false;
-                                    ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer10);
-                                }
-                                if (ZombieLaboratory.survivorPlayer10HasKeyItem) {
-                                    ZombieLaboratory.survivorPlayer10HasKeyItem = false;
-                                    RPCProcedure.zombieLaboratoryRevertedKeyPosition(target.PlayerId, ZombieLaboratory.survivorPlayer10FoundBox);
-                                }
-                            }
-                            else if (ZombieLaboratory.survivorPlayer11 != null && target.PlayerId == ZombieLaboratory.survivorPlayer11.PlayerId) {
-                                ZombieLaboratory.survivorPlayer11IsReviving = true;
-                                ZombieLaboratory.survivorPlayer11CanKill = false;
-                                if (ZombieLaboratory.survivorPlayer11IsInfected) {
-                                    ZombieLaboratory.survivorPlayer11IsInfected = false;
-                                    ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer11);
-                                }
-                                if (ZombieLaboratory.survivorPlayer11HasKeyItem) {
-                                    ZombieLaboratory.survivorPlayer11HasKeyItem = false;
-                                    RPCProcedure.zombieLaboratoryRevertedKeyPosition(target.PlayerId, ZombieLaboratory.survivorPlayer11FoundBox);
-                                }
-                            }
-                            else if (ZombieLaboratory.survivorPlayer12 != null && target.PlayerId == ZombieLaboratory.survivorPlayer12.PlayerId) {
-                                ZombieLaboratory.survivorPlayer12IsReviving = true;
-                                ZombieLaboratory.survivorPlayer12CanKill = false;
-                                if (ZombieLaboratory.survivorPlayer12IsInfected) {
-                                    ZombieLaboratory.survivorPlayer12IsInfected = false;
-                                    ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer12);
-                                }
-                                if (ZombieLaboratory.survivorPlayer12HasKeyItem) {
-                                    ZombieLaboratory.survivorPlayer12HasKeyItem = false;
-                                    RPCProcedure.zombieLaboratoryRevertedKeyPosition(target.PlayerId, ZombieLaboratory.survivorPlayer12FoundBox);
-                                }
-                            }
-                            else if (ZombieLaboratory.survivorPlayer13 != null && target.PlayerId == ZombieLaboratory.survivorPlayer13.PlayerId) {
-                                ZombieLaboratory.survivorPlayer13IsReviving = true;
-                                ZombieLaboratory.survivorPlayer13CanKill = false;
-                                if (ZombieLaboratory.survivorPlayer13IsInfected) {
-                                    ZombieLaboratory.survivorPlayer13IsInfected = false;
-                                    ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer13);
-                                }
-                                if (ZombieLaboratory.survivorPlayer13HasKeyItem) {
-                                    ZombieLaboratory.survivorPlayer13HasKeyItem = false;
-                                    RPCProcedure.zombieLaboratoryRevertedKeyPosition(target.PlayerId, ZombieLaboratory.survivorPlayer13FoundBox);
-                                }
-                            }
-                            Helpers.alphaPlayer(true, player.PlayerId);
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
-                                if (p == 1f && player != null) {
-                                    if (ZombieLaboratory.survivorPlayer01 != null && target.PlayerId == ZombieLaboratory.survivorPlayer01.PlayerId) {
-                                        ZombieLaboratory.survivorPlayer01IsReviving = false;
-                                    }
-                                    else if (ZombieLaboratory.survivorPlayer02 != null && target.PlayerId == ZombieLaboratory.survivorPlayer02.PlayerId) {
-                                        ZombieLaboratory.survivorPlayer02IsReviving = false;
-                                    }
-                                    else if (ZombieLaboratory.survivorPlayer03 != null && target.PlayerId == ZombieLaboratory.survivorPlayer03.PlayerId) {
-                                        ZombieLaboratory.survivorPlayer03IsReviving = false;
-                                    }
-                                    else if (ZombieLaboratory.survivorPlayer04 != null && target.PlayerId == ZombieLaboratory.survivorPlayer04.PlayerId) {
-                                        ZombieLaboratory.survivorPlayer04IsReviving = false;
-                                    }
-                                    else if (ZombieLaboratory.survivorPlayer05 != null && target.PlayerId == ZombieLaboratory.survivorPlayer05.PlayerId) {
-                                        ZombieLaboratory.survivorPlayer05IsReviving = false;
-                                    }
-                                    else if (ZombieLaboratory.survivorPlayer06 != null && target.PlayerId == ZombieLaboratory.survivorPlayer06.PlayerId) {
-                                        ZombieLaboratory.survivorPlayer06IsReviving = false;
-                                    }
-                                    else if (ZombieLaboratory.survivorPlayer07 != null && target.PlayerId == ZombieLaboratory.survivorPlayer07.PlayerId) {
-                                        ZombieLaboratory.survivorPlayer07IsReviving = false;
-                                    }
-                                    else if (ZombieLaboratory.survivorPlayer08 != null && target.PlayerId == ZombieLaboratory.survivorPlayer08.PlayerId) {
-                                        ZombieLaboratory.survivorPlayer08IsReviving = false;
-                                    }
-                                    else if (ZombieLaboratory.survivorPlayer09 != null && target.PlayerId == ZombieLaboratory.survivorPlayer09.PlayerId) {
-                                        ZombieLaboratory.survivorPlayer09IsReviving = false;
-                                    }
-                                    else if (ZombieLaboratory.survivorPlayer10 != null && target.PlayerId == ZombieLaboratory.survivorPlayer10.PlayerId) {
-                                        ZombieLaboratory.survivorPlayer10IsReviving = false;
-                                    }
-                                    else if (ZombieLaboratory.survivorPlayer11 != null && target.PlayerId == ZombieLaboratory.survivorPlayer11.PlayerId) {
-                                        ZombieLaboratory.survivorPlayer11IsReviving = false;
-                                    }
-                                    else if (ZombieLaboratory.survivorPlayer12 != null && target.PlayerId == ZombieLaboratory.survivorPlayer12.PlayerId) {
-                                        ZombieLaboratory.survivorPlayer12IsReviving = false;
-                                    }
-                                    else if (ZombieLaboratory.survivorPlayer13 != null && target.PlayerId == ZombieLaboratory.survivorPlayer13.PlayerId) {
-                                        ZombieLaboratory.survivorPlayer13IsReviving = false;
-                                    }
-                                    Helpers.alphaPlayer(false, player.PlayerId);
-                                }
-                            })));
-
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
-                                if (p == 1f && player != null) {
-                                    player.Revive();
-                                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
-                                        // Skeld
-                                        case 0:
-                                            if (activatedSensei) {
-                                                if (player == ZombieLaboratory.nursePlayer) {
-                                                    player.transform.position = new Vector3(-12f, 7.15f, player.transform.position.z);
-                                                }
-                                                else {
-                                                    player.transform.position = new Vector3(4.75f, -8.5f, player.transform.position.z);
-                                                }
-                                            }
-                                            else if (activatedDleks) {
-                                                if (player == ZombieLaboratory.nursePlayer) {
-                                                    player.transform.position = new Vector3(10.2f, 3.6f, player.transform.position.z);
-                                                }
-                                                else {
-                                                    player.transform.position = new Vector3(-11.75f, -4.75f, player.transform.position.z);
-                                                }
-                                            }
-                                            else {
-                                                if (player == ZombieLaboratory.nursePlayer) {
-                                                    player.transform.position = new Vector3(-10.2f, 3.6f, player.transform.position.z);
-                                                }
-                                                else {
-                                                    player.transform.position = new Vector3(11.75f, -4.75f, player.transform.position.z);
-                                                }
-                                            }
-                                            break;
-                                        // MiraHQ
-                                        case 1:
-                                            if (player == ZombieLaboratory.nursePlayer) {
-                                                player.transform.position = new Vector3(1.8f, 1.25f, player.transform.position.z);
-                                            }
-                                            else {
-                                                player.transform.position = new Vector3(6.1f, 5.75f, player.transform.position.z);
-                                            }
-                                            break;
-                                        // Polus
-                                        case 2:
-                                            if (player == ZombieLaboratory.nursePlayer) {
-                                                player.transform.position = new Vector3(16.65f, -2.5f, player.transform.position.z);
-                                            }
-                                            else {
-                                                player.transform.position = new Vector3(40.4f, -6.8f, player.transform.position.z);
-                                            }
-                                            break;
-                                        // Dleks
-                                        case 3:
-                                            if (player == ZombieLaboratory.nursePlayer) {
-                                                player.transform.position = new Vector3(10.2f, 3.6f, player.transform.position.z);
-                                            }
-                                            else {
-                                                player.transform.position = new Vector3(-11.75f, -4.75f, player.transform.position.z);
-                                            }
-                                            break;
-                                        // Airship
-                                        case 4:
-                                            if (player == ZombieLaboratory.nursePlayer) {
-                                                player.transform.position = new Vector3(-18.5f, 2.9f, player.transform.position.z);
-                                            }
-                                            else {
-                                                player.transform.position = new Vector3(25.25f, -8.65f, player.transform.position.z);
-                                            }
-                                            break;
-                                        // Fungle
-                                        case 5:
-                                            if (player == ZombieLaboratory.nursePlayer) {
-                                                player.transform.position = new Vector3(-26.75f, -0.5f, player.transform.position.z);
-                                            }
-                                            else {
-                                                player.transform.position = new Vector3(6.5f, 2.85f, player.transform.position.z);
-                                            }
-                                            break;
-                                        // Submerged
-                                        case 6:
-                                            if (player.transform.position.y > 0) {
-                                                if (player == ZombieLaboratory.nursePlayer) {
-                                                    player.transform.position = new Vector3(-6f, 31.85f, player.transform.position.z);
-                                                }
-                                                else {
-                                                    player.transform.position = new Vector3(5.5f, 31.5f, player.transform.position.z);
-                                                }
-                                            }
-                                            else {
-                                                if (player == ZombieLaboratory.nursePlayer) {
-                                                    player.transform.position = new Vector3(-14f, -39.25f, player.transform.position.z);
-                                                }
-                                                else {
-                                                    player.transform.position = new Vector3(9.75f, -31.35f, player.transform.position.z);
-                                                }
-                                            }
-                                            break;
-                                    }
-                                    DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                                    if (zlBody != null) UnityEngine.Object.Destroy(zlBody.gameObject);
-                                    if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
-                                }
-
-                            })));
+                            Helpers.alphaPlayer(player.PlayerId, 0.5f);
+                            Helpers.GamemodesGenericBecomeAliveAndTargetable(player, ZombieLaboratory.revivingPlayers, LasMonjas.gamemodeReviveTime);
+                            Helpers.GamemodesGenericRevive(player, zlBody, LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, Helpers.ZLsurvivorTeamPos, Helpers.ZLsurvivorTeamPos, new Vector3(9.75f, -31.35f, player.transform.position.z));
                         }
                     }
                     foreach (PlayerControl player in ZombieLaboratory.zombieTeam) {
                         if (player.PlayerId == target.PlayerId) {
-                            var zlBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
-                            zlBody.transform.position = new Vector3(50, 50, 1);
-                            if (ZombieLaboratory.zombiePlayer01 != null && target.PlayerId == ZombieLaboratory.zombiePlayer01.PlayerId) {
-                                ZombieLaboratory.zombiePlayer01IsReviving = true;
-                            }
-                            else if (ZombieLaboratory.zombiePlayer02 != null && target.PlayerId == ZombieLaboratory.zombiePlayer02.PlayerId) {
-                                ZombieLaboratory.zombiePlayer02IsReviving = true;
-                            }
-                            else if (ZombieLaboratory.zombiePlayer03 != null && target.PlayerId == ZombieLaboratory.zombiePlayer03.PlayerId) {
-                                ZombieLaboratory.zombiePlayer03IsReviving = true;
-                            }
-                            else if (ZombieLaboratory.zombiePlayer04 != null && target.PlayerId == ZombieLaboratory.zombiePlayer04.PlayerId) {
-                                ZombieLaboratory.zombiePlayer04IsReviving = true;
-                            }
-                            else if (ZombieLaboratory.zombiePlayer05 != null && target.PlayerId == ZombieLaboratory.zombiePlayer05.PlayerId) {
-                                ZombieLaboratory.zombiePlayer05IsReviving = true;
-                            }
-                            else if (ZombieLaboratory.zombiePlayer06 != null && target.PlayerId == ZombieLaboratory.zombiePlayer06.PlayerId) {
-                                ZombieLaboratory.zombiePlayer06IsReviving = true;
-                            }
-                            else if (ZombieLaboratory.zombiePlayer07 != null && target.PlayerId == ZombieLaboratory.zombiePlayer07.PlayerId) {
-                                ZombieLaboratory.zombiePlayer07IsReviving = true;
-                            }
-                            else if (ZombieLaboratory.zombiePlayer08 != null && target.PlayerId == ZombieLaboratory.zombiePlayer08.PlayerId) {
-                                ZombieLaboratory.zombiePlayer08IsReviving = true;
-                            }
-                            else if (ZombieLaboratory.zombiePlayer09 != null && target.PlayerId == ZombieLaboratory.zombiePlayer09.PlayerId) {
-                                ZombieLaboratory.zombiePlayer09IsReviving = true;
-                            }
-                            else if (ZombieLaboratory.zombiePlayer10 != null && target.PlayerId == ZombieLaboratory.zombiePlayer10.PlayerId) {
-                                ZombieLaboratory.zombiePlayer10IsReviving = true;
-                            }
-                            else if (ZombieLaboratory.zombiePlayer11 != null && target.PlayerId == ZombieLaboratory.zombiePlayer11.PlayerId) {
-                                ZombieLaboratory.zombiePlayer11IsReviving = true;
-                            }
-                            else if (ZombieLaboratory.zombiePlayer12 != null && target.PlayerId == ZombieLaboratory.zombiePlayer12.PlayerId) {
-                                ZombieLaboratory.zombiePlayer12IsReviving = true;
-                            }
-                            else if (ZombieLaboratory.zombiePlayer13 != null && target.PlayerId == ZombieLaboratory.zombiePlayer13.PlayerId) {
-                                ZombieLaboratory.zombiePlayer13IsReviving = true;
-                            }
-                            else if (ZombieLaboratory.zombiePlayer14 != null && target.PlayerId == ZombieLaboratory.zombiePlayer14.PlayerId) {
-                                ZombieLaboratory.zombiePlayer14IsReviving = true;
-                            }
+                            ZombieLaboratory.revivingPlayers.Add(player);
                             player.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                            Helpers.alphaPlayer(true, player.PlayerId);
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
-                                if (p == 1f && player != null) {
-                                    if (ZombieLaboratory.zombiePlayer01 != null && target.PlayerId == ZombieLaboratory.zombiePlayer01.PlayerId) {
-                                        ZombieLaboratory.zombiePlayer01IsReviving = false;
-                                    }
-                                    else if (ZombieLaboratory.zombiePlayer02 != null && target.PlayerId == ZombieLaboratory.zombiePlayer02.PlayerId) {
-                                        ZombieLaboratory.zombiePlayer02IsReviving = false;
-                                    }
-                                    else if (ZombieLaboratory.zombiePlayer03 != null && target.PlayerId == ZombieLaboratory.zombiePlayer03.PlayerId) {
-                                        ZombieLaboratory.zombiePlayer03IsReviving = false;
-                                    }
-                                    else if (ZombieLaboratory.zombiePlayer04 != null && target.PlayerId == ZombieLaboratory.zombiePlayer04.PlayerId) {
-                                        ZombieLaboratory.zombiePlayer04IsReviving = false;
-                                    }
-                                    else if (ZombieLaboratory.zombiePlayer05 != null && target.PlayerId == ZombieLaboratory.zombiePlayer05.PlayerId) {
-                                        ZombieLaboratory.zombiePlayer05IsReviving = false;
-                                    }
-                                    else if (ZombieLaboratory.zombiePlayer06 != null && target.PlayerId == ZombieLaboratory.zombiePlayer06.PlayerId) {
-                                        ZombieLaboratory.zombiePlayer06IsReviving = false;
-                                    }
-                                    else if (ZombieLaboratory.zombiePlayer07 != null && target.PlayerId == ZombieLaboratory.zombiePlayer07.PlayerId) {
-                                        ZombieLaboratory.zombiePlayer07IsReviving = false;
-                                    }
-                                    else if (ZombieLaboratory.zombiePlayer08 != null && target.PlayerId == ZombieLaboratory.zombiePlayer08.PlayerId) {
-                                        ZombieLaboratory.zombiePlayer08IsReviving = false;
-                                    }
-                                    else if (ZombieLaboratory.zombiePlayer09 != null && target.PlayerId == ZombieLaboratory.zombiePlayer09.PlayerId) {
-                                        ZombieLaboratory.zombiePlayer09IsReviving = false;
-                                    }
-                                    else if (ZombieLaboratory.zombiePlayer10 != null && target.PlayerId == ZombieLaboratory.zombiePlayer10.PlayerId) {
-                                        ZombieLaboratory.zombiePlayer10IsReviving = false;
-                                    }
-                                    else if (ZombieLaboratory.zombiePlayer11 != null && target.PlayerId == ZombieLaboratory.zombiePlayer11.PlayerId) {
-                                        ZombieLaboratory.zombiePlayer11IsReviving = false;
-                                    }
-                                    else if (ZombieLaboratory.zombiePlayer12 != null && target.PlayerId == ZombieLaboratory.zombiePlayer12.PlayerId) {
-                                        ZombieLaboratory.zombiePlayer12IsReviving = false;
-                                    }
-                                    else if (ZombieLaboratory.zombiePlayer13 != null && target.PlayerId == ZombieLaboratory.zombiePlayer13.PlayerId) {
-                                        ZombieLaboratory.zombiePlayer13IsReviving = false;
-                                    }
-                                    else if (ZombieLaboratory.zombiePlayer14 != null && target.PlayerId == ZombieLaboratory.zombiePlayer14.PlayerId) {
-                                        ZombieLaboratory.zombiePlayer14IsReviving = false;
-                                    }
-                                    Helpers.alphaPlayer(false, player.PlayerId);
-                                    player.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                }
-                            })));
-
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
-                                if (p == 1f && player != null) {
-                                    player.Revive();
-                                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
-                                        // Skeld
-                                        case 0:
-                                            if (activatedSensei) {
-                                                player.transform.position = new Vector3(-4.85f, 6, player.transform.position.z);
-                                            }
-                                            else if (activatedDleks) {
-                                                player.transform.position = new Vector3(17.25f, -13.25f, player.transform.position.z);
-                                            }
-                                            else {
-                                                player.transform.position = new Vector3(-17.25f, -13.25f, player.transform.position.z);
-                                            }
-                                            break;
-                                        // MiraHQ
-                                        case 1:
-                                            player.transform.position = new Vector3(18.5f, -1.85f, player.transform.position.z);
-                                            break;
-                                        // Polus
-                                        case 2:
-                                            player.transform.position = new Vector3(17.15f, -17.15f, player.transform.position.z);
-                                            break;
-                                        // Dleks
-                                        case 3:
-                                            player.transform.position = new Vector3(17.25f, -13.25f, player.transform.position.z);
-                                            break;
-                                        // Airship
-                                        case 4:
-                                            player.transform.position = new Vector3(32.35f, 7.25f, player.transform.position.z);
-                                            break;
-                                        // Fungle
-                                        case 5:
-                                            player.transform.position = new Vector3(-4.25f, -10.5f, player.transform.position.z);
-                                            break;
-                                        // Submerged
-                                        case 6:
-                                            if (player.transform.position.y > 0) {
-                                                player.transform.position = new Vector3(1f, 10f, player.transform.position.z);
-                                            }
-                                            else {
-                                                player.transform.position = new Vector3(-4.15f, -33.5f, player.transform.position.z);
-                                            }
-                                            break;
-                                    }
-                                    DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                                    if (zlBody != null) UnityEngine.Object.Destroy(zlBody.gameObject);
-                                    if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
-                                }
-
-                            })));
-
+                            Helpers.alphaPlayer(player.PlayerId, 0.5f);
+                            Helpers.GamemodesGenericBecomeAliveAndTargetable(player, ZombieLaboratory.revivingPlayers, LasMonjas.gamemodeReviveTime, true);
+                            Helpers.GamemodesGenericRevive(player, zlBody, LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, Helpers.ZLzombieTeamPos, Helpers.ZLzombieTeamPos, new Vector3(-4.15f, -33.5f, player.transform.position.z));
                         }
                     }
-                    ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
+                    ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedPlayers.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
                     break;
                 case 7:
                     // BR
                     var brBody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
-                    brBody.transform.position = new Vector3(50, 50, 1);
+                    Helpers.GamemodesDisableDeadBodyReportOnClic(brBody);
 
                     if (BattleRoyale.matchType == 2) {
                         if (BattleRoyale.serialKiller != null && BattleRoyale.serialKiller.PlayerId == target.PlayerId) {
-                            BattleRoyale.serialKillerIsReviving = true;
-                            BattleRoyale.serialKiller.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                            Helpers.alphaPlayer(true, BattleRoyale.serialKiller.PlayerId);
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
-                                if (p == 1f && BattleRoyale.serialKiller != null) {
-                                    BattleRoyale.serialKillerIsReviving = false;
-                                    if (PlayerInCache.AllPlayers.Count >= 11) {
-                                        BattleRoyale.serialKillerLifes = BattleRoyale.fighterLifes * 3;
-                                    }
-                                    else {
-                                        BattleRoyale.serialKillerLifes = BattleRoyale.fighterLifes * 2;
-                                    }
-                                    Helpers.alphaPlayer(false, BattleRoyale.serialKiller.PlayerId);
-                                    BattleRoyale.serialKiller.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                                }
-                            })));
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
-                                if (p == 1f && BattleRoyale.serialKiller != null) {
-                                    BattleRoyale.serialKiller.Revive();
-                                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
-                                        // Skeld
-                                        case 0:
-                                            if (activatedSensei) {
-                                                BattleRoyale.serialKiller.transform.position = new Vector3(-3.65f, 5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                                            }
-                                            else if (activatedDleks) {
-                                                BattleRoyale.serialKiller.transform.position = new Vector3(-6.35f, -7.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                                            }
-                                            else {
-                                                BattleRoyale.serialKiller.transform.position = new Vector3(6.35f, -7.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                                            }
-                                            break;
-                                        // MiraHQ
-                                        case 1:
-                                            BattleRoyale.serialKiller.transform.position = new Vector3(16.25f, 24.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                                            break;
-                                        // Polus
-                                        case 2:
-                                            BattleRoyale.serialKiller.transform.position = new Vector3(22.3f, -19.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                                            break;
-                                        // Dleks
-                                        case 3:
-                                            BattleRoyale.serialKiller.transform.position = new Vector3(-6.35f, -7.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                                            break;
-                                        // Airship
-                                        case 4:
-                                            BattleRoyale.serialKiller.transform.position = new Vector3(12.25f, 2f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                                            break;
-                                        // Fungle
-                                        case 5:
-                                            BattleRoyale.serialKiller.transform.position = new Vector3(9.35f, -9.85f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                                            break;
-                                        // Submerged
-                                        case 6:
-                                            if (BattleRoyale.serialKiller.transform.position.y > 0) {
-                                                BattleRoyale.serialKiller.transform.position = new Vector3(5.75f, 31.25f, BattleRoyale.serialKiller.transform.position.z);
-                                            }
-                                            else {
-                                                BattleRoyale.serialKiller.transform.position = new Vector3(-4.25f, -33.5f, BattleRoyale.serialKiller.transform.position.z);
-                                            }
-                                            break;
-                                    }
-                                    DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                                    if (brBody != null) UnityEngine.Object.Destroy(brBody.gameObject);
-                                    if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
-                                }
-
-                            })));
-
+                            BattleRoyale.revivingPlayers.Add(BattleRoyale.serialKiller);
+                            //BattleRoyale.serialKiller.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+                            Helpers.alphaPlayer(BattleRoyale.serialKiller.PlayerId, 0.5f);
+                            Helpers.GamemodesGenericBecomeAliveAndTargetable(BattleRoyale.serialKiller, BattleRoyale.revivingPlayers, LasMonjas.gamemodeReviveTime, true, true);
+                            Helpers.GamemodesGenericRevive(BattleRoyale.serialKiller, brBody, LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, Helpers.BRserialKillerPos, Helpers.BRserialKillerPos, new Vector3(-4.25f, -33.5f, BattleRoyale.serialKiller.transform.position.z));
                         }
 
                         foreach (PlayerControl player in BattleRoyale.limeTeam) {
                             if (player.PlayerId == target.PlayerId) {
-
-                                if (BattleRoyale.limePlayer01 != null && target.PlayerId == BattleRoyale.limePlayer01.PlayerId) {
-                                    BattleRoyale.limePlayer01IsReviving = true;
-                                }
-                                else if (BattleRoyale.limePlayer02 != null && target.PlayerId == BattleRoyale.limePlayer02.PlayerId) {
-                                    BattleRoyale.limePlayer02IsReviving = true;
-                                }
-                                else if (BattleRoyale.limePlayer03 != null && target.PlayerId == BattleRoyale.limePlayer03.PlayerId) {
-                                    BattleRoyale.limePlayer03IsReviving = true;
-                                }
-                                else if (BattleRoyale.limePlayer04 != null && target.PlayerId == BattleRoyale.limePlayer04.PlayerId) {
-                                    BattleRoyale.limePlayer04IsReviving = true;
-                                }
-                                else if (BattleRoyale.limePlayer05 != null && target.PlayerId == BattleRoyale.limePlayer05.PlayerId) {
-                                    BattleRoyale.limePlayer05IsReviving = true;
-                                }
-                                else if (BattleRoyale.limePlayer06 != null && target.PlayerId == BattleRoyale.limePlayer06.PlayerId) {
-                                    BattleRoyale.limePlayer06IsReviving = true;
-                                }
-                                else if (BattleRoyale.limePlayer07 != null && target.PlayerId == BattleRoyale.limePlayer07.PlayerId) {
-                                    BattleRoyale.limePlayer07IsReviving = true;
-                                }
-                                Helpers.alphaPlayer(true, player.PlayerId);
-                                HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
-                                    if (p == 1f && player != null) {
-                                        if (BattleRoyale.limePlayer01 != null && target.PlayerId == BattleRoyale.limePlayer01.PlayerId) {
-                                            BattleRoyale.limePlayer01IsReviving = false;
-                                            BattleRoyale.limePlayer01Lifes = BattleRoyale.fighterLifes;
-                                        }
-                                        else if (BattleRoyale.limePlayer02 != null && target.PlayerId == BattleRoyale.limePlayer02.PlayerId) {
-                                            BattleRoyale.limePlayer02IsReviving = false;
-                                            BattleRoyale.limePlayer02Lifes = BattleRoyale.fighterLifes;
-                                        }
-                                        else if (BattleRoyale.limePlayer03 != null && target.PlayerId == BattleRoyale.limePlayer03.PlayerId) {
-                                            BattleRoyale.limePlayer03IsReviving = false;
-                                            BattleRoyale.limePlayer03Lifes = BattleRoyale.fighterLifes;
-                                        }
-                                        else if (BattleRoyale.limePlayer04 != null && target.PlayerId == BattleRoyale.limePlayer04.PlayerId) {
-                                            BattleRoyale.limePlayer04IsReviving = false;
-                                            BattleRoyale.limePlayer04Lifes = BattleRoyale.fighterLifes;
-                                        }
-                                        else if (BattleRoyale.limePlayer05 != null && target.PlayerId == BattleRoyale.limePlayer05.PlayerId) {
-                                            BattleRoyale.limePlayer05IsReviving = false;
-                                            BattleRoyale.limePlayer05Lifes = BattleRoyale.fighterLifes;
-                                        }
-                                        else if (BattleRoyale.limePlayer06 != null && target.PlayerId == BattleRoyale.limePlayer06.PlayerId) {
-                                            BattleRoyale.limePlayer06IsReviving = false;
-                                            BattleRoyale.limePlayer06Lifes = BattleRoyale.fighterLifes;
-                                        }
-                                        else if (BattleRoyale.limePlayer07 != null && target.PlayerId == BattleRoyale.limePlayer07.PlayerId) {
-                                            BattleRoyale.limePlayer07IsReviving = false;
-                                            BattleRoyale.limePlayer07Lifes = BattleRoyale.fighterLifes;
-                                        }
-                                        Helpers.alphaPlayer(false, player.PlayerId);
-                                    }
-                                })));
-                                HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
-                                    if (p == 1f && player != null) {
-                                        player.Revive();
-                                        switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
-                                            // Skeld
-                                            case 0:
-                                                if (activatedSensei) {
-                                                    player.transform.position = new Vector3(-17.5f, -1.15f, player.transform.position.z);
-                                                }
-                                                else if (activatedDleks) {
-                                                    player.transform.position = new Vector3(17f, -5.5f, player.transform.position.z);
-                                                }
-                                                else {
-                                                    player.transform.position = new Vector3(-17f, -5.5f, player.transform.position.z);
-                                                }
-                                                break;
-                                            // MiraHQ
-                                            case 1:
-                                                player.transform.position = new Vector3(6.15f, 13.25f, player.transform.position.z);
-                                                break;
-                                            // Polus
-                                            case 2:
-                                                player.transform.position = new Vector3(2.35f, -23.75f, player.transform.position.z);
-                                                break;
-                                            // Dleks
-                                            case 3:
-                                                player.transform.position = new Vector3(17f, -5.5f, player.transform.position.z);
-                                                break;
-                                            // Airship
-                                            case 4:
-                                                player.transform.position = new Vector3(-13.9f, -14.45f, player.transform.position.z);
-                                                break;
-                                            // Fungle
-                                            case 5:
-                                                player.transform.position = new Vector3(1.6f, -1.65f, player.transform.position.z);
-                                                break;
-                                            // Submerged
-                                            case 6:
-                                                if (player.transform.position.y > 0) {
-                                                    player.transform.position = new Vector3(-12.25f, 18.5f, player.transform.position.z);
-                                                }
-                                                else {
-                                                    player.transform.position = new Vector3(-14.5f, -34.35f, player.transform.position.z);
-                                                }
-                                                break;
-                                        }
-                                        DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                                        if (brBody != null) UnityEngine.Object.Destroy(brBody.gameObject);
-                                        if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
-                                    }
-
-                                })));
-
+                                BattleRoyale.revivingPlayers.Add(player);
+                                Helpers.alphaPlayer(player.PlayerId, 0.5f);
+                                Helpers.GamemodesGenericBecomeAliveAndTargetable(player, BattleRoyale.revivingPlayers, LasMonjas.gamemodeReviveTime, false, true);
+                                Helpers.GamemodesGenericRevive(player, brBody, LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, Helpers.BRlimeTeamPos, Helpers.BRlimeTeamPos, new Vector3(-14.5f, -34.35f, player.transform.position.z));
                             }
                         }
                         foreach (PlayerControl player in BattleRoyale.pinkTeam) {
                             if (player.PlayerId == target.PlayerId) {
-
-                                if (BattleRoyale.pinkPlayer01 != null && target.PlayerId == BattleRoyale.pinkPlayer01.PlayerId) {
-                                    BattleRoyale.pinkPlayer01IsReviving = true;
-                                }
-                                else if (BattleRoyale.pinkPlayer02 != null && target.PlayerId == BattleRoyale.pinkPlayer02.PlayerId) {
-                                    BattleRoyale.pinkPlayer02IsReviving = true;
-                                }
-                                else if (BattleRoyale.pinkPlayer03 != null && target.PlayerId == BattleRoyale.pinkPlayer03.PlayerId) {
-                                    BattleRoyale.pinkPlayer03IsReviving = true;
-                                }
-                                else if (BattleRoyale.pinkPlayer04 != null && target.PlayerId == BattleRoyale.pinkPlayer04.PlayerId) {
-                                    BattleRoyale.pinkPlayer04IsReviving = true;
-                                }
-                                else if (BattleRoyale.pinkPlayer05 != null && target.PlayerId == BattleRoyale.pinkPlayer05.PlayerId) {
-                                    BattleRoyale.pinkPlayer05IsReviving = true;
-                                }
-                                else if (BattleRoyale.pinkPlayer06 != null && target.PlayerId == BattleRoyale.pinkPlayer06.PlayerId) {
-                                    BattleRoyale.pinkPlayer06IsReviving = true;
-                                }
-                                else if (BattleRoyale.pinkPlayer01 != null && target.PlayerId == BattleRoyale.pinkPlayer07.PlayerId) {
-                                    BattleRoyale.pinkPlayer07IsReviving = true;
-                                }
-                                Helpers.alphaPlayer(true, player.PlayerId);
-                                HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
-                                    if (p == 1f && player != null) {
-                                        if (BattleRoyale.pinkPlayer01 != null && target.PlayerId == BattleRoyale.pinkPlayer01.PlayerId) {
-                                            BattleRoyale.pinkPlayer01IsReviving = false;
-                                            BattleRoyale.pinkPlayer01Lifes = BattleRoyale.fighterLifes;
-                                        }
-                                        else if (BattleRoyale.pinkPlayer02 != null && target.PlayerId == BattleRoyale.pinkPlayer02.PlayerId) {
-                                            BattleRoyale.pinkPlayer02IsReviving = false;
-                                            BattleRoyale.pinkPlayer02Lifes = BattleRoyale.fighterLifes;
-                                        }
-                                        else if (BattleRoyale.pinkPlayer03 != null && target.PlayerId == BattleRoyale.pinkPlayer03.PlayerId) {
-                                            BattleRoyale.pinkPlayer03IsReviving = false;
-                                            BattleRoyale.pinkPlayer03Lifes = BattleRoyale.fighterLifes;
-                                        }
-                                        else if (BattleRoyale.pinkPlayer04 != null && target.PlayerId == BattleRoyale.pinkPlayer04.PlayerId) {
-                                            BattleRoyale.pinkPlayer04IsReviving = false;
-                                            BattleRoyale.pinkPlayer04Lifes = BattleRoyale.fighterLifes;
-                                        }
-                                        else if (BattleRoyale.pinkPlayer05 != null && target.PlayerId == BattleRoyale.pinkPlayer05.PlayerId) {
-                                            BattleRoyale.pinkPlayer05IsReviving = false;
-                                            BattleRoyale.pinkPlayer05Lifes = BattleRoyale.fighterLifes;
-                                        }
-                                        else if (BattleRoyale.pinkPlayer06 != null && target.PlayerId == BattleRoyale.pinkPlayer06.PlayerId) {
-                                            BattleRoyale.pinkPlayer06IsReviving = false;
-                                            BattleRoyale.pinkPlayer06Lifes = BattleRoyale.fighterLifes;
-                                        }
-                                        else if (BattleRoyale.pinkPlayer01 != null && target.PlayerId == BattleRoyale.pinkPlayer07.PlayerId) {
-                                            BattleRoyale.pinkPlayer07IsReviving = false;
-                                            BattleRoyale.pinkPlayer07Lifes = BattleRoyale.fighterLifes;
-                                        }
-                                        Helpers.alphaPlayer(false, player.PlayerId);
-                                    }
-                                })));
-
-                                HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
-                                    if (p == 1f && player != null) {
-                                        player.Revive();
-                                        switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
-                                            // Skeld
-                                            case 0:
-                                                if (activatedSensei) {
-                                                    player.transform.position = new Vector3(7.7f, -0.95f, player.transform.position.z);
-                                                }
-                                                else if (activatedDleks) {
-                                                    player.transform.position = new Vector3(-12f, -4.75f, player.transform.position.z);
-                                                }
-                                                else {
-                                                    player.transform.position = new Vector3(12f, -4.75f, player.transform.position.z);
-                                                }
-                                                break;
-                                            // MiraHQ
-                                            case 1:
-                                                player.transform.position = new Vector3(22.25f, 3f, player.transform.position.z);
-                                                break;
-                                            // Polus
-                                            case 2:
-                                                player.transform.position = new Vector3(36.35f, -8f, player.transform.position.z);
-                                                break;
-                                            // Dleks
-                                            case 3:
-                                                player.transform.position = new Vector3(-12f, -4.75f, player.transform.position.z);
-                                                break;
-                                            // Airship
-                                            case 4:
-                                                player.transform.position = new Vector3(37.35f, -3.25f, player.transform.position.z);
-                                                break;
-                                            // Fungle
-                                            case 5:
-                                                player.transform.position = new Vector3(6.75f, 2f, player.transform.position.z);
-                                                break;
-                                            // Submerged
-                                            case 6:
-                                                if (player.transform.position.y > 0) {
-                                                    player.transform.position = new Vector3(0f, 33.5f, player.transform.position.z);
-                                                }
-                                                else {
-                                                    player.transform.position = new Vector3(-8.5f, -39.5f, player.transform.position.z);
-                                                }
-                                                break;
-                                        }
-                                        DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                                        if (brBody != null) UnityEngine.Object.Destroy(brBody.gameObject);
-                                        if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
-                                    }
-
-                                })));
-
+                                BattleRoyale.revivingPlayers.Add(player);
+                                Helpers.alphaPlayer(player.PlayerId, 0.5f);
+                                Helpers.GamemodesGenericBecomeAliveAndTargetable(player, BattleRoyale.revivingPlayers, LasMonjas.gamemodeReviveTime, false, true);
+                                Helpers.GamemodesGenericRevive(player, brBody, LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, Helpers.BRpinkTeamPos, new Vector3(0f, 33.5f, player.transform.position.z), Helpers.BRpinkTeamPos);
                             }
                         }
                     }
                     break;
                 case 8:
                     // MF
-                    var body = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
-                    body.transform.position = new Vector3(50, 50, 1);
+                    var mfbody = UnityEngine.Object.FindObjectsOfType<DeadBody>().FirstOrDefault(b => b.ParentId == target.PlayerId);
+                    Helpers.GamemodesDisableDeadBodyReportOnClic(mfbody);
 
                     float AngleStep = 360.0f;
                     float Offset = 0.15f;
                     if (MonjaFestival.bigMonjaPlayer != null && MonjaFestival.bigMonjaPlayer.PlayerId == target.PlayerId) {
                         MonjaFestival.resetBigMonja();
-                        MonjaFestival.bigMonjaIsReviving = true;
-                        AngleStep = AngleStep / MonjaFestival.bigMonjaPlayerItems;
-                        for (int i = 0; i < MonjaFestival.bigMonjaPlayerItems; i++) {
-                            GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreyMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                            littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-                            littleMonja.transform.position = new Vector3(MonjaFestival.bigMonjaPlayer.transform.position.x + Offset, MonjaFestival.bigMonjaPlayer.transform.position.y + Offset, 0.5f);
-                            littleMonja.transform.RotateAround(MonjaFestival.bigMonjaPlayer.transform.position, Vector3.forward, AngleStep * i);
-                            littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
-                            MonjaFestival.littleMonjasDroppedCount += 1;
-                            MonjaFestival.bigMonjaSpawns.Add(littleMonja);
-                        }
+                        MonjaFestival.revivingPlayers.Add(MonjaFestival.bigMonjaPlayer);
+                        Helpers.MonjaFestivalResetPlayer(MonjaFestival.bigMonjaPlayer, ref MonjaFestival.bigMonjaPlayerItems, MonjaFestival.bigMonjaPlayerDeliverCount, null, AngleStep, Offset);
                         MonjaFestival.bigMonjaPlayerItems = 0;
                         MonjaFestival.bigMonjaPlayerDeliverCount.text = $"{MonjaFestival.bigMonjaPlayerItems} / 10";
                         MonjaFestival.bigMonjaPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                        Helpers.alphaPlayer(true, MonjaFestival.bigMonjaPlayer.PlayerId);
-                        HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
-                            if (p == 1f && MonjaFestival.bigMonjaPlayer != null) {
-                                MonjaFestival.bigMonjaIsReviving = false;
-                                Helpers.alphaPlayer(false, MonjaFestival.bigMonjaPlayer.PlayerId);
-                                MonjaFestival.bigMonjaPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                            }
-                        })));
-                        HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
-                            if (p == 1f && MonjaFestival.bigMonjaPlayer != null) {
-                                MonjaFestival.bigMonjaPlayer.Revive();
-                                switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
-                                    // Skeld
-                                    case 0:
-                                        if (activatedSensei) {
-                                            MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-12f, 7f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                                        }
-                                        else if (activatedDleks) {
-                                            MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-4.5f, -7.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                                        }
-                                        else {
-                                            MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(4.5f, -7.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                                        }
-                                        break;
-                                    // MiraHQ
-                                    case 1:
-                                        MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-4.45f, 2f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                                        break;
-                                    // Polus
-                                    case 2:
-                                        MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(21.75f, -25.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                                        break;
-                                    // Dleks
-                                    case 3:
-                                        MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-4.5f, -7.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                                        break;
-                                    // Airship
-                                    case 4:
-                                        MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(6.35f, 2.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                                        break;
-                                    // Fungle
-                                    case 5:
-                                        MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-4.25f, -8.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                                        break;
-                                    // Submerged
-                                    case 6:
-                                        if (MonjaFestival.bigMonjaPlayer.transform.position.y > 0) {
-                                            MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(-12.2f, 19.15f, MonjaFestival.bigMonjaPlayer.transform.position.z);
-                                        }
-                                        else {
-                                            MonjaFestival.bigMonjaPlayer.transform.position = new Vector3(7.15f, -20.5f, MonjaFestival.bigMonjaPlayer.transform.position.z);
-                                        }
-                                        break;
-                                }
-                                DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                                if (body != null) UnityEngine.Object.Destroy(body.gameObject);
-                                if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
-                            }
-
-                        })));
-
+                        Helpers.alphaPlayer(MonjaFestival.bigMonjaPlayer.PlayerId, 0.5f);
+                        Helpers.GamemodesGenericBecomeAliveAndTargetable(MonjaFestival.bigMonjaPlayer, MonjaFestival.revivingPlayers, LasMonjas.gamemodeReviveTime, true);
+                        Helpers.GamemodesGenericRevive(MonjaFestival.bigMonjaPlayer, mfbody, LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, Helpers.MFbigMonjaPos, Helpers.MFbigMonjaPos, new Vector3(7.15f, -20.5f, MonjaFestival.bigMonjaPlayer.transform.position.z));
                     }
 
                     foreach (PlayerControl player in MonjaFestival.greenTeam) {
                         if (player.PlayerId == target.PlayerId) {
+                            MonjaFestival.revivingPlayers.Add(player);
                             if (MonjaFestival.greenPlayer01 != null && target.PlayerId == MonjaFestival.greenPlayer01.PlayerId) {
-                                MonjaFestival.greenPlayer01IsReviving = true;
-                                AngleStep = AngleStep / MonjaFestival.greenPlayer01Items;
-                                for (int i = 0; i < MonjaFestival.greenPlayer01Items; i++) {
-                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreenMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                                    littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-                                    littleMonja.transform.position = new Vector3(MonjaFestival.greenPlayer01.transform.position.x + Offset, MonjaFestival.greenPlayer01.transform.position.y + Offset, 0.5f);
-                                    littleMonja.transform.RotateAround(MonjaFestival.greenPlayer01.transform.position, Vector3.forward, AngleStep * i);
-                                    littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
-                                    MonjaFestival.littleMonjasDroppedCount += 1;
-                                    MonjaFestival.bigMonjaSpawns.Add(littleMonja);
-                                }
-                                MonjaFestival.greenPlayer01Items = 0;
-                                MonjaFestival.greenmonja01DeliverCount.text = $"{MonjaFestival.greenPlayer01Items} / 3";
-                                MonjaFestival.handsGreen01.GetComponent<SpriteRenderer>().sprite = null;
+                                Helpers.MonjaFestivalResetPlayer(MonjaFestival.greenPlayer01, ref MonjaFestival.greenPlayer01Items, MonjaFestival.greenmonja01DeliverCount, MonjaFestival.handsGreen01, AngleStep, Offset);
                             }
                             else if (MonjaFestival.greenPlayer02 != null && target.PlayerId == MonjaFestival.greenPlayer02.PlayerId) {
-                                MonjaFestival.greenPlayer02IsReviving = true;
-                                AngleStep = AngleStep / MonjaFestival.greenPlayer02Items;
-                                for (int i = 0; i < MonjaFestival.greenPlayer02Items; i++) {
-                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreenMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                                    littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-                                    littleMonja.transform.position = new Vector3(MonjaFestival.greenPlayer02.transform.position.x + Offset, MonjaFestival.greenPlayer02.transform.position.y + Offset, 0.5f);
-                                    littleMonja.transform.RotateAround(MonjaFestival.greenPlayer02.transform.position, Vector3.forward, AngleStep * i);
-                                    littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
-                                    MonjaFestival.littleMonjasDroppedCount += 1;
-                                    MonjaFestival.bigMonjaSpawns.Add(littleMonja);
-                                }
-                                MonjaFestival.greenPlayer02Items = 0;
-                                MonjaFestival.greenmonja02DeliverCount.text = $"{MonjaFestival.greenPlayer02Items} / 3";
-                                MonjaFestival.handsGreen02.GetComponent<SpriteRenderer>().sprite = null;
+                                Helpers.MonjaFestivalResetPlayer(MonjaFestival.greenPlayer02, ref MonjaFestival.greenPlayer02Items, MonjaFestival.greenmonja02DeliverCount, MonjaFestival.handsGreen02, AngleStep, Offset);
                             }
                             else if (MonjaFestival.greenPlayer03 != null && target.PlayerId == MonjaFestival.greenPlayer03.PlayerId) {
-                                MonjaFestival.greenPlayer03IsReviving = true;
-                                AngleStep = AngleStep / MonjaFestival.greenPlayer03Items;
-                                for (int i = 0; i < MonjaFestival.greenPlayer03Items; i++) {
-                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreenMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                                    littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-                                    littleMonja.transform.position = new Vector3(MonjaFestival.greenPlayer03.transform.position.x + Offset, MonjaFestival.greenPlayer03.transform.position.y + Offset, 0.5f);
-                                    littleMonja.transform.RotateAround(MonjaFestival.greenPlayer03.transform.position, Vector3.forward, AngleStep * i);
-                                    littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
-                                    MonjaFestival.littleMonjasDroppedCount += 1;
-                                    MonjaFestival.bigMonjaSpawns.Add(littleMonja);
-                                }
-                                MonjaFestival.greenPlayer03Items = 0;
-                                MonjaFestival.greenmonja03DeliverCount.text = $"{MonjaFestival.greenPlayer03Items} / 3";
-                                MonjaFestival.handsGreen03.GetComponent<SpriteRenderer>().sprite = null;
+                                Helpers.MonjaFestivalResetPlayer(MonjaFestival.greenPlayer03, ref MonjaFestival.greenPlayer03Items, MonjaFestival.greenmonja03DeliverCount, MonjaFestival.handsGreen03, AngleStep, Offset);
                             }
                             else if (MonjaFestival.greenPlayer04 != null && target.PlayerId == MonjaFestival.greenPlayer04.PlayerId) {
-                                MonjaFestival.greenPlayer04IsReviving = true;
-                                AngleStep = AngleStep / MonjaFestival.greenPlayer04Items;
-                                for (int i = 0; i < MonjaFestival.greenPlayer04Items; i++) {
-                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreenMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                                    littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-                                    littleMonja.transform.position = new Vector3(MonjaFestival.greenPlayer04.transform.position.x + Offset, MonjaFestival.greenPlayer04.transform.position.y + Offset, 0.5f);
-                                    littleMonja.transform.RotateAround(MonjaFestival.greenPlayer04.transform.position, Vector3.forward, AngleStep * i);
-                                    littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
-                                    MonjaFestival.littleMonjasDroppedCount += 1;
-                                    MonjaFestival.bigMonjaSpawns.Add(littleMonja);
-                                }
-                                MonjaFestival.greenPlayer04Items = 0;
-                                MonjaFestival.greenmonja04DeliverCount.text = $"{MonjaFestival.greenPlayer04Items} / 3";
-                                MonjaFestival.handsGreen04.GetComponent<SpriteRenderer>().sprite = null;
+                                Helpers.MonjaFestivalResetPlayer(MonjaFestival.greenPlayer04, ref MonjaFestival.greenPlayer04Items, MonjaFestival.greenmonja04DeliverCount, MonjaFestival.handsGreen04, AngleStep, Offset);
                             }
                             else if (MonjaFestival.greenPlayer05 != null && target.PlayerId == MonjaFestival.greenPlayer05.PlayerId) {
-                                MonjaFestival.greenPlayer05IsReviving = true;
-                                AngleStep = AngleStep / MonjaFestival.greenPlayer05Items;
-                                for (int i = 0; i < MonjaFestival.greenPlayer05Items; i++) {
-                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreenMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                                    littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-                                    littleMonja.transform.position = new Vector3(MonjaFestival.greenPlayer05.transform.position.x + Offset, MonjaFestival.greenPlayer05.transform.position.y + Offset, 0.5f);
-                                    littleMonja.transform.RotateAround(MonjaFestival.greenPlayer05.transform.position, Vector3.forward, AngleStep * i);
-                                    littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
-                                    MonjaFestival.littleMonjasDroppedCount += 1;
-                                    MonjaFestival.bigMonjaSpawns.Add(littleMonja);
-                                }
-                                MonjaFestival.greenPlayer05Items = 0;
-                                MonjaFestival.greenmonja05DeliverCount.text = $"{MonjaFestival.greenPlayer05Items} / 3";
-                                MonjaFestival.handsGreen05.GetComponent<SpriteRenderer>().sprite = null;
+                                Helpers.MonjaFestivalResetPlayer(MonjaFestival.greenPlayer05, ref MonjaFestival.greenPlayer05Items, MonjaFestival.greenmonja05DeliverCount, MonjaFestival.handsGreen05, AngleStep, Offset);
                             }
                             else if (MonjaFestival.greenPlayer06 != null && target.PlayerId == MonjaFestival.greenPlayer06.PlayerId) {
-                                MonjaFestival.greenPlayer06IsReviving = true;
-                                AngleStep = AngleStep / MonjaFestival.greenPlayer06Items;
-                                for (int i = 0; i < MonjaFestival.greenPlayer06Items; i++) {
-                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreenMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                                    littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-                                    littleMonja.transform.position = new Vector3(MonjaFestival.greenPlayer06.transform.position.x + Offset, MonjaFestival.greenPlayer06.transform.position.y + Offset, 0.5f);
-                                    littleMonja.transform.RotateAround(MonjaFestival.greenPlayer06.transform.position, Vector3.forward, AngleStep * i);
-                                    littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
-                                    MonjaFestival.littleMonjasDroppedCount += 1;
-                                    MonjaFestival.bigMonjaSpawns.Add(littleMonja);
-                                }
-                                MonjaFestival.greenPlayer06Items = 0;
-                                MonjaFestival.greenmonja06DeliverCount.text = $"{MonjaFestival.greenPlayer06Items} / 3";
-                                MonjaFestival.handsGreen06.GetComponent<SpriteRenderer>().sprite = null;
+                                Helpers.MonjaFestivalResetPlayer(MonjaFestival.greenPlayer06, ref MonjaFestival.greenPlayer06Items, MonjaFestival.greenmonja06DeliverCount, MonjaFestival.handsGreen06, AngleStep, Offset);
                             }
                             else if (MonjaFestival.greenPlayer07 != null && target.PlayerId == MonjaFestival.greenPlayer07.PlayerId) {
-                                MonjaFestival.greenPlayer07IsReviving = true;
-                                AngleStep = AngleStep / MonjaFestival.greenPlayer07Items;
-                                for (int i = 0; i < MonjaFestival.greenPlayer07Items; i++) {
-                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreenMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                                    littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-                                    littleMonja.transform.position = new Vector3(MonjaFestival.greenPlayer07.transform.position.x + Offset, MonjaFestival.greenPlayer07.transform.position.y + Offset, 0.5f);
-                                    littleMonja.transform.RotateAround(MonjaFestival.greenPlayer07.transform.position, Vector3.forward, AngleStep * i);
-                                    littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
-                                    MonjaFestival.littleMonjasDroppedCount += 1;
-                                    MonjaFestival.bigMonjaSpawns.Add(littleMonja);
-                                }
-                                MonjaFestival.greenPlayer07Items = 0;
-                                MonjaFestival.greenmonja07DeliverCount.text = $"{MonjaFestival.greenPlayer07Items} / 3";
-                                MonjaFestival.handsGreen07.GetComponent<SpriteRenderer>().sprite = null;
+                                Helpers.MonjaFestivalResetPlayer(MonjaFestival.greenPlayer07, ref MonjaFestival.greenPlayer07Items, MonjaFestival.greenmonja07DeliverCount, MonjaFestival.handsGreen07, AngleStep, Offset);
                             }
-                            Helpers.alphaPlayer(true, player.PlayerId);
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
-                                if (p == 1f && player != null) {
-                                    if (MonjaFestival.greenPlayer01 != null && target.PlayerId == MonjaFestival.greenPlayer01.PlayerId) {
-                                        MonjaFestival.greenPlayer01IsReviving = false;
-                                    }
-                                    else if (MonjaFestival.greenPlayer02 != null && target.PlayerId == MonjaFestival.greenPlayer02.PlayerId) {
-                                        MonjaFestival.greenPlayer02IsReviving = false;
-                                    }
-                                    else if (MonjaFestival.greenPlayer03 != null && target.PlayerId == MonjaFestival.greenPlayer03.PlayerId) {
-                                        MonjaFestival.greenPlayer03IsReviving = false;
-                                    }
-                                    else if (MonjaFestival.greenPlayer04 != null && target.PlayerId == MonjaFestival.greenPlayer04.PlayerId) {
-                                        MonjaFestival.greenPlayer04IsReviving = false;
-                                    }
-                                    else if (MonjaFestival.greenPlayer05 != null && target.PlayerId == MonjaFestival.greenPlayer05.PlayerId) {
-                                        MonjaFestival.greenPlayer05IsReviving = false;
-                                    }
-                                    else if (MonjaFestival.greenPlayer06 != null && target.PlayerId == MonjaFestival.greenPlayer06.PlayerId) {
-                                        MonjaFestival.greenPlayer06IsReviving = false;
-                                    }
-                                    else if (MonjaFestival.greenPlayer07 != null && target.PlayerId == MonjaFestival.greenPlayer07.PlayerId) {
-                                        MonjaFestival.greenPlayer07IsReviving = false;
-                                    }
-                                    Helpers.alphaPlayer(false, player.PlayerId);
-                                }
-                            })));
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
-                                if (p == 1f && player != null) {
-                                    player.Revive();
-                                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
-                                        // Skeld
-                                        case 0:
-                                            if (activatedSensei) {
-                                                player.transform.position = new Vector3(-10.5f, -10, player.transform.position.z);
-                                            }
-                                            else if (activatedDleks) {
-                                                player.transform.position = new Vector3(9f, -2.5f, player.transform.position.z);
-                                            }
-                                            else {
-                                                player.transform.position = new Vector3(-9f, -2.5f, player.transform.position.z);
-                                            }
-                                            break;
-                                        // MiraHQ
-                                        case 1:
-                                            player.transform.position = new Vector3(23f, 4.75f, player.transform.position.z);
-                                            break;
-                                        // Polus
-                                        case 2:
-                                            player.transform.position = new Vector3(31.5f, -7.75f, player.transform.position.z);
-                                            break;
-                                        // Dleks
-                                        case 3:
-                                            player.transform.position = new Vector3(9f, -2.5f, player.transform.position.z);
-                                            break;
-                                        // Airship
-                                        case 4:
-                                            player.transform.position = new Vector3(-10.15f, -6.75f, player.transform.position.z);
-                                            break;
-                                        // Fungle
-                                        case 5:
-                                            player.transform.position = new Vector3(-17.5f, 7.2f, player.transform.position.z);
-                                            break;
-                                        // Submerged
-                                        case 6:
-                                            if (player.transform.position.y > 0) {
-                                                player.transform.position = new Vector3(-1.8f, 12.25f, player.transform.position.z);
-                                            }
-                                            else {
-                                                player.transform.position = new Vector3(-4.35f, -33.5f, player.transform.position.z);
-                                            }
-                                            break;
-                                    }
-                                    DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                                    if (body != null) UnityEngine.Object.Destroy(body.gameObject);
-                                    if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
-                                }
-
-                            })));
-
+                            Helpers.alphaPlayer(player.PlayerId, 0.5f);
+                            Helpers.GamemodesGenericBecomeAliveAndTargetable(player, MonjaFestival.revivingPlayers, LasMonjas.gamemodeReviveTime);
+                            Helpers.GamemodesGenericRevive(player, mfbody, LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, Helpers.MFgreenTeamPos, Helpers.MFgreenTeamPos, new Vector3(-4.35f, -33.5f, player.transform.position.z));
                         }
                     }
                     foreach (PlayerControl player in MonjaFestival.cyanTeam) {
                         if (player.PlayerId == target.PlayerId) {
 
+                            MonjaFestival.revivingPlayers.Add(player);
                             if (MonjaFestival.cyanPlayer01 != null && target.PlayerId == MonjaFestival.cyanPlayer01.PlayerId) {
-                                MonjaFestival.cyanPlayer01IsReviving = true;
-                                AngleStep = AngleStep / MonjaFestival.cyanPlayer01Items;
-                                for (int i = 0; i < MonjaFestival.cyanPlayer01Items; i++) {
-                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorCyanMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                                    littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-                                    littleMonja.transform.position = new Vector3(MonjaFestival.cyanPlayer01.transform.position.x + Offset, MonjaFestival.cyanPlayer01.transform.position.y + Offset, 0.5f);
-                                    littleMonja.transform.RotateAround(MonjaFestival.cyanPlayer01.transform.position, Vector3.forward, AngleStep * i);
-                                    littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
-                                    MonjaFestival.littleMonjasDroppedCount += 1;
-                                    MonjaFestival.bigMonjaSpawns.Add(littleMonja);
-                                }
-                                MonjaFestival.cyanPlayer01Items = 0;
-                                MonjaFestival.cyanPlayer01DeliverCount.text = $"{MonjaFestival.cyanPlayer01Items} / 3";
-                                MonjaFestival.handsCyan01.GetComponent<SpriteRenderer>().sprite = null;
+                                Helpers.MonjaFestivalResetPlayer(MonjaFestival.cyanPlayer01, ref MonjaFestival.cyanPlayer01Items, MonjaFestival.cyanPlayer01DeliverCount, MonjaFestival.handsCyan01, AngleStep, Offset);
                             }
                             else if (MonjaFestival.cyanPlayer02 != null && target.PlayerId == MonjaFestival.cyanPlayer02.PlayerId) {
-                                MonjaFestival.cyanPlayer02IsReviving = true;
-                                AngleStep = AngleStep / MonjaFestival.cyanPlayer02Items;
-                                for (int i = 0; i < MonjaFestival.cyanPlayer02Items; i++) {
-                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorCyanMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                                    littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-                                    littleMonja.transform.position = new Vector3(MonjaFestival.cyanPlayer02.transform.position.x + Offset, MonjaFestival.cyanPlayer02.transform.position.y + Offset, 0.5f);
-                                    littleMonja.transform.RotateAround(MonjaFestival.cyanPlayer02.transform.position, Vector3.forward, AngleStep * i);
-                                    littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
-                                    MonjaFestival.littleMonjasDroppedCount += 1;
-                                    MonjaFestival.bigMonjaSpawns.Add(littleMonja);
-                                }
-                                MonjaFestival.cyanPlayer02Items = 0;
-                                MonjaFestival.cyanPlayer02DeliverCount.text = $"{MonjaFestival.cyanPlayer02Items} / 3";
-                                MonjaFestival.handsCyan02.GetComponent<SpriteRenderer>().sprite = null;
+                                Helpers.MonjaFestivalResetPlayer(MonjaFestival.cyanPlayer02, ref MonjaFestival.cyanPlayer02Items, MonjaFestival.cyanPlayer02DeliverCount, MonjaFestival.handsCyan02, AngleStep, Offset);
                             }
                             else if (MonjaFestival.cyanPlayer03 != null && target.PlayerId == MonjaFestival.cyanPlayer03.PlayerId) {
-                                MonjaFestival.cyanPlayer03IsReviving = true;
-                                AngleStep = AngleStep / MonjaFestival.cyanPlayer03Items;
-                                for (int i = 0; i < MonjaFestival.cyanPlayer03Items; i++) {
-                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorCyanMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                                    littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-                                    littleMonja.transform.position = new Vector3(MonjaFestival.cyanPlayer03.transform.position.x + Offset, MonjaFestival.cyanPlayer03.transform.position.y + Offset, 0.5f);
-                                    littleMonja.transform.RotateAround(MonjaFestival.cyanPlayer03.transform.position, Vector3.forward, AngleStep * i);
-                                    littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
-                                    MonjaFestival.littleMonjasDroppedCount += 1;
-                                    MonjaFestival.bigMonjaSpawns.Add(littleMonja);
-                                }
-                                MonjaFestival.cyanPlayer03Items = 0;
-                                MonjaFestival.cyanPlayer03DeliverCount.text = $"{MonjaFestival.cyanPlayer03Items} / 3";
-                                MonjaFestival.handsCyan03.GetComponent<SpriteRenderer>().sprite = null;
+                                Helpers.MonjaFestivalResetPlayer(MonjaFestival.cyanPlayer03, ref MonjaFestival.cyanPlayer03Items, MonjaFestival.cyanPlayer03DeliverCount, MonjaFestival.handsCyan03, AngleStep, Offset);
                             }
                             else if (MonjaFestival.cyanPlayer04 != null && target.PlayerId == MonjaFestival.cyanPlayer04.PlayerId) {
-                                MonjaFestival.cyanPlayer04IsReviving = true;
-                                AngleStep = AngleStep / MonjaFestival.cyanPlayer04Items;
-                                for (int i = 0; i < MonjaFestival.cyanPlayer04Items; i++) {
-                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorCyanMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                                    littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-                                    littleMonja.transform.position = new Vector3(MonjaFestival.cyanPlayer04.transform.position.x + Offset, MonjaFestival.cyanPlayer04.transform.position.y + Offset, 0.5f);
-                                    littleMonja.transform.RotateAround(MonjaFestival.cyanPlayer04.transform.position, Vector3.forward, AngleStep * i);
-                                    littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
-                                    MonjaFestival.littleMonjasDroppedCount += 1;
-                                    MonjaFestival.bigMonjaSpawns.Add(littleMonja);
-                                }
-                                MonjaFestival.cyanPlayer04Items = 0;
-                                MonjaFestival.cyanPlayer04DeliverCount.text = $"{MonjaFestival.cyanPlayer04Items} / 3";
-                                MonjaFestival.handsCyan04.GetComponent<SpriteRenderer>().sprite = null;
+                                Helpers.MonjaFestivalResetPlayer(MonjaFestival.cyanPlayer04, ref MonjaFestival.cyanPlayer04Items, MonjaFestival.cyanPlayer04DeliverCount, MonjaFestival.handsCyan04, AngleStep, Offset);
                             }
                             else if (MonjaFestival.cyanPlayer05 != null && target.PlayerId == MonjaFestival.cyanPlayer05.PlayerId) {
-                                MonjaFestival.cyanPlayer05IsReviving = true;
-                                AngleStep = AngleStep / MonjaFestival.cyanPlayer05Items;
-                                for (int i = 0; i < MonjaFestival.cyanPlayer05Items; i++) {
-                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorCyanMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                                    littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-                                    littleMonja.transform.position = new Vector3(MonjaFestival.cyanPlayer05.transform.position.x + Offset, MonjaFestival.cyanPlayer05.transform.position.y + Offset, 0.5f);
-                                    littleMonja.transform.RotateAround(MonjaFestival.cyanPlayer05.transform.position, Vector3.forward, AngleStep * i);
-                                    littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
-                                    MonjaFestival.littleMonjasDroppedCount += 1;
-                                    MonjaFestival.bigMonjaSpawns.Add(littleMonja);
-                                }
-                                MonjaFestival.cyanPlayer05Items = 0;
-                                MonjaFestival.cyanPlayer05DeliverCount.text = $"{MonjaFestival.cyanPlayer05Items} / 3";
-                                MonjaFestival.handsCyan05.GetComponent<SpriteRenderer>().sprite = null;
+                                Helpers.MonjaFestivalResetPlayer(MonjaFestival.cyanPlayer05, ref MonjaFestival.cyanPlayer05Items, MonjaFestival.cyanPlayer05DeliverCount, MonjaFestival.handsCyan05, AngleStep, Offset);
                             }
                             else if (MonjaFestival.cyanPlayer06 != null && target.PlayerId == MonjaFestival.cyanPlayer06.PlayerId) {
-                                MonjaFestival.cyanPlayer06IsReviving = true;
-                                AngleStep = AngleStep / MonjaFestival.cyanPlayer06Items;
-                                for (int i = 0; i < MonjaFestival.cyanPlayer06Items; i++) {
-                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorCyanMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                                    littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-                                    littleMonja.transform.position = new Vector3(MonjaFestival.cyanPlayer06.transform.position.x + Offset, MonjaFestival.cyanPlayer06.transform.position.y + Offset, 0.5f);
-                                    littleMonja.transform.RotateAround(MonjaFestival.cyanPlayer06.transform.position, Vector3.forward, AngleStep * i);
-                                    littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
-                                    MonjaFestival.littleMonjasDroppedCount += 1;
-                                    MonjaFestival.bigMonjaSpawns.Add(littleMonja);
-                                }
-                                MonjaFestival.cyanPlayer06Items = 0;
-                                MonjaFestival.cyanPlayer06DeliverCount.text = $"{MonjaFestival.cyanPlayer06Items} / 3";
-                                MonjaFestival.handsCyan06.GetComponent<SpriteRenderer>().sprite = null;
+                                Helpers.MonjaFestivalResetPlayer(MonjaFestival.cyanPlayer06, ref MonjaFestival.cyanPlayer06Items, MonjaFestival.cyanPlayer06DeliverCount, MonjaFestival.handsCyan06, AngleStep, Offset);
                             }
                             else if (MonjaFestival.cyanPlayer07 != null && target.PlayerId == MonjaFestival.cyanPlayer07.PlayerId) {
-                                MonjaFestival.cyanPlayer07IsReviving = true;
-                                AngleStep = AngleStep / MonjaFestival.cyanPlayer07Items;
-                                for (int i = 0; i < MonjaFestival.cyanPlayer07Items; i++) {
-                                    GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorCyanMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                                    littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-                                    littleMonja.transform.position = new Vector3(MonjaFestival.cyanPlayer07.transform.position.x + Offset, MonjaFestival.cyanPlayer07.transform.position.y + Offset, 0.5f);
-                                    littleMonja.transform.RotateAround(MonjaFestival.cyanPlayer07.transform.position, Vector3.forward, AngleStep * i);
-                                    littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
-                                    MonjaFestival.littleMonjasDroppedCount += 1;
-                                    MonjaFestival.bigMonjaSpawns.Add(littleMonja);
-                                }
-                                MonjaFestival.cyanPlayer07Items = 0;
-                                MonjaFestival.cyanPlayer07DeliverCount.text = $"{MonjaFestival.cyanPlayer07Items} / 3";
-                                MonjaFestival.handsCyan07.GetComponent<SpriteRenderer>().sprite = null;
+                                Helpers.MonjaFestivalResetPlayer(MonjaFestival.cyanPlayer07, ref MonjaFestival.cyanPlayer07Items, MonjaFestival.cyanPlayer07DeliverCount, MonjaFestival.handsCyan07, AngleStep, Offset);
                             }
-                            Helpers.alphaPlayer(true, player.PlayerId);
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime, new Action<float>((p) => {
-                                if (p == 1f && player != null) {
-                                    if (MonjaFestival.cyanPlayer01 != null && target.PlayerId == MonjaFestival.cyanPlayer01.PlayerId) {
-                                        MonjaFestival.cyanPlayer01IsReviving = false;
-                                    }
-                                    else if (MonjaFestival.cyanPlayer02 != null && target.PlayerId == MonjaFestival.cyanPlayer02.PlayerId) {
-                                        MonjaFestival.cyanPlayer02IsReviving = false;
-                                    }
-                                    else if (MonjaFestival.cyanPlayer03 != null && target.PlayerId == MonjaFestival.cyanPlayer03.PlayerId) {
-                                        MonjaFestival.cyanPlayer03IsReviving = false;
-                                    }
-                                    else if (MonjaFestival.cyanPlayer04 != null && target.PlayerId == MonjaFestival.cyanPlayer04.PlayerId) {
-                                        MonjaFestival.cyanPlayer04IsReviving = false;
-                                    }
-                                    else if (MonjaFestival.cyanPlayer05 != null && target.PlayerId == MonjaFestival.cyanPlayer05.PlayerId) {
-                                        MonjaFestival.cyanPlayer05IsReviving = false;
-                                    }
-                                    else if (MonjaFestival.cyanPlayer06 != null && target.PlayerId == MonjaFestival.cyanPlayer06.PlayerId) {
-                                        MonjaFestival.cyanPlayer06IsReviving = false;
-                                    }
-                                    else if (MonjaFestival.cyanPlayer07 != null && target.PlayerId == MonjaFestival.cyanPlayer07.PlayerId) {
-                                        MonjaFestival.cyanPlayer07IsReviving = false;
-                                    }
-                                    Helpers.alphaPlayer(false, player.PlayerId);
-                                }
-                            })));
-
-                            HudManager.Instance.StartCoroutine(Effects.Lerp(LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, new Action<float>((p) => {
-                                if (p == 1f && player != null) {
-                                    player.Revive();
-                                    switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
-                                        // Skeld
-                                        case 0:
-                                            if (activatedSensei) {
-                                                player.transform.position = new Vector3(7.4f, -5f, player.transform.position.z);
-                                            }
-                                            else if (activatedDleks) {
-                                                player.transform.position = new Vector3(-5f, -15.5f, player.transform.position.z);
-                                            }
-                                            else {
-                                                player.transform.position = new Vector3(5f, -15.5f, player.transform.position.z);
-                                            }
-                                            break;
-                                        // MiraHQ
-                                        case 1:
-                                            player.transform.position = new Vector3(8.5f, 13f, player.transform.position.z);
-                                            break;
-                                        // Polus
-                                        case 2:
-                                            player.transform.position = new Vector3(2.35f, -23.75f, player.transform.position.z);
-                                            break;
-                                        // Dleks
-                                        case 3:
-                                            player.transform.position = new Vector3(-5f, -15.5f, player.transform.position.z);
-                                            break;
-                                        // Airship
-                                        case 4:
-                                            player.transform.position = new Vector3(38.25f, 0f, player.transform.position.z);
-                                            break;
-                                        // Fungle
-                                        case 5:
-                                            player.transform.position = new Vector3(12.5f, 10, player.transform.position.z);
-                                            break;
-                                        // Submerged
-                                        case 6:
-                                            if (player.transform.position.y > 0) {
-                                                player.transform.position = new Vector3(-10.25f, 10.15f, player.transform.position.z);
-                                            }
-                                            else {
-                                                player.transform.position = new Vector3(2.65f, -35.65f, player.transform.position.z);
-                                            }
-                                            break;
-                                    }
-                                    DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == target.PlayerId).FirstOrDefault();
-                                    if (body != null) UnityEngine.Object.Destroy(body.gameObject);
-                                    if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
-                                }
-
-                            })));
-
+                            Helpers.alphaPlayer(player.PlayerId, 0.5f);
+                            Helpers.GamemodesGenericBecomeAliveAndTargetable(player, MonjaFestival.revivingPlayers, LasMonjas.gamemodeReviveTime);
+                            Helpers.GamemodesGenericRevive(player, mfbody, LasMonjas.gamemodeReviveTime - LasMonjas.gamemodeInvincibilityTime, Helpers.MFcyanTeamPos, new Vector3(-10.25f, 10.15f, player.transform.position.z), Helpers.MFcyanTeamPos);
                         }
                     }
                     break;
+            }
+            // Reset RolesSummaryUI on target if is open when it gets killed
+            if (PlayerInCache.LocalPlayer.PlayerControl == target) {
+                Helpers.ResetRoleSummaryUI();
             }
         }
     }

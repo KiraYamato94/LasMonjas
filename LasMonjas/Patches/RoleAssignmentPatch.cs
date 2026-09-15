@@ -34,6 +34,106 @@ namespace LasMonjas.Patches
             }
         }
 
+        private static readonly RoleId[][] ZombieLaboratoryLayouts = {
+
+            null, // case 0 doesn't do anything
+
+            new RoleId[] // start zombies = 1
+                {
+                    RoleId.ZombiePlayer01,
+                    RoleId.NursePlayer,
+                    RoleId.SurvivorPlayer01,
+                    RoleId.SurvivorPlayer02,
+                    RoleId.SurvivorPlayer03,
+                    RoleId.SurvivorPlayer04,
+                    RoleId.SurvivorPlayer05,
+                    RoleId.SurvivorPlayer06,
+                    RoleId.SurvivorPlayer07,
+                    RoleId.SurvivorPlayer08,
+                    RoleId.SurvivorPlayer09,
+                    RoleId.SurvivorPlayer10,
+                    RoleId.SurvivorPlayer11,
+                    RoleId.SurvivorPlayer12,
+                    RoleId.SurvivorPlayer13
+                },
+
+                new RoleId[] // start zombies = 2
+                {
+                    RoleId.ZombiePlayer01,
+                    RoleId.NursePlayer,
+                    RoleId.SurvivorPlayer01,
+                    RoleId.ZombiePlayer02,
+                    RoleId.SurvivorPlayer02,
+                    RoleId.SurvivorPlayer03,
+                    RoleId.SurvivorPlayer04,
+                    RoleId.SurvivorPlayer05,
+                    RoleId.SurvivorPlayer06,
+                    RoleId.SurvivorPlayer07,
+                    RoleId.SurvivorPlayer08,
+                    RoleId.SurvivorPlayer09,
+                    RoleId.SurvivorPlayer10,
+                    RoleId.SurvivorPlayer11,
+                    RoleId.SurvivorPlayer12
+                },
+
+            new RoleId[] // start zombies = 3
+                {
+                    RoleId.ZombiePlayer01,
+                    RoleId.NursePlayer,
+                    RoleId.SurvivorPlayer01,
+                    RoleId.ZombiePlayer02,
+                    RoleId.ZombiePlayer03,
+                    RoleId.SurvivorPlayer02,
+                    RoleId.SurvivorPlayer03,
+                    RoleId.SurvivorPlayer04,
+                    RoleId.SurvivorPlayer05,
+                    RoleId.SurvivorPlayer06,
+                    RoleId.SurvivorPlayer07,
+                    RoleId.SurvivorPlayer08,
+                    RoleId.SurvivorPlayer09,
+                    RoleId.SurvivorPlayer10,
+                    RoleId.SurvivorPlayer11
+                },
+
+            new RoleId[] // start zombies = 4
+                {
+                    RoleId.ZombiePlayer01,
+                    RoleId.NursePlayer,
+                    RoleId.SurvivorPlayer01,
+                    RoleId.ZombiePlayer02,
+                    RoleId.ZombiePlayer03,
+                    RoleId.ZombiePlayer04,
+                    RoleId.SurvivorPlayer02,
+                    RoleId.SurvivorPlayer03,
+                    RoleId.SurvivorPlayer04,
+                    RoleId.SurvivorPlayer05,
+                    RoleId.SurvivorPlayer06,
+                    RoleId.SurvivorPlayer07,
+                    RoleId.SurvivorPlayer08,
+                    RoleId.SurvivorPlayer09,
+                    RoleId.SurvivorPlayer10
+                },
+
+            new RoleId[] // start zombies = 5
+                {
+                    RoleId.ZombiePlayer01,
+                    RoleId.NursePlayer,
+                    RoleId.SurvivorPlayer01,
+                    RoleId.ZombiePlayer02,
+                    RoleId.ZombiePlayer03,
+                    RoleId.ZombiePlayer04,
+                    RoleId.ZombiePlayer05,
+                    RoleId.SurvivorPlayer02,
+                    RoleId.SurvivorPlayer03,
+                    RoleId.SurvivorPlayer04,
+                    RoleId.SurvivorPlayer05,
+                    RoleId.SurvivorPlayer06,
+                    RoleId.SurvivorPlayer07,
+                    RoleId.SurvivorPlayer08,
+                    RoleId.SurvivorPlayer09
+                }
+        };
+
         private static void getRoleAssignmentData() {
             // Get 3 player lists, one for crewmates/neutrals/rebels, one for impostor and a global one for gamemodes.
             List<PlayerControl> crewmates = PlayerControl.AllPlayerControls.ToArray().ToArray().ToList().OrderBy(x => Guid.NewGuid()).ToList();
@@ -114,12 +214,7 @@ namespace LasMonjas.Patches
                     crewSettings.Add((byte)RoleId.Kid, CustomOptionHolder.kidSpawnRate.getSelection());
                     crewSettings.Add((byte)RoleId.Welder, CustomOptionHolder.welderSpawnRate.getSelection());
                     crewSettings.Add((byte)RoleId.Spiritualist, CustomOptionHolder.spiritualistSpawnRate.getSelection());
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId != 1) {
-                        crewSettings.Add((byte)RoleId.Vigilant, CustomOptionHolder.vigilantSpawnRate.getSelection());
-                    }
-                    else {
-                        crewSettings.Add((byte)RoleId.VigilantMira, CustomOptionHolder.vigilantSpawnRate.getSelection());
-                    }
+                    crewSettings.Add((byte)RoleId.Vigilant, CustomOptionHolder.vigilantSpawnRate.getSelection());
                     crewSettings.Add((byte)RoleId.Hunter, CustomOptionHolder.hunterSpawnRate.getSelection());
                     crewSettings.Add((byte)RoleId.Jinx, CustomOptionHolder.jinxSpawnRate.getSelection());
                     crewSettings.Add((byte)RoleId.Coward, CustomOptionHolder.cowardSpawnRate.getSelection());
@@ -183,57 +278,13 @@ namespace LasMonjas.Patches
                         setRoleToRandomPlayer((byte)RoleId.StealerPlayer, modifiers);
                     }
                     while (myGamemodeList.Count < (Mathf.Round(PlayerInCache.AllPlayers.Count / 2))) {
-                        switch (playerNumber) {
-                            case 1:
-                                setRoleToRandomPlayer((byte)RoleId.RedPlayer01, modifiers);
-                                break;
-                            case 2:
-                                setRoleToRandomPlayer((byte)RoleId.RedPlayer02, modifiers);
-                                break;
-                            case 3:
-                                setRoleToRandomPlayer((byte)RoleId.RedPlayer03, modifiers);
-                                break;
-                            case 4:
-                                setRoleToRandomPlayer((byte)RoleId.RedPlayer04, modifiers);
-                                break;
-                            case 5:
-                                setRoleToRandomPlayer((byte)RoleId.RedPlayer05, modifiers);
-                                break;
-                            case 6:
-                                setRoleToRandomPlayer((byte)RoleId.RedPlayer06, modifiers);
-                                break;
-                            case 7:
-                                setRoleToRandomPlayer((byte)RoleId.RedPlayer07, modifiers);
-                                break;
-                        }
+                        setRoleToRandomPlayer((byte)((int)RoleId.RedPlayer01 + playerNumber - 1), modifiers);
                         myGamemodeList.Add(playerNumber);
                         playerNumber += 1;
                     }
                     playerNumber = 9;
                     while (!oddNumber && myGamemodeList.Count < PlayerInCache.AllPlayers.Count || oddNumber && myGamemodeList.Count < PlayerInCache.AllPlayers.Count - 1) {
-                        switch (playerNumber) {
-                            case 9:
-                                setRoleToRandomPlayer((byte)RoleId.BluePlayer01, modifiers);
-                                break;
-                            case 10:
-                                setRoleToRandomPlayer((byte)RoleId.BluePlayer02, modifiers);
-                                break;
-                            case 11:
-                                setRoleToRandomPlayer((byte)RoleId.BluePlayer03, modifiers);
-                                break;
-                            case 12:
-                                setRoleToRandomPlayer((byte)RoleId.BluePlayer04, modifiers);
-                                break;
-                            case 13:
-                                setRoleToRandomPlayer((byte)RoleId.BluePlayer05, modifiers);
-                                break;
-                            case 14:
-                                setRoleToRandomPlayer((byte)RoleId.BluePlayer06, modifiers);
-                                break;
-                            case 15:
-                                setRoleToRandomPlayer((byte)RoleId.BluePlayer07, modifiers);
-                                break;
-                        }
+                        setRoleToRandomPlayer((byte)((int)RoleId.BluePlayer01 + playerNumber - 9), modifiers); 
                         myGamemodeList.Add(playerNumber);
                         playerNumber += 1;
                     }
@@ -241,60 +292,13 @@ namespace LasMonjas.Patches
                 case 3:
                     // PT
                     while (myGamemodeList.Count < (Mathf.Round(PlayerInCache.AllPlayers.Count / 2.39f))) {
-                        switch (playerNumber) {
-                            case 1:
-                                setRoleToRandomPlayer((byte)RoleId.PolicePlayer01, modifiers);
-                                break;
-                            case 2:
-                                setRoleToRandomPlayer((byte)RoleId.PolicePlayer03, modifiers);
-                                break;
-                            case 3:
-                                setRoleToRandomPlayer((byte)RoleId.PolicePlayer02, modifiers);
-                                break;
-                            case 4:
-                                setRoleToRandomPlayer((byte)RoleId.PolicePlayer05, modifiers);
-                                break;
-                            case 5:
-                                setRoleToRandomPlayer((byte)RoleId.PolicePlayer04, modifiers);
-                                break;
-                            case 6:
-                                setRoleToRandomPlayer((byte)RoleId.PolicePlayer06, modifiers);
-                                break;
-                        }
+                        setRoleToRandomPlayer((byte)((int)RoleId.PolicePlayer01 + playerNumber - 1), modifiers);
                         myGamemodeList.Add(playerNumber);
                         playerNumber += 1;
                     }
                     playerNumber = 7;
                     while (myGamemodeList.Count < PlayerInCache.AllPlayers.Count) {
-                        switch (playerNumber) {
-                            case 7:
-                                setRoleToRandomPlayer((byte)RoleId.ThiefPlayer01, modifiers);
-                                break;
-                            case 8:
-                                setRoleToRandomPlayer((byte)RoleId.ThiefPlayer02, modifiers);
-                                break;
-                            case 9:
-                                setRoleToRandomPlayer((byte)RoleId.ThiefPlayer03, modifiers);
-                                break;
-                            case 10:
-                                setRoleToRandomPlayer((byte)RoleId.ThiefPlayer04, modifiers);
-                                break;
-                            case 11:
-                                setRoleToRandomPlayer((byte)RoleId.ThiefPlayer05, modifiers);
-                                break;
-                            case 12:
-                                setRoleToRandomPlayer((byte)RoleId.ThiefPlayer06, modifiers);
-                                break;
-                            case 13:
-                                setRoleToRandomPlayer((byte)RoleId.ThiefPlayer07, modifiers);
-                                break;
-                            case 14:
-                                setRoleToRandomPlayer((byte)RoleId.ThiefPlayer08, modifiers);
-                                break;
-                            case 15:
-                                setRoleToRandomPlayer((byte)RoleId.ThiefPlayer09, modifiers);
-                                break;
-                        }
+                        setRoleToRandomPlayer((byte)((int)RoleId.ThiefPlayer01 + playerNumber - 7), modifiers);
                         myGamemodeList.Add(playerNumber);
                         playerNumber += 1;
                     }
@@ -306,57 +310,13 @@ namespace LasMonjas.Patches
                         setRoleToRandomPlayer((byte)RoleId.UsurperPlayer, modifiers);
                     }
                     while (myGamemodeList.Count < (Mathf.Round(PlayerInCache.AllPlayers.Count / 2))) {
-                        switch (playerNumber) {
-                            case 1:
-                                setRoleToRandomPlayer((byte)RoleId.GreenKing, modifiers);
-                                break;
-                            case 2:
-                                setRoleToRandomPlayer((byte)RoleId.GreenPlayer01, modifiers);
-                                break;
-                            case 3:
-                                setRoleToRandomPlayer((byte)RoleId.GreenPlayer02, modifiers);
-                                break;
-                            case 4:
-                                setRoleToRandomPlayer((byte)RoleId.GreenPlayer03, modifiers);
-                                break;
-                            case 5:
-                                setRoleToRandomPlayer((byte)RoleId.GreenPlayer04, modifiers);
-                                break;
-                            case 6:
-                                setRoleToRandomPlayer((byte)RoleId.GreenPlayer05, modifiers);
-                                break;
-                            case 7:
-                                setRoleToRandomPlayer((byte)RoleId.GreenPlayer06, modifiers);
-                                break;
-                        }
+                        setRoleToRandomPlayer((byte)((int)RoleId.GreenKing + playerNumber - 1), modifiers);
                         myGamemodeList.Add(playerNumber);
                         playerNumber += 1;
                     }
                     playerNumber = 9;
                     while (!oddNumber && myGamemodeList.Count < PlayerInCache.AllPlayers.Count || oddNumber && myGamemodeList.Count < PlayerInCache.AllPlayers.Count - 1) {
-                        switch (playerNumber) {
-                            case 9:
-                                setRoleToRandomPlayer((byte)RoleId.YellowKing, modifiers);
-                                break;
-                            case 10:
-                                setRoleToRandomPlayer((byte)RoleId.YellowPlayer01, modifiers);
-                                break;
-                            case 11:
-                                setRoleToRandomPlayer((byte)RoleId.YellowPlayer02, modifiers);
-                                break;
-                            case 12:
-                                setRoleToRandomPlayer((byte)RoleId.YellowPlayer03, modifiers);
-                                break;
-                            case 13:
-                                setRoleToRandomPlayer((byte)RoleId.YellowPlayer04, modifiers);
-                                break;
-                            case 14:
-                                setRoleToRandomPlayer((byte)RoleId.YellowPlayer05, modifiers);
-                                break;
-                            case 15:
-                                setRoleToRandomPlayer((byte)RoleId.YellowPlayer06, modifiers);
-                                break;
-                        }
+                        setRoleToRandomPlayer((byte)((int)RoleId.YellowKing + playerNumber - 9), modifiers); 
                         myGamemodeList.Add(playerNumber);
                         playerNumber += 1;
                     }
@@ -364,362 +324,26 @@ namespace LasMonjas.Patches
                 case 5:
                     // HP
                     while (myGamemodeList.Count < PlayerInCache.AllPlayers.Count) {
-                        switch (playerNumber) {
-                            case 1:
-                                setRoleToRandomPlayer((byte)RoleId.HotPotato, modifiers);
-                                break;
-                            case 2:
-                                setRoleToRandomPlayer((byte)RoleId.NotPotato01, modifiers);
-                                break;
-                            case 3:
-                                setRoleToRandomPlayer((byte)RoleId.NotPotato02, modifiers);
-                                break;
-                            case 4:
-                                setRoleToRandomPlayer((byte)RoleId.NotPotato03, modifiers);
-                                break;
-                            case 5:
-                                setRoleToRandomPlayer((byte)RoleId.NotPotato04, modifiers);
-                                break;
-                            case 6:
-                                setRoleToRandomPlayer((byte)RoleId.NotPotato05, modifiers);
-                                break;
-                            case 7:
-                                setRoleToRandomPlayer((byte)RoleId.NotPotato06, modifiers);
-                                break;
-                            case 8:
-                                setRoleToRandomPlayer((byte)RoleId.NotPotato07, modifiers);
-                                break;
-                            case 9:
-                                setRoleToRandomPlayer((byte)RoleId.NotPotato08, modifiers);
-                                break;
-                            case 10:
-                                setRoleToRandomPlayer((byte)RoleId.NotPotato09, modifiers);
-                                break;
-                            case 11:
-                                setRoleToRandomPlayer((byte)RoleId.NotPotato10, modifiers);
-                                break;
-                            case 12:
-                                setRoleToRandomPlayer((byte)RoleId.NotPotato11, modifiers);
-                                break;
-                            case 13:
-                                setRoleToRandomPlayer((byte)RoleId.NotPotato12, modifiers);
-                                break;
-                            case 14:
-                                setRoleToRandomPlayer((byte)RoleId.NotPotato13, modifiers);
-                                break;
-                            case 15:
-                                setRoleToRandomPlayer((byte)RoleId.NotPotato14, modifiers);
-                                break;
-                        }
+                        setRoleToRandomPlayer((byte)((int)RoleId.HotPotato + playerNumber - 1), modifiers); 
                         myGamemodeList.Add(playerNumber);
                         playerNumber += 1;
                     }
                     break;
                 case 6:
-                    // ZL
-                    while (myGamemodeList.Count < PlayerInCache.AllPlayers.Count) {
-                        switch (ZombieLaboratory.startZombies) {
-                            case 1:
-                                switch (playerNumber) {
-                                    case 1:
-                                        setRoleToRandomPlayer((byte)RoleId.ZombiePlayer01, modifiers);
-                                        break;
-                                    case 2:
-                                        setRoleToRandomPlayer((byte)RoleId.NursePlayer, modifiers);
-                                        break;
-                                    case 3:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer01, modifiers);
-                                        break;
-                                    case 4:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer02, modifiers);
-                                        break;
-                                    case 5:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer03, modifiers);
-                                        break;
-                                    case 6:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer04, modifiers);
-                                        break;
-                                    case 7:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer05, modifiers);
-                                        break;
-                                    case 8:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer06, modifiers);
-                                        break;
-                                    case 9:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer07, modifiers);
-                                        break;
-                                    case 10:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer08, modifiers);
-                                        break;
-                                    case 11:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer09, modifiers);
-                                        break;
-                                    case 12:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer10, modifiers);
-                                        break;
-                                    case 13:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer11, modifiers);
-                                        break;
-                                    case 14:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer12, modifiers);
-                                        break;
-                                    case 15:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer13, modifiers);
-                                        break;
-                                }
-                                break;
-                            case 2:
-                                switch (playerNumber) {
-                                    case 1:
-                                        setRoleToRandomPlayer((byte)RoleId.ZombiePlayer01, modifiers);
-                                        break;
-                                    case 2:
-                                        setRoleToRandomPlayer((byte)RoleId.NursePlayer, modifiers);
-                                        break;
-                                    case 3:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer01, modifiers);
-                                        break;
-                                    case 4:
-                                        setRoleToRandomPlayer((byte)RoleId.ZombiePlayer02, modifiers);
-                                        break;
-                                    case 5:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer02, modifiers);
-                                        break;
-                                    case 6:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer03, modifiers);
-                                        break;
-                                    case 7:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer04, modifiers);
-                                        break;
-                                    case 8:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer05, modifiers);
-                                        break;
-                                    case 9:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer06, modifiers);
-                                        break;
-                                    case 10:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer07, modifiers);
-                                        break;
-                                    case 11:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer08, modifiers);
-                                        break;
-                                    case 12:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer09, modifiers);
-                                        break;
-                                    case 13:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer10, modifiers);
-                                        break;
-                                    case 14:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer11, modifiers);
-                                        break;
-                                    case 15:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer12, modifiers);
-                                        break;
-                                }
-                                break;
-                            case 3:
-                                switch (playerNumber) {
-                                    case 1:
-                                        setRoleToRandomPlayer((byte)RoleId.ZombiePlayer01, modifiers);
-                                        break;
-                                    case 2:
-                                        setRoleToRandomPlayer((byte)RoleId.NursePlayer, modifiers);
-                                        break;
-                                    case 3:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer01, modifiers);
-                                        break;
-                                    case 4:
-                                        setRoleToRandomPlayer((byte)RoleId.ZombiePlayer02, modifiers);
-                                        break;
-                                    case 5:
-                                        setRoleToRandomPlayer((byte)RoleId.ZombiePlayer03, modifiers);
-                                        break;
-                                    case 6:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer02, modifiers);
-                                        break;
-                                    case 7:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer03, modifiers);
-                                        break;
-                                    case 8:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer04, modifiers);
-                                        break;
-                                    case 9:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer05, modifiers);
-                                        break;
-                                    case 10:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer06, modifiers);
-                                        break;
-                                    case 11:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer07, modifiers);
-                                        break;
-                                    case 12:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer08, modifiers);
-                                        break;
-                                    case 13:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer09, modifiers);
-                                        break;
-                                    case 14:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer10, modifiers);
-                                        break;
-                                    case 15:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer11, modifiers);
-                                        break;
-                                }
-                                break;
-                            case 4:
-                                switch (playerNumber) {
-                                    case 1:
-                                        setRoleToRandomPlayer((byte)RoleId.ZombiePlayer01, modifiers);
-                                        break;
-                                    case 2:
-                                        setRoleToRandomPlayer((byte)RoleId.NursePlayer, modifiers);
-                                        break;
-                                    case 3:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer01, modifiers);
-                                        break;
-                                    case 4:
-                                        setRoleToRandomPlayer((byte)RoleId.ZombiePlayer02, modifiers);
-                                        break;
-                                    case 5:
-                                        setRoleToRandomPlayer((byte)RoleId.ZombiePlayer03, modifiers);
-                                        break;
-                                    case 6:
-                                        setRoleToRandomPlayer((byte)RoleId.ZombiePlayer04, modifiers);
-                                        break;
-                                    case 7:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer02, modifiers);
-                                        break;
-                                    case 8:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer03, modifiers);
-                                        break;
-                                    case 9:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer04, modifiers);
-                                        break;
-                                    case 10:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer05, modifiers);
-                                        break;
-                                    case 11:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer06, modifiers);
-                                        break;
-                                    case 12:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer07, modifiers);
-                                        break;
-                                    case 13:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer08, modifiers);
-                                        break;
-                                    case 14:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer09, modifiers);
-                                        break;
-                                    case 15:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer10, modifiers);
-                                        break;
-                                }
-                                break;
-                            case 5:
-                                switch (playerNumber) {
-                                    case 1:
-                                        setRoleToRandomPlayer((byte)RoleId.ZombiePlayer01, modifiers);
-                                        break;
-                                    case 2:
-                                        setRoleToRandomPlayer((byte)RoleId.NursePlayer, modifiers);
-                                        break;
-                                    case 3:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer01, modifiers);
-                                        break;
-                                    case 4:
-                                        setRoleToRandomPlayer((byte)RoleId.ZombiePlayer02, modifiers);
-                                        break;
-                                    case 5:
-                                        setRoleToRandomPlayer((byte)RoleId.ZombiePlayer03, modifiers);
-                                        break;
-                                    case 6:
-                                        setRoleToRandomPlayer((byte)RoleId.ZombiePlayer04, modifiers);
-                                        break;
-                                    case 7:
-                                        setRoleToRandomPlayer((byte)RoleId.ZombiePlayer05, modifiers);
-                                        break;
-                                    case 8:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer02, modifiers);
-                                        break;
-                                    case 9:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer03, modifiers);
-                                        break;
-                                    case 10:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer04, modifiers);
-                                        break;
-                                    case 11:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer05, modifiers);
-                                        break;
-                                    case 12:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer06, modifiers);
-                                        break;
-                                    case 13:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer07, modifiers);
-                                        break;
-                                    case 14:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer08, modifiers);
-                                        break;
-                                    case 15:
-                                        setRoleToRandomPlayer((byte)RoleId.SurvivorPlayer09, modifiers);
-                                        break;
-                                }
-                                break;
-                        }
-                        myGamemodeList.Add(playerNumber);
-                        playerNumber += 1;
-                    }
+                    // ZL  
+                    var layout = ZombieLaboratoryLayouts[(int)ZombieLaboratory.startZombies];
+
+                    for (int i = 0; i < PlayerInCache.AllPlayers.Count; i++) {
+                        setRoleToRandomPlayer((byte)layout[i], modifiers);
+                    }                        
+                    myGamemodeList.Add(playerNumber);
+                    playerNumber += 1;
                     break;
                 case 7:
                     // BR
                     if (BattleRoyale.matchType == 0) {
                         while (myGamemodeList.Count < PlayerInCache.AllPlayers.Count) {
-                            switch (playerNumber) {
-                                case 1:
-                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer01, modifiers);
-                                    break;
-                                case 2:
-                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer02, modifiers);
-                                    break;
-                                case 3:
-                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer03, modifiers);
-                                    break;
-                                case 4:
-                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer04, modifiers);
-                                    break;
-                                case 5:
-                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer05, modifiers);
-                                    break;
-                                case 6:
-                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer06, modifiers);
-                                    break;
-                                case 7:
-                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer07, modifiers);
-                                    break;
-                                case 8:
-                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer08, modifiers);
-                                    break;
-                                case 9:
-                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer09, modifiers);
-                                    break;
-                                case 10:
-                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer10, modifiers);
-                                    break;
-                                case 11:
-                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer11, modifiers);
-                                    break;
-                                case 12:
-                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer12, modifiers);
-                                    break;
-                                case 13:
-                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer13, modifiers);
-                                    break;
-                                case 14:
-                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer14, modifiers);
-                                    break;
-                                case 15:
-                                    setRoleToRandomPlayer((byte)RoleId.SoloPlayer15, modifiers);
-                                    break;
-                            }
+                            setRoleToRandomPlayer((byte)((int)RoleId.SoloPlayer01 + playerNumber - 1), modifiers);
                             myGamemodeList.Add(playerNumber);
                             playerNumber += 1;
                         }
@@ -731,57 +355,13 @@ namespace LasMonjas.Patches
                             setRoleToRandomPlayer((byte)RoleId.SerialKiller, modifiers);
                         }
                         while (myGamemodeList.Count < (Mathf.Round(PlayerInCache.AllPlayers.Count / 2))) {
-                            switch (playerNumber) {
-                                case 1:
-                                    setRoleToRandomPlayer((byte)RoleId.LimePlayer01, modifiers);
-                                    break;
-                                case 2:
-                                    setRoleToRandomPlayer((byte)RoleId.LimePlayer02, modifiers);
-                                    break;
-                                case 3:
-                                    setRoleToRandomPlayer((byte)RoleId.LimePlayer03, modifiers);
-                                    break;
-                                case 4:
-                                    setRoleToRandomPlayer((byte)RoleId.LimePlayer04, modifiers);
-                                    break;
-                                case 5:
-                                    setRoleToRandomPlayer((byte)RoleId.LimePlayer05, modifiers);
-                                    break;
-                                case 6:
-                                    setRoleToRandomPlayer((byte)RoleId.LimePlayer06, modifiers);
-                                    break;
-                                case 7:
-                                    setRoleToRandomPlayer((byte)RoleId.LimePlayer07, modifiers);
-                                    break;
-                            }
+                            setRoleToRandomPlayer((byte)((int)RoleId.LimePlayer01 + playerNumber - 1), modifiers);
                             myGamemodeList.Add(playerNumber);
                             playerNumber += 1;
                         }
                         playerNumber = 9;
                         while (!oddNumber && myGamemodeList.Count < PlayerInCache.AllPlayers.Count || oddNumber && myGamemodeList.Count < PlayerInCache.AllPlayers.Count - 1) {
-                            switch (playerNumber) {
-                                case 9:
-                                    setRoleToRandomPlayer((byte)RoleId.PinkPlayer01, modifiers);
-                                    break;
-                                case 10:
-                                    setRoleToRandomPlayer((byte)RoleId.PinkPlayer02, modifiers);
-                                    break;
-                                case 11:
-                                    setRoleToRandomPlayer((byte)RoleId.PinkPlayer03, modifiers);
-                                    break;
-                                case 12:
-                                    setRoleToRandomPlayer((byte)RoleId.PinkPlayer04, modifiers);
-                                    break;
-                                case 13:
-                                    setRoleToRandomPlayer((byte)RoleId.PinkPlayer05, modifiers);
-                                    break;
-                                case 14:
-                                    setRoleToRandomPlayer((byte)RoleId.PinkPlayer06, modifiers);
-                                    break;
-                                case 15:
-                                    setRoleToRandomPlayer((byte)RoleId.PinkPlayer07, modifiers);
-                                    break;
-                            }
+                            setRoleToRandomPlayer((byte)((int)RoleId.PinkPlayer01 + playerNumber - 9), modifiers); 
                             myGamemodeList.Add(playerNumber);
                             playerNumber += 1;
                         }
@@ -794,57 +374,13 @@ namespace LasMonjas.Patches
                         setRoleToRandomPlayer((byte)RoleId.BigMonja, modifiers);
                     }
                     while (myGamemodeList.Count < (Mathf.Round(PlayerInCache.AllPlayers.Count / 2))) {
-                        switch (playerNumber) {
-                            case 1:
-                                setRoleToRandomPlayer((byte)RoleId.GreenMonjaPlayer01, modifiers);
-                                break;
-                            case 2:
-                                setRoleToRandomPlayer((byte)RoleId.GreenMonjaPlayer02, modifiers);
-                                break;
-                            case 3:
-                                setRoleToRandomPlayer((byte)RoleId.GreenMonjaPlayer03, modifiers);
-                                break;
-                            case 4:
-                                setRoleToRandomPlayer((byte)RoleId.GreenMonjaPlayer04, modifiers);
-                                break;
-                            case 5:
-                                setRoleToRandomPlayer((byte)RoleId.GreenMonjaPlayer05, modifiers);
-                                break;
-                            case 6:
-                                setRoleToRandomPlayer((byte)RoleId.GreenMonjaPlayer06, modifiers);
-                                break;
-                            case 7:
-                                setRoleToRandomPlayer((byte)RoleId.GreenMonjaPlayer07, modifiers);
-                                break;
-                        }
+                        setRoleToRandomPlayer((byte)((int)RoleId.GreenMonjaPlayer01 + playerNumber - 1), modifiers); 
                         myGamemodeList.Add(playerNumber);
                         playerNumber += 1;
                     }
                     playerNumber = 9;
                     while (!oddNumber && myGamemodeList.Count < PlayerInCache.AllPlayers.Count || oddNumber && myGamemodeList.Count < PlayerInCache.AllPlayers.Count - 1) {
-                        switch (playerNumber) {
-                            case 9:
-                                setRoleToRandomPlayer((byte)RoleId.CyanPlayer01, modifiers);
-                                break;
-                            case 10:
-                                setRoleToRandomPlayer((byte)RoleId.CyanPlayer02, modifiers);
-                                break;
-                            case 11:
-                                setRoleToRandomPlayer((byte)RoleId.CyanPlayer03, modifiers);
-                                break;
-                            case 12:
-                                setRoleToRandomPlayer((byte)RoleId.CyanPlayer04, modifiers);
-                                break;
-                            case 13:
-                                setRoleToRandomPlayer((byte)RoleId.CyanPlayer05, modifiers);
-                                break;
-                            case 14:
-                                setRoleToRandomPlayer((byte)RoleId.CyanPlayer06, modifiers);
-                                break;
-                            case 15:
-                                setRoleToRandomPlayer((byte)RoleId.CyanPlayer07, modifiers);
-                                break;
-                        }
+                        setRoleToRandomPlayer((byte)((int)RoleId.CyanPlayer01 + playerNumber - 9), modifiers);
                         myGamemodeList.Add(playerNumber);
                         playerNumber += 1;
                     }

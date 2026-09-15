@@ -31,27 +31,24 @@ namespace LasMonjas.Patches {
         LoversWin = 29,
         KidLose = 30,
         TaskMasterCrewWin = 31,
-        DrawTeamWin = 32,
+        GamemodesDrawWin = 32,
         RedTeamFlagWin = 33,
         BlueTeamFlagWin = 34,
         ThiefModeThiefWin = 35,
         ThiefModePoliceWin = 36,
-        TeamHillDraw = 37,
-        GreenTeamHillWin = 38,
-        YellowTeamHillWin = 39,
-        HotPotatoEnd = 40,
-        ZombieWin = 41,
-        SurvivorWin = 42,
-        BattleRoyaleSoloWin = 43,
-        BattleRoyaleTimeWin = 44,
-        BattleRoyaleDraw = 45,
-        BattleRoyaleLimeTeamWin = 46,
-        BattleRoyalePinkTeamWin = 47,
-        BattleRoyaleSerialKillerWin = 48,
-        MonjaFestivalGreenWin = 49,
-        MonjaFestivalCyanWin = 50,
-        MonjaFestivalBigMonjaWin = 51,
-        MonjaFestivalDraw = 52
+        GreenTeamHillWin = 37,
+        YellowTeamHillWin = 38,
+        HotPotatoEnd = 39,
+        ZombieWin = 40,
+        SurvivorWin = 41,
+        BattleRoyaleSoloWin = 42,
+        BattleRoyaleTimeWin = 43,
+        BattleRoyaleLimeTeamWin = 44,
+        BattleRoyalePinkTeamWin = 45,
+        BattleRoyaleSerialKillerWin = 46,
+        MonjaFestivalGreenWin = 47,
+        MonjaFestivalCyanWin = 48,
+        MonjaFestivalBigMonjaWin = 49
     }
 
     enum WinCondition {
@@ -79,12 +76,11 @@ namespace LasMonjas.Patches {
         LoversSoloWin,
         KidLose,
         TaskMasterCrewWin,
-        DrawTeamWin,
+        GamemodesDrawWin,
         RedTeamFlagWin,
         BlueTeamFlagWin,
         ThiefModeThiefWin,
         ThiefModePoliceWin,
-        TeamHillDraw,
         GreenTeamHillWin,
         YellowTeamHillWin,
         HotPotatoEnd,
@@ -92,14 +88,12 @@ namespace LasMonjas.Patches {
         SurvivorWin,
         BattleRoyaleSoloWin,
         BattleRoyaleTimeWin,
-        BattleRoyaleDraw,
         BattleRoyaleLimeTeamWin,
         BattleRoyalePinkTeamWin,
         BattleRoyaleSerialKillerWin,
         MonjaFestivalGreenWin,
         MonjaFestivalCyanWin,
-        MonjaFestivalBigMonjaWin,
-        MonjaFestivalDraw
+        MonjaFestivalBigMonjaWin
     }
 
     static class AdditionalTempData {
@@ -124,6 +118,74 @@ namespace LasMonjas.Patches {
 
     [HarmonyPatch(typeof(AmongUsClient), nameof(AmongUsClient.OnGameEnd))]
     public class OnGameEndPatch {
+        
+        private static void SetWinner(PlayerControl player, WinCondition condition, Action<CachedPlayerData> configure = null) {
+            EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+
+            if (player != null) {
+                CachedPlayerData wpd = new CachedPlayerData(player.Data);
+
+                configure?.Invoke(wpd);
+
+                EndGameResult.CachedWinners.Add(wpd);
+            }
+
+            AdditionalTempData.winCondition = condition;
+        }
+        private static void SetWinners(IEnumerable<PlayerControl> players, WinCondition condition, Action<CachedPlayerData> configure = null) {
+            EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+
+            foreach (var player in players) {
+                if (player == null) {
+                    continue;
+                }
+                CachedPlayerData wpd = new CachedPlayerData(player.Data);
+
+                configure?.Invoke(wpd);
+
+                EndGameResult.CachedWinners.Add(wpd);
+            }
+
+            AdditionalTempData.winCondition = condition;
+        }
+
+        private static void SetAllPlayers(WinCondition condition) {
+            SetWinners(PlayerInCache.AllPlayers.Select(x => x.PlayerControl), condition);
+        }
+
+        private static void SetAlivePlayers(IEnumerable<PlayerControl> players, WinCondition condition) {
+            EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+
+            foreach (var player in players) {
+                if (player == null || player.Data == null || player.Data.IsDead || player.Data.Disconnected) {
+                    continue;
+                }
+
+                EndGameResult.CachedWinners.Add(new CachedPlayerData(player.Data));
+            }
+
+            AdditionalTempData.winCondition = condition;
+        }
+
+        private static void SetFilteredWinners(IEnumerable<PlayerControl> players, WinCondition condition, Func<PlayerControl, bool> filter) {
+            EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+           
+            foreach (var player in players) {
+                if (player == null) {
+                    continue;
+                }
+
+                if (!filter(player)) {
+                    continue;
+                }
+
+                EndGameResult.CachedWinners.Add(new CachedPlayerData(player.Data));
+            }
+
+            AdditionalTempData.winCondition = condition;
+        }
+
+
         private static GameOverReason gameOverReason;
         public static void Prefix(AmongUsClient __instance, [HarmonyArgument(0)]ref EndGameResult endGameResult) {
             gameOverReason = endGameResult.GameOverReason;
@@ -152,7 +214,6 @@ namespace LasMonjas.Patches {
             List<PlayerControl> notWinners = new List<PlayerControl>();
             if (Renegade.renegade != null) notWinners.Add(Renegade.renegade);
             if (Minion.minion != null) notWinners.Add(Minion.minion);
-            notWinners.AddRange(Renegade.formerRenegades);
             if (BountyHunter.bountyhunter != null) notWinners.Add(BountyHunter.bountyhunter);
             if (Trapper.trapper != null) notWinners.Add(Trapper.trapper);
             if (Yinyanger.yinyanger != null) notWinners.Add(Yinyanger.yinyanger);
@@ -181,7 +242,6 @@ namespace LasMonjas.Patches {
             if (HotPotato.hotPotatoPlayer != null) notWinners.Add(HotPotato.hotPotatoPlayer);
 
             List<CachedPlayerData> winnersToRemove = new List<CachedPlayerData>();
-            //foreach (CachedPlayerData winner in EndGameResult.CachedWinners.GetFastEnumerator()) {
             foreach (CachedPlayerData winner in EndGameResult.CachedWinners) {
                 if (notWinners.Any(x => x.Data.PlayerName == winner.PlayerName)) winnersToRemove.Add(winner);
             }
@@ -209,12 +269,11 @@ namespace LasMonjas.Patches {
             bool seekerWin = Seeker.seeker != null && gameOverReason == (GameOverReason)CustomGameOverReason.SeekerWin;
             bool loversWin = Modifiers.existingAndAlive() && (gameOverReason == (GameOverReason)CustomGameOverReason.LoversWin || (GameManager.Instance.DidHumansWin(gameOverReason) && !Modifiers.existingWithKiller()));
             bool taskMasterCrewWin = TaskMaster.taskMaster != null && gameOverReason == (GameOverReason)CustomGameOverReason.TaskMasterCrewWin;
-            bool drawTeamWin = gameType == 2 && gameOverReason == (GameOverReason)CustomGameOverReason.DrawTeamWin;
+            bool gamemodesDrawWin = (gameType == 2 || gameType == 4 || gameType == 7 || gameType == 8) && gameOverReason == (GameOverReason)CustomGameOverReason.GamemodesDrawWin;
             bool redTeamFlagWin = gameType == 2 && gameOverReason == (GameOverReason)CustomGameOverReason.RedTeamFlagWin;
             bool blueTeamFlagWin = gameType == 2 && gameOverReason == (GameOverReason)CustomGameOverReason.BlueTeamFlagWin;
             bool thiefModeThiefWin = gameType == 3 && gameOverReason == (GameOverReason)CustomGameOverReason.ThiefModeThiefWin;
             bool thiefModePoliceWin = gameType == 3 && gameOverReason == (GameOverReason)CustomGameOverReason.ThiefModePoliceWin;
-            bool teamHillDraw = gameType == 4 && gameOverReason == (GameOverReason)CustomGameOverReason.TeamHillDraw;
             bool greenTeamHillWin = gameType == 4 && gameOverReason == (GameOverReason)CustomGameOverReason.GreenTeamHillWin;
             bool yellowTeamHillWin = gameType == 4 && gameOverReason == (GameOverReason)CustomGameOverReason.YellowTeamHillWin;
             bool hotPotatoEnd = gameType == 5 && gameOverReason == (GameOverReason)CustomGameOverReason.HotPotatoEnd;
@@ -222,438 +281,221 @@ namespace LasMonjas.Patches {
             bool survivorWin = gameType == 6 && gameOverReason == (GameOverReason)CustomGameOverReason.SurvivorWin;
             bool battleRoyaleSoloWin = gameType == 7 && gameOverReason == (GameOverReason)CustomGameOverReason.BattleRoyaleSoloWin;
             bool battleRoyaleTimeWin = gameType == 7 && gameOverReason == (GameOverReason)CustomGameOverReason.BattleRoyaleTimeWin;
-            bool battleRoyaleDraw = gameType == 7 && gameOverReason == (GameOverReason)CustomGameOverReason.BattleRoyaleDraw;
             bool battleRoyaleLimeTeamWin = gameType == 7 && gameOverReason == (GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin;
             bool battleRoyalePinkTeamWin = gameType == 7 && gameOverReason == (GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin;
             bool battleRoyaleSerialKillerWin = gameType == 7 && gameOverReason == (GameOverReason)CustomGameOverReason.BattleRoyaleSerialKillerWin;
             bool monjaFestivalGreenWin = gameType == 8 && gameOverReason == (GameOverReason)CustomGameOverReason.MonjaFestivalGreenWin;
             bool monjaFestivalCyanWin = gameType == 8 && gameOverReason == (GameOverReason)CustomGameOverReason.MonjaFestivalCyanWin;
             bool monjaFestivalBigMonjaWin = gameType == 8 && gameOverReason == (GameOverReason)CustomGameOverReason.MonjaFestivalBigMonjaWin;
-            bool monjaFestivalDraw = gameType == 8 && gameOverReason == (GameOverReason)CustomGameOverReason.MonjaFestivalDraw;
 
             // Kid lose
             if (kidLose) {
-                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                CachedPlayerData wpd = new CachedPlayerData(Kid.kid.Data);
-                wpd.IsYou = false;
-                EndGameResult.CachedWinners.Add(wpd);
-                AdditionalTempData.winCondition = WinCondition.KidLose;
+                SetWinner(Kid.kid, WinCondition.KidLose, wpd => wpd.IsYou = false);
             }
 
             // Bomb exploded
             else if (bombExploded) {
-                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                foreach (PlayerControl imimpostor in PlayerInCache.AllPlayers) {
-                    if (imimpostor.Data.Role.IsImpostor == true) {
-                        CachedPlayerData wpd = new CachedPlayerData(imimpostor.Data);
-                        EndGameResult.CachedWinners.Add(wpd);
-                    }
-                }
-                AdditionalTempData.winCondition = WinCondition.BombExploded;
+                SetFilteredWinners(PlayerInCache.AllPlayers.Select(x => x.PlayerControl), WinCondition.BombExploded, p => p.Data.Role.IsImpostor);
             }
 
             // Lovers win conditions
             else if (loversWin) {
                 // Double win for lovers with crewmates
                 if (!Modifiers.existingWithKiller()) {
-                    EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                    foreach (PlayerControl p in PlayerInCache.AllPlayers) {
-                        if (p == null) continue;
-                        if (p == Modifiers.lover1 || p == Modifiers.lover2)
-                            EndGameResult.CachedWinners.Add(new CachedPlayerData(p.Data));
-                        else if (p != Joker.joker && p != RoleThief.rolethief && p != Pyromaniac.pyromaniac && p != TreasureHunter.treasureHunter && p != Devourer.devourer && p != Poisoner.poisoner && p != Puppeteer.puppeteer && p != Exiler.exiler && p != Amnesiac.amnesiac && p != Seeker.seeker && p != Renegade.renegade && p != Minion.minion && !Renegade.formerRenegades.Contains(p) && p != BountyHunter.bountyhunter && p != Trapper.trapper && p != Yinyanger.yinyanger && p != Challenger.challenger && p != Ninja.ninja && p != Berserker.berserker && p != Yandere.yandere && p != Stranded.stranded && p != Monja.monja && !p.Data.Role.IsImpostor)
-                            EndGameResult.CachedWinners.Add(new CachedPlayerData(p.Data));
-                    }
-                    AdditionalTempData.winCondition = WinCondition.LoversTeamWin;
-
+                    SetFilteredWinners(PlayerInCache.AllPlayers.Select(x => x.PlayerControl), WinCondition.LoversTeamWin, p => p == Modifiers.lover1 || p == Modifiers.lover2 || (!p.Data.Role.IsImpostor && !Helpers.isNeutral(p) && !Helpers.isRebel(p)));
                 }
                 // Lovers solo win
                 else {
-                    EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                    EndGameResult.CachedWinners.Add(new CachedPlayerData(Modifiers.lover1.Data));
-                    EndGameResult.CachedWinners.Add(new CachedPlayerData(Modifiers.lover2.Data));
-                    AdditionalTempData.winCondition = WinCondition.LoversSoloWin;
+                    SetWinners(new[] { Modifiers.lover1, Modifiers.lover2 }, WinCondition.LoversSoloWin);
                 }
             }
 
             // TaskMaster crew win
             else if (taskMasterCrewWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                foreach (PlayerControl p in PlayerInCache.AllPlayers) {
-                    if (p == null) continue;
-                    if (p != Joker.joker && p != RoleThief.rolethief && p != Pyromaniac.pyromaniac && p != TreasureHunter.treasureHunter && p != Devourer.devourer && p != Poisoner.poisoner && p != Puppeteer.puppeteer && p != Exiler.exiler && p != Amnesiac.amnesiac && p != Seeker.seeker && p != Renegade.renegade && p != Minion.minion && !Renegade.formerRenegades.Contains(p) && p != BountyHunter.bountyhunter && p != Trapper.trapper && p != Yinyanger.yinyanger && p != Challenger.challenger && p != Ninja.ninja && p != Berserker.berserker && p != Yandere.yandere && p != Stranded.stranded && p != Monja.monja && !p.Data.Role.IsImpostor)
-                        EndGameResult.CachedWinners.Add(new CachedPlayerData(p.Data));
-                }
-                AdditionalTempData.winCondition = WinCondition.TaskMasterCrewWin;
+                SetFilteredWinners(PlayerInCache.AllPlayers.Select(x => x.PlayerControl), WinCondition.TaskMasterCrewWin, p => !p.Data.Role.IsImpostor && !Helpers.isNeutral(p) && !Helpers.isRebel(p));
             }
 
             // Joker win
             else if (jokerWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                CachedPlayerData wpd = new CachedPlayerData(Joker.joker.Data);
-                EndGameResult.CachedWinners.Add(wpd);
-                AdditionalTempData.winCondition = WinCondition.JokerWin;
+                SetWinner(Joker.joker, WinCondition.JokerWin);
             }
 
             // Pyromaniac win
             else if (pyromaniacWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                CachedPlayerData wpd = new CachedPlayerData(Pyromaniac.pyromaniac.Data);
-                EndGameResult.CachedWinners.Add(wpd);
-                AdditionalTempData.winCondition = WinCondition.PyromaniacWin;
+                SetWinner(Pyromaniac.pyromaniac, WinCondition.PyromaniacWin);
             }
 
             // TreasureHunter win
             else if (treasurehunterWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                CachedPlayerData wpd = new CachedPlayerData(TreasureHunter.treasureHunter.Data);
-                EndGameResult.CachedWinners.Add(wpd);
-                AdditionalTempData.winCondition = WinCondition.TreasureHunterWin;
+                SetWinner(TreasureHunter.treasureHunter, WinCondition.TreasureHunterWin);
             }
 
             // Devourer win
             else if (devourerWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                CachedPlayerData wpd = new CachedPlayerData(Devourer.devourer.Data);
-                EndGameResult.CachedWinners.Add(wpd);
-                AdditionalTempData.winCondition = WinCondition.DevourerWin;
+                SetWinner(Devourer.devourer, WinCondition.DevourerWin);
             }
 
             // Poisoner win
             else if (poisonerWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                CachedPlayerData wpd = new CachedPlayerData(Poisoner.poisoner.Data);
-                EndGameResult.CachedWinners.Add(wpd);
-                AdditionalTempData.winCondition = WinCondition.PoisonerWin;
+                SetWinner(Poisoner.poisoner, WinCondition.PoisonerWin);
             }
 
             // Puppeteer win
             else if (puppeteerWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                CachedPlayerData wpd = new CachedPlayerData(Puppeteer.puppeteer.Data);
-                EndGameResult.CachedWinners.Add(wpd);
-                AdditionalTempData.winCondition = WinCondition.PuppeteerWin;
+                SetWinner(Puppeteer.puppeteer, WinCondition.PuppeteerWin);
             }
 
             // Exiler win
             else if (exilerWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                CachedPlayerData wpd = new CachedPlayerData(Exiler.exiler.Data);
-                EndGameResult.CachedWinners.Add(wpd);
-                AdditionalTempData.winCondition = WinCondition.ExilerWin;
+                SetWinner(Exiler.exiler, WinCondition.ExilerWin);
             }
 
             // Seeker win
             else if (seekerWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                CachedPlayerData wpd = new CachedPlayerData(Seeker.seeker.Data);
-                EndGameResult.CachedWinners.Add(wpd);
-                AdditionalTempData.winCondition = WinCondition.SeekerWin;
+                SetWinner(Seeker.seeker, WinCondition.SeekerWin);
             }
 
             // Renegade win condition
             else if (teamRenegadeWin) {
-                // Renegade wins if nobody except renegade is alive
-                AdditionalTempData.winCondition = WinCondition.RenegadeWin;
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                CachedPlayerData wpd = new CachedPlayerData(Renegade.renegade.Data);
-                wpd.IsImpostor = false;
-                EndGameResult.CachedWinners.Add(wpd);
-                // If there is a minion. The minion also wins
+                // Renegade wins if nobody except renegade is alive, if there is a minion the minion also wins
                 if (Minion.minion != null) {
-                    CachedPlayerData wpdMinion = new CachedPlayerData(Minion.minion.Data);
-                    wpdMinion.IsImpostor = false;
-                    EndGameResult.CachedWinners.Add(wpdMinion);
+                    SetWinners(new[] { Renegade.renegade, Minion.minion }, WinCondition.RenegadeWin, wpd => wpd.IsImpostor = false);
                 }
-                foreach (var player in Renegade.formerRenegades) {
-                    CachedPlayerData wpdFormerRenegade = new CachedPlayerData(player.Data);
-                    wpdFormerRenegade.IsImpostor = false;
-                    EndGameResult.CachedWinners.Add(wpdFormerRenegade);
+                else {
+                    SetWinner(Renegade.renegade, WinCondition.RenegadeWin, wpd => wpd.IsImpostor = false);
                 }
             }
 
             // BountyHunter win
             else if (bountyhunterWin) {
-                // BountyHunter wins if he kills his target 
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                CachedPlayerData wpd = new CachedPlayerData(BountyHunter.bountyhunter.Data);
-                EndGameResult.CachedWinners.Add(wpd);
-                AdditionalTempData.winCondition = WinCondition.BountyHunterWin;
+                SetWinner(BountyHunter.bountyhunter, WinCondition.BountyHunterWin);
             }
 
             // Trapper win
             else if (trapperWin) {
-                // Trapper wins if nobody except Trapper is alive
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                CachedPlayerData wpd = new CachedPlayerData(Trapper.trapper.Data);
-                EndGameResult.CachedWinners.Add(wpd);
-                AdditionalTempData.winCondition = WinCondition.TrapperWin;
+                SetWinner(Trapper.trapper, WinCondition.TrapperWin);
             }
 
             // Yinyanger win
             else if (yinyangerWin) {
-                // Yinyanger wins if nobody except Yinyanger is alive
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                CachedPlayerData wpd = new CachedPlayerData(Yinyanger.yinyanger.Data);
-                EndGameResult.CachedWinners.Add(wpd);
-                AdditionalTempData.winCondition = WinCondition.YinyangerWin;
+                SetWinner(Yinyanger.yinyanger, WinCondition.YinyangerWin);
             }
 
             // Challenger win
             else if (challengerWin) {
-                // Challenger wins if nobody except Challenger is alive
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                CachedPlayerData wpd = new CachedPlayerData(Challenger.challenger.Data);
-                EndGameResult.CachedWinners.Add(wpd);
-                AdditionalTempData.winCondition = WinCondition.ChallengerWin;
+                SetWinner(Challenger.challenger, WinCondition.ChallengerWin);
             }
 
             // Ninja win
             else if (ninjaWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                CachedPlayerData wpd = new CachedPlayerData(Ninja.ninja.Data);
-                EndGameResult.CachedWinners.Add(wpd);
-                AdditionalTempData.winCondition = WinCondition.NinjaWin;
+                SetWinner(Ninja.ninja, WinCondition.NinjaWin);
             }
 
             // Berserker win
             else if (berserkerWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                CachedPlayerData wpd = new CachedPlayerData(Berserker.berserker.Data);
-                EndGameResult.CachedWinners.Add(wpd);
-                AdditionalTempData.winCondition = WinCondition.BerserkerWin;
+                SetWinner(Berserker.berserker, WinCondition.BerserkerWin);
             }
 
             // Yandere win
             else if (yandereWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                CachedPlayerData wpd = new CachedPlayerData(Yandere.yandere.Data);
-                EndGameResult.CachedWinners.Add(wpd);
-                AdditionalTempData.winCondition = WinCondition.YandereWin;
+                SetWinner(Yandere.yandere, WinCondition.YandereWin);
             }
 
             // Stranded win
             else if (strandedWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                CachedPlayerData wpd = new CachedPlayerData(Stranded.stranded.Data);
-                EndGameResult.CachedWinners.Add(wpd);
-                AdditionalTempData.winCondition = WinCondition.StrandedWin;
+                SetWinner(Stranded.stranded, WinCondition.StrandedWin);
             }
 
             // Monja win
             else if (monjaWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                CachedPlayerData wpd = new CachedPlayerData(Monja.monja.Data);
-                EndGameResult.CachedWinners.Add(wpd);
-                AdditionalTempData.winCondition = WinCondition.MonjaWin;
+                SetWinner(Monja.monja, WinCondition.MonjaWin);
+            }
+
+            // Gamemodes Draw
+            else if (gamemodesDrawWin) {
+                SetAllPlayers(WinCondition.GamemodesDrawWin);
             }
 
             // Flag Game Mode Win
-            // Draw
-            else if (drawTeamWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                foreach (PlayerControl player in PlayerInCache.AllPlayers) {
-                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
-                    EndGameResult.CachedWinners.Add(wpd);
-                }
-                AdditionalTempData.winCondition = WinCondition.DrawTeamWin;
-            }
             // Red Team Win
             else if (redTeamFlagWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                foreach (PlayerControl player in CaptureTheFlag.redteamFlag) {
-                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
-                    EndGameResult.CachedWinners.Add(wpd);
-                }
-                AdditionalTempData.winCondition = WinCondition.RedTeamFlagWin;
+                SetWinners(CaptureTheFlag.redteamFlag, WinCondition.RedTeamFlagWin);
             }
             // Blue Team Win
             else if (blueTeamFlagWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                foreach (PlayerControl player in CaptureTheFlag.blueteamFlag) {
-                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
-                    EndGameResult.CachedWinners.Add(wpd);
-                }
-                AdditionalTempData.winCondition = WinCondition.BlueTeamFlagWin;
+                SetWinners(CaptureTheFlag.blueteamFlag, WinCondition.BlueTeamFlagWin);
             }
 
             // Thief Mode Win
             // Thief Team Win
             else if (thiefModeThiefWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
-                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
-                    EndGameResult.CachedWinners.Add(wpd);
-                }
-                AdditionalTempData.winCondition = WinCondition.ThiefModeThiefWin;
+                SetWinners(PoliceAndThief.thiefTeam, WinCondition.ThiefModeThiefWin);
             }
             // Police Team Win
             else if (thiefModePoliceWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                foreach (PlayerControl player in PoliceAndThief.policeTeam) {
-                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
-                    EndGameResult.CachedWinners.Add(wpd);
-                }
-                AdditionalTempData.winCondition = WinCondition.ThiefModePoliceWin;
+                SetWinners(PoliceAndThief.policeTeam, WinCondition.ThiefModePoliceWin);
             }
 
-            // King Game Mode Win
-            // Draw
-            else if (teamHillDraw) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                foreach (PlayerControl player in PlayerInCache.AllPlayers) {
-                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
-                    EndGameResult.CachedWinners.Add(wpd);
-                }
-                AdditionalTempData.winCondition = WinCondition.TeamHillDraw;
-            }
+            // King Game Mode Win            
             // Green Team Win
             else if (greenTeamHillWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                foreach (PlayerControl player in KingOfTheHill.greenTeam) {
-                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
-                    EndGameResult.CachedWinners.Add(wpd);
-                }
-                AdditionalTempData.winCondition = WinCondition.GreenTeamHillWin;
+                SetWinners(KingOfTheHill.greenTeam, WinCondition.GreenTeamHillWin);
             }
             // Yellow Team Win
             else if (yellowTeamHillWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                foreach (PlayerControl player in KingOfTheHill.yellowTeam) {
-                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
-                    EndGameResult.CachedWinners.Add(wpd);
-                }
-                AdditionalTempData.winCondition = WinCondition.YellowTeamHillWin;
+                SetWinners(KingOfTheHill.yellowTeam, WinCondition.YellowTeamHillWin);
             }
 
             // Hot Potato Game Mode Win
             else if (hotPotatoEnd) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                foreach (PlayerControl player in HotPotato.notPotatoTeamAlive) {
-                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
-                    EndGameResult.CachedWinners.Add(wpd);
-                }
-                AdditionalTempData.winCondition = WinCondition.HotPotatoEnd;
+                SetWinners(HotPotato.notPotatoTeamAlive, WinCondition.HotPotatoEnd);
             }
 
             // ZombieLaboratory zombie Win
             else if (zombieWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                foreach (PlayerControl player in ZombieLaboratory.zombieTeam) {
-                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
-                    EndGameResult.CachedWinners.Add(wpd);
-                }
-                AdditionalTempData.winCondition = WinCondition.ZombieWin;
+                SetWinners(ZombieLaboratory.zombieTeam, WinCondition.ZombieWin);
             }
             else if (survivorWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                foreach (PlayerControl player in ZombieLaboratory.survivorTeam) {
-                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
-                    EndGameResult.CachedWinners.Add(wpd);
-                }
-                AdditionalTempData.winCondition = WinCondition.SurvivorWin;
+                SetWinners(ZombieLaboratory.survivorTeam, WinCondition.SurvivorWin);
             }
 
             // BattleRoyale Win
             else if (battleRoyaleSoloWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                foreach (PlayerControl player in BattleRoyale.soloPlayerTeam) {
-                    if (!player.Data.IsDead) {
-                        CachedPlayerData wpd = new CachedPlayerData(player.Data);
-                        EndGameResult.CachedWinners.Add(wpd);
-                    }
-                }
-                AdditionalTempData.winCondition = WinCondition.BattleRoyaleSoloWin;
+                SetAlivePlayers(BattleRoyale.soloPlayerTeam, WinCondition.BattleRoyaleSoloWin);
             }
             // BattleRoyale Time Win
             else if (battleRoyaleTimeWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
                 if (BattleRoyale.matchType == 0) {
-                    foreach (PlayerControl player in BattleRoyale.soloPlayerTeam) {
-                        if (!player.Data.IsDead) {
-                            CachedPlayerData wpd = new CachedPlayerData(player.Data);
-                            EndGameResult.CachedWinners.Add(wpd);
-                        }
-                    }
+                    SetAlivePlayers(BattleRoyale.soloPlayerTeam, WinCondition.BattleRoyaleTimeWin);
                 }
                 else {
-                    foreach (PlayerControl player in PlayerInCache.AllPlayers) {
-                        if (!player.Data.IsDead) {
-                            CachedPlayerData wpd = new CachedPlayerData(player.Data);
-                            EndGameResult.CachedWinners.Add(wpd);
-                        }
-                    }
+                    SetAlivePlayers(PlayerInCache.AllPlayers.Select(x => x.PlayerControl), WinCondition.BattleRoyaleTimeWin);
                 }
-                AdditionalTempData.winCondition = WinCondition.BattleRoyaleTimeWin;
             }
             // BattleRoyale Lime Team Win
             else if (battleRoyaleLimeTeamWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                foreach (PlayerControl player in BattleRoyale.limeTeam) {
-                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
-                    EndGameResult.CachedWinners.Add(wpd);
-                }
-                AdditionalTempData.winCondition = WinCondition.BattleRoyaleLimeTeamWin;
+                SetWinners(BattleRoyale.limeTeam, WinCondition.BattleRoyaleLimeTeamWin);
             }
             // BattleRoyale Pink Team Win
             else if (battleRoyalePinkTeamWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                foreach (PlayerControl player in BattleRoyale.pinkTeam) {
-                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
-                    EndGameResult.CachedWinners.Add(wpd);
-                }
-                AdditionalTempData.winCondition = WinCondition.BattleRoyalePinkTeamWin;
+                SetWinners(BattleRoyale.pinkTeam, WinCondition.BattleRoyalePinkTeamWin);
             }
             // BattleRoyale Serial Killer Win
             else if (battleRoyaleSerialKillerWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                CachedPlayerData wpd = new CachedPlayerData(BattleRoyale.serialKiller.Data);
-                EndGameResult.CachedWinners.Add(wpd);
-                AdditionalTempData.winCondition = WinCondition.BattleRoyaleSerialKillerWin;
-            }
-            // BattleRoyale Draw
-            else if (battleRoyaleDraw) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                foreach (PlayerControl player in PlayerInCache.AllPlayers) {
-                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
-                    EndGameResult.CachedWinners.Add(wpd);
-                }
-                AdditionalTempData.winCondition = WinCondition.BattleRoyaleDraw; 
+                SetWinner(BattleRoyale.serialKiller, WinCondition.BattleRoyaleSerialKillerWin);
             }
 
             // MonjaFestival Green Team Win
             else if (monjaFestivalGreenWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                foreach (PlayerControl player in MonjaFestival.greenTeam) {
-                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
-                    EndGameResult.CachedWinners.Add(wpd);
-                }
-                AdditionalTempData.winCondition = WinCondition.MonjaFestivalGreenWin;
+                SetWinners(MonjaFestival.greenTeam, WinCondition.MonjaFestivalGreenWin);
             }
             // MonjaFestival Pink Team Win
             else if (monjaFestivalCyanWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                foreach (PlayerControl player in MonjaFestival.cyanTeam) {
-                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
-                    EndGameResult.CachedWinners.Add(wpd);
-                }
-                AdditionalTempData.winCondition = WinCondition.MonjaFestivalCyanWin;
+                SetWinners(MonjaFestival.cyanTeam, WinCondition.MonjaFestivalCyanWin);
             }
             // MonjaFestival Big Monja Win
             else if (monjaFestivalBigMonjaWin) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                CachedPlayerData wpd = new CachedPlayerData(MonjaFestival.bigMonjaPlayer.Data);
-                EndGameResult.CachedWinners.Add(wpd);
-                AdditionalTempData.winCondition = WinCondition.MonjaFestivalBigMonjaWin;
-            }
-            // MonjaFestival Draw
-            else if (monjaFestivalDraw) {
-                                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
-                foreach (PlayerControl player in PlayerInCache.AllPlayers) {
-                    CachedPlayerData wpd = new CachedPlayerData(player.Data);
-                    EndGameResult.CachedWinners.Add(wpd);
-                }
-                AdditionalTempData.winCondition = WinCondition.MonjaFestivalDraw;
+                SetWinner(MonjaFestival.bigMonjaPlayer, WinCondition.MonjaFestivalBigMonjaWin);
             }
 
             // Reset Settings
@@ -663,6 +505,18 @@ namespace LasMonjas.Patches {
 
     [HarmonyPatch(typeof(EndGameManager), nameof(EndGameManager.SetEverythingUp))]
     public class EndGameManagerSetUpPatch {
+
+        private static void ApplyWinCondition(EndGameManager manager, TMPro.TMP_Text textRenderer, string text, Color color, int? music = null) {
+            textRenderer.text = text;
+            textRenderer.color = color;
+
+            manager.BackgroundBar.material.SetColor("_Color", color);
+
+            if (music.HasValue) {
+                Helpers.playEndMusic(music.Value);
+            }
+        }
+        
         public static void Postfix(EndGameManager __instance) {
 
             GameObject bonusText = UnityEngine.Object.Instantiate(__instance.WinText.gameObject);
@@ -673,235 +527,127 @@ namespace LasMonjas.Patches {
 
             switch (AdditionalTempData.winCondition) {
                 case WinCondition.KidLose:
-                    textRenderer.text = Language.endGameTexts[0];
-                    textRenderer.color = Kid.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Kid.color);
-                    Helpers.playEndMusic(5);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[0], Kid.color, 5);
                     break;
                 case WinCondition.BombExploded:
-                    textRenderer.text = Language.endGameTexts[1];
-                    textRenderer.color = Bomberman.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Bomberman.color);
-                    Helpers.playEndMusic(6);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[1], Bomberman.color, 6);
                     break;
                 case WinCondition.LoversTeamWin:
-                    textRenderer.text = Language.endGameTexts[2];
-                    textRenderer.color = Modifiers.loverscolor;
-                    __instance.BackgroundBar.material.SetColor("_Color", Modifiers.loverscolor);
-                    Helpers.playEndMusic(5);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[2], Modifiers.loverscolor, 5); 
                     break;
                 case WinCondition.LoversSoloWin:
-                    textRenderer.text = Language.endGameTexts[3];
-                    textRenderer.color = Modifiers.loverscolor;
-                    __instance.BackgroundBar.material.SetColor("_Color", Modifiers.loverscolor);
-                    Helpers.playEndMusic(6);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[3], Modifiers.loverscolor, 6);
                     break;
                 case WinCondition.TaskMasterCrewWin:
-                    textRenderer.text = Language.endGameTexts[4];
-                    textRenderer.color = TaskMaster.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", TaskMaster.color);
-                    Helpers.playEndMusic(5);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[4], TaskMaster.color, 5);
                     break;
                 case WinCondition.JokerWin:
-                    textRenderer.text = Language.endGameTexts[5];
-                    textRenderer.color = Joker.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Joker.color);
-                    Helpers.playEndMusic(3);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[5], Joker.color, 3);
                     break;
                 case WinCondition.PyromaniacWin:
-                    textRenderer.text = Language.endGameTexts[6];
-                    textRenderer.color = Pyromaniac.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Pyromaniac.color);
-                    Helpers.playEndMusic(3);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[6], Pyromaniac.color, 3);
                     break;
                 case WinCondition.TreasureHunterWin:
-                    textRenderer.text = Language.endGameTexts[7];
-                    textRenderer.color = TreasureHunter.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", TreasureHunter.color);
-                    Helpers.playEndMusic(3);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[7], TreasureHunter.color, 3);
                     break;
                 case WinCondition.DevourerWin:
-                    textRenderer.text = Language.endGameTexts[8];
-                    textRenderer.color = Devourer.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Devourer.color);
-                    Helpers.playEndMusic(3);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[8], Devourer.color, 3);
                     break;
                 case WinCondition.PoisonerWin:
-                    textRenderer.text = Language.endGameTexts[9];
-                    textRenderer.color = Poisoner.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Poisoner.color);
-                    Helpers.playEndMusic(3);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[9], Poisoner.color, 3);
                     break;
                 case WinCondition.PuppeteerWin:
-                    textRenderer.text = Language.endGameTexts[10];
-                    textRenderer.color = Puppeteer.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Puppeteer.color);
-                    Helpers.playEndMusic(3);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[10], Puppeteer.color, 3);
                     break;
                 case WinCondition.ExilerWin:
-                    textRenderer.text = Language.endGameTexts[11];
-                    textRenderer.color = Exiler.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Exiler.color);
-                    Helpers.playEndMusic(3);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[11], Exiler.color, 3);
                     break;
                 case WinCondition.SeekerWin:
-                    textRenderer.text = Language.endGameTexts[12];
-                    textRenderer.color = Seeker.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Seeker.color);
-                    Helpers.playEndMusic(3);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[12], Seeker.color, 3);
                     break;
                 case WinCondition.RenegadeWin:
-                    textRenderer.text = Language.endGameTexts[13];
-                    textRenderer.color = Renegade.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Renegade.color);
-                    Helpers.playEndMusic(4);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[13], Renegade.color, 4);
                     break;
                 case WinCondition.BountyHunterWin:
-                    textRenderer.text = Language.endGameTexts[14];
-                    textRenderer.color = BountyHunter.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", BountyHunter.color);
-                    Helpers.playEndMusic(4);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[14], BountyHunter.color, 4);
                     break;
                 case WinCondition.TrapperWin:
-                    textRenderer.text = Language.endGameTexts[15];
-                    textRenderer.color = Trapper.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Trapper.color);
-                    Helpers.playEndMusic(4);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[15], Trapper.color, 4);
                     break;
                 case WinCondition.YinyangerWin:
-                    textRenderer.text = Language.endGameTexts[16];
-                    textRenderer.color = Yinyanger.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Yinyanger.color);
-                    Helpers.playEndMusic(4);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[16], Yinyanger.color, 4);
                     break;
                 case WinCondition.ChallengerWin:
-                    textRenderer.text = Language.endGameTexts[17];
-                    textRenderer.color = Challenger.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Challenger.color);
-                    Helpers.playEndMusic(4);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[17], Challenger.color, 4);
                     break;
                 case WinCondition.NinjaWin:
-                    textRenderer.text = Language.endGameTexts[18];
-                    textRenderer.color = Ninja.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Ninja.color);
-                    Helpers.playEndMusic(4);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[18], Ninja.color, 4); 
                     break;
                 case WinCondition.BerserkerWin:
-                    textRenderer.text = Language.endGameTexts[19];
-                    textRenderer.color = Berserker.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Berserker.color);
-                    Helpers.playEndMusic(4);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[19], Berserker.color, 4);
                     break;
                 case WinCondition.YandereWin:
-                    textRenderer.text = Language.endGameTexts[20];
-                    textRenderer.color = Yandere.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Yandere.color);
-                    Helpers.playEndMusic(4);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[20], Yandere.color, 4);
                     break;
                 case WinCondition.StrandedWin:
-                    textRenderer.text = Language.endGameTexts[21];
-                    textRenderer.color = Stranded.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Stranded.color);
-                    Helpers.playEndMusic(4);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[21], Stranded.color, 4);
                     break;
                 case WinCondition.MonjaWin:
-                    textRenderer.text = Language.endGameTexts[22];
-                    textRenderer.color = Monja.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Monja.color);
-                    Helpers.playEndMusic(4);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[22], Monja.color, 4);
                     break;
-                case WinCondition.DrawTeamWin:
-                case WinCondition.TeamHillDraw:
-                case WinCondition.BattleRoyaleDraw:
-                case WinCondition.MonjaFestivalDraw:
-                    textRenderer.text = Language.endGameTexts[23];
-                    textRenderer.color = new Color32(255, 128, 0, byte.MaxValue);
-                    __instance.BackgroundBar.material.SetColor("_Color", Joker.color);
+                case WinCondition.GamemodesDrawWin:
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[23], Joker.color);
                     break;
                 case WinCondition.RedTeamFlagWin:
-                    textRenderer.text = Language.endGameTexts[24];
-                    textRenderer.color = Color.red;
-                    __instance.BackgroundBar.material.SetColor("_Color", Color.red);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[24], Color.red);
                     break;
                 case WinCondition.BlueTeamFlagWin:
-                    textRenderer.text = Language.endGameTexts[25];
-                    textRenderer.color = Color.blue;
-                    __instance.BackgroundBar.material.SetColor("_Color", Color.blue);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[25], Color.blue);
                     break;
                 case WinCondition.ThiefModePoliceWin:
-                    textRenderer.text = Language.endGameTexts[26];
-                    textRenderer.color = Color.cyan;
-                    __instance.BackgroundBar.material.SetColor("_Color", Color.cyan);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[26], Color.cyan);
                     break;
                 case WinCondition.ThiefModeThiefWin:
-                    textRenderer.text = Language.endGameTexts[27];
-                    textRenderer.color = Mechanic.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Mechanic.color);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[27], Mechanic.color);
                     break;
                 case WinCondition.GreenTeamHillWin:
-                    textRenderer.text = Language.endGameTexts[28];
-                    textRenderer.color = Color.green;
-                    __instance.BackgroundBar.material.SetColor("_Color", Color.green);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[28], Color.green);
                     break;
                 case WinCondition.YellowTeamHillWin:
-                    textRenderer.text = Language.endGameTexts[29];
-                    textRenderer.color = Color.yellow;
-                    __instance.BackgroundBar.material.SetColor("_Color", Color.yellow);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[29], Color.yellow);
                     break;
                 case WinCondition.HotPotatoEnd:
-                    textRenderer.text = Language.endGameTexts[30];
-                    textRenderer.color = Color.cyan;
-                    __instance.BackgroundBar.material.SetColor("_Color", Color.cyan);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[30], Color.cyan);
                     break;
                 case WinCondition.ZombieWin:
-                    textRenderer.text = Language.endGameTexts[31];
-                    textRenderer.color = Mechanic.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Mechanic.color);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[31], Mechanic.color);
                     break;
                 case WinCondition.SurvivorWin:
-                    textRenderer.text = Language.endGameTexts[32];
-                    textRenderer.color = Locksmith.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Locksmith.color);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[32], Locksmith.color);
                     break;
                 case WinCondition.BattleRoyaleSoloWin:
-                    textRenderer.text = Language.endGameTexts[33];
-                    textRenderer.color = Sleuth.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Sleuth.color);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[33], Sleuth.color);
                     break;
                 case WinCondition.BattleRoyaleTimeWin:
-                    textRenderer.text = Language.endGameTexts[34];
-                    textRenderer.color = Sleuth.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Sleuth.color);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[34], Sleuth.color);
                     break;
                 case WinCondition.BattleRoyaleLimeTeamWin:
-                    textRenderer.text = Language.endGameTexts[35];
-                    textRenderer.color = FortuneTeller.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", FortuneTeller.color);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[35], FortuneTeller.color); 
                     break;
                 case WinCondition.BattleRoyalePinkTeamWin:
-                    textRenderer.text = Language.endGameTexts[36];
-                    textRenderer.color = Locksmith.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Locksmith.color);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[36], Locksmith.color);
                     break;
                 case WinCondition.BattleRoyaleSerialKillerWin:
-                    textRenderer.text = Language.endGameTexts[37];
-                    textRenderer.color = Joker.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Joker.color);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[37], Joker.color);
                     break;
                 case WinCondition.MonjaFestivalGreenWin:
-                    textRenderer.text = Language.endGameTexts[38];
-                    textRenderer.color = Color.green;
-                    __instance.BackgroundBar.material.SetColor("_Color", Color.green);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[38], Color.green);
                     break;
                 case WinCondition.MonjaFestivalCyanWin:
-                    textRenderer.text = Language.endGameTexts[39];
-                    textRenderer.color = Color.cyan;
-                    __instance.BackgroundBar.material.SetColor("_Color", Color.cyan);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[39], Color.cyan);
                     break;
                 case WinCondition.MonjaFestivalBigMonjaWin:
-                    textRenderer.text = Language.endGameTexts[40];
-                    textRenderer.color = Joker.color;
-                    __instance.BackgroundBar.material.SetColor("_Color", Joker.color);
+                    ApplyWinCondition(__instance, textRenderer, Language.endGameTexts[40], Joker.color);
                     break;
                 default:
                     Helpers.playEndMusic(5);
@@ -939,6 +685,27 @@ namespace LasMonjas.Patches {
 
     [HarmonyPatch(typeof(LogicGameFlowNormal), nameof(LogicGameFlowNormal.CheckEndCriteria))]
     class CheckEndCriteriaPatch {
+
+        private static bool TryEndGame(bool trigger, CustomGameOverReason reason) {
+            if (!trigger) {
+                return false;
+            }
+
+            GameManager.Instance.RpcEndGame((GameOverReason)reason, false);
+
+            return true;
+        }
+        private static bool TryEndStatisticsGame(int aliveCount, PlayerStatistics statistics, CustomGameOverReason reason) {
+            if (aliveCount >= statistics.TotalAlive - aliveCount && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
+                
+                GameManager.Instance.RpcEndGame((GameOverReason)reason, false);
+
+                return true;
+            }
+
+            return false;
+        }
+
         public static bool Prefix(LogicGameFlowNormal __instance) {
             if (!GameData.Instance) return false;
             if (DestroyableSingleton<TutorialManager>.InstanceExists)
@@ -970,12 +737,11 @@ namespace LasMonjas.Patches {
             if (CheckAndEndGameForTaskWin(__instance)) return false;
             if (CheckAndEndGameForImpostorWin(__instance, statistics)) return false;
             if (CheckAndEndGameForCrewmateWin(__instance, statistics)) return false;
-            if (CheckAndEndGameForDrawFlagWin(__instance)) return false;
+            if (CheckAndEndGameForGameModeDrawWin(__instance)) return false;
             if (CheckAndEndGameForRedTeamFlagWin(__instance)) return false;
             if (CheckAndEndGameForBlueTeamFlagWin(__instance)) return false;
             if (CheckAndEndGameForThiefModeThiefWin(__instance)) return false;
             if (CheckAndEndGameForThiefModePoliceWin(__instance)) return false;
-            if (CheckAndEndGameForDrawHillWin(__instance)) return false;
             if (CheckAndEndGameForGreenTeamHillWin(__instance)) return false;
             if (CheckAndEndGameForYellowTeamHillWin(__instance)) return false;
             if (CheckAndEndGameForHotPotatoEnd(__instance)) return false;
@@ -983,11 +749,9 @@ namespace LasMonjas.Patches {
             if (CheckAndEndGameForSurvivorWin(__instance)) return false;
             if (CheckAndEndGameForBattleRoyaleSoloWin(__instance)) return false;
             if (CheckAndEndGameForBattleRoyaleTimeWin(__instance)) return false;
-            if (CheckAndEndGameForBattleRoyaleDraw(__instance)) return false;
             if (CheckAndEndGameForBattleRoyaleLimeTeamWin(__instance)) return false;
             if (CheckAndEndGameForBattleRoyalePinkTeamWin(__instance)) return false;
             if (CheckAndEndGameForBattleRoyaleSerialKillerWin(__instance)) return false;
-            if (CheckAndEndGameForMonjaFestivalDraw(__instance)) return false;
             if (CheckAndEndGameForMonjaFestivalGreenTeamWin(__instance)) return false;
             if (CheckAndEndGameForMonjaFestivalCyanTeamWin(__instance)) return false;
             if (CheckAndEndGameForMonjaFestivalBigMonjaWin(__instance)) return false; 
@@ -995,11 +759,7 @@ namespace LasMonjas.Patches {
         }
 
         private static bool CheckAndEndGameForBombExploded(LogicGameFlowNormal __instance) {
-            if (Bomberman.triggerBombExploded) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BombExploded, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(Bomberman.triggerBombExploded, CustomGameOverReason.BombExploded); 
         }
         private static bool CheckAndEndGameForLoverWin(LogicGameFlowNormal __instance, PlayerStatistics statistics) {
             if (statistics.TeamLoversAlive == 2 && statistics.TotalAlive <= 3) {
@@ -1009,75 +769,35 @@ namespace LasMonjas.Patches {
             return false;
         }
         private static bool CheckAndEndGameForTaskMasterWin(LogicGameFlowNormal __instance) {
-            if (TaskMaster.triggerTaskMasterCrewWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.TaskMasterCrewWin, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(TaskMaster.triggerTaskMasterCrewWin, CustomGameOverReason.TaskMasterCrewWin);
         }
         private static bool CheckAndEndGameForJokerWin(LogicGameFlowNormal __instance) {
-            if (Joker.triggerJokerWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.JokerWin, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(Joker.triggerJokerWin, CustomGameOverReason.JokerWin);
         }
         private static bool CheckAndEndGameForPyromaniacWin(LogicGameFlowNormal __instance) {
-            if (Pyromaniac.triggerPyromaniacWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.PyromaniacWin, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(Pyromaniac.triggerPyromaniacWin, CustomGameOverReason.PyromaniacWin); 
         }
         private static bool CheckAndEndGameForTreasureHunterWin(LogicGameFlowNormal __instance) {
-            if (TreasureHunter.triggertreasureHunterWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.TreasureHunterWin, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(TreasureHunter.triggertreasureHunterWin, CustomGameOverReason.TreasureHunterWin);
         }
         private static bool CheckAndEndGameForDevourerWin(LogicGameFlowNormal __instance) {
-            if (Devourer.triggerdevourerWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.DevourerWin, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(Devourer.triggerdevourerWin, CustomGameOverReason.DevourerWin);
         }
         private static bool CheckAndEndGameForPoisonerWin(LogicGameFlowNormal __instance) {
-            if (Poisoner.triggerPoisonerWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.PoisonerWin, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(Poisoner.triggerPoisonerWin, CustomGameOverReason.PoisonerWin);
         }
         private static bool CheckAndEndGameForPuppeteerWin(LogicGameFlowNormal __instance) {
-            if (Puppeteer.triggerPuppeteerWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.PuppeteerWin, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(Puppeteer.triggerPuppeteerWin, CustomGameOverReason.PuppeteerWin); 
         }
 
         private static bool CheckAndEndGameForExilerWin(LogicGameFlowNormal __instance) {
-            if (Exiler.triggerExilerWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.ExilerWin, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(Exiler.triggerExilerWin, CustomGameOverReason.ExilerWin);
         }
         private static bool CheckAndEndGameForSeekerWin(LogicGameFlowNormal __instance) {
-            if (Seeker.triggerSeekerWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.SeekerWin, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(Seeker.triggerSeekerWin, CustomGameOverReason.SeekerWin);
         }
         private static bool CheckAndEndGameForKidLose(LogicGameFlowNormal __instance) {
-            if (Kid.triggerKidLose) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.KidLose, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(Kid.triggerKidLose, CustomGameOverReason.KidLose);
         }
         private static bool CheckAndEndGameForRenegadeWin(LogicGameFlowNormal __instance, PlayerStatistics statistics) {
             if (statistics.TeamRenegadeAlive >= statistics.TotalAlive - statistics.TeamRenegadeAlive + statistics.TeamCaptainAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive != statistics.TeamRenegadeAlive && !(statistics.TeamRenegadeHasAliveLover && statistics.TeamLoversAlive == 2)) {
@@ -1087,76 +807,31 @@ namespace LasMonjas.Patches {
             return false;
         }
         private static bool CheckAndEndGameForBountyHunterWin(LogicGameFlowNormal __instance) {
-            if (BountyHunter.triggerBountyHunterWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BountyHunterWin, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(BountyHunter.triggerBountyHunterWin, CustomGameOverReason.BountyHunterWin);
         }
         private static bool CheckAndEndGameForTrapperWin(LogicGameFlowNormal __instance, PlayerStatistics statistics) {
-            if (statistics.TeamTrapperAlive >= statistics.TotalAlive - statistics.TeamTrapperAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.TrapperWin, false);
-                return true;
-            }
-            return false;
+            return TryEndStatisticsGame(statistics.TeamTrapperAlive, statistics, CustomGameOverReason.TrapperWin);
         }
         private static bool CheckAndEndGameForYinyangerWin(LogicGameFlowNormal __instance, PlayerStatistics statistics) {
-            if (statistics.TeamYinyangerAlive >= statistics.TotalAlive - statistics.TeamYinyangerAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.YinyangerWin, false);
-                return true;
-            }
-            return false;
+            return TryEndStatisticsGame(statistics.TeamYinyangerAlive, statistics, CustomGameOverReason.YinyangerWin);
         }
         private static bool CheckAndEndGameForChallengerWin(LogicGameFlowNormal __instance, PlayerStatistics statistics) {
-            if (Challenger.triggerChallengerWin || (statistics.TeamChallengerAlive >= statistics.TotalAlive - statistics.TeamChallengerAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2))) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.ChallengerWin, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(Challenger.triggerChallengerWin, CustomGameOverReason.ChallengerWin) || TryEndStatisticsGame(statistics.TeamChallengerAlive, statistics, CustomGameOverReason.ChallengerWin);
         }
         private static bool CheckAndEndGameForNinjaWin(LogicGameFlowNormal __instance, PlayerStatistics statistics) {
-            if (statistics.TeamNinjaAlive >= statistics.TotalAlive - statistics.TeamNinjaAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.NinjaWin, false);
-                return true;
-            }
-            return false;
+            return TryEndStatisticsGame(statistics.TeamNinjaAlive, statistics, CustomGameOverReason.NinjaWin);
         }
         private static bool CheckAndEndGameForBerserkerWin(LogicGameFlowNormal __instance, PlayerStatistics statistics) {
-            if (statistics.TeamBerserkerAlive >= statistics.TotalAlive - statistics.TeamBerserkerAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BerserkerWin, false);
-                return true;
-            }
-            return false;
+            return TryEndStatisticsGame(statistics.TeamBerserkerAlive, statistics, CustomGameOverReason.BerserkerWin);
         }
         private static bool CheckAndEndGameForYandereWin(LogicGameFlowNormal __instance, PlayerStatistics statistics) {
-            if (Yandere.triggerYandereWin && !Yandere.rampageMode) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.YandereWin, false);
-                return true;
-            }
-
-            if (Yandere.rampageMode && statistics.TeamYandereAlive >= statistics.TotalAlive - statistics.TeamYandereAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.YandereWin, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(Yandere.triggerYandereWin && !Yandere.rampageMode, CustomGameOverReason.YandereWin) || (Yandere.rampageMode && TryEndStatisticsGame(statistics.TeamYandereAlive, statistics, CustomGameOverReason.YandereWin));
         }
         private static bool CheckAndEndGameForStrandedWin(LogicGameFlowNormal __instance, PlayerStatistics statistics) {
-            if (Stranded.triggerStrandedWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.StrandedWin, false);
-                return true;
-            }
-            if (statistics.TeamStrandedAlive >= statistics.TotalAlive - statistics.TeamStrandedAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.StrandedWin, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(Stranded.triggerStrandedWin, CustomGameOverReason.StrandedWin) || TryEndStatisticsGame(statistics.TeamStrandedAlive, statistics, CustomGameOverReason.StrandedWin);
         }
         private static bool CheckAndEndGameForMonjaWin(LogicGameFlowNormal __instance, PlayerStatistics statistics) {
-            if (statistics.TeamMonjaAlive >= statistics.TotalAlive - statistics.TeamMonjaAlive && statistics.TeamImpostorsAlive == 0 && statistics.TeamCaptainAlive == 0 && !(statistics.TeamImpostorHasAliveLover && statistics.TeamLoversAlive == 2)) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.MonjaWin, false);
-                return true;
-            }
-            return false;
+            return TryEndStatisticsGame(statistics.TeamMonjaAlive, statistics, CustomGameOverReason.MonjaWin);
         }
         private static bool CheckAndEndGameForSabotageWin(LogicGameFlowNormal __instance) {
             if (ShipStatus.Instance.Systems == null) return false;
@@ -1223,152 +898,59 @@ namespace LasMonjas.Patches {
             GameManager.Instance.RpcEndGame(GameOverReason.ImpostorsBySabotage, false);
             return;
         }
-        private static bool CheckAndEndGameForDrawFlagWin(LogicGameFlowNormal __instance) {
-            if (CaptureTheFlag.triggerDrawWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.DrawTeamWin, false);
-                return true;
-            }
-            return false;
+        private static bool CheckAndEndGameForGameModeDrawWin(LogicGameFlowNormal __instance) {
+            return TryEndGame(LasMonjas.triggerGamemodesDrawWin, CustomGameOverReason.GamemodesDrawWin);
         }
         private static bool CheckAndEndGameForRedTeamFlagWin(LogicGameFlowNormal __instance) {
-            if (CaptureTheFlag.triggerRedTeamWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.RedTeamFlagWin, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(CaptureTheFlag.triggerRedTeamWin, CustomGameOverReason.RedTeamFlagWin);
         }
         private static bool CheckAndEndGameForBlueTeamFlagWin(LogicGameFlowNormal __instance) {
-            if (CaptureTheFlag.triggerBlueTeamWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BlueTeamFlagWin, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(CaptureTheFlag.triggerBlueTeamWin, CustomGameOverReason.BlueTeamFlagWin); 
         }
         private static bool CheckAndEndGameForThiefModeThiefWin(LogicGameFlowNormal __instance) {
-            if (PoliceAndThief.triggerThiefWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.ThiefModeThiefWin, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(PoliceAndThief.triggerThiefWin, CustomGameOverReason.ThiefModeThiefWin);
         }
         private static bool CheckAndEndGameForThiefModePoliceWin(LogicGameFlowNormal __instance) {
-            if (PoliceAndThief.triggerPoliceWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.ThiefModePoliceWin, false);
-                return true;
-            }
-            return false;
-        }
-        private static bool CheckAndEndGameForDrawHillWin(LogicGameFlowNormal __instance) {
-            if (KingOfTheHill.triggerDrawWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.TeamHillDraw, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(PoliceAndThief.triggerPoliceWin, CustomGameOverReason.ThiefModePoliceWin);
         }
         private static bool CheckAndEndGameForGreenTeamHillWin(LogicGameFlowNormal __instance) {
-            if (KingOfTheHill.triggerGreenTeamWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.GreenTeamHillWin, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(KingOfTheHill.triggerGreenTeamWin, CustomGameOverReason.GreenTeamHillWin);
         }
         private static bool CheckAndEndGameForYellowTeamHillWin(LogicGameFlowNormal __instance) {
-            if (KingOfTheHill.triggerYellowTeamWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.YellowTeamHillWin, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(KingOfTheHill.triggerYellowTeamWin, CustomGameOverReason.YellowTeamHillWin);
         }
         private static bool CheckAndEndGameForHotPotatoEnd(LogicGameFlowNormal __instance) {
-            if (HotPotato.triggerHotPotatoEnd) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.HotPotatoEnd, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(HotPotato.triggerHotPotatoEnd, CustomGameOverReason.HotPotatoEnd);
         }
         private static bool CheckAndEndGameForZombieWin(LogicGameFlowNormal __instance) {
-            if (ZombieLaboratory.triggerZombieWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.ZombieWin, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(ZombieLaboratory.triggerZombieWin, CustomGameOverReason.ZombieWin);
         }
         private static bool CheckAndEndGameForSurvivorWin(LogicGameFlowNormal __instance) {
-            if (ZombieLaboratory.triggerSurvivorWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.SurvivorWin, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(ZombieLaboratory.triggerSurvivorWin, CustomGameOverReason.SurvivorWin);
         }
         private static bool CheckAndEndGameForBattleRoyaleSoloWin(LogicGameFlowNormal __instance) {
-            if (BattleRoyale.triggerSoloWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSoloWin, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(BattleRoyale.triggerSoloWin, CustomGameOverReason.BattleRoyaleSoloWin);
         }
         private static bool CheckAndEndGameForBattleRoyaleTimeWin(LogicGameFlowNormal __instance) {
-            if (BattleRoyale.triggerTimeWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleTimeWin, false);
-                return true;
-            }
-            return false;
-        }
-        private static bool CheckAndEndGameForBattleRoyaleDraw(LogicGameFlowNormal __instance) {
-            if (BattleRoyale.triggerDrawWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleDraw, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(BattleRoyale.triggerTimeWin, CustomGameOverReason.BattleRoyaleTimeWin);
         }
         private static bool CheckAndEndGameForBattleRoyaleLimeTeamWin(LogicGameFlowNormal __instance) {
-            if (BattleRoyale.triggerLimeTeamWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleLimeTeamWin, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(BattleRoyale.triggerLimeTeamWin, CustomGameOverReason.BattleRoyaleLimeTeamWin);
         }
         private static bool CheckAndEndGameForBattleRoyalePinkTeamWin(LogicGameFlowNormal __instance) {
-            if (BattleRoyale.triggerPinkTeamWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyalePinkTeamWin, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(BattleRoyale.triggerPinkTeamWin, CustomGameOverReason.BattleRoyalePinkTeamWin); 
         }
         private static bool CheckAndEndGameForBattleRoyaleSerialKillerWin(LogicGameFlowNormal __instance) {
-            if (BattleRoyale.triggerSerialKillerWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.BattleRoyaleSerialKillerWin, false);
-                return true;
-            }
-            return false;
-        }
-        private static bool CheckAndEndGameForMonjaFestivalDraw(LogicGameFlowNormal __instance) {
-            if (MonjaFestival.triggerDrawWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.MonjaFestivalDraw, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(BattleRoyale.triggerSerialKillerWin, CustomGameOverReason.BattleRoyaleSerialKillerWin); 
         }
         private static bool CheckAndEndGameForMonjaFestivalGreenTeamWin(LogicGameFlowNormal __instance) {
-            if (MonjaFestival.triggerGreenTeamWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.MonjaFestivalGreenWin, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(MonjaFestival.triggerGreenTeamWin, CustomGameOverReason.MonjaFestivalGreenWin);
         }
         private static bool CheckAndEndGameForMonjaFestivalCyanTeamWin(LogicGameFlowNormal __instance) {
-            if (MonjaFestival.triggerCyanTeamWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.MonjaFestivalCyanWin, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(MonjaFestival.triggerCyanTeamWin, CustomGameOverReason.MonjaFestivalCyanWin);
         }
         private static bool CheckAndEndGameForMonjaFestivalBigMonjaWin(LogicGameFlowNormal __instance) {
-            if (MonjaFestival.triggerBigMonjaWin) {
-                GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.MonjaFestivalBigMonjaWin, false);
-                return true;
-            }
-            return false;
+            return TryEndGame(MonjaFestival.triggerBigMonjaWin, CustomGameOverReason.MonjaFestivalBigMonjaWin);
         }
     }
 

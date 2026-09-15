@@ -86,9 +86,12 @@ namespace LasMonjas.Patches {
             }
 
             // Run a postfix on submerged exile cutscene
-            if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+            if (Helpers.isSubmergedMap()) {
                 ExileControllerWrapUpPatch.WrapUpPostfix(ExileControllerBeginPatch.lastExiled);
             }
+            
+            // Reset RolesSummaryUI if is open when exiling is called
+            Helpers.ResetRoleSummaryUI();
         }
     }
 
@@ -106,6 +109,21 @@ namespace LasMonjas.Patches {
         class AirshipExileControllerPatch {
             public static void Postfix(AirshipExileController __instance) {
                 WrapUpPostfix(__instance.initData.networkedPlayer);
+            }
+        }
+        private static void UpdatePlayerIconsforPyroPoison() {
+            int visibleCounter = 0;
+            Vector3 bottomLeft = new Vector3(-HudManager.Instance.UseButton.transform.parent.localPosition.x, HudManager.Instance.UseButton.transform.parent.localPosition.y, HudManager.Instance.UseButton.transform.parent.localPosition.z);
+            bottomLeft += new Vector3(-0.25f, -0.25f, 0);
+            foreach (PlayerControl p in PlayerInCache.AllPlayers) {
+                if (!MapOptions.playerIcons.ContainsKey(p.PlayerId)) continue;
+                if (p.Data.IsDead || p.Data.Disconnected) {
+                    MapOptions.playerIcons[p.PlayerId].gameObject.SetActive(false);
+                }
+                else {
+                    MapOptions.playerIcons[p.PlayerId].transform.localPosition = bottomLeft + Vector3.right * visibleCounter * 0.35f;
+                    visibleCounter++;
+                }
             }
         }
 
@@ -156,38 +174,9 @@ namespace LasMonjas.Patches {
                 Yandere.rampageMode = true;
             }
 
-            // Pyromaniac deactivate dead players icons
-            if (Pyromaniac.pyromaniac != null && Pyromaniac.pyromaniac == PlayerInCache.LocalPlayer.PlayerControl) {
-                int visibleCounter = 0;
-                Vector3 bottomLeft = new Vector3(-HudManager.Instance.UseButton.transform.parent.localPosition.x, HudManager.Instance.UseButton.transform.parent.localPosition.y, HudManager.Instance.UseButton.transform.parent.localPosition.z);
-                bottomLeft += new Vector3(-0.25f, -0.25f, 0);
-                foreach (PlayerControl p in PlayerInCache.AllPlayers) {
-                    if (!MapOptions.playerIcons.ContainsKey(p.PlayerId)) continue;
-                    if (p.Data.IsDead || p.Data.Disconnected) {
-                        MapOptions.playerIcons[p.PlayerId].gameObject.SetActive(false);
-                    }
-                    else {
-                        MapOptions.playerIcons[p.PlayerId].transform.localPosition = bottomLeft + Vector3.right * visibleCounter * 0.35f;
-                        visibleCounter++;
-                    }
-                }
-            }
-
-            // Poisoner deactivate dead poolable players
-            if (Poisoner.poisoner != null && Poisoner.poisoner == PlayerInCache.LocalPlayer.PlayerControl) {
-                int visibleCounter = 0;
-                Vector3 bottomLeft = new Vector3(-HudManager.Instance.UseButton.transform.parent.localPosition.x, HudManager.Instance.UseButton.transform.parent.localPosition.y, HudManager.Instance.UseButton.transform.parent.localPosition.z);
-                bottomLeft += new Vector3(-0.25f, -0.25f, 0);
-                foreach (PlayerControl p in PlayerInCache.AllPlayers) {
-                    if (!MapOptions.playerIcons.ContainsKey(p.PlayerId)) continue;
-                    if (p.Data.IsDead || p.Data.Disconnected) {
-                        MapOptions.playerIcons[p.PlayerId].gameObject.SetActive(false);
-                    }
-                    else {
-                        MapOptions.playerIcons[p.PlayerId].transform.localPosition = bottomLeft + Vector3.right * visibleCounter * 0.35f;
-                        visibleCounter++;
-                    }
-                }
+            // Pyromaniac/Poisoner deactivate dead players icons
+            if (Pyromaniac.pyromaniac != null && Pyromaniac.pyromaniac == PlayerInCache.LocalPlayer.PlayerControl || Poisoner.poisoner != null && Poisoner.poisoner == PlayerInCache.LocalPlayer.PlayerControl) {
+                UpdatePlayerIconsforPyroPoison();
             }
 
             // Exiler win condition
@@ -197,7 +186,7 @@ namespace LasMonjas.Patches {
 
             // Captain reset specialTarget
             if (Captain.captain != null && !Captain.captain.Data.IsDead && Captain.usedSpecialVote) {
-                if (Captain.specialVoteTarget != null && Captain.specialVoteTarget.Data.IsDead && !Captain.specialVoteTarget.Data.Role.IsImpostor && Captain.specialVoteTarget != Renegade.renegade && Captain.specialVoteTarget != Minion.minion && Captain.specialVoteTarget != BountyHunter.bountyhunter && Captain.specialVoteTarget != Trapper.trapper && Captain.specialVoteTarget != Yinyanger.yinyanger && Captain.specialVoteTarget != Challenger.challenger && Captain.specialVoteTarget != Ninja.ninja && Captain.specialVoteTarget != Berserker.berserker && Captain.specialVoteTarget != Yandere.yandere && Captain.specialVoteTarget != Stranded.stranded && Captain.specialVoteTarget != Monja.monja && Captain.specialVoteTarget != Joker.joker && Captain.specialVoteTarget != RoleThief.rolethief && Captain.specialVoteTarget != Pyromaniac.pyromaniac && Captain.specialVoteTarget != TreasureHunter.treasureHunter && Captain.specialVoteTarget != Devourer.devourer && Captain.specialVoteTarget != Poisoner.poisoner && Captain.specialVoteTarget != Puppeteer.puppeteer && Captain.specialVoteTarget != Exiler.exiler && Captain.specialVoteTarget != Amnesiac.amnesiac && Captain.specialVoteTarget != Seeker.seeker) {
+                if (Captain.specialVoteTarget != null && Captain.specialVoteTarget.Data.IsDead && !Captain.specialVoteTarget.Data.Role.IsImpostor && !Helpers.isNeutral(Captain.specialVoteTarget) && !Helpers.isRebel(Captain.specialVoteTarget)) {
                     Captain.captain.Exiled();
                 }
                 Captain.specialVoteTargetPlayerId = byte.MaxValue;
@@ -233,10 +222,10 @@ namespace LasMonjas.Patches {
 
             // Cheater exile if the cheated player was innocent, rebels and neutrals counts as impostors
             if (Cheater.cheater != null && !Cheater.cheater.Data.IsDead) {
-                if (Cheater.usedCheat == true && Cheater.cheatedP1.Data.IsDead && !Cheater.cheatedP1.Data.Role.IsImpostor && Cheater.cheatedP1 != Renegade.renegade && Cheater.cheatedP1 != Minion.minion && Cheater.cheatedP1 != BountyHunter.bountyhunter && Cheater.cheatedP1 != Trapper.trapper && Cheater.cheatedP1 != Yinyanger.yinyanger && Cheater.cheatedP1 != Challenger.challenger && Cheater.cheatedP1 != Ninja.ninja && Cheater.cheatedP1 != Berserker.berserker && Cheater.cheatedP1 != Yandere.yandere && Cheater.cheatedP1 != Stranded.stranded && Cheater.cheatedP1 != Monja.monja && Cheater.cheatedP1 != Joker.joker && Cheater.cheatedP1 != RoleThief.rolethief && Cheater.cheatedP1 != Pyromaniac.pyromaniac && Cheater.cheatedP1 != TreasureHunter.treasureHunter && Cheater.cheatedP1 != Devourer.devourer && Cheater.cheatedP1 != Poisoner.poisoner && Cheater.cheatedP1 != Puppeteer.puppeteer && Cheater.cheatedP1 != Exiler.exiler && Cheater.cheatedP1 != Amnesiac.amnesiac && Cheater.cheatedP1 != Seeker.seeker) {
+                if (Cheater.usedCheat == true && Cheater.cheatedP1.Data.IsDead && !Cheater.cheatedP1.Data.Role.IsImpostor && !Helpers.isNeutral(Cheater.cheatedP1) && !Helpers.isRebel(Cheater.cheatedP1)) {
                     Cheater.cheater.Exiled();
                 }
-                else if (Cheater.usedCheat == true && Cheater.cheatedP2.Data.IsDead && !Cheater.cheatedP2.Data.Role.IsImpostor && Cheater.cheatedP2 != Renegade.renegade && Cheater.cheatedP2 != Minion.minion && Cheater.cheatedP2 != BountyHunter.bountyhunter && Cheater.cheatedP2 != Trapper.trapper && Cheater.cheatedP2 != Yinyanger.yinyanger && Cheater.cheatedP2 != Challenger.challenger && Cheater.cheatedP2 != Ninja.ninja && Cheater.cheatedP2 != Berserker.berserker && Cheater.cheatedP2 != Yandere.yandere && Cheater.cheatedP2 != Stranded.stranded && Cheater.cheatedP2 != Monja.monja && Cheater.cheatedP2 != Joker.joker && Cheater.cheatedP2 != RoleThief.rolethief && Cheater.cheatedP2 != Pyromaniac.pyromaniac && Cheater.cheatedP2 != TreasureHunter.treasureHunter && Cheater.cheatedP2 != Devourer.devourer && Cheater.cheatedP2 != Poisoner.poisoner && Cheater.cheatedP2 != Puppeteer.puppeteer && Cheater.cheatedP2 != Exiler.exiler && Cheater.cheatedP2 != Amnesiac.amnesiac && Cheater.cheatedP2 != Seeker.seeker) {
+                else if (Cheater.usedCheat == true && Cheater.cheatedP2.Data.IsDead && !Cheater.cheatedP2.Data.Role.IsImpostor && !Helpers.isNeutral(Cheater.cheatedP2) && !Helpers.isRebel(Cheater.cheatedP2)) {
                     Cheater.cheater.Exiled();
                 }
                 Cheater.cheatedP1 = null;

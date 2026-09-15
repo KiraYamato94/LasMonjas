@@ -95,6 +95,16 @@ namespace LasMonjas.Patches
     [HarmonyPatch]
     class IntroPatch
     {
+        public static void SetGreyTeam (ref Il2CppSystem.Collections.Generic.List<PlayerControl> team, RoleTypes sound) {
+            var soloTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
+
+            soloTeam.Add(PlayerInCache.LocalPlayer.PlayerControl);
+
+            team = soloTeam;
+
+            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(sound);
+        }
+        
         public static void setupIntroTeamIcons(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam) {
 
             //SoundManager.Instance.StopSound(CustomMain.customAssets.lobbyMusic);            
@@ -105,17 +115,11 @@ namespace LasMonjas.Patches
                     case 1:
                         // Intro solo teams (rebels and neutrals)
                         if (Helpers.isNeutral(PlayerInCache.LocalPlayer.PlayerControl)) {
-                            var soloTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                            soloTeam.Add(PlayerInCache.LocalPlayer.PlayerControl);
-                            yourTeam = soloTeam;
-                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Engineer);
+                            SetGreyTeam(ref yourTeam, RoleTypes.Detective);
                         }
 
                         if (Helpers.isRebel(PlayerInCache.LocalPlayer.PlayerControl)) {
-                            var soloTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                            soloTeam.Add(PlayerInCache.LocalPlayer.PlayerControl);
-                            yourTeam = soloTeam;
-                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Shapeshifter);
+                            SetGreyTeam(ref yourTeam, RoleTypes.Judge);
                         }                        
 
                         if (MapOptions.activateMusic) {
@@ -127,11 +131,9 @@ namespace LasMonjas.Patches
                         SoundManager.Instance.PlaySound(CustomMain.customAssets.captureTheFlagMusic, true, 25f);
                         // Intro capture the flag teams                        
                         if (PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.stealerPlayer) {
-                            var greyTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                            greyTeam.Add(PlayerInCache.LocalPlayer.PlayerControl);
-                            yourTeam = greyTeam;
-                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Shapeshifter);
-                        } else {
+                            SetGreyTeam(ref yourTeam, RoleTypes.Shapeshifter);
+                        }
+                        else {
                             PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
                         }
                         break;
@@ -139,17 +141,22 @@ namespace LasMonjas.Patches
                         // PT
                         SoundManager.Instance.PlaySound(CustomMain.customAssets.policeAndThiefMusic, true, 25f);
                         // Intro police and thiefs teams
-                        PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);                        
+                        if (PoliceAndThief.policeTeam.Contains(PlayerInCache.LocalPlayer.PlayerControl)) {
+                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Detective);
+                        }
+                        else {
+                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Phantom);
+                        }               
                         break;
                     case 4:
                         // KOTH
                         SoundManager.Instance.PlaySound(CustomMain.customAssets.kingOfTheHillMusic, true, 25f);
                         // Intro king of the hill teams                        
                         if (PlayerInCache.LocalPlayer.PlayerControl == KingOfTheHill.usurperPlayer) {
-                            var greyTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                            greyTeam.Add(PlayerInCache.LocalPlayer.PlayerControl);
-                            yourTeam = greyTeam;
-                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Shapeshifter);
+                            SetGreyTeam(ref yourTeam, RoleTypes.Shapeshifter);
+                        }
+                        else if (PlayerInCache.LocalPlayer.PlayerControl == KingOfTheHill.greenKingplayer || PlayerInCache.LocalPlayer.PlayerControl == KingOfTheHill.yellowKingplayer) {
+                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Judge);
                         }
                         else {
                             PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
@@ -160,23 +167,24 @@ namespace LasMonjas.Patches
                         SoundManager.Instance.PlaySound(CustomMain.customAssets.hotPotatoMusic, true, 25f);
                         // Intro hot potato teams
                         if (PlayerInCache.LocalPlayer.PlayerControl == HotPotato.hotPotatoPlayer) {
-                            var greyTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                            greyTeam.Add(PlayerInCache.LocalPlayer.PlayerControl);
-                            yourTeam = greyTeam;
-                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Impostor);
-                        } else {
-                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
+                            SetGreyTeam(ref yourTeam, RoleTypes.Shapeshifter);
+                        }
+                        else {
+                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Phantom);
                         }
                         break;
                     case 6:
                         // ZL
                         SoundManager.Instance.PlaySound(CustomMain.customAssets.zombieLaboratoryMusic, true, 25f);
                         // Intro zombie teams                        
-                        if (PlayerInCache.LocalPlayer.PlayerControl == ZombieLaboratory.nursePlayer) {                            
+                        if (PlayerInCache.LocalPlayer.PlayerControl == ZombieLaboratory.nursePlayer) {
                             PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Scientist);
                         }
+                        else if (ZombieLaboratory.zombieTeam.Contains(PlayerInCache.LocalPlayer.PlayerControl)) {
+                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Viper);
+                        }
                         else {
-                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
+                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Detective);
                         }
                         break;
                     case 7:
@@ -184,17 +192,14 @@ namespace LasMonjas.Patches
                         SoundManager.Instance.PlaySound(CustomMain.customAssets.battleRoyaleMusic, true, 25f);
                         // Intro Battle Royale
                         if (BattleRoyale.matchType == 0) {
-                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
+                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Judge);
                         }
                         else {
                             if (PlayerInCache.LocalPlayer.PlayerControl == BattleRoyale.serialKiller) {
-                                var greyTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                                greyTeam.Add(PlayerInCache.LocalPlayer.PlayerControl);
-                                yourTeam = greyTeam;
-                                PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Shapeshifter);
+                                SetGreyTeam(ref yourTeam, RoleTypes.Shapeshifter);
                             }
                             else {
-                                PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
+                                PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Judge);
                             }
                         }
                         break;
@@ -202,17 +207,27 @@ namespace LasMonjas.Patches
                         // MF
                         SoundManager.Instance.PlaySound(CustomMain.customAssets.monjaFestivalMusic, true, 25f);                        
                         if (PlayerInCache.LocalPlayer.PlayerControl == MonjaFestival.bigMonjaPlayer) {
-                            var greyTeam = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
-                            greyTeam.Add(PlayerInCache.LocalPlayer.PlayerControl);
-                            yourTeam = greyTeam;
-                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Shapeshifter);
+                            SetGreyTeam(ref yourTeam, RoleTypes.Shapeshifter);
                         }
                         else {
-                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Crewmate);
+                            PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IntroSound = Helpers.GetIntroSound(RoleTypes.Detective);
                         }
                         break;
                 }
             }
+        }
+
+        private static void SetNeutralRebelIntro(IntroCutscene instance, string teamName, Color color) {
+            instance.BackgroundBar.material.color = color;
+            instance.TeamTitle.text = teamName;
+            instance.TeamTitle.color = color;
+        }
+        
+        private static void SetGamemodeIntro(IntroCutscene instance, string teamName, Color color) {
+            instance.ImpostorText.text = "";
+            instance.BackgroundBar.material.color = color;
+            instance.TeamTitle.text = teamName;
+            instance.TeamTitle.color = color;
         }
 
         public static void setupIntroTeam(IntroCutscene __instance, ref Il2CppSystem.Collections.Generic.List<PlayerControl> yourTeam) {
@@ -225,66 +240,39 @@ namespace LasMonjas.Patches
                     case 0:
                     case 1:
                         if (roleInfo.TeamId == Team.Neutral) {
-                            var neutralColor = new Color32(128, 128, 128, 255);
-                            __instance.BackgroundBar.material.color = neutralColor;
-                            __instance.TeamTitle.text = Language.teamNames[0];
-                            __instance.TeamTitle.color = neutralColor;
+                            SetNeutralRebelIntro(__instance, Language.teamNames[0], Joker.color);
                         }
                         else if (roleInfo.TeamId == Team.Rebel) {
-                            var rebelColor = new Color32(79, 125, 0, 255);
-                            __instance.BackgroundBar.material.color = rebelColor;
-                            __instance.TeamTitle.text = Language.teamNames[1];
-                            __instance.TeamTitle.color = rebelColor;
+                            SetNeutralRebelIntro(__instance, Language.teamNames[1], Renegade.color);
                         }
                         break;
                     case 2:
                         // CTF
-                        __instance.ImpostorText.text = "";
-                        __instance.BackgroundBar.material.color = Sheriff.color;
-                        __instance.TeamTitle.text = Language.teamNames[2];
-                        __instance.TeamTitle.color = Sheriff.color;
+                        SetGamemodeIntro(__instance, Language.teamNames[2], Sheriff.color);
                         break;
                     case 3:
                         // PT
-                        __instance.ImpostorText.text = "";
-                        __instance.BackgroundBar.material.color = Coward.color;
-                        __instance.TeamTitle.text = Language.teamNames[3];
-                        __instance.TeamTitle.color = Coward.color;
+                        SetGamemodeIntro(__instance, Language.teamNames[3], Coward.color);
                         break;
                     case 4:
                         // KOTH
-                        __instance.ImpostorText.text = "";
-                        __instance.BackgroundBar.material.color = Squire.color;
-                        __instance.TeamTitle.text = Language.teamNames[4];
-                        __instance.TeamTitle.color = Squire.color;
+                        SetGamemodeIntro(__instance, Language.teamNames[4], Squire.color);
                         break;
                     case 5:
                         // HP
-                        __instance.ImpostorText.text = "";
-                        __instance.BackgroundBar.material.color = Locksmith.color;
-                        __instance.TeamTitle.text = Language.teamNames[5];
-                        __instance.TeamTitle.color = Locksmith.color;
+                        SetGamemodeIntro(__instance, Language.teamNames[5], Locksmith.color);
                         break;
                     case 6:
                         // ZL
-                        __instance.ImpostorText.text = "";
-                        __instance.BackgroundBar.material.color = Hunter.color;
-                        __instance.TeamTitle.text = Language.teamNames[6];
-                        __instance.TeamTitle.color = Hunter.color;
+                        SetGamemodeIntro(__instance, Language.teamNames[6], Hunter.color);
                         break;
                     case 7:
                         // BR
-                        __instance.ImpostorText.text = "";
-                        __instance.BackgroundBar.material.color = Sleuth.color;
-                        __instance.TeamTitle.text = Language.teamNames[7];
-                        __instance.TeamTitle.color = Sleuth.color;
+                        SetGamemodeIntro(__instance, Language.teamNames[7], Sleuth.color);
                         break;
                     case 8:
                         // MF
-                        __instance.ImpostorText.text = "";
-                        __instance.BackgroundBar.material.color = Monja.color;
-                        __instance.TeamTitle.text = Language.teamNames[8];
-                        __instance.TeamTitle.color = Monja.color;
+                        SetGamemodeIntro(__instance, Language.teamNames[8], Monja.color);
                         break;
                 }
             }
@@ -293,10 +281,11 @@ namespace LasMonjas.Patches
         //[HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.ShowRole))]
         [HarmonyPatch(typeof(IntroCutscene._ShowRole_d__41), nameof(IntroCutscene._ShowRole_d__41.MoveNext))]
         class ShowRolePatch
-        {
-            //public static void Postfix(IntroCutscene __instance) {
-            private static int last;
-            public static void Postfix(IntroCutscene._ShowRole_d__41 __instance) {
+        {           
+             private static int last;
+
+             //public static void Postfix(IntroCutscene __instance) {
+             public static void Postfix(IntroCutscene._ShowRole_d__41 __instance) {
                 if (__instance.__4__this.GetInstanceID() == last)
                     return;
 
@@ -333,9 +322,9 @@ namespace LasMonjas.Patches
                 if (GameOptionsManager.Instance.currentGameOptions.MapId == 1) {
 
                     // Create the doorlog access from anywhere to the Vigilant
-                    if (Vigilant.vigilantMira != null && Vigilant.vigilantMira == PlayerInCache.LocalPlayer.PlayerControl && !Vigilant.createdDoorLog) {
+                    if (Vigilant.vigilant != null && Vigilant.vigilant == PlayerInCache.LocalPlayer.PlayerControl && !Vigilant.createdDoorLog) {
                         GameObject vigilantDoorLog = GameObject.Find("SurvLogConsole");
-                        Vigilant.doorLog = GameObject.Instantiate(vigilantDoorLog, Vigilant.vigilantMira.transform);
+                        Vigilant.doorLog = GameObject.Instantiate(vigilantDoorLog, Vigilant.vigilant.transform);
                         Vigilant.doorLog.name = "VigilantDoorLog";
                         Vigilant.doorLog.layer = 8; // Assign player layer to ignore collisions
                         Vigilant.doorLog.GetComponent<SpriteRenderer>().enabled = false;
@@ -365,7 +354,7 @@ namespace LasMonjas.Patches
                     GameObject duelArena = GameObject.Instantiate(CustomMain.customAssets.challengerDuelArena, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                     duelArena.name = "duelArena";
                     duelArena.transform.position = new Vector3(40, 0f, 1f);
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) { // Create another duel arena on submerged lower floor
+                    if (Helpers.isSubmergedMap()) { // Create another duel arena on submerged lower floor
                         GameObject lowerduelArena = GameObject.Instantiate(CustomMain.customAssets.challengerDuelArena, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                         lowerduelArena.name = "lowerduelArena";
                         lowerduelArena.transform.position = new Vector3(40, -48.119f, 1f);
@@ -390,7 +379,7 @@ namespace LasMonjas.Patches
                     Seeker.minigameArenaHideThreePointOne.transform.parent.transform.position = Seeker.minigameArenaHideThreePointOne.transform.parent.transform.position + new Vector3(0, 0, -2);
                     Seeker.minigameArenaHideThreePointTwo = seekerArena.transform.GetChild(2).transform.GetChild(1).gameObject;
                     Seeker.minigameArenaHideThreePointThree = seekerArena.transform.GetChild(2).transform.GetChild(2).gameObject; 
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) { // Create another duel arena on submerged lower floor
+                    if (Helpers.isSubmergedMap()) { // Create another duel arena on submerged lower floor
                         GameObject lowerseekerArena = GameObject.Instantiate(CustomMain.customAssets.seekerArena, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                         lowerseekerArena.name = "lowerseekerArena";
                         lowerseekerArena.transform.position = new Vector3(-40, -48.119f, 1f);
@@ -415,7 +404,7 @@ namespace LasMonjas.Patches
                     GameObject devourerArena = GameObject.Instantiate(CustomMain.customAssets.devourerArena, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                     devourerArena.name = "devourerArena";
                     devourerArena.transform.position = new Vector3(-40, 0f, 1f);
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) { // Create another devourer arena on submerged lower floor
+                    if (Helpers.isSubmergedMap()) { // Create another devourer arena on submerged lower floor
                         GameObject lowerdevourerArena = GameObject.Instantiate(CustomMain.customAssets.devourerArena, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                         lowerdevourerArena.name = "lowerdevourerArena";
                         lowerdevourerArena.transform.position = new Vector3(-40, -48.119f, 1f);
@@ -427,7 +416,7 @@ namespace LasMonjas.Patches
                 if (Bomberman.bomberman != null && PlayerInCache.LocalPlayer.PlayerControl == Bomberman.bomberman) {
                     GameObject bombArea = GameObject.Instantiate(CustomMain.customAssets.bombermanArea, PlayerInCache.LocalPlayer.PlayerControl.transform);
                     bombArea.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+                    if (Helpers.isSubmergedMap()) {
                         bombArea.transform.localPosition = new Vector3(0, 0f, -0.5f);
                     }
                     else {
@@ -439,7 +428,7 @@ namespace LasMonjas.Patches
                 }
                 
                 // Submerged remove Chameleon special vent
-                if (Chameleon.chameleon != null && PlayerInCache.LocalPlayer.PlayerControl == Chameleon.chameleon && GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+                if (Chameleon.chameleon != null && PlayerInCache.LocalPlayer.PlayerControl == Chameleon.chameleon && Helpers.isSubmergedMap()) {
                     GameObject vent = GameObject.Find("LowerCentralVent");
                     vent.GetComponent<BoxCollider2D>().enabled = false;
                 }
@@ -503,7 +492,7 @@ namespace LasMonjas.Patches
                 }
 
                 // Make elevator list for Time Traveler
-                if ((TimeTraveler.timeTraveler != null || Plumber.plumber != null) && GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+                if ((TimeTraveler.timeTraveler != null || Plumber.plumber != null) && Helpers.isSubmergedMap()) {
                     GameObject westLeftElevatorLower = GameObject.Find("Submerged(Clone)/Elevators/WestLeftElevator/LowerElevator");
                     GameObject westLeftElevatorUpper = GameObject.Find("Submerged(Clone)/Elevators/WestLeftElevator/UpperElevator");
                     GameObject westRightElevatorLower = GameObject.Find("Submerged(Clone)/Elevators/WestRightElevator/LowerElevator");
@@ -528,9 +517,6 @@ namespace LasMonjas.Patches
 
                 // Remove the swipe card task
                 clearSwipeCardTask();
-
-                // Remove airship doors
-                //removeAirshipDoors();
 
                 // Activate sensei map
                 Helpers.activateSenseiMap();
@@ -889,7 +875,7 @@ namespace LasMonjas.Patches
                                     ZombieLaboratory.groundItems.Add(nothingBox);
                                 }
                                 progress.GetComponentInChildren<TextMeshPro>().text = Language.introTexts[1] + LasMonjas.gamemodeMatchDuration.ToString("F0");
-                                ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
+                                ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedPlayers.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
                                 new CustomMessage(ZombieLaboratory.zombieLaboratoryCounter, LasMonjas.gamemodeMatchDuration, new Vector2(-2.5f, 2.35f), 15); 
                                 break;
                             case 7:
@@ -902,7 +888,7 @@ namespace LasMonjas.Patches
                                         break;
                                     case 1:
                                         if (BattleRoyale.serialKiller != null) {
-                                            BattleRoyale.battleRoyalepointCounter = Language.introTexts[12] + "<color=#39FF14FF>" + BattleRoyale.limeTeam.Count + "</color> | " + Language.introTexts[13] + "<color=#F2BEFFFF>" + BattleRoyale.pinkTeam.Count + "</color> | " + Language.introTexts[14] + "<color=#808080FF>" + BattleRoyale.serialKillerTeam.Count + "</color>";
+                                            BattleRoyale.battleRoyalepointCounter = Language.introTexts[12] + "<color=#39FF14FF>" + BattleRoyale.limeTeam.Count + "</color> | " + Language.introTexts[13] + "<color=#F2BEFFFF>" + BattleRoyale.pinkTeam.Count + "</color> | " + Language.introTexts[14] + "<color=#808080FF>1</color>";
                                         }
                                         else {
                                             BattleRoyale.battleRoyalepointCounter = Language.introTexts[12] + "<color=#39FF14FF>" + BattleRoyale.limeTeam.Count + "</color> | " + Language.introTexts[13] + "<color=#F2BEFFFF>" + BattleRoyale.pinkTeam.Count + "</color>";
@@ -942,7 +928,7 @@ namespace LasMonjas.Patches
 
                                     if (PlayerInCache.LocalPlayer.PlayerControl == MonjaFestival.bigMonjaPlayer) {
                                         MonjaFestival.localArrows[2].arrow.SetActive(true);
-                                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+                                        if (Helpers.isSubmergedMap()) {
                                             MonjaFestival.localArrows[3].arrow.SetActive(true);
                                         }
                                     }
@@ -1045,7 +1031,7 @@ namespace LasMonjas.Patches
 
             if (removeSwipeCard && removedSwipe == false && GameOptionsManager.Instance.currentGameOptions.MapId != 1 && GameOptionsManager.Instance.currentGameOptions.MapId != 4) {
                 foreach (PlayerControl myplayer in PlayerInCache.AllPlayers) {
-                    if (myplayer != Joker.joker && myplayer != RoleThief.rolethief && myplayer != Pyromaniac.pyromaniac && myplayer != TreasureHunter.treasureHunter && myplayer != Devourer.devourer && myplayer != Poisoner.poisoner && myplayer != Puppeteer.puppeteer && myplayer != Exiler.exiler && myplayer != Amnesiac.amnesiac && myplayer != Seeker.seeker && myplayer != Renegade.renegade && myplayer != Minion.minion && myplayer != BountyHunter.bountyhunter && myplayer != Trapper.trapper && myplayer != Yinyanger.yinyanger && myplayer != Challenger.challenger && myplayer != Ninja.ninja && myplayer != Berserker.berserker && myplayer != Yandere.yandere && myplayer != Stranded.stranded && myplayer != Monja.monja && !myplayer.Data.Role.IsImpostor) {
+                    if (!Helpers.isNeutral(myplayer) && !Helpers.isRebel(myplayer) && !myplayer.Data.Role.IsImpostor) {
                         var toRemove = new List<PlayerTask>();
                         foreach (PlayerTask task in myplayer.myTasks)
                             if (task.TaskType == TaskTypes.SwipeCard)
@@ -1058,61 +1044,5 @@ namespace LasMonjas.Patches
                 removedSwipe = true;
             }
         }
-
-        /*public static void removeAirshipDoors() {
-
-            bool removeAirshipDoors = CustomOptionHolder.removeAirshipDoors.getBool();
-
-            if (removeAirshipDoors && removedAirshipDoors == false && GameOptionsManager.Instance.currentGameOptions.MapId == 4) {
-                List<GameObject> doors = new List<GameObject>();
-
-                GameObject celldoor01 = GameObject.Find("doorsideOpen (2)");
-                doors.Add(celldoor01);
-                GameObject celldoor02 = GameObject.Find("door_vault");
-                doors.Add(celldoor02);
-                GameObject celldoor04 = GameObject.Find("door_gap");
-                doors.Add(celldoor04);
-
-                GameObject bighallwaydoor01 = GameObject.Find("Door_VertOpen");
-                doors.Add(bighallwaydoor01);
-                GameObject bighallwaydoor02 = GameObject.Find("Door_VertOpen (4)");
-                doors.Add(bighallwaydoor02);
-                GameObject bighallwaydoor03 = GameObject.Find("Door_HortOpen");
-                doors.Add(bighallwaydoor03);
-                GameObject bighallwaydoor04 = GameObject.Find("Door_HortOpen (1)");
-                doors.Add(bighallwaydoor04);
-
-                GameObject kitchendoor01 = GameObject.Find("Door_VertOpen (1)");
-                doors.Add(kitchendoor01);
-                GameObject kitchendoor02 = GameObject.Find("Door_VertOpen (2)");
-                doors.Add(kitchendoor02);
-                GameObject kitchendoor03 = GameObject.Find("Door_VertOpen (3)");
-                doors.Add(kitchendoor03);
-
-                GameObject medbeydoor01 = GameObject.Find("Door_VertOpen (10)");
-                doors.Add(medbeydoor01);
-                GameObject medbeydoor02 = GameObject.Find("Door_HortOpen (3)");
-                doors.Add(medbeydoor02);
-
-                GameObject recorddoor01 = GameObject.Find("Door_VertOpen (11)");
-                doors.Add(recorddoor01);
-                GameObject recorddoor02 = GameObject.Find("Door_VertOpen (12)");
-                doors.Add(recorddoor02);
-                GameObject recorddoor03 = GameObject.Find("Door_HortOpen (2)");
-                doors.Add(recorddoor03);
-
-                GameObject hallway01 = GameObject.Find("Door_VertOpen (5)");
-                doors.Add(hallway01);
-                GameObject hallway02 = GameObject.Find("Door_VertOpen (6)");
-                doors.Add(hallway02);
-
-                foreach (GameObject door in doors) {
-                    door.GetComponent<BoxCollider2D>().enabled = false;
-                    door.GetComponent<SpriteRenderer>().enabled = false;
-                }
-
-                removedAirshipDoors = true;
-            }
-        }*/
     }
 }
