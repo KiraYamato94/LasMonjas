@@ -7,14 +7,12 @@ global using Il2CppInterop.Runtime.Injection;
 using BepInEx;
 using BepInEx.Configuration;
 using HarmonyLib;
-using System.Linq;
 using LasMonjas.Core;
 using LasMonjas.Patches;
 using BepInEx.Unity.IL2CPP;
 using Reactor.Networking;
 using Reactor.Networking.Attributes;
 using AmongUs.Data;
-using AmongUs.GameOptions;
 using System;
 using AmongUs.Data.Player;
 
@@ -28,16 +26,13 @@ namespace LasMonjas
     {
         public const string Id = "me.allul.lasmonjas";
 
-        public const string VersionString = "3.9.3";
+        public const string VersionString = "4.0.0";
 
         public static System.Version Version = System.Version.Parse(VersionString);
         internal static BepInEx.Logging.ManualLogSource Logger;
 
         public Harmony Harmony { get; } = new Harmony(Id);
         public static LasMonjasPlugin Instance;
-
-        public static int optionsPage = 1;
-
         public static ConfigEntry<bool> ShowRoleSummary { get; set; }
         public static ConfigEntry<bool> ActivateMusic { get; set; }
         public static ConfigEntry<bool> GhostsSeeRoles { get; set; }
@@ -58,7 +53,7 @@ namespace LasMonjas
             IRegionInfo currentRegion = serverManager.CurrentRegion;
 
             foreach (IRegionInfo region in regions) {
-                if (region != null) { }
+                //if (region != null) { }
                 if (currentRegion != null && region.Name.Equals(currentRegion.Name, StringComparison.OrdinalIgnoreCase))
                     currentRegion = region;
                 serverManager.AddOrUpdateRegion(region);

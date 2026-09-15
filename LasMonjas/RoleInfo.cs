@@ -216,7 +216,7 @@ namespace LasMonjas
 
         // Rebelde roles
         public static RoleInfo renegade = new RoleInfo(Language.roleInfoRoleNames[15], Renegade.color, Language.roleInfoNames[44], Language.roleInfoNames[44], RoleId.Renegade, Team.Rebel, Language.rebelSummaryTexts[0]);
-        public static RoleInfo minion = new RoleInfo(Language.roleInfoRoleNames[16], Minion.color, Language.roleInfoNames[45], Language.roleInfoNames[45], RoleId.Minion);
+        public static RoleInfo minion = new RoleInfo(Language.roleInfoRoleNames[16], Minion.color, Language.roleInfoNames[45], Language.roleInfoNames[45], RoleId.Minion, Team.Rebel, Language.rebelSummaryTexts[10]);
         public static RoleInfo bountyHunter = new RoleInfo(Language.roleInfoRoleNames[17], BountyHunter.color, Language.roleInfoNames[46], Language.roleInfoNames[46], RoleId.BountyHunter, Team.Rebel, Language.rebelSummaryTexts[1]);
         public static RoleInfo trapper = new RoleInfo(Language.roleInfoRoleNames[18], Trapper.color, Language.roleInfoNames[47], Language.roleInfoNames[47], RoleId.Trapper, Team.Rebel, Language.rebelSummaryTexts[2]);
         public static RoleInfo yinyanger = new RoleInfo(Language.roleInfoRoleNames[19], Yinyanger.color, Language.roleInfoNames[48], Language.roleInfoNames[49], RoleId.Yinyanger, Team.Rebel, Language.rebelSummaryTexts[3]);
@@ -257,7 +257,6 @@ namespace LasMonjas
         public static RoleInfo spiritualist = new RoleInfo(Language.roleInfoRoleNames[50], Spiritualist.color, Language.roleInfoNames[86], Language.roleInfoNames[86], RoleId.Spiritualist, Team.Crewmate, Language.crewSummaryTexts[14]);
         public static RoleInfo coward = new RoleInfo(Language.roleInfoRoleNames[51], Coward.color, Language.roleInfoNames[87], Language.roleInfoNames[87], RoleId.Coward, Team.Crewmate, Language.crewSummaryTexts[18]);
         public static RoleInfo vigilant = new RoleInfo(Language.roleInfoRoleNames[52], Vigilant.color, Language.roleInfoNames[88], Language.roleInfoNames[88], RoleId.Vigilant, Team.Crewmate, Language.crewSummaryTexts[15]);
-        public static RoleInfo vigilantMira = new RoleInfo(Language.roleInfoRoleNames[52], Vigilant.color, Language.roleInfoNames[89], Language.roleInfoNames[89], RoleId.VigilantMira);
         public static RoleInfo hunter = new RoleInfo(Language.roleInfoRoleNames[53], Hunter.color, Language.roleInfoNames[90], Language.roleInfoNames[90], RoleId.Hunter, Team.Crewmate, Language.crewSummaryTexts[16]);
         public static RoleInfo jinx = new RoleInfo(Language.roleInfoRoleNames[54], Jinx.color, Language.roleInfoNames[91], Language.roleInfoNames[91], RoleId.Jinx, Team.Crewmate, Language.crewSummaryTexts[17]);
         public static RoleInfo bat = new RoleInfo(Language.roleInfoRoleNames[55], Bat.color, Language.roleInfoNames[92], Language.roleInfoNames[93], RoleId.Bat, Team.Crewmate, Language.crewSummaryTexts[19]);
@@ -266,19 +265,19 @@ namespace LasMonjas
         public static RoleInfo locksmith = new RoleInfo(Language.roleInfoRoleNames[58], Locksmith.color, Language.roleInfoNames[97], Language.roleInfoNames[97], RoleId.Locksmith, Team.Crewmate, Language.crewSummaryTexts[22]);
         public static RoleInfo taskMaster = new RoleInfo(Language.roleInfoRoleNames[59], TaskMaster.color, Language.roleInfoNames[98], Language.roleInfoNames[99], RoleId.TaskMaster, Team.Crewmate, Language.crewSummaryTexts[23]);
         public static RoleInfo jailer = new RoleInfo(Language.roleInfoRoleNames[60], Jailer.color, Language.roleInfoNames[100], Language.roleInfoNames[100], RoleId.Jailer, Team.Crewmate, Language.crewSummaryTexts[24]);
-        public static RoleInfo impostor = new RoleInfo(Language.roleInfoRoleNames[61], Palette.ImpostorRed, Helpers.cs(Palette.ImpostorRed, Language.roleInfoNames[101]), Language.roleInfoNames[101], RoleId.Impostor);
-        public static RoleInfo crewmate = new RoleInfo(Language.roleInfoRoleNames[62], Kid.color, Language.roleInfoNames[102], Language.roleInfoNames[102], RoleId.Crewmate);
-        public static RoleInfo lighter = new RoleInfo(Language.roleInfoRoleNames[63], Modifiers.color, Language.roleInfoNames[103], Language.roleInfoNames[103], RoleId.Lighter, Team.Modifier, Language.modifierSummaryTexts[2]);
-        public static RoleInfo blind = new RoleInfo(Language.roleInfoRoleNames[64], Modifiers.color, Language.roleInfoNames[104], Language.roleInfoNames[104], RoleId.Blind, Team.Modifier, Language.modifierSummaryTexts[3]);
-        public static RoleInfo flash = new RoleInfo(Language.roleInfoRoleNames[65], Modifiers.color, Language.roleInfoNames[105], Language.roleInfoNames[105], RoleId.Flash, Team.Modifier, Language.modifierSummaryTexts[4]);
-        public static RoleInfo bigchungus = new RoleInfo(Language.roleInfoRoleNames[66], Modifiers.color, Language.roleInfoNames[106], Language.roleInfoNames[106], RoleId.BigChungus, Team.Modifier, Language.modifierSummaryTexts[5]);
-        public static RoleInfo theChosenOne = new RoleInfo(Language.roleInfoRoleNames[67], Modifiers.color, Language.roleInfoNames[107], Language.roleInfoNames[107], RoleId.TheChosenOne, Team.Modifier, Language.modifierSummaryTexts[6]);
-        public static RoleInfo performer = new RoleInfo(Language.roleInfoRoleNames[68], Modifiers.color, Language.roleInfoNames[108], Language.roleInfoNames[109], RoleId.Performer, Team.Modifier, Language.modifierSummaryTexts[7]);
-        public static RoleInfo pro = new RoleInfo(Language.roleInfoRoleNames[69], Modifiers.color, Language.roleInfoNames[110], Language.roleInfoNames[110], RoleId.Pro, Team.Modifier, Language.modifierSummaryTexts[8]);
-        public static RoleInfo paintball = new RoleInfo(Language.roleInfoRoleNames[70], Modifiers.color, Language.roleInfoNames[111], Language.roleInfoNames[111], RoleId.Paintball, Team.Modifier, Language.modifierSummaryTexts[9]);
-        public static RoleInfo electrician = new RoleInfo(Language.roleInfoRoleNames[71], Modifiers.color, Language.roleInfoNames[112], Language.roleInfoNames[112], RoleId.Electrician, Team.Modifier, Language.modifierSummaryTexts[10]);
-        public static RoleInfo lover = new RoleInfo(Language.roleInfoRoleNames[72], Modifiers.loverscolor, $"{Language.roleInfoNames[113]}", $"{Language.roleInfoNames[114]}", RoleId.Lover, Team.Modifier, Language.modifierSummaryTexts[1]);
-        public static RoleInfo badlover = new RoleInfo(Language.roleInfoRoleNames[73], Palette.ImpostorRed, $"{Language.roleInfoNames[115]}", $"{Language.roleInfoNames[116]}", RoleId.Lover);
+        public static RoleInfo impostor = new RoleInfo(Language.roleInfoRoleNames[61], Palette.ImpostorRed, Helpers.cs(Palette.ImpostorRed, Language.roleInfoNames[101]), Language.roleInfoNames[101], RoleId.Impostor, Team.Impostor, Language.impSummaryTexts[15]);
+        public static RoleInfo crewmate = new RoleInfo(Language.roleInfoRoleNames[62], Kid.color, Language.roleInfoNames[102], Language.roleInfoNames[102], RoleId.Crewmate, Team.Crewmate, Language.crewSummaryTexts[25]);
+        public static RoleInfo lighter = new RoleInfo(Language.roleInfoRoleNames[63], Modifiers.color, Language.roleInfoNames[103], Language.roleInfoNames[103], RoleId.Lighter, Team.Modifier, Language.modifierSummaryTexts[1]);
+        public static RoleInfo blind = new RoleInfo(Language.roleInfoRoleNames[64], Modifiers.color, Language.roleInfoNames[104], Language.roleInfoNames[104], RoleId.Blind, Team.Modifier, Language.modifierSummaryTexts[2]);
+        public static RoleInfo flash = new RoleInfo(Language.roleInfoRoleNames[65], Modifiers.color, Language.roleInfoNames[105], Language.roleInfoNames[105], RoleId.Flash, Team.Modifier, Language.modifierSummaryTexts[3]);
+        public static RoleInfo bigchungus = new RoleInfo(Language.roleInfoRoleNames[66], Modifiers.color, Language.roleInfoNames[106], Language.roleInfoNames[106], RoleId.BigChungus, Team.Modifier, Language.modifierSummaryTexts[4]);
+        public static RoleInfo theChosenOne = new RoleInfo(Language.roleInfoRoleNames[67], Modifiers.color, Language.roleInfoNames[107], Language.roleInfoNames[107], RoleId.TheChosenOne, Team.Modifier, Language.modifierSummaryTexts[5]);
+        public static RoleInfo performer = new RoleInfo(Language.roleInfoRoleNames[68], Modifiers.color, Language.roleInfoNames[108], Language.roleInfoNames[109], RoleId.Performer, Team.Modifier, Language.modifierSummaryTexts[6]);
+        public static RoleInfo pro = new RoleInfo(Language.roleInfoRoleNames[69], Modifiers.color, Language.roleInfoNames[110], Language.roleInfoNames[110], RoleId.Pro, Team.Modifier, Language.modifierSummaryTexts[7]);
+        public static RoleInfo paintball = new RoleInfo(Language.roleInfoRoleNames[70], Modifiers.color, Language.roleInfoNames[111], Language.roleInfoNames[111], RoleId.Paintball, Team.Modifier, Language.modifierSummaryTexts[8]);
+        public static RoleInfo electrician = new RoleInfo(Language.roleInfoRoleNames[71], Modifiers.color, Language.roleInfoNames[112], Language.roleInfoNames[112], RoleId.Electrician, Team.Modifier, Language.modifierSummaryTexts[9]);
+        public static RoleInfo lover = new RoleInfo(Language.roleInfoRoleNames[72], Modifiers.loverscolor, $"{Language.roleInfoNames[113]}", $"{Language.roleInfoNames[114]}", RoleId.Lover, Team.Modifier, Language.modifierSummaryTexts[0]);
+        public static RoleInfo badlover = new RoleInfo(Language.roleInfoRoleNames[73], Palette.ImpostorRed, $"{Language.roleInfoNames[115]}", $"{Language.roleInfoNames[116]}", RoleId.Lover, Team.Modifier, Language.modifierSummaryTexts[0]);
 
 
         public static List<RoleInfo> allRoleInfos = new List<RoleInfo>() {
@@ -336,7 +335,6 @@ namespace LasMonjas
             spiritualist,
             coward,
             vigilant,
-            vigilantMira,
             kid,
             hunter,
             jinx,
@@ -700,7 +698,7 @@ namespace LasMonjas
             if (p == Librarian.librarian) infos.Add(librarian);
 
             // Rebels roles
-            if (p == Renegade.renegade || (Renegade.formerRenegades != null && Renegade.formerRenegades.Any(x => x.PlayerId == p.PlayerId))) infos.Add(renegade);
+            if (p == Renegade.renegade) infos.Add(renegade);
             if (p == Minion.minion) infos.Add(minion);
             if (p == BountyHunter.bountyhunter) infos.Add(bountyHunter);
             if (p == Trapper.trapper) infos.Add(trapper);
@@ -742,7 +740,6 @@ namespace LasMonjas
             if (p == Spiritualist.spiritualist) infos.Add(spiritualist);
             if (p == Coward.coward) infos.Add(coward);
             if (p == Vigilant.vigilant) infos.Add(vigilant);
-            if (p == Vigilant.vigilantMira) infos.Add(vigilantMira);
             if (p == Hunter.hunter) infos.Add(hunter);
             if (p == Jinx.jinx) infos.Add(jinx);
             if (p == Bat.bat) infos.Add(bat);
@@ -791,309 +788,10 @@ namespace LasMonjas
             }
 
             public static RoleFortuneTellerInfo getFortuneTellerRoleInfoForPlayer(PlayerControl p) {
-                string name = "";
-                bool isGood = true;
-                Color color = Color.white;
+                RoleInfo role = RoleInfo.getRoleInfoForPlayer(p).First(r => r.TeamId != Team.Modifier);
 
-                if (Captain.captain != null && p == Captain.captain) {
-                    name = "Captain";
-                    color = Captain.color;
-                }
-                else if (Mechanic.mechanic != null && p == Mechanic.mechanic) {
-                    name = "Mechanic";
-                    color = Mechanic.color;
-                }
-                else if (Sheriff.sheriff != null && p == Sheriff.sheriff) {
-                    name = "Sheriff";
-                    color = Sheriff.color;
-                }
-                else if (Detective.detective != null && p == Detective.detective) {
-                    name = "Detective";
-                    color = Detective.color;
-                }
-                else if (Forensic.forensic != null && p == Forensic.forensic) {
-                    name = "Forensic";
-                    color = Forensic.color;
-                }
-                else if (TimeTraveler.timeTraveler != null && p == TimeTraveler.timeTraveler) {
-                    name = "Time Traveler";
-                    color = TimeTraveler.color;
-                }
-                else if (Squire.squire != null && p == Squire.squire) {
-                    name = "Squire";
-                    color = Squire.color;
-                }
-                else if (Cheater.cheater != null && p == Cheater.cheater) {
-                    name = "Cheater";
-                    color = Cheater.color;
-                }
-                else if (FortuneTeller.fortuneTeller != null && p == FortuneTeller.fortuneTeller) {
-                    name = "Fortune Teller";
-                    color = FortuneTeller.color;
-                }
-                else if (Hacker.hacker != null && p == Hacker.hacker) {
-                    name = "Hacker";
-                    color = Hacker.color;
-                }
-                else if (Sleuth.sleuth != null && p == Sleuth.sleuth) {
-                    name = "Sleuth";
-                    color = Sleuth.color;
-                }
-                else if (Fink.fink != null && p == Fink.fink) {
-                    name = "Fink";
-                    color = Fink.color;
-                }
-                else if (Kid.kid != null && p == Kid.kid) {
-                    name = "Kid";
-                    color = Kid.color;
-                }
-                else if (Welder.welder != null && p == Welder.welder) {
-                    name = "Welder";
-                    color = Welder.color;
-                }
-                else if (Spiritualist.spiritualist != null && p == Spiritualist.spiritualist) {
-                    name = "Spiritualist";
-                    color = Spiritualist.color;
-                }
-                else if (Coward.coward != null && p == Coward.coward) {
-                    name = "Coward";
-                    color = Coward.color;
-                }
-                else if (Vigilant.vigilant != null && p == Vigilant.vigilant) {
-                    name = "Vigilant";
-                    color = Vigilant.color;
-                }
-                else if (Vigilant.vigilantMira != null && p == Vigilant.vigilantMira) {
-                    name = "Vigilant";
-                    color = Vigilant.color;
-                }
-                else if (Hunter.hunter != null && p == Hunter.hunter) {
-                    name = "Hunter";
-                    color = Hunter.color;
-                }
-                else if (Jinx.jinx != null && p == Jinx.jinx) {
-                    name = "Jinx";
-                    color = Jinx.color;
-                }
-                else if (Bat.bat != null && p == Bat.bat) {
-                    name = "Bat";
-                    color = Bat.color;
-                }
-                else if (Necromancer.necromancer != null && p == Necromancer.necromancer) {
-                    name = "Necromancer";
-                    color = Necromancer.color;
-                }
-                else if (Engineer.engineer != null && p == Engineer.engineer) {
-                    name = "Engineer";
-                    color = Engineer.color;
-                }
-                else if (Locksmith.locksmith != null && p == Locksmith.locksmith) {
-                    name = "Locksmith";
-                    color = Locksmith.color;
-                }
-                else if (TaskMaster.taskMaster != null && p == TaskMaster.taskMaster) {
-                    name = "Task Master";
-                    color = TaskMaster.color;
-                }
-                else if (Jailer.jailer != null && p == Jailer.jailer) {
-                    name = "Jailer";
-                    color = Jailer.color;
-                }
-                else if (Mimic.mimic != null && p == Mimic.mimic) {
-                    name = "Mimic";
-                    color = Mimic.color;
-                    isGood = false;
-                }
-                else if (Painter.painter != null && p == Painter.painter) {
-                    name = "Painter";
-                    color = Painter.color;
-                    isGood = false;
-                }
-                else if (Demon.demon != null && p == Demon.demon) {
-                    name = "Demon";
-                    color = Demon.color;
-                    isGood = false;
-                }
-                else if (Illusionist.illusionist != null && p == Illusionist.illusionist) {
-                    name = "Illusionist";
-                    color = Illusionist.color;
-                    isGood = false;
-                }
-                else if (Janitor.janitor != null && p == Janitor.janitor) {
-                    name = "Janitor";
-                    color = Janitor.color;
-                    isGood = false;
-                }
-                else if (Manipulator.manipulator != null && p == Manipulator.manipulator) {
-                    name = "Manipulator";
-                    color = Manipulator.color;
-                    isGood = false;
-                }
-                else if (Bomberman.bomberman != null && p == Bomberman.bomberman) {
-                    name = "Bomberman";
-                    color = Bomberman.color;
-                    isGood = false;
-                }
-                else if (Chameleon.chameleon != null && p == Chameleon.chameleon) {
-                    name = "Chameleon";
-                    color = Palette.ImpostorRed;
-                    isGood = false;
-                }
-                else if (Gambler.gambler != null && p == Gambler.gambler) {
-                    name = "Gambler";
-                    color = Palette.ImpostorRed;
-                    isGood = false;
-                }
-                else if (Sorcerer.sorcerer != null && p == Sorcerer.sorcerer) {
-                    name = "Sorcerer";
-                    color = Palette.ImpostorRed;
-                    isGood = false;
-                }
-                else if (Medusa.medusa != null && p == Medusa.medusa) {
-                    name = "Medusa";
-                    color = Medusa.color;
-                    isGood = false;
-                }
-                else if (Hypnotist.hypnotist != null && p == Hypnotist.hypnotist) {
-                    name = "Hypnotist";
-                    color = Palette.ImpostorRed;
-                    isGood = false;
-                }
-                else if (Archer.archer != null && p == Archer.archer) {
-                    name = "Archer";
-                    color = Palette.ImpostorRed;
-                    isGood = false;
-                }
-                else if (Plumber.plumber != null && p == Plumber.plumber) {
-                    name = "Plumber";
-                    color = Palette.ImpostorRed;
-                    isGood = false;
-                }
-                else if (Librarian.librarian != null && p == Librarian.librarian) {
-                    name = "Librarian";
-                    color = Palette.ImpostorRed;
-                    isGood = false;
-                }
-                else if (Renegade.renegade != null && p == Renegade.renegade) {
-                    name = "Renegade";
-                    color = Renegade.color;
-                    isGood = false;
-                }
-                else if (Minion.minion != null && p == Minion.minion) {
-                    name = "Minion";
-                    color = Minion.color;
-                    isGood = false;
-                }
-                else if (BountyHunter.bountyhunter != null && p == BountyHunter.bountyhunter) {
-                    name = "Bounty Hunter";
-                    color = BountyHunter.color;
-                    isGood = false;
-                }
-                else if (Trapper.trapper != null && p == Trapper.trapper) {
-                    name = "Trapper";
-                    color = Trapper.color;
-                    isGood = false;
-                }
-                else if (Yinyanger.yinyanger != null && p == Yinyanger.yinyanger) {
-                    name = "Yinyanger";
-                    color = Yinyanger.color;
-                    isGood = false;
-                }
-                else if (Challenger.challenger != null && p == Challenger.challenger) {
-                    name = "Challenger";
-                    color = Challenger.color;
-                    isGood = false;
-                }
-                else if (Ninja.ninja != null && p == Ninja.ninja) {
-                    name = "Ninja";
-                    color = Ninja.color;
-                    isGood = false;
-                }
-                else if (Berserker.berserker != null && p == Berserker.berserker) {
-                    name = "Berserker";
-                    color = Berserker.color;
-                    isGood = false;
-                }
-                else if (Yandere.yandere != null && p == Yandere.yandere) {
-                    name = "Yandere";
-                    color = Yandere.color;
-                    isGood = false;
-                }
-                else if (Stranded.stranded != null && p == Stranded.stranded) {
-                    name = "Stranded";
-                    color = Stranded.color;
-                    isGood = false;
-                }
-                else if (Monja.monja != null && p == Monja.monja) {
-                    name = "Monja";
-                    color = Monja.color;
-                    isGood = false;
-                }
-                else if (Joker.joker != null && p == Joker.joker) {
-                    name = "Joker";
-                    color = Joker.color;
-                    isGood = false;
-                }
-                else if (RoleThief.rolethief != null && p == RoleThief.rolethief) {
-                    name = "Role Thief";
-                    color = RoleThief.color;
-                    isGood = false;
-                }
-                else if (Pyromaniac.pyromaniac != null && p == Pyromaniac.pyromaniac) {
-                    name = "Pyromaniac";
-                    color = Pyromaniac.color;
-                    isGood = false;
-                }
-                else if (TreasureHunter.treasureHunter != null && p == TreasureHunter.treasureHunter) {
-                    name = "Treasure Hunter";
-                    color = TreasureHunter.color;
-                    isGood = false;
-                }
-                else if (Devourer.devourer != null && p == Devourer.devourer) {
-                    name = "Devourer";
-                    color = Devourer.color;
-                    isGood = false;
-                }
-                else if (Poisoner.poisoner != null && p == Poisoner.poisoner) {
-                    name = "Poisoner";
-                    color = Poisoner.color;
-                    isGood = false;
-                }
-                else if (Puppeteer.puppeteer != null && p == Puppeteer.puppeteer) {
-                    name = "Puppeteer";
-                    color = Puppeteer.color;
-                    isGood = false;
-                }
-                else if (Exiler.exiler != null && p == Exiler.exiler) {
-                    name = "Exiler";
-                    color = Exiler.color;
-                    isGood = false;
-                }
-                else if (Amnesiac.amnesiac != null && p == Amnesiac.amnesiac) {
-                    name = "Amnesiac";
-                    color = Amnesiac.color;
-                    isGood = false;
-                }
-                else if (Seeker.seeker != null && p == Seeker.seeker) {
-                    name = "Seeker";
-                    color = Seeker.color;
-                    isGood = false;
-                }
-                else if (p.Data.Role.IsImpostor) { // Just Impostor
-                    name = "Impostor";
-                    color = Palette.ImpostorRed;
-                    isGood = false;
-                }
-                else { // Just Crewmate
-                    name = "Crewmate";
-                    color = Kid.color;
-                }
+                return new RoleFortuneTellerInfo(role.color, role.name, role.TeamId == Team.Crewmate);
 
-                return new RoleFortuneTellerInfo(
-                    color,
-                    name,
-                    isGood
-                );
             }
         }
     }

@@ -13,10 +13,6 @@ using LasMonjas.Patches;
 using static LasMonjas.RoleInfo;
 using LasMonjas.Core;
 using AmongUs.GameOptions;
-using static UnityEngine.GraphicsBuffer;
-using TMPro;
-using UnityEngine.Rendering.VirtualTexturing;
-using MS.Internal.Xml.XPath;
 
 namespace LasMonjas
 {
@@ -75,7 +71,6 @@ namespace LasMonjas
         Spiritualist,
         Coward,
         Vigilant,
-        VigilantMira,
         Hunter,
         Jinx,
         Bat,
@@ -118,10 +113,10 @@ namespace LasMonjas
         // Police and Thief
         PoliceAndThiefs,
         PolicePlayer01,
-        PolicePlayer02,
         PolicePlayer03,
-        PolicePlayer04,
+        PolicePlayer02,
         PolicePlayer05,
+        PolicePlayer04,
         PolicePlayer06,
         ThiefPlayer01,
         ThiefPlayer02,
@@ -270,10 +265,10 @@ namespace LasMonjas
     {
         // Main Controls
 
-        ResetVaribles = 67, // vanilla max 65
+        ResetVaribles = 70, // vanilla max 66 on 2026.8.18
         ShareOptions,
         SetRole,
-        SetModifier, 
+        SetModifier,
         UseUncheckedVent,
         UncheckedMurderPlayer,
         UncheckedCmdReportDeadBody,
@@ -282,7 +277,7 @@ namespace LasMonjas
 
         // Role functionality
 
-        MimicTransform = 77,
+        MimicTransform = 80,
         PainterPaint,
         DemonSetBitten,
         PlaceNun,
@@ -349,7 +344,7 @@ namespace LasMonjas
         SeekerSelectAttack,
 
         CaptainSpecialVote,
-        CaptainAutoCastSpecialVote, 
+        CaptainAutoCastSpecialVote,
         MechanicFixLights,
         MechanicFixMushroom,
         MechanicUsedRepair,
@@ -391,7 +386,7 @@ namespace LasMonjas
 
         // Gamemodes
         GamemodeKills,
-        
+
         // Capture the flag
         CaptureTheFlagWhoTookTheFlag,
         CaptureTheFlagWhichTeamScored,
@@ -452,7 +447,8 @@ namespace LasMonjas
             clearAndReloadRoles();
             clearGameHistory();
             setCustomButtonCooldowns();
-            Helpers.toggleZoom(reset : true);
+            Helpers.toggleZoom(reset: true);
+            AmongUsClientOnPlayerJoinedPatch.introChatShown = false;
         }
 
         public static void ShareOptions(int numberOfOptions, MessageReader reader) {
@@ -632,9 +628,6 @@ namespace LasMonjas
                 case RoleId.Vigilant:
                     Vigilant.vigilant = player;
                     break;
-                case RoleId.VigilantMira:
-                    Vigilant.vigilantMira = player;
-                    break;
                 case RoleId.Hunter:
                     Hunter.hunter = player;
                     break;
@@ -662,60 +655,46 @@ namespace LasMonjas
 
                 // Capture the Flag
                 case RoleId.RedPlayer01:
-                    CaptureTheFlag.redplayer01 = player;
-                    CaptureTheFlag.redteamFlag.Add(player);
+                    Helpers.AssingRoleToTeam(ref CaptureTheFlag.redplayer01, player, CaptureTheFlag.redteamFlag);
                     break;
                 case RoleId.RedPlayer02:
-                    CaptureTheFlag.redplayer02 = player;
-                    CaptureTheFlag.redteamFlag.Add(player);
+                    Helpers.AssingRoleToTeam(ref CaptureTheFlag.redplayer02, player, CaptureTheFlag.redteamFlag);
                     break;
                 case RoleId.RedPlayer03:
-                    CaptureTheFlag.redplayer03 = player;
-                    CaptureTheFlag.redteamFlag.Add(player);
+                    Helpers.AssingRoleToTeam(ref CaptureTheFlag.redplayer03, player, CaptureTheFlag.redteamFlag);
                     break;
                 case RoleId.RedPlayer04:
-                    CaptureTheFlag.redplayer04 = player;
-                    CaptureTheFlag.redteamFlag.Add(player);
+                    Helpers.AssingRoleToTeam(ref CaptureTheFlag.redplayer04, player, CaptureTheFlag.redteamFlag);
                     break;
                 case RoleId.RedPlayer05:
-                    CaptureTheFlag.redplayer05 = player;
-                    CaptureTheFlag.redteamFlag.Add(player);
+                    Helpers.AssingRoleToTeam(ref CaptureTheFlag.redplayer05, player, CaptureTheFlag.redteamFlag);
                     break;
                 case RoleId.RedPlayer06:
-                    CaptureTheFlag.redplayer06 = player;
-                    CaptureTheFlag.redteamFlag.Add(player);
+                    Helpers.AssingRoleToTeam(ref CaptureTheFlag.redplayer06, player, CaptureTheFlag.redteamFlag);
                     break;
                 case RoleId.RedPlayer07:
-                    CaptureTheFlag.redplayer07 = player;
-                    CaptureTheFlag.redteamFlag.Add(player);
+                    Helpers.AssingRoleToTeam(ref CaptureTheFlag.redplayer07, player, CaptureTheFlag.redteamFlag);
                     break;
                 case RoleId.BluePlayer01:
-                    CaptureTheFlag.blueplayer01 = player;
-                    CaptureTheFlag.blueteamFlag.Add(player);
+                    Helpers.AssingRoleToTeam(ref CaptureTheFlag.blueplayer01, player, CaptureTheFlag.blueteamFlag);
                     break;
                 case RoleId.BluePlayer02:
-                    CaptureTheFlag.blueplayer02 = player;
-                    CaptureTheFlag.blueteamFlag.Add(player);
+                    Helpers.AssingRoleToTeam(ref CaptureTheFlag.blueplayer02, player, CaptureTheFlag.blueteamFlag);
                     break;
                 case RoleId.BluePlayer03:
-                    CaptureTheFlag.blueplayer03 = player;
-                    CaptureTheFlag.blueteamFlag.Add(player);
+                    Helpers.AssingRoleToTeam(ref CaptureTheFlag.blueplayer03, player, CaptureTheFlag.blueteamFlag);
                     break;
                 case RoleId.BluePlayer04:
-                    CaptureTheFlag.blueplayer04 = player;
-                    CaptureTheFlag.blueteamFlag.Add(player);
+                    Helpers.AssingRoleToTeam(ref CaptureTheFlag.blueplayer04, player, CaptureTheFlag.blueteamFlag);
                     break;
                 case RoleId.BluePlayer05:
-                    CaptureTheFlag.blueplayer05 = player;
-                    CaptureTheFlag.blueteamFlag.Add(player);
+                    Helpers.AssingRoleToTeam(ref CaptureTheFlag.blueplayer05, player, CaptureTheFlag.blueteamFlag);
                     break;
                 case RoleId.BluePlayer06:
-                    CaptureTheFlag.blueplayer06 = player;
-                    CaptureTheFlag.blueteamFlag.Add(player);
+                    Helpers.AssingRoleToTeam(ref CaptureTheFlag.blueplayer06, player, CaptureTheFlag.blueteamFlag);
                     break;
                 case RoleId.BluePlayer07:
-                    CaptureTheFlag.blueplayer07 = player;
-                    CaptureTheFlag.blueteamFlag.Add(player);
+                    Helpers.AssingRoleToTeam(ref CaptureTheFlag.blueplayer07, player, CaptureTheFlag.blueteamFlag);
                     break;
                 case RoleId.StealerPlayer:
                     CaptureTheFlag.stealerPlayer = player;
@@ -723,122 +702,93 @@ namespace LasMonjas
 
                 // Police and Thief
                 case RoleId.PolicePlayer01:
-                    PoliceAndThief.policeplayer01 = player;
-                    PoliceAndThief.policeTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref PoliceAndThief.policeplayer01, player, PoliceAndThief.policeTeam);
                     break;
                 case RoleId.PolicePlayer02:
-                    PoliceAndThief.policeplayer02 = player;
-                    PoliceAndThief.policeTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref PoliceAndThief.policeplayer02, player, PoliceAndThief.policeTeam);
                     break;
                 case RoleId.PolicePlayer03:
-                    PoliceAndThief.policeplayer03 = player;
-                    PoliceAndThief.policeTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref PoliceAndThief.policeplayer03, player, PoliceAndThief.policeTeam);
                     break;
                 case RoleId.PolicePlayer04:
-                    PoliceAndThief.policeplayer04 = player;
-                    PoliceAndThief.policeTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref PoliceAndThief.policeplayer04, player, PoliceAndThief.policeTeam);
                     break;
                 case RoleId.PolicePlayer05:
-                    PoliceAndThief.policeplayer05 = player;
-                    PoliceAndThief.policeTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref PoliceAndThief.policeplayer05, player, PoliceAndThief.policeTeam);
                     break;
                 case RoleId.PolicePlayer06:
-                    PoliceAndThief.policeplayer06 = player;
-                    PoliceAndThief.policeTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref PoliceAndThief.policeplayer06, player, PoliceAndThief.policeTeam);
                     break;
                 case RoleId.ThiefPlayer01:
-                    PoliceAndThief.thiefplayer01 = player;
-                    PoliceAndThief.thiefTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref PoliceAndThief.thiefplayer01, player, PoliceAndThief.thiefTeam);
                     break;
                 case RoleId.ThiefPlayer02:
-                    PoliceAndThief.thiefplayer02 = player;
-                    PoliceAndThief.thiefTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref PoliceAndThief.thiefplayer02, player, PoliceAndThief.thiefTeam);
                     break;
                 case RoleId.ThiefPlayer03:
-                    PoliceAndThief.thiefplayer03 = player;
-                    PoliceAndThief.thiefTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref PoliceAndThief.thiefplayer03, player, PoliceAndThief.thiefTeam);
                     break;
                 case RoleId.ThiefPlayer04:
-                    PoliceAndThief.thiefplayer04 = player;
-                    PoliceAndThief.thiefTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref PoliceAndThief.thiefplayer04, player, PoliceAndThief.thiefTeam);
                     break;
                 case RoleId.ThiefPlayer05:
-                    PoliceAndThief.thiefplayer05 = player;
-                    PoliceAndThief.thiefTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref PoliceAndThief.thiefplayer05, player, PoliceAndThief.thiefTeam);
                     break;
                 case RoleId.ThiefPlayer06:
-                    PoliceAndThief.thiefplayer06 = player;
-                    PoliceAndThief.thiefTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref PoliceAndThief.thiefplayer06, player, PoliceAndThief.thiefTeam);
                     break;
                 case RoleId.ThiefPlayer07:
-                    PoliceAndThief.thiefplayer07 = player;
-                    PoliceAndThief.thiefTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref PoliceAndThief.thiefplayer07, player, PoliceAndThief.thiefTeam);
                     break;
                 case RoleId.ThiefPlayer08:
-                    PoliceAndThief.thiefplayer08 = player;
-                    PoliceAndThief.thiefTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref PoliceAndThief.thiefplayer08, player, PoliceAndThief.thiefTeam);
                     break;
                 case RoleId.ThiefPlayer09:
-                    PoliceAndThief.thiefplayer09 = player;
-                    PoliceAndThief.thiefTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref PoliceAndThief.thiefplayer09, player, PoliceAndThief.thiefTeam);
                     break;
 
                 // King of the Hill
                 case RoleId.GreenKing:
-                    KingOfTheHill.greenKingplayer = player;
-                    KingOfTheHill.greenTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref KingOfTheHill.greenKingplayer, player, KingOfTheHill.greenTeam);
                     break;
                 case RoleId.GreenPlayer01:
-                    KingOfTheHill.greenplayer01 = player;
-                    KingOfTheHill.greenTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref KingOfTheHill.greenplayer01, player, KingOfTheHill.greenTeam);
                     break;
                 case RoleId.GreenPlayer02:
-                    KingOfTheHill.greenplayer02 = player;
-                    KingOfTheHill.greenTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref KingOfTheHill.greenplayer02, player, KingOfTheHill.greenTeam);
                     break;
                 case RoleId.GreenPlayer03:
-                    KingOfTheHill.greenplayer03 = player;
-                    KingOfTheHill.greenTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref KingOfTheHill.greenplayer03, player, KingOfTheHill.greenTeam);
                     break;
                 case RoleId.GreenPlayer04:
-                    KingOfTheHill.greenplayer04 = player;
-                    KingOfTheHill.greenTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref KingOfTheHill.greenplayer04, player, KingOfTheHill.greenTeam);
                     break;
                 case RoleId.GreenPlayer05:
-                    KingOfTheHill.greenplayer05 = player;
-                    KingOfTheHill.greenTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref KingOfTheHill.greenplayer05, player, KingOfTheHill.greenTeam);
                     break;
                 case RoleId.GreenPlayer06:
-                    KingOfTheHill.greenplayer06 = player;
-                    KingOfTheHill.greenTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref KingOfTheHill.greenplayer06, player, KingOfTheHill.greenTeam);
                     break;
                 case RoleId.YellowKing:
-                    KingOfTheHill.yellowKingplayer = player;
-                    KingOfTheHill.yellowTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref KingOfTheHill.yellowKingplayer, player, KingOfTheHill.yellowTeam);
                     break;
                 case RoleId.YellowPlayer01:
-                    KingOfTheHill.yellowplayer01 = player;
-                    KingOfTheHill.yellowTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref KingOfTheHill.yellowplayer01, player, KingOfTheHill.yellowTeam);
                     break;
                 case RoleId.YellowPlayer02:
-                    KingOfTheHill.yellowplayer02 = player;
-                    KingOfTheHill.yellowTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref KingOfTheHill.yellowplayer02, player, KingOfTheHill.yellowTeam);
                     break;
                 case RoleId.YellowPlayer03:
-                    KingOfTheHill.yellowplayer03 = player;
-                    KingOfTheHill.yellowTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref KingOfTheHill.yellowplayer03, player, KingOfTheHill.yellowTeam);
                     break;
                 case RoleId.YellowPlayer04:
-                    KingOfTheHill.yellowplayer04 = player;
-                    KingOfTheHill.yellowTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref KingOfTheHill.yellowplayer04, player, KingOfTheHill.yellowTeam);
                     break;
                 case RoleId.YellowPlayer05:
-                    KingOfTheHill.yellowplayer05 = player;
-                    KingOfTheHill.yellowTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref KingOfTheHill.yellowplayer05, player, KingOfTheHill.yellowTeam);
                     break;
                 case RoleId.YellowPlayer06:
-                    KingOfTheHill.yellowplayer06 = player;
-                    KingOfTheHill.yellowTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref KingOfTheHill.yellowplayer06, player, KingOfTheHill.yellowTeam);
                     break;
                 case RoleId.UsurperPlayer:
                     KingOfTheHill.usurperPlayer = player;
@@ -849,60 +799,46 @@ namespace LasMonjas
                     HotPotato.hotPotatoPlayer = player;
                     break;
                 case RoleId.NotPotato01:
-                    HotPotato.notPotato01 = player;
-                    HotPotato.notPotatoTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref HotPotato.notPotato01, player, HotPotato.notPotatoTeam);
                     break;
                 case RoleId.NotPotato02:
-                    HotPotato.notPotato02 = player;
-                    HotPotato.notPotatoTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref HotPotato.notPotato02, player, HotPotato.notPotatoTeam);
                     break;
                 case RoleId.NotPotato03:
-                    HotPotato.notPotato03 = player;
-                    HotPotato.notPotatoTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref HotPotato.notPotato03, player, HotPotato.notPotatoTeam);
                     break;
                 case RoleId.NotPotato04:
-                    HotPotato.notPotato04 = player;
-                    HotPotato.notPotatoTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref HotPotato.notPotato04, player, HotPotato.notPotatoTeam);
                     break;
                 case RoleId.NotPotato05:
-                    HotPotato.notPotato05 = player;
-                    HotPotato.notPotatoTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref HotPotato.notPotato05, player, HotPotato.notPotatoTeam);
                     break;
                 case RoleId.NotPotato06:
-                    HotPotato.notPotato06 = player;
-                    HotPotato.notPotatoTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref HotPotato.notPotato06, player, HotPotato.notPotatoTeam);
                     break;
                 case RoleId.NotPotato07:
-                    HotPotato.notPotato07 = player;
-                    HotPotato.notPotatoTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref HotPotato.notPotato07, player, HotPotato.notPotatoTeam);
                     break;
                 case RoleId.NotPotato08:
-                    HotPotato.notPotato08 = player;
-                    HotPotato.notPotatoTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref HotPotato.notPotato08, player, HotPotato.notPotatoTeam);
                     break;
                 case RoleId.NotPotato09:
-                    HotPotato.notPotato09 = player;
-                    HotPotato.notPotatoTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref HotPotato.notPotato09, player, HotPotato.notPotatoTeam);
                     break;
                 case RoleId.NotPotato10:
-                    HotPotato.notPotato10 = player;
-                    HotPotato.notPotatoTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref HotPotato.notPotato10, player, HotPotato.notPotatoTeam);
                     break;
                 case RoleId.NotPotato11:
-                    HotPotato.notPotato11 = player;
-                    HotPotato.notPotatoTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref HotPotato.notPotato11, player, HotPotato.notPotatoTeam);
                     break;
                 case RoleId.NotPotato12:
-                    HotPotato.notPotato12 = player;
-                    HotPotato.notPotatoTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref HotPotato.notPotato12, player, HotPotato.notPotatoTeam);
                     break;
                 case RoleId.NotPotato13:
-                    HotPotato.notPotato13 = player;
-                    HotPotato.notPotatoTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref HotPotato.notPotato13, player, HotPotato.notPotatoTeam);
                     break;
                 case RoleId.NotPotato14:
-                    HotPotato.notPotato14 = player;
-                    HotPotato.notPotatoTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref HotPotato.notPotato14, player, HotPotato.notPotatoTeam);
                     break;
                 case RoleId.ExplodedPotato01:
                     HotPotato.explodedPotato01 = player;
@@ -949,302 +885,229 @@ namespace LasMonjas
 
                 // ZombieLaboratory
                 case RoleId.NursePlayer:
-                    ZombieLaboratory.nursePlayer = player;
-                    ZombieLaboratory.survivorTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref ZombieLaboratory.nursePlayer, player, ZombieLaboratory.survivorTeam);
                     break;
                 case RoleId.ZombiePlayer01:
-                    ZombieLaboratory.zombiePlayer01 = player;
-                    ZombieLaboratory.zombieTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref ZombieLaboratory.zombiePlayer01, player, ZombieLaboratory.zombieTeam);
                     break;
                 case RoleId.ZombiePlayer02:
-                    ZombieLaboratory.zombiePlayer02 = player;
-                    ZombieLaboratory.zombieTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref ZombieLaboratory.zombiePlayer02, player, ZombieLaboratory.zombieTeam);
                     break;
                 case RoleId.ZombiePlayer03:
-                    ZombieLaboratory.zombiePlayer03 = player;
-                    ZombieLaboratory.zombieTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref ZombieLaboratory.zombiePlayer03, player, ZombieLaboratory.zombieTeam);
                     break;
                 case RoleId.ZombiePlayer04:
-                    ZombieLaboratory.zombiePlayer04 = player;
-                    ZombieLaboratory.zombieTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref ZombieLaboratory.zombiePlayer04, player, ZombieLaboratory.zombieTeam);
                     break;
                 case RoleId.ZombiePlayer05:
-                    ZombieLaboratory.zombiePlayer05 = player;
-                    ZombieLaboratory.zombieTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref ZombieLaboratory.zombiePlayer05, player, ZombieLaboratory.zombieTeam);
                     break;
                 case RoleId.ZombiePlayer06:
-                    ZombieLaboratory.zombiePlayer06 = player;
-                    ZombieLaboratory.zombieTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref ZombieLaboratory.zombiePlayer06, player, ZombieLaboratory.zombieTeam);
                     break;
                 case RoleId.ZombiePlayer07:
-                    ZombieLaboratory.zombiePlayer07 = player;
-                    ZombieLaboratory.zombieTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref ZombieLaboratory.zombiePlayer07, player, ZombieLaboratory.zombieTeam);
                     break;
                 case RoleId.ZombiePlayer08:
-                    ZombieLaboratory.zombiePlayer08 = player;
-                    ZombieLaboratory.zombieTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref ZombieLaboratory.zombiePlayer08, player, ZombieLaboratory.zombieTeam);
                     break;
                 case RoleId.ZombiePlayer09:
-                    ZombieLaboratory.zombiePlayer09 = player;
-                    ZombieLaboratory.zombieTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref ZombieLaboratory.zombiePlayer09, player, ZombieLaboratory.zombieTeam);
                     break;
                 case RoleId.ZombiePlayer10:
-                    ZombieLaboratory.zombiePlayer10 = player;
-                    ZombieLaboratory.zombieTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref ZombieLaboratory.zombiePlayer10, player, ZombieLaboratory.zombieTeam);
                     break;
                 case RoleId.ZombiePlayer11:
-                    ZombieLaboratory.zombiePlayer11 = player;
-                    ZombieLaboratory.zombieTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref ZombieLaboratory.zombiePlayer11, player, ZombieLaboratory.zombieTeam);
                     break;
                 case RoleId.ZombiePlayer12:
-                    ZombieLaboratory.zombiePlayer12 = player;
-                    ZombieLaboratory.zombieTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref ZombieLaboratory.zombiePlayer12, player, ZombieLaboratory.zombieTeam);
                     break;
                 case RoleId.ZombiePlayer13:
-                    ZombieLaboratory.zombiePlayer13 = player;
-                    ZombieLaboratory.zombieTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref ZombieLaboratory.zombiePlayer13, player, ZombieLaboratory.zombieTeam);
                     break;
                 case RoleId.ZombiePlayer14:
-                    ZombieLaboratory.zombiePlayer14 = player;
-                    ZombieLaboratory.zombieTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref ZombieLaboratory.zombiePlayer14, player, ZombieLaboratory.zombieTeam);
                     break;
                 case RoleId.SurvivorPlayer01:
-                    ZombieLaboratory.survivorPlayer01 = player;
-                    ZombieLaboratory.survivorTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref ZombieLaboratory.survivorPlayer01, player, ZombieLaboratory.survivorTeam);
                     break;
                 case RoleId.SurvivorPlayer02:
-                    ZombieLaboratory.survivorPlayer02 = player;
-                    ZombieLaboratory.survivorTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref ZombieLaboratory.survivorPlayer02, player, ZombieLaboratory.survivorTeam);
                     break;
                 case RoleId.SurvivorPlayer03:
-                    ZombieLaboratory.survivorPlayer03 = player;
-                    ZombieLaboratory.survivorTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref ZombieLaboratory.survivorPlayer03, player, ZombieLaboratory.survivorTeam);
                     break;
                 case RoleId.SurvivorPlayer04:
-                    ZombieLaboratory.survivorPlayer04 = player;
-                    ZombieLaboratory.survivorTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref ZombieLaboratory.survivorPlayer04, player, ZombieLaboratory.survivorTeam);
                     break;
                 case RoleId.SurvivorPlayer05:
-                    ZombieLaboratory.survivorPlayer05 = player;
-                    ZombieLaboratory.survivorTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref ZombieLaboratory.survivorPlayer05, player, ZombieLaboratory.survivorTeam);
                     break;
                 case RoleId.SurvivorPlayer06:
-                    ZombieLaboratory.survivorPlayer06 = player;
-                    ZombieLaboratory.survivorTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref ZombieLaboratory.survivorPlayer06, player, ZombieLaboratory.survivorTeam);
                     break;
                 case RoleId.SurvivorPlayer07:
-                    ZombieLaboratory.survivorPlayer07 = player;
-                    ZombieLaboratory.survivorTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref ZombieLaboratory.survivorPlayer07, player, ZombieLaboratory.survivorTeam);
                     break;
                 case RoleId.SurvivorPlayer08:
-                    ZombieLaboratory.survivorPlayer08 = player;
-                    ZombieLaboratory.survivorTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref ZombieLaboratory.survivorPlayer08, player, ZombieLaboratory.survivorTeam);
                     break;
                 case RoleId.SurvivorPlayer09:
-                    ZombieLaboratory.survivorPlayer09 = player;
-                    ZombieLaboratory.survivorTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref ZombieLaboratory.survivorPlayer09, player, ZombieLaboratory.survivorTeam);
                     break;
                 case RoleId.SurvivorPlayer10:
-                    ZombieLaboratory.survivorPlayer10 = player;
-                    ZombieLaboratory.survivorTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref ZombieLaboratory.survivorPlayer10, player, ZombieLaboratory.survivorTeam);
                     break;
                 case RoleId.SurvivorPlayer11:
-                    ZombieLaboratory.survivorPlayer11 = player;
-                    ZombieLaboratory.survivorTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref ZombieLaboratory.survivorPlayer11, player, ZombieLaboratory.survivorTeam);
                     break;
                 case RoleId.SurvivorPlayer12:
-                    ZombieLaboratory.survivorPlayer12 = player;
-                    ZombieLaboratory.survivorTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref ZombieLaboratory.survivorPlayer12, player, ZombieLaboratory.survivorTeam);
                     break;
                 case RoleId.SurvivorPlayer13:
-                    ZombieLaboratory.survivorPlayer13 = player;
-                    ZombieLaboratory.survivorTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref ZombieLaboratory.survivorPlayer13, player, ZombieLaboratory.survivorTeam);
                     break;
 
                 // Battle Royale
                 case RoleId.SoloPlayer01:
-                    BattleRoyale.soloPlayer01 = player;
-                    BattleRoyale.soloPlayerTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.soloPlayer01, player, BattleRoyale.soloPlayerTeam);
                     break;
                 case RoleId.SoloPlayer02:
-                    BattleRoyale.soloPlayer02 = player;
-                    BattleRoyale.soloPlayerTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.soloPlayer02, player, BattleRoyale.soloPlayerTeam);
                     break;
                 case RoleId.SoloPlayer03:
-                    BattleRoyale.soloPlayer03 = player;
-                    BattleRoyale.soloPlayerTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.soloPlayer03, player, BattleRoyale.soloPlayerTeam);
                     break;
                 case RoleId.SoloPlayer04:
-                    BattleRoyale.soloPlayer04 = player;
-                    BattleRoyale.soloPlayerTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.soloPlayer04, player, BattleRoyale.soloPlayerTeam);
                     break;
                 case RoleId.SoloPlayer05:
-                    BattleRoyale.soloPlayer05 = player;
-                    BattleRoyale.soloPlayerTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.soloPlayer05, player, BattleRoyale.soloPlayerTeam);
                     break;
                 case RoleId.SoloPlayer06:
-                    BattleRoyale.soloPlayer06 = player;
-                    BattleRoyale.soloPlayerTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.soloPlayer06, player, BattleRoyale.soloPlayerTeam);
                     break;
                 case RoleId.SoloPlayer07:
-                    BattleRoyale.soloPlayer07 = player;
-                    BattleRoyale.soloPlayerTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.soloPlayer07, player, BattleRoyale.soloPlayerTeam);
                     break;
                 case RoleId.SoloPlayer08:
-                    BattleRoyale.soloPlayer08 = player;
-                    BattleRoyale.soloPlayerTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.soloPlayer08, player, BattleRoyale.soloPlayerTeam);
                     break;
                 case RoleId.SoloPlayer09:
-                    BattleRoyale.soloPlayer09 = player;
-                    BattleRoyale.soloPlayerTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.soloPlayer09, player, BattleRoyale.soloPlayerTeam);
                     break;
                 case RoleId.SoloPlayer10:
-                    BattleRoyale.soloPlayer10 = player;
-                    BattleRoyale.soloPlayerTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.soloPlayer10, player, BattleRoyale.soloPlayerTeam);
                     break;
                 case RoleId.SoloPlayer11:
-                    BattleRoyale.soloPlayer11 = player;
-                    BattleRoyale.soloPlayerTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.soloPlayer11, player, BattleRoyale.soloPlayerTeam);
                     break;
                 case RoleId.SoloPlayer12:
-                    BattleRoyale.soloPlayer12 = player;
-                    BattleRoyale.soloPlayerTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.soloPlayer12, player, BattleRoyale.soloPlayerTeam);
                     break;
                 case RoleId.SoloPlayer13:
-                    BattleRoyale.soloPlayer13 = player;
-                    BattleRoyale.soloPlayerTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.soloPlayer13, player, BattleRoyale.soloPlayerTeam);
                     break;
                 case RoleId.SoloPlayer14:
-                    BattleRoyale.soloPlayer14 = player;
-                    BattleRoyale.soloPlayerTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.soloPlayer14, player, BattleRoyale.soloPlayerTeam);
                     break;
                 case RoleId.SoloPlayer15:
-                    BattleRoyale.soloPlayer15 = player;
-                    BattleRoyale.soloPlayerTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.soloPlayer15, player, BattleRoyale.soloPlayerTeam);
                     break;
                 case RoleId.LimePlayer01:
-                    BattleRoyale.limePlayer01 = player;
-                    BattleRoyale.limeTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.limePlayer01, player, BattleRoyale.limeTeam);
                     break;
                 case RoleId.LimePlayer02:
-                    BattleRoyale.limePlayer02 = player;
-                    BattleRoyale.limeTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.limePlayer02, player, BattleRoyale.limeTeam);
                     break;
                 case RoleId.LimePlayer03:
-                    BattleRoyale.limePlayer03 = player;
-                    BattleRoyale.limeTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.limePlayer03, player, BattleRoyale.limeTeam);
                     break;
                 case RoleId.LimePlayer04:
-                    BattleRoyale.limePlayer04 = player;
-                    BattleRoyale.limeTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.limePlayer04, player, BattleRoyale.limeTeam);
                     break;
                 case RoleId.LimePlayer05:
-                    BattleRoyale.limePlayer05 = player;
-                    BattleRoyale.limeTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.limePlayer05, player, BattleRoyale.limeTeam);
                     break;
                 case RoleId.LimePlayer06:
-                    BattleRoyale.limePlayer06 = player;
-                    BattleRoyale.limeTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.limePlayer06, player, BattleRoyale.limeTeam);
                     break;
                 case RoleId.LimePlayer07:
-                    BattleRoyale.limePlayer07 = player;
-                    BattleRoyale.limeTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.limePlayer07, player, BattleRoyale.limeTeam);
                     break;
                 case RoleId.PinkPlayer01:
-                    BattleRoyale.pinkPlayer01 = player;
-                    BattleRoyale.pinkTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.pinkPlayer01, player, BattleRoyale.pinkTeam);
                     break;
                 case RoleId.PinkPlayer02:
-                    BattleRoyale.pinkPlayer02 = player;
-                    BattleRoyale.pinkTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.pinkPlayer02, player, BattleRoyale.pinkTeam);
                     break;
                 case RoleId.PinkPlayer03:
-                    BattleRoyale.pinkPlayer03 = player;
-                    BattleRoyale.pinkTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.pinkPlayer03, player, BattleRoyale.pinkTeam);
                     break;
                 case RoleId.PinkPlayer04:
-                    BattleRoyale.pinkPlayer04 = player;
-                    BattleRoyale.pinkTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.pinkPlayer04, player, BattleRoyale.pinkTeam);
                     break;
                 case RoleId.PinkPlayer05:
-                    BattleRoyale.pinkPlayer05 = player;
-                    BattleRoyale.pinkTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.pinkPlayer05, player, BattleRoyale.pinkTeam);
                     break;
                 case RoleId.PinkPlayer06:
-                    BattleRoyale.pinkPlayer06 = player;
-                    BattleRoyale.pinkTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.pinkPlayer06, player, BattleRoyale.pinkTeam);
                     break;
                 case RoleId.PinkPlayer07:
-                    BattleRoyale.pinkPlayer07 = player;
-                    BattleRoyale.pinkTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.pinkPlayer07, player, BattleRoyale.pinkTeam);
                     break;
                 case RoleId.SerialKiller:
-                    BattleRoyale.serialKiller = player;
-                    BattleRoyale.serialKillerTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref BattleRoyale.serialKiller, player, BattleRoyale.serialKillerTeam);
                     break;
 
                 // Monja Festival
                 case RoleId.GreenMonjaPlayer01:
-                    MonjaFestival.greenPlayer01 = player;
-                    MonjaFestival.greenTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref MonjaFestival.greenPlayer01, player, MonjaFestival.greenTeam);
                     break;
                 case RoleId.GreenMonjaPlayer02:
-                    MonjaFestival.greenPlayer02 = player;
-                    MonjaFestival.greenTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref MonjaFestival.greenPlayer02, player, MonjaFestival.greenTeam);
                     break;
                 case RoleId.GreenMonjaPlayer03:
-                    MonjaFestival.greenPlayer03 = player;
-                    MonjaFestival.greenTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref MonjaFestival.greenPlayer03, player, MonjaFestival.greenTeam);
                     break;
                 case RoleId.GreenMonjaPlayer04:
-                    MonjaFestival.greenPlayer04 = player;
-                    MonjaFestival.greenTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref MonjaFestival.greenPlayer04, player, MonjaFestival.greenTeam);
                     break;
                 case RoleId.GreenMonjaPlayer05:
-                    MonjaFestival.greenPlayer05 = player;
-                    MonjaFestival.greenTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref MonjaFestival.greenPlayer05, player, MonjaFestival.greenTeam);
                     break;
                 case RoleId.GreenMonjaPlayer06:
-                    MonjaFestival.greenPlayer06 = player;
-                    MonjaFestival.greenTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref MonjaFestival.greenPlayer06, player, MonjaFestival.greenTeam);
                     break;
                 case RoleId.GreenMonjaPlayer07:
-                    MonjaFestival.greenPlayer07 = player;
-                    MonjaFestival.greenTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref MonjaFestival.greenPlayer07, player, MonjaFestival.greenTeam);
                     break;
                 case RoleId.CyanPlayer01:
-                    MonjaFestival.cyanPlayer01 = player;
-                    MonjaFestival.cyanTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref MonjaFestival.cyanPlayer01, player, MonjaFestival.cyanTeam);
                     break;
                 case RoleId.CyanPlayer02:
-                    MonjaFestival.cyanPlayer02 = player;
-                    MonjaFestival.cyanTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref MonjaFestival.cyanPlayer02, player, MonjaFestival.cyanTeam);
                     break;
                 case RoleId.CyanPlayer03:
-                    MonjaFestival.cyanPlayer03 = player;
-                    MonjaFestival.cyanTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref MonjaFestival.cyanPlayer03, player, MonjaFestival.cyanTeam);
                     break;
                 case RoleId.CyanPlayer04:
-                    MonjaFestival.cyanPlayer04 = player;
-                    MonjaFestival.cyanTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref MonjaFestival.cyanPlayer04, player, MonjaFestival.cyanTeam);
                     break;
                 case RoleId.CyanPlayer05:
-                    MonjaFestival.cyanPlayer05 = player;
-                    MonjaFestival.cyanTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref MonjaFestival.cyanPlayer05, player, MonjaFestival.cyanTeam);
                     break;
                 case RoleId.CyanPlayer06:
-                    MonjaFestival.cyanPlayer06 = player;
-                    MonjaFestival.cyanTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref MonjaFestival.cyanPlayer06, player, MonjaFestival.cyanTeam);
                     break;
                 case RoleId.CyanPlayer07:
-                    MonjaFestival.cyanPlayer07 = player;
-                    MonjaFestival.cyanTeam.Add(player);
+                    Helpers.AssingRoleToTeam(ref MonjaFestival.cyanPlayer07, player, MonjaFestival.cyanTeam);
                     break;
                 case RoleId.BigMonja:
                     MonjaFestival.bigMonjaPlayer = player;
-                    MonjaFestival.bigMonjaTeam.Add(player);
                     break;
-            }                
+            }
         }
 
         public static void setModifier(byte modifierId, byte playerId, byte flag) {
@@ -1300,20 +1163,20 @@ namespace LasMonjas
         }
 
         public static void uncheckedMurderPlayer(byte sourceId, byte targetId, byte showAnimation) {
-            if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) return; 
+            if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) return;
             PlayerControl source = Helpers.playerById(sourceId);
             Vector3 sourcePos = source.NetTransform.transform.position;
             PlayerControl target = Helpers.playerById(targetId);
             if (source != null && target != null) {
-                if (showAnimation == 0) 
+                if (showAnimation == 0)
                     KillAnimationCoPerformKillPatch.hideNextAnimation = true;
                 source.MurderPlayer(target, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
                 HudManager.Instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) => { // Delayed action
                     if (p == 1f) {
                         source.NetTransform.SnapTo(sourcePos);
                     }
-                })));                 
-            }           
+                })));
+            }
         }
 
         public static void uncheckedCmdReportDeadBody(byte sourceId, byte targetId) {
@@ -1378,7 +1241,7 @@ namespace LasMonjas
             Vector3 position = Vector3.zero;
             position.x = BitConverter.ToSingle(buff, 0 * sizeof(float));
             position.y = BitConverter.ToSingle(buff, 1 * sizeof(float));
-            if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+            if (Helpers.isSubmergedMap()) {
                 position.z = -0.5f;
             }
             new Nun(position);
@@ -1404,7 +1267,7 @@ namespace LasMonjas
                             if (!Janitor.dragginBody) {
                                 Janitor.dragginBody = true;
                                 Janitor.bodyId = playerId;
-                                if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+                                if (Helpers.isSubmergedMap()) {
                                     GameObject vent = GameObject.Find("LowerCentralVent");
                                     vent.GetComponent<BoxCollider2D>().enabled = false;
                                 }
@@ -1421,7 +1284,7 @@ namespace LasMonjas
                                     Constants.ShipAndObjectsMask,
                                     false
                                 )) {
-                                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+                                    if (Helpers.isSubmergedMap()) {
                                         array[i].transform.position = newPos;
                                         array[i].transform.position += new Vector3(0, 0, -0.5f);
                                         GameObject vent = GameObject.Find("LowerCentralVent");
@@ -1486,15 +1349,13 @@ namespace LasMonjas
 
 
         public static void manipulatorSetManipulated(byte targetId, byte reset) {
+            Manipulator.manipulatedVictimTimer = 21f;
             if (reset == 0) {
                 Manipulator.manipulatedVictim = null;
                 Manipulator.manipulatedVictimTarget = null;
-                Manipulator.manipulatedVictimTimer = 21f;
-                return;
             }
             else {
                 Manipulator.manipulatedVictim = Helpers.playerById(targetId);
-                Manipulator.manipulatedVictimTimer = 21f;
             }
         }
 
@@ -1509,25 +1370,17 @@ namespace LasMonjas
             Bomberman.currentBombNumber += 1;
             switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                 case 0:
-                    Bomberman.bombDuration = 60;
-                    break;
                 case 1:
-                    Bomberman.bombDuration = 60;
-                    break;
-                case 2:
-                    Bomberman.bombDuration = 90;
-                    break;
                 case 3:
                     Bomberman.bombDuration = 60;
                     break;
-                case 4:
-                    Bomberman.bombDuration = 180;
-                    break;
+                case 2:
                 case 5:
-                    Bomberman.bombDuration = 90;
-                    break;
                 case 6:
                     Bomberman.bombDuration = 90;
+                    break;
+                case 4:
+                    Bomberman.bombDuration = 180;
                     break;
             }
             foreach (PlayerControl player in PlayerInCache.AllPlayers) {
@@ -1549,14 +1402,14 @@ namespace LasMonjas
         public static void fixBomb() {
             if (Bomberman.bombObject != null) {
                 Bomberman.activeBomb = false;
-                Bomberman.bombObject.SetActive(false); 
+                Bomberman.bombObject.SetActive(false);
                 resetBomberBombButton();
                 //Music after fix bomb
                 if (!Monja.awakened) {
                     changeMusic(2);
                 }
                 Bomberman.bombObject = null;
-            }            
+            }
         }
         public static void bombermanWin() {
             SoundManager.Instance.PlaySound(CustomMain.customAssets.bombermanBombClip, false, 100f);
@@ -1619,7 +1472,7 @@ namespace LasMonjas
             PlayerControl petrified = Helpers.playerById(targetId);
             GameObject petrifyZone = GameObject.Instantiate(CustomMain.customAssets.medusaPetrifyProp, petrified.transform);
             petrifyZone.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-            petrifyZone.transform.localPosition = new Vector3(0, 0, -0.5f);           
+            petrifyZone.transform.localPosition = new Vector3(0, 0, -0.5f);
             petrifyZone.name = petrified.name + "petrifyZone";
             if (PlayerInCache.LocalPlayer.PlayerControl == petrified) {
                 SoundManager.Instance.PlaySound(CustomMain.customAssets.medusaPetrify, false, 100f);
@@ -1629,12 +1482,12 @@ namespace LasMonjas
             }
             petrified.moveable = false;
             petrified.NetTransform.Halt(); // Stop current movement                    
-            Medusa.petrifiedPlayers.Add(petrified);            
+            Medusa.petrifiedPlayers.Add(petrified);
         }
 
         public static void medusaUnpetrify(byte targetId) {
             PlayerControl depetrifiedPlayer = Medusa.petrifiedPlayers.FirstOrDefault(x => x.PlayerId == targetId);
-            
+
             if (PlayerInCache.LocalPlayer.PlayerControl == depetrifiedPlayer) {
                 SoundManager.Instance.PlaySound(CustomMain.customAssets.hackerHack, false, 100f);
             }
@@ -1657,8 +1510,8 @@ namespace LasMonjas
         }
 
         public static void activateSpiralTrap(byte targetId) {
-            PlayerControl player = Helpers.playerById(targetId);            
-            
+            PlayerControl player = Helpers.playerById(targetId);
+
             Hypnotist.hypnotizedPlayers.Add(player);
 
             if (player == PlayerInCache.LocalPlayer.PlayerControl) {
@@ -1705,9 +1558,9 @@ namespace LasMonjas
 
             var ventPrefab = UnityEngine.Object.FindObjectOfType<Vent>();
             var vent = UnityEngine.Object.Instantiate(ventPrefab, ventPrefab.transform.parent);
-            vent.Id = ventId; 
+            vent.Id = ventId;
             vent.gameObject.GetComponent<BoxCollider2D>().enabled = false;
-            if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+            if (Helpers.isSubmergedMap()) {
                 vent.gameObject.layer = 12;
                 vent.gameObject.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
                 vent.transform.position = new Vector3(position.x, position.y - 0.25f, -0.5f);
@@ -1723,7 +1576,7 @@ namespace LasMonjas
             if (anim) {
                 anim.Stop();
             }
-            vent.myRend = ventRenderer; 
+            vent.myRend = ventRenderer;
             if (PlayerInCache.LocalPlayer.PlayerControl == Plumber.plumber) {
                 ventRenderer.color = new Color(1, 1, 1, 0.5f);
             }
@@ -1754,7 +1607,7 @@ namespace LasMonjas
                     else {
                         vent.transform.GetChild(3).GetComponent<SpriteRenderer>().color = Color.white;
                     }
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+                    if (Helpers.isSubmergedMap()) {
                         vent.gameObject.GetComponent<CircleCollider2D>().enabled = true;
                     }
                     else {
@@ -1850,7 +1703,6 @@ namespace LasMonjas
             if (player == Spiritualist.spiritualist) Spiritualist.clearAndReload();
             if (player == Coward.coward) Coward.clearAndReload();
             if (player == Vigilant.vigilant) Vigilant.clearAndReload();
-            if (player == Vigilant.vigilantMira) Vigilant.clearAndReload();
             if (player == Hunter.hunter) Hunter.clearAndReload();
             if (player == Jinx.jinx) Jinx.clearAndReload();
             if (player == Bat.bat) Bat.clearAndReload();
@@ -1899,172 +1751,32 @@ namespace LasMonjas
         }
 
         public static void setRandomTarget(byte playerid, byte whichPlayer) {
-            
+
             switch (whichPlayer) {
                 // Bounty Hunter
                 case 0:
-                    if (BountyHunter.bountyhunter == null) return; 
-                    {
+                    if (BountyHunter.bountyhunter == null) return; {
                         PlayerControl player = Helpers.playerById(playerid);
-                        
-                        BountyHunter.hasToKill = player;                           
+
+                        BountyHunter.hasToKill = player;
 
                         if (BountyHunter.hasToKill.Data.IsDead) {
                             BountyHunter.bountyhunter.MurderPlayer(BountyHunter.bountyhunter, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
                         }
-
-                        if (BountyHunter.hasToKill == Joker.joker) {
-                            BountyHunter.rolName = "<color=#808080FF>"+ Language.roleInfoRoleNames[26] +"</color>";
-                        }
-                        else if (BountyHunter.hasToKill == RoleThief.rolethief) {
-                            BountyHunter.rolName = "<color=#808080FF>"+ Language.roleInfoRoleNames[27] +"</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Pyromaniac.pyromaniac) {
-                            BountyHunter.rolName = "<color=#808080FF>"+ Language.roleInfoRoleNames[28] +"</color>";
-                        }
-                        else if (BountyHunter.hasToKill == TreasureHunter.treasureHunter) {
-                            BountyHunter.rolName = "<color=#808080FF>" + Language.roleInfoRoleNames[29] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Devourer.devourer) {
-                            BountyHunter.rolName = "<color=#808080FF>" + Language.roleInfoRoleNames[30] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Poisoner.poisoner) {
-                            BountyHunter.rolName = "<color=#808080FF>" + Language.roleInfoRoleNames[31] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Puppeteer.puppeteer) {
-                            BountyHunter.rolName = "<color=#808080FF>" + Language.roleInfoRoleNames[32] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Exiler.exiler) {
-                            BountyHunter.rolName = "<color=#808080FF>" + Language.roleInfoRoleNames[33] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Seeker.seeker) {
-                            BountyHunter.rolName = "<color=#808080FF>" + Language.roleInfoRoleNames[35] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Captain.captain) {
-                            BountyHunter.rolName = "<color=#5E3E7DFF>" + Language.roleInfoRoleNames[36] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Mechanic.mechanic) {
-                            BountyHunter.rolName = "<color=#7F4C00FF>" + Language.roleInfoRoleNames[37] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Sheriff.sheriff) {
-                            BountyHunter.rolName = "<color=#FFFF00FF>" + Language.roleInfoRoleNames[38] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Detective.detective) {
-                            BountyHunter.rolName = "<color=#C85ABEFF>" + Language.roleInfoRoleNames[39] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Forensic.forensic) {
-                            BountyHunter.rolName = "<color=#4E61FFFF>" + Language.roleInfoRoleNames[40] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == TimeTraveler.timeTraveler) {
-                            BountyHunter.rolName = "<color=#00BDFFFF>" + Language.roleInfoRoleNames[41] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Squire.squire) {
-                            BountyHunter.rolName = "<color=#00FF00FF>" + Language.roleInfoRoleNames[42] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Cheater.cheater) {
-                            BountyHunter.rolName = "<color=#666699FF>" + Language.roleInfoRoleNames[43] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == FortuneTeller.fortuneTeller) {
-                            BountyHunter.rolName = "<color=#00C642FF>" + Language.roleInfoRoleNames[44] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Hacker.hacker) {
-                            BountyHunter.rolName = "<color=#72FFACFF>" + Language.roleInfoRoleNames[45] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Sleuth.sleuth) {
-                            BountyHunter.rolName = "<color=#009F57FF>" + Language.roleInfoRoleNames[46] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Fink.fink) {
-                            BountyHunter.rolName = "<color=#FF73F6FF>" + Language.roleInfoRoleNames[47] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Welder.welder) {
-                            BountyHunter.rolName = "<color=#6D5B2FFF>" + Language.roleInfoRoleNames[49] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Spiritualist.spiritualist) {
-                            BountyHunter.rolName = "<color=#FFC5E1FF>" + Language.roleInfoRoleNames[50] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Coward.coward) {
-                            BountyHunter.rolName = "<color=#00F7E1FF>" + Language.roleInfoRoleNames[51] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Vigilant.vigilant) {
-                            BountyHunter.rolName = "<color=#E3E15AFF>" + Language.roleInfoRoleNames[52] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Vigilant.vigilantMira) {
-                            BountyHunter.rolName = "<color=#E3E15AFF>" + Language.roleInfoRoleNames[52] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Hunter.hunter) {
-                            BountyHunter.rolName = "<color=#E1EB90FF>" + Language.roleInfoRoleNames[53] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Jinx.jinx) {
-                            BountyHunter.rolName = "<color=#928B55FF>" + Language.roleInfoRoleNames[54] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Bat.bat) {
-                            BountyHunter.rolName = "<color=#A600FFFF>" + Language.roleInfoRoleNames[55] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Necromancer.necromancer) {
-                            BountyHunter.rolName = "<color=#FF73F6FF>" + Language.roleInfoRoleNames[56] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Engineer.engineer) {
-                            BountyHunter.rolName = "<color=#7F4C00FF>" + Language.roleInfoRoleNames[57] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Locksmith.locksmith) {
-                            BountyHunter.rolName = "<color=#F2BEFFFF>" + Language.roleInfoRoleNames[58] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == TaskMaster.taskMaster) {
-                            BountyHunter.rolName = "<color=#999999FF>" + Language.roleInfoRoleNames[59] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Jailer.jailer) {
-                            BountyHunter.rolName = "<color=#CCFF99FF>" + Language.roleInfoRoleNames[60] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Mimic.mimic) {
-                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[0] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Painter.painter) {
-                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[1] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Demon.demon) {
-                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[2] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Janitor.janitor) {
-                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[3] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Illusionist.illusionist) {
-                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[4] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Manipulator.manipulator) {
-                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[5] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Bomberman.bomberman) {
-                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[6] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Chameleon.chameleon) {
-                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[7] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Gambler.gambler) {
-                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[8] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Sorcerer.sorcerer) {
-                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[9] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Medusa.medusa) {
-                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[10] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Archer.archer) {
-                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[12] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Hypnotist.hypnotist) {
-                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[11] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Plumber.plumber) {
-                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[13] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill == Librarian.librarian) {
-                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[14] + "</color>";
-                        }
-                        else if (BountyHunter.hasToKill.Data.Role.IsImpostor) {
-                            BountyHunter.rolName = "<color=#FF0000FF>" + Language.roleInfoRoleNames[61] + "</color>";
-                        }
                         else {
-                            BountyHunter.rolName = "<color=#8DFFFFFF>" + Language.roleInfoRoleNames[62] + "</color>";
+                            // skip modifiers and vanilla impostor/crewmate from the first search
+                            // then assign custom role if found, otherwise check if is vanilla impostor or crewmate
+                            RoleInfo roleInfo = RoleInfo.getRoleInfoForPlayer(BountyHunter.hasToKill).FirstOrDefault(r => r.TeamId != Team.Modifier && r.roleId != RoleId.Impostor && r.roleId != RoleId.Crewmate);
+
+                            if (roleInfo != null) {
+                                BountyHunter.rolName = Helpers.cs(roleInfo.color, roleInfo.name);
+                            }
+                            else if (BountyHunter.hasToKill.Data.Role.IsImpostor) {
+                                BountyHunter.rolName = Helpers.cs(Palette.ImpostorRed, Language.roleInfoRoleNames[61]);
+                            }
+                            else {
+                                BountyHunter.rolName = Helpers.cs(Palette.CrewmateBlue, Language.roleInfoRoleNames[62]);
+                            }
                         }
                     }
 
@@ -2073,10 +1785,9 @@ namespace LasMonjas
                     break;
                 // Exiler
                 case 1:
-                    if (Exiler.exiler == null) return; 
-                    {
+                    if (Exiler.exiler == null) return; {
                         PlayerControl player = Helpers.playerById(playerid);
-                        
+
                         Exiler.target = player;
 
                         if (Exiler.target.Data.IsDead) {
@@ -2088,11 +1799,10 @@ namespace LasMonjas
                     break;
                 // Yandere:
                 case 2:
-                    if (Yandere.yandere == null) return; 
-                    {
+                    if (Yandere.yandere == null) return; {
                         PlayerControl player = Helpers.playerById(playerid);
-                        
-                        Yandere.target = player;                            
+
+                        Yandere.target = player;
 
                         if (Yandere.target.Data.IsDead) {
                             Yandere.rampageMode = true;
@@ -2123,26 +1833,27 @@ namespace LasMonjas
             position.x = BitConverter.ToSingle(buff, 0 * sizeof(float));
             position.y = BitConverter.ToSingle(buff, 1 * sizeof(float));
             Trapper.currentMineNumber += 1;
+            Trapper.mineCountId += 1;
             new Mine(Trapper.durationOfMines, position);
         }
         public static void placeTrap(byte[] buff) {
             Vector3 position = Vector3.zero;
             position.x = BitConverter.ToSingle(buff, 0 * sizeof(float));
             position.y = BitConverter.ToSingle(buff, 1 * sizeof(float));
-            Trapper.currentTrapNumber += 1;
+            Trapper.currentTrapNumber += 1; 
+            Trapper.trapCountId += 1;
             new Trap(Trapper.durationOfTraps, position);
         }
 
-        public static void mineKill(byte targetId) {
+        public static void mineKill(byte targetId, int mineId) {
             PlayerControl player = Helpers.playerById(targetId);
+            Mine mined = Mine.mines.FirstOrDefault(mine => mine.mineId == mineId);
+            mined.touched = true;
+            mined.mine.SetActive(true);
 
             HudManager.Instance.StartCoroutine(Effects.Lerp(1, new Action<float>((p) => {
                 if (p == 1f) {
-                    foreach (Mine mine in Mine.mines) {
-                        if (Vector2.Distance(player.transform.position, mine.mine.transform.position) < 1f && player != Trapper.trapper) {
-                            mine.mine.transform.position = new Vector3(-1000, 500, 0);
-                        }
-                    }
+                    mined.mine.transform.position = new Vector3(-1000, 500, 0);
                 }
             })));
 
@@ -2163,14 +1874,16 @@ namespace LasMonjas
             })));
         }
 
-        public static void activateTrap(byte targetId) {
+        public static void activateTrap(byte targetId, int trapId) {
             PlayerControl player = Helpers.playerById(targetId);
+            Trap trapped = Trap.traps.FirstOrDefault(trap => trap.trapId == trapId);
+            trapped.touched = true;
+            trapped.trap.SetActive(true);
 
-            foreach (Trap trap in Trap.traps) {
-                if (Vector2.Distance(player.transform.position, trap.trap.transform.position) < 1f && player != Trapper.trapper) {
-                    player.transform.position = trap.trap.transform.position;
-                }
+            if (Vector2.Distance(player.transform.position, trapped.trap.transform.position) < 1f) {
+                player.transform.position = trapped.trap.transform.position;
             }
+
             if (player == PlayerInCache.LocalPlayer.PlayerControl) {
                 SoundManager.Instance.PlaySound(CustomMain.customAssets.trapperStepTrapClip, false, 100f);
             }
@@ -2179,11 +1892,7 @@ namespace LasMonjas
             HudManager.Instance.StartCoroutine(Effects.Lerp(5, new Action<float>((p) => {
                 if (p == 1f) {
                     player.moveable = true;
-                    foreach (Trap trap in Trap.traps) {
-                        if (Vector2.Distance(player.transform.position, trap.trap.transform.position) < 1f && player != Trapper.trapper) {
-                            trap.trap.transform.position = new Vector3(-1000, 500, 0);
-                        }
-                    }
+                    trapped.trap.transform.position = new Vector3(-1000, 500, 0);
                 }
             })));
         }
@@ -2212,12 +1921,12 @@ namespace LasMonjas
             Yinyanger.yinyedplayer.moveable = false;
             Yinyanger.yinyedplayer.NetTransform.Halt();
             Yinyanger.yangyedplayer.moveable = false;
-            Yinyanger.yangyedplayer.NetTransform.Halt(); 
+            Yinyanger.yangyedplayer.NetTransform.Halt();
 
             HudManager.Instance.StartCoroutine(Effects.Lerp(1, new Action<float>((p) => {
                 if (Yinyanger.yinyanger == PlayerInCache.LocalPlayer.PlayerControl || Yinyanger.yinyedplayer == PlayerInCache.LocalPlayer.PlayerControl || Yinyanger.yangyedplayer == PlayerInCache.LocalPlayer.PlayerControl) {
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.yinyangerYinyangColisionClip, false, 100f);
-                }               
+                }
                 if (p == 1f) {
 
                     uncheckedMurderPlayer(Yinyanger.yinyanger.PlayerId, Yinyanger.yinyedplayer.PlayerId, 0);
@@ -2300,6 +2009,9 @@ namespace LasMonjas
             // Force task close to all players
             if (Minigame.Instance)
                 Minigame.Instance.ForceClose();
+
+            // Reset rolesummary values
+            Helpers.ResetRoleSummaryUI();
 
             new CustomMessage(Language.introTexts[1], Challenger.duelDuration, new Vector2(0f, -1.3f), 5);
 
@@ -2425,7 +2137,7 @@ namespace LasMonjas
             if (Monja.monja != null) {
                 Monja.isDeliveringItem = true;
                 Monja.itemId = monjaItemId;
-                switch(monjaItemId) {
+                switch (monjaItemId) {
                     case 1:
                         Monja.item01.transform.parent = Monja.monja.transform;
                         Monja.item01.transform.localPosition = new Vector3(0f, 0.7f, -0.1f);
@@ -2484,7 +2196,7 @@ namespace LasMonjas
                 item.SetActive(true);
             }
             else {
-                HudManager.Instance.StartCoroutine(Effects.Lerp(5, new Action<float>((p) => {
+                HudManager.Instance.StartCoroutine(Effects.Lerp(10, new Action<float>((p) => {
                     if (p == 1f) {
                         item.SetActive(true);
                     }
@@ -2591,7 +2303,7 @@ namespace LasMonjas
             return;
         }
 
-        public static void monjaReset () {
+        public static void monjaReset() {
             HudManager.Instance.FullScreen.enabled = false;
             Monja.monjaSprite.SetActive(false);
             Monja.awakened = false;
@@ -2646,7 +2358,7 @@ namespace LasMonjas
                     Forensic.forensic = oldRoleThief;
                 }
                 else if (TimeTraveler.timeTraveler != null && TimeTraveler.timeTraveler == player) {
-                    TimeTraveler.resetTimeTraveler();                    
+                    TimeTraveler.resetTimeTraveler();
                     TimeTraveler.timeTraveler = oldRoleThief;
                 }
                 else if (Squire.squire != null && Squire.squire == player) {
@@ -2688,27 +2400,29 @@ namespace LasMonjas
                     Coward.coward = oldRoleThief;
                 }
                 else if (Vigilant.vigilant != null && Vigilant.vigilant == player) {
-                    if (Vigilant.minigame != null) {
-                        Vigilant.minigame.ForceClose();
-                        Vigilant.minigame = null;
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 1) {
+                        // Vigilant delete doorlog item when switch rol
+                        GameObject vigilantdoorlog = GameObject.Find("VigilantDoorLog");
+                        if (vigilantdoorlog != null) {
+                            UnityEngine.Object.Destroy(vigilantdoorlog);
+                        }
+                        Vigilant.vigilant = oldRoleThief;
+                        // Recreate the doorlog access from anywhere to the new Vigilant after rol switch
+                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 1 && Vigilant.vigilant == PlayerInCache.LocalPlayer.PlayerControl) {
+                            GameObject vigilantDoorLog = GameObject.Find("SurvLogConsole");
+                            Vigilant.doorLog = GameObject.Instantiate(vigilantDoorLog, Vigilant.vigilant.transform);
+                            Vigilant.doorLog.name = "VigilantDoorLog";
+                            Vigilant.doorLog.layer = 8; // Player layer to ignore collisions
+                            Vigilant.doorLog.GetComponent<SpriteRenderer>().enabled = false;
+                            Vigilant.doorLog.transform.localPosition = new Vector2(0, -0.5f);
+                        }
                     }
-                    Vigilant.vigilant = oldRoleThief;
-                }
-                else if (Vigilant.vigilantMira != null && Vigilant.vigilantMira == player) {
-                    // Vigilant delete doorlog item when switch rol
-                    GameObject vigilantdoorlog = GameObject.Find("VigilantDoorLog");
-                    if (vigilantdoorlog != null) {
-                        UnityEngine.Object.Destroy(vigilantdoorlog);
-                    }
-                    Vigilant.vigilantMira = oldRoleThief;
-                    // Recreate the doorlog access from anywhere to the new Vigilant after rol switch
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 1 && Vigilant.vigilantMira == PlayerInCache.LocalPlayer.PlayerControl) {
-                        GameObject vigilantDoorLog = GameObject.Find("SurvLogConsole");
-                        Vigilant.doorLog = GameObject.Instantiate(vigilantDoorLog, Vigilant.vigilantMira.transform);
-                        Vigilant.doorLog.name = "VigilantDoorLog";
-                        Vigilant.doorLog.layer = 8; // Player layer to ignore collisions
-                        Vigilant.doorLog.GetComponent<SpriteRenderer>().enabled = false;
-                        Vigilant.doorLog.transform.localPosition = new Vector2(0, -0.5f);
+                    else {
+                        if (Vigilant.minigame != null) {
+                            Vigilant.minigame.ForceClose();
+                            Vigilant.minigame = null;
+                        }
+                        Vigilant.vigilant = oldRoleThief;
                     }
                 }
                 else if (Hunter.hunter != null && Hunter.hunter == player) {
@@ -2746,9 +2460,10 @@ namespace LasMonjas
                 RoleThief.rolethief = player;
 
                 // Set cooldowns to max for both players
-                if (PlayerInCache.LocalPlayer.PlayerControl == RoleThief.rolethief || PlayerInCache.LocalPlayer.PlayerControl == oldRoleThief)
+                if (PlayerInCache.LocalPlayer.PlayerControl == RoleThief.rolethief || PlayerInCache.LocalPlayer.PlayerControl == oldRoleThief) {
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.roleThiefStealRole, false, 100f);
-                CustomButton.ResetAllCooldowns();
+                    CustomButton.ResetAllCooldowns();
+                }
             }
         }
 
@@ -2831,11 +2546,11 @@ namespace LasMonjas
             if (Necromancer.necromancer != null && eatenPlayer == Necromancer.necromancer && Necromancer.dragginBody) {
                 Necromancer.necromancerResetValuesAtDead();
             }
-            
+
             // Force exit from vents to eaten player, close map and task
             if (eatenPlayer == PlayerInCache.LocalPlayer.PlayerControl) {
                 SoundManager.Instance.PlaySound(CustomMain.customAssets.devourerDevourClip, false, 100f);
-                
+
                 if (eatenPlayer.inVent) {
                     foreach (Vent vent in ShipStatus.Instance.AllVents) {
                         bool canUse;
@@ -2847,7 +2562,7 @@ namespace LasMonjas
                         }
                     }
                 }
-                
+
                 // Force map close
                 if (MapBehaviour.Instance) {
                     MapBehaviour.Instance.Close();
@@ -2862,7 +2577,7 @@ namespace LasMonjas
             eatenPlayer.transform.position = new Vector3(-37.75f, 0.75f, eatenPlayer.transform.position.z);
             Devourer.eatenPlayers.Add(eatenPlayer);
             Devourer.devourEatCounterButtonText.text = $"{Devourer.eatenPlayers.Count}";
-            if (Devourer.eatenPlayers.Count == alivePlayers -1) {
+            if (Devourer.eatenPlayers.Count == alivePlayers - 1) {
                 Devourer.triggerdevourerWin = true;
             }
         }
@@ -2889,7 +2604,7 @@ namespace LasMonjas
         }
 
         public static void puppeteerResetTransform() {
-            if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+            if (Helpers.isSubmergedMap()) {
                 if (Puppeteer.puppeteer.transform.position.y > 0) {
                     Puppeteer.puppeteer.transform.position = new Vector3(5.5f, 31.5f, -5);
                 }
@@ -2903,7 +2618,7 @@ namespace LasMonjas
             HudManagerStartPatch.puppeteerTransformButton.Timer = HudManagerStartPatch.puppeteerTransformButton.MaxTimer;
             HudManagerStartPatch.puppeteerSampleButton.Timer = HudManagerStartPatch.puppeteerSampleButton.MaxTimer;
             Puppeteer.morphed = false;
-            Puppeteer.puppeteer.setDefaultLook();            
+            Puppeteer.puppeteer.setDefaultLook();
             Puppeteer.transformTarget = null;
             Puppeteer.pickTarget = null;
             Puppeteer.currentTarget = null;
@@ -3045,19 +2760,14 @@ namespace LasMonjas
                 case RoleId.Renegade:
                     //Renegade.clearAndReload(); Don't reset Renegade to prevent bugs
                     Renegade.renegade = oldAmnesiac;
-                    Renegade.formerRenegades.Add(oldAmnesiac);
                     Amnesiac.clearAndReload();
                     Amnesiac.amnesiac = target;
-                    Renegade.formerRenegades.Remove(target);
                     break;
                 case RoleId.Minion:
-                    Renegade.formerRenegades.Add(target);
                     Minion.clearAndReload();
                     Minion.minion = oldAmnesiac;
-                    Renegade.formerRenegades.Add(oldAmnesiac);
                     Amnesiac.clearAndReload();
                     Amnesiac.amnesiac = target;
-                    Renegade.formerRenegades.Remove(target);
                     break;
                 case RoleId.BountyHunter:
                     // Can't remember BountyHunter role
@@ -3190,31 +2900,33 @@ namespace LasMonjas
                     Amnesiac.amnesiac = target;
                     break;
                 case RoleId.Vigilant:
-                    //Vigilant.clearAndReload(); Keep already placed cameras
-                    Vigilant.vigilant = oldAmnesiac;
-                    Amnesiac.clearAndReload();
-                    Amnesiac.amnesiac = target;
-                    break;
-                case RoleId.VigilantMira:
-                    // Vigilant delete doorlog item when switch rol
-                    if (Vigilant.vigilantMira != null && Vigilant.vigilantMira == PlayerInCache.LocalPlayer.PlayerControl) {
-                        GameObject vigilantdoorlog = GameObject.Find("VigilantDoorLog");
-                        if (vigilantdoorlog != null) {
-                            UnityEngine.Object.Destroy(vigilantdoorlog);
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 1) {
+                        // Vigilant delete doorlog item when switch rol
+                        if (Vigilant.vigilant != null && Vigilant.vigilant == PlayerInCache.LocalPlayer.PlayerControl) {
+                            GameObject vigilantdoorlog = GameObject.Find("VigilantDoorLog");
+                            if (vigilantdoorlog != null) {
+                                UnityEngine.Object.Destroy(vigilantdoorlog);
+                            }
+                        }
+                        //Vigilant.clearAndReload(); Keep already placed cameras
+                        Vigilant.vigilant = oldAmnesiac;
+                        Amnesiac.clearAndReload();
+                        Amnesiac.amnesiac = target;
+                        // Recreate the doorlog access from anywhere to the new Vigilant after rol switch
+                        if (Vigilant.vigilant == PlayerInCache.LocalPlayer.PlayerControl) {
+                            GameObject vigilantDoorLog = GameObject.Find("SurvLogConsole");
+                            Vigilant.doorLog = GameObject.Instantiate(vigilantDoorLog, Vigilant.vigilant.transform);
+                            Vigilant.doorLog.name = "VigilantDoorLog";
+                            Vigilant.doorLog.layer = 8; // Player layer to ignore collisions
+                            Vigilant.doorLog.GetComponent<SpriteRenderer>().enabled = false;
+                            Vigilant.doorLog.transform.localPosition = new Vector2(0, -0.5f);
                         }
                     }
-                    //Vigilant.clearAndReload(); Keep already placed cameras
-                    Vigilant.vigilantMira = oldAmnesiac;
-                    Amnesiac.clearAndReload();
-                    Amnesiac.amnesiac = target;
-                    // Recreate the doorlog access from anywhere to the new Vigilant after rol switch
-                    if (Vigilant.vigilantMira == PlayerInCache.LocalPlayer.PlayerControl) {
-                        GameObject vigilantDoorLog = GameObject.Find("SurvLogConsole");
-                        Vigilant.doorLog = GameObject.Instantiate(vigilantDoorLog, Vigilant.vigilantMira.transform);
-                        Vigilant.doorLog.name = "VigilantDoorLog";
-                        Vigilant.doorLog.layer = 8; // Player layer to ignore collisions
-                        Vigilant.doorLog.GetComponent<SpriteRenderer>().enabled = false;
-                        Vigilant.doorLog.transform.localPosition = new Vector2(0, -0.5f);
+                    else {
+                        //Vigilant.clearAndReload(); Keep already placed cameras
+                        Vigilant.vigilant = oldAmnesiac;
+                        Amnesiac.clearAndReload();
+                        Amnesiac.amnesiac = target;
                     }
                     break;
                 case RoleId.Hunter:
@@ -3287,7 +2999,7 @@ namespace LasMonjas
                     break;
             }
 
-            
+
             // Bomberman bomb reset when report the chosen one
             if (Bomberman.bomberman != null && Bomberman.activeBomb == true) {
                 fixBomb();
@@ -3296,9 +3008,9 @@ namespace LasMonjas
             Helpers.handleMedusaPetrifyOnBodyReport(); // Manually call Medusa handling, since the CmdReportDeadBody Prefix won't be called
             Helpers.handleEatenPlayersOnBodyReport(); // Manually call Devourer devour, since the CmdReportDeadBody Prefix won't be called
             // Manually murder the Spiritualist's revived player
-            if (Spiritualist.revivedPlayer != null && !Spiritualist.revivedPlayer.Data.IsDead) {                
+            if (Spiritualist.revivedPlayer != null && !Spiritualist.revivedPlayer.Data.IsDead) {
                 murderSpiritualistRevivedPlayer();
-            }            
+            }
             changeMusic(1);
         }
 
@@ -3336,7 +3048,7 @@ namespace LasMonjas
                     Seeker.currentPlayers += 1;
                 }
             }
-            
+
             Seeker.seekerPlayerPointsCount.text = $"{Seeker.currentPlayers} / 3";
 
             if (Seeker.currentPlayers == 3) {
@@ -3348,19 +3060,11 @@ namespace LasMonjas
 
             if (Seeker.seeker == null) return;
 
-            switch (option) {
-                case 1:
-                    Seeker.ResetOnePlayer(1);
-                    break;
-                case 2:
-                    Seeker.ResetOnePlayer(2);
-                    break;
-                case 3:
-                    Seeker.ResetOnePlayer(3);
-                    break;
-                case 4:
-                    Seeker.ResetValues(false);
-                    break;
+            if (option == 4) {
+                Seeker.ResetValues(false);
+            }
+            else {
+                Seeker.ResetOnePlayer(option);
             }
         }
 
@@ -3398,7 +3102,7 @@ namespace LasMonjas
             // Check if the hiding players are petrified and unpetrify them
             if (Medusa.medusa != null && Medusa.petrifiedPlayers.Count != 0) {
                 if (Seeker.hidedPlayerOne != null) {
-                    Helpers.unpetrifyForMinigames(Seeker.hidedPlayerOne);                    
+                    Helpers.unpetrifyForMinigames(Seeker.hidedPlayerOne);
                 }
                 if (Seeker.hidedPlayerTwo != null) {
                     Helpers.unpetrifyForMinigames(Seeker.hidedPlayerTwo);
@@ -3407,7 +3111,7 @@ namespace LasMonjas
                     Helpers.unpetrifyForMinigames(Seeker.hidedPlayerThree);
                 }
             }
-            
+
             // Force map close to all players
             if (MapBehaviour.Instance) {
                 MapBehaviour.Instance.Close();
@@ -3416,7 +3120,11 @@ namespace LasMonjas
             if (Minigame.Instance)
                 Minigame.Instance.ForceClose();
 
+            // Reset rolesummary values
+            Helpers.ResetRoleSummaryUI();
+
             new CustomMessage(Language.introTexts[1], Seeker.minigameDuration, new Vector2(0f, -1.3f), 7);
+            new CustomMessage(Language.statusRolesTexts[4] + $"{Seeker.currentPoints} / {Seeker.neededPoints}", Seeker.minigameDuration, new Vector2(0f, 1.6f), 8);
 
             // music stop and play duel music
             changeMusic(8);
@@ -3449,102 +3157,99 @@ namespace LasMonjas
         public static void seekerSelectAttack(byte whichAttack) {
             switch (whichAttack) {
                 case 1:
-                    Seeker.seekerSelectedHiding = 1;
-                    break;
                 case 2:
-                    Seeker.seekerSelectedHiding = 2;
-                    break;
                 case 3:
-                    Seeker.seekerSelectedHiding = 3;
+                    Seeker.seekerSelectedHiding = whichAttack;
                     break;
                 case 4:
                     Seeker.hidedPlayerOneSelectedHiding = 1;
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId != 6 || (GameOptionsManager.Instance.currentGameOptions.MapId == 6 && Seeker.hidedPlayerOne.transform.position.y > 0)) {
+                    if (!Helpers.isSubmergedMap() || (Helpers.isSubmergedMap() && Seeker.hidedPlayerOne.transform.position.y > 0)) {
                         Seeker.hidedPlayerOne.transform.position = new Vector3(Seeker.minigameArenaHideOnePointOne.transform.position.x, Seeker.minigameArenaHideOnePointOne.transform.position.y, Seeker.hidedPlayerOne.transform.position.z);
-                    } else if (GameOptionsManager.Instance.currentGameOptions.MapId == 6 && Seeker.hidedPlayerOne.transform.position.y < 0) {
+                    }
+                    else if (Helpers.isSubmergedMap() && Seeker.hidedPlayerOne.transform.position.y < 0) {
                         Seeker.hidedPlayerOne.transform.position = new Vector3(Seeker.lowerminigameArenaHideOnePointOne.transform.position.x, Seeker.lowerminigameArenaHideOnePointOne.transform.position.y, Seeker.hidedPlayerOne.transform.position.z);
                     }
                     seekerStopMovements(1);
                     break;
                 case 5:
                     Seeker.hidedPlayerOneSelectedHiding = 2;
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId != 6 || (GameOptionsManager.Instance.currentGameOptions.MapId == 6 && Seeker.hidedPlayerOne.transform.position.y > 0)) {
+                    if (!Helpers.isSubmergedMap() || (Helpers.isSubmergedMap() && Seeker.hidedPlayerOne.transform.position.y > 0)) {
                         Seeker.hidedPlayerOne.transform.position = new Vector3(Seeker.minigameArenaHideTwoPointOne.transform.position.x, Seeker.minigameArenaHideTwoPointOne.transform.position.y, Seeker.hidedPlayerOne.transform.position.z);
                     }
-                    else if (GameOptionsManager.Instance.currentGameOptions.MapId == 6 && Seeker.hidedPlayerOne.transform.position.y < 0) {
+                    else if (Helpers.isSubmergedMap() && Seeker.hidedPlayerOne.transform.position.y < 0) {
                         Seeker.hidedPlayerOne.transform.position = new Vector3(Seeker.lowerminigameArenaHideTwoPointOne.transform.position.x, Seeker.lowerminigameArenaHideTwoPointOne.transform.position.y, Seeker.hidedPlayerOne.transform.position.z);
                     }
                     seekerStopMovements(1);
                     break;
                 case 6:
                     Seeker.hidedPlayerOneSelectedHiding = 3;
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId != 6 || (GameOptionsManager.Instance.currentGameOptions.MapId == 6 && Seeker.hidedPlayerOne.transform.position.y > 0)) {
+                    if (!Helpers.isSubmergedMap() || (Helpers.isSubmergedMap() && Seeker.hidedPlayerOne.transform.position.y > 0)) {
                         Seeker.hidedPlayerOne.transform.position = new Vector3(Seeker.minigameArenaHideThreePointOne.transform.position.x, Seeker.minigameArenaHideThreePointOne.transform.position.y, Seeker.hidedPlayerOne.transform.position.z);
                     }
-                    else if (GameOptionsManager.Instance.currentGameOptions.MapId == 6 && Seeker.hidedPlayerOne.transform.position.y < 0) {
+                    else if (Helpers.isSubmergedMap() && Seeker.hidedPlayerOne.transform.position.y < 0) {
                         Seeker.hidedPlayerOne.transform.position = new Vector3(Seeker.lowerminigameArenaHideThreePointOne.transform.position.x, Seeker.lowerminigameArenaHideThreePointOne.transform.position.y, Seeker.hidedPlayerOne.transform.position.z);
                     }
                     seekerStopMovements(1);
                     break;
                 case 7:
                     Seeker.hidedPlayerTwoSelectedHiding = 1;
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId != 6 || (GameOptionsManager.Instance.currentGameOptions.MapId == 6 && Seeker.hidedPlayerTwo.transform.position.y > 0)) {
+                    if (!Helpers.isSubmergedMap() || (Helpers.isSubmergedMap() && Seeker.hidedPlayerTwo.transform.position.y > 0)) {
                         Seeker.hidedPlayerTwo.transform.position = new Vector3(Seeker.minigameArenaHideOnePointTwo.transform.position.x, Seeker.minigameArenaHideOnePointTwo.transform.position.y, Seeker.hidedPlayerTwo.transform.position.z);
                     }
-                    else if (GameOptionsManager.Instance.currentGameOptions.MapId == 6 && Seeker.hidedPlayerTwo.transform.position.y < 0) {
+                    else if (Helpers.isSubmergedMap() && Seeker.hidedPlayerTwo.transform.position.y < 0) {
                         Seeker.hidedPlayerTwo.transform.position = new Vector3(Seeker.lowerminigameArenaHideOnePointTwo.transform.position.x, Seeker.lowerminigameArenaHideOnePointTwo.transform.position.y, Seeker.hidedPlayerTwo.transform.position.z);
                     }
-                    seekerStopMovements(2); 
+                    seekerStopMovements(2);
                     break;
                 case 8:
                     Seeker.hidedPlayerTwoSelectedHiding = 2;
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId != 6 || (GameOptionsManager.Instance.currentGameOptions.MapId == 6 && Seeker.hidedPlayerTwo.transform.position.y > 0)) {
+                    if (!Helpers.isSubmergedMap() || (Helpers.isSubmergedMap() && Seeker.hidedPlayerTwo.transform.position.y > 0)) {
                         Seeker.hidedPlayerTwo.transform.position = new Vector3(Seeker.minigameArenaHideTwoPointTwo.transform.position.x, Seeker.minigameArenaHideTwoPointTwo.transform.position.y, Seeker.hidedPlayerTwo.transform.position.z);
                     }
-                    else if (GameOptionsManager.Instance.currentGameOptions.MapId == 6 && Seeker.hidedPlayerTwo.transform.position.y < 0) {
+                    else if (Helpers.isSubmergedMap() && Seeker.hidedPlayerTwo.transform.position.y < 0) {
                         Seeker.hidedPlayerTwo.transform.position = new Vector3(Seeker.lowerminigameArenaHideTwoPointTwo.transform.position.x, Seeker.lowerminigameArenaHideTwoPointTwo.transform.position.y, Seeker.hidedPlayerTwo.transform.position.z);
                     }
-                    seekerStopMovements(2); 
+                    seekerStopMovements(2);
                     break;
                 case 9:
                     Seeker.hidedPlayerTwoSelectedHiding = 3;
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId != 6 || (GameOptionsManager.Instance.currentGameOptions.MapId == 6 && Seeker.hidedPlayerTwo.transform.position.y > 0)) {
+                    if (!Helpers.isSubmergedMap() || (Helpers.isSubmergedMap() && Seeker.hidedPlayerTwo.transform.position.y > 0)) {
                         Seeker.hidedPlayerTwo.transform.position = new Vector3(Seeker.minigameArenaHideThreePointTwo.transform.position.x, Seeker.minigameArenaHideThreePointTwo.transform.position.y, Seeker.hidedPlayerTwo.transform.position.z);
                     }
-                    else if (GameOptionsManager.Instance.currentGameOptions.MapId == 6 && Seeker.hidedPlayerTwo.transform.position.y < 0) {
+                    else if (Helpers.isSubmergedMap() && Seeker.hidedPlayerTwo.transform.position.y < 0) {
                         Seeker.hidedPlayerTwo.transform.position = new Vector3(Seeker.lowerminigameArenaHideThreePointTwo.transform.position.x, Seeker.lowerminigameArenaHideThreePointTwo.transform.position.y, Seeker.hidedPlayerTwo.transform.position.z);
                     }
-                    seekerStopMovements(2); 
+                    seekerStopMovements(2);
                     break;
                 case 10:
                     Seeker.hidedPlayerThreeSelectedHiding = 1;
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId != 6 || (GameOptionsManager.Instance.currentGameOptions.MapId == 6 && Seeker.hidedPlayerThree.transform.position.y > 0)) {
+                    if (!Helpers.isSubmergedMap() || (Helpers.isSubmergedMap() && Seeker.hidedPlayerThree.transform.position.y > 0)) {
                         Seeker.hidedPlayerThree.transform.position = new Vector3(Seeker.minigameArenaHideOnePointThree.transform.position.x, Seeker.minigameArenaHideOnePointThree.transform.position.y, Seeker.hidedPlayerThree.transform.position.z);
                     }
-                    else if (GameOptionsManager.Instance.currentGameOptions.MapId == 6 && Seeker.hidedPlayerThree.transform.position.y < 0) {
+                    else if (Helpers.isSubmergedMap() && Seeker.hidedPlayerThree.transform.position.y < 0) {
                         Seeker.hidedPlayerThree.transform.position = new Vector3(Seeker.lowerminigameArenaHideOnePointThree.transform.position.x, Seeker.lowerminigameArenaHideOnePointThree.transform.position.y, Seeker.hidedPlayerThree.transform.position.z);
                     }
                     seekerStopMovements(3);
                     break;
                 case 11:
                     Seeker.hidedPlayerThreeSelectedHiding = 2;
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId != 6 || (GameOptionsManager.Instance.currentGameOptions.MapId == 6 && Seeker.hidedPlayerThree.transform.position.y > 0)) {
+                    if (!Helpers.isSubmergedMap() || (Helpers.isSubmergedMap() && Seeker.hidedPlayerThree.transform.position.y > 0)) {
                         Seeker.hidedPlayerThree.transform.position = new Vector3(Seeker.minigameArenaHideTwoPointThree.transform.position.x, Seeker.minigameArenaHideTwoPointThree.transform.position.y, Seeker.hidedPlayerThree.transform.position.z);
                     }
-                    else if (GameOptionsManager.Instance.currentGameOptions.MapId == 6 && Seeker.hidedPlayerThree.transform.position.y < 0) {
+                    else if (Helpers.isSubmergedMap() && Seeker.hidedPlayerThree.transform.position.y < 0) {
                         Seeker.hidedPlayerThree.transform.position = new Vector3(Seeker.lowerminigameArenaHideTwoPointThree.transform.position.x, Seeker.lowerminigameArenaHideTwoPointThree.transform.position.y, Seeker.hidedPlayerThree.transform.position.z);
                     }
-                    seekerStopMovements(3); 
+                    seekerStopMovements(3);
                     break;
                 case 12:
                     Seeker.hidedPlayerThreeSelectedHiding = 3;
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId != 6 || (GameOptionsManager.Instance.currentGameOptions.MapId == 6 && Seeker.hidedPlayerThree.transform.position.y > 0)) {
+                    if (!Helpers.isSubmergedMap() || (Helpers.isSubmergedMap() && Seeker.hidedPlayerThree.transform.position.y > 0)) {
                         Seeker.hidedPlayerThree.transform.position = new Vector3(Seeker.minigameArenaHideThreePointThree.transform.position.x, Seeker.minigameArenaHideThreePointThree.transform.position.y, Seeker.hidedPlayerThree.transform.position.z);
                     }
-                    else if (GameOptionsManager.Instance.currentGameOptions.MapId == 6 && Seeker.hidedPlayerThree.transform.position.y < 0) {
+                    else if (Helpers.isSubmergedMap() && Seeker.hidedPlayerThree.transform.position.y < 0) {
                         Seeker.hidedPlayerThree.transform.position = new Vector3(Seeker.lowerminigameArenaHideThreePointThree.transform.position.x, Seeker.lowerminigameArenaHideThreePointThree.transform.position.y, Seeker.hidedPlayerThree.transform.position.z);
                     }
-                    seekerStopMovements(3); 
+                    seekerStopMovements(3);
                     break;
             }
             Seeker.howmanyselectedattacks += 1;
@@ -3604,7 +3309,7 @@ namespace LasMonjas
                 Mechanic.rechargedTasks += Mechanic.rechargeTasksNumber;
                 if (Mechanic.numberOfRepairs > Mechanic.charges) Mechanic.charges++;
             }
-            Mechanic.mechanicRepairButtonText.text = $"{Mechanic.charges} / {Mechanic.numberOfRepairs}"; 
+            Mechanic.mechanicRepairButtonText.text = $"{Mechanic.charges} / {Mechanic.numberOfRepairs}";
         }
 
         public static void sheriffKill(byte targetId) {
@@ -3618,10 +3323,11 @@ namespace LasMonjas
             if (mark == 0) {
                 TimeTraveler.timeTraveler.transform.position = TimeTraveler.teleportPos;
                 TimeTraveler.markedLocation = false;
-            } else {
+            }
+            else {
                 TimeTraveler.teleportPos = TimeTraveler.timeTraveler.GetTruePosition();
                 TimeTraveler.markedLocation = true;
-            }            
+            }
         }
 
         public static void timeTravelerStopTime() {
@@ -3677,12 +3383,12 @@ namespace LasMonjas
         public static void squireSetShielded(byte shieldedId) {
             Squire.usedShield = true;
             PlayerControl player = Helpers.playerById(shieldedId);
-                    
+
             Squire.shielded = player;
         }
 
         public static void shieldedMurderAttempt() {
-            if (Squire.shielded != null && Squire.shielded == PlayerInCache.LocalPlayer.PlayerControl && Squire.showAttemptToShielded || Squire.showAttemptToShielded && (PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor || Sheriff.sheriff != null && Sheriff.sheriff == PlayerInCache.LocalPlayer.PlayerControl || Renegade.renegade != null && Renegade.renegade == PlayerInCache.LocalPlayer.PlayerControl || Minion.minion != null && Minion.minion == PlayerInCache.LocalPlayer.PlayerControl || BountyHunter.bountyhunter != null && BountyHunter.bountyhunter == PlayerInCache.LocalPlayer.PlayerControl || Trapper.trapper != null && Trapper.trapper == PlayerInCache.LocalPlayer.PlayerControl || Yinyanger.yinyanger != null && Yinyanger.yinyanger == PlayerInCache.LocalPlayer.PlayerControl || Challenger.challenger != null && Challenger.challenger == PlayerInCache.LocalPlayer.PlayerControl || Ninja.ninja != null && Ninja.ninja == PlayerInCache.LocalPlayer.PlayerControl || Berserker.berserker != null && Berserker.berserker == PlayerInCache.LocalPlayer.PlayerControl || Yandere.yandere != null && Yandere.yandere == PlayerInCache.LocalPlayer.PlayerControl || Stranded.stranded != null && Stranded.stranded == PlayerInCache.LocalPlayer.PlayerControl || Monja.monja != null && Monja.monja == PlayerInCache.LocalPlayer.PlayerControl)) {
+            if (Squire.showAttemptToShielded && Squire.shielded != null && (Squire.shielded == PlayerInCache.LocalPlayer.PlayerControl || PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor || Sheriff.sheriff != null && Sheriff.sheriff == PlayerInCache.LocalPlayer.PlayerControl || Helpers.isRebel(PlayerInCache.LocalPlayer.PlayerControl))) {
                 SoundManager.Instance.PlaySound(CustomMain.customAssets.squireShieldClip, false, 100f);
                 return;
             }
@@ -3740,7 +3446,7 @@ namespace LasMonjas
             fortuneTellerAbilityUses(0);
         }
 
-        public static void fortuneTellerAbilityUses (byte value) {
+        public static void fortuneTellerAbilityUses(byte value) {
             if (value == 0) {
                 FortuneTeller.charges--;
             }
@@ -3804,7 +3510,7 @@ namespace LasMonjas
                             PowerTools.SpriteAnim animator = vent.GetComponent<PowerTools.SpriteAnim>();
                             animator?.Stop();
                             vent.EnterVentAnim = vent.ExitVentAnim = null;
-                            vent.myRend.sprite = Welder.getAnimatedVentSealedSprite(); 
+                            vent.myRend.sprite = Welder.getAnimatedVentSealedSprite();
                             break;
                         case 2:
                             vent.myRend.sprite = Welder.getStaticVentSealedSprite();
@@ -3812,13 +3518,14 @@ namespace LasMonjas
                         case 5:
                             PowerTools.SpriteAnim fungleanimator = vent.transform.GetChild(3).GetComponent<PowerTools.SpriteAnim>();
                             fungleanimator?.Stop();
-                            vent.EnterVentAnim = vent.ExitVentAnim = null; 
+                            vent.EnterVentAnim = vent.ExitVentAnim = null;
                             vent.transform.GetChild(3).GetComponent<SpriteRenderer>().sprite = Welder.getFungleVentSealedSprite();
                             break;
                     }
                     vent.myRend.color = new Color(1, 1, 1, 0.5f);
                 }
-            } else {
+            }
+            else {
                 Welder.bombedVent = vent;
             }
         }
@@ -3853,7 +3560,7 @@ namespace LasMonjas
                     // Check roles that needs reset on revive
                     if (Modifiers.performer != null && player == Modifiers.performer)
                         performerIsReported(1);
-                    if (Vigilant.vigilantMira != null && player == Vigilant.vigilantMira)
+                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 1 && Vigilant.vigilant != null && player == Vigilant.vigilant)
                         vigilantMiraRestoreDoorlogItem();
                     if (Hunter.hunter != null && player == Hunter.hunter)
                         Hunter.resetHunted();
@@ -3919,7 +3626,7 @@ namespace LasMonjas
 
         public static void spiritualistPinkScreen(byte playerId) {
             foreach (PlayerControl player in PlayerInCache.AllPlayers) {
-                if (PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor || Renegade.renegade != null && Renegade.renegade == PlayerInCache.LocalPlayer.PlayerControl || Minion.minion != null && Minion.minion == PlayerInCache.LocalPlayer.PlayerControl || BountyHunter.bountyhunter != null && BountyHunter.bountyhunter == PlayerInCache.LocalPlayer.PlayerControl || Trapper.trapper != null && Trapper.trapper == PlayerInCache.LocalPlayer.PlayerControl || Yinyanger.yinyanger != null && Yinyanger.yinyanger == PlayerInCache.LocalPlayer.PlayerControl || Challenger.challenger != null && Challenger.challenger == PlayerInCache.LocalPlayer.PlayerControl || Ninja.ninja != null && Ninja.ninja == PlayerInCache.LocalPlayer.PlayerControl || Berserker.berserker != null && Berserker.berserker == PlayerInCache.LocalPlayer.PlayerControl || Yandere.yandere != null && Yandere.yandere == PlayerInCache.LocalPlayer.PlayerControl || Stranded.stranded != null && Stranded.stranded == PlayerInCache.LocalPlayer.PlayerControl || Monja.monja != null && Monja.monja == PlayerInCache.LocalPlayer.PlayerControl) {
+                if (PlayerInCache.LocalPlayer.PlayerControl.Data.Role.IsImpostor || Helpers.isRebel(player)) {
                     SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
                 }
                 if (player.PlayerId == playerId && playerId == PlayerInCache.LocalPlayer.PlayerControl.PlayerId) {
@@ -3955,7 +3662,7 @@ namespace LasMonjas
 
         public static void teleportSpiritualistNecromancerBodies(PlayerControl player, DeadBody body) {
             player.Revive();
-            if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+            if (Helpers.isSubmergedMap()) {
                 if (player.transform.position.y > 0) {
                     player.transform.position = new Vector3(5.5f, 31.5f, -5);
                 }
@@ -4011,7 +3718,7 @@ namespace LasMonjas
             Vigilant.remainingCameras -= 1;
             Vigilant.vigilantButtonCameraText.text = $"{Vigilant.remainingCameras} / {Vigilant.totalCameras}";
         }
-        
+
         public static void vigilantAbilityUses(byte value) {
             if (value == 0) {
                 Vigilant.charges--;
@@ -4025,7 +3732,7 @@ namespace LasMonjas
 
         public static void vigilantMiraRestoreDoorlogItem() {
             // Vigilant restore doorlog item when revive
-            if (Vigilant.vigilantMira != null && PlayerInCache.LocalPlayer.PlayerControl == Vigilant.vigilantMira) {
+            if (Vigilant.vigilant != null && PlayerInCache.LocalPlayer.PlayerControl == Vigilant.vigilant) {
                 Vigilant.doorLog.SetActive(true);
             }
         }
@@ -4033,7 +3740,7 @@ namespace LasMonjas
         public static void hunterUsedHunted(byte targetId) {
             Hunter.usedHunted = true;
             PlayerControl player = Helpers.playerById(targetId);
-            
+
             Hunter.hunted = player;
             Hunter.targetButtonText.text = $"{Hunter.hunted.name}";
         }
@@ -4379,7 +4086,7 @@ namespace LasMonjas
                     break;
                 case "timetravelerRole":
                     TimeTraveler.timeTraveler = player;
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+                    if (Helpers.isSubmergedMap()) {
                         GameObject westLeftElevator = GameObject.Find("WestLeftElevator");
                         GameObject westRightElevator = GameObject.Find("WestRightElevator");
                         GameObject eastLeftElevator = GameObject.Find("EastLeftElevator");
@@ -4421,9 +4128,9 @@ namespace LasMonjas
                     break;
                 case "vigilantRole":
                     if (GameOptionsManager.Instance.currentGameOptions.MapId == 1 && player == PlayerInCache.LocalPlayer.PlayerControl) {
-                        Vigilant.vigilantMira = player;
+                        Vigilant.vigilant = player;
                         GameObject vigilantDoorLog = GameObject.Find("SurvLogConsole");
-                        Vigilant.doorLog = GameObject.Instantiate(vigilantDoorLog, Vigilant.vigilantMira.transform);
+                        Vigilant.doorLog = GameObject.Instantiate(vigilantDoorLog, Vigilant.vigilant.transform);
                         Vigilant.doorLog.name = "VigilantDoorLog";
                         Vigilant.doorLog.layer = 8; // Assign player layer to ignore collisions
                         Vigilant.doorLog.GetComponent<SpriteRenderer>().enabled = false;
@@ -4527,7 +4234,7 @@ namespace LasMonjas
                     break;
                 case "chameleonRole":
                     Chameleon.chameleon = player;
-                    if (PlayerInCache.LocalPlayer.PlayerControl == player && GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+                    if (PlayerInCache.LocalPlayer.PlayerControl == player && Helpers.isSubmergedMap()) {
                         GameObject vent = GameObject.Find("LowerCentralVent");
                         vent.GetComponent<BoxCollider2D>().enabled = false;
                     }
@@ -4646,7 +4353,7 @@ namespace LasMonjas
                     GameObject devourerArena = GameObject.Instantiate(CustomMain.customAssets.challengerDuelArena, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                     devourerArena.name = "devourerArena";
                     devourerArena.transform.position = new Vector3(-40, 0f, 1f);
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) { // Create another devourer arena on submerged lower floor
+                    if (Helpers.isSubmergedMap()) { // Create another devourer arena on submerged lower floor
                         GameObject lowerdevourerArena = GameObject.Instantiate(CustomMain.customAssets.challengerDuelArena, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                         lowerdevourerArena.name = "lowerdevourerArena";
                         lowerdevourerArena.transform.position = new Vector3(-40, -48.119f, 1f);
@@ -4699,7 +4406,7 @@ namespace LasMonjas
                     Seeker.minigameArenaHideThreePointOne.transform.parent.transform.position = Seeker.minigameArenaHideThreePointOne.transform.parent.transform.position + new Vector3(0, 0, -2);
                     Seeker.minigameArenaHideThreePointTwo = seekerArena.transform.GetChild(2).transform.GetChild(1).gameObject;
                     Seeker.minigameArenaHideThreePointThree = seekerArena.transform.GetChild(2).transform.GetChild(2).gameObject;
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) { // Create another duel arena on submerged lower floor
+                    if (Helpers.isSubmergedMap()) { // Create another duel arena on submerged lower floor
                         GameObject lowerseekerArena = GameObject.Instantiate(CustomMain.customAssets.seekerArena, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                         lowerseekerArena.name = "lowerseekerArena";
                         lowerseekerArena.transform.position = new Vector3(-40, -48.119f, 1f);
@@ -4737,7 +4444,7 @@ namespace LasMonjas
                     GameObject duelArena = GameObject.Instantiate(CustomMain.customAssets.challengerDuelArena, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                     duelArena.name = "duelArena";
                     duelArena.transform.position = new Vector3(40, 0f, 1f);
-                    if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) { // Create another duel arena on submerged lower floor
+                    if (Helpers.isSubmergedMap()) { // Create another duel arena on submerged lower floor
                         GameObject lowerduelArena = GameObject.Instantiate(CustomMain.customAssets.challengerDuelArena, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                         lowerduelArena.name = "lowerduelArena";
                         lowerduelArena.transform.position = new Vector3(40, -48.119f, 1f);
@@ -4889,7 +4596,8 @@ namespace LasMonjas
                 foreach (GameObject item in whoAmIModeNeutralsItems) {
                     item.transform.position = new Vector3(100, 100, 0);
                 }
-            } else {
+            }
+            else {
                 foreach (GameObject item in whoAmIModeRebelsItems) {
                     item.transform.position = new Vector3(100, 100, 0);
                 }
@@ -4907,125 +4615,55 @@ namespace LasMonjas
                         if (CaptureTheFlag.redPlayerWhoHasBlueFlag != null && murdered.PlayerId == CaptureTheFlag.redPlayerWhoHasBlueFlag.PlayerId) {
                             Helpers.showGamemodesPopUp(1, Helpers.playerById(CaptureTheFlag.stealerPlayer.PlayerId));
                             if (CaptureTheFlag.redplayer01 != null && CaptureTheFlag.redplayer01 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
-                                CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer01);
-                                CaptureTheFlag.redplayer01 = CaptureTheFlag.stealerPlayer;
-                                CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                                CaptureTheFlag.stealerPlayer = murdered;
-                                CaptureTheFlag.redplayer01.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                                CaptureTheFlag.redplayer01.MurderPlayer(CaptureTheFlag.stealerPlayer, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
+                                Helpers.CaptureTheFlagSwapStealerRole(ref CaptureTheFlag.redplayer01, murdered, CaptureTheFlag.redteamFlag);
                             }
                             else if (CaptureTheFlag.redplayer02 != null && CaptureTheFlag.redplayer02 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
-                                CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer02);
-                                CaptureTheFlag.redplayer02 = CaptureTheFlag.stealerPlayer;
-                                CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                                CaptureTheFlag.stealerPlayer = murdered;
-                                CaptureTheFlag.redplayer02.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                                CaptureTheFlag.redplayer02.MurderPlayer(CaptureTheFlag.stealerPlayer, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
+                                Helpers.CaptureTheFlagSwapStealerRole(ref CaptureTheFlag.redplayer02, murdered, CaptureTheFlag.redteamFlag);
                             }
                             else if (CaptureTheFlag.redplayer03 != null && CaptureTheFlag.redplayer03 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
-                                CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer03);
-                                CaptureTheFlag.redplayer03 = CaptureTheFlag.stealerPlayer;
-                                CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                                CaptureTheFlag.stealerPlayer = murdered;
-                                CaptureTheFlag.redplayer03.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                                CaptureTheFlag.redplayer03.MurderPlayer(CaptureTheFlag.stealerPlayer, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
+                                Helpers.CaptureTheFlagSwapStealerRole(ref CaptureTheFlag.redplayer03, murdered, CaptureTheFlag.redteamFlag);
                             }
                             else if (CaptureTheFlag.redplayer04 != null && CaptureTheFlag.redplayer04 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
-                                CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer04);
-                                CaptureTheFlag.redplayer04 = CaptureTheFlag.stealerPlayer;
-                                CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                                CaptureTheFlag.stealerPlayer = murdered;
-                                CaptureTheFlag.redplayer04.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                                CaptureTheFlag.redplayer04.MurderPlayer(CaptureTheFlag.stealerPlayer, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
+                                Helpers.CaptureTheFlagSwapStealerRole(ref CaptureTheFlag.redplayer04, murdered, CaptureTheFlag.redteamFlag);
                             }
                             else if (CaptureTheFlag.redplayer05 != null && CaptureTheFlag.redplayer05 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
-                                CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer05);
-                                CaptureTheFlag.redplayer05 = CaptureTheFlag.stealerPlayer;
-                                CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                                CaptureTheFlag.stealerPlayer = murdered;
-                                CaptureTheFlag.redplayer05.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                                CaptureTheFlag.redplayer05.MurderPlayer(CaptureTheFlag.stealerPlayer, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
+                                Helpers.CaptureTheFlagSwapStealerRole(ref CaptureTheFlag.redplayer05, murdered, CaptureTheFlag.redteamFlag);
                             }
                             else if (CaptureTheFlag.redplayer06 != null && CaptureTheFlag.redplayer06 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
-                                CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer06);
-                                CaptureTheFlag.redplayer06 = CaptureTheFlag.stealerPlayer;
-                                CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                                CaptureTheFlag.stealerPlayer = murdered;
-                                CaptureTheFlag.redplayer06.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                                CaptureTheFlag.redplayer06.MurderPlayer(CaptureTheFlag.stealerPlayer, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
+                                Helpers.CaptureTheFlagSwapStealerRole(ref CaptureTheFlag.redplayer06, murdered, CaptureTheFlag.redteamFlag);
                             }
                             else if (CaptureTheFlag.redplayer07 != null && CaptureTheFlag.redplayer07 == CaptureTheFlag.redPlayerWhoHasBlueFlag) {
-                                CaptureTheFlag.redteamFlag.Remove(CaptureTheFlag.redplayer07);
-                                CaptureTheFlag.redplayer07 = CaptureTheFlag.stealerPlayer;
-                                CaptureTheFlag.redteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                                CaptureTheFlag.stealerPlayer = murdered;
-                                CaptureTheFlag.redplayer07.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                                CaptureTheFlag.redplayer07.MurderPlayer(CaptureTheFlag.stealerPlayer, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
+                                Helpers.CaptureTheFlagSwapStealerRole(ref CaptureTheFlag.redplayer07, murdered, CaptureTheFlag.redteamFlag);
                             }
                         }
                         else if (CaptureTheFlag.bluePlayerWhoHasRedFlag != null && murdered.PlayerId == CaptureTheFlag.bluePlayerWhoHasRedFlag.PlayerId) {
                             Helpers.showGamemodesPopUp(2, Helpers.playerById(CaptureTheFlag.stealerPlayer.PlayerId));
                             if (CaptureTheFlag.blueplayer01 != null && CaptureTheFlag.blueplayer01 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
-                                CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer01);
-                                CaptureTheFlag.blueplayer01 = CaptureTheFlag.stealerPlayer;
-                                CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                                CaptureTheFlag.stealerPlayer = murdered;
-                                CaptureTheFlag.blueplayer01.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                                CaptureTheFlag.blueplayer01.MurderPlayer(CaptureTheFlag.stealerPlayer, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
+                                Helpers.CaptureTheFlagSwapStealerRole(ref CaptureTheFlag.blueplayer01, murdered, CaptureTheFlag.blueteamFlag);
                             }
                             else if (CaptureTheFlag.blueplayer02 != null && CaptureTheFlag.blueplayer02 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
-                                CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer02);
-                                CaptureTheFlag.blueplayer02 = CaptureTheFlag.stealerPlayer;
-                                CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                                CaptureTheFlag.stealerPlayer = murdered;
-                                CaptureTheFlag.blueplayer02.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                                CaptureTheFlag.blueplayer02.MurderPlayer(CaptureTheFlag.stealerPlayer, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
+                                Helpers.CaptureTheFlagSwapStealerRole(ref CaptureTheFlag.blueplayer02, murdered, CaptureTheFlag.blueteamFlag);
                             }
                             else if (CaptureTheFlag.blueplayer03 != null && CaptureTheFlag.blueplayer03 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
-                                CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer03);
-                                CaptureTheFlag.blueplayer03 = CaptureTheFlag.stealerPlayer;
-                                CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                                CaptureTheFlag.stealerPlayer = murdered;
-                                CaptureTheFlag.blueplayer03.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                                CaptureTheFlag.blueplayer03.MurderPlayer(CaptureTheFlag.stealerPlayer, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
+                                Helpers.CaptureTheFlagSwapStealerRole(ref CaptureTheFlag.blueplayer03, murdered, CaptureTheFlag.blueteamFlag);
                             }
                             else if (CaptureTheFlag.blueplayer04 != null && CaptureTheFlag.blueplayer04 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
-                                CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer04);
-                                CaptureTheFlag.blueplayer04 = CaptureTheFlag.stealerPlayer;
-                                CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                                CaptureTheFlag.stealerPlayer = murdered;
-                                CaptureTheFlag.blueplayer04.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                                CaptureTheFlag.blueplayer04.MurderPlayer(CaptureTheFlag.stealerPlayer, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
+                                Helpers.CaptureTheFlagSwapStealerRole(ref CaptureTheFlag.blueplayer04, murdered, CaptureTheFlag.blueteamFlag);
                             }
                             else if (CaptureTheFlag.blueplayer05 != null && CaptureTheFlag.blueplayer05 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
-                                CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer05);
-                                CaptureTheFlag.blueplayer05 = CaptureTheFlag.stealerPlayer;
-                                CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                                CaptureTheFlag.stealerPlayer = murdered;
-                                CaptureTheFlag.blueplayer05.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                                CaptureTheFlag.blueplayer05.MurderPlayer(CaptureTheFlag.stealerPlayer, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
+                                Helpers.CaptureTheFlagSwapStealerRole(ref CaptureTheFlag.blueplayer05, murdered, CaptureTheFlag.blueteamFlag);
                             }
                             else if (CaptureTheFlag.blueplayer06 != null && CaptureTheFlag.blueplayer06 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
-                                CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer06);
-                                CaptureTheFlag.blueplayer06 = CaptureTheFlag.stealerPlayer;
-                                CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                                CaptureTheFlag.stealerPlayer = murdered;
-                                CaptureTheFlag.blueplayer06.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                                CaptureTheFlag.blueplayer06.MurderPlayer(CaptureTheFlag.stealerPlayer, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
+                                Helpers.CaptureTheFlagSwapStealerRole(ref CaptureTheFlag.blueplayer06, murdered, CaptureTheFlag.blueteamFlag);
                             }
                             else if (CaptureTheFlag.blueplayer07 != null && CaptureTheFlag.blueplayer07 == CaptureTheFlag.bluePlayerWhoHasRedFlag) {
-                                CaptureTheFlag.blueteamFlag.Remove(CaptureTheFlag.blueplayer07);
-                                CaptureTheFlag.blueplayer07 = CaptureTheFlag.stealerPlayer;
-                                CaptureTheFlag.blueteamFlag.Add(CaptureTheFlag.stealerPlayer);
-                                CaptureTheFlag.stealerPlayer = murdered;
-                                CaptureTheFlag.blueplayer07.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                                CaptureTheFlag.blueplayer07.MurderPlayer(CaptureTheFlag.stealerPlayer, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
+                                Helpers.CaptureTheFlagSwapStealerRole(ref CaptureTheFlag.blueplayer07, murdered, CaptureTheFlag.blueteamFlag);
                             }
                         }
                         else {
                             CaptureTheFlag.stealerPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
                             killer.MurderPlayer(murdered, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
-                            CaptureTheFlag.stealerPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                            Helpers.RestoreBodyTypeWithDelay(CaptureTheFlag.stealerPlayer);
                         }
                     }
                     else {
@@ -5040,11 +4678,14 @@ namespace LasMonjas
                 case 4:
                     if (KingOfTheHill.usurperPlayer != null && sourceId == KingOfTheHill.usurperPlayer.PlayerId) {
                         if (murdered.PlayerId == KingOfTheHill.greenKingplayer.PlayerId) {
-                            KingOfTheHill.greenTeam.Remove(KingOfTheHill.greenKingplayer);
+                            int index = KingOfTheHill.greenTeam.IndexOf(murdered);
+
+                            if (index != -1) {
+                                KingOfTheHill.greenTeam[index] = KingOfTheHill.usurperPlayer;
+                            }
                             KingOfTheHill.greenKingplayer = KingOfTheHill.usurperPlayer;
-                            KingOfTheHill.greenTeam.Add(KingOfTheHill.usurperPlayer);
                             KingOfTheHill.usurperPlayer = murdered;
-                            if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+                            if (Helpers.isSubmergedMap()) {
                                 KingOfTheHill.greenkingaura.transform.position = new Vector3(KingOfTheHill.greenKingplayer.transform.position.x, KingOfTheHill.greenKingplayer.transform.position.y, -0.5f);
                             }
                             else {
@@ -5066,11 +4707,14 @@ namespace LasMonjas
                             }
                         }
                         else if (murdered.PlayerId == KingOfTheHill.yellowKingplayer.PlayerId) {
-                            KingOfTheHill.yellowTeam.Remove(KingOfTheHill.yellowKingplayer);
+                            int index = KingOfTheHill.yellowTeam.IndexOf(murdered);
+
+                            if (index != -1) {
+                                KingOfTheHill.yellowTeam[index] = KingOfTheHill.usurperPlayer;
+                            }
                             KingOfTheHill.yellowKingplayer = KingOfTheHill.usurperPlayer;
-                            KingOfTheHill.yellowTeam.Add(KingOfTheHill.usurperPlayer);
                             KingOfTheHill.usurperPlayer = murdered;
-                            if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+                            if (Helpers.isSubmergedMap()) {
                                 KingOfTheHill.yellowkingaura.transform.position = new Vector3(KingOfTheHill.yellowKingplayer.transform.position.x, KingOfTheHill.yellowKingplayer.transform.position.y, -0.5f);
                             }
                             else {
@@ -5094,7 +4738,7 @@ namespace LasMonjas
                         else {
                             KingOfTheHill.usurperPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
                             killer.MurderPlayer(murdered, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
-                            KingOfTheHill.usurperPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                            Helpers.RestoreBodyTypeWithDelay(KingOfTheHill.usurperPlayer);
                         }
                     }
                     else {
@@ -5103,90 +4747,10 @@ namespace LasMonjas
                     break;
                 // ZL
                 case 6:
-                    if (ZombieLaboratory.zombiePlayer01 != null && killer == ZombieLaboratory.zombiePlayer01) {
-                        ZombieLaboratory.zombiePlayer01.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                    }
-                    if (ZombieLaboratory.zombiePlayer02 != null && killer == ZombieLaboratory.zombiePlayer02) {
-                        ZombieLaboratory.zombiePlayer02.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                    }
-                    if (ZombieLaboratory.zombiePlayer03 != null && killer == ZombieLaboratory.zombiePlayer03) {
-                        ZombieLaboratory.zombiePlayer03.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                    }
-                    if (ZombieLaboratory.zombiePlayer04 != null && killer == ZombieLaboratory.zombiePlayer04) {
-                        ZombieLaboratory.zombiePlayer04.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                    }
-                    if (ZombieLaboratory.zombiePlayer05 != null && killer == ZombieLaboratory.zombiePlayer05) {
-                        ZombieLaboratory.zombiePlayer05.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                    }
-                    if (ZombieLaboratory.zombiePlayer06 != null && killer == ZombieLaboratory.zombiePlayer06) {
-                        ZombieLaboratory.zombiePlayer06.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                    }
-                    if (ZombieLaboratory.zombiePlayer07 != null && killer == ZombieLaboratory.zombiePlayer07) {
-                        ZombieLaboratory.zombiePlayer07.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                    }
-                    if (ZombieLaboratory.zombiePlayer08 != null && killer == ZombieLaboratory.zombiePlayer08) {
-                        ZombieLaboratory.zombiePlayer08.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                    }
-                    if (ZombieLaboratory.zombiePlayer09 != null && killer == ZombieLaboratory.zombiePlayer09) {
-                        ZombieLaboratory.zombiePlayer09.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                    }
-                    if (ZombieLaboratory.zombiePlayer10 != null && killer == ZombieLaboratory.zombiePlayer10) {
-                        ZombieLaboratory.zombiePlayer10.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                    }
-                    if (ZombieLaboratory.zombiePlayer11 != null && killer == ZombieLaboratory.zombiePlayer11) {
-                        ZombieLaboratory.zombiePlayer11.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                    }
-                    if (ZombieLaboratory.zombiePlayer12 != null && killer == ZombieLaboratory.zombiePlayer12) {
-                        ZombieLaboratory.zombiePlayer12.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                    }
-                    if (ZombieLaboratory.zombiePlayer13 != null && killer == ZombieLaboratory.zombiePlayer13) {
-                        ZombieLaboratory.zombiePlayer13.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                    }
-                    if (ZombieLaboratory.zombiePlayer14 != null && killer == ZombieLaboratory.zombiePlayer14) {
-                        ZombieLaboratory.zombiePlayer14.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                    }
+                    killer.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
                     killer.MurderPlayer(murdered, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
-                    if (ZombieLaboratory.zombiePlayer01 != null && killer == ZombieLaboratory.zombiePlayer01) {
-                        ZombieLaboratory.zombiePlayer01.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                    }
-                    if (ZombieLaboratory.zombiePlayer02 != null && killer == ZombieLaboratory.zombiePlayer02) {
-                        ZombieLaboratory.zombiePlayer02.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                    }
-                    if (ZombieLaboratory.zombiePlayer03 != null && killer == ZombieLaboratory.zombiePlayer03) {
-                        ZombieLaboratory.zombiePlayer03.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                    }
-                    if (ZombieLaboratory.zombiePlayer04 != null && killer == ZombieLaboratory.zombiePlayer04) {
-                        ZombieLaboratory.zombiePlayer04.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                    }
-                    if (ZombieLaboratory.zombiePlayer05 != null && killer == ZombieLaboratory.zombiePlayer05) {
-                        ZombieLaboratory.zombiePlayer05.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                    }
-                    if (ZombieLaboratory.zombiePlayer06 != null && killer == ZombieLaboratory.zombiePlayer06) {
-                        ZombieLaboratory.zombiePlayer06.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                    }
-                    if (ZombieLaboratory.zombiePlayer07 != null && killer == ZombieLaboratory.zombiePlayer07) {
-                        ZombieLaboratory.zombiePlayer07.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                    }
-                    if (ZombieLaboratory.zombiePlayer08 != null && killer == ZombieLaboratory.zombiePlayer08) {
-                        ZombieLaboratory.zombiePlayer08.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                    }
-                    if (ZombieLaboratory.zombiePlayer09 != null && killer == ZombieLaboratory.zombiePlayer09) {
-                        ZombieLaboratory.zombiePlayer09.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                    }
-                    if (ZombieLaboratory.zombiePlayer10 != null && killer == ZombieLaboratory.zombiePlayer10) {
-                        ZombieLaboratory.zombiePlayer10.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                    }
-                    if (ZombieLaboratory.zombiePlayer11 != null && killer == ZombieLaboratory.zombiePlayer11) {
-                        ZombieLaboratory.zombiePlayer11.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                    }
-                    if (ZombieLaboratory.zombiePlayer12 != null && killer == ZombieLaboratory.zombiePlayer12) {
-                        ZombieLaboratory.zombiePlayer12.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                    }
-                    if (ZombieLaboratory.zombiePlayer13 != null && killer == ZombieLaboratory.zombiePlayer13) {
-                        ZombieLaboratory.zombiePlayer13.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                    }
-                    if (ZombieLaboratory.zombiePlayer14 != null && killer == ZombieLaboratory.zombiePlayer14) {
-                        ZombieLaboratory.zombiePlayer14.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                    if (ZombieLaboratory.zombieTeam.Contains(killer)) {
+                        Helpers.RestoreBodyTypeWithDelay(killer);
                     }
                     break;
                 // BR
@@ -5198,7 +4762,7 @@ namespace LasMonjas
 
                     if (BattleRoyale.matchType == 0) {
                         new BattleRoyaleFootprint(murdered, 0);
-                        
+
                         // Remove 1 life and check remaining lifes
                         if (BattleRoyale.soloPlayer01 != null && murdered == BattleRoyale.soloPlayer01) {
                             BattleRoyale.soloPlayer01Lifes -= 1;
@@ -5322,331 +4886,48 @@ namespace LasMonjas
                         }
                     }
                     else {
-                        if (BattleRoyale.serialKiller != null && killer == BattleRoyale.serialKiller) {
-                            BattleRoyale.serialKiller.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                        }
                         // Remove 1 life and check remaining lifes
                         if (BattleRoyale.limePlayer01 != null && murdered == BattleRoyale.limePlayer01) {
-                            BattleRoyale.limePlayer01Lifes -= 1;
-                            new BattleRoyaleFootprint(murdered, 1);
-                            if (BattleRoyale.limePlayer01Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                switch (BattleRoyale.matchType) {
-                                    case 1:
-                                        battleRoyaleCheckWin(1);
-                                        Helpers.showGamemodesPopUp(1, Helpers.playerById(targetId));
-                                        break;
-                                    case 2:
-                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                            battleRoyaleScoreCheck(3, 1);
-                                            Helpers.showGamemodesPopUp(3, Helpers.playerById(targetId));
-                                        }
-                                        else {
-                                            battleRoyaleScoreCheck(2, 1);
-                                            Helpers.showGamemodesPopUp(2, Helpers.playerById(targetId));
-                                        }
-                                        break;
-                                }
-                            }
+                            Helpers.BattleRoyaleHandleTeamLifes(ref BattleRoyale.limePlayer01Lifes, murdered, sourceId, targetId, 1, 2);
                         }
                         else if (BattleRoyale.limePlayer02 != null && murdered == BattleRoyale.limePlayer02) {
-                            BattleRoyale.limePlayer02Lifes -= 1;
-                            new BattleRoyaleFootprint(murdered, 1);
-                            if (BattleRoyale.limePlayer02Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                switch (BattleRoyale.matchType) {
-                                    case 1:
-                                        battleRoyaleCheckWin(1);
-                                        Helpers.showGamemodesPopUp(1, Helpers.playerById(targetId));
-                                        break;
-                                    case 2:
-                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                            battleRoyaleScoreCheck(3, 1);
-                                            Helpers.showGamemodesPopUp(3, Helpers.playerById(targetId));
-                                        }
-                                        else {
-                                            battleRoyaleScoreCheck(2, 1);
-                                            Helpers.showGamemodesPopUp(2, Helpers.playerById(targetId));
-                                        }
-                                        break;
-                                }
-                            }
+                            Helpers.BattleRoyaleHandleTeamLifes(ref BattleRoyale.limePlayer02Lifes, murdered, sourceId, targetId, 1, 2);
                         }
                         else if (BattleRoyale.limePlayer03 != null && murdered == BattleRoyale.limePlayer03) {
-                            BattleRoyale.limePlayer03Lifes -= 1;
-                            new BattleRoyaleFootprint(murdered, 1);
-                            if (BattleRoyale.limePlayer03Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                switch (BattleRoyale.matchType) {
-                                    case 1:
-                                        battleRoyaleCheckWin(1);
-                                        Helpers.showGamemodesPopUp(1, Helpers.playerById(targetId));
-                                        break;
-                                    case 2:
-                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                            battleRoyaleScoreCheck(3, 1);
-                                            Helpers.showGamemodesPopUp(3, Helpers.playerById(targetId));
-                                        }
-                                        else {
-                                            battleRoyaleScoreCheck(2, 1);
-                                            Helpers.showGamemodesPopUp(2, Helpers.playerById(targetId));
-                                        }
-                                        break;
-                                }
-                            }
+                            Helpers.BattleRoyaleHandleTeamLifes(ref BattleRoyale.limePlayer03Lifes, murdered, sourceId, targetId, 1, 2);
                         }
                         else if (BattleRoyale.limePlayer04 != null && murdered == BattleRoyale.limePlayer04) {
-                            BattleRoyale.limePlayer04Lifes -= 1;
-                            new BattleRoyaleFootprint(murdered, 1);
-                            if (BattleRoyale.limePlayer04Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                switch (BattleRoyale.matchType) {
-                                    case 1:
-                                        battleRoyaleCheckWin(1);
-                                        Helpers.showGamemodesPopUp(1, Helpers.playerById(targetId));
-                                        break;
-                                    case 2:
-                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                            battleRoyaleScoreCheck(3, 1);
-                                            Helpers.showGamemodesPopUp(3, Helpers.playerById(targetId));
-                                        }
-                                        else {
-                                            battleRoyaleScoreCheck(2, 1);
-                                            Helpers.showGamemodesPopUp(2, Helpers.playerById(targetId));
-                                        }
-                                        break;
-                                }
-                            }
+                            Helpers.BattleRoyaleHandleTeamLifes(ref BattleRoyale.limePlayer04Lifes, murdered, sourceId, targetId, 1, 2);
                         }
                         else if (BattleRoyale.limePlayer05 != null && murdered == BattleRoyale.limePlayer05) {
-                            BattleRoyale.limePlayer05Lifes -= 1;
-                            new BattleRoyaleFootprint(murdered, 1);
-                            if (BattleRoyale.limePlayer05Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                switch (BattleRoyale.matchType) {
-                                    case 1:
-                                        battleRoyaleCheckWin(1);
-                                        Helpers.showGamemodesPopUp(1, Helpers.playerById(targetId));
-                                        break;
-                                    case 2:
-                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                            battleRoyaleScoreCheck(3, 1);
-                                            Helpers.showGamemodesPopUp(3, Helpers.playerById(targetId));
-                                        }
-                                        else {
-                                            battleRoyaleScoreCheck(2, 1);
-                                            Helpers.showGamemodesPopUp(2, Helpers.playerById(targetId));
-                                        }
-                                        break;
-                                }
-                            }
+                            Helpers.BattleRoyaleHandleTeamLifes(ref BattleRoyale.limePlayer05Lifes, murdered, sourceId, targetId, 1, 2);
                         }
                         else if (BattleRoyale.limePlayer06 != null && murdered == BattleRoyale.limePlayer06) {
-                            BattleRoyale.limePlayer06Lifes -= 1;
-                            new BattleRoyaleFootprint(murdered, 1);
-                            if (BattleRoyale.limePlayer06Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                switch (BattleRoyale.matchType) {
-                                    case 1:
-                                        battleRoyaleCheckWin(1);
-                                        Helpers.showGamemodesPopUp(1, Helpers.playerById(targetId));
-                                        break;
-                                    case 2:
-                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                            battleRoyaleScoreCheck(3, 1);
-                                            Helpers.showGamemodesPopUp(3, Helpers.playerById(targetId));
-                                        }
-                                        else {
-                                            battleRoyaleScoreCheck(2, 1);
-                                            Helpers.showGamemodesPopUp(2, Helpers.playerById(targetId));
-                                        }
-                                        break;
-                                }
-                            }
+                            Helpers.BattleRoyaleHandleTeamLifes(ref BattleRoyale.limePlayer06Lifes, murdered, sourceId, targetId, 1, 2);
                         }
                         else if (BattleRoyale.limePlayer07 != null && murdered == BattleRoyale.limePlayer07) {
-                            BattleRoyale.limePlayer07Lifes -= 1;
-                            new BattleRoyaleFootprint(murdered, 1);
-                            if (BattleRoyale.limePlayer07Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                switch (BattleRoyale.matchType) {
-                                    case 1:
-                                        battleRoyaleCheckWin(1);
-                                        Helpers.showGamemodesPopUp(1, Helpers.playerById(targetId));
-                                        break;
-                                    case 2:
-                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                            battleRoyaleScoreCheck(3, 1);
-                                            Helpers.showGamemodesPopUp(3, Helpers.playerById(targetId));
-                                        }
-                                        else {
-                                            battleRoyaleScoreCheck(2, 1);
-                                            Helpers.showGamemodesPopUp(2, Helpers.playerById(targetId));
-                                        }
-                                        break;
-                                }
-                            }
+                            Helpers.BattleRoyaleHandleTeamLifes(ref BattleRoyale.limePlayer07Lifes, murdered, sourceId, targetId, 1, 2);
                         }
                         else if (BattleRoyale.pinkPlayer01 != null && murdered == BattleRoyale.pinkPlayer01) {
-                            BattleRoyale.pinkPlayer01Lifes -= 1;
-                            new BattleRoyaleFootprint(murdered, 2);
-                            if (BattleRoyale.pinkPlayer01Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                switch (BattleRoyale.matchType) {
-                                    case 1:
-                                        battleRoyaleCheckWin(2);
-                                        Helpers.showGamemodesPopUp(2, Helpers.playerById(targetId));
-                                        break;
-                                    case 2:
-                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                            battleRoyaleScoreCheck(3, 1);
-                                            Helpers.showGamemodesPopUp(3, Helpers.playerById(targetId));
-                                        }
-                                        else {
-                                            battleRoyaleScoreCheck(1, 1);
-                                            Helpers.showGamemodesPopUp(1, Helpers.playerById(targetId));
-                                        }
-                                        break;
-                                }
-                            }
+                            Helpers.BattleRoyaleHandleTeamLifes(ref BattleRoyale.pinkPlayer01Lifes, murdered, sourceId, targetId, 2, 1);
                         }
                         else if (BattleRoyale.pinkPlayer02 != null && murdered == BattleRoyale.pinkPlayer02) {
-                            BattleRoyale.pinkPlayer02Lifes -= 1;
-                            new BattleRoyaleFootprint(murdered, 2);
-                            if (BattleRoyale.pinkPlayer02Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                switch (BattleRoyale.matchType) {
-                                    case 1:
-                                        battleRoyaleCheckWin(2);
-                                        Helpers.showGamemodesPopUp(2, Helpers.playerById(targetId));
-                                        break;
-                                    case 2:
-                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                            battleRoyaleScoreCheck(3, 1);
-                                            Helpers.showGamemodesPopUp(3, Helpers.playerById(targetId));
-                                        }
-                                        else {
-                                            battleRoyaleScoreCheck(1, 1);
-                                            Helpers.showGamemodesPopUp(1, Helpers.playerById(targetId));
-                                        }
-                                        break;
-                                }
-                            }
+                            Helpers.BattleRoyaleHandleTeamLifes(ref BattleRoyale.pinkPlayer02Lifes, murdered, sourceId, targetId, 2, 1);
                         }
                         else if (BattleRoyale.pinkPlayer03 != null && murdered == BattleRoyale.pinkPlayer03) {
-                            BattleRoyale.pinkPlayer03Lifes -= 1;
-                            new BattleRoyaleFootprint(murdered, 2);
-                            if (BattleRoyale.pinkPlayer03Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                switch (BattleRoyale.matchType) {
-                                    case 1:
-                                        battleRoyaleCheckWin(2);
-                                        Helpers.showGamemodesPopUp(2, Helpers.playerById(targetId));
-                                        break;
-                                    case 2:
-                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                            battleRoyaleScoreCheck(3, 1);
-                                            Helpers.showGamemodesPopUp(3, Helpers.playerById(targetId));
-                                        }
-                                        else {
-                                            battleRoyaleScoreCheck(1, 1);
-                                            Helpers.showGamemodesPopUp(1, Helpers.playerById(targetId));
-                                        }
-                                        break;
-                                }
-                            }
+                            Helpers.BattleRoyaleHandleTeamLifes(ref BattleRoyale.pinkPlayer03Lifes, murdered, sourceId, targetId, 2, 1);
                         }
                         else if (BattleRoyale.pinkPlayer04 != null && murdered == BattleRoyale.pinkPlayer04) {
-                            BattleRoyale.pinkPlayer04Lifes -= 1;
-                            new BattleRoyaleFootprint(murdered, 2);
-                            if (BattleRoyale.pinkPlayer04Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                switch (BattleRoyale.matchType) {
-                                    case 1:
-                                        battleRoyaleCheckWin(2);
-                                        Helpers.showGamemodesPopUp(2, Helpers.playerById(targetId));
-                                        break;
-                                    case 2:
-                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                            battleRoyaleScoreCheck(3, 1);
-                                            Helpers.showGamemodesPopUp(3, Helpers.playerById(targetId));
-                                        }
-                                        else {
-                                            battleRoyaleScoreCheck(1, 1);
-                                            Helpers.showGamemodesPopUp(1, Helpers.playerById(targetId));
-                                        }
-                                        break;
-                                }
-                            }
+                            Helpers.BattleRoyaleHandleTeamLifes(ref BattleRoyale.pinkPlayer04Lifes, murdered, sourceId, targetId, 2, 1);
                         }
                         else if (BattleRoyale.pinkPlayer05 != null && murdered == BattleRoyale.pinkPlayer05) {
-                            BattleRoyale.pinkPlayer05Lifes -= 1;
-                            new BattleRoyaleFootprint(murdered, 2);
-                            if (BattleRoyale.pinkPlayer05Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                switch (BattleRoyale.matchType) {
-                                    case 1:
-                                        battleRoyaleCheckWin(2);
-                                        Helpers.showGamemodesPopUp(2, Helpers.playerById(targetId));
-                                        break;
-                                    case 2:
-                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                            battleRoyaleScoreCheck(3, 1);
-                                            Helpers.showGamemodesPopUp(3, Helpers.playerById(targetId));
-                                        }
-                                        else {
-                                            battleRoyaleScoreCheck(1, 1);
-                                            Helpers.showGamemodesPopUp(1, Helpers.playerById(targetId));
-                                        }
-                                        break;
-                                }
-                            }
+                            Helpers.BattleRoyaleHandleTeamLifes(ref BattleRoyale.pinkPlayer05Lifes, murdered, sourceId, targetId, 2, 1);
                         }
                         else if (BattleRoyale.pinkPlayer06 != null && murdered == BattleRoyale.pinkPlayer06) {
-                            BattleRoyale.pinkPlayer06Lifes -= 1;
-                            new BattleRoyaleFootprint(murdered, 2);
-                            if (BattleRoyale.pinkPlayer06Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                switch (BattleRoyale.matchType) {
-                                    case 1:
-                                        battleRoyaleCheckWin(2);
-                                        Helpers.showGamemodesPopUp(2, Helpers.playerById(targetId));
-                                        break;
-                                    case 2:
-                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                            battleRoyaleScoreCheck(3, 1);
-                                            Helpers.showGamemodesPopUp(3, Helpers.playerById(targetId));
-                                        }
-                                        else {
-                                            battleRoyaleScoreCheck(1, 1);
-                                            Helpers.showGamemodesPopUp(1, Helpers.playerById(targetId));
-                                        }
-                                        break;
-                                }
-                            }
+                            Helpers.BattleRoyaleHandleTeamLifes(ref BattleRoyale.pinkPlayer06Lifes, murdered, sourceId, targetId, 2, 1);
                         }
                         else if (BattleRoyale.pinkPlayer07 != null && murdered == BattleRoyale.pinkPlayer07) {
-                            BattleRoyale.pinkPlayer07Lifes -= 1;
-                            new BattleRoyaleFootprint(murdered, 2);
-                            if (BattleRoyale.pinkPlayer07Lifes <= 0) {
-                                uncheckedMurderPlayer(sourceId, targetId, 0);
-                                switch (BattleRoyale.matchType) {
-                                    case 1:
-                                        battleRoyaleCheckWin(2);
-                                        Helpers.showGamemodesPopUp(2, Helpers.playerById(targetId));
-                                        break;
-                                    case 2:
-                                        if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
-                                            battleRoyaleScoreCheck(3, 1);
-                                            Helpers.showGamemodesPopUp(3, Helpers.playerById(targetId));
-                                        }
-                                        else {
-                                            battleRoyaleScoreCheck(1, 1);
-                                            Helpers.showGamemodesPopUp(1, Helpers.playerById(targetId));
-                                        }
-                                        break;
-                                }
-                            }
+                            Helpers.BattleRoyaleHandleTeamLifes(ref BattleRoyale.pinkPlayer07Lifes, murdered, sourceId, targetId, 2, 1);
                         }
                         else if (BattleRoyale.serialKiller != null && murdered == BattleRoyale.serialKiller) {
                             BattleRoyale.serialKillerLifes -= 1;
@@ -5671,19 +4952,14 @@ namespace LasMonjas
                                 }
                             }
                         }
-                        if (BattleRoyale.serialKiller != null && killer == BattleRoyale.serialKiller) {
-                            BattleRoyale.serialKiller.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                        }
                     }
                     break;
                 // MJ
                 case 8:
-                    /*if (MonjaFestival.bigMonjaPlayer != null && killer == MonjaFestival.bigMonjaPlayer) {
-                        MonjaFestival.bigMonjaPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
-                    }*/
+                    //killer.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
                     killer.MurderPlayer(murdered, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
                     /*if (MonjaFestival.bigMonjaPlayer != null && killer == MonjaFestival.bigMonjaPlayer) {
-                        MonjaFestival.bigMonjaPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                        Helpers.RestoreBodyTypeWithDelay(killer);
                     }*/
                     break;
             }
@@ -5698,7 +4974,7 @@ namespace LasMonjas
                 CaptureTheFlag.redPlayerWhoHasBlueFlag = playerWhoGotTheFlag;
                 CaptureTheFlag.blueflag.transform.parent = playerWhoGotTheFlag.transform;
                 CaptureTheFlag.blueflag.transform.localPosition = new Vector3(0f, 0f, -0.1f);
-                Helpers.showGamemodesPopUp(3, Helpers.playerById(CaptureTheFlag.redPlayerWhoHasBlueFlag.PlayerId));                
+                Helpers.showGamemodesPopUp(3, Helpers.playerById(CaptureTheFlag.redPlayerWhoHasBlueFlag.PlayerId));
             }
 
             // Blue team steal red flag
@@ -5707,8 +4983,8 @@ namespace LasMonjas
                 CaptureTheFlag.bluePlayerWhoHasRedFlag = playerWhoGotTheFlag;
                 CaptureTheFlag.redflag.transform.parent = playerWhoGotTheFlag.transform;
                 CaptureTheFlag.redflag.transform.localPosition = new Vector3(0f, 0f, -0.1f);
-                Helpers.showGamemodesPopUp(4, Helpers.playerById(CaptureTheFlag.bluePlayerWhoHasRedFlag.PlayerId));                
-            }            
+                Helpers.showGamemodesPopUp(4, Helpers.playerById(CaptureTheFlag.bluePlayerWhoHasRedFlag.PlayerId));
+            }
         }
 
         public static void captureTheFlagWhichTeamScored(int whichteam) {
@@ -5835,50 +5111,8 @@ namespace LasMonjas
                 SoundManager.Instance.PlaySound(CustomMain.customAssets.jailerJail, false, 100f);
             }
             PoliceAndThief.thiefArrested.Add(capturedThief);
-            if (PoliceAndThief.thiefplayer01 != null && thiefId == PoliceAndThief.thiefplayer01.PlayerId) {
-                if (PoliceAndThief.thiefplayer01IsStealing) {
-                    policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer01JewelId);
-                }
-            }
-            else if (PoliceAndThief.thiefplayer02 != null && thiefId == PoliceAndThief.thiefplayer02.PlayerId) {
-                if (PoliceAndThief.thiefplayer02IsStealing) {
-                    policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer02JewelId);
-                }
-            }
-            else if (PoliceAndThief.thiefplayer03 != null && thiefId == PoliceAndThief.thiefplayer03.PlayerId) {
-                if (PoliceAndThief.thiefplayer03IsStealing) {
-                    policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer03JewelId);
-                }
-            }
-            else if (PoliceAndThief.thiefplayer04 != null && thiefId == PoliceAndThief.thiefplayer04.PlayerId) {
-                if (PoliceAndThief.thiefplayer04IsStealing) {
-                    policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer04JewelId);
-                }
-            }
-            else if (PoliceAndThief.thiefplayer05 != null && thiefId == PoliceAndThief.thiefplayer05.PlayerId) {
-                if (PoliceAndThief.thiefplayer05IsStealing) {
-                    policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer05JewelId);
-                }
-            }
-            else if (PoliceAndThief.thiefplayer06 != null && thiefId == PoliceAndThief.thiefplayer06.PlayerId) {
-                if (PoliceAndThief.thiefplayer06IsStealing) {
-                    policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer06JewelId);
-                }
-            }
-            else if (PoliceAndThief.thiefplayer07 != null && thiefId == PoliceAndThief.thiefplayer07.PlayerId) {
-                if (PoliceAndThief.thiefplayer07IsStealing) {
-                    policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer07JewelId);
-                }
-            }
-            else if (PoliceAndThief.thiefplayer08 != null && thiefId == PoliceAndThief.thiefplayer08.PlayerId) {
-                if (PoliceAndThief.thiefplayer08IsStealing) {
-                    policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer08JewelId);
-                }
-            }
-            else if (PoliceAndThief.thiefplayer09 != null && thiefId == PoliceAndThief.thiefplayer09.PlayerId) {
-                if (PoliceAndThief.thiefplayer09IsStealing) {
-                    policeandThiefRevertedJewelPosition(thiefId, PoliceAndThief.thiefplayer09JewelId);
-                }
+            if (PoliceAndThief.stealingPlayers.Contains(capturedThief)) {
+                policeandThiefRevertedJewelPosition(thiefId, Helpers.PoliceAndThiefsGetJewelId(capturedThief));
             }
             switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                 // Skeld
@@ -5985,42 +5219,12 @@ namespace LasMonjas
         public static void policeandThiefTakeJewel(byte thiefWhoTookATreasure, byte jewelId) {
             PlayerControl thiefTookJewel = Helpers.playerById(thiefWhoTookATreasure);
 
-            if (PoliceAndThief.thiefplayer01 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer01.PlayerId) {
-                PoliceAndThief.thiefplayer01IsStealing = true;
-                PoliceAndThief.thiefplayer01JewelId = jewelId;
-            }
-            else if (PoliceAndThief.thiefplayer02 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer02.PlayerId) {
-                PoliceAndThief.thiefplayer02IsStealing = true;
-                PoliceAndThief.thiefplayer02JewelId = jewelId;
-            }
-            else if (PoliceAndThief.thiefplayer03 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer03.PlayerId) {
-                PoliceAndThief.thiefplayer03IsStealing = true;
-                PoliceAndThief.thiefplayer03JewelId = jewelId;
-            }
-            else if (PoliceAndThief.thiefplayer04 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer04.PlayerId) {
-                PoliceAndThief.thiefplayer04IsStealing = true;
-                PoliceAndThief.thiefplayer04JewelId = jewelId;
-            }
-            else if (PoliceAndThief.thiefplayer05 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer05.PlayerId) {
-                PoliceAndThief.thiefplayer05IsStealing = true;
-                PoliceAndThief.thiefplayer05JewelId = jewelId;
-            }
-            else if (PoliceAndThief.thiefplayer06 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer06.PlayerId) {
-                PoliceAndThief.thiefplayer06IsStealing = true;
-                PoliceAndThief.thiefplayer06JewelId = jewelId;
-            }
-            else if (PoliceAndThief.thiefplayer07 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer07.PlayerId) {
-                PoliceAndThief.thiefplayer07IsStealing = true;
-                PoliceAndThief.thiefplayer07JewelId = jewelId;
-            }
-            else if (PoliceAndThief.thiefplayer08 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer08.PlayerId) {
-                PoliceAndThief.thiefplayer08IsStealing = true;
-                PoliceAndThief.thiefplayer08JewelId = jewelId;
-            }
-            else if (PoliceAndThief.thiefplayer09 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer09.PlayerId) {
-                PoliceAndThief.thiefplayer09IsStealing = true;
-                PoliceAndThief.thiefplayer09JewelId = jewelId;
-            }
+            if (thiefTookJewel == null) return;
+
+            PoliceAndThief.stealingPlayers.Add(thiefTookJewel);
+
+            Helpers.PoliceAndThiefsSetJewelId(thiefTookJewel, jewelId);
+
             switch (jewelId) {
                 case 1:
                     thiefCarryJewel(thiefTookJewel, PoliceAndThief.jewel01);
@@ -6094,43 +5298,12 @@ namespace LasMonjas
         public static void policeandThiefDeliverJewel(byte thiefWhoTookATreasure, byte jewelId) {
             PlayerControl thiefDeliverJewel = Helpers.playerById(thiefWhoTookATreasure);
 
-            // Thief player steal a jewel
-            if (PoliceAndThief.thiefplayer01 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer01.PlayerId) {
-                PoliceAndThief.thiefplayer01IsStealing = false;
-                PoliceAndThief.thiefplayer01JewelId = 0;
-            }
-            else if (PoliceAndThief.thiefplayer02 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer02.PlayerId) {
-                PoliceAndThief.thiefplayer02IsStealing = false;
-                PoliceAndThief.thiefplayer02JewelId = 0;
-            }
-            else if (PoliceAndThief.thiefplayer03 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer03.PlayerId) {
-                PoliceAndThief.thiefplayer03IsStealing = false;
-                PoliceAndThief.thiefplayer03JewelId = 0;
-            }
-            else if (PoliceAndThief.thiefplayer04 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer04.PlayerId) {
-                PoliceAndThief.thiefplayer04IsStealing = false;
-                PoliceAndThief.thiefplayer04JewelId = 0;
-            }
-            else if (PoliceAndThief.thiefplayer05 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer05.PlayerId) {
-                PoliceAndThief.thiefplayer05IsStealing = false;
-                PoliceAndThief.thiefplayer05JewelId = 0;
-            }
-            else if (PoliceAndThief.thiefplayer06 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer06.PlayerId) {
-                PoliceAndThief.thiefplayer06IsStealing = false;
-                PoliceAndThief.thiefplayer06JewelId = 0;
-            }
-            else if (PoliceAndThief.thiefplayer07 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer07.PlayerId) {
-                PoliceAndThief.thiefplayer07IsStealing = false;
-                PoliceAndThief.thiefplayer07JewelId = 0;
-            }
-            else if (PoliceAndThief.thiefplayer08 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer08.PlayerId) {
-                PoliceAndThief.thiefplayer08IsStealing = false;
-                PoliceAndThief.thiefplayer08JewelId = 0;
-            }
-            else if (PoliceAndThief.thiefplayer09 != null && thiefWhoTookATreasure == PoliceAndThief.thiefplayer09.PlayerId) {
-                PoliceAndThief.thiefplayer09IsStealing = false;
-                PoliceAndThief.thiefplayer09JewelId = 0;
-            }
+            if (thiefDeliverJewel == null) return;
+
+            PoliceAndThief.stealingPlayers.Remove(thiefDeliverJewel);
+
+            Helpers.PoliceAndThiefsSetJewelId(thiefDeliverJewel, 0);
+
             GameObject myJewel = null;
             bool isDiamond = true;
             switch (jewelId) {
@@ -6306,43 +5479,14 @@ namespace LasMonjas
         }
 
         public static void policeandThiefRevertedJewelPosition(byte thiefWhoLostJewel, byte jewelRevertedId) {
+            PlayerControl thiefLostJewel = Helpers.playerById(thiefWhoLostJewel);
 
-            if (PoliceAndThief.thiefplayer01 != null && thiefWhoLostJewel == PoliceAndThief.thiefplayer01.PlayerId) {
-                PoliceAndThief.thiefplayer01IsStealing = false;
-                PoliceAndThief.thiefplayer01JewelId = 0;
-            }
-            else if (PoliceAndThief.thiefplayer02 != null && thiefWhoLostJewel == PoliceAndThief.thiefplayer02.PlayerId) {
-                PoliceAndThief.thiefplayer02IsStealing = false;
-                PoliceAndThief.thiefplayer02JewelId = 0;
-            }
-            else if (PoliceAndThief.thiefplayer03 != null && thiefWhoLostJewel == PoliceAndThief.thiefplayer03.PlayerId) {
-                PoliceAndThief.thiefplayer03IsStealing = false;
-                PoliceAndThief.thiefplayer03JewelId = 0;
-            }
-            else if (PoliceAndThief.thiefplayer04 != null && thiefWhoLostJewel == PoliceAndThief.thiefplayer04.PlayerId) {
-                PoliceAndThief.thiefplayer04IsStealing = false;
-                PoliceAndThief.thiefplayer04JewelId = 0;
-            }
-            else if (PoliceAndThief.thiefplayer05 != null && thiefWhoLostJewel == PoliceAndThief.thiefplayer05.PlayerId) {
-                PoliceAndThief.thiefplayer05IsStealing = false;
-                PoliceAndThief.thiefplayer05JewelId = 0;
-            }
-            else if (PoliceAndThief.thiefplayer06 != null && thiefWhoLostJewel == PoliceAndThief.thiefplayer06.PlayerId) {
-                PoliceAndThief.thiefplayer06IsStealing = false;
-                PoliceAndThief.thiefplayer06JewelId = 0;
-            }
-            else if (PoliceAndThief.thiefplayer07 != null && thiefWhoLostJewel == PoliceAndThief.thiefplayer07.PlayerId) {
-                PoliceAndThief.thiefplayer07IsStealing = false;
-                PoliceAndThief.thiefplayer07JewelId = 0;
-            }
-            else if (PoliceAndThief.thiefplayer08 != null && thiefWhoLostJewel == PoliceAndThief.thiefplayer08.PlayerId) {
-                PoliceAndThief.thiefplayer08IsStealing = false;
-                PoliceAndThief.thiefplayer08JewelId = 0;
-            }
-            else if (PoliceAndThief.thiefplayer09 != null && thiefWhoLostJewel == PoliceAndThief.thiefplayer09.PlayerId) {
-                PoliceAndThief.thiefplayer09IsStealing = false;
-                PoliceAndThief.thiefplayer09JewelId = 0;
-            }
+            if (thiefLostJewel == null) return;
+
+            PoliceAndThief.stealingPlayers.Remove(thiefLostJewel);
+
+            Helpers.PoliceAndThiefsSetJewelId(thiefLostJewel, 0);
+
             switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                 // Skeld
                 case 0:
@@ -7067,8 +6211,8 @@ namespace LasMonjas
             }
 
             // if police can't see jewels, hide it after jailing a player
-            if (PlayerInCache.LocalPlayer.PlayerControl == PoliceAndThief.policeplayer01 || PlayerInCache.LocalPlayer.PlayerControl == PoliceAndThief.policeplayer02 || PlayerInCache.LocalPlayer.PlayerControl == PoliceAndThief.policeplayer03 || PlayerInCache.LocalPlayer.PlayerControl == PoliceAndThief.policeplayer04 || PlayerInCache.LocalPlayer.PlayerControl == PoliceAndThief.policeplayer05 || PlayerInCache.LocalPlayer.PlayerControl == PoliceAndThief.policeplayer06) {
-                if (!PoliceAndThief.policeCanSeeJewels) {
+            foreach (PlayerControl police in PoliceAndThief.policeTeam) { 
+                if (PlayerInCache.LocalPlayer.PlayerControl == police && !PoliceAndThief.policeCanSeeJewels) {
                     switch (jewelRevertedId) {
                         case 1:
                             PoliceAndThief.jewel01.SetActive(false);
@@ -7130,50 +6274,9 @@ namespace LasMonjas
                 }
             }
             new Tased(PoliceAndThief.policeTaseDuration, tased);
-            if (PoliceAndThief.thiefplayer01 != null && targetId == PoliceAndThief.thiefplayer01.PlayerId) {
-                if (PoliceAndThief.thiefplayer01IsStealing) {
-                    policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer01JewelId);
-                }
-            }
-            else if (PoliceAndThief.thiefplayer02 != null && targetId == PoliceAndThief.thiefplayer02.PlayerId) {
-                if (PoliceAndThief.thiefplayer02IsStealing) {
-                    policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer02JewelId);
-                }
-            }
-            else if (PoliceAndThief.thiefplayer03 != null && targetId == PoliceAndThief.thiefplayer03.PlayerId) {
-                if (PoliceAndThief.thiefplayer03IsStealing) {
-                    policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer03JewelId);
-                }
-            }
-            else if (PoliceAndThief.thiefplayer04 != null && targetId == PoliceAndThief.thiefplayer04.PlayerId) {
-                if (PoliceAndThief.thiefplayer04IsStealing) {
-                    policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer04JewelId);
-                }
-            }
-            else if (PoliceAndThief.thiefplayer05 != null && targetId == PoliceAndThief.thiefplayer05.PlayerId) {
-                if (PoliceAndThief.thiefplayer05IsStealing) {
-                    policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer05JewelId);
-                }
-            }
-            else if (PoliceAndThief.thiefplayer06 != null && targetId == PoliceAndThief.thiefplayer06.PlayerId) {
-                if (PoliceAndThief.thiefplayer06IsStealing) {
-                    policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer06JewelId);
-                }
-            }
-            else if (PoliceAndThief.thiefplayer07 != null && targetId == PoliceAndThief.thiefplayer07.PlayerId) {
-                if (PoliceAndThief.thiefplayer07IsStealing) {
-                    policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer07JewelId);
-                }
-            }
-            else if (PoliceAndThief.thiefplayer08 != null && targetId == PoliceAndThief.thiefplayer08.PlayerId) {
-                if (PoliceAndThief.thiefplayer08IsStealing) {
-                    policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer08JewelId);
-                }
-            }
-            else if (PoliceAndThief.thiefplayer09 != null && targetId == PoliceAndThief.thiefplayer09.PlayerId) {
-                if (PoliceAndThief.thiefplayer09IsStealing) {
-                    policeandThiefRevertedJewelPosition(targetId, PoliceAndThief.thiefplayer09JewelId);
-                }
+
+            if (PoliceAndThief.stealingPlayers.Contains(tased)) {
+                policeandThiefRevertedJewelPosition(targetId, Helpers.PoliceAndThiefsGetJewelId(tased));
             }
             return;
         }
@@ -7286,68 +6389,13 @@ namespace LasMonjas
 
                 HotPotato.notPotatoTeam.Add(oldHotPotato);
 
+                HotPotato.notPotatoTeam.Remove(player);
+                Helpers.HotPotatoReplaceNotPotato(player, oldHotPotato);
                 // Switch role
-                if (HotPotato.notPotato01 != null && HotPotato.notPotato01 == player) {
-                    HotPotato.notPotatoTeam.Remove(HotPotato.notPotato01);
-                    HotPotato.notPotato01 = oldHotPotato;
-                }
-                else if (HotPotato.notPotato02 != null && HotPotato.notPotato02 == player) {
-                    HotPotato.notPotatoTeam.Remove(HotPotato.notPotato02);
-                    HotPotato.notPotato02 = oldHotPotato;
-                }
-                else if (HotPotato.notPotato03 != null && HotPotato.notPotato03 == player) {
-                    HotPotato.notPotatoTeam.Remove(HotPotato.notPotato03);
-                    HotPotato.notPotato03 = oldHotPotato;
-                }
-                else if (HotPotato.notPotato04 != null && HotPotato.notPotato04 == player) {
-                    HotPotato.notPotatoTeam.Remove(HotPotato.notPotato04);
-                    HotPotato.notPotato04 = oldHotPotato;
-                }
-                else if (HotPotato.notPotato05 != null && HotPotato.notPotato05 == player) {
-                    HotPotato.notPotatoTeam.Remove(HotPotato.notPotato05);
-                    HotPotato.notPotato05 = oldHotPotato;
-                }
-                else if (HotPotato.notPotato06 != null && HotPotato.notPotato06 == player) {
-                    HotPotato.notPotatoTeam.Remove(HotPotato.notPotato06);
-                    HotPotato.notPotato06 = oldHotPotato;
-                }
-                else if (HotPotato.notPotato07 != null && HotPotato.notPotato07 == player) {
-                    HotPotato.notPotatoTeam.Remove(HotPotato.notPotato07);
-                    HotPotato.notPotato07 = oldHotPotato;
-                }
-                else if (HotPotato.notPotato08 != null && HotPotato.notPotato08 == player) {
-                    HotPotato.notPotatoTeam.Remove(HotPotato.notPotato08);
-                    HotPotato.notPotato08 = oldHotPotato;
-                }
-                else if (HotPotato.notPotato09 != null && HotPotato.notPotato09 == player) {
-                    HotPotato.notPotatoTeam.Remove(HotPotato.notPotato09);
-                    HotPotato.notPotato09 = oldHotPotato;
-                }
-                else if (HotPotato.notPotato10 != null && HotPotato.notPotato10 == player) {
-                    HotPotato.notPotatoTeam.Remove(HotPotato.notPotato10);
-                    HotPotato.notPotato10 = oldHotPotato;
-                }
-                else if (HotPotato.notPotato11 != null && HotPotato.notPotato11 == player) {
-                    HotPotato.notPotatoTeam.Remove(HotPotato.notPotato11);
-                    HotPotato.notPotato11 = oldHotPotato;
-                }
-                else if (HotPotato.notPotato12 != null && HotPotato.notPotato12 == player) {
-                    HotPotato.notPotatoTeam.Remove(HotPotato.notPotato12);
-                    HotPotato.notPotato12 = oldHotPotato;
-                }
-                else if (HotPotato.notPotato13 != null && HotPotato.notPotato13 == player) {
-                    HotPotato.notPotatoTeam.Remove(HotPotato.notPotato13);
-                    HotPotato.notPotato13 = oldHotPotato;
-                }
-                else if (HotPotato.notPotato14 != null && HotPotato.notPotato14 == player) {
-                    HotPotato.notPotatoTeam.Remove(HotPotato.notPotato14);
-                    HotPotato.notPotato14 = oldHotPotato;
-                }
-
                 HotPotato.hotPotatoPlayer = player;
                 HotPotato.hotPotatoPlayer.NetTransform.Halt();
                 HotPotato.hotPotatoPlayer.moveable = false;
-                HotPotato.hotPotatoPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                Helpers.RestoreBodyTypeWithDelay(HotPotato.hotPotatoPlayer);
                 HotPotato.hotPotato.transform.position = HotPotato.hotPotatoPlayer.transform.position + new Vector3(0, 0.5f, -0.25f);
                 HotPotato.hotPotato.transform.parent = HotPotato.hotPotatoPlayer.transform;
 
@@ -7387,59 +6435,8 @@ namespace LasMonjas
             PlayerControl survivorTookKey = Helpers.playerById(survivorWhoTookTheKey);
 
             // survivor player take key item
-
-            if (ZombieLaboratory.survivorPlayer01 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer01.PlayerId) {
-                ZombieLaboratory.survivorPlayer01HasKeyItem = true;
-                ZombieLaboratory.survivorPlayer01FoundBox = keyId;
-            }
-            else if (ZombieLaboratory.survivorPlayer02 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer02.PlayerId) {
-                ZombieLaboratory.survivorPlayer02HasKeyItem = true;
-                ZombieLaboratory.survivorPlayer02FoundBox = keyId;
-            }
-            else if (ZombieLaboratory.survivorPlayer03 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer03.PlayerId) {
-                ZombieLaboratory.survivorPlayer03HasKeyItem = true;
-                ZombieLaboratory.survivorPlayer03FoundBox = keyId;
-            }
-            else if (ZombieLaboratory.survivorPlayer04 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer04.PlayerId) {
-                ZombieLaboratory.survivorPlayer04HasKeyItem = true;
-                ZombieLaboratory.survivorPlayer04FoundBox = keyId;
-            }
-            else if (ZombieLaboratory.survivorPlayer05 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer05.PlayerId) {
-                ZombieLaboratory.survivorPlayer05HasKeyItem = true;
-                ZombieLaboratory.survivorPlayer05FoundBox = keyId;
-            }
-            else if (ZombieLaboratory.survivorPlayer06 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer06.PlayerId) {
-                ZombieLaboratory.survivorPlayer06HasKeyItem = true;
-                ZombieLaboratory.survivorPlayer06FoundBox = keyId;
-            }
-            else if (ZombieLaboratory.survivorPlayer07 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer07.PlayerId) {
-                ZombieLaboratory.survivorPlayer07HasKeyItem = true;
-                ZombieLaboratory.survivorPlayer07FoundBox = keyId;
-            }
-            else if (ZombieLaboratory.survivorPlayer08 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer08.PlayerId) {
-                ZombieLaboratory.survivorPlayer08HasKeyItem = true;
-                ZombieLaboratory.survivorPlayer08FoundBox = keyId;
-            }
-            else if (ZombieLaboratory.survivorPlayer09 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer09.PlayerId) {
-                ZombieLaboratory.survivorPlayer09HasKeyItem = true;
-                ZombieLaboratory.survivorPlayer09FoundBox = keyId;
-            }
-            else if (ZombieLaboratory.survivorPlayer10 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer10.PlayerId) {
-                ZombieLaboratory.survivorPlayer10HasKeyItem = true;
-                ZombieLaboratory.survivorPlayer10FoundBox = keyId;
-            }
-            else if (ZombieLaboratory.survivorPlayer11 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer11.PlayerId) {
-                ZombieLaboratory.survivorPlayer11HasKeyItem = true;
-                ZombieLaboratory.survivorPlayer11FoundBox = keyId;
-            }
-            else if (ZombieLaboratory.survivorPlayer12 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer12.PlayerId) {
-                ZombieLaboratory.survivorPlayer12HasKeyItem = true;
-                ZombieLaboratory.survivorPlayer12FoundBox = keyId;
-            }
-            else if (ZombieLaboratory.survivorPlayer13 != null && survivorWhoTookTheKey == ZombieLaboratory.survivorPlayer13.PlayerId) {
-                ZombieLaboratory.survivorPlayer13HasKeyItem = true;
-                ZombieLaboratory.survivorPlayer13FoundBox = keyId;
-            }
+            ZombieLaboratory.hasKeyItemPlayers.Add(survivorTookKey);
+            Helpers.ZombieLaboratorySetFoundBox(survivorTookKey, keyId);
             switch (keyId) {
                 case 1:
                     ZombieLaboratory.keyItem01BeingHeld = true;
@@ -7481,60 +6478,13 @@ namespace LasMonjas
         }
 
         public static void zombieDeliverKeyItem(byte survivorWhoHasKey, byte keyId) {
+            PlayerControl survivor = Helpers.playerById(survivorWhoHasKey);
 
+            if (survivor == null) return;
+
+            ZombieLaboratory.hasKeyItemPlayers.Remove(survivor);
+            Helpers.ZombieLaboratorySetFoundBox(survivor, 0);
             // survivor deliver keyitem            
-            if (ZombieLaboratory.survivorPlayer01 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer01.PlayerId) {
-                ZombieLaboratory.survivorPlayer01HasKeyItem = false;
-                ZombieLaboratory.survivorPlayer01FoundBox = 0;
-            }
-            else if (ZombieLaboratory.survivorPlayer02 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer02.PlayerId) {
-                ZombieLaboratory.survivorPlayer02HasKeyItem = false;
-                ZombieLaboratory.survivorPlayer02FoundBox = 0;
-            }
-            else if (ZombieLaboratory.survivorPlayer03 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer03.PlayerId) {
-                ZombieLaboratory.survivorPlayer03HasKeyItem = false;
-                ZombieLaboratory.survivorPlayer03FoundBox = 0;
-            }
-            else if (ZombieLaboratory.survivorPlayer04 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer04.PlayerId) {
-                ZombieLaboratory.survivorPlayer04HasKeyItem = false;
-                ZombieLaboratory.survivorPlayer04FoundBox = 0;
-            }
-            else if (ZombieLaboratory.survivorPlayer05 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer05.PlayerId) {
-                ZombieLaboratory.survivorPlayer05HasKeyItem = false;
-                ZombieLaboratory.survivorPlayer05FoundBox = 0;
-            }
-            else if (ZombieLaboratory.survivorPlayer06 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer06.PlayerId) {
-                ZombieLaboratory.survivorPlayer06HasKeyItem = false;
-                ZombieLaboratory.survivorPlayer06FoundBox = 0;
-            }
-            else if (ZombieLaboratory.survivorPlayer07 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer07.PlayerId) {
-                ZombieLaboratory.survivorPlayer07HasKeyItem = false;
-                ZombieLaboratory.survivorPlayer07FoundBox = 0;
-            }
-            else if (ZombieLaboratory.survivorPlayer08 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer08.PlayerId) {
-                ZombieLaboratory.survivorPlayer08HasKeyItem = false;
-                ZombieLaboratory.survivorPlayer08FoundBox = 0;
-            }
-            else if (ZombieLaboratory.survivorPlayer09 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer09.PlayerId) {
-                ZombieLaboratory.survivorPlayer09HasKeyItem = false;
-                ZombieLaboratory.survivorPlayer09FoundBox = 0;
-            }
-            else if (ZombieLaboratory.survivorPlayer10 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer10.PlayerId) {
-                ZombieLaboratory.survivorPlayer10HasKeyItem = false;
-                ZombieLaboratory.survivorPlayer10FoundBox = 0;
-            }
-            else if (ZombieLaboratory.survivorPlayer11 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer11.PlayerId) {
-                ZombieLaboratory.survivorPlayer11HasKeyItem = false;
-                ZombieLaboratory.survivorPlayer11FoundBox = 0;
-            }
-            else if (ZombieLaboratory.survivorPlayer12 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer12.PlayerId) {
-                ZombieLaboratory.survivorPlayer12HasKeyItem = false;
-                ZombieLaboratory.survivorPlayer12FoundBox = 0;
-            }
-            else if (ZombieLaboratory.survivorPlayer13 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer13.PlayerId) {
-                ZombieLaboratory.survivorPlayer13HasKeyItem = false;
-                ZombieLaboratory.survivorPlayer13FoundBox = 0;
-            }
             GameObject myKeyItem = null;
             switch (keyId) {
                 case 1:
@@ -7805,53 +6755,18 @@ namespace LasMonjas
 
             ZombieLaboratory.currentKeyItems += 1;
             Helpers.showGamemodesPopUp(1, Helpers.playerById(survivorWhoHasKey));
-            ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
+            ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedPlayers.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
             if (ZombieLaboratory.currentKeyItems >= 6) {
                 ZombieLaboratory.nursePlayerHasCureReady = true;
             }
         }
 
         public static void zombieLaboratoryRevertedKeyPosition(byte survivorWhoHasKey, byte keyRevertedId) {
+            PlayerControl survivor = Helpers.playerById(survivorWhoHasKey);
 
-            if (ZombieLaboratory.survivorPlayer01 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer01.PlayerId) {
-                ZombieLaboratory.survivorPlayer01FoundBox = 0;
-            }
-            else if (ZombieLaboratory.survivorPlayer02 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer02.PlayerId) {
-                ZombieLaboratory.survivorPlayer02FoundBox = 0;
-            }
-            else if (ZombieLaboratory.survivorPlayer03 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer03.PlayerId) {
-                ZombieLaboratory.survivorPlayer03FoundBox = 0;
-            }
-            else if (ZombieLaboratory.survivorPlayer04 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer04.PlayerId) {
-                ZombieLaboratory.survivorPlayer04FoundBox = 0;
-            }
-            else if (ZombieLaboratory.survivorPlayer05 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer05.PlayerId) {
-                ZombieLaboratory.survivorPlayer05FoundBox = 0;
-            }
-            else if (ZombieLaboratory.survivorPlayer06 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer06.PlayerId) {
-                ZombieLaboratory.survivorPlayer06FoundBox = 0;
-            }
-            else if (ZombieLaboratory.survivorPlayer07 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer07.PlayerId) {
-                ZombieLaboratory.survivorPlayer07FoundBox = 0;
-            }
-            else if (ZombieLaboratory.survivorPlayer08 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer08.PlayerId) {
-                ZombieLaboratory.survivorPlayer08FoundBox = 0;
-            }
-            else if (ZombieLaboratory.survivorPlayer09 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer09.PlayerId) {
-                ZombieLaboratory.survivorPlayer09FoundBox = 0;
-            }
-            else if (ZombieLaboratory.survivorPlayer10 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer10.PlayerId) {
-                ZombieLaboratory.survivorPlayer10FoundBox = 0;
-            }
-            else if (ZombieLaboratory.survivorPlayer11 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer11.PlayerId) {
-                ZombieLaboratory.survivorPlayer11FoundBox = 0;
-            }
-            else if (ZombieLaboratory.survivorPlayer12 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer12.PlayerId) {
-                ZombieLaboratory.survivorPlayer12FoundBox = 0;
-            }
-            else if (ZombieLaboratory.survivorPlayer13 != null && survivorWhoHasKey == ZombieLaboratory.survivorPlayer13.PlayerId) {
-                ZombieLaboratory.survivorPlayer13FoundBox = 0;
-            }
+            if (survivor == null) return;
+
+            Helpers.ZombieLaboratorySetFoundBox(survivor, 0);
 
             switch (keyRevertedId) {
                 case 1:
@@ -7917,126 +6832,15 @@ namespace LasMonjas
             PlayerControl survivorInfected = Helpers.playerById(targetId);
 
             // Assign infect bool
-            if (ZombieLaboratory.survivorPlayer01 != null && survivorInfected == ZombieLaboratory.survivorPlayer01) {
-                if (!ZombieLaboratory.survivorPlayer01IsInfected) {
-                    ZombieLaboratory.survivorPlayer01IsInfected = true;
-                    ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer01);
-                }
-                else {
-                    return;
-                }
+            if (!ZombieLaboratory.infectedPlayers.Contains(survivorInfected)) {
+                ZombieLaboratory.infectedPlayers.Add(survivorInfected);
             }
-            else if (ZombieLaboratory.survivorPlayer02 != null && survivorInfected == ZombieLaboratory.survivorPlayer02) {
-                if (!ZombieLaboratory.survivorPlayer02IsInfected) {
-                    ZombieLaboratory.survivorPlayer02IsInfected = true;
-                    ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer02);
-                }
-                else {
-                    return;
-                }
-            }
-            else if (ZombieLaboratory.survivorPlayer03 != null && survivorInfected == ZombieLaboratory.survivorPlayer03) {
-                if (!ZombieLaboratory.survivorPlayer03IsInfected) {
-                    ZombieLaboratory.survivorPlayer03IsInfected = true;
-                    ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer03);
-                }
-                else {
-                    return;
-                }
-            }
-            else if (ZombieLaboratory.survivorPlayer04 != null && survivorInfected == ZombieLaboratory.survivorPlayer04) {
-                if (!ZombieLaboratory.survivorPlayer04IsInfected) {
-                    ZombieLaboratory.survivorPlayer04IsInfected = true;
-                    ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer04);
-                }
-                else {
-                    return;
-                }
-            }
-            else if (ZombieLaboratory.survivorPlayer05 != null && survivorInfected == ZombieLaboratory.survivorPlayer05) {
-                if (!ZombieLaboratory.survivorPlayer05IsInfected) {
-                    ZombieLaboratory.survivorPlayer05IsInfected = true;
-                    ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer05);
-                }
-                else {
-                    return;
-                }
-            }
-            else if (ZombieLaboratory.survivorPlayer06 != null && survivorInfected == ZombieLaboratory.survivorPlayer06) {
-                if (!ZombieLaboratory.survivorPlayer06IsInfected) {
-                    ZombieLaboratory.survivorPlayer06IsInfected = true;
-                    ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer06);
-                }
-                else {
-                    return;
-                }
-            }
-            else if (ZombieLaboratory.survivorPlayer07 != null && survivorInfected == ZombieLaboratory.survivorPlayer07) {
-                if (!ZombieLaboratory.survivorPlayer07IsInfected) {
-                    ZombieLaboratory.survivorPlayer07IsInfected = true;
-                    ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer07);
-                }
-                else {
-                    return;
-                }
-            }
-            else if (ZombieLaboratory.survivorPlayer08 != null && survivorInfected == ZombieLaboratory.survivorPlayer08) {
-                if (!ZombieLaboratory.survivorPlayer08IsInfected) {
-                    ZombieLaboratory.survivorPlayer08IsInfected = true;
-                    ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer08);
-                }
-                else {
-                    return;
-                }
-            }
-            else if (ZombieLaboratory.survivorPlayer09 != null && survivorInfected == ZombieLaboratory.survivorPlayer09) {
-                if (!ZombieLaboratory.survivorPlayer09IsInfected) {
-                    ZombieLaboratory.survivorPlayer09IsInfected = true;
-                    ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer09);
-                }
-                else {
-                    return;
-                }
-            }
-            else if (ZombieLaboratory.survivorPlayer10 != null && survivorInfected == ZombieLaboratory.survivorPlayer10) {
-                if (!ZombieLaboratory.survivorPlayer10IsInfected) {
-                    ZombieLaboratory.survivorPlayer10IsInfected = true;
-                    ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer10);
-                }
-                else {
-                    return;
-                }
-            }
-            else if (ZombieLaboratory.survivorPlayer11 != null && survivorInfected == ZombieLaboratory.survivorPlayer11) {
-                if (!ZombieLaboratory.survivorPlayer11IsInfected) {
-                    ZombieLaboratory.survivorPlayer11IsInfected = true;
-                    ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer11);
-                }
-                else {
-                    return;
-                }
-            }
-            else if (ZombieLaboratory.survivorPlayer12 != null && survivorInfected == ZombieLaboratory.survivorPlayer12) {
-                if (!ZombieLaboratory.survivorPlayer12IsInfected) {
-                    ZombieLaboratory.survivorPlayer12IsInfected = true;
-                    ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer12);
-                }
-                else {
-                    return;
-                }
-            }
-            else if (ZombieLaboratory.survivorPlayer13 != null && survivorInfected == ZombieLaboratory.survivorPlayer13) {
-                if (!ZombieLaboratory.survivorPlayer13IsInfected) {
-                    ZombieLaboratory.survivorPlayer13IsInfected = true;
-                    ZombieLaboratory.infectedTeam.Add(ZombieLaboratory.survivorPlayer13);
-                }
-                else {
-                    return;
-                }
+            else {
+                return;
             }
 
             Helpers.showGamemodesPopUp(2, Helpers.playerById(survivorInfected.PlayerId));
-            ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
+            ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedPlayers.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
         }
 
         public static void zombieLaboratoryTurnZombie(byte playerId) {
@@ -8097,46 +6901,11 @@ namespace LasMonjas
             }
             player.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
             if (!player.Data.IsDead) {
-                switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
-                    case 0:
-                        if (activatedSensei) {
-                            player.transform.position = new Vector3(-4.85f, 6, player.transform.position.z);
-                        }
-                        else if (activatedDleks) {
-                            player.transform.position = new Vector3(17.25f, -13.25f, player.transform.position.z);
-                        }
-                        else {
-                            player.transform.position = new Vector3(-17.25f, -13.25f, player.transform.position.z);
-                        }
-                        break;
-                    case 1:
-                        player.transform.position = new Vector3(18.5f, -1.85f, player.transform.position.z);
-                        break;
-                    case 2:
-                        player.transform.position = new Vector3(17.15f, -17.15f, player.transform.position.z);
-                        break;
-                    case 3:
-                        player.transform.position = new Vector3(17.25f, -13.25f, player.transform.position.z);
-                        break;
-                    case 4:
-                        player.transform.position = new Vector3(32.35f, 7.25f, player.transform.position.z);
-                        break;
-                    case 5:
-                        player.transform.position = new Vector3(-4.25f, -10.5f, player.transform.position.z);
-                        break;
-                    case 6:
-                        if (player.transform.position.y > 0) {
-                            player.transform.position = new Vector3(1f, 10f, player.transform.position.z);
-                        }
-                        else {
-                            player.transform.position = new Vector3(-4.15f, -33.5f, player.transform.position.z);
-                        }
-                        break;
-                }
+                player.transform.position = Helpers.ZLzombieTeamPos;
             }
 
             Helpers.showGamemodesPopUp(3, Helpers.playerById(player.PlayerId));
-            ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
+            ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedPlayers.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
             HudManager.Instance.StartCoroutine(Effects.Lerp(1, new Action<float>((p) => { // Delayed action
                 if (p == 1f) {
                     // Check win condition
@@ -8150,115 +6919,17 @@ namespace LasMonjas
         public static void zombieNurseHeal(byte targetId) {
             PlayerControl survivorHealed = Helpers.playerById(targetId);
 
-            if (ZombieLaboratory.survivorPlayer01 != null && survivorHealed == ZombieLaboratory.survivorPlayer01) {
-                ZombieLaboratory.survivorPlayer01IsInfected = false;
-                ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer01);
+            if (survivorHealed == null) return;
+
+            if (ZombieLaboratory.infectedPlayers.Contains(survivorHealed)) {
+                ZombieLaboratory.infectedPlayers.Remove(survivorHealed);
                 SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
             }
-            else if (ZombieLaboratory.survivorPlayer02 != null && survivorHealed == ZombieLaboratory.survivorPlayer02) {
-                ZombieLaboratory.survivorPlayer02IsInfected = false;
-                ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer02);
-                SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
-            }
-            else if (ZombieLaboratory.survivorPlayer03 != null && survivorHealed == ZombieLaboratory.survivorPlayer03) {
-                ZombieLaboratory.survivorPlayer03IsInfected = false;
-                ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer03);
-                SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
-            }
-            else if (ZombieLaboratory.survivorPlayer04 != null && survivorHealed == ZombieLaboratory.survivorPlayer04) {
-                ZombieLaboratory.survivorPlayer04IsInfected = false;
-                ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer04);
-                SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
-            }
-            else if (ZombieLaboratory.survivorPlayer05 != null && survivorHealed == ZombieLaboratory.survivorPlayer05) {
-                ZombieLaboratory.survivorPlayer05IsInfected = false;
-                ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer05);
-                SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
-            }
-            else if (ZombieLaboratory.survivorPlayer06 != null && survivorHealed == ZombieLaboratory.survivorPlayer06) {
-                ZombieLaboratory.survivorPlayer06IsInfected = false;
-                ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer06);
-                SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
-            }
-            else if (ZombieLaboratory.survivorPlayer07 != null && survivorHealed == ZombieLaboratory.survivorPlayer07) {
-                ZombieLaboratory.survivorPlayer07IsInfected = false;
-                ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer07);
-                SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
-            }
-            else if (ZombieLaboratory.survivorPlayer08 != null && survivorHealed == ZombieLaboratory.survivorPlayer08) {
-                ZombieLaboratory.survivorPlayer08IsInfected = false;
-                ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer08);
-                SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
-            }
-            else if (ZombieLaboratory.survivorPlayer09 != null && survivorHealed == ZombieLaboratory.survivorPlayer09) {
-                ZombieLaboratory.survivorPlayer09IsInfected = false;
-                ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer09);
-                SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
-            }
-            else if (ZombieLaboratory.survivorPlayer10 != null && survivorHealed == ZombieLaboratory.survivorPlayer10) {
-                ZombieLaboratory.survivorPlayer10IsInfected = false;
-                ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer10);
-                SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
-            }
-            else if (ZombieLaboratory.survivorPlayer11 != null && survivorHealed == ZombieLaboratory.survivorPlayer11) {
-                ZombieLaboratory.survivorPlayer11IsInfected = false;
-                ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer11);
-                SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
-            }
-            else if (ZombieLaboratory.survivorPlayer12 != null && survivorHealed == ZombieLaboratory.survivorPlayer12) {
-                ZombieLaboratory.survivorPlayer12IsInfected = false;
-                ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer12);
-                SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
-            }
-            else if (ZombieLaboratory.survivorPlayer13 != null && survivorHealed == ZombieLaboratory.survivorPlayer13) {
-                ZombieLaboratory.survivorPlayer13IsInfected = false;
-                ZombieLaboratory.infectedTeam.Remove(ZombieLaboratory.survivorPlayer13);
-                SoundManager.Instance.PlaySound(CustomMain.customAssets.spiritualistRevive, false, 100f);
-            }
-            else if (ZombieLaboratory.zombiePlayer01 != null && survivorHealed == ZombieLaboratory.zombiePlayer01) {
-                ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer01, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
-            }
-            else if (ZombieLaboratory.zombiePlayer02 != null && survivorHealed == ZombieLaboratory.zombiePlayer02) {
-                ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer02, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
-            }
-            else if (ZombieLaboratory.zombiePlayer03 != null && survivorHealed == ZombieLaboratory.zombiePlayer03) {
-                ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer03, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
-            }
-            else if (ZombieLaboratory.zombiePlayer04 != null && survivorHealed == ZombieLaboratory.zombiePlayer04) {
-                ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer04, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
-            }
-            else if (ZombieLaboratory.zombiePlayer05 != null && survivorHealed == ZombieLaboratory.zombiePlayer05) {
-                ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer05, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
-            }
-            else if (ZombieLaboratory.zombiePlayer06 != null && survivorHealed == ZombieLaboratory.zombiePlayer06) {
-                ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer06, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
-            }
-            else if (ZombieLaboratory.zombiePlayer07 != null && survivorHealed == ZombieLaboratory.zombiePlayer07) {
-                ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer07, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
-            }
-            else if (ZombieLaboratory.zombiePlayer08 != null && survivorHealed == ZombieLaboratory.zombiePlayer08) {
-                ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer08, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
-            }
-            else if (ZombieLaboratory.zombiePlayer09 != null && survivorHealed == ZombieLaboratory.zombiePlayer09) {
-                ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer09, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
-            }
-            else if (ZombieLaboratory.zombiePlayer10 != null && survivorHealed == ZombieLaboratory.zombiePlayer10) {
-                ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer10, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
-            }
-            else if (ZombieLaboratory.zombiePlayer11 != null && survivorHealed == ZombieLaboratory.zombiePlayer11) {
-                ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer11, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
-            }
-            else if (ZombieLaboratory.zombiePlayer12 != null && survivorHealed == ZombieLaboratory.zombiePlayer12) {
-                ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer12, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
-            }
-            else if (ZombieLaboratory.zombiePlayer13 != null && survivorHealed == ZombieLaboratory.zombiePlayer13) {
-                ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer13, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
-            }
-            else if (ZombieLaboratory.zombiePlayer14 != null && survivorHealed == ZombieLaboratory.zombiePlayer14) {
-                ZombieLaboratory.nursePlayer.MurderPlayer(ZombieLaboratory.zombiePlayer14, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
+            else if (ZombieLaboratory.zombieTeam.Contains(survivorHealed)) {
+                ZombieLaboratory.nursePlayer.MurderPlayer(survivorHealed, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
             }
             ZombieLaboratory.laboratoryNurseMedKit.SetActive(false);
-            ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
+            ZombieLaboratory.zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + ZombieLaboratory.currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + ZombieLaboratory.survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedPlayers.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + ZombieLaboratory.zombieTeam.Count + "</color>";
         }
 
         public static void enterLeaveInfirmary(byte survivorId, bool isEntering, byte whichExit) {
@@ -8513,15 +7184,8 @@ namespace LasMonjas
 
                 if (BattleRoyale.serialKiller != null) {
 
-                    int serialKillerAlive = 0;
+                    int serialKillerAlive = BattleRoyale.serialKiller != null && !BattleRoyale.serialKiller.Data.IsDead ? 1 : 0;
 
-                    foreach (PlayerControl serialKiller in BattleRoyale.serialKillerTeam) {
-
-                        if (!serialKiller.Data.IsDead) {
-                            serialKillerAlive += 1;
-                        }
-
-                    }
                     BattleRoyale.battleRoyalepointCounter = Language.introTexts[12] + "<color=#39FF14FF>" + limePlayersAlive + "</color> | " + Language.introTexts[13] + " <color=#F2BEFFFF>" + pinkPlayersAlive + "</color> | " + Language.introTexts[14] + "<color=#808080FF>" + serialKillerAlive + "</color>";
                     if (limePlayersAlive <= 0 && pinkPlayersAlive <= 0 && !BattleRoyale.serialKiller.Data.IsDead) {
                         BattleRoyale.triggerSerialKillerWin = true;
@@ -8562,7 +7226,7 @@ namespace LasMonjas
                     BattleRoyale.serialKillerPoints += 10 * multiplier;
                     break;
             }
-            
+
             if (BattleRoyale.serialKiller != null) {
                 BattleRoyale.battleRoyalepointCounter = Language.introTexts[15] + BattleRoyale.requiredScore + " | <color=#39FF14FF>" + Language.introTexts[12] + BattleRoyale.limePoints + "</color> | " + "<color=#F2BEFFFF>" + Language.introTexts[13] + BattleRoyale.pinkPoints + "</color> | " + "<color=#808080FF>" + Language.introTexts[16] + BattleRoyale.serialKillerPoints + "</color>";
             }
@@ -8897,7 +7561,8 @@ namespace LasMonjas
                         playerHand.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.pickThreeGreenMonja.GetComponent<SpriteRenderer>().sprite;
                         break;
                 }
-            } else {
+            }
+            else {
                 switch (itemNumber) {
                     case 0:
                         playerHand.GetComponent<SpriteRenderer>().sprite = null;
@@ -8915,7 +7580,7 @@ namespace LasMonjas
             }
         }
 
-        public static void monjaFestivalDeliver (int deliverId) {
+        public static void monjaFestivalDeliver(int deliverId) {
             switch (deliverId) {
                 // Green base
                 case 1:
@@ -8936,24 +7601,24 @@ namespace LasMonjas
                     MonjaFestival.bigMonjaPoints += 1;
                     if (MonjaFestival.bigMonjaPoints > 0) {
                         MonjaFestival.bigMonjaBase.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.greyBaseFull.GetComponent<SpriteRenderer>().sprite;
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+                        if (Helpers.isSubmergedMap()) {
                             MonjaFestival.bigMonjaBaseTwo.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.greyBaseFull.GetComponent<SpriteRenderer>().sprite;
                         }
                     }
                     break;
                 // Allul Monja for Green
                 case 4:
-                    MonjaFestival.greenPoints += 10;
+                    MonjaFestival.greenPoints += 5;
                     Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.allulMonjaReload());
                     break;
                 // Allul Monja for Cyan
                 case 5:
-                    MonjaFestival.cyanPoints += 10;
+                    MonjaFestival.cyanPoints += 5;
                     Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.allulMonjaReload());
                     break;
                 // Allul Monja for Big Monja
                 case 6:
-                    MonjaFestival.bigMonjaPoints += 10;
+                    MonjaFestival.bigMonjaPoints += 5;
                     Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.allulMonjaReload());
                     break;
             }
@@ -9128,10 +7793,14 @@ namespace LasMonjas
                     RPCProcedure.placeTrap(reader.ReadBytesAndSize());
                     break;
                 case (byte)CustomRPC.MineKill:
-                    RPCProcedure.mineKill(reader.ReadByte());
+                    byte minedPlayerId = reader.ReadByte();
+                    var mineId = reader.ReadInt32();
+                    RPCProcedure.mineKill(minedPlayerId, mineId);
                     break;
                 case (byte)CustomRPC.ActivateTrap:
-                    RPCProcedure.activateTrap(reader.ReadByte());
+                    byte trapPlayerId = reader.ReadByte();
+                    var trapId = reader.ReadInt32();
+                    RPCProcedure.activateTrap(trapPlayerId, trapId);
                     break;
                 case (byte)CustomRPC.YinyangerSetYinyang:
                     byte yinedId = reader.ReadByte();
@@ -9146,7 +7815,7 @@ namespace LasMonjas
                     break;
                 case (byte)CustomRPC.ChallengerSetRival:
                     byte rivalId = reader.ReadByte();
-                    byte rivalflag = reader.ReadByte(); 
+                    byte rivalflag = reader.ReadByte();
                     RPCProcedure.challengerSetRival(rivalId, rivalflag);
                     break;
                 case (byte)CustomRPC.ChallengerSelectAttack:
@@ -9322,7 +7991,7 @@ namespace LasMonjas
                     RPCProcedure.murderSpiritualistRevivedPlayer();
                     break;
                 case (byte)CustomRPC.CowardUsedCall:
-                    byte cowardCharges = reader.ReadByte(); 
+                    byte cowardCharges = reader.ReadByte();
                     RPCProcedure.cowardUsedCall(cowardCharges);
                     break;
                 case (byte)CustomRPC.PlaceCamera:
@@ -9486,9 +8155,9 @@ namespace LasMonjas
 
                 // Battle Royale
                 case (byte)CustomRPC.BattleRoyaleShowShoots:
+                    float angle = reader.ReadSingle(); 
                     byte playerWhoShot = reader.ReadByte();
                     byte color = reader.ReadByte();
-                    float angle = reader.ReadSingle();
                     RPCProcedure.battleRoyaleShowShoots(playerWhoShot, color, angle);
                     break;
 

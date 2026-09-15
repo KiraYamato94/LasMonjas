@@ -5,6 +5,7 @@ using System.Reflection;
 using UnityEngine;
 using System.Linq;
 using static LasMonjas.LasMonjas;
+using static LasMonjas.GameHistory;
 using LasMonjas.Core;
 using HarmonyLib;
 using Hazel;
@@ -14,6 +15,7 @@ using AmongUs.GameOptions;
 using System.Collections;
 using TMPro;
 using System.Text.RegularExpressions;
+using static UnityEngine.GraphicsBuffer;
 
 
 namespace LasMonjas
@@ -112,6 +114,39 @@ namespace LasMonjas
                 }
             }
         }
+        public static PlayerControl GetShootPlayer(float shotSize, float effectiveRange, float angle, List<PlayerControl> team, Vector2 originPlayer, bool checkWalls = false) {
+            PlayerControl result = null;
+            float num = effectiveRange;
+            Vector3 pos;
+            float mouseAngle = angle;
+            foreach (PlayerControl player in team) {
+                if (player.PlayerId == PlayerInCache.LocalPlayer.PlayerControl.PlayerId) continue;
+
+                if (player.Data.IsDead) continue;
+
+                pos = player.transform.position - PlayerInCache.LocalPlayer.PlayerControl.transform.position;
+                pos = new Vector3(
+                    pos.x * MathF.Cos(mouseAngle) + pos.y * MathF.Sin(mouseAngle),
+                    pos.y * MathF.Cos(mouseAngle) - pos.x * MathF.Sin(mouseAngle));
+                if (Math.Abs(pos.y) < shotSize && (!(pos.x < 0)) && pos.x < num) {
+                    num = pos.x;
+                    if (checkWalls) {
+                        if (!PhysicsHelpers.AnythingBetween(
+                            originPlayer,
+                            player.GetTruePosition(),
+                            Constants.ShipOnlyMask,
+                            false
+                        )) {
+                            result = player;
+                        }
+                    }
+                    else {
+                        result = player;
+                    }
+                }
+            }
+            return result;
+        }
 
         public static void handleEatenPlayersOnBodyReport() {
             // Murder the eaten players (regardless whether the kill was successful or not)
@@ -165,7 +200,7 @@ namespace LasMonjas
 
         //Fake tasks for neutral and rebel team
         public static bool hasFakeTasks(this PlayerControl player) {
-            return (player == Joker.joker || player == RoleThief.rolethief || player == Pyromaniac.pyromaniac || player == TreasureHunter.treasureHunter || player == Devourer.devourer || player == Poisoner.poisoner || player == Puppeteer.puppeteer || player == Exiler.exiler || player == Amnesiac.amnesiac || player == Seeker.seeker || player == Renegade.renegade || player == Minion.minion || player == BountyHunter.bountyhunter || player == Trapper.trapper || player == Yinyanger.yinyanger || player == Challenger.challenger || player == Ninja.ninja || player == Berserker.berserker || player == Yandere.yandere || player == Stranded.stranded || player == Monja.monja || Renegade.formerRenegades.Any(x => x == player));
+            return isNeutral(player) || isRebel(player);
         }
 
         public static void clearAllTasks(this PlayerControl player) {
@@ -236,7 +271,7 @@ namespace LasMonjas
             if (!MapOptions.hidePlayerNames) return false; // All names are visible
             if (source.Data.Role.IsImpostor && target.Data.Role.IsImpostor) return false; // Members of team Impostors see the names of Impostors
             if (source.getPartner() == target) return false; // Members of team Lovers see the names of each other
-            if ((source == Renegade.renegade || source == Minion.minion) && (target == Renegade.renegade || target == Minion.minion || target == Renegade.fakeMinion)) return false; // Members of team Renegade see the names of each other
+            if ((source == Renegade.renegade || source == Minion.minion) && (target == Renegade.renegade || target == Minion.minion)) return false; // Members of team Renegade see the names of each other
             return true;
         }
 
@@ -310,21 +345,9 @@ namespace LasMonjas
                     case 2:
                         // CTF:
                         if (PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.bluePlayerWhoHasRedFlag && PlayerInCache.LocalPlayer.PlayerControl != CaptureTheFlag.redPlayerWhoHasBlueFlag
-                                && (PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.redplayer01 && !CaptureTheFlag.redplayer01IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.redplayer02 && !CaptureTheFlag.redplayer02IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.redplayer03 && !CaptureTheFlag.redplayer03IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.redplayer04 && !CaptureTheFlag.redplayer04IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.redplayer05 && !CaptureTheFlag.redplayer05IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.redplayer06 && !CaptureTheFlag.redplayer06IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.redplayer07 && !CaptureTheFlag.redplayer07IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.blueplayer01 && !CaptureTheFlag.blueplayer01IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.blueplayer02 && !CaptureTheFlag.blueplayer02IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.blueplayer03 && !CaptureTheFlag.blueplayer03IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.blueplayer04 && !CaptureTheFlag.blueplayer04IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.blueplayer05 && !CaptureTheFlag.blueplayer05IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.blueplayer06 && !CaptureTheFlag.blueplayer06IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.blueplayer07 && !CaptureTheFlag.blueplayer07IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.stealerPlayer && !CaptureTheFlag.stealerPlayerIsReviving)) {
+                                && (CaptureTheFlag.redteamFlag.Contains(player) && !CaptureTheFlag.revivingPlayers.Contains(player)
+                                || CaptureTheFlag.blueteamFlag.Contains(player) && !CaptureTheFlag.revivingPlayers.Contains(player)
+                                || PlayerInCache.LocalPlayer.PlayerControl == CaptureTheFlag.stealerPlayer && !CaptureTheFlag.revivingPlayers.Contains(CaptureTheFlag.stealerPlayer))) {
                             roleCouldUse = true;
                         }
                         else {
@@ -333,15 +356,7 @@ namespace LasMonjas
                         break;
                     case 3:
                         // PT:
-                        if (PlayerInCache.LocalPlayer.PlayerControl == PoliceAndThief.thiefplayer01 && !PoliceAndThief.thiefplayer01IsStealing && !PoliceAndThief.thiefplayer01IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == PoliceAndThief.thiefplayer02 && !PoliceAndThief.thiefplayer02IsStealing && !PoliceAndThief.thiefplayer02IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == PoliceAndThief.thiefplayer03 && !PoliceAndThief.thiefplayer03IsStealing && !PoliceAndThief.thiefplayer03IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == PoliceAndThief.thiefplayer04 && !PoliceAndThief.thiefplayer04IsStealing && !PoliceAndThief.thiefplayer04IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == PoliceAndThief.thiefplayer05 && !PoliceAndThief.thiefplayer05IsStealing && !PoliceAndThief.thiefplayer05IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == PoliceAndThief.thiefplayer06 && !PoliceAndThief.thiefplayer06IsStealing && !PoliceAndThief.thiefplayer06IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == PoliceAndThief.thiefplayer07 && !PoliceAndThief.thiefplayer07IsStealing && !PoliceAndThief.thiefplayer07IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == PoliceAndThief.thiefplayer08 && !PoliceAndThief.thiefplayer08IsStealing && !PoliceAndThief.thiefplayer08IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == PoliceAndThief.thiefplayer09 && !PoliceAndThief.thiefplayer09IsStealing && !PoliceAndThief.thiefplayer09IsReviving) {
+                        if (PoliceAndThief.thiefTeam.Contains(player) && !PoliceAndThief.revivingPlayers.Contains(player) && !PoliceAndThief.stealingPlayers.Contains(player)) {
                             roleCouldUse = true;
                         }
                         else {
@@ -351,19 +366,9 @@ namespace LasMonjas
                     case 4:
                         // KOTH:
                         if (PlayerInCache.LocalPlayer.PlayerControl != KingOfTheHill.greenKingplayer && PlayerInCache.LocalPlayer.PlayerControl != KingOfTheHill.yellowKingplayer
-                                && (PlayerInCache.LocalPlayer.PlayerControl == KingOfTheHill.greenplayer01 && !KingOfTheHill.greenplayer01IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == KingOfTheHill.greenplayer02 && !KingOfTheHill.greenplayer02IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == KingOfTheHill.greenplayer03 && !KingOfTheHill.greenplayer03IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == KingOfTheHill.greenplayer04 && !KingOfTheHill.greenplayer04IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == KingOfTheHill.greenplayer05 && !KingOfTheHill.greenplayer05IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == KingOfTheHill.greenplayer06 && !KingOfTheHill.greenplayer06IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == KingOfTheHill.yellowplayer01 && !KingOfTheHill.yellowplayer01IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == KingOfTheHill.yellowplayer02 && !KingOfTheHill.yellowplayer02IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == KingOfTheHill.yellowplayer03 && !KingOfTheHill.yellowplayer03IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == KingOfTheHill.yellowplayer04 && !KingOfTheHill.yellowplayer04IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == KingOfTheHill.yellowplayer05 && !KingOfTheHill.yellowplayer05IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == KingOfTheHill.yellowplayer06 && !KingOfTheHill.yellowplayer06IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == KingOfTheHill.usurperPlayer && !KingOfTheHill.usurperPlayerIsReviving)) {
+                                && (KingOfTheHill.greenTeam.Contains(player) && !KingOfTheHill.revivingPlayers.Contains(player)
+                                || KingOfTheHill.yellowTeam.Contains(player) && !KingOfTheHill.revivingPlayers.Contains(player)
+                                || PlayerInCache.LocalPlayer.PlayerControl == KingOfTheHill.usurperPlayer && !KingOfTheHill.revivingPlayers.Contains(KingOfTheHill.usurperPlayer))) {
                             roleCouldUse = true;
                         }
                         else {
@@ -381,20 +386,7 @@ namespace LasMonjas
                         break;
                     case 6:
                         // ZL:
-                        if (PlayerInCache.LocalPlayer.PlayerControl == ZombieLaboratory.zombiePlayer01 && !ZombieLaboratory.zombiePlayer01IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == ZombieLaboratory.zombiePlayer02 && !ZombieLaboratory.zombiePlayer02IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == ZombieLaboratory.zombiePlayer03 && !ZombieLaboratory.zombiePlayer03IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == ZombieLaboratory.zombiePlayer04 && !ZombieLaboratory.zombiePlayer04IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == ZombieLaboratory.zombiePlayer05 && !ZombieLaboratory.zombiePlayer05IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == ZombieLaboratory.zombiePlayer06 && !ZombieLaboratory.zombiePlayer06IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == ZombieLaboratory.zombiePlayer07 && !ZombieLaboratory.zombiePlayer07IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == ZombieLaboratory.zombiePlayer08 && !ZombieLaboratory.zombiePlayer08IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == ZombieLaboratory.zombiePlayer09 && !ZombieLaboratory.zombiePlayer09IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == ZombieLaboratory.zombiePlayer10 && !ZombieLaboratory.zombiePlayer10IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == ZombieLaboratory.zombiePlayer11 && !ZombieLaboratory.zombiePlayer11IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == ZombieLaboratory.zombiePlayer12 && !ZombieLaboratory.zombiePlayer12IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == ZombieLaboratory.zombiePlayer13 && !ZombieLaboratory.zombiePlayer13IsReviving
-                                || PlayerInCache.LocalPlayer.PlayerControl == ZombieLaboratory.zombiePlayer14 && !ZombieLaboratory.zombiePlayer14IsReviving) {
+                        if (ZombieLaboratory.zombieTeam.Contains(player) && !ZombieLaboratory.revivingPlayers.Contains(player)) { 
                             roleCouldUse = true;
                         }
                         else {
@@ -578,94 +570,31 @@ namespace LasMonjas
 
         public static void playEndMusic(int whichTeamMusic) {
             MessageWriter writermusic = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ChangeMusic, Hazel.SendOption.Reliable, -1);
-            switch (whichTeamMusic) {
-                case 3: // Neutrals
-                    writermusic.Write(3);
-                    AmongUsClient.Instance.FinishRpcImmediately(writermusic);
-                    RPCProcedure.changeMusic(3);
-                    break;
-                case 4: // Rebels
-                    writermusic.Write(4);
-                    AmongUsClient.Instance.FinishRpcImmediately(writermusic);
-                    RPCProcedure.changeMusic(4);
-                    break;
-                case 5: // Crewmates
-                    writermusic.Write(5);
-                    AmongUsClient.Instance.FinishRpcImmediately(writermusic);
-                    RPCProcedure.changeMusic(5);
-                    break;
-                case 6: // Impostors
-                    writermusic.Write(6);
-                    AmongUsClient.Instance.FinishRpcImmediately(writermusic);
-                    RPCProcedure.changeMusic(6);
-                    break;
-            }
+            writermusic.Write(whichTeamMusic);
+            AmongUsClient.Instance.FinishRpcImmediately(writermusic);
+            RPCProcedure.changeMusic((byte)whichTeamMusic);
         }
 
-        public static void alphaPlayer(bool invisible, byte playerId) {
-            
+        public static void alphaPlayer(byte playerId, float alpha) {
             PlayerControl player = playerById(playerId);
 
-            if (invisible) {
-                player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0.5f);
-                player.cosmetics.colorBlindText.color = new Color(player.cosmetics.colorBlindText.color.r, player.cosmetics.colorBlindText.color.g, player.cosmetics.colorBlindText.color.b, 0.5f);
-                if (!player.cosmetics.currentPet.data.IsEmpty) {
-                    if (player.cosmetics.currentPet.renderers[0] != null && player.cosmetics.currentPet.shadows[0] != null) {
-                        player.cosmetics.currentPet.renderers[0].color = new Color(player.cosmetics.currentPet.renderers[0].color.r, player.cosmetics.currentPet.renderers[0].color.g, player.cosmetics.currentPet.renderers[0].color.b, 0.5f);
-                        player.cosmetics.currentPet.shadows[0].color = new Color(player.cosmetics.currentPet.shadows[0].color.r, player.cosmetics.currentPet.shadows[0].color.g, player.cosmetics.currentPet.shadows[0].color.b, 0.5f);
-                    }
-                }
-                if (player.cosmetics.hat != null) {
-                    player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0.5f);
-                    player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 0.5f);
-                    player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 0.5f);
-                }
-                if (player.cosmetics.visor != null) {
-                    player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 0.5f);
-                }
-                player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0.5f);
-            }
-            else {
-                player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 1f);
-                player.cosmetics.colorBlindText.color = new Color(player.cosmetics.colorBlindText.color.r, player.cosmetics.colorBlindText.color.g, player.cosmetics.colorBlindText.color.b, 1);
-                if (!player.cosmetics.currentPet.data.IsEmpty) {
-                    if (player.cosmetics.currentPet.renderers[0] != null && player.cosmetics.currentPet.shadows[0] != null) {
-                        player.cosmetics.currentPet.renderers[0].color = new Color(player.cosmetics.currentPet.renderers[0].color.r, player.cosmetics.currentPet.renderers[0].color.g, player.cosmetics.currentPet.renderers[0].color.b, 1f);
-                        player.cosmetics.currentPet.shadows[0].color = new Color(player.cosmetics.currentPet.shadows[0].color.r, player.cosmetics.currentPet.shadows[0].color.g, player.cosmetics.currentPet.shadows[0].color.b, 1f);
-                    }
-                }
-                if (player.cosmetics.hat != null) {
-                    player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 1f);
-                    player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 1f);
-                    player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 1f);
-                }
-                if (player.cosmetics.visor != null) {
-                    player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 1f);
-                }
-                player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 1f);
-            }
-        }
-
-        public static void invisiblePlayer(byte playerId) {
-            PlayerControl player = playerById(playerId);
-
-            player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, 0f);
-            player.cosmetics.colorBlindText.color = new Color(player.cosmetics.colorBlindText.color.r, player.cosmetics.colorBlindText.color.g, player.cosmetics.colorBlindText.color.b, 0);
+            player.cosmetics.nameText.color = new Color(player.cosmetics.nameText.color.r, player.cosmetics.nameText.color.g, player.cosmetics.nameText.color.b, alpha);
+            player.cosmetics.colorBlindText.color = new Color(player.cosmetics.colorBlindText.color.r, player.cosmetics.colorBlindText.color.g, player.cosmetics.colorBlindText.color.b, alpha);
             if (!player.cosmetics.currentPet.data.IsEmpty) {
                 if (player.cosmetics.currentPet.renderers[0] != null && player.cosmetics.currentPet.shadows[0] != null) {
-                    player.cosmetics.currentPet.renderers[0].color = new Color(player.cosmetics.currentPet.renderers[0].color.r, player.cosmetics.currentPet.renderers[0].color.g, player.cosmetics.currentPet.renderers[0].color.b, 0f);
-                    player.cosmetics.currentPet.shadows[0].color = new Color(player.cosmetics.currentPet.shadows[0].color.r, player.cosmetics.currentPet.shadows[0].color.g, player.cosmetics.currentPet.shadows[0].color.b, 0f);
+                    player.cosmetics.currentPet.renderers[0].color = new Color(player.cosmetics.currentPet.renderers[0].color.r, player.cosmetics.currentPet.renderers[0].color.g, player.cosmetics.currentPet.renderers[0].color.b, alpha);
+                    player.cosmetics.currentPet.shadows[0].color = new Color(player.cosmetics.currentPet.shadows[0].color.r, player.cosmetics.currentPet.shadows[0].color.g, player.cosmetics.currentPet.shadows[0].color.b, alpha);
                 }
             }
             if (player.cosmetics.hat != null) {
-                player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, 0f);
-                player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, 0f);
-                player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, 0f);
+                player.cosmetics.hat.Parent.color = new Color(player.cosmetics.hat.Parent.color.r, player.cosmetics.hat.Parent.color.g, player.cosmetics.hat.Parent.color.b, alpha);
+                player.cosmetics.hat.BackLayer.color = new Color(player.cosmetics.hat.BackLayer.color.r, player.cosmetics.hat.BackLayer.color.g, player.cosmetics.hat.BackLayer.color.b, alpha);
+                player.cosmetics.hat.FrontLayer.color = new Color(player.cosmetics.hat.FrontLayer.color.r, player.cosmetics.hat.FrontLayer.color.g, player.cosmetics.hat.FrontLayer.color.b, alpha);
             }
             if (player.cosmetics.visor != null) {
-                player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, 0f);
+                player.cosmetics.visor.Image.color = new Color(player.cosmetics.visor.Image.color.r, player.cosmetics.visor.Image.color.g, player.cosmetics.visor.Image.color.b, alpha);
             }
-            player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, 0f);
+            player.MyPhysics.myPlayer.cosmetics.skin.layer.color = new Color(player.MyPhysics.myPlayer.cosmetics.skin.layer.color.r, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.g, player.MyPhysics.myPlayer.cosmetics.skin.layer.color.b, alpha);
         }
 
         public static void turnIntoImpostor(PlayerControl player) {
@@ -1473,25 +1402,25 @@ namespace LasMonjas
             RoleInfo.jailer.SettingsDescription = Language.crewSummaryTexts[24];
 
             RoleInfo.lighter.name = Language.roleInfoRoleNames[63];
-            RoleInfo.lighter.SettingsDescription = Language.modifierSummaryTexts[2];
+            RoleInfo.lighter.SettingsDescription = Language.modifierSummaryTexts[1];
             RoleInfo.blind.name = Language.roleInfoRoleNames[64];
-            RoleInfo.blind.SettingsDescription = Language.modifierSummaryTexts[3];
+            RoleInfo.blind.SettingsDescription = Language.modifierSummaryTexts[2];
             RoleInfo.flash.name = Language.roleInfoRoleNames[65];
-            RoleInfo.flash.SettingsDescription = Language.modifierSummaryTexts[4];
+            RoleInfo.flash.SettingsDescription = Language.modifierSummaryTexts[3];
             RoleInfo.bigchungus.name = Language.roleInfoRoleNames[66];
-            RoleInfo.bigchungus.SettingsDescription = Language.modifierSummaryTexts[5];
+            RoleInfo.bigchungus.SettingsDescription = Language.modifierSummaryTexts[4];
             RoleInfo.theChosenOne.name = Language.roleInfoRoleNames[67];
-            RoleInfo.theChosenOne.SettingsDescription = Language.modifierSummaryTexts[6];
+            RoleInfo.theChosenOne.SettingsDescription = Language.modifierSummaryTexts[5];
             RoleInfo.performer.name = Language.roleInfoRoleNames[68];
-            RoleInfo.performer.SettingsDescription = Language.modifierSummaryTexts[7];
+            RoleInfo.performer.SettingsDescription = Language.modifierSummaryTexts[6];
             RoleInfo.pro.name = Language.roleInfoRoleNames[69];
-            RoleInfo.pro.SettingsDescription = Language.modifierSummaryTexts[8];
+            RoleInfo.pro.SettingsDescription = Language.modifierSummaryTexts[7];
             RoleInfo.paintball.name = Language.roleInfoRoleNames[70];
-            RoleInfo.paintball.SettingsDescription = Language.modifierSummaryTexts[9];
+            RoleInfo.paintball.SettingsDescription = Language.modifierSummaryTexts[8];
             RoleInfo.electrician.name = Language.roleInfoRoleNames[71];
-            RoleInfo.electrician.SettingsDescription = Language.modifierSummaryTexts[10];
+            RoleInfo.electrician.SettingsDescription = Language.modifierSummaryTexts[9];
             RoleInfo.lover.name = Language.roleInfoRoleNames[72];
-            RoleInfo.lover.SettingsDescription = Language.modifierSummaryTexts[1];
+            RoleInfo.lover.SettingsDescription = Language.modifierSummaryTexts[0];
 
             RoleInfo.captureTheFlag.name = Language.teamNames[2];
             RoleInfo.captureTheFlag.SettingsDescription = Language.gamemodeSummaryTexts[0];
@@ -1509,106 +1438,114 @@ namespace LasMonjas
             RoleInfo.monjaFestival.SettingsDescription = Language.gamemodeSummaryTexts[6];
         }
 
+        public static Vector3 CTFstealerPlayerPos;
+        public static Vector3 CTFredTeamPos;
+        public static Vector3 CTFblueTeamPos;
+        public static Vector3 CTFredFlagPos;
+        public static Vector3 CTFredFlagBasePos;
+        public static Vector3 CTFblueFlagPos;
+        public static Vector3 CTFblueFlagBasePos;
+
         public static void CreateCTF() {
             
-            Vector3 stealerPlayerPos = new Vector3();
-            Vector3 redTeamPos = new Vector3();
-            Vector3 blueTeamPos = new Vector3();
-            Vector3 redFlagPos = new Vector3();
-            Vector3 redFlagBasePos = new Vector3();
-            Vector3 blueFlagPos = new Vector3();
-            Vector3 blueFlagBasePos = new Vector3();
+            CTFstealerPlayerPos = new Vector3();
+            CTFredTeamPos = new Vector3();
+            CTFblueTeamPos = new Vector3();
+            CTFredFlagPos = new Vector3();
+            CTFredFlagBasePos = new Vector3();
+            CTFblueFlagPos = new Vector3();
+            CTFblueFlagBasePos = new Vector3();
 
             switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                 // Skeld / Custom Skeld
                 case 0:
                     if (activatedSensei) {
-                        stealerPlayerPos = new Vector3(-3.65f, 5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        redTeamPos = new Vector3(-17.5f, -1.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        blueTeamPos = new Vector3(7.7f, -0.95f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        redFlagPos = new Vector3(-17.5f, -1.35f, 0.5f);
-                        redFlagBasePos = new Vector3(-17.5f, -1.4f, 1f);
-                        blueFlagPos = new Vector3(7.7f, -1.15f, 0.5f);
-                        blueFlagBasePos = new Vector3(7.7f, -1.2f, 1f);
+                        CTFstealerPlayerPos = new Vector3(-3.65f, 5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        CTFredTeamPos = new Vector3(-17.5f, -1.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        CTFblueTeamPos = new Vector3(7.7f, -0.95f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        CTFredFlagPos = new Vector3(-17.5f, -1.35f, 0.5f);
+                        CTFredFlagBasePos = new Vector3(-17.5f, -1.4f, 1f);
+                        CTFblueFlagPos = new Vector3(7.7f, -1.15f, 0.5f);
+                        CTFblueFlagBasePos = new Vector3(7.7f, -1.2f, 1f);
                     }
                     else if (activatedDleks) {
-                        stealerPlayerPos = new Vector3(-6.35f, -7.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        redTeamPos = new Vector3(20.5f, -5.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        blueTeamPos = new Vector3(-16.5f, -4.45f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        redFlagPos = new Vector3(20.5f, -5.35f, 0.5f);
-                        redFlagBasePos = new Vector3(20.5f, -5.4f, 1f);
-                        blueFlagPos = new Vector3(-16.5f, -4.65f, 0.5f);
-                        blueFlagBasePos = new Vector3(-16.5f, -4.7f, 1f);
+                        CTFstealerPlayerPos = new Vector3(-6.35f, -7.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        CTFredTeamPos = new Vector3(20.5f, -5.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        CTFblueTeamPos = new Vector3(-16.5f, -4.45f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        CTFredFlagPos = new Vector3(20.5f, -5.35f, 0.5f);
+                        CTFredFlagBasePos = new Vector3(20.5f, -5.4f, 1f);
+                        CTFblueFlagPos = new Vector3(-16.5f, -4.65f, 0.5f);
+                        CTFblueFlagBasePos = new Vector3(-16.5f, -4.7f, 1f);
                     }
                     else {
-                        stealerPlayerPos = new Vector3(6.35f, -7.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        redTeamPos = new Vector3(-20.5f, -5.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        blueTeamPos = new Vector3(16.5f, -4.45f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        redFlagPos = new Vector3(-20.5f, -5.35f, 0.5f);
-                        redFlagBasePos = new Vector3(-20.5f, -5.4f, 1f);
-                        blueFlagPos = new Vector3(16.5f, -4.65f, 0.5f);
-                        blueFlagBasePos = new Vector3(16.5f, -4.7f, 1f);
+                        CTFstealerPlayerPos = new Vector3(6.35f, -7.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        CTFredTeamPos = new Vector3(-20.5f, -5.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        CTFblueTeamPos = new Vector3(16.5f, -4.45f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        CTFredFlagPos = new Vector3(-20.5f, -5.35f, 0.5f);
+                        CTFredFlagBasePos = new Vector3(-20.5f, -5.4f, 1f);
+                        CTFblueFlagPos = new Vector3(16.5f, -4.65f, 0.5f);
+                        CTFblueFlagBasePos = new Vector3(16.5f, -4.7f, 1f);
                     }
                     break;
                 // Mira HQ
                 case 1:
-                    stealerPlayerPos = new Vector3(17.75f, 24f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    redTeamPos = new Vector3(2.53f, 10.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    blueTeamPos = new Vector3(23.25f, 5.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    redFlagPos = new Vector3(2.525f, 10.55f, 0.5f);
-                    redFlagBasePos = new Vector3(2.53f, 10.5f, 1f);
-                    blueFlagPos = new Vector3(23.25f, 5.05f, 0.5f);
-                    blueFlagBasePos = new Vector3(23.25f, 5f, 1f);
+                    CTFstealerPlayerPos = new Vector3(17.75f, 24f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    CTFredTeamPos = new Vector3(2.53f, 10.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    CTFblueTeamPos = new Vector3(23.25f, 5.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    CTFredFlagPos = new Vector3(2.525f, 10.55f, 0.5f);
+                    CTFredFlagBasePos = new Vector3(2.53f, 10.5f, 1f);
+                    CTFblueFlagPos = new Vector3(23.25f, 5.05f, 0.5f);
+                    CTFblueFlagBasePos = new Vector3(23.25f, 5f, 1f);
                     break;
                     // Polus
                 case 2:
-                    stealerPlayerPos = new Vector3(31.75f, -13f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    redTeamPos = new Vector3(36.4f, -21.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    blueTeamPos = new Vector3(5.4f, -9.45f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    redFlagPos = new Vector3(36.4f, -21.7f, 0.5f);
-                    redFlagBasePos = new Vector3(36.4f, -21.75f, 1f);
-                    blueFlagPos = new Vector3(5.4f, -9.65f, 0.5f);
-                    blueFlagBasePos = new Vector3(5.4f, -9.7f, 1f);
+                    CTFstealerPlayerPos = new Vector3(31.75f, -13f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    CTFredTeamPos = new Vector3(36.4f, -21.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    CTFblueTeamPos = new Vector3(5.4f, -9.45f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    CTFredFlagPos = new Vector3(36.4f, -21.7f, 0.5f);
+                    CTFredFlagBasePos = new Vector3(36.4f, -21.75f, 1f);
+                    CTFblueFlagPos = new Vector3(5.4f, -9.65f, 0.5f);
+                    CTFblueFlagBasePos = new Vector3(5.4f, -9.7f, 1f);
                     break;
                 // Dleks
                 case 3:
-                    stealerPlayerPos = new Vector3(-6.35f, -7.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    redTeamPos = new Vector3(20.5f, -5.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    blueTeamPos = new Vector3(-16.5f, -4.45f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    redFlagPos = new Vector3(20.5f, -5.35f, 0.5f);
-                    redFlagBasePos = new Vector3(20.5f, -5.4f, 1f);
-                    blueFlagPos = new Vector3(-16.5f, -4.65f, 0.5f);
-                    blueFlagBasePos = new Vector3(-16.5f, -4.7f, 1f);
+                    CTFstealerPlayerPos = new Vector3(-6.35f, -7.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    CTFredTeamPos = new Vector3(20.5f, -5.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    CTFblueTeamPos = new Vector3(-16.5f, -4.45f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    CTFredFlagPos = new Vector3(20.5f, -5.35f, 0.5f);
+                    CTFredFlagBasePos = new Vector3(20.5f, -5.4f, 1f);
+                    CTFblueFlagPos = new Vector3(-16.5f, -4.65f, 0.5f);
+                    CTFblueFlagBasePos = new Vector3(-16.5f, -4.7f, 1f);
                     break;
                 // Airship
                 case 4:
-                    stealerPlayerPos = new Vector3(10.25f, -15.35f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    redTeamPos = new Vector3(-17.5f, -1f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    blueTeamPos = new Vector3(33.6f, 1.45f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    redFlagPos = new Vector3(-17.5f, -1.2f, 0.5f);
-                    redFlagBasePos = new Vector3(-17.5f, -1.25f, 1f);
-                    blueFlagPos = new Vector3(33.6f, 1.25f, 0.5f);
-                    blueFlagBasePos = new Vector3(33.6f, 1.2f, 1f);
+                    CTFstealerPlayerPos = new Vector3(10.25f, -15.35f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    CTFredTeamPos = new Vector3(-17.5f, -1f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    CTFblueTeamPos = new Vector3(33.6f, 1.45f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    CTFredFlagPos = new Vector3(-17.5f, -1.2f, 0.5f);
+                    CTFredFlagBasePos = new Vector3(-17.5f, -1.25f, 1f);
+                    CTFblueFlagPos = new Vector3(33.6f, 1.25f, 0.5f);
+                    CTFblueFlagBasePos = new Vector3(33.6f, 1.2f, 1f);
                     break;
                 // Fungle
                 case 5:
-                    stealerPlayerPos = new Vector3(2.85f, -5.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    redTeamPos = new Vector3(-23f, -0.45f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    blueTeamPos = new Vector3(19.25f, 2.35f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    redFlagPos = new Vector3(-23f, -0.65f, 0.5f);
-                    redFlagBasePos = new Vector3(-23, -0.7f, 1f);
-                    blueFlagPos = new Vector3(19.25f, 2.15f, 0.5f);
-                    blueFlagBasePos = new Vector3(19.25f, 2.1f, 1f);
+                    CTFstealerPlayerPos = new Vector3(2.85f, -5.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    CTFredTeamPos = new Vector3(-23f, -0.45f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    CTFblueTeamPos = new Vector3(19.25f, 2.35f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    CTFredFlagPos = new Vector3(-23f, -0.65f, 0.5f);
+                    CTFredFlagBasePos = new Vector3(-23, -0.7f, 1f);
+                    CTFblueFlagPos = new Vector3(19.25f, 2.15f, 0.5f);
+                    CTFblueFlagBasePos = new Vector3(19.25f, 2.1f, 1f);
                     break;
                 // Submerged
                 case 6:
-                    stealerPlayerPos = new Vector3(1f, 10f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    redTeamPos = new Vector3(-8.35f, 28.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    blueTeamPos = new Vector3(12.5f, -31.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    redFlagPos = new Vector3(-8.35f, 28.05f, 0.03f);
-                    redFlagBasePos = new Vector3(-8.35f, 28, 0.031f);
-                    blueFlagPos = new Vector3(12.5f, -31.45f, -0.011f);
-                    blueFlagBasePos = new Vector3(12.5f, -31.5f, -0.01f); 
+                    CTFstealerPlayerPos = new Vector3(1f, 10f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    CTFredTeamPos = new Vector3(-8.35f, 28.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    CTFblueTeamPos = new Vector3(12.5f, -31.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    CTFredFlagPos = new Vector3(-8.35f, 28.05f, 0.03f);
+                    CTFredFlagBasePos = new Vector3(-8.35f, 28, 0.031f);
+                    CTFblueFlagPos = new Vector3(12.5f, -31.45f, -0.011f);
+                    CTFblueFlagBasePos = new Vector3(12.5f, -31.5f, -0.01f); 
                     
                     // Add another respawn on each floor
                     GameObject redteamfloor = GameObject.Instantiate(CustomMain.customAssets.redfloor, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
@@ -1621,11 +1558,11 @@ namespace LasMonjas
             }
 
             foreach (PlayerControl player in CaptureTheFlag.redteamFlag) {
-                player.transform.position = redTeamPos;
+                player.transform.position = CTFredTeamPos;
             }
 
             foreach (PlayerControl player in CaptureTheFlag.blueteamFlag) {
-                player.transform.position = blueTeamPos;
+                player.transform.position = CTFblueTeamPos;
             }
 
             if (PlayerInCache.LocalPlayer.PlayerControl != null && !createdcapturetheflag) {
@@ -1633,24 +1570,24 @@ namespace LasMonjas
                 
                 GameObject redflag = GameObject.Instantiate(CustomMain.customAssets.redflag, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                 redflag.name = "redflag";
-                redflag.transform.position = redFlagPos;
+                redflag.transform.position = CTFredFlagPos;
                 CaptureTheFlag.redflag = redflag;
                 GameObject redflagbase = GameObject.Instantiate(CustomMain.customAssets.redflagbase, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                 redflagbase.name = "redflagbase";
-                redflagbase.transform.position = redFlagBasePos;
+                redflagbase.transform.position = CTFredFlagBasePos;
                 CaptureTheFlag.redflagbase = redflagbase;
                 GameObject blueflag = GameObject.Instantiate(CustomMain.customAssets.blueflag, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                 blueflag.name = "blueflag";
-                blueflag.transform.position = blueFlagPos;
+                blueflag.transform.position = CTFblueFlagPos;
                 CaptureTheFlag.blueflag = blueflag;
                 GameObject blueflagbase = GameObject.Instantiate(CustomMain.customAssets.blueflagbase, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                 blueflagbase.name = "blueflagbase";
-                blueflagbase.transform.position = blueFlagBasePos;
+                blueflagbase.transform.position = CTFblueFlagBasePos;
                 CaptureTheFlag.blueflagbase = blueflagbase;               
 
                 if (CaptureTheFlag.stealerPlayer != null) {
                     CaptureTheFlag.stealerPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                    CaptureTheFlag.stealerPlayer.transform.position = stealerPlayerPos;
+                    CaptureTheFlag.stealerPlayer.transform.position = CTFstealerPlayerPos;
                     CaptureTheFlag.stealerSpawns.Add(redflagbase);
                     CaptureTheFlag.stealerSpawns.Add(blueflagbase);
                 }
@@ -1659,255 +1596,277 @@ namespace LasMonjas
             }
         }
 
+        public static Vector3 PATpoliceTeamPos;
+        public static Vector3 PATthiefTeamPos;
+        public static Vector3 PATcellPos;
+        public static Vector3 PATcellButtonPos;
+        public static Vector3 PATjewelButtonPos;
+        public static Vector3 PATthiefSpaceShipPos;
+        public static Vector3 PATjewel01Pos;
+        public static Vector3 PATjewel02Pos;
+        public static Vector3 PATjewel03Pos;
+        public static Vector3 PATjewel04Pos;
+        public static Vector3 PATjewel05Pos;
+        public static Vector3 PATjewel06Pos;
+        public static Vector3 PATjewel07Pos;
+        public static Vector3 PATjewel08Pos;
+        public static Vector3 PATjewel09Pos;
+        public static Vector3 PATjewel10Pos;
+        public static Vector3 PATjewel11Pos;
+        public static Vector3 PATjewel12Pos;
+        public static Vector3 PATjewel13Pos;
+        public static Vector3 PATjewel14Pos;
+        public static Vector3 PATjewel15Pos;
+
         public static void CreatePAT() {
 
-            Vector3 policeTeamPos = new Vector3();
-            Vector3 thiefTeamPos = new Vector3();
-            Vector3 cellPos = new Vector3();
-            Vector3 cellButtonPos = new Vector3();
-            Vector3 jewelButtonPos = new Vector3();
-            Vector3 thiefSpaceShipPos = new Vector3();
-            Vector3 jewel01Pos = new Vector3();
-            Vector3 jewel02Pos = new Vector3();
-            Vector3 jewel03Pos = new Vector3();
-            Vector3 jewel04Pos = new Vector3();
-            Vector3 jewel05Pos = new Vector3();
-            Vector3 jewel06Pos = new Vector3();
-            Vector3 jewel07Pos = new Vector3();
-            Vector3 jewel08Pos = new Vector3();
-            Vector3 jewel09Pos = new Vector3();
-            Vector3 jewel10Pos = new Vector3();
-            Vector3 jewel11Pos = new Vector3();
-            Vector3 jewel12Pos = new Vector3();
-            Vector3 jewel13Pos = new Vector3();
-            Vector3 jewel14Pos = new Vector3();
-            Vector3 jewel15Pos = new Vector3();
+            PATpoliceTeamPos = new Vector3();
+            PATthiefTeamPos = new Vector3();
+            PATcellPos = new Vector3();
+            PATcellButtonPos = new Vector3();
+            PATjewelButtonPos = new Vector3();
+            PATthiefSpaceShipPos = new Vector3();
+            PATjewel01Pos = new Vector3();
+            PATjewel02Pos = new Vector3();
+            PATjewel03Pos = new Vector3();
+            PATjewel04Pos = new Vector3();
+            PATjewel05Pos = new Vector3();
+            PATjewel06Pos = new Vector3();
+            PATjewel07Pos = new Vector3();
+            PATjewel08Pos = new Vector3();
+            PATjewel09Pos = new Vector3();
+            PATjewel10Pos = new Vector3();
+            PATjewel11Pos = new Vector3();
+            PATjewel12Pos = new Vector3();
+            PATjewel13Pos = new Vector3();
+            PATjewel14Pos = new Vector3();
+            PATjewel15Pos = new Vector3();
 
             switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                 // Skeld / Custom Skeld
                 case 0:
                     if (activatedSensei) {
-                        policeTeamPos = new Vector3(-12f, 5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        thiefTeamPos = new Vector3(13.75f, -0.2f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        cellPos = new Vector3(-12f, 7.2f, 0.5f);
-                        cellButtonPos = new Vector3(-12f, 4.7f, 0.5f);
-                        jewelButtonPos = new Vector3(13.75f, -0.42f, 0.5f);
-                        thiefSpaceShipPos = new Vector3(17f, 0f, 0.6f);
-                        jewel01Pos = new Vector3(6.95f, 4.95f, 1f);
-                        jewel02Pos = new Vector3(-3.75f, 5.35f, 1f);
-                        jewel03Pos = new Vector3(-7.7f, 11.3f, 1f);
-                        jewel04Pos = new Vector3(-19.65f, 5.3f, 1f);
-                        jewel05Pos = new Vector3(-19.65f, -8, 1f);
-                        jewel06Pos = new Vector3(-5.45f, -13f, 1f);
-                        jewel07Pos = new Vector3(-7.65f, -4.2f, 1f);
-                        jewel08Pos = new Vector3(2f, -6.75f, 1f);
-                        jewel09Pos = new Vector3(8.9f, 1.45f, 1f);
-                        jewel10Pos = new Vector3(4.6f, -2.25f, 1f);
-                        jewel11Pos = new Vector3(-5.05f, -0.88f, 1f);
-                        jewel12Pos = new Vector3(-8.25f, -0.45f, 1f);
-                        jewel13Pos = new Vector3(-19.75f, -1.55f, 1f);
-                        jewel14Pos = new Vector3(-12.1f, -13.15f, 1f);
-                        jewel15Pos = new Vector3(7.15f, -14.45f, 1f);
+                        PATpoliceTeamPos = new Vector3(-12f, 5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        PATthiefTeamPos = new Vector3(13.75f, -0.2f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        PATcellPos = new Vector3(-12f, 7.2f, 0.5f);
+                        PATcellButtonPos = new Vector3(-12f, 4.7f, 0.5f);
+                        PATjewelButtonPos = new Vector3(13.75f, -0.42f, 0.5f);
+                        PATthiefSpaceShipPos = new Vector3(17f, 0f, 0.6f);
+                        PATjewel01Pos = new Vector3(6.95f, 4.95f, 1f);
+                        PATjewel02Pos = new Vector3(-3.75f, 5.35f, 1f);
+                        PATjewel03Pos = new Vector3(-7.7f, 11.3f, 1f);
+                        PATjewel04Pos = new Vector3(-19.65f, 5.3f, 1f);
+                        PATjewel05Pos = new Vector3(-19.65f, -8, 1f);
+                        PATjewel06Pos = new Vector3(-5.45f, -13f, 1f);
+                        PATjewel07Pos = new Vector3(-7.65f, -4.2f, 1f);
+                        PATjewel08Pos = new Vector3(2f, -6.75f, 1f);
+                        PATjewel09Pos = new Vector3(8.9f, 1.45f, 1f);
+                        PATjewel10Pos = new Vector3(4.6f, -2.25f, 1f);
+                        PATjewel11Pos = new Vector3(-5.05f, -0.88f, 1f);
+                        PATjewel12Pos = new Vector3(-8.25f, -0.45f, 1f);
+                        PATjewel13Pos = new Vector3(-19.75f, -1.55f, 1f);
+                        PATjewel14Pos = new Vector3(-12.1f, -13.15f, 1f);
+                        PATjewel15Pos = new Vector3(7.15f, -14.45f, 1f);
                     }
                     else if (activatedDleks) {
-                        policeTeamPos = new Vector3(10.2f, 1.18f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        thiefTeamPos = new Vector3(1.31f, -16.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        cellPos = new Vector3(10.25f, 3.38f, 0.5f);
-                        cellButtonPos = new Vector3(10.2f, 0.93f, 0.5f);
-                        jewelButtonPos = new Vector3(-0.20f, -17.15f, 0.5f);
-                        thiefSpaceShipPos = new Vector3(1.345f, -19.16f, 0.6f);
+                        PATpoliceTeamPos = new Vector3(10.2f, 1.18f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        PATthiefTeamPos = new Vector3(1.31f, -16.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        PATcellPos = new Vector3(10.25f, 3.38f, 0.5f);
+                        PATcellButtonPos = new Vector3(10.2f, 0.93f, 0.5f);
+                        PATjewelButtonPos = new Vector3(-0.20f, -17.15f, 0.5f);
+                        PATthiefSpaceShipPos = new Vector3(1.345f, -19.16f, 0.6f);
                         GameObject thiefspaceshiphatchDleks = GameObject.Instantiate(CustomMain.customAssets.thiefspaceshiphatch, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                         thiefspaceshiphatchDleks.name = "thiefspaceshiphatch";
                         thiefspaceshiphatchDleks.transform.position = new Vector3(1.345f, -19.16f, 0.6f);
-                        jewel01Pos = new Vector3(18.65f, -9.9f, 1f);
-                        jewel02Pos = new Vector3(21.5f, -2, 1f);
-                        jewel03Pos = new Vector3(5.9f, -8.25f, 1f);
-                        jewel04Pos = new Vector3(-4.5f, -7.5f, 1f);
-                        jewel05Pos = new Vector3(-7.85f, -14.45f, 1f);
-                        jewel06Pos = new Vector3(-6.65f, -4.8f, 1f);
-                        jewel07Pos = new Vector3(-10.5f, 2.15f, 1f);
-                        jewel08Pos = new Vector3(5.5f, 3.5f, 1f);
-                        jewel09Pos = new Vector3(19, -1.2f, 1f);
-                        jewel10Pos = new Vector3(21.5f, -8.35f, 1f);
-                        jewel11Pos = new Vector3(12.5f, -3.75f, 1f);
-                        jewel12Pos = new Vector3(5.9f, -5.25f, 1f);
-                        jewel13Pos = new Vector3(-2.65f, -16.5f, 1f);
-                        jewel14Pos = new Vector3(-16.75f, -4.75f, 1f);
-                        jewel15Pos = new Vector3(-3.8f, 3.5f, 1f);
+                        PATjewel01Pos = new Vector3(18.65f, -9.9f, 1f);
+                        PATjewel02Pos = new Vector3(21.5f, -2, 1f);
+                        PATjewel03Pos = new Vector3(5.9f, -8.25f, 1f);
+                        PATjewel04Pos = new Vector3(-4.5f, -7.5f, 1f);
+                        PATjewel05Pos = new Vector3(-7.85f, -14.45f, 1f);
+                        PATjewel06Pos = new Vector3(-6.65f, -4.8f, 1f);
+                        PATjewel07Pos = new Vector3(-10.5f, 2.15f, 1f);
+                        PATjewel08Pos = new Vector3(5.5f, 3.5f, 1f);
+                        PATjewel09Pos = new Vector3(19, -1.2f, 1f);
+                        PATjewel10Pos = new Vector3(21.5f, -8.35f, 1f);
+                        PATjewel11Pos = new Vector3(12.5f, -3.75f, 1f);
+                        PATjewel12Pos = new Vector3(5.9f, -5.25f, 1f);
+                        PATjewel13Pos = new Vector3(-2.65f, -16.5f, 1f);
+                        PATjewel14Pos = new Vector3(-16.75f, -4.75f, 1f);
+                        PATjewel15Pos = new Vector3(-3.8f, 3.5f, 1f);
                     }
                     else {
-                        policeTeamPos = new Vector3(-10.2f, 1.18f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        thiefTeamPos = new Vector3(-1.31f, -16.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        cellPos = new Vector3(-10.25f, 3.38f, 0.5f);
-                        cellButtonPos = new Vector3(-10.2f, 0.93f, 0.5f);
-                        jewelButtonPos = new Vector3(0.20f, -17.15f, 0.5f);
-                        thiefSpaceShipPos = new Vector3(1.765f, -19.16f, 0.6f);
+                        PATpoliceTeamPos = new Vector3(-10.2f, 1.18f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        PATthiefTeamPos = new Vector3(-1.31f, -16.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        PATcellPos = new Vector3(-10.25f, 3.38f, 0.5f);
+                        PATcellButtonPos = new Vector3(-10.2f, 0.93f, 0.5f);
+                        PATjewelButtonPos = new Vector3(0.20f, -17.15f, 0.5f);
+                        PATthiefSpaceShipPos = new Vector3(1.765f, -19.16f, 0.6f);
                         GameObject thiefspaceshiphatch = GameObject.Instantiate(CustomMain.customAssets.thiefspaceshiphatch, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                         thiefspaceshiphatch.name = "thiefspaceshiphatch";
                         thiefspaceshiphatch.transform.position = new Vector3(1.765f, -19.16f, 0.6f);
-                        jewel01Pos = new Vector3(-18.65f, -9.9f, 1f);
-                        jewel02Pos = new Vector3(-21.5f, -2, 1f);
-                        jewel03Pos = new Vector3(-5.9f, -8.25f, 1f);
-                        jewel04Pos = new Vector3(4.5f, -7.5f, 1f);
-                        jewel05Pos = new Vector3(7.85f, -14.45f, 1f);
-                        jewel06Pos = new Vector3(6.65f, -4.8f, 1f);
-                        jewel07Pos = new Vector3(10.5f, 2.15f, 1f);
-                        jewel08Pos = new Vector3(-5.5f, 3.5f, 1f);
-                        jewel09Pos = new Vector3(-19, -1.2f, 1f);
-                        jewel10Pos = new Vector3(-21.5f, -8.35f, 1f);
-                        jewel11Pos = new Vector3(-12.5f, -3.75f, 1f);
-                        jewel12Pos = new Vector3(-5.9f, -5.25f, 1f);
-                        jewel13Pos = new Vector3(2.65f, -16.5f, 1f);
-                        jewel14Pos = new Vector3(16.75f, -4.75f, 1f);
-                        jewel15Pos = new Vector3(3.8f, 3.5f, 1f);
+                        PATjewel01Pos = new Vector3(-18.65f, -9.9f, 1f);
+                        PATjewel02Pos = new Vector3(-21.5f, -2, 1f);
+                        PATjewel03Pos = new Vector3(-5.9f, -8.25f, 1f);
+                        PATjewel04Pos = new Vector3(4.5f, -7.5f, 1f);
+                        PATjewel05Pos = new Vector3(7.85f, -14.45f, 1f);
+                        PATjewel06Pos = new Vector3(6.65f, -4.8f, 1f);
+                        PATjewel07Pos = new Vector3(10.5f, 2.15f, 1f);
+                        PATjewel08Pos = new Vector3(-5.5f, 3.5f, 1f);
+                        PATjewel09Pos = new Vector3(-19, -1.2f, 1f);
+                        PATjewel10Pos = new Vector3(-21.5f, -8.35f, 1f);
+                        PATjewel11Pos = new Vector3(-12.5f, -3.75f, 1f);
+                        PATjewel12Pos = new Vector3(-5.9f, -5.25f, 1f);
+                        PATjewel13Pos = new Vector3(2.65f, -16.5f, 1f);
+                        PATjewel14Pos = new Vector3(16.75f, -4.75f, 1f);
+                        PATjewel15Pos = new Vector3(3.8f, 3.5f, 1f);
                     }
                     break;
                 // Mira HQ
                 case 1:
-                    policeTeamPos = new Vector3(1.8f, -1f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    thiefTeamPos = new Vector3(17.75f, 11.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    cellPos = new Vector3(1.75f, 1.125f, 0.5f);
-                    cellButtonPos = new Vector3(1.8f, -1.25f, 0.5f);
-                    jewelButtonPos = new Vector3(18.5f, 13.85f, 0.5f);
-                    thiefSpaceShipPos = new Vector3(21.4f, 14.2f, 0.6f);
-                    jewel01Pos = new Vector3(-4.5f, 2.5f, 1f);
-                    jewel02Pos = new Vector3(6.25f, 14f, 1f);
-                    jewel03Pos = new Vector3(9.15f, 4.75f, 1f);
-                    jewel04Pos = new Vector3(14.75f, 20.5f, 1f);
-                    jewel05Pos = new Vector3(19.5f, 17.5f, 1f);
-                    jewel06Pos = new Vector3(21, 24.1f, 1f);
-                    jewel07Pos = new Vector3(19.5f, 4.75f, 1f);
-                    jewel08Pos = new Vector3(28.25f, 0, 1f);
-                    jewel09Pos = new Vector3(2.45f, 11.25f, 1f);
-                    jewel10Pos = new Vector3(4.4f, 1.75f, 1f);
-                    jewel11Pos = new Vector3(9.25f, 13f, 1f);
-                    jewel12Pos = new Vector3(13.75f, 23.5f, 1f);
-                    jewel13Pos = new Vector3(16, 4, 1f);
-                    jewel14Pos = new Vector3(15.35f, -0.9f, 1f);
-                    jewel15Pos = new Vector3(19.5f, -1.75f, 1f);
+                    PATpoliceTeamPos = new Vector3(1.8f, -1f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    PATthiefTeamPos = new Vector3(17.75f, 11.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    PATcellPos = new Vector3(1.75f, 1.125f, 0.5f);
+                    PATcellButtonPos = new Vector3(1.8f, -1.25f, 0.5f);
+                    PATjewelButtonPos = new Vector3(18.5f, 13.85f, 0.5f);
+                    PATthiefSpaceShipPos = new Vector3(21.4f, 14.2f, 0.6f);
+                    PATjewel01Pos = new Vector3(-4.5f, 2.5f, 1f);
+                    PATjewel02Pos = new Vector3(6.25f, 14f, 1f);
+                    PATjewel03Pos = new Vector3(9.15f, 4.75f, 1f);
+                    PATjewel04Pos = new Vector3(14.75f, 20.5f, 1f);
+                    PATjewel05Pos = new Vector3(19.5f, 17.5f, 1f);
+                    PATjewel06Pos = new Vector3(21, 24.1f, 1f);
+                    PATjewel07Pos = new Vector3(19.5f, 4.75f, 1f);
+                    PATjewel08Pos = new Vector3(28.25f, 0, 1f);
+                    PATjewel09Pos = new Vector3(2.45f, 11.25f, 1f);
+                    PATjewel10Pos = new Vector3(4.4f, 1.75f, 1f);
+                    PATjewel11Pos = new Vector3(9.25f, 13f, 1f);
+                    PATjewel12Pos = new Vector3(13.75f, 23.5f, 1f);
+                    PATjewel13Pos = new Vector3(16, 4, 1f);
+                    PATjewel14Pos = new Vector3(15.35f, -0.9f, 1f);
+                    PATjewel15Pos = new Vector3(19.5f, -1.75f, 1f);
                     break;
                 // Polus
                 case 2:
-                    policeTeamPos = new Vector3(8.18f, -7.4f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    thiefTeamPos = new Vector3(30f, -15.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    cellPos = new Vector3(8.25f, -5.15f, 0.5f);
-                    cellButtonPos = new Vector3(8.2f, -7.5f, 0.5f);
-                    jewelButtonPos = new Vector3(32.25f, -15.9f, 0.5f);
-                    thiefSpaceShipPos = new Vector3(35.35f, -15.55f, 0.8f);
-                    jewel01Pos = new Vector3(16.7f, -2.65f, 0.75f);
-                    jewel02Pos = new Vector3(25.35f, -7.35f, 0.75f);
-                    jewel03Pos = new Vector3(34.9f, -9.75f, 0.75f);
-                    jewel04Pos = new Vector3(36.5f, -21.75f, 0.75f);
-                    jewel05Pos = new Vector3(17.25f, -17.5f, 0.75f);
-                    jewel06Pos = new Vector3(10.9f, -20.5f, -0.75f);
-                    jewel07Pos = new Vector3(1.5f, -20.25f, 0.75f);
-                    jewel08Pos = new Vector3(3f, -12f, 0.75f);
-                    jewel09Pos = new Vector3(30f, -7.35f, 0.75f);
-                    jewel10Pos = new Vector3(40.25f, -8f, 0.75f);
-                    jewel11Pos = new Vector3(26f, -17.15f, 0.75f);
-                    jewel12Pos = new Vector3(22f, -25.25f, 0.75f);
-                    jewel13Pos = new Vector3(20.65f, -12f, 0.75f);
-                    jewel14Pos = new Vector3(9.75f, -12.25f, 0.75f);
-                    jewel15Pos = new Vector3(2.25f, -24f, 0.75f);
+                    PATpoliceTeamPos = new Vector3(8.18f, -7.4f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    PATthiefTeamPos = new Vector3(30f, -15.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    PATcellPos = new Vector3(8.25f, -5.15f, 0.5f);
+                    PATcellButtonPos = new Vector3(8.2f, -7.5f, 0.5f);
+                    PATjewelButtonPos = new Vector3(32.25f, -15.9f, 0.5f);
+                    PATthiefSpaceShipPos = new Vector3(35.35f, -15.55f, 0.8f);
+                    PATjewel01Pos = new Vector3(16.7f, -2.65f, 0.75f);
+                    PATjewel02Pos = new Vector3(25.35f, -7.35f, 0.75f);
+                    PATjewel03Pos = new Vector3(34.9f, -9.75f, 0.75f);
+                    PATjewel04Pos = new Vector3(36.5f, -21.75f, 0.75f);
+                    PATjewel05Pos = new Vector3(17.25f, -17.5f, 0.75f);
+                    PATjewel06Pos = new Vector3(10.9f, -20.5f, -0.75f);
+                    PATjewel07Pos = new Vector3(1.5f, -20.25f, 0.75f);
+                    PATjewel08Pos = new Vector3(3f, -12f, 0.75f);
+                    PATjewel09Pos = new Vector3(30f, -7.35f, 0.75f);
+                    PATjewel10Pos = new Vector3(40.25f, -8f, 0.75f);
+                    PATjewel11Pos = new Vector3(26f, -17.15f, 0.75f);
+                    PATjewel12Pos = new Vector3(22f, -25.25f, 0.75f);
+                    PATjewel13Pos = new Vector3(20.65f, -12f, 0.75f);
+                    PATjewel14Pos = new Vector3(9.75f, -12.25f, 0.75f);
+                    PATjewel15Pos = new Vector3(2.25f, -24f, 0.75f);
                     break;
                 // Dleks
                 case 3:
-                    policeTeamPos = new Vector3(10.2f, 1.18f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    thiefTeamPos = new Vector3(1.31f, -16.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    cellPos = new Vector3(10.25f, 3.38f, 0.5f);
-                    cellButtonPos = new Vector3(10.2f, 0.93f, 0.5f);
-                    jewelButtonPos = new Vector3(-0.20f, -17.15f, 0.5f);
-                    thiefSpaceShipPos = new Vector3(1.345f, -19.16f, 0.6f);
+                    PATpoliceTeamPos = new Vector3(10.2f, 1.18f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    PATthiefTeamPos = new Vector3(1.31f, -16.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    PATcellPos = new Vector3(10.25f, 3.38f, 0.5f);
+                    PATcellButtonPos = new Vector3(10.2f, 0.93f, 0.5f);
+                    PATjewelButtonPos = new Vector3(-0.20f, -17.15f, 0.5f);
+                    PATthiefSpaceShipPos = new Vector3(1.345f, -19.16f, 0.6f);
                     GameObject thiefspaceshiphatchdleks = GameObject.Instantiate(CustomMain.customAssets.thiefspaceshiphatch, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                     thiefspaceshiphatchdleks.name = "thiefspaceshiphatch";
                     thiefspaceshiphatchdleks.transform.position = new Vector3(1.345f, -19.16f, 0.6f);
-                    jewel01Pos = new Vector3(18.65f, -9.9f, 1f);
-                    jewel02Pos = new Vector3(21.5f, -2, 1f);
-                    jewel03Pos = new Vector3(5.9f, -8.25f, 1f);
-                    jewel04Pos = new Vector3(-4.5f, -7.5f, 1f);
-                    jewel05Pos = new Vector3(-7.85f, -14.45f, 1f);
-                    jewel06Pos = new Vector3(-6.65f, -4.8f, 1f);
-                    jewel07Pos = new Vector3(-10.5f, 2.15f, 1f);
-                    jewel08Pos = new Vector3(5.5f, 3.5f, 1f);
-                    jewel09Pos = new Vector3(19, -1.2f, 1f);
-                    jewel10Pos = new Vector3(21.5f, -8.35f, 1f);
-                    jewel11Pos = new Vector3(12.5f, -3.75f, 1f);
-                    jewel12Pos = new Vector3(5.9f, -5.25f, 1f);
-                    jewel13Pos = new Vector3(-2.65f, -16.5f, 1f);
-                    jewel14Pos = new Vector3(-16.75f, -4.75f, 1f);
-                    jewel15Pos = new Vector3(-3.8f, 3.5f, 1f);
+                    PATjewel01Pos = new Vector3(18.65f, -9.9f, 1f);
+                    PATjewel02Pos = new Vector3(21.5f, -2, 1f);
+                    PATjewel03Pos = new Vector3(5.9f, -8.25f, 1f);
+                    PATjewel04Pos = new Vector3(-4.5f, -7.5f, 1f);
+                    PATjewel05Pos = new Vector3(-7.85f, -14.45f, 1f);
+                    PATjewel06Pos = new Vector3(-6.65f, -4.8f, 1f);
+                    PATjewel07Pos = new Vector3(-10.5f, 2.15f, 1f);
+                    PATjewel08Pos = new Vector3(5.5f, 3.5f, 1f);
+                    PATjewel09Pos = new Vector3(19, -1.2f, 1f);
+                    PATjewel10Pos = new Vector3(21.5f, -8.35f, 1f);
+                    PATjewel11Pos = new Vector3(12.5f, -3.75f, 1f);
+                    PATjewel12Pos = new Vector3(5.9f, -5.25f, 1f);
+                    PATjewel13Pos = new Vector3(-2.65f, -16.5f, 1f);
+                    PATjewel14Pos = new Vector3(-16.75f, -4.75f, 1f);
+                    PATjewel15Pos = new Vector3(-3.8f, 3.5f, 1f);
                     break;
                 // Airship
                 case 4:
-                    policeTeamPos = new Vector3(-18.5f, 0.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    thiefTeamPos = new Vector3(7.15f, -14.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    cellPos = new Vector3(-18.45f, 3.55f, 0.5f);
-                    cellButtonPos = new Vector3(-18.5f, 0.5f, 0.5f);
-                    jewelButtonPos = new Vector3(10.275f, -16.3f, -0.01f);
-                    thiefSpaceShipPos = new Vector3(13.5f, -16f, 0.6f);
-                    jewel01Pos = new Vector3(-23.5f, -1.5f, 1f);
-                    jewel02Pos = new Vector3(-14.15f, -4.85f, 1f);
-                    jewel03Pos = new Vector3(-13.9f, -16.25f, 1f);
-                    jewel04Pos = new Vector3(-0.85f, -2.5f, 1f);
-                    jewel05Pos = new Vector3(-5, 8.5f, 1f);
-                    jewel06Pos = new Vector3(19.3f, -4.15f, 1f);
-                    jewel07Pos = new Vector3(19.85f, 8, 1f);
-                    jewel08Pos = new Vector3(28.85f, -1.75f, 1f);
-                    jewel09Pos = new Vector3(-14.5f, -8.5f, 1f);
-                    jewel10Pos = new Vector3(6.3f, -2.75f, 1f);
-                    jewel11Pos = new Vector3(20.75f, 2.5f, 1f);
-                    jewel12Pos = new Vector3(29.25f, 7, 1f);
-                    jewel13Pos = new Vector3(37.5f, -3.5f, 1f);
-                    jewel14Pos = new Vector3(25.2f, -8.75f, 1f);
-                    jewel15Pos = new Vector3(16.3f, -11, 1f);
+                    PATpoliceTeamPos = new Vector3(-18.5f, 0.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    PATthiefTeamPos = new Vector3(7.15f, -14.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    PATcellPos = new Vector3(-18.45f, 3.55f, 0.5f);
+                    PATcellButtonPos = new Vector3(-18.5f, 0.5f, 0.5f);
+                    PATjewelButtonPos = new Vector3(10.275f, -16.3f, -0.01f);
+                    PATthiefSpaceShipPos = new Vector3(13.5f, -16f, 0.6f);
+                    PATjewel01Pos = new Vector3(-23.5f, -1.5f, 1f);
+                    PATjewel02Pos = new Vector3(-14.15f, -4.85f, 1f);
+                    PATjewel03Pos = new Vector3(-13.9f, -16.25f, 1f);
+                    PATjewel04Pos = new Vector3(-0.85f, -2.5f, 1f);
+                    PATjewel05Pos = new Vector3(-5, 8.5f, 1f);
+                    PATjewel06Pos = new Vector3(19.3f, -4.15f, 1f);
+                    PATjewel07Pos = new Vector3(19.85f, 8, 1f);
+                    PATjewel08Pos = new Vector3(28.85f, -1.75f, 1f);
+                    PATjewel09Pos = new Vector3(-14.5f, -8.5f, 1f);
+                    PATjewel10Pos = new Vector3(6.3f, -2.75f, 1f);
+                    PATjewel11Pos = new Vector3(20.75f, 2.5f, 1f);
+                    PATjewel12Pos = new Vector3(29.25f, 7, 1f);
+                    PATjewel13Pos = new Vector3(37.5f, -3.5f, 1f);
+                    PATjewel14Pos = new Vector3(25.2f, -8.75f, 1f);
+                    PATjewel15Pos = new Vector3(16.3f, -11, 1f);
                     break;
-               // Fungle
+                // Fungle
                 case 5:
-                    policeTeamPos = new Vector3(-22.5f, -0.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    thiefTeamPos = new Vector3(20f, 11f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    cellPos = new Vector3(-26.75f, -0.65f, 0.5f);
-                    cellButtonPos = new Vector3(-24f, -0.5f, 0.5f);
-                    jewelButtonPos = new Vector3(18f, 11.75f, 0.05f);
-                    thiefSpaceShipPos = new Vector3(19f, 9.25f, 0.6f);
-                    jewel01Pos = new Vector3(-18.25f, 5f, 1f);
-                    jewel02Pos = new Vector3(-22.65f, -7.15f, 1f);
-                    jewel03Pos = new Vector3(2, 4.35f, 1f);
-                    jewel04Pos = new Vector3(-3.15f, -10.5f, 0.9f);
-                    jewel05Pos = new Vector3(23.7f, -7.8f, 1f);
-                    jewel06Pos = new Vector3(-4.75f, -1.75f, 1f);
-                    jewel07Pos = new Vector3(8f, -10f, 1f);
-                    jewel08Pos = new Vector3(7f, 1.75f, 1f);
-                    jewel09Pos = new Vector3(13.25f, 10, 1f);
-                    jewel10Pos = new Vector3(22.3f, 3.3f, 1f);
-                    jewel11Pos = new Vector3(20.5f, 7.35f, 1f);
-                    jewel12Pos = new Vector3(24.15f, 14.45f, 1f);
-                    jewel13Pos = new Vector3(-16.12f, 0.7f, 1f);
-                    jewel14Pos = new Vector3(1.65f, -1.5f, 1f);
-                    jewel15Pos = new Vector3(10.5f, -12, 1f);
+                    PATpoliceTeamPos = new Vector3(-22.5f, -0.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    PATthiefTeamPos = new Vector3(20f, 11f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    PATcellPos = new Vector3(-26.75f, -0.65f, 0.5f);
+                    PATcellButtonPos = new Vector3(-24f, -0.5f, 0.5f);
+                    PATjewelButtonPos = new Vector3(18f, 11.75f, 0.05f);
+                    PATthiefSpaceShipPos = new Vector3(19f, 9.25f, 0.6f);
+                    PATjewel01Pos = new Vector3(-18.25f, 5f, 1f);
+                    PATjewel02Pos = new Vector3(-22.65f, -7.15f, 1f);
+                    PATjewel03Pos = new Vector3(2, 4.35f, 1f);
+                    PATjewel04Pos = new Vector3(-3.15f, -10.5f, 0.9f);
+                    PATjewel05Pos = new Vector3(23.7f, -7.8f, 1f);
+                    PATjewel06Pos = new Vector3(-4.75f, -1.75f, 1f);
+                    PATjewel07Pos = new Vector3(8f, -10f, 1f);
+                    PATjewel08Pos = new Vector3(7f, 1.75f, 1f);
+                    PATjewel09Pos = new Vector3(13.25f, 10, 1f);
+                    PATjewel10Pos = new Vector3(22.3f, 3.3f, 1f);
+                    PATjewel11Pos = new Vector3(20.5f, 7.35f, 1f);
+                    PATjewel12Pos = new Vector3(24.15f, 14.45f, 1f);
+                    PATjewel13Pos = new Vector3(-16.12f, 0.7f, 1f);
+                    PATjewel14Pos = new Vector3(1.65f, -1.5f, 1f);
+                    PATjewel15Pos = new Vector3(10.5f, -12, 1f);
                     break;
                 // Submerged
                 case 6:
-                    policeTeamPos = new Vector3(-8.45f, 27f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    thiefTeamPos = new Vector3(1f, 10f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    cellPos = new Vector3(-5.9f, 31.85f, 0.5f);
-                    cellButtonPos = new Vector3(-6f, 28.5f, 0.03f);
-                    jewelButtonPos = new Vector3(1f, 10f, 0.03f);
-                    thiefSpaceShipPos = new Vector3(14.5f, -35f, -0.011f);
-                    jewel01Pos = new Vector3(-15f, 17.5f, -1f);
-                    jewel02Pos = new Vector3(8f, 32f, -1f);
-                    jewel03Pos = new Vector3(-6.75f, 10f, -1f);
-                    jewel04Pos = new Vector3(5.15f, 8f, -1f);
-                    jewel05Pos = new Vector3(5f, -33.5f, -1f);
-                    jewel06Pos = new Vector3(-4.15f, -33.5f, -1f);
-                    jewel07Pos = new Vector3(-14f, -27.75f, -1f);
-                    jewel08Pos = new Vector3(7.8f, -23.75f, -1f);
-                    jewel09Pos = new Vector3(-6.75f, -42.75f, -1f);
-                    jewel10Pos = new Vector3(13f, -25.25f, -1f);
-                    jewel11Pos = new Vector3(-14f, -34.25f, -1f);
-                    jewel12Pos = new Vector3(0f, -33.5f, -1f);
-                    jewel13Pos = new Vector3(-6.5f, 14f, -1f);
-                    jewel14Pos = new Vector3(14.25f, 24.5f, -1f);
-                    jewel15Pos = new Vector3(-12.25f, 31f, -1f);
+                    PATpoliceTeamPos = new Vector3(-8.45f, 27f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    PATthiefTeamPos = new Vector3(1f, 10f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    PATcellPos = new Vector3(-5.9f, 31.85f, 0.5f);
+                    PATcellButtonPos = new Vector3(-6f, 28.5f, 0.03f);
+                    PATjewelButtonPos = new Vector3(1f, 10f, 0.03f);
+                    PATthiefSpaceShipPos = new Vector3(14.5f, -35f, -0.011f);
+                    PATjewel01Pos = new Vector3(-15f, 17.5f, -1f);
+                    PATjewel02Pos = new Vector3(8f, 32f, -1f);
+                    PATjewel03Pos = new Vector3(-6.75f, 10f, -1f);
+                    PATjewel04Pos = new Vector3(5.15f, 8f, -1f);
+                    PATjewel05Pos = new Vector3(5f, -33.5f, -1f);
+                    PATjewel06Pos = new Vector3(-4.15f, -33.5f, -1f);
+                    PATjewel07Pos = new Vector3(-14f, -27.75f, -1f);
+                    PATjewel08Pos = new Vector3(7.8f, -23.75f, -1f);
+                    PATjewel09Pos = new Vector3(-6.75f, -42.75f, -1f);
+                    PATjewel10Pos = new Vector3(13f, -25.25f, -1f);
+                    PATjewel11Pos = new Vector3(-14f, -34.25f, -1f);
+                    PATjewel12Pos = new Vector3(0f, -33.5f, -1f);
+                    PATjewel13Pos = new Vector3(-6.5f, 14f, -1f);
+                    PATjewel14Pos = new Vector3(14.25f, 24.5f, -1f);
+                    PATjewel15Pos = new Vector3(-12.25f, 31f, -1f);
 
                     // Add another cell and deliver point on each floor
                     GameObject celltwo = GameObject.Instantiate(CustomMain.customAssets.cell, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
@@ -1932,17 +1891,17 @@ namespace LasMonjas
             }
 
             foreach (PlayerControl player in PoliceAndThief.policeTeam) {
-                player.transform.position = policeTeamPos;
+                player.transform.position = PATpoliceTeamPos;
             }
 
             foreach (PlayerControl player in PoliceAndThief.thiefTeam) {
-                player.transform.position = thiefTeamPos;
+                player.transform.position = PATthiefTeamPos;
                 if (player == PlayerInCache.LocalPlayer.PlayerControl) {
                     // Add Arrows pointing the release and deliver point
                     if (PoliceAndThief.localThiefReleaseArrow.Count == 0) {
                         PoliceAndThief.localThiefReleaseArrow.Add(new Arrow(Palette.PlayerColors[10]));
                         PoliceAndThief.localThiefReleaseArrow[0].arrow.SetActive(true);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+                        if (Helpers.isSubmergedMap()) {
                             PoliceAndThief.localThiefReleaseArrow.Add(new Arrow(Palette.PlayerColors[10]));
                             PoliceAndThief.localThiefReleaseArrow[1].arrow.SetActive(true);
                         }
@@ -1950,7 +1909,7 @@ namespace LasMonjas
                     if (PoliceAndThief.localThiefDeliverArrow.Count == 0) {
                         PoliceAndThief.localThiefDeliverArrow.Add(new Arrow(Palette.PlayerColors[16]));
                         PoliceAndThief.localThiefDeliverArrow[0].arrow.SetActive(true);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+                        if (Helpers.isSubmergedMap()) {
                             PoliceAndThief.localThiefDeliverArrow.Add(new Arrow(Palette.PlayerColors[16]));
                             PoliceAndThief.localThiefDeliverArrow[1].arrow.SetActive(true);
                         }
@@ -1963,81 +1922,81 @@ namespace LasMonjas
                 
                 GameObject cell = GameObject.Instantiate(CustomMain.customAssets.cell, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                 cell.name = "cell";
-                cell.transform.position = cellPos;
+                cell.transform.position = PATcellPos;
                 cell.gameObject.layer = 9;
                 cell.transform.GetChild(0).gameObject.layer = 9;
                 PoliceAndThief.cell = cell;
                 GameObject cellbutton = GameObject.Instantiate(CustomMain.customAssets.freethiefbutton, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                 cellbutton.name = "cellbutton";
-                cellbutton.transform.position = cellButtonPos;
+                cellbutton.transform.position = PATcellButtonPos;
                 PoliceAndThief.cellbutton = cellbutton;
                 GameObject jewelbutton = GameObject.Instantiate(CustomMain.customAssets.jewelbutton, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                 jewelbutton.name = "jewelbutton";
-                jewelbutton.transform.position = jewelButtonPos;
+                jewelbutton.transform.position = PATjewelButtonPos;
                 PoliceAndThief.jewelbutton = jewelbutton;
                 GameObject thiefspaceship = GameObject.Instantiate(CustomMain.customAssets.thiefspaceship, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                 thiefspaceship.name = "thiefspaceship";
-                thiefspaceship.transform.position = thiefSpaceShipPos;
+                thiefspaceship.transform.position = PATthiefSpaceShipPos;
 
                 // Spawn jewels
                 GameObject jewel01 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                jewel01.transform.position = jewel01Pos;
+                jewel01.transform.position = PATjewel01Pos;
                 jewel01.name = "jewel01";
                 PoliceAndThief.jewel01 = jewel01;
                 GameObject jewel02 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                jewel02.transform.position = jewel02Pos;
+                jewel02.transform.position = PATjewel02Pos;
                 jewel02.name = "jewel02";
                 PoliceAndThief.jewel02 = jewel02;
                 GameObject jewel03 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                jewel03.transform.position = jewel03Pos;
+                jewel03.transform.position = PATjewel03Pos;
                 jewel03.name = "jewel03";
                 PoliceAndThief.jewel03 = jewel03;
                 GameObject jewel04 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                jewel04.transform.position = jewel04Pos;
+                jewel04.transform.position = PATjewel04Pos;
                 jewel04.name = "jewel04";
                 PoliceAndThief.jewel04 = jewel04;
                 GameObject jewel05 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                jewel05.transform.position = jewel05Pos;
+                jewel05.transform.position = PATjewel05Pos;
                 jewel05.name = "jewel05";
                 PoliceAndThief.jewel05 = jewel05;
                 GameObject jewel06 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                jewel06.transform.position = jewel06Pos;
+                jewel06.transform.position = PATjewel06Pos;
                 jewel06.name = "jewel06";
                 PoliceAndThief.jewel06 = jewel06;
                 GameObject jewel07 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                jewel07.transform.position = jewel07Pos;
+                jewel07.transform.position = PATjewel07Pos;
                 jewel07.name = "jewel07";
                 PoliceAndThief.jewel07 = jewel07;
                 GameObject jewel08 = GameObject.Instantiate(CustomMain.customAssets.jeweldiamond, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                jewel08.transform.position = jewel08Pos;
+                jewel08.transform.position = PATjewel08Pos;
                 jewel08.name = "jewel08";
                 PoliceAndThief.jewel08 = jewel08;
                 GameObject jewel09 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                jewel09.transform.position = jewel09Pos;
+                jewel09.transform.position = PATjewel09Pos;
                 jewel09.name = "jewel09";
                 PoliceAndThief.jewel09 = jewel09;
                 GameObject jewel10 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                jewel10.transform.position = jewel10Pos;
+                jewel10.transform.position = PATjewel10Pos;
                 jewel10.name = "jewel10";
                 PoliceAndThief.jewel10 = jewel10;
                 GameObject jewel11 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                jewel11.transform.position = jewel11Pos;
+                jewel11.transform.position = PATjewel11Pos;
                 jewel11.name = "jewel11";
                 PoliceAndThief.jewel11 = jewel11;
                 GameObject jewel12 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                jewel12.transform.position = jewel12Pos;
+                jewel12.transform.position = PATjewel12Pos;
                 jewel12.name = "jewel12";
                 PoliceAndThief.jewel12 = jewel12;
                 GameObject jewel13 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                jewel13.transform.position = jewel13Pos;
+                jewel13.transform.position = PATjewel13Pos;
                 jewel13.name = "jewel13";
                 PoliceAndThief.jewel13 = jewel13;
                 GameObject jewel14 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                jewel14.transform.position = jewel14Pos;
+                jewel14.transform.position = PATjewel14Pos;
                 jewel14.name = "jewel14";
                 PoliceAndThief.jewel14 = jewel14;
                 GameObject jewel15 = GameObject.Instantiate(CustomMain.customAssets.jewelruby, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                jewel15.transform.position = jewel15Pos;
+                jewel15.transform.position = PATjewel15Pos;
                 jewel15.name = "jewel15";
                 PoliceAndThief.jewel15 = jewel15;
                 PoliceAndThief.thiefTreasures.Add(jewel01);
@@ -2060,163 +2019,175 @@ namespace LasMonjas
             }
         }
 
+        public static Vector3 KOTHusurperPlayerPos;
+        public static Vector3 KOTHgreenTeamPos;
+        public static Vector3 KOTHyellowTeamPos;
+        public static Vector3 KOTHgreenTeamFloorPos;
+        public static Vector3 KOTHyellowTeamFloorPos;
+        public static Vector3 KOTHflagZoneOnePos;
+        public static Vector3 KOTHzoneOnePos;
+        public static Vector3 KOTHflagZoneTwoPos;
+        public static Vector3 KOTHzoneTwoPos;
+        public static Vector3 KOTHflagZoneThreePos;
+        public static Vector3 KOTHzoneThreePos;
+
         public static void CreateKOTH() {
 
-            Vector3 usurperPlayerPos = new Vector3();
-            Vector3 greenTeamPos = new Vector3();
-            Vector3 yellowTeamPos = new Vector3();
-            Vector3 greenTeamFloorPos = new Vector3();
-            Vector3 yellowTeamFloorPos = new Vector3();
-            Vector3 flagZoneOnePos = new Vector3();
-            Vector3 zoneOnePos = new Vector3();
-            Vector3 flagZoneTwoPos = new Vector3();
-            Vector3 zoneTwoPos = new Vector3();
-            Vector3 flagZoneThreePos = new Vector3();
-            Vector3 zoneThreePos = new Vector3();
+            KOTHusurperPlayerPos = new Vector3();
+            KOTHgreenTeamPos = new Vector3();
+            KOTHyellowTeamPos = new Vector3();
+            KOTHgreenTeamFloorPos = new Vector3();
+            KOTHyellowTeamFloorPos = new Vector3();
+            KOTHflagZoneOnePos = new Vector3();
+            KOTHzoneOnePos = new Vector3();
+            KOTHflagZoneTwoPos = new Vector3();
+            KOTHzoneTwoPos = new Vector3();
+            KOTHflagZoneThreePos = new Vector3();
+            KOTHzoneThreePos = new Vector3();
 
             switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                 // Skeld / Custom Skeld
                 case 0:
                     if (activatedSensei) {
-                        usurperPlayerPos = new Vector3(-6.8f, 10.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        greenTeamPos = new Vector3(-16.4f, -10.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        yellowTeamPos = new Vector3(7f, -14.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        greenTeamFloorPos = new Vector3(-16.4f, -10.5f, 0.5f);
-                        yellowTeamFloorPos = new Vector3(7f, -14.4f, 0.5f);
-                        flagZoneOnePos = new Vector3(7.85f, -1.5f, 0.4f);
-                        zoneOnePos = new Vector3(7.85f, -1.5f, 0.5f);
-                        flagZoneTwoPos = new Vector3(-6.35f, -1.1f, 0.4f);
-                        zoneTwoPos = new Vector3(-6.35f, -1.1f, 0.5f);
-                        flagZoneThreePos = new Vector3(-12.15f, 7.35f, 0.4f);
-                        zoneThreePos = new Vector3(-12.15f, 7.35f, 0.5f);
+                        KOTHusurperPlayerPos = new Vector3(-6.8f, 10.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        KOTHgreenTeamPos = new Vector3(-16.4f, -10.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        KOTHyellowTeamPos = new Vector3(7f, -14.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        KOTHgreenTeamFloorPos = new Vector3(-16.4f, -10.5f, 0.5f);
+                        KOTHyellowTeamFloorPos = new Vector3(7f, -14.4f, 0.5f);
+                        KOTHflagZoneOnePos = new Vector3(7.85f, -1.5f, 0.4f);
+                        KOTHzoneOnePos = new Vector3(7.85f, -1.5f, 0.5f);
+                        KOTHflagZoneTwoPos = new Vector3(-6.35f, -1.1f, 0.4f);
+                        KOTHzoneTwoPos = new Vector3(-6.35f, -1.1f, 0.5f);
+                        KOTHflagZoneThreePos = new Vector3(-12.15f, 7.35f, 0.4f);
+                        KOTHzoneThreePos = new Vector3(-12.15f, 7.35f, 0.5f);
                     }
                     else if (activatedDleks) {
-                        usurperPlayerPos = new Vector3(1f, 5.35f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        greenTeamPos = new Vector3(7f, -8.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        yellowTeamPos = new Vector3(-6.25f, -3.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        greenTeamFloorPos = new Vector3(7f, -8.5f, 0.5f);
-                        yellowTeamFloorPos = new Vector3(-6.25f, -3.75f, 0.5f);
-                        flagZoneOnePos = new Vector3(9.1f, -2.25f, 0.4f);
-                        zoneOnePos = new Vector3(9.1f, -2.25f, 0.5f);
-                        flagZoneTwoPos = new Vector3(-4.5f, -7.5f, 0.4f);
-                        zoneTwoPos = new Vector3(-4.5f, -7.5f, 0.5f);
-                        flagZoneThreePos = new Vector3(-3.25f, -15.5f, 0.4f);
-                        zoneThreePos = new Vector3(-3.25f, -15.5f, 0.5f);
+                        KOTHusurperPlayerPos = new Vector3(1f, 5.35f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        KOTHgreenTeamPos = new Vector3(7f, -8.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        KOTHyellowTeamPos = new Vector3(-6.25f, -3.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        KOTHgreenTeamFloorPos = new Vector3(7f, -8.5f, 0.5f);
+                        KOTHyellowTeamFloorPos = new Vector3(-6.25f, -3.75f, 0.5f);
+                        KOTHflagZoneOnePos = new Vector3(9.1f, -2.25f, 0.4f);
+                        KOTHzoneOnePos = new Vector3(9.1f, -2.25f, 0.5f);
+                        KOTHflagZoneTwoPos = new Vector3(-4.5f, -7.5f, 0.4f);
+                        KOTHzoneTwoPos = new Vector3(-4.5f, -7.5f, 0.5f);
+                        KOTHflagZoneThreePos = new Vector3(-3.25f, -15.5f, 0.4f);
+                        KOTHzoneThreePos = new Vector3(-3.25f, -15.5f, 0.5f);
                     }
                     else {
-                        usurperPlayerPos = new Vector3(-1f, 5.35f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        greenTeamPos = new Vector3(-7f, -8.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        yellowTeamPos = new Vector3(6.25f, -3.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        greenTeamFloorPos = new Vector3(-7f, -8.5f, 0.5f);
-                        yellowTeamFloorPos = new Vector3(6.25f, -3.75f, 0.5f);
-                        flagZoneOnePos = new Vector3(-9.1f, -2.25f, 0.4f);
-                        zoneOnePos = new Vector3(-9.1f, -2.25f, 0.5f);
-                        flagZoneTwoPos = new Vector3(4.5f, -7.5f, 0.4f);
-                        zoneTwoPos = new Vector3(4.5f, -7.5f, 0.5f);
-                        flagZoneThreePos = new Vector3(3.25f, -15.5f, 0.4f);
-                        zoneThreePos = new Vector3(3.25f, -15.5f, 0.5f);
+                        KOTHusurperPlayerPos = new Vector3(-1f, 5.35f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        KOTHgreenTeamPos = new Vector3(-7f, -8.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        KOTHyellowTeamPos = new Vector3(6.25f, -3.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        KOTHgreenTeamFloorPos = new Vector3(-7f, -8.5f, 0.5f);
+                        KOTHyellowTeamFloorPos = new Vector3(6.25f, -3.75f, 0.5f);
+                        KOTHflagZoneOnePos = new Vector3(-9.1f, -2.25f, 0.4f);
+                        KOTHzoneOnePos = new Vector3(-9.1f, -2.25f, 0.5f);
+                        KOTHflagZoneTwoPos = new Vector3(4.5f, -7.5f, 0.4f);
+                        KOTHzoneTwoPos = new Vector3(4.5f, -7.5f, 0.5f);
+                        KOTHflagZoneThreePos = new Vector3(3.25f, -15.5f, 0.4f);
+                        KOTHzoneThreePos = new Vector3(3.25f, -15.5f, 0.5f);
                     }
                     break;
                 // Mira HQ
                 case 1:
-                    usurperPlayerPos = new Vector3(2.5f, 11f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    greenTeamPos = new Vector3(-4.45f, 1.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    yellowTeamPos = new Vector3(19.5f, 4.7f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    greenTeamFloorPos = new Vector3(-4.45f, 1.5f, 0.5f);
-                    yellowTeamFloorPos = new Vector3(19.5f, 4.45f, 0.5f);
-                    flagZoneOnePos = new Vector3(15.25f, 4f, 0.4f);
-                    zoneOnePos = new Vector3(15.25f, 4f, 0.5f);
-                    flagZoneTwoPos = new Vector3(17.85f, 19.5f, 0.4f);
-                    zoneTwoPos = new Vector3(17.85f, 19.5f, 0.5f);
-                    flagZoneThreePos = new Vector3(6.15f, 12.5f, 0.4f);
-                    zoneThreePos = new Vector3(6.15f, 12.5f, 0.5f);
+                    KOTHusurperPlayerPos = new Vector3(2.5f, 11f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    KOTHgreenTeamPos = new Vector3(-4.45f, 1.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    KOTHyellowTeamPos = new Vector3(19.5f, 4.7f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    KOTHgreenTeamFloorPos = new Vector3(-4.45f, 1.5f, 0.5f);
+                    KOTHyellowTeamFloorPos = new Vector3(19.5f, 4.45f, 0.5f);
+                    KOTHflagZoneOnePos = new Vector3(15.25f, 4f, 0.4f);
+                    KOTHzoneOnePos = new Vector3(15.25f, 4f, 0.5f);
+                    KOTHflagZoneTwoPos = new Vector3(17.85f, 19.5f, 0.4f);
+                    KOTHzoneTwoPos = new Vector3(17.85f, 19.5f, 0.5f);
+                    KOTHflagZoneThreePos = new Vector3(6.15f, 12.5f, 0.4f);
+                    KOTHzoneThreePos = new Vector3(6.15f, 12.5f, 0.5f);
                     break;
                 // Polus
                 case 2:
-                    usurperPlayerPos = new Vector3(20.5f, -12f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    greenTeamPos = new Vector3(2.25f, -23.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    yellowTeamPos = new Vector3(36.35f, -6.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    greenTeamFloorPos = new Vector3(2.25f, -24f, 0.5f);
-                    yellowTeamFloorPos = new Vector3(36.35f, -6.4f, 0.5f);
-                    flagZoneOnePos = new Vector3(15f, -13.5f, 0.4f);
-                    zoneOnePos = new Vector3(15f, -13.5f, 0.5f);
-                    flagZoneTwoPos = new Vector3(20.75f, -22.75f, 0.4f);
-                    zoneTwoPos = new Vector3(20.75f, -22.75f, 0.5f);
-                    flagZoneThreePos = new Vector3(16.65f, -1.5f, 0.4f);
-                    zoneThreePos = new Vector3(16.65f, -1.5f, 0.5f);
+                    KOTHusurperPlayerPos = new Vector3(20.5f, -12f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    KOTHgreenTeamPos = new Vector3(2.25f, -23.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    KOTHyellowTeamPos = new Vector3(36.35f, -6.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    KOTHgreenTeamFloorPos = new Vector3(2.25f, -24f, 0.5f);
+                    KOTHyellowTeamFloorPos = new Vector3(36.35f, -6.4f, 0.5f);
+                    KOTHflagZoneOnePos = new Vector3(15f, -13.5f, 0.4f);
+                    KOTHzoneOnePos = new Vector3(15f, -13.5f, 0.5f);
+                    KOTHflagZoneTwoPos = new Vector3(20.75f, -22.75f, 0.4f);
+                    KOTHzoneTwoPos = new Vector3(20.75f, -22.75f, 0.5f);
+                    KOTHflagZoneThreePos = new Vector3(16.65f, -1.5f, 0.4f);
+                    KOTHzoneThreePos = new Vector3(16.65f, -1.5f, 0.5f);
                     break;
                 // Dleks
                 case 3:
-                    usurperPlayerPos = new Vector3(1f, 5.35f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    greenTeamPos = new Vector3(7f, -8.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    yellowTeamPos = new Vector3(-6.25f, -3.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    greenTeamFloorPos = new Vector3(7f, -8.5f, 0.5f);
-                    yellowTeamFloorPos = new Vector3(-6.25f, -3.75f, 0.5f);
-                    flagZoneOnePos = new Vector3(9.1f, -2.25f, 0.4f);
-                    zoneOnePos = new Vector3(9.1f, -2.25f, 0.5f);
-                    flagZoneTwoPos = new Vector3(-4.5f, -7.5f, 0.4f);
-                    zoneTwoPos = new Vector3(-4.5f, -7.5f, 0.5f);
-                    flagZoneThreePos = new Vector3(-3.25f, -15.5f, 0.4f);
-                    zoneThreePos = new Vector3(-3.25f, -15.5f, 0.5f);
+                    KOTHusurperPlayerPos = new Vector3(1f, 5.35f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    KOTHgreenTeamPos = new Vector3(7f, -8.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    KOTHyellowTeamPos = new Vector3(-6.25f, -3.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    KOTHgreenTeamFloorPos = new Vector3(7f, -8.5f, 0.5f);
+                    KOTHyellowTeamFloorPos = new Vector3(-6.25f, -3.75f, 0.5f);
+                    KOTHflagZoneOnePos = new Vector3(9.1f, -2.25f, 0.4f);
+                    KOTHzoneOnePos = new Vector3(9.1f, -2.25f, 0.5f);
+                    KOTHflagZoneTwoPos = new Vector3(-4.5f, -7.5f, 0.4f);
+                    KOTHzoneTwoPos = new Vector3(-4.5f, -7.5f, 0.5f);
+                    KOTHflagZoneThreePos = new Vector3(-3.25f, -15.5f, 0.4f);
+                    KOTHzoneThreePos = new Vector3(-3.25f, -15.5f, 0.5f);
                     break;
                 // Airship
                 case 4:
-                    usurperPlayerPos = new Vector3(12.25f, 2f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    greenTeamPos = new Vector3(-13.9f, -14.45f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    yellowTeamPos = new Vector3(37.35f, -3.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    greenTeamFloorPos = new Vector3(-13.9f, -14.7f, 0.5f);
-                    yellowTeamFloorPos = new Vector3(37.35f, -3.5f, 0.5f);
-                    flagZoneOnePos = new Vector3(-8.75f, 5.1f, 0.4f);
-                    zoneOnePos = new Vector3(-8.75f, 5.1f, 0.5f);
-                    flagZoneTwoPos = new Vector3(19.9f, 11.25f, 0.4f);
-                    zoneTwoPos = new Vector3(19.9f, 11.25f, 0.5f);
-                    flagZoneThreePos = new Vector3(16.3f, -8.6f, 0.4f);
-                    zoneThreePos = new Vector3(16.3f, -8.6f, 0.5f);
+                    KOTHusurperPlayerPos = new Vector3(12.25f, 2f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    KOTHgreenTeamPos = new Vector3(-13.9f, -14.45f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    KOTHyellowTeamPos = new Vector3(37.35f, -3.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    KOTHgreenTeamFloorPos = new Vector3(-13.9f, -14.7f, 0.5f);
+                    KOTHyellowTeamFloorPos = new Vector3(37.35f, -3.5f, 0.5f);
+                    KOTHflagZoneOnePos = new Vector3(-8.75f, 5.1f, 0.4f);
+                    KOTHzoneOnePos = new Vector3(-8.75f, 5.1f, 0.5f);
+                    KOTHflagZoneTwoPos = new Vector3(19.9f, 11.25f, 0.4f);
+                    KOTHzoneTwoPos = new Vector3(19.9f, 11.25f, 0.5f);
+                    KOTHflagZoneThreePos = new Vector3(16.3f, -8.6f, 0.4f);
+                    KOTHzoneThreePos = new Vector3(16.3f, -8.6f, 0.5f);
                     break;
                 // Fungle
                 case 5:
-                    usurperPlayerPos = new Vector3(-3.25f, -10.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    greenTeamPos = new Vector3(-17.5f, 7f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    yellowTeamPos = new Vector3(21.5f, -6.85f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    greenTeamFloorPos = new Vector3(-17.5f, 7.25f, 0.5f);
-                    yellowTeamFloorPos = new Vector3(21.5f, -7.1f, 0.5f);
-                    flagZoneOnePos = new Vector3(-17.5f, -7.25f, 0.4f);
-                    zoneOnePos = new Vector3(-17.5f, -7.25f, 0.5f);
-                    flagZoneTwoPos = new Vector3(10.7f, -12f, 0.4f);
-                    zoneTwoPos = new Vector3(10.7f, -12f, 0.5f);
-                    flagZoneThreePos = new Vector3(13.15f, 10f, 0.4f);
-                    zoneThreePos = new Vector3(13.15f, 10f, 0.5f);
+                    KOTHusurperPlayerPos = new Vector3(-3.25f, -10.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    KOTHgreenTeamPos = new Vector3(-17.5f, 7f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    KOTHyellowTeamPos = new Vector3(21.5f, -6.85f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    KOTHgreenTeamFloorPos = new Vector3(-17.5f, 7.25f, 0.5f);
+                    KOTHyellowTeamFloorPos = new Vector3(21.5f, -7.1f, 0.5f);
+                    KOTHflagZoneOnePos = new Vector3(-17.5f, -7.25f, 0.4f);
+                    KOTHzoneOnePos = new Vector3(-17.5f, -7.25f, 0.5f);
+                    KOTHflagZoneTwoPos = new Vector3(10.7f, -12f, 0.4f);
+                    KOTHzoneTwoPos = new Vector3(10.7f, -12f, 0.5f);
+                    KOTHflagZoneThreePos = new Vector3(13.15f, 10f, 0.4f);
+                    KOTHzoneThreePos = new Vector3(13.15f, 10f, 0.5f);
                     break;
                 // Submerged
                 case 6:
-                    usurperPlayerPos = new Vector3(5.75f, 31.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    greenTeamPos = new Vector3(-12.25f, 18.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    yellowTeamPos = new Vector3(-8.5f, -39.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    greenTeamFloorPos = new Vector3(-12.25f, 18.25f, 0.03f);
+                    KOTHusurperPlayerPos = new Vector3(5.75f, 31.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    KOTHgreenTeamPos = new Vector3(-12.25f, 18.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    KOTHyellowTeamPos = new Vector3(-8.5f, -39.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    KOTHgreenTeamFloorPos = new Vector3(-12.25f, 18.25f, 0.03f);
                     GameObject greenteamfloortwo = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                     greenteamfloortwo.name = "greenteamfloortwo";
                     greenteamfloortwo.transform.position = new Vector3(-14.5f, -34.35f, -0.01f);
-                    yellowTeamFloorPos = new Vector3(-8.5f, -39.5f, -0.01f);
+                    KOTHyellowTeamFloorPos = new Vector3(-8.5f, -39.5f, -0.01f);
                     GameObject yellowteamfloortwo = GameObject.Instantiate(CustomMain.customAssets.yellowfloor, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                     yellowteamfloortwo.name = "yellowteamfloortwo";
                     yellowteamfloortwo.transform.position = new Vector3(0f, 33.5f, 0.03f);
-                    flagZoneOnePos = new Vector3(1f, 10f, 0.029f);
-                    zoneOnePos = new Vector3(1f, 10f, 0.03f);
-                    flagZoneTwoPos = new Vector3(2.5f, -35.5f, -0.01f);
-                    zoneTwoPos = new Vector3(2.5f, -35.5f, -0.011f);
-                    flagZoneThreePos = new Vector3(10f, -31.5f, -0.01f);
-                    zoneThreePos = new Vector3(10f, -31.5f, -0.011f);
+                    KOTHflagZoneOnePos = new Vector3(1f, 10f, 0.029f);
+                    KOTHzoneOnePos = new Vector3(1f, 10f, 0.03f);
+                    KOTHflagZoneTwoPos = new Vector3(2.5f, -35.5f, -0.01f);
+                    KOTHzoneTwoPos = new Vector3(2.5f, -35.5f, -0.011f);
+                    KOTHflagZoneThreePos = new Vector3(10f, -31.5f, -0.01f);
+                    KOTHzoneThreePos = new Vector3(10f, -31.5f, -0.011f);
                     KingOfTheHill.usurperSpawns.Add(greenteamfloortwo);
                     KingOfTheHill.usurperSpawns.Add(yellowteamfloortwo);
                     break;
             }
 
             foreach (PlayerControl player in KingOfTheHill.greenTeam) {
-                player.transform.position = greenTeamPos;
+                player.transform.position = KOTHgreenTeamPos;
             }
 
             foreach (PlayerControl player in KingOfTheHill.yellowTeam) {
-                player.transform.position = yellowTeamPos;
+                player.transform.position = KOTHyellowTeamPos;
             }
 
             if (PlayerInCache.LocalPlayer.PlayerControl != null && !createdkingofthehill) {
@@ -2224,10 +2195,10 @@ namespace LasMonjas
 
                 GameObject greenteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                 greenteamfloor.name = "greenteamfloor";
-                greenteamfloor.transform.position = greenTeamFloorPos;
+                greenteamfloor.transform.position = KOTHgreenTeamFloorPos;
                 GameObject yellowteamfloor = GameObject.Instantiate(CustomMain.customAssets.yellowfloor, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                 yellowteamfloor.name = "yellowteamfloor";
-                yellowteamfloor.transform.position = yellowTeamFloorPos;
+                yellowteamfloor.transform.position = KOTHyellowTeamFloorPos;
                 GameObject greenkingaura = GameObject.Instantiate(CustomMain.customAssets.greenaura, KingOfTheHill.greenKingplayer.transform);
                 greenkingaura.name = "greenkingaura";
                 greenkingaura.transform.position = new Vector3(KingOfTheHill.greenKingplayer.transform.position.x, KingOfTheHill.greenKingplayer.transform.position.y, 0.4f);
@@ -2238,27 +2209,27 @@ namespace LasMonjas
                 KingOfTheHill.yellowkingaura = yellowkingaura;
                 GameObject flagzoneone = GameObject.Instantiate(CustomMain.customAssets.whiteflag, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                 flagzoneone.name = "flagzoneone";
-                flagzoneone.transform.position = flagZoneOnePos;
+                flagzoneone.transform.position = KOTHflagZoneOnePos;
                 KingOfTheHill.flagzoneone = flagzoneone;
                 GameObject zoneone = GameObject.Instantiate(CustomMain.customAssets.whitebase, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                 zoneone.name = "zoneone";
-                zoneone.transform.position = zoneOnePos;
+                zoneone.transform.position = KOTHzoneOnePos;
                 KingOfTheHill.zoneone = zoneone;
                 GameObject flagzonetwo = GameObject.Instantiate(CustomMain.customAssets.whiteflag, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                 flagzonetwo.name = "flagzonetwo";
-                flagzonetwo.transform.position = flagZoneTwoPos;
+                flagzonetwo.transform.position = KOTHflagZoneTwoPos;
                 KingOfTheHill.flagzonetwo = flagzonetwo;
                 GameObject zonetwo = GameObject.Instantiate(CustomMain.customAssets.whitebase, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                 zonetwo.name = "zonetwo";
-                zonetwo.transform.position = zoneTwoPos;
+                zonetwo.transform.position = KOTHzoneTwoPos;
                 KingOfTheHill.zonetwo = zonetwo;
                 GameObject flagzonethree = GameObject.Instantiate(CustomMain.customAssets.whiteflag, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                 flagzonethree.name = "flagzonethree";
-                flagzonethree.transform.position = flagZoneThreePos;
+                flagzonethree.transform.position = KOTHflagZoneThreePos;
                 KingOfTheHill.flagzonethree = flagzonethree;
                 GameObject zonethree = GameObject.Instantiate(CustomMain.customAssets.whitebase, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                 zonethree.name = "zonethree";
-                zonethree.transform.position = zoneThreePos;
+                zonethree.transform.position = KOTHzoneThreePos;
                 KingOfTheHill.zonethree = zonethree;
                 KingOfTheHill.kingZones.Add(zoneone);
                 KingOfTheHill.kingZones.Add(zonetwo);
@@ -2266,12 +2237,12 @@ namespace LasMonjas
 
                 if (KingOfTheHill.usurperPlayer != null) {
                     KingOfTheHill.usurperPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                    KingOfTheHill.usurperPlayer.transform.position = usurperPlayerPos;
+                    KingOfTheHill.usurperPlayer.transform.position = KOTHusurperPlayerPos;
                     KingOfTheHill.usurperSpawns.Add(greenteamfloor);
                     KingOfTheHill.usurperSpawns.Add(yellowteamfloor);                    
                 }
 
-                if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+                if (Helpers.isSubmergedMap()) {
                     greenkingaura.transform.position = new Vector3(KingOfTheHill.greenKingplayer.transform.position.x, KingOfTheHill.greenKingplayer.transform.position.y, -0.5f);
                     yellowkingaura.transform.position = new Vector3(KingOfTheHill.yellowKingplayer.transform.position.x, KingOfTheHill.yellowKingplayer.transform.position.y, -0.5f);
                 }
@@ -2280,64 +2251,67 @@ namespace LasMonjas
             }
         }
 
+        public static Vector3 HPhotPotatoPlayerPos;
+        public static Vector3 HPnotPotatoTeamPos;
+
         public static void CreateHP() {
 
-            Vector3 hotPotatoPlayerPos = new Vector3();
-            Vector3 notPotatoTeamPos = new Vector3();
+            HPhotPotatoPlayerPos = new Vector3();
+            HPnotPotatoTeamPos = new Vector3();
 
             switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                 // Skeld / Custom Skeld
                 case 0:
                     if (activatedSensei) {
-                        hotPotatoPlayerPos = new Vector3(-6.5f, -2.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        notPotatoTeamPos = new Vector3(12.5f, -0.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        HPhotPotatoPlayerPos = new Vector3(-6.5f, -2.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        HPnotPotatoTeamPos = new Vector3(12.5f, -0.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                     }
                     else if (activatedDleks) {
-                        hotPotatoPlayerPos = new Vector3(0.75f, -7f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        notPotatoTeamPos = new Vector3(-6.25f, -3.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        HPhotPotatoPlayerPos = new Vector3(0.75f, -7f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        HPnotPotatoTeamPos = new Vector3(-6.25f, -3.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                     }
                     else {
-                        hotPotatoPlayerPos = new Vector3(-0.75f, -7f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        notPotatoTeamPos = new Vector3(6.25f, -3.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        HPhotPotatoPlayerPos = new Vector3(-0.75f, -7f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        HPnotPotatoTeamPos = new Vector3(6.25f, -3.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                     }
                     break;
                 // Mira HQ
                 case 1:
-                    hotPotatoPlayerPos = new Vector3(6.15f, 6.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    notPotatoTeamPos = new Vector3(17.75f, 11.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    HPhotPotatoPlayerPos = new Vector3(6.15f, 6.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    HPnotPotatoTeamPos = new Vector3(17.75f, 11.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                     break;
                 // Polus
                 case 2:
-                    hotPotatoPlayerPos = new Vector3(20.5f, -11.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    notPotatoTeamPos = new Vector3(12.25f, -16f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    HPhotPotatoPlayerPos = new Vector3(20.5f, -11.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    HPnotPotatoTeamPos = new Vector3(12.25f, -16f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                     break;
                 // Dleks
                 case 3:
-                    hotPotatoPlayerPos = new Vector3(0.75f, -7f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    notPotatoTeamPos = new Vector3(-6.25f, -3.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    HPhotPotatoPlayerPos = new Vector3(0.75f, -7f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    HPnotPotatoTeamPos = new Vector3(-6.25f, -3.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                     break;
                 // Airship
                 case 4:
-                    hotPotatoPlayerPos = new Vector3(12.25f, 2f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    notPotatoTeamPos = new Vector3(6.25f, 2.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    HPhotPotatoPlayerPos = new Vector3(12.25f, 2f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    HPnotPotatoTeamPos = new Vector3(6.25f, 2.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                     break;
                 // Fungle
                 case 5:
-                    hotPotatoPlayerPos = new Vector3(-10.75f, 12.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    notPotatoTeamPos = new Vector3(-3.25f, -10.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    HPhotPotatoPlayerPos = new Vector3(-10.75f, 12.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    HPnotPotatoTeamPos = new Vector3(-3.25f, -10.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                     break;
                 // Submerged
                 case 6:
-                    hotPotatoPlayerPos = new Vector3(-4.25f, -33.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    notPotatoTeamPos = new Vector3(13f, -25.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    HPhotPotatoPlayerPos = new Vector3(-4.25f, -33.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    HPnotPotatoTeamPos = new Vector3(13f, -25.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
                     break;
             }
 
             HotPotato.hotPotatoPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-            HotPotato.hotPotatoPlayer.transform.position = hotPotatoPlayerPos;
+            HotPotato.hotPotatoPlayer.transform.position = HPhotPotatoPlayerPos;
             
             foreach (PlayerControl player in HotPotato.notPotatoTeam) {
-                player.transform.position = notPotatoTeamPos;
+                player.transform.position = HPnotPotatoTeamPos;
             }
 
             if (PlayerInCache.LocalPlayer.PlayerControl != null && !createdhotpotato) {
@@ -2353,107 +2327,116 @@ namespace LasMonjas
                 createdhotpotato = true;
             }
         }
+
+        public static Vector3 ZLzombieTeamPos;
+        public static Vector3 ZLsurvivorTeamPos;
+        public static Vector3 ZLnursePos;
+        public static Vector3 ZLmedkitOnePos;
+        public static Vector3 ZLmedkitTwoPos;
+        public static Vector3 ZLmedkitThreePos;
+        public static Vector3 ZLlaboratoryPos;
+
         public static void CreateZL() {
 
-            Vector3 zombieTeamPos = new Vector3();
-            Vector3 survivorTeamPos = new Vector3();
-            Vector3 nursePos = new Vector3();
-            Vector3 medkitOnePos = new Vector3();
-            Vector3 medkitTwoPos = new Vector3();
-            Vector3 medkitThreePos = new Vector3();
-            Vector3 laboratoryPos = new Vector3();
+            ZLzombieTeamPos = new Vector3();
+            ZLsurvivorTeamPos = new Vector3();
+            ZLnursePos = new Vector3();
+            ZLmedkitOnePos = new Vector3();
+            ZLmedkitTwoPos = new Vector3();
+            ZLmedkitThreePos = new Vector3();
+            ZLlaboratoryPos = new Vector3();
 
             switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                 // Skeld / Custom Skeld
                 case 0:
                     if (activatedSensei) {
-                        zombieTeamPos = new Vector3(-4.85f, 6, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        survivorTeamPos = new Vector3(4.75f, -8.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        nursePos = new Vector3(-12f, 7.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        medkitOnePos = new Vector3(-6.5f, -0.85f, -0.1f);
-                        medkitTwoPos = new Vector3(-18.85f, 2f, -0.1f);
-                        medkitThreePos = new Vector3(-5.75f, 11.75f, -0.1f);
-                        laboratoryPos = new Vector3(-12f, 7.2f, 0.5f);
+                        ZLzombieTeamPos = new Vector3(-4.85f, 6, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        ZLsurvivorTeamPos = new Vector3(4.75f, -8.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        ZLnursePos = new Vector3(-12f, 7.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        ZLmedkitOnePos = new Vector3(-6.5f, -0.85f, -0.1f);
+                        ZLmedkitTwoPos = new Vector3(-18.85f, 2f, -0.1f);
+                        ZLmedkitThreePos = new Vector3(-5.75f, 11.75f, -0.1f);
+                        ZLlaboratoryPos = new Vector3(-12f, 7.2f, 0.5f);
                     }
                     else if (activatedDleks) {
-                        zombieTeamPos = new Vector3(17.25f, -13.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        survivorTeamPos = new Vector3(-11.75f, -4.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        nursePos = new Vector3(10.2f, 3.6f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        medkitOnePos = new Vector3(7.25f, -5f, -0.1f);
-                        medkitTwoPos = new Vector3(-3.75f, 3.5f, -0.1f);
-                        medkitThreePos = new Vector3(13.75f, -3.75f, -0.1f);
-                        laboratoryPos = new Vector3(10.25f, 3.38f, 0.5f);
+                        ZLzombieTeamPos = new Vector3(17.25f, -13.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        ZLsurvivorTeamPos = new Vector3(-11.75f, -4.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        ZLnursePos = new Vector3(10.2f, 3.6f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        ZLmedkitOnePos = new Vector3(7.25f, -5f, -0.1f);
+                        ZLmedkitTwoPos = new Vector3(-3.75f, 3.5f, -0.1f);
+                        ZLmedkitThreePos = new Vector3(13.75f, -3.75f, -0.1f);
+                        ZLlaboratoryPos = new Vector3(10.25f, 3.38f, 0.5f);
                     }
                     else {
-                        zombieTeamPos = new Vector3(-17.25f, -13.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        survivorTeamPos = new Vector3(11.75f, -4.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        nursePos = new Vector3(-10.2f, 3.6f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        medkitOnePos = new Vector3(-7.25f, -5f, -0.1f);
-                        medkitTwoPos = new Vector3(3.75f, 3.5f, -0.1f);
-                        medkitThreePos = new Vector3(-13.75f, -3.75f, -0.1f);
-                        laboratoryPos = new Vector3(-10.25f, 3.38f, 0.5f);
+                        ZLzombieTeamPos = new Vector3(-17.25f, -13.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        ZLsurvivorTeamPos = new Vector3(11.75f, -4.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        ZLnursePos = new Vector3(-10.2f, 3.6f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        ZLmedkitOnePos = new Vector3(-7.25f, -5f, -0.1f);
+                        ZLmedkitTwoPos = new Vector3(3.75f, 3.5f, -0.1f);
+                        ZLmedkitThreePos = new Vector3(-13.75f, -3.75f, -0.1f);
+                        ZLlaboratoryPos = new Vector3(-10.25f, 3.38f, 0.5f);
                     }
                     break;
                 // Mira HQ
                 case 1:
-                    zombieTeamPos = new Vector3(18.5f, -1.85f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    survivorTeamPos = new Vector3(6.1f, 5.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    nursePos = new Vector3(1.8f, 1.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    medkitOnePos = new Vector3(16.25f, 0.25f, -0.1f);
-                    medkitTwoPos = new Vector3(8.5f, 13.75f, -0.1f);
-                    medkitThreePos = new Vector3(-4.5f, 3.5f, -0.1f);
-                    laboratoryPos = new Vector3(1.75f, 1.125f, 0.5f);
+                    ZLzombieTeamPos = new Vector3(18.5f, -1.85f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    ZLsurvivorTeamPos = new Vector3(6.1f, 5.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    ZLnursePos = new Vector3(1.8f, 1.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    ZLmedkitOnePos = new Vector3(16.25f, 0.25f, -0.1f);
+                    ZLmedkitTwoPos = new Vector3(8.5f, 13.75f, -0.1f);
+                    ZLmedkitThreePos = new Vector3(-4.5f, 3.5f, -0.1f);
+                    ZLlaboratoryPos = new Vector3(1.75f, 1.125f, 0.5f);
                     break;
                 // Polus
                 case 2:
-                    zombieTeamPos = new Vector3(17.15f, -17.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    survivorTeamPos = new Vector3(40.4f, -6.8f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    nursePos = new Vector3(16.65f, -2.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    medkitOnePos = new Vector3(20.75f, -12f, -0.1f);
-                    medkitTwoPos = new Vector3(3.5f, -11.75f, -0.1f);
-                    medkitThreePos = new Vector3(31.5f, -7.5f, -0.1f);
-                    laboratoryPos = new Vector3(16.68f, -2.52f, 0.5f);
+                    ZLzombieTeamPos = new Vector3(17.15f, -17.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    ZLsurvivorTeamPos = new Vector3(40.4f, -6.8f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    ZLnursePos = new Vector3(16.65f, -2.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    ZLmedkitOnePos = new Vector3(20.75f, -12f, -0.1f);
+                    ZLmedkitTwoPos = new Vector3(3.5f, -11.75f, -0.1f);
+                    ZLmedkitThreePos = new Vector3(31.5f, -7.5f, -0.1f);
+                    ZLlaboratoryPos = new Vector3(16.68f, -2.52f, 0.5f);
                     break;
                 // Dleks
                 case 3:
-                    zombieTeamPos = new Vector3(17.25f, -13.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    survivorTeamPos = new Vector3(-11.75f, -4.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    nursePos = new Vector3(10.2f, 3.6f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    medkitOnePos = new Vector3(7.25f, -5f, -0.1f);
-                    medkitTwoPos = new Vector3(-3.75f, 3.5f, -0.1f);
-                    medkitThreePos = new Vector3(13.75f, -3.75f, -0.1f);
-                    laboratoryPos = new Vector3(10.25f, 3.38f, 0.5f);
+                    ZLzombieTeamPos = new Vector3(17.25f, -13.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    ZLsurvivorTeamPos = new Vector3(-11.75f, -4.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    ZLnursePos = new Vector3(10.2f, 3.6f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    ZLmedkitOnePos = new Vector3(7.25f, -5f, -0.1f);
+                    ZLmedkitTwoPos = new Vector3(-3.75f, 3.5f, -0.1f);
+                    ZLmedkitThreePos = new Vector3(13.75f, -3.75f, -0.1f);
+                    ZLlaboratoryPos = new Vector3(10.25f, 3.38f, 0.5f);
                     break;
                 // Airship
                 case 4:
-                    zombieTeamPos = new Vector3(32.35f, 7.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    survivorTeamPos = new Vector3(25.25f, -8.65f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    nursePos = new Vector3(-18.5f, 2.9f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    medkitOnePos = new Vector3(-12f, 2.5f, -0.1f);
-                    medkitTwoPos = new Vector3(-13.5f, -9.75f, -0.1f);
-                    medkitThreePos = new Vector3(-8.85f, 7.5f, -0.1f);
-                    laboratoryPos = new Vector3(-18.45f, 3f, 0.5f);
+                    ZLzombieTeamPos = new Vector3(32.35f, 7.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    ZLsurvivorTeamPos = new Vector3(25.25f, -8.65f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    ZLnursePos = new Vector3(-18.5f, 2.9f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    ZLmedkitOnePos = new Vector3(-12f, 2.5f, -0.1f);
+                    ZLmedkitTwoPos = new Vector3(-13.5f, -9.75f, -0.1f);
+                    ZLmedkitThreePos = new Vector3(-8.85f, 7.5f, -0.1f);
+                    ZLlaboratoryPos = new Vector3(-18.45f, 3f, 0.5f);
                     ZombieLaboratory.nursePlayerInsideLaboratory = false;
                     break;
                 // Fungle
                 case 5:
-                    zombieTeamPos = new Vector3(-4.25f, -10.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    survivorTeamPos = new Vector3(6.5f, 2.85f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    nursePos = new Vector3(-26.75f, -0.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    medkitOnePos = new Vector3(-2.75f, -0.15f, -0.1f);
-                    medkitTwoPos = new Vector3(-10, -12.25f, -0.1f);
-                    medkitThreePos = new Vector3(-9.25f, 6.4f, -0.1f);
-                    laboratoryPos = new Vector3(-27f, -0.65f, 0.5f);
+                    ZLzombieTeamPos = new Vector3(-4.25f, -10.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    ZLsurvivorTeamPos = new Vector3(6.5f, 2.85f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    ZLnursePos = new Vector3(-26.75f, -0.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    ZLmedkitOnePos = new Vector3(-2.75f, -0.15f, -0.1f);
+                    ZLmedkitTwoPos = new Vector3(-10, -12.25f, -0.1f);
+                    ZLmedkitThreePos = new Vector3(-9.25f, 6.4f, -0.1f);
+                    ZLlaboratoryPos = new Vector3(-27f, -0.65f, 0.5f);
                     break;
                 // Submerged
                 case 6:
-                    zombieTeamPos = new Vector3(1f, 10f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    survivorTeamPos = new Vector3(5.5f, 31.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    nursePos = new Vector3(-6f, 31.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    medkitOnePos = new Vector3(0f, 32f, -1f);
-                    medkitTwoPos = new Vector3(6f, -34f, -1f);
-                    medkitThreePos = new Vector3(-11.25f, -27.75f, -1f);
-                    laboratoryPos = new Vector3(-5.9f, 31.85f, 0.5f);
+                    ZLzombieTeamPos = new Vector3(1f, 10f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    ZLsurvivorTeamPos = new Vector3(5.5f, 31.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    ZLnursePos = new Vector3(-6f, 31.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    ZLmedkitOnePos = new Vector3(0f, 32f, -1f);
+                    ZLmedkitTwoPos = new Vector3(6f, -34f, -1f);
+                    ZLmedkitThreePos = new Vector3(-11.25f, -27.75f, -1f);
+                    ZLlaboratoryPos = new Vector3(-5.9f, 31.85f, 0.5f);
                     GameObject laboratorytwo = GameObject.Instantiate(CustomMain.customAssets.laboratory, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                     laboratorytwo.name = "laboratorytwo";
                     laboratorytwo.transform.position = new Vector3(-14.1f, -39f, -0.01f);
@@ -2478,17 +2461,17 @@ namespace LasMonjas
 
             foreach (PlayerControl player in ZombieLaboratory.zombieTeam) {
                 player.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                player.transform.position = zombieTeamPos;
+                player.transform.position = ZLzombieTeamPos;
             }
 
             foreach (PlayerControl player in ZombieLaboratory.survivorTeam) {
                 if (player == PlayerInCache.LocalPlayer.PlayerControl && PlayerInCache.LocalPlayer.PlayerControl != ZombieLaboratory.nursePlayer) {
-                    player.transform.position = survivorTeamPos;
+                    player.transform.position = ZLsurvivorTeamPos;
                     // Add Arrows pointing the deliver point
                     if (ZombieLaboratory.localSurvivorsDeliverArrow.Count == 0) {
                         ZombieLaboratory.localSurvivorsDeliverArrow.Add(new Arrow(Palette.PlayerColors[3]));
                         ZombieLaboratory.localSurvivorsDeliverArrow[0].arrow.SetActive(true);
-                        if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+                        if (Helpers.isSubmergedMap()) {
                             ZombieLaboratory.localSurvivorsDeliverArrow.Add(new Arrow(Palette.PlayerColors[3]));
                             ZombieLaboratory.localSurvivorsDeliverArrow[1].arrow.SetActive(true);
                         }
@@ -2497,16 +2480,16 @@ namespace LasMonjas
             }
 
             if (PlayerInCache.LocalPlayer.PlayerControl == ZombieLaboratory.nursePlayer) {
-                ZombieLaboratory.nursePlayer.transform.position = nursePos; ;
+                ZombieLaboratory.nursePlayer.transform.position = ZLnursePos; ;
                 GameObject mapMedKit = GameObject.Instantiate(CustomMain.customAssets.mapMedKit, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                 mapMedKit.name = "mapMedKit";
-                mapMedKit.transform.position = medkitOnePos;
+                mapMedKit.transform.position = ZLmedkitOnePos;
                 GameObject mapMedKittwo = GameObject.Instantiate(CustomMain.customAssets.mapMedKit, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                 mapMedKittwo.name = "mapMedKittwo";
-                mapMedKittwo.transform.position = medkitTwoPos;
+                mapMedKittwo.transform.position = ZLmedkitTwoPos;
                 GameObject mapMedKitthree = GameObject.Instantiate(CustomMain.customAssets.mapMedKit, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                 mapMedKitthree.name = "mapMedKitthree";
-                mapMedKitthree.transform.position = medkitThreePos;
+                mapMedKitthree.transform.position = ZLmedkitThreePos;
                 ZombieLaboratory.nurseMedkits.Add(mapMedKit);
                 ZombieLaboratory.nurseMedkits.Add(mapMedKittwo);
                 ZombieLaboratory.nurseMedkits.Add(mapMedKitthree);
@@ -2526,7 +2509,7 @@ namespace LasMonjas
 
                 GameObject laboratory = GameObject.Instantiate(CustomMain.customAssets.laboratory, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                 laboratory.name = "laboratory";
-                laboratory.transform.position = laboratoryPos;
+                laboratory.transform.position = ZLlaboratoryPos;
                 laboratory.gameObject.layer = 9;
                 laboratory.transform.GetChild(0).gameObject.layer = 9;
                 ZombieLaboratory.laboratory = laboratory;
@@ -2534,7 +2517,7 @@ namespace LasMonjas
                 if (GameOptionsManager.Instance.currentGameOptions.MapId == 5) {
                     ZombieLaboratory.laboratoryEnterButton.transform.position = new Vector3(-23.6f, -0.73f, 0.04f);
                 }
-                else if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+                else if (Helpers.isSubmergedMap()) {
                     ZombieLaboratory.laboratoryEnterButton.transform.position = new Vector3(-5.7f, 29.47f, -0.01f);
                 }
                 ZombieLaboratory.laboratoryExitButton = laboratory.transform.GetChild(2).gameObject;
@@ -2558,86 +2541,93 @@ namespace LasMonjas
                 createdzombielaboratory = true;
             }
         }
+
+        public static Vector3 BRserialKillerPos;
+        public static Vector3 BRlimeTeamPos;
+        public static Vector3 BRpinkTeamPos;
+        public static Vector3 BRlimeTeamFloorPos;
+        public static Vector3 BRpinkTeamFloorPos;
+
         public static void CreateBR() {
 
-            Vector3 serialKillerPos = new Vector3();
-            Vector3 limeTeamPos = new Vector3();
-            Vector3 pinkTeamPos = new Vector3();
-            Vector3 limeTeamFloorPos = new Vector3();
-            Vector3 pinkTeamFloorPos = new Vector3();
+            BRserialKillerPos = new Vector3();
+            BRlimeTeamPos = new Vector3();
+            BRpinkTeamPos = new Vector3();
+            BRlimeTeamFloorPos = new Vector3();
+            BRpinkTeamFloorPos = new Vector3();
 
             switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                 // Skeld / Custom Skeld
                 case 0:
                     if (activatedSensei) {
-                        serialKillerPos = new Vector3(-3.65f, 5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        limeTeamPos = new Vector3(-17.5f, -1.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        pinkTeamPos = new Vector3(7.7f, -0.95f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        limeTeamFloorPos = new Vector3(-17.5f, -1.15f, 0.5f);
-                        pinkTeamFloorPos = new Vector3(7.7f, -0.95f, 0.5f);
+                        BRserialKillerPos = new Vector3(-3.65f, 5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        BRlimeTeamPos = new Vector3(-17.5f, -1.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        BRpinkTeamPos = new Vector3(7.7f, -0.95f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        BRlimeTeamFloorPos = new Vector3(-17.5f, -1.15f, 0.5f);
+                        BRpinkTeamFloorPos = new Vector3(7.7f, -0.95f, 0.5f);
                     }
                     else if (activatedDleks) {
-                        serialKillerPos = new Vector3(-6.35f, -7.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        limeTeamPos = new Vector3(17f, -5.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        pinkTeamPos = new Vector3(-12f, -4.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        limeTeamFloorPos = new Vector3(17f, -5.5f, 0.5f);
-                        pinkTeamFloorPos = new Vector3(-12f, -4.75f, 0.5f);
+                        BRserialKillerPos = new Vector3(-6.35f, -7.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        BRlimeTeamPos = new Vector3(17f, -5.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        BRpinkTeamPos = new Vector3(-12f, -4.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        BRlimeTeamFloorPos = new Vector3(17f, -5.5f, 0.5f);
+                        BRpinkTeamFloorPos = new Vector3(-12f, -4.75f, 0.5f);
                     }
                     else {
-                        serialKillerPos = new Vector3(6.35f, -7.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        limeTeamPos = new Vector3(-17f, -5.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        pinkTeamPos = new Vector3(12f, -4.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        limeTeamFloorPos = new Vector3(-17f, -5.5f, 0.5f);
-                        pinkTeamFloorPos = new Vector3(12f, -4.75f, 0.5f);
+                        BRserialKillerPos = new Vector3(6.35f, -7.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        BRlimeTeamPos = new Vector3(-17f, -5.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        BRpinkTeamPos = new Vector3(12f, -4.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        BRlimeTeamFloorPos = new Vector3(-17f, -5.5f, 0.5f);
+                        BRpinkTeamFloorPos = new Vector3(12f, -4.75f, 0.5f);
                     }
                     break;
                 // Mira HQ
                 case 1:
-                    serialKillerPos = new Vector3(16.25f, 24.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    limeTeamPos = new Vector3(6.15f, 13.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    pinkTeamPos = new Vector3(22.25f, 3f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    limeTeamFloorPos = new Vector3(6.15f, 13.25f, 0.5f);
-                    pinkTeamFloorPos = new Vector3(22.25f, 3f, 0.5f);                    
+                    BRserialKillerPos = new Vector3(16.25f, 24.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    BRlimeTeamPos = new Vector3(6.15f, 13.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    BRpinkTeamPos = new Vector3(22.25f, 3f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    BRlimeTeamFloorPos = new Vector3(6.15f, 13.25f, 0.5f);
+                    BRpinkTeamFloorPos = new Vector3(22.25f, 3f, 0.5f);                    
                     break;
                 // Polus
                 case 2:
-                    serialKillerPos = new Vector3(22.3f, -19.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    limeTeamPos = new Vector3(2.35f, -23.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    pinkTeamPos = new Vector3(36.35f, -8f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    limeTeamFloorPos = new Vector3(2.35f, -23.75f, 0.5f);
-                    pinkTeamFloorPos = new Vector3(36.35f, -8f, 0.5f);                    
+                    BRserialKillerPos = new Vector3(22.3f, -19.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    BRlimeTeamPos = new Vector3(2.35f, -23.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    BRpinkTeamPos = new Vector3(36.35f, -8f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    BRlimeTeamFloorPos = new Vector3(2.35f, -23.75f, 0.5f);
+                    BRpinkTeamFloorPos = new Vector3(36.35f, -8f, 0.5f);                    
                     break;
                 // Dleks
                 case 3:
-                    serialKillerPos = new Vector3(-6.35f, -7.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    limeTeamPos = new Vector3(17f, -5.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    pinkTeamPos = new Vector3(-12f, -4.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    limeTeamFloorPos = new Vector3(17f, -5.5f, 0.5f);
-                    pinkTeamFloorPos = new Vector3(-12f, -4.75f, 0.5f);
+                    BRserialKillerPos = new Vector3(-6.35f, -7.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    BRlimeTeamPos = new Vector3(17f, -5.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    BRpinkTeamPos = new Vector3(-12f, -4.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    BRlimeTeamFloorPos = new Vector3(17f, -5.5f, 0.5f);
+                    BRpinkTeamFloorPos = new Vector3(-12f, -4.75f, 0.5f);
                     break;
                 // Airship
                 case 4:
-                    serialKillerPos = new Vector3(12.25f, 2f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    limeTeamPos = new Vector3(-13.9f, -14.45f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    pinkTeamPos = new Vector3(37.35f, -3.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    limeTeamFloorPos = new Vector3(-13.9f, -14.45f, 0.5f);
-                    pinkTeamFloorPos = new Vector3(37.35f, -3.25f, 0.5f);                    
+                    BRserialKillerPos = new Vector3(12.25f, 2f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    BRlimeTeamPos = new Vector3(-13.9f, -14.45f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    BRpinkTeamPos = new Vector3(37.35f, -3.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    BRlimeTeamFloorPos = new Vector3(-13.9f, -14.45f, 0.5f);
+                    BRpinkTeamFloorPos = new Vector3(37.35f, -3.25f, 0.5f);                    
                     break;
                 // Fungle
                 case 5:
-                    serialKillerPos = new Vector3(9.35f, -9.85f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    limeTeamPos = new Vector3(1.6f, -1.65f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    pinkTeamPos = new Vector3(6.75f, 2f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    limeTeamFloorPos = new Vector3(1.6f, -1.65f, 0.5f);
-                    pinkTeamFloorPos = new Vector3(6.75f, 2, 0.5f);                    
+                    BRserialKillerPos = new Vector3(9.35f, -9.85f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    BRlimeTeamPos = new Vector3(1.6f, -1.65f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    BRpinkTeamPos = new Vector3(6.75f, 2f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    BRlimeTeamFloorPos = new Vector3(1.6f, -1.65f, 0.5f);
+                    BRpinkTeamFloorPos = new Vector3(6.75f, 2, 0.5f);                    
                     break;
                 // Submerged
                 case 6:
-                    serialKillerPos = new Vector3(5.75f, 31.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    limeTeamPos = new Vector3(-12.25f, 18.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    pinkTeamPos = new Vector3(-8.5f, -39.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    limeTeamFloorPos = new Vector3(-12.25f, 18.5f, 0.03f);
-                    pinkTeamFloorPos = new Vector3(-8.5f, -39.5f, -0.01f);
+                    BRserialKillerPos = new Vector3(5.75f, 31.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    BRlimeTeamPos = new Vector3(-12.25f, 18.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    BRpinkTeamPos = new Vector3(-8.5f, -39.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    BRlimeTeamFloorPos = new Vector3(-12.25f, 18.5f, 0.03f);
+                    BRpinkTeamFloorPos = new Vector3(-8.5f, -39.5f, -0.01f);
                     GameObject limeteamfloortwo = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                     limeteamfloortwo.name = "limeteamfloortwo";
                     limeteamfloortwo.transform.position = new Vector3(-14.5f, -34.35f, -0.01f);
@@ -2658,15 +2648,15 @@ namespace LasMonjas
             else {
                 if (BattleRoyale.serialKiller != null) {
                     BattleRoyale.serialKiller.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                    BattleRoyale.serialKiller.transform.position = serialKillerPos;
+                    BattleRoyale.serialKiller.transform.position = BRserialKillerPos;
                 }
 
                 foreach (PlayerControl player in BattleRoyale.limeTeam) {
-                    player.transform.position = limeTeamPos;
+                    player.transform.position = BRlimeTeamPos;
                 }
 
                 foreach (PlayerControl player in BattleRoyale.pinkTeam) {
-                    player.transform.position = pinkTeamPos;
+                    player.transform.position = BRpinkTeamPos;
                 }
             }
 
@@ -2676,10 +2666,10 @@ namespace LasMonjas
                 if (BattleRoyale.matchType != 0) {
                     GameObject limeteamfloor = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                     limeteamfloor.name = "limeteamfloor";
-                    limeteamfloor.transform.position = limeTeamFloorPos;
+                    limeteamfloor.transform.position = BRlimeTeamFloorPos;
                     GameObject pinkteamfloor = GameObject.Instantiate(CustomMain.customAssets.redfloor, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                     pinkteamfloor.name = "pinkteamfloor";
-                    pinkteamfloor.transform.position = pinkTeamFloorPos;
+                    pinkteamfloor.transform.position = BRpinkTeamFloorPos;
                     BattleRoyale.serialKillerSpawns.Add(limeteamfloor);
                     BattleRoyale.serialKillerSpawns.Add(pinkteamfloor);
                 }
@@ -2687,172 +2677,187 @@ namespace LasMonjas
                 createdbattleroyale = true;
             }
         }
+
+        public static Vector3 MFbigMonjaPos;
+        public static Vector3 MFgreenTeamPos;
+        public static Vector3 MFcyanTeamPos;
+        public static Vector3 MFbigSpawnOnePos;
+        public static Vector3 MFbigSpawnTwoPos;
+        public static Vector3 MFlittleSpawnOnePos;
+        public static Vector3 MFlittleSpawnTwoPos;
+        public static Vector3 MFlittleSpawnThreePos;
+        public static Vector3 MFlittleSpawnFourPos;
+        public static Vector3 MFgreenBasePos;
+        public static Vector3 MFcyanBasePos;
+        public static Vector3 MFgreyBasePos;
+        public static Vector3 MFallulMonjaPos;
+
         public static void CreateMF() {
 
-            Vector3 bigMonjaPos = new Vector3();
-            Vector3 greenTeamPos = new Vector3();
-            Vector3 cyanTeamPos = new Vector3();
-            Vector3 bigSpawnOnePos = new Vector3();
-            Vector3 bigSpawnTwoPos = new Vector3();
-            Vector3 littleSpawnOnePos = new Vector3();
-            Vector3 littleSpawnTwoPos = new Vector3();
-            Vector3 littleSpawnThreePos = new Vector3();
-            Vector3 littleSpawnFourPos = new Vector3();
-            Vector3 greenBasePos = new Vector3();
-            Vector3 cyanBasePos = new Vector3();
-            Vector3 greyBasePos = new Vector3();
-            Vector3 allulMonjaPos = new Vector3();
+            MFbigMonjaPos = new Vector3();
+            MFgreenTeamPos = new Vector3();
+            MFcyanTeamPos = new Vector3();
+            MFbigSpawnOnePos = new Vector3();
+            MFbigSpawnTwoPos = new Vector3();
+            MFlittleSpawnOnePos = new Vector3();
+            MFlittleSpawnTwoPos = new Vector3();
+            MFlittleSpawnThreePos = new Vector3();
+            MFlittleSpawnFourPos = new Vector3();
+            MFgreenBasePos = new Vector3();
+            MFcyanBasePos = new Vector3();
+            MFgreyBasePos = new Vector3();
+            MFallulMonjaPos = new Vector3();
 
             switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                 // Skeld / Custom Skeld
                 case 0:
                     if (activatedSensei) {
-                        bigMonjaPos = new Vector3(-12f, 7f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        greenTeamPos = new Vector3(-10.5f, -10, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        cyanTeamPos = new Vector3(7.4f, -5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        bigSpawnOnePos = new Vector3(-6.2f, -1.4f, 1f);
-                        bigSpawnTwoPos = new Vector3(-0.5f, 3f, 1f);
-                        littleSpawnOnePos = new Vector3(-6.75f, 10.5f, 0.5f);
-                        littleSpawnTwoPos = new Vector3(-17.5f, -1.5f, 0.5f);
-                        littleSpawnThreePos = new Vector3(4.5f, -14f, 0.5f);
-                        littleSpawnFourPos = new Vector3(-11.5f, -4f, 0.5f);
-                        greenBasePos = new Vector3(-10.5f, -10, 0.5f);
-                        cyanBasePos = new Vector3(7.4f, -5f, 0.5f);
-                        greyBasePos = new Vector3(-12f, 7f, 0.5f);
-                        allulMonjaPos = new Vector3(9.2f, 5f, 0.5f);
+                        MFbigMonjaPos = new Vector3(-12f, 7f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        MFgreenTeamPos = new Vector3(-10.5f, -10, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        MFcyanTeamPos = new Vector3(7.4f, -5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        MFbigSpawnOnePos = new Vector3(-6.2f, -1.4f, 1f);
+                        MFbigSpawnTwoPos = new Vector3(-0.5f, 3f, 1f);
+                        MFlittleSpawnOnePos = new Vector3(-6.75f, 10.5f, 0.5f);
+                        MFlittleSpawnTwoPos = new Vector3(-17.5f, -1.5f, 0.5f);
+                        MFlittleSpawnThreePos = new Vector3(4.5f, -14f, 0.5f);
+                        MFlittleSpawnFourPos = new Vector3(-11.5f, -4f, 0.5f);
+                        MFgreenBasePos = new Vector3(-10.5f, -10, 0.5f);
+                        MFcyanBasePos = new Vector3(7.4f, -5f, 0.5f);
+                        MFgreyBasePos = new Vector3(-12f, 7f, 0.5f);
+                        MFallulMonjaPos = new Vector3(9.2f, 5f, 0.5f);
                     }
                     else if (activatedDleks) {
-                        bigMonjaPos = new Vector3(-4.5f, -7.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        greenTeamPos = new Vector3(9f, -2.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        cyanTeamPos = new Vector3(-5f, -15.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        bigSpawnOnePos = new Vector3(-9.5f, 0.9f, 1f);
-                        bigSpawnTwoPos = new Vector3(17.15f, -13.25f, 1f);
-                        littleSpawnOnePos = new Vector3(20.5f, -5.5f, 0.5f);
-                        littleSpawnTwoPos = new Vector3(0.75f, 5.25f, 0.5f);
-                        littleSpawnThreePos = new Vector3(2.15f, -9.75f, 0.5f);
-                        littleSpawnFourPos = new Vector3(-16.5f, -4.7f, 0.5f);
-                        greenBasePos = new Vector3(9f, -2.5f, 0.5f);
-                        cyanBasePos = new Vector3(-5f, -15.5f, 0.5f);
-                        greyBasePos = new Vector3(-4.5f, -7.25f, 0.5f);
-                        allulMonjaPos = new Vector3(9.8f, -8.9f, 0.5f);
+                        MFbigMonjaPos = new Vector3(-4.5f, -7.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        MFgreenTeamPos = new Vector3(9f, -2.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        MFcyanTeamPos = new Vector3(-5f, -15.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        MFbigSpawnOnePos = new Vector3(-9.5f, 0.9f, 1f);
+                        MFbigSpawnTwoPos = new Vector3(17.15f, -13.25f, 1f);
+                        MFlittleSpawnOnePos = new Vector3(20.5f, -5.5f, 0.5f);
+                        MFlittleSpawnTwoPos = new Vector3(0.75f, 5.25f, 0.5f);
+                        MFlittleSpawnThreePos = new Vector3(2.15f, -9.75f, 0.5f);
+                        MFlittleSpawnFourPos = new Vector3(-16.5f, -4.7f, 0.5f);
+                        MFgreenBasePos = new Vector3(9f, -2.5f, 0.5f);
+                        MFcyanBasePos = new Vector3(-5f, -15.5f, 0.5f);
+                        MFgreyBasePos = new Vector3(-4.5f, -7.25f, 0.5f);
+                        MFallulMonjaPos = new Vector3(9.8f, -8.9f, 0.5f);
                         GameObject skeldBigYVentDleks = GameObject.Find("AdminVent");
                         skeldBigYVentDleks.transform.position = new Vector3(-2.25f, -15.25f, skeldBigYVentDleks.transform.position.z);
                     }
                     else {
-                        bigMonjaPos = new Vector3(4.5f, -7.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        greenTeamPos = new Vector3(-9f, -2.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        cyanTeamPos = new Vector3(5f, -15.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                        bigSpawnOnePos = new Vector3(9.5f, 0.9f, 1f);
-                        bigSpawnTwoPos = new Vector3(-17.15f, -13.25f, 1f);
-                        littleSpawnOnePos = new Vector3(-20.5f, -5.5f, 0.5f);
-                        littleSpawnTwoPos = new Vector3(-0.75f, 5.25f, 0.5f);
-                        littleSpawnThreePos = new Vector3(-2.15f, -9.75f, 0.5f);
-                        littleSpawnFourPos = new Vector3(16.5f, -4.7f, 0.5f);
-                        greenBasePos = new Vector3(-9f, -2.5f, 0.5f);
-                        cyanBasePos = new Vector3(5f, -15.5f, 0.5f);
-                        greyBasePos = new Vector3(4.5f, -7.25f, 0.5f);
-                        allulMonjaPos = new Vector3(-9.8f, -8.9f, 0.5f);
+                        MFbigMonjaPos = new Vector3(4.5f, -7.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        MFgreenTeamPos = new Vector3(-9f, -2.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        MFcyanTeamPos = new Vector3(5f, -15.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                        MFbigSpawnOnePos = new Vector3(9.5f, 0.9f, 1f);
+                        MFbigSpawnTwoPos = new Vector3(-17.15f, -13.25f, 1f);
+                        MFlittleSpawnOnePos = new Vector3(-20.5f, -5.5f, 0.5f);
+                        MFlittleSpawnTwoPos = new Vector3(-0.75f, 5.25f, 0.5f);
+                        MFlittleSpawnThreePos = new Vector3(-2.15f, -9.75f, 0.5f);
+                        MFlittleSpawnFourPos = new Vector3(16.5f, -4.7f, 0.5f);
+                        MFgreenBasePos = new Vector3(-9f, -2.5f, 0.5f);
+                        MFcyanBasePos = new Vector3(5f, -15.5f, 0.5f);
+                        MFgreyBasePos = new Vector3(4.5f, -7.25f, 0.5f);
+                        MFallulMonjaPos = new Vector3(-9.8f, -8.9f, 0.5f);
                         GameObject skeldBigYVentDleks = GameObject.Find("AdminVent");
                         skeldBigYVentDleks.transform.position = new Vector3(2.25f, -15.25f, skeldBigYVentDleks.transform.position.z);
                     }
                     break;
                 // Mira HQ
                 case 1:
-                    bigMonjaPos = new Vector3(-4.45f, 2f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    greenTeamPos = new Vector3(23f, 4.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    cyanTeamPos = new Vector3(8.5f, 13f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    bigSpawnOnePos = new Vector3(15.25f, 4f, 1f);
-                    bigSpawnTwoPos = new Vector3(17.85f, 23.25f, 1f);
-                    littleSpawnOnePos = new Vector3(19.5f, 4.55f, 0.5f);
-                    littleSpawnTwoPos = new Vector3(15f, 19.25f, 0.5f);
-                    littleSpawnThreePos = new Vector3(14.5f, 0.25f, 0.5f);
-                    littleSpawnFourPos = new Vector3(2.35f, 11.15f, 0.5f);
-                    greenBasePos = new Vector3(23f, 4.75f, 0.5f);
-                    cyanBasePos = new Vector3(8.5f, 13f, 0.5f);
-                    greyBasePos = new Vector3(-4.45f, 2f, 0.5f);
-                    allulMonjaPos = new Vector3(9.2f, 5f, 0.5f);
+                    MFbigMonjaPos = new Vector3(-4.45f, 2f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    MFgreenTeamPos = new Vector3(23f, 4.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    MFcyanTeamPos = new Vector3(8.5f, 13f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    MFbigSpawnOnePos = new Vector3(15.25f, 4f, 1f);
+                    MFbigSpawnTwoPos = new Vector3(17.85f, 23.25f, 1f);
+                    MFlittleSpawnOnePos = new Vector3(19.5f, 4.55f, 0.5f);
+                    MFlittleSpawnTwoPos = new Vector3(15f, 19.25f, 0.5f);
+                    MFlittleSpawnThreePos = new Vector3(14.5f, 0.25f, 0.5f);
+                    MFlittleSpawnFourPos = new Vector3(2.35f, 11.15f, 0.5f);
+                    MFgreenBasePos = new Vector3(23f, 4.75f, 0.5f);
+                    MFcyanBasePos = new Vector3(8.5f, 13f, 0.5f);
+                    MFgreyBasePos = new Vector3(-4.45f, 2f, 0.5f);
+                    MFallulMonjaPos = new Vector3(9.2f, 5f, 0.5f);
                     break;
                 // Polus
                 case 2:
-                    bigMonjaPos = new Vector3(21.75f, -25.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    greenTeamPos = new Vector3(31.5f, -7.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    cyanTeamPos = new Vector3(2.35f, -23.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    bigSpawnOnePos = new Vector3(26.2f, -17f, 1f);
-                    bigSpawnTwoPos = new Vector3(7.45f, -9.5f, 1f);
-                    littleSpawnOnePos = new Vector3(36.5f, -21.5f, 0.5f);
-                    littleSpawnTwoPos = new Vector3(1.35f, -17f, 0.5f);
-                    littleSpawnThreePos = new Vector3(19.75f, -11.5f, 0.5f);
-                    littleSpawnFourPos = new Vector3(20.75f, -21.35f, 0.5f);
-                    greenBasePos = new Vector3(31.5f, -7.75f, 0.5f);
-                    cyanBasePos = new Vector3(2.35f, -23.75f, 0.5f);
-                    greyBasePos = new Vector3(21.75f, -25.15f, 0.5f);
-                    allulMonjaPos = new Vector3(4.65f, -4.5f, 0.5f);
+                    MFbigMonjaPos = new Vector3(21.75f, -25.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    MFgreenTeamPos = new Vector3(31.5f, -7.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    MFcyanTeamPos = new Vector3(2.35f, -23.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    MFbigSpawnOnePos = new Vector3(26.2f, -17f, 1f);
+                    MFbigSpawnTwoPos = new Vector3(7.45f, -9.5f, 1f);
+                    MFlittleSpawnOnePos = new Vector3(36.5f, -21.5f, 0.5f);
+                    MFlittleSpawnTwoPos = new Vector3(1.35f, -17f, 0.5f);
+                    MFlittleSpawnThreePos = new Vector3(19.75f, -11.5f, 0.5f);
+                    MFlittleSpawnFourPos = new Vector3(20.75f, -21.35f, 0.5f);
+                    MFgreenBasePos = new Vector3(31.5f, -7.75f, 0.5f);
+                    MFcyanBasePos = new Vector3(2.35f, -23.75f, 0.5f);
+                    MFgreyBasePos = new Vector3(21.75f, -25.15f, 0.5f);
+                    MFallulMonjaPos = new Vector3(4.65f, -4.5f, 0.5f);
                     break;
                 // Dleks
                 case 3:
-                    bigMonjaPos = new Vector3(4.5f, -7.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    greenTeamPos = new Vector3(-9f, -2.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    cyanTeamPos = new Vector3(5f, -15.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    bigSpawnOnePos = new Vector3(9.5f, 0.9f, 1f);
-                    bigSpawnTwoPos = new Vector3(-17.15f, -13.25f, 1f);
-                    littleSpawnOnePos = new Vector3(-20.5f, -5.5f, 0.5f);
-                    littleSpawnTwoPos = new Vector3(-0.75f, 5.25f, 0.5f);
-                    littleSpawnThreePos = new Vector3(-2.15f, -9.75f, 0.5f);
-                    littleSpawnFourPos = new Vector3(16.5f, -4.7f, 0.5f);
-                    greenBasePos = new Vector3(-9f, -2.5f, 0.5f);
-                    cyanBasePos = new Vector3(5f, -15.5f, 0.5f);
-                    greyBasePos = new Vector3(4.5f, -7.25f, 0.5f);
-                    allulMonjaPos = new Vector3(-9.8f, -8.9f, 0.5f);
+                    MFbigMonjaPos = new Vector3(4.5f, -7.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    MFgreenTeamPos = new Vector3(-9f, -2.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    MFcyanTeamPos = new Vector3(5f, -15.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    MFbigSpawnOnePos = new Vector3(9.5f, 0.9f, 1f);
+                    MFbigSpawnTwoPos = new Vector3(-17.15f, -13.25f, 1f);
+                    MFlittleSpawnOnePos = new Vector3(-20.5f, -5.5f, 0.5f);
+                    MFlittleSpawnTwoPos = new Vector3(-0.75f, 5.25f, 0.5f);
+                    MFlittleSpawnThreePos = new Vector3(-2.15f, -9.75f, 0.5f);
+                    MFlittleSpawnFourPos = new Vector3(16.5f, -4.7f, 0.5f);
+                    MFgreenBasePos = new Vector3(-9f, -2.5f, 0.5f);
+                    MFcyanBasePos = new Vector3(5f, -15.5f, 0.5f);
+                    MFgreyBasePos = new Vector3(4.5f, -7.25f, 0.5f);
+                    MFallulMonjaPos = new Vector3(-9.8f, -8.9f, 0.5f);
                     GameObject skeldBigYVent = GameObject.Find("AdminVent");
                     skeldBigYVent.transform.position = new Vector3(-2.25f, -15.25f, skeldBigYVent.transform.position.z);
                     break;
                 // Airship
                 case 4:
-                    bigMonjaPos = new Vector3(6.35f, 2.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    greenTeamPos = new Vector3(-10.15f, -6.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    cyanTeamPos = new Vector3(38.25f, 0f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    bigSpawnOnePos = new Vector3(-8.75f, 12.35f, 1f);
-                    bigSpawnTwoPos = new Vector3(16.25f, -8.85f, 1f);
-                    littleSpawnOnePos = new Vector3(-23.5f, -1.35f, 0.5f);
-                    littleSpawnTwoPos = new Vector3(7f, -12.5f, 0.5f);
-                    littleSpawnThreePos = new Vector3(20f, 7.75f, 0.5f);
-                    littleSpawnFourPos = new Vector3(15.45f, 0f, 0.5f);
-                    greenBasePos = new Vector3(-10.15f, -6.75f, 0.5f);
-                    cyanBasePos = new Vector3(38.25f, 0f, 0.5f);
-                    greyBasePos = new Vector3(6.35f, 2.5f, 0.5f);
-                    allulMonjaPos = new Vector3(20.75f, 2.5f, 0.5f);
+                    MFbigMonjaPos = new Vector3(6.35f, 2.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    MFgreenTeamPos = new Vector3(-10.15f, -6.75f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    MFcyanTeamPos = new Vector3(38.25f, 0f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    MFbigSpawnOnePos = new Vector3(-8.75f, 12.35f, 1f);
+                    MFbigSpawnTwoPos = new Vector3(16.25f, -8.85f, 1f);
+                    MFlittleSpawnOnePos = new Vector3(-23.5f, -1.35f, 0.5f);
+                    MFlittleSpawnTwoPos = new Vector3(7f, -12.5f, 0.5f);
+                    MFlittleSpawnThreePos = new Vector3(20f, 7.75f, 0.5f);
+                    MFlittleSpawnFourPos = new Vector3(15.45f, 0f, 0.5f);
+                    MFgreenBasePos = new Vector3(-10.15f, -6.75f, 0.5f);
+                    MFcyanBasePos = new Vector3(38.25f, 0f, 0.5f);
+                    MFgreyBasePos = new Vector3(6.35f, 2.5f, 0.5f);
+                    MFallulMonjaPos = new Vector3(20.75f, 2.5f, 0.5f);
                     break;
                 // Fungle
                 case 5:
-                    bigMonjaPos = new Vector3(-4.25f, -8.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    greenTeamPos = new Vector3(-17.5f, 7.2f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    cyanTeamPos = new Vector3(12.5f, 10, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    bigSpawnOnePos = new Vector3(-0.65f, 4.25f, 1f);
-                    bigSpawnTwoPos = new Vector3(23.25f, 13.5f, 1f);
-                    littleSpawnOnePos = new Vector3(-17.45f, -7.35f, 0.5f);
-                    littleSpawnTwoPos = new Vector3(10.85f, -15, 0.5f);
-                    littleSpawnThreePos = new Vector3(21.85f, -7.5f, 0.5f);
-                    littleSpawnFourPos = new Vector3(21.45f, 3, 0.5f);
-                    greenBasePos = new Vector3(-17.5f, 7.2f, 0.5f);
-                    cyanBasePos = new Vector3(12.5f, 10, 0.5f);
-                    greyBasePos = new Vector3(-4.25f, -8.5f, 0.5f);
-                    allulMonjaPos = new Vector3(1.5f, -1.5f, 0.5f);
+                    MFbigMonjaPos = new Vector3(-4.25f, -8.5f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    MFgreenTeamPos = new Vector3(-17.5f, 7.2f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    MFcyanTeamPos = new Vector3(12.5f, 10, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    MFbigSpawnOnePos = new Vector3(-0.65f, 4.25f, 1f);
+                    MFbigSpawnTwoPos = new Vector3(23.25f, 13.5f, 1f);
+                    MFlittleSpawnOnePos = new Vector3(-17.45f, -7.35f, 0.5f);
+                    MFlittleSpawnTwoPos = new Vector3(10.85f, -15, 0.5f);
+                    MFlittleSpawnThreePos = new Vector3(21.85f, -7.5f, 0.5f);
+                    MFlittleSpawnFourPos = new Vector3(21.45f, 3, 0.5f);
+                    MFgreenBasePos = new Vector3(-17.5f, 7.2f, 0.5f);
+                    MFcyanBasePos = new Vector3(12.5f, 10, 0.5f);
+                    MFgreyBasePos = new Vector3(-4.25f, -8.5f, 0.5f);
+                    MFallulMonjaPos = new Vector3(1.5f, -1.5f, 0.5f);
                     break;
                 // Submerged
                 case 6:
-                    bigMonjaPos = new Vector3(-12.2f, 19.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    greenTeamPos = new Vector3(-1.8f, 12.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    cyanTeamPos = new Vector3(2.65f, -35.65f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
-                    bigSpawnOnePos = new Vector3(-8.45f, 28.55f, 0.03f);
-                    bigSpawnTwoPos = new Vector3(-8.45f, -39.65f, -0.01f);
-                    littleSpawnOnePos = new Vector3(5.35f, 31.35f, 0.03f);
-                    littleSpawnTwoPos = new Vector3(5.10f, 10.85f, 0.03f);
-                    littleSpawnThreePos = new Vector3(-11.45f, -31.15f, -0.01f);
-                    littleSpawnFourPos = new Vector3(12.65f, -31.85f, -0.01f);
-                    greenBasePos = new Vector3(-1.8f, 12.25f, 0.03f);
-                    cyanBasePos = new Vector3(2.65f, -35.65f, -0.01f);
-                    greyBasePos = new Vector3(-12.2f, 19.15f, 0.03f);
-                    allulMonjaPos = new Vector3(-14.5f, -34.25f, -0.01f);
+                    MFbigMonjaPos = new Vector3(-12.2f, 19.15f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    MFgreenTeamPos = new Vector3(-1.8f, 12.25f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    MFcyanTeamPos = new Vector3(2.65f, -35.65f, PlayerInCache.LocalPlayer.PlayerControl.transform.position.z);
+                    MFbigSpawnOnePos = new Vector3(-8.45f, 28.55f, 0.03f);
+                    MFbigSpawnTwoPos = new Vector3(-8.45f, -39.65f, -0.01f);
+                    MFlittleSpawnOnePos = new Vector3(5.35f, 31.35f, 0.03f);
+                    MFlittleSpawnTwoPos = new Vector3(5.10f, 10.85f, 0.03f);
+                    MFlittleSpawnThreePos = new Vector3(-11.45f, -31.15f, -0.01f);
+                    MFlittleSpawnFourPos = new Vector3(12.65f, -31.85f, -0.01f);
+                    MFgreenBasePos = new Vector3(-1.8f, 12.25f, 0.03f);
+                    MFcyanBasePos = new Vector3(2.65f, -35.65f, -0.01f);
+                    MFgreyBasePos = new Vector3(-12.2f, 19.15f, 0.03f);
+                    MFallulMonjaPos = new Vector3(-14.5f, -34.25f, -0.01f);
                     GameObject greenteamfloortwo = GameObject.Instantiate(CustomMain.customAssets.greenfloor, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                     greenteamfloortwo.name = "greenteamfloortwo";
                     greenteamfloortwo.transform.position = new Vector3(-4.35f, -33.5f, -0.01f);
@@ -2869,20 +2874,20 @@ namespace LasMonjas
 
             if (MonjaFestival.bigMonjaPlayer != null) {
                 MonjaFestival.bigMonjaPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-                MonjaFestival.bigMonjaPlayer.transform.position = bigMonjaPos;
+                MonjaFestival.bigMonjaPlayer.transform.position = MFbigMonjaPos;
                 GameObject greyBase = GameObject.Instantiate(CustomMain.customAssets.greyBaseEmpty, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                 greyBase.name = "greyBase";
-                greyBase.transform.position = greyBasePos;
+                greyBase.transform.position = MFgreyBasePos;
                 MonjaFestival.bigMonjaBase = greyBase;
                 MonjaFestival.bigMonjaSpawns.Add(greyBase);
             }
 
             foreach (PlayerControl player in MonjaFestival.greenTeam) {
-                player.transform.position = greenTeamPos;
+                player.transform.position = MFgreenTeamPos;
             }
 
             foreach (PlayerControl player in MonjaFestival.cyanTeam) {
-                player.transform.position = cyanTeamPos;
+                player.transform.position = MFcyanTeamPos;
             }
 
             if (PlayerInCache.LocalPlayer.PlayerControl != null && !createdmonjafestival) {
@@ -2890,7 +2895,7 @@ namespace LasMonjas
 
                 GameObject bigSpawnOne = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                 bigSpawnOne.name = "bigSpawnOne";
-                bigSpawnOne.transform.position = bigSpawnOnePos;
+                bigSpawnOne.transform.position = MFbigSpawnOnePos;
                 MonjaFestival.bigSpawnOne = bigSpawnOne;
                 MonjaFestival.bigSpawnOneCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.bigSpawnOne.transform);
                 MonjaFestival.bigSpawnOneCount.text = $"{MonjaFestival.bigSpawnOnePoints} / 30";
@@ -2900,7 +2905,7 @@ namespace LasMonjas
 
                 GameObject bigSpawnTwo = GameObject.Instantiate(CustomMain.customAssets.bigSpawnOneFull, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                 bigSpawnTwo.name = "bigSpawnTwo";
-                bigSpawnTwo.transform.position = bigSpawnTwoPos;
+                bigSpawnTwo.transform.position = MFbigSpawnTwoPos;
                 MonjaFestival.bigSpawnTwo = bigSpawnTwo;
                 MonjaFestival.bigSpawnTwoCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.bigSpawnTwo.transform);
                 MonjaFestival.bigSpawnTwoCount.text = $"{MonjaFestival.bigSpawnTwoPoints} / 30";
@@ -2910,7 +2915,7 @@ namespace LasMonjas
 
                 GameObject littleSpawnOne = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                 littleSpawnOne.name = "littleSpawnOne";
-                littleSpawnOne.transform.position = littleSpawnOnePos;
+                littleSpawnOne.transform.position = MFlittleSpawnOnePos;
                 MonjaFestival.littleSpawnOne = littleSpawnOne;
                 MonjaFestival.littleSpawnOneCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnOne.transform);
                 MonjaFestival.littleSpawnOneCount.text = $"{MonjaFestival.littleSpawnOnePoints} / 10";
@@ -2920,7 +2925,7 @@ namespace LasMonjas
 
                 GameObject littleSpawnTwo = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                 littleSpawnTwo.name = "littleSpawnTwo";
-                littleSpawnTwo.transform.position = littleSpawnTwoPos;
+                littleSpawnTwo.transform.position = MFlittleSpawnTwoPos;
                 MonjaFestival.littleSpawnTwo = littleSpawnTwo;
                 MonjaFestival.littleSpawnTwoCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnTwo.transform);
                 MonjaFestival.littleSpawnTwoCount.text = $"{MonjaFestival.littleSpawnTwoPoints} / 10";
@@ -2930,7 +2935,7 @@ namespace LasMonjas
 
                 GameObject littleSpawnThree = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                 littleSpawnThree.name = "littleSpawnThree";
-                littleSpawnThree.transform.position = littleSpawnThreePos;
+                littleSpawnThree.transform.position = MFlittleSpawnThreePos;
                 MonjaFestival.littleSpawnThree = littleSpawnThree;
                 MonjaFestival.littleSpawnThreeCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnThree.transform);
                 MonjaFestival.littleSpawnThreeCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
@@ -2940,7 +2945,7 @@ namespace LasMonjas
 
                 GameObject littleSpawnFour = GameObject.Instantiate(CustomMain.customAssets.littleSpawnOneFull, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                 littleSpawnFour.name = "littleSpawnFour";
-                littleSpawnFour.transform.position = littleSpawnFourPos;
+                littleSpawnFour.transform.position = MFlittleSpawnFourPos;
                 MonjaFestival.littleSpawnFour = littleSpawnFour;
                 MonjaFestival.littleSpawnFourCount = GameObject.Instantiate(HudManagerStartPatch.greenmonja01PickDeliverButton.actionButton.cooldownTimerText, MonjaFestival.littleSpawnFour.transform);
                 MonjaFestival.littleSpawnFourCount.text = $"{MonjaFestival.littleSpawnThreePoints} / 10";
@@ -2950,15 +2955,15 @@ namespace LasMonjas
 
                 GameObject greenBase = GameObject.Instantiate(CustomMain.customAssets.greenBaseEmpty, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                 greenBase.name = "greenBase";
-                greenBase.transform.position = greenBasePos;
+                greenBase.transform.position = MFgreenBasePos;
                 MonjaFestival.greenTeamBase = greenBase;
                 GameObject cyanBase = GameObject.Instantiate(CustomMain.customAssets.cyanBaseEmpty, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
                 cyanBase.name = "cyanBase";
-                cyanBase.transform.position = cyanBasePos;
+                cyanBase.transform.position = MFcyanBasePos;
                 MonjaFestival.cyanTeamBase = cyanBase;
 
                 GameObject allulMonja = GameObject.Instantiate(CustomMain.customAssets.floorAllulMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
-                allulMonja.transform.position = allulMonjaPos;
+                allulMonja.transform.position = MFallulMonjaPos;
                 allulMonja.name = "allulMonja";
                 MonjaFestival.allulMonja = allulMonja;
                 Reactor.Utilities.Coroutines.Start(HudManagerUpdatePatch.allulMonjaReload());
@@ -3121,17 +3126,19 @@ namespace LasMonjas
             RPCProcedure.setJinxed(player.PlayerId, 0);
         }
 
-        public static void unpetrifyForMinigames (PlayerControl player) {
-            bool isPetrified = Medusa.petrifiedPlayers.FirstOrDefault(x => x.PlayerId == player.PlayerId);
-            if (isPetrified) {
-                PlayerControl unPetrify = Medusa.petrifiedPlayers.FirstOrDefault(x => x.PlayerId == player.PlayerId);
-                unPetrify.moveable = true;
-                Medusa.petrifiedPlayers.Remove(unPetrify);
-                GameObject petrifyZone = GameObject.Find(unPetrify.name + "petrifyZone");
-                if (petrifyZone != null) {
-                    UnityEngine.Object.Destroy(petrifyZone);
-                }
+        public static void unpetrifyForMinigames(PlayerControl player) {
+            var unPetrify = Medusa.petrifiedPlayers.FirstOrDefault(x => x.PlayerId == player.PlayerId);
+
+            if (unPetrify == null)
+                return;
+
+            unPetrify.moveable = true;
+            Medusa.petrifiedPlayers.Remove(unPetrify);
+            GameObject petrifyZone = GameObject.Find(unPetrify.name + "petrifyZone");
+            if (petrifyZone != null) {
+                UnityEngine.Object.Destroy(petrifyZone);
             }
+
         }
 
         public static bool checkIfEaten(PlayerControl player) {
@@ -3254,20 +3261,20 @@ namespace LasMonjas
                 case 7:
                     // BR:
                     switch (BattleRoyale.matchType) {
-                        case 0:
+                        case 0: // someone died
                             newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusBattleRoyaleTexts[0];
                             break;
                         case 1:
                             switch (flag) {
-                                case 1:
+                                case 1: // someone from lime team died
                                     newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusBattleRoyaleTexts[1];
                                     newPopUp.gameObject.transform.position += new Vector3(-3, -0.25f, 0);
                                     break;
-                                case 2:
+                                case 2: // someone from pink team died
                                     newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusBattleRoyaleTexts[2];
-                                    newPopUp.gameObject.transform.position += new Vector3(-3, -0.25f, 0);
+                                    newPopUp.gameObject.transform.position += new Vector3(3, -0.25f, 0);
                                     break;
-                                case 3:
+                                case 3: // serial killer died
                                     newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusBattleRoyaleTexts[3];
                                     newPopUp.gameObject.transform.position += new Vector3(0, -0.25f, 0);
                                     break;
@@ -3275,17 +3282,17 @@ namespace LasMonjas
                             break;
                         case 2:
                             switch (flag) {
-                                case 1:
+                                case 1: // points for lime team
                                     newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusBattleRoyaleTexts[4];
                                     newPopUp.gameObject.transform.position += new Vector3(-3, -0.25f, 0);
                                     break;
-                                case 2:
+                                case 2: // points for pink team
                                     newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusBattleRoyaleTexts[5];
-                                    newPopUp.gameObject.transform.position += new Vector3(0, -0.25f, 0);
+                                    newPopUp.gameObject.transform.position += new Vector3(3, -0.25f, 0);
                                     break;
-                                case 3:
+                                case 3: // points for serial killer
                                     newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusBattleRoyaleTexts[6];
-                                    newPopUp.gameObject.transform.position += new Vector3(-3, -0.25f, 0);
+                                    newPopUp.gameObject.transform.position += new Vector3(0, -0.25f, 0);
                                     break;
                             }
                             break;
@@ -3300,10 +3307,6 @@ namespace LasMonjas
                             break;
                         case 2: // steal from cyan
                             newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusMonjaFestivalTexts[0];
-                            newPopUp.gameObject.transform.position += new Vector3(0, -0.25f, 0);
-                            break;
-                        case 3: // survivor zombie
-                            newPopUp.gameObject.transform.GetChild(0).GetComponent<TextMeshPro>().text = Language.statusZombieLaboratoryTexts[2];
                             newPopUp.gameObject.transform.position += new Vector3(0, -0.25f, 0);
                             break;
                     }
@@ -3351,6 +3354,386 @@ namespace LasMonjas
         public static void AddModSettingsChangeMessage(this NotificationPopper popper, StringNames key, string value, string option, bool playSound = true) {
             string str = DestroyableSingleton<TranslationController>.Instance.GetString(StringNames.LobbyChangeSettingNotification, "<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">" + option + "</font>", "<font=\"Barlow-Black SDF\" material=\"Barlow-Black Outline\">" + value + "</font>");
             popper.SettingsChangeMessageLogic(key, str, playSound);
+        }
+
+        public static void ResetRoleSummaryUI() {
+            if (LobbyRoleInfo.RolesSummaryUI != null) {
+                UnityEngine.Object.Destroy(LobbyRoleInfo.RolesSummaryUI);
+                LobbyRoleInfo.RolesSummaryUI = null;
+            }
+        }
+
+        public static void UpdateSenseiMap() {
+            GameObject mymap = GameObject.Find("Main Camera/Hud/ShipMap(Clone)/Background");
+            mymap.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.customMinimap.GetComponent<SpriteRenderer>().sprite;
+            GameObject hereindicator = GameObject.Find("Main Camera/Hud/ShipMap(Clone)/HereIndicatorParent");
+            hereindicator.transform.position = hereindicator.transform.position + new Vector3(0.23f, -0.8f, 0);
+
+            // Map room names
+            GameObject minimapNames = GameObject.Find("Main Camera/Hud/ShipMap(Clone)/RoomNames (1)");
+            minimapNames.transform.GetChild(0).transform.position = minimapNames.transform.GetChild(0).transform.position + new Vector3(0f, -0.5f, 0); // Upper engine
+            minimapNames.transform.GetChild(2).transform.position = minimapNames.transform.GetChild(2).transform.position + new Vector3(0.7f, -0.55f, 0); // Reactor
+            minimapNames.transform.GetChild(3).transform.position = minimapNames.transform.GetChild(3).transform.position + new Vector3(1.75f, 2.37f, 0); // security
+            minimapNames.transform.GetChild(4).transform.position = minimapNames.transform.GetChild(4).transform.position + new Vector3(0.89f, -1.18f, 0); // medbey
+            minimapNames.transform.GetChild(5).transform.position = minimapNames.transform.GetChild(5).transform.position + new Vector3(0.52f, -1.32f, 0); // Cafetería
+            minimapNames.transform.GetChild(6).transform.position = minimapNames.transform.GetChild(6).transform.position + new Vector3(1f, -1.59f, 0); // weapons
+            minimapNames.transform.GetChild(7).transform.position = minimapNames.transform.GetChild(7).transform.position + new Vector3(-1.72f, -3.03f, 0); // nav
+            minimapNames.transform.GetChild(8).transform.position = minimapNames.transform.GetChild(8).transform.position + new Vector3(-0.08f, 1.45f, 0); // shields
+            minimapNames.transform.GetChild(9).transform.position = minimapNames.transform.GetChild(9).transform.position + new Vector3(1.1f, 2.88f, 0); // cooms
+            minimapNames.transform.GetChild(10).transform.position = minimapNames.transform.GetChild(10).transform.position + new Vector3(-2.2f, -0.82f, 0); // storage
+            minimapNames.transform.GetChild(11).transform.position = minimapNames.transform.GetChild(11).transform.position + new Vector3(0.32f, -1.02f, 0); // Admin
+            minimapNames.transform.GetChild(12).transform.position = minimapNames.transform.GetChild(12).transform.position + new Vector3(0.53f, -2.1f, 0); // electrical
+            minimapNames.transform.GetChild(13).transform.position = minimapNames.transform.GetChild(13).transform.position + new Vector3(-3.5f, -0.5f, 0); // o2
+
+            // Map sabotage
+            GameObject minimapSabotage = GameObject.Find("Main Camera/Hud/ShipMap(Clone)/InfectedOverlay");
+            minimapSabotage.transform.GetChild(0).gameObject.SetActive(false); // cafeteria doors
+            minimapSabotage.transform.GetChild(2).gameObject.SetActive(false); // medbey doors
+            minimapSabotage.transform.GetChild(3).transform.GetChild(0).gameObject.SetActive(false); // electrical doors
+            minimapSabotage.transform.GetChild(5).gameObject.SetActive(false); // upper engine doors
+            minimapSabotage.transform.GetChild(6).gameObject.SetActive(false); // lower engine doors
+            minimapSabotage.transform.GetChild(7).gameObject.SetActive(false); // storage doors
+            minimapSabotage.transform.GetChild(9).gameObject.SetActive(false); // security doors
+
+            minimapSabotage.transform.GetChild(1).transform.position = minimapSabotage.transform.GetChild(1).transform.position + new Vector3(0.95f, 3.3f, 0); // Sabotage cooms
+            minimapSabotage.transform.GetChild(3).transform.GetChild(1).transform.position = minimapSabotage.transform.GetChild(3).transform.GetChild(1).transform.position + new Vector3(0.165f, -1.2f, 0); // Sabotage electrical
+            minimapSabotage.transform.GetChild(4).transform.position = minimapSabotage.transform.GetChild(4).transform.position + new Vector3(-3f, 0.05f, 0); // Sabotage o2
+            minimapSabotage.transform.GetChild(8).transform.position = minimapSabotage.transform.GetChild(8).transform.position + new Vector3(0.6f, 0.1f, 0); // Sabotage reactor
+
+            updatedSenseiMinimap = true;
+        }
+
+        public static bool isSubmergedMap() {
+            return GameOptionsManager.Instance.currentGameOptions.MapId == 6;
+        }
+
+        public static void AssingRoleToTeam(ref PlayerControl slot, PlayerControl player, List<PlayerControl> team) {
+            slot = player;
+            team.Add(player);
+        }
+
+        public static void UpdateDraggedBody(PlayerControl player, bool draggingBody, byte bodyId) {
+            if (player == null || !draggingBody)
+                return;
+
+            DeadBody[] bodies = UnityEngine.Object.FindObjectsOfType<DeadBody>();
+
+            foreach (DeadBody body in bodies) {
+                if (GameData.Instance.GetPlayerById(body.ParentId).PlayerId != bodyId)
+                    continue;
+
+                var currentPosition = player.GetTruePosition();
+                var velocity = player.gameObject.GetComponent<Rigidbody2D>().velocity.normalized;
+
+                var newPos = (Vector2)player.GetTruePosition() - (velocity / 3) + new Vector2(0.15f, 0.25f) + body.myCollider.offset;
+
+                if (PhysicsHelpers.AnythingBetween(
+                        currentPosition,
+                        newPos,
+                        Constants.ShipAndObjectsMask,
+                        false))
+                    continue;
+
+                body.transform.position = newPos;
+
+                if (Helpers.isSubmergedMap()) {
+                    body.transform.position += new Vector3(0, 0, -0.5f);
+                }
+
+                break;
+            }
+        }
+
+        public static void RestoreBodyTypeWithDelay(PlayerControl player) {
+            HudManager.Instance.StartCoroutine(Effects.Lerp(0.1f, new Action<float>((p) => { // Delayed action
+                if (p == 1f && player != null) {
+                    player.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                }
+            })));
+        }
+        
+        public static void GamemodesDisableDeadBodyReportOnClic(DeadBody gamemodeBody) {
+            gamemodeBody.GetComponent<PassiveButton>().enabled = false;
+        }
+
+        public static void GamemodesGenericBecomeAliveAndTargetable(PlayerControl player, HashSet<PlayerControl> revivingList, float reviveTime, bool isNeutral = false, bool isBattleRoyale = false) {
+            HudManager.Instance.StartCoroutine(Effects.Lerp(reviveTime, new Action<float>((p) => {
+                if (p == 1f && player != null) {
+                    revivingList.Remove(player);
+                    Helpers.alphaPlayer(player.PlayerId, 1f);
+                    if (isNeutral) {
+                        player.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                    }
+                    if (isBattleRoyale) {
+                        if (isNeutral) {
+                            if (PlayerInCache.AllPlayers.Count >= 11) {
+                                BattleRoyale.serialKillerLifes = BattleRoyale.fighterLifes * 3;
+                            }
+                            else {
+                                BattleRoyale.serialKillerLifes = BattleRoyale.fighterLifes * 2;
+                            }
+                        }
+                        else {
+                            Helpers.BattleRoyaleRestoreTeamLifes(player);
+                        }
+                    }
+                }
+            })));
+        }
+
+        public static void GamemodesGenericRevive(PlayerControl player, DeadBody playerBody, float reviveTime, Vector3 playerPos, Vector3 submergedUpperPos, Vector3 submergedLowerPos) {
+            HudManager.Instance.StartCoroutine(Effects.Lerp(reviveTime, new Action<float>((p) => {
+                if (p == 1f && player != null) {
+                    player.Revive();
+                    if (Helpers.isSubmergedMap()) {
+                        if (player.transform.position.y > 0) {
+                            player.transform.position = submergedUpperPos;
+                        }
+                        else {
+                            player.transform.position = submergedLowerPos;
+                        }
+                    }
+                    else {
+                        player.transform.position = playerPos;
+                    }
+                    DeadPlayer deadPlayerEntry = deadPlayers.Where(x => x.player.PlayerId == player.PlayerId).FirstOrDefault();
+                    if (playerBody != null) UnityEngine.Object.Destroy(playerBody.gameObject);
+                    if (deadPlayerEntry != null) deadPlayers.Remove(deadPlayerEntry);
+                }
+
+            })));
+        }
+
+        public static void CaptureTheFlagSwapStealerRole(ref PlayerControl player, PlayerControl murdered, List<PlayerControl> team) {
+            int index = team.IndexOf(player);
+
+            if (index != -1) {
+                team[index] = CaptureTheFlag.stealerPlayer;
+            }
+            player = CaptureTheFlag.stealerPlayer;
+            CaptureTheFlag.stealerPlayer = murdered;
+            player.MyPhysics.SetBodyType(PlayerBodyTypes.Normal);
+            player.MurderPlayer(CaptureTheFlag.stealerPlayer, MurderResultFlags.Succeeded | MurderResultFlags.DecisionByHost);
+        }
+
+        public static byte PoliceAndThiefsGetJewelId(PlayerControl player) {
+            if (player == PoliceAndThief.thiefplayer01) return PoliceAndThief.thiefplayer01JewelId;
+            if (player == PoliceAndThief.thiefplayer02) return PoliceAndThief.thiefplayer02JewelId;
+            if (player == PoliceAndThief.thiefplayer03) return PoliceAndThief.thiefplayer03JewelId;
+            if (player == PoliceAndThief.thiefplayer04) return PoliceAndThief.thiefplayer04JewelId;
+            if (player == PoliceAndThief.thiefplayer05) return PoliceAndThief.thiefplayer05JewelId;
+            if (player == PoliceAndThief.thiefplayer06) return PoliceAndThief.thiefplayer06JewelId;
+            if (player == PoliceAndThief.thiefplayer07) return PoliceAndThief.thiefplayer07JewelId;
+            if (player == PoliceAndThief.thiefplayer08) return PoliceAndThief.thiefplayer08JewelId;
+            if (player == PoliceAndThief.thiefplayer09) return PoliceAndThief.thiefplayer09JewelId;
+
+            return 0;
+        }
+        public static void PoliceAndThiefsSetJewelId(PlayerControl player, byte jewelId) {
+            if (player == PoliceAndThief.thiefplayer01) PoliceAndThief.thiefplayer01JewelId = jewelId;
+            else if (player == PoliceAndThief.thiefplayer02) PoliceAndThief.thiefplayer02JewelId = jewelId;
+            else if (player == PoliceAndThief.thiefplayer03) PoliceAndThief.thiefplayer03JewelId = jewelId;
+            else if (player == PoliceAndThief.thiefplayer04) PoliceAndThief.thiefplayer04JewelId = jewelId;
+            else if (player == PoliceAndThief.thiefplayer05) PoliceAndThief.thiefplayer05JewelId = jewelId;
+            else if (player == PoliceAndThief.thiefplayer06) PoliceAndThief.thiefplayer06JewelId = jewelId;
+            else if (player == PoliceAndThief.thiefplayer07) PoliceAndThief.thiefplayer07JewelId = jewelId;
+            else if (player == PoliceAndThief.thiefplayer08) PoliceAndThief.thiefplayer08JewelId = jewelId;
+            else if (player == PoliceAndThief.thiefplayer09) PoliceAndThief.thiefplayer09JewelId = jewelId;
+        }
+        public static void KOTHRemoveMinionPlayer(PlayerControl player, bool greenTeam) {
+            if (greenTeam) {
+                if (KingOfTheHill.greenplayer01 == player) KingOfTheHill.greenplayer01 = null;
+                else if (KingOfTheHill.greenplayer02 == player) KingOfTheHill.greenplayer02 = null;
+                else if (KingOfTheHill.greenplayer03 == player) KingOfTheHill.greenplayer03 = null;
+                else if (KingOfTheHill.greenplayer04 == player) KingOfTheHill.greenplayer04 = null;
+                else if (KingOfTheHill.greenplayer05 == player) KingOfTheHill.greenplayer05 = null;
+                else if (KingOfTheHill.greenplayer06 == player) KingOfTheHill.greenplayer06 = null;
+            }
+            else {
+                if (KingOfTheHill.yellowplayer01 == player) KingOfTheHill.yellowplayer01 = null;
+                else if (KingOfTheHill.yellowplayer02 == player) KingOfTheHill.yellowplayer02 = null;
+                else if (KingOfTheHill.yellowplayer03 == player) KingOfTheHill.yellowplayer03 = null;
+                else if (KingOfTheHill.yellowplayer04 == player) KingOfTheHill.yellowplayer04 = null;
+                else if (KingOfTheHill.yellowplayer05 == player) KingOfTheHill.yellowplayer05 = null;
+                else if (KingOfTheHill.yellowplayer06 == player) KingOfTheHill.yellowplayer06 = null;
+            }
+        }
+        public static void RemoveNotPotato(PlayerControl potato) {
+            if (HotPotato.notPotato01 == potato) HotPotato.notPotato01 = null;
+            else if (HotPotato.notPotato02 == potato) HotPotato.notPotato02 = null;
+            else if (HotPotato.notPotato03 == potato) HotPotato.notPotato03 = null;
+            else if (HotPotato.notPotato04 == potato) HotPotato.notPotato04 = null;
+            else if (HotPotato.notPotato05 == potato) HotPotato.notPotato05 = null;
+            else if (HotPotato.notPotato06 == potato) HotPotato.notPotato06 = null;
+            else if (HotPotato.notPotato07 == potato) HotPotato.notPotato07 = null;
+            else if (HotPotato.notPotato08 == potato) HotPotato.notPotato08 = null;
+            else if (HotPotato.notPotato09 == potato) HotPotato.notPotato09 = null;
+            else if (HotPotato.notPotato10 == potato) HotPotato.notPotato10 = null;
+            else if (HotPotato.notPotato11 == potato) HotPotato.notPotato11 = null;
+            else if (HotPotato.notPotato12 == potato) HotPotato.notPotato12 = null;
+            else if (HotPotato.notPotato13 == potato) HotPotato.notPotato13 = null;
+            else if (HotPotato.notPotato14 == potato) HotPotato.notPotato14 = null;
+        }
+
+        public static void AddExplodedPotato(PlayerControl potato) {
+            if (HotPotato.explodedPotato01 == null) HotPotato.explodedPotato01 = potato;
+            else if (HotPotato.explodedPotato02 == null) HotPotato.explodedPotato02 = potato;
+            else if (HotPotato.explodedPotato03 == null) HotPotato.explodedPotato03 = potato;
+            else if (HotPotato.explodedPotato04 == null) HotPotato.explodedPotato04 = potato;
+            else if (HotPotato.explodedPotato05 == null) HotPotato.explodedPotato05 = potato;
+            else if (HotPotato.explodedPotato06 == null) HotPotato.explodedPotato06 = potato;
+            else if (HotPotato.explodedPotato07 == null) HotPotato.explodedPotato07 = potato;
+            else if (HotPotato.explodedPotato08 == null) HotPotato.explodedPotato08 = potato;
+            else if (HotPotato.explodedPotato09 == null) HotPotato.explodedPotato09 = potato;
+            else if (HotPotato.explodedPotato10 == null) HotPotato.explodedPotato10 = potato;
+            else if (HotPotato.explodedPotato11 == null) HotPotato.explodedPotato11 = potato;
+            else if (HotPotato.explodedPotato12 == null) HotPotato.explodedPotato12 = potato;
+            else if (HotPotato.explodedPotato13 == null) HotPotato.explodedPotato13 = potato;
+            else if (HotPotato.explodedPotato14 == null) HotPotato.explodedPotato14 = potato;
+
+            HotPotato.explodedPotatoTeam.Add(potato);
+        }
+
+        public static void HotPotatoReplaceNotPotato(PlayerControl currentPotato, PlayerControl replacementPotato) {
+            if (HotPotato.notPotato01 == currentPotato) HotPotato.notPotato01 = replacementPotato;
+            else if (HotPotato.notPotato02 == currentPotato) HotPotato.notPotato02 = replacementPotato;
+            else if (HotPotato.notPotato03 == currentPotato) HotPotato.notPotato03 = replacementPotato;
+            else if (HotPotato.notPotato04 == currentPotato) HotPotato.notPotato04 = replacementPotato;
+            else if (HotPotato.notPotato05 == currentPotato) HotPotato.notPotato05 = replacementPotato;
+            else if (HotPotato.notPotato06 == currentPotato) HotPotato.notPotato06 = replacementPotato;
+            else if (HotPotato.notPotato07 == currentPotato) HotPotato.notPotato07 = replacementPotato;
+            else if (HotPotato.notPotato08 == currentPotato) HotPotato.notPotato08 = replacementPotato;
+            else if (HotPotato.notPotato09 == currentPotato) HotPotato.notPotato09 = replacementPotato;
+            else if (HotPotato.notPotato10 == currentPotato) HotPotato.notPotato10 = replacementPotato;
+            else if (HotPotato.notPotato11 == currentPotato) HotPotato.notPotato11 = replacementPotato;
+            else if (HotPotato.notPotato12 == currentPotato) HotPotato.notPotato12 = replacementPotato;
+            else if (HotPotato.notPotato13 == currentPotato) HotPotato.notPotato13 = replacementPotato;
+            else if (HotPotato.notPotato14 == currentPotato) HotPotato.notPotato14 = replacementPotato;
+        }
+
+        public static byte ZombieLaboratoryGetFoundBox(PlayerControl player) {
+            if (player == ZombieLaboratory.survivorPlayer01) return ZombieLaboratory.survivorPlayer01FoundBox;
+            if (player == ZombieLaboratory.survivorPlayer02) return ZombieLaboratory.survivorPlayer02FoundBox;
+            if (player == ZombieLaboratory.survivorPlayer03) return ZombieLaboratory.survivorPlayer03FoundBox;
+            if (player == ZombieLaboratory.survivorPlayer04) return ZombieLaboratory.survivorPlayer04FoundBox;
+            if (player == ZombieLaboratory.survivorPlayer05) return ZombieLaboratory.survivorPlayer05FoundBox;
+            if (player == ZombieLaboratory.survivorPlayer06) return ZombieLaboratory.survivorPlayer06FoundBox;
+            if (player == ZombieLaboratory.survivorPlayer07) return ZombieLaboratory.survivorPlayer07FoundBox;
+            if (player == ZombieLaboratory.survivorPlayer08) return ZombieLaboratory.survivorPlayer08FoundBox;
+            if (player == ZombieLaboratory.survivorPlayer09) return ZombieLaboratory.survivorPlayer09FoundBox;
+            if (player == ZombieLaboratory.survivorPlayer10) return ZombieLaboratory.survivorPlayer10FoundBox;
+            if (player == ZombieLaboratory.survivorPlayer11) return ZombieLaboratory.survivorPlayer11FoundBox;
+            if (player == ZombieLaboratory.survivorPlayer12) return ZombieLaboratory.survivorPlayer12FoundBox;
+            if (player == ZombieLaboratory.survivorPlayer13) return ZombieLaboratory.survivorPlayer13FoundBox;
+
+            return 0;
+        }
+        public static void ZombieLaboratorySetFoundBox(PlayerControl player, byte foundBox) {
+            if (player == ZombieLaboratory.survivorPlayer01) ZombieLaboratory.survivorPlayer01FoundBox = foundBox;
+            else if (player == ZombieLaboratory.survivorPlayer02) ZombieLaboratory.survivorPlayer02FoundBox = foundBox;
+            else if (player == ZombieLaboratory.survivorPlayer03) ZombieLaboratory.survivorPlayer03FoundBox = foundBox;
+            else if (player == ZombieLaboratory.survivorPlayer04) ZombieLaboratory.survivorPlayer04FoundBox = foundBox;
+            else if (player == ZombieLaboratory.survivorPlayer05) ZombieLaboratory.survivorPlayer05FoundBox = foundBox;
+            else if (player == ZombieLaboratory.survivorPlayer06) ZombieLaboratory.survivorPlayer06FoundBox = foundBox;
+            else if (player == ZombieLaboratory.survivorPlayer07) ZombieLaboratory.survivorPlayer07FoundBox = foundBox;
+            else if (player == ZombieLaboratory.survivorPlayer08) ZombieLaboratory.survivorPlayer08FoundBox = foundBox;
+            else if (player == ZombieLaboratory.survivorPlayer09) ZombieLaboratory.survivorPlayer09FoundBox = foundBox;
+            else if (player == ZombieLaboratory.survivorPlayer10) ZombieLaboratory.survivorPlayer10FoundBox = foundBox;
+            else if (player == ZombieLaboratory.survivorPlayer11) ZombieLaboratory.survivorPlayer11FoundBox = foundBox;
+            else if (player == ZombieLaboratory.survivorPlayer12) ZombieLaboratory.survivorPlayer12FoundBox = foundBox;
+            else if (player == ZombieLaboratory.survivorPlayer13) ZombieLaboratory.survivorPlayer13FoundBox = foundBox;
+        }
+
+        public static void BattleRoyaleHandleTeamLifes(ref float lifes, PlayerControl murdered, byte sourceId, byte targetId, int footprintColor, int scoredTeam) {
+            lifes -= 1;
+            new BattleRoyaleFootprint(murdered, footprintColor);
+            if (lifes > 0) return;
+            RPCProcedure.uncheckedMurderPlayer(sourceId, targetId, 0);
+            switch (BattleRoyale.matchType) {
+                case 1: 
+                    // lime 1 - pink 2, same value used for creating footprint
+                    RPCProcedure.battleRoyaleCheckWin(footprintColor);
+                    Helpers.showGamemodesPopUp(footprintColor, Helpers.playerById(targetId));
+                    break;
+                case 2:
+                    if (BattleRoyale.serialKiller != null && sourceId == BattleRoyale.serialKiller.PlayerId) {
+                        RPCProcedure.battleRoyaleScoreCheck(3, 1);
+                        Helpers.showGamemodesPopUp(3, Helpers.playerById(targetId));
+                    }
+                    else {
+                        // on teamscore check, points for lime = 1, pink = 2
+                        RPCProcedure.battleRoyaleScoreCheck(scoredTeam, 1);
+                        Helpers.showGamemodesPopUp(scoredTeam, Helpers.playerById(targetId));
+                    }
+                    break;
+            }
+        }
+
+        public static void BattleRoyaleRestoreTeamLifes(PlayerControl battler) {
+            // Lime Team
+            if (BattleRoyale.limePlayer01?.PlayerId == battler.PlayerId) BattleRoyale.limePlayer01Lifes = BattleRoyale.fighterLifes;
+            else if (BattleRoyale.limePlayer02?.PlayerId == battler.PlayerId) BattleRoyale.limePlayer02Lifes = BattleRoyale.fighterLifes;
+            else if (BattleRoyale.limePlayer03?.PlayerId == battler.PlayerId) BattleRoyale.limePlayer03Lifes = BattleRoyale.fighterLifes;
+            else if (BattleRoyale.limePlayer04?.PlayerId == battler.PlayerId) BattleRoyale.limePlayer04Lifes = BattleRoyale.fighterLifes;
+            else if (BattleRoyale.limePlayer05?.PlayerId == battler.PlayerId) BattleRoyale.limePlayer05Lifes = BattleRoyale.fighterLifes;
+            else if (BattleRoyale.limePlayer06?.PlayerId == battler.PlayerId) BattleRoyale.limePlayer06Lifes = BattleRoyale.fighterLifes;
+            else if (BattleRoyale.limePlayer07?.PlayerId == battler.PlayerId) BattleRoyale.limePlayer07Lifes = BattleRoyale.fighterLifes;
+
+            // Pink Team
+            else if (BattleRoyale.pinkPlayer01?.PlayerId == battler.PlayerId) BattleRoyale.pinkPlayer01Lifes = BattleRoyale.fighterLifes;
+            else if (BattleRoyale.pinkPlayer02?.PlayerId == battler.PlayerId) BattleRoyale.pinkPlayer02Lifes = BattleRoyale.fighterLifes;
+            else if (BattleRoyale.pinkPlayer03?.PlayerId == battler.PlayerId) BattleRoyale.pinkPlayer03Lifes = BattleRoyale.fighterLifes;
+            else if (BattleRoyale.pinkPlayer04?.PlayerId == battler.PlayerId) BattleRoyale.pinkPlayer04Lifes = BattleRoyale.fighterLifes;
+            else if (BattleRoyale.pinkPlayer05?.PlayerId == battler.PlayerId) BattleRoyale.pinkPlayer05Lifes = BattleRoyale.fighterLifes;
+            else if (BattleRoyale.pinkPlayer06?.PlayerId == battler.PlayerId) BattleRoyale.pinkPlayer06Lifes = BattleRoyale.fighterLifes;
+            else if (BattleRoyale.pinkPlayer07?.PlayerId == battler.PlayerId) BattleRoyale.pinkPlayer07Lifes = BattleRoyale.fighterLifes;
+        }
+
+        public static void MonjaFestivalResetPlayer(PlayerControl player, ref int monjitas, TMPro.TMP_Text deliverCount, GameObject handsObject, float angleStep, float offset) {
+            MonjaFestivalDropMonjitas(player, monjitas, angleStep, offset);
+            if (MonjaFestival.bigMonjaPlayer != null && MonjaFestival.bigMonjaPlayer == player) return;
+            monjitas = 0;
+            deliverCount.text = $"{monjitas} / 3";
+            handsObject.GetComponent<SpriteRenderer>().sprite = null;
+        }
+
+        public static void MonjaFestivalDropMonjitas(PlayerControl player, int monjitasCount, float angleStep, float offset) {
+            if (player == null || monjitasCount <= 0) return;
+
+            float currentAngleStep = angleStep / monjitasCount;
+            for (int i = 0; i < monjitasCount; i++) {
+                GameObject littleMonja = GameObject.Instantiate(CustomMain.customAssets.floorGreenMonja, PlayerInCache.LocalPlayer.PlayerControl.transform.parent);
+                littleMonja.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
+                littleMonja.transform.position = new Vector3(player.transform.position.x + offset, player.transform.position.y + offset, 0.5f);
+                littleMonja.transform.RotateAround(player.transform.position, Vector3.forward, currentAngleStep * i);
+                littleMonja.name = "littleMonja" + MonjaFestival.littleMonjasDroppedCount.ToString();
+                MonjaFestival.littleMonjasDroppedCount += 1;
+                MonjaFestival.bigMonjaSpawns.Add(littleMonja);
+            }
+        }
+        public static IEnumerator MonjaSpawnReload(Func<int> getCurrentPoints, Action<int> setCurrentPoints, int maximumPoints, float reloadSeconds, Action<bool> setReloadingState, GameObject spawnObject, TMPro.TMP_Text counterText, Sprite fullSpawnSprite) {
+            setReloadingState(true);
+
+            while (getCurrentPoints() < maximumPoints) {
+                yield return new WaitForSeconds(reloadSeconds);
+
+                if (AmongUsClient.Instance.GameState != InnerNet.InnerNetClient.GameStates.Started) {
+                    setReloadingState(false);
+                    yield break;
+                }
+
+                int newPoints = getCurrentPoints() + 1;
+
+                setCurrentPoints(newPoints);
+
+                spawnObject.GetComponent<SpriteRenderer>().sprite = fullSpawnSprite;
+
+                counterText.text = $"{newPoints} / {maximumPoints}";
+
+                if (newPoints >= maximumPoints) {
+                    setReloadingState(false);
+                }
+            }
         }
     }
 }

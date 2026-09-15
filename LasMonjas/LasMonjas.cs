@@ -6,7 +6,6 @@ using UnityEngine;
 using LasMonjas.Objects;
 using LasMonjas.Core;
 using AmongUs.GameOptions;
-using static UnityEngine.GraphicsBuffer;
 
 namespace LasMonjas
 {
@@ -16,8 +15,6 @@ namespace LasMonjas
         public static System.Random rnd = new System.Random((int)DateTime.Now.Ticks);
 
         public static bool removedSwipe = false;
-
-        public static bool removedAirshipDoors = false;
 
         public static bool activatedSensei = false;
 
@@ -60,6 +57,8 @@ namespace LasMonjas
         public static int alivePlayers = 15;
 
         public static int howmanyBattleRoyaleplayers = 0;
+
+        public static bool triggerGamemodesDrawWin = false;
 
         public static List<GameObject> nightOverlay = new List<GameObject>();
         public static bool canNightOverlay = true;
@@ -190,7 +189,6 @@ namespace LasMonjas
             MonjaFestival.clearAndReload();
 
             removedSwipe = false;
-            removedAirshipDoors = false;
             activatedSensei = false;
             updatedSenseiMinimap = false;
             updatedSenseiAdminmap = false;
@@ -212,6 +210,7 @@ namespace LasMonjas
             quackNumber = 0;
             alivePlayers = PlayerInCache.AllPlayers.Count;
             howmanyBattleRoyaleplayers = 0;
+            triggerGamemodesDrawWin = false;
 
             nightOverlay = new List<GameObject>();
             canNightOverlay = true;
@@ -396,7 +395,7 @@ namespace LasMonjas
             // Restore janitor values when dead
             dragginBody = false;
             bodyId = 0;
-            if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+            if (Helpers.isSubmergedMap()) {
                 GameObject vent = GameObject.Find("LowerCentralVent");
                 vent.GetComponent<BoxCollider2D>().enabled = true;
             }
@@ -479,16 +478,17 @@ namespace LasMonjas
 
         public static void clearAndReload() {
             manipulator = null;
-            currentTarget = null;
-            manipulatedVictim = null;
-            manipulatedVictimTarget = null;
-            manipulatedVictimTimer = 21f;
+            resetManipulatedValues();
             cooldown = GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
         }
 
         public static void resetManipulate() {
             HudManagerStartPatch.manipulatorManipulateButton.Timer = HudManagerStartPatch.manipulatorManipulateButton.MaxTimer;
             HudManagerStartPatch.manipulatorManipulateButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
+            resetManipulatedValues();
+        }
+
+        public static void resetManipulatedValues() {
             currentTarget = null;
             manipulatedVictim = null;
             manipulatedVictimTarget = null;
@@ -567,7 +567,7 @@ namespace LasMonjas
         public static void resetChameleon() {
             chameleonTimer = 0f;
             if (chameleon != null) {
-                Helpers.alphaPlayer(false, chameleon.PlayerId);
+                Helpers.alphaPlayer(chameleon.PlayerId, 1f);
             }
         }
 
@@ -801,29 +801,6 @@ namespace LasMonjas
             Guides = new Dictionary<byte, SpriteRenderer>();
             bow = null;
         }
-
-        public static PlayerControl GetShootPlayer(float shotSize, float effectiveRange) {
-            PlayerControl result = null;
-            float num = effectiveRange;
-            Vector3 pos;
-            float mouseAngle = mouseArcherAngle;
-            foreach (PlayerControl player in PlayerInCache.AllPlayers) {
-                if (player.PlayerId == PlayerInCache.LocalPlayer.PlayerControl.PlayerId) continue;
-
-                if (player.Data.IsDead) continue;
-
-                pos = player.transform.position - PlayerInCache.LocalPlayer.PlayerControl.transform.position;
-                pos = new Vector3(
-                    pos.x * MathF.Cos(mouseAngle) + pos.y * MathF.Sin(mouseAngle),
-                    pos.y * MathF.Cos(mouseAngle) - pos.x * MathF.Sin(mouseAngle));
-                if (Math.Abs(pos.y) < shotSize && (!(pos.x < 0)) && pos.x < num) {
-                    num = pos.x;
-                    result = player;
-                }
-            }
-            return result;
-        }
-
     }
 
     public class Plumber
@@ -887,9 +864,7 @@ namespace LasMonjas
     {
         public static PlayerControl renegade;
         public static Color color = new Color32(79, 125, 0, byte.MaxValue);
-        public static PlayerControl fakeMinion;
         public static PlayerControl currentTarget;
-        public static List<PlayerControl> formerRenegades = new List<PlayerControl>();
 
         public static float cooldown = 30f;
         public static bool canUseVents = true;
@@ -903,23 +878,13 @@ namespace LasMonjas
             return buttonSprite;
         }
 
-        public static void removeCurrentRenegade() {
-            if (!formerRenegades.Any(x => x.PlayerId == renegade.PlayerId)) formerRenegades.Add(renegade);
-            renegade = null;
-            currentTarget = null;
-            fakeMinion = null;
-            cooldown = GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
-        }
-
         public static void clearAndReload() {
             renegade = null;
             currentTarget = null;
-            fakeMinion = null;
             cooldown = GameOptionsManager.Instance.CurrentGameOptions.GetFloat(FloatOptionNames.KillCooldown);
             canUseVents = CustomOptionHolder.renegadeCanUseVents.getBool();
             canRecruitMinion = CustomOptionHolder.renegadeCanRecruitMinion.getBool();
             usedRecruit = false;
-            formerRenegades.Clear();
         }
 
     }
@@ -999,6 +964,10 @@ namespace LasMonjas
 
         public static int currentTrapNumber = 0;
 
+        public static int mineCountId = 0;
+
+        public static int trapCountId = 0;
+
         public static PlayerControl mined;
 
         public static PlayerControl currentTarget;
@@ -1026,6 +995,8 @@ namespace LasMonjas
             durationOfTraps = CustomOptionHolder.trapperTrapDuration.getFloat();
             currentMineNumber = 0;
             currentTrapNumber = 0;
+            mineCountId = 0;
+            trapCountId = 0;
             mined = null;
             currentTarget = null;
         }
@@ -1195,53 +1166,7 @@ namespace LasMonjas
             isDueling = false;
             onlyOneFinishDuel = true;
             duelDuration = 30f;
-            if (Jailer.prisonPlayer != null) {
-                switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
-                    // Skeld
-                    case 0:
-                        if (LasMonjas.activatedSensei) {
-                            Jailer.prisonPlayer.transform.position = new Vector3(-0.6f, 3.5f, Jailer.prisonPlayer.transform.position.z);
-                        }
-                        else if (LasMonjas.activatedDleks) {
-                            Jailer.prisonPlayer.transform.position = new Vector3(0.75f, 5.25f, Jailer.prisonPlayer.transform.position.z);
-                        }
-                        else {
-                            Jailer.prisonPlayer.transform.position = new Vector3(-0.75f, 5.25f, Jailer.prisonPlayer.transform.position.z);
-                        }
-                        break;
-                    // MiraHQ
-                    case 1:
-                        Jailer.prisonPlayer.transform.position = new Vector3(25.5f, 4.75f, Jailer.prisonPlayer.transform.position.z);
-                        break;
-                    // Polus
-                    case 2:
-                        Jailer.prisonPlayer.transform.position = new Vector3(17.15f, -17.15f, Jailer.prisonPlayer.transform.position.z);
-                        break;
-                    // Dleks
-                    case 3:
-                        Jailer.prisonPlayer.transform.position = new Vector3(0.75f, 5.25f, Jailer.prisonPlayer.transform.position.z);
-                        break;
-                    // Airship
-                    case 4:
-                        Jailer.prisonPlayer.transform.position = new Vector3(16.25f, 15.25f, Jailer.prisonPlayer.transform.position.z);
-                        break;
-                    // Fungle
-                    case 5:
-                        Jailer.prisonPlayer.transform.position = new Vector3(-5.5f, 1f, Jailer.prisonPlayer.transform.position.z);
-                        break;
-                    // Submerged
-                    case 6:
-                        if (Jailer.prisonPlayer.transform.position.y > 0) {
-                            Jailer.prisonPlayer.transform.position = new Vector3(-4.3f, 13.5f, Jailer.prisonPlayer.transform.position.z);
-                        }
-                        else {
-                            Jailer.prisonPlayer.transform.position = new Vector3(1.85f, -26.65f, Jailer.prisonPlayer.transform.position.z);
-                        }
-                        break;
-                }
-                Jailer.prisonPlayer = null;
-                Jailer.usedJail = false;
-            }
+            Jailer.releasePrisonPlayer();  
         }
     }
 
@@ -1403,7 +1328,7 @@ namespace LasMonjas
             HudManagerStartPatch.strandedInvisibleButton.isEffectActive = false;
             HudManagerStartPatch.strandedInvisibleButton.actionButton.cooldownTimerText.color = Palette.EnabledColor; 
             if (stranded != null) {
-                Helpers.alphaPlayer(false, stranded.PlayerId);
+                Helpers.alphaPlayer(stranded.PlayerId, 1f);
             }
         }
 
@@ -2091,7 +2016,7 @@ namespace LasMonjas
 
         private static Sprite buttonEatSprite;
         public static Sprite getEatButtonSprite() {
-            if (buttonEatSprite) return buttonSprite;
+            if (buttonEatSprite) return buttonEatSprite;
             buttonEatSprite = Helpers.loadSpriteFromResources("LasMonjas.Images.DevourerEatButton.png", 90f);
             return buttonEatSprite;
         }
@@ -2444,52 +2369,8 @@ namespace LasMonjas
             howmanyselectedattacks = 0;
             seekerPlayerPointsCount.text = $"{currentPlayers} / 3";
             seekerPerformMinigamePlayerPointsCount.text = $"{currentPoints} / {neededPoints}";
-            if (checkJailer && Jailer.prisonPlayer != null) {
-                switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
-                    // Skeld
-                    case 0:
-                        if (LasMonjas.activatedSensei) {
-                            Jailer.prisonPlayer.transform.position = new Vector3(-0.6f, 3.5f, Jailer.prisonPlayer.transform.position.z);
-                        }
-                        else if (LasMonjas.activatedDleks) {
-                            Jailer.prisonPlayer.transform.position = new Vector3(0.75f, 5.25f, Jailer.prisonPlayer.transform.position.z);
-                        }
-                        else {
-                            Jailer.prisonPlayer.transform.position = new Vector3(-0.75f, 5.25f, Jailer.prisonPlayer.transform.position.z);
-                        }
-                        break;
-                    // MiraHQ
-                    case 1:
-                        Jailer.prisonPlayer.transform.position = new Vector3(25.5f, 4.75f, Jailer.prisonPlayer.transform.position.z);
-                        break;
-                    // Polus
-                    case 2:
-                        Jailer.prisonPlayer.transform.position = new Vector3(17.15f, -17.15f, Jailer.prisonPlayer.transform.position.z);
-                        break;
-                    // Dleks
-                    case 3:
-                        Jailer.prisonPlayer.transform.position = new Vector3(0.75f, 5.25f, Jailer.prisonPlayer.transform.position.z);
-                        break;
-                    // Airship
-                    case 4:
-                        Jailer.prisonPlayer.transform.position = new Vector3(16.25f, 15.25f, Jailer.prisonPlayer.transform.position.z);
-                        break;
-                    // Fungle
-                    case 5:
-                        Jailer.prisonPlayer.transform.position = new Vector3(-5.5f, 1f, Jailer.prisonPlayer.transform.position.z);
-                        break;
-                    // Submerged
-                    case 6:
-                        if (Jailer.prisonPlayer.transform.position.y > 0) {
-                            Jailer.prisonPlayer.transform.position = new Vector3(-4.3f, 13.5f, Jailer.prisonPlayer.transform.position.z);
-                        }
-                        else {
-                            Jailer.prisonPlayer.transform.position = new Vector3(1.85f, -26.65f, Jailer.prisonPlayer.transform.position.z);
-                        }
-                        break;
-                }
-                Jailer.prisonPlayer = null;
-                Jailer.usedJail = false;
+            if (checkJailer) {
+                Jailer.releasePrisonPlayer();
             }
         }
     }
@@ -3164,7 +3045,6 @@ namespace LasMonjas
     public static class Vigilant
     {
         public static PlayerControl vigilant;
-        public static PlayerControl vigilantMira;
         public static bool doorLogActivated = true;
 
         public static Color color = new Color32(227, 225, 90, byte.MaxValue);
@@ -3203,7 +3083,6 @@ namespace LasMonjas
 
         public static void clearAndReload() {
             vigilant = null;
-            vigilantMira = null;
             cooldown = CustomOptionHolder.vigilantCooldown.getFloat();
             totalCameras = 4;
             remainingCameras = totalCameras;
@@ -3573,6 +3452,56 @@ namespace LasMonjas
             usedJail = false; 
             jailButtonText.text = $" ";
         }
+
+        public static void releasePrisonPlayer() {
+            if (Jailer.prisonPlayer != null) {
+                switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
+                    // Skeld
+                    case 0:
+                        if (LasMonjas.activatedSensei) {
+                            Jailer.prisonPlayer.transform.position = new Vector3(-0.6f, 3.5f, Jailer.prisonPlayer.transform.position.z);
+                        }
+                        else if (LasMonjas.activatedDleks) {
+                            Jailer.prisonPlayer.transform.position = new Vector3(0.75f, 5.25f, Jailer.prisonPlayer.transform.position.z);
+                        }
+                        else {
+                            Jailer.prisonPlayer.transform.position = new Vector3(-0.75f, 5.25f, Jailer.prisonPlayer.transform.position.z);
+                        }
+                        break;
+                    // MiraHQ
+                    case 1:
+                        Jailer.prisonPlayer.transform.position = new Vector3(25.5f, 4.75f, Jailer.prisonPlayer.transform.position.z);
+                        break;
+                    // Polus
+                    case 2:
+                        Jailer.prisonPlayer.transform.position = new Vector3(17.15f, -17.15f, Jailer.prisonPlayer.transform.position.z);
+                        break;
+                    // Dleks
+                    case 3:
+                        Jailer.prisonPlayer.transform.position = new Vector3(0.75f, 5.25f, Jailer.prisonPlayer.transform.position.z);
+                        break;
+                    // Airship
+                    case 4:
+                        Jailer.prisonPlayer.transform.position = new Vector3(16.25f, 15.25f, Jailer.prisonPlayer.transform.position.z);
+                        break;
+                    // Fungle
+                    case 5:
+                        Jailer.prisonPlayer.transform.position = new Vector3(-5.5f, 1f, Jailer.prisonPlayer.transform.position.z);
+                        break;
+                    // Submerged
+                    case 6:
+                        if (Jailer.prisonPlayer.transform.position.y > 0) {
+                            Jailer.prisonPlayer.transform.position = new Vector3(-4.3f, 13.5f, Jailer.prisonPlayer.transform.position.z);
+                        }
+                        else {
+                            Jailer.prisonPlayer.transform.position = new Vector3(1.85f, -26.65f, Jailer.prisonPlayer.transform.position.z);
+                        }
+                        break;
+                }
+                Jailer.prisonPlayer = null;
+                Jailer.usedJail = false;
+            }
+        }
     }
 
     public static class Modifiers
@@ -3615,9 +3544,7 @@ namespace LasMonjas
         }
 
         public static bool existingWithKiller() {
-            return existing() && (lover1 == Renegade.renegade || lover2 == Renegade.renegade
-                               || lover1 == Minion.minion || lover2 == Minion.minion
-                               || lover1.Data.Role.IsImpostor || lover2.Data.Role.IsImpostor);
+            return existing() && (Helpers.isRebel(lover1) || Helpers.isRebel(lover2) || lover1.Data.Role.IsImpostor || lover2.Data.Role.IsImpostor);
         }
 
         public static bool hasAliveKillingLover(this PlayerControl player) {
@@ -3673,53 +3600,29 @@ namespace LasMonjas
     {
         public static List<PlayerControl> redteamFlag = new List<PlayerControl>();
         public static PlayerControl redplayer01 = null;
-        public static bool redplayer01IsReviving = false;
-        public static PlayerControl redplayer01currentTarget = null;
         public static PlayerControl redplayer02 = null;
-        public static bool redplayer02IsReviving = false;
-        public static PlayerControl redplayer02currentTarget = null;
         public static PlayerControl redplayer03 = null;
-        public static bool redplayer03IsReviving = false;
-        public static PlayerControl redplayer03currentTarget = null;
         public static PlayerControl redplayer04 = null;
-        public static bool redplayer04IsReviving = false;
-        public static PlayerControl redplayer04currentTarget = null;
         public static PlayerControl redplayer05 = null;
-        public static bool redplayer05IsReviving = false;
-        public static PlayerControl redplayer05currentTarget = null;
         public static PlayerControl redplayer06 = null;
-        public static bool redplayer06IsReviving = false;
-        public static PlayerControl redplayer06currentTarget = null;
         public static PlayerControl redplayer07 = null;
-        public static bool redplayer07IsReviving = false;
-        public static PlayerControl redplayer07currentTarget = null;
+        public static List<PlayerControl> redTeamCurrentargets = new List<PlayerControl>();
 
         public static List<PlayerControl> blueteamFlag = new List<PlayerControl>();
         public static PlayerControl blueplayer01 = null;
-        public static bool blueplayer01IsReviving = false;
-        public static PlayerControl blueplayer01currentTarget = null;
         public static PlayerControl blueplayer02 = null;
-        public static bool blueplayer02IsReviving = false;
-        public static PlayerControl blueplayer02currentTarget = null;
         public static PlayerControl blueplayer03 = null;
-        public static bool blueplayer03IsReviving = false;
-        public static PlayerControl blueplayer03currentTarget = null;
         public static PlayerControl blueplayer04 = null;
-        public static bool blueplayer04IsReviving = false;
-        public static PlayerControl blueplayer04currentTarget = null;
         public static PlayerControl blueplayer05 = null;
-        public static bool blueplayer05IsReviving = false;
-        public static PlayerControl blueplayer05currentTarget = null;
         public static PlayerControl blueplayer06 = null;
-        public static bool blueplayer06IsReviving = false;
-        public static PlayerControl blueplayer06currentTarget = null;
         public static PlayerControl blueplayer07 = null;
-        public static bool blueplayer07IsReviving = false;
-        public static PlayerControl blueplayer07currentTarget = null;
+        public static List<PlayerControl> blueTeamCurrentargets = new List<PlayerControl>();
+
         public static PlayerControl stealerPlayer = null;
-        public static bool stealerPlayerIsReviving = false;
         public static PlayerControl stealerPlayercurrentTarget = null;
         public static List<GameObject> stealerSpawns = new List<GameObject>();
+
+        public static HashSet<PlayerControl> revivingPlayers = new();
 
         public static float requiredFlags = 3;
 
@@ -3739,7 +3642,6 @@ namespace LasMonjas
 
         public static bool triggerRedTeamWin = false;
         public static bool triggerBlueTeamWin = false;
-        public static bool triggerDrawWin = false;
 
         public static string flagpointCounter = Language.introTexts[2] + "<color=#FF0000FF>" + currentRedTeamPoints + "</color> - " + "<color=#0000FFFF>" + currentBlueTeamPoints + "</color>";
 
@@ -3776,52 +3678,29 @@ namespace LasMonjas
         public static void clearAndReload() {
             redteamFlag.Clear();
             redplayer01 = null;
-            redplayer01currentTarget = null;
-            redplayer01IsReviving = false;
             redplayer02 = null;
-            redplayer02IsReviving = false;
-            redplayer02currentTarget = null;
             redplayer03 = null;
-            redplayer03IsReviving = false;
-            redplayer03currentTarget = null;
             redplayer04 = null;
-            redplayer04IsReviving = false;
-            redplayer04currentTarget = null;
             redplayer05 = null;
-            redplayer05IsReviving = false;
-            redplayer05currentTarget = null;
             redplayer06 = null;
-            redplayer06IsReviving = false;
-            redplayer06currentTarget = null;
             redplayer07 = null;
-            redplayer07IsReviving = false;
-            redplayer07currentTarget = null;
+            redTeamCurrentargets.Clear();
+            redTeamCurrentargets = Enumerable.Repeat<PlayerControl>(null, 7).ToList();
             blueteamFlag.Clear();
             blueplayer01 = null;
-            blueplayer01IsReviving = false;
-            blueplayer01currentTarget = null;
             blueplayer02 = null;
-            blueplayer02IsReviving = false;
-            blueplayer02currentTarget = null;
             blueplayer03 = null;
-            blueplayer03IsReviving = false;
-            blueplayer03currentTarget = null;
             blueplayer04 = null;
-            blueplayer04IsReviving = false;
-            blueplayer04currentTarget = null;
             blueplayer05 = null;
-            blueplayer05IsReviving = false;
-            blueplayer05currentTarget = null;
             blueplayer06 = null;
-            blueplayer06IsReviving = false;
-            blueplayer06currentTarget = null;
             blueplayer07 = null;
-            blueplayer07IsReviving = false;
-            blueplayer07currentTarget = null;
+            blueTeamCurrentargets.Clear();
+            blueTeamCurrentargets = Enumerable.Repeat<PlayerControl>(null, 7).ToList();
             stealerPlayer = null;
-            stealerPlayerIsReviving = false;
             stealerPlayercurrentTarget = null;
             stealerSpawns.Clear();
+
+            revivingPlayers.Clear();
 
             requiredFlags = CustomOptionHolder.requiredFlags.getFloat();
             redflag = null;
@@ -3835,7 +3714,6 @@ namespace LasMonjas
             bluePlayerWhoHasRedFlag = null;
             triggerRedTeamWin = false;
             triggerBlueTeamWin = false;
-            triggerDrawWin = false;
             currentBlueTeamPoints = 0;
             localRedFlagArrow = new List<Arrow>();
             localBlueFlagArrow = new List<Arrow>();
@@ -3847,84 +3725,51 @@ namespace LasMonjas
     {
         public static List<PlayerControl> thiefTeam = new List<PlayerControl>();
         public static PlayerControl thiefplayer01 = null;
-        public static PlayerControl thiefplayer01currentTarget = null;
-        public static bool thiefplayer01IsStealing = false;
         public static byte thiefplayer01JewelId = 0;
-        public static bool thiefplayer01IsReviving = false;
         public static PlayerControl thiefplayer02 = null;
-        public static PlayerControl thiefplayer02currentTarget = null;
-        public static bool thiefplayer02IsStealing = false;
         public static byte thiefplayer02JewelId = 0;
-        public static bool thiefplayer02IsReviving = false;
         public static PlayerControl thiefplayer03 = null;
-        public static PlayerControl thiefplayer03currentTarget = null;
-        public static bool thiefplayer03IsStealing = false;
         public static byte thiefplayer03JewelId = 0;
-        public static bool thiefplayer03IsReviving = false;
         public static PlayerControl thiefplayer04 = null;
-        public static PlayerControl thiefplayer04currentTarget = null;
-        public static bool thiefplayer04IsStealing = false;
         public static byte thiefplayer04JewelId = 0;
-        public static bool thiefplayer04IsReviving = false;
         public static PlayerControl thiefplayer05 = null;
-        public static PlayerControl thiefplayer05currentTarget = null;
-        public static bool thiefplayer05IsStealing = false;
         public static byte thiefplayer05JewelId = 0;
-        public static bool thiefplayer05IsReviving = false;
         public static PlayerControl thiefplayer06 = null;
-        public static PlayerControl thiefplayer06currentTarget = null;
-        public static bool thiefplayer06IsStealing = false;
         public static byte thiefplayer06JewelId = 0;
-        public static bool thiefplayer06IsReviving = false;
         public static PlayerControl thiefplayer07 = null;
-        public static PlayerControl thiefplayer07currentTarget = null;
-        public static bool thiefplayer07IsStealing = false;
         public static byte thiefplayer07JewelId = 0;
-        public static bool thiefplayer07IsReviving = false;
         public static PlayerControl thiefplayer08 = null;
-        public static PlayerControl thiefplayer08currentTarget = null;
-        public static bool thiefplayer08IsStealing = false;
         public static byte thiefplayer08JewelId = 0;
-        public static bool thiefplayer08IsReviving = false;
         public static PlayerControl thiefplayer09 = null;
-        public static PlayerControl thiefplayer09currentTarget = null;
-        public static bool thiefplayer09IsStealing = false;
-        public static byte thiefplayer09JewelId = 0;
-        public static bool thiefplayer09IsReviving = false;
+        public static byte thiefplayer09JewelId = 0; 
+        public static List<PlayerControl> thiefTeamCurrentargets = new List<PlayerControl>();
+
+        public static HashSet<PlayerControl> stealingPlayers = new();
 
         public static List<PlayerControl> policeTeam = new List<PlayerControl>();
         public static PlayerControl policeplayer01 = null;
-        public static PlayerControl policeplayer01currentTarget = null;
         public static PlayerControl policeplayer01targetedPlayer = null;
         public static float policeplayer01lightTimer = 0;
-        public static bool policeplayer01IsReviving = false;
         public static PlayerControl policeplayer02 = null;
-        public static PlayerControl policeplayer02currentTarget = null;
         public static float policeplayer02lightTimer = 0;
-        public static bool policeplayer02IsReviving = false;
         public static GameObject policeplayer02Taser = null;
         public static float policeplayer02mouseAngle = 0f;
         public static PlayerControl policeplayer03 = null;
-        public static PlayerControl policeplayer03currentTarget = null;
         public static PlayerControl policeplayer03targetedPlayer = null;
         public static float policeplayer03lightTimer = 0;
-        public static bool policeplayer03IsReviving = false;
         public static PlayerControl policeplayer04 = null;
-        public static PlayerControl policeplayer04currentTarget = null;
         public static float policeplayer04lightTimer = 0;
-        public static bool policeplayer04IsReviving = false;
         public static GameObject policeplayer04Taser = null;
         public static float policeplayer04mouseAngle = 0f; 
         public static PlayerControl policeplayer05 = null;
-        public static PlayerControl policeplayer05currentTarget = null;
         public static PlayerControl policeplayer05targetedPlayer = null;
-        public static float policeplayer05lightTimer = 0;
-        public static bool policeplayer05IsReviving = false; 
+        public static float policeplayer05lightTimer = 0; 
         public static PlayerControl policeplayer06 = null;
-        public static PlayerControl policeplayer06currentTarget = null;
         public static PlayerControl policeplayer06targetedPlayer = null;
         public static float policeplayer06lightTimer = 0;
-        public static bool policeplayer06IsReviving = false;
+        public static List<PlayerControl> policeTeamCurrentargets = new List<PlayerControl>();
+
+        public static HashSet<PlayerControl> revivingPlayers = new();
 
         public static List<PlayerControl> thiefArrested = new List<PlayerControl>();
         public static List<GameObject> thiefTreasures = new List<GameObject>();
@@ -4056,84 +3901,53 @@ namespace LasMonjas
 
             thiefTeam.Clear();
             thiefplayer01 = null;
-            thiefplayer01currentTarget = null;
-            thiefplayer01IsStealing = false;
             thiefplayer01JewelId = 0;
-            thiefplayer01IsReviving = false;
             thiefplayer02 = null;
-            thiefplayer02currentTarget = null;
-            thiefplayer02IsStealing = false;
             thiefplayer02JewelId = 0;
-            thiefplayer02IsReviving = false;
             thiefplayer03 = null;
-            thiefplayer03currentTarget = null;
-            thiefplayer03IsStealing = false;
             thiefplayer03JewelId = 0;
-            thiefplayer03IsReviving = false;
             thiefplayer04 = null;
-            thiefplayer04currentTarget = null;
-            thiefplayer04IsStealing = false;
             thiefplayer04JewelId = 0;
-            thiefplayer04IsReviving = false;
             thiefplayer05 = null;
-            thiefplayer05currentTarget = null;
-            thiefplayer05IsStealing = false;
             thiefplayer05JewelId = 0;
-            thiefplayer05IsReviving = false;
             thiefplayer06 = null;
-            thiefplayer06currentTarget = null;
-            thiefplayer06IsStealing = false;
             thiefplayer06JewelId = 0;
-            thiefplayer06IsReviving = false;
             thiefplayer07 = null;
-            thiefplayer07currentTarget = null;
-            thiefplayer07IsStealing = false;
             thiefplayer07JewelId = 0;
-            thiefplayer07IsReviving = false;
             thiefplayer08 = null;
-            thiefplayer08currentTarget = null;
-            thiefplayer08IsStealing = false;
             thiefplayer08JewelId = 0;
-            thiefplayer08IsReviving = false;
             thiefplayer09 = null;
-            thiefplayer09currentTarget = null;
-            thiefplayer09IsStealing = false;
             thiefplayer09JewelId = 0;
-            thiefplayer09IsReviving = false;
+            thiefTeamCurrentargets.Clear();
+            thiefTeamCurrentargets = Enumerable.Repeat<PlayerControl>(null, 9).ToList();
+
+            stealingPlayers.Clear();
 
             policeTeam.Clear();
             policeplayer01 = null;
-            policeplayer01currentTarget = null;
             policeplayer01targetedPlayer = null;
             policeplayer01lightTimer = 0;
-            policeplayer01IsReviving = false;
             policeplayer02 = null;
-            policeplayer02currentTarget = null;
             policeplayer02lightTimer = 0;
-            policeplayer02IsReviving = false;
             policeplayer02Taser = null;
             policeplayer02mouseAngle = 0f;
             policeplayer03 = null;
-            policeplayer03currentTarget = null;
             policeplayer03targetedPlayer = null;
             policeplayer03lightTimer = 0;
-            policeplayer03IsReviving = false;
             policeplayer04 = null;
-            policeplayer04currentTarget = null;
             policeplayer04lightTimer = 0;
-            policeplayer04IsReviving = false;
             policeplayer04Taser = null;
             policeplayer04mouseAngle = 0f; 
             policeplayer05 = null;
-            policeplayer05currentTarget = null;
             policeplayer05targetedPlayer = null;
             policeplayer05lightTimer = 0;
-            policeplayer05IsReviving = false;
             policeplayer06 = null;
-            policeplayer06currentTarget = null;
             policeplayer06targetedPlayer = null;
             policeplayer06lightTimer = 0;
-            policeplayer06IsReviving = false;
+            policeTeamCurrentargets.Clear();
+            policeTeamCurrentargets = Enumerable.Repeat<PlayerControl>(null, 6).ToList();
+
+            revivingPlayers.Clear();
 
             jewel01 = null;
             jewel01BeingStealed = null;
@@ -4182,32 +3996,6 @@ namespace LasMonjas
             currentThiefsCaptured = 0;
             thiefpointCounter = Language.introTexts[3] + "<color=#00F7FFFF>" + currentJewelsStoled + " / " + requiredJewels + "</color> | " + Language.introTexts[4] + " <color=#928B55FF>" + currentThiefsCaptured + " / " + thiefTeam.Count + "</color>";
         }
-        public static PlayerControl GetTasedPlayer(float shotSize, float effectiveRange, bool policeTwo) {
-            PlayerControl result = null;
-            float num = effectiveRange;
-            Vector3 pos;
-            float mouseAngle;
-            if (policeTwo) {
-                mouseAngle = policeplayer02mouseAngle;
-            } else {
-                mouseAngle = policeplayer04mouseAngle;
-            }
-            foreach (PlayerControl player in thiefTeam) {
-                if (player.PlayerId == PlayerInCache.LocalPlayer.PlayerControl.PlayerId) continue;
-
-                if (player.Data.IsDead || player.inVent) continue;
-
-                pos = player.transform.position - PlayerInCache.LocalPlayer.PlayerControl.transform.position;
-                pos = new Vector3(
-                    pos.x * MathF.Cos(mouseAngle) + pos.y * MathF.Sin(mouseAngle),
-                    pos.y * MathF.Cos(mouseAngle) - pos.x * MathF.Sin(mouseAngle));
-                if (Math.Abs(pos.y) < shotSize && (!(pos.x < 0)) && pos.x < num) {
-                    num = pos.x;
-                    result = player;
-                }
-            }
-            return result;
-        }
     }
 
     public static class KingOfTheHill
@@ -4219,26 +4007,13 @@ namespace LasMonjas
         public static bool greenKinghaszonetwo = false;
         public static bool greenKinghaszonethree = false;
         public static PlayerControl greenKingplayer = null;
-        public static PlayerControl greenKingplayercurrentTarget = null;
-        public static bool greenKingIsReviving = false;
         public static PlayerControl greenplayer01 = null;
-        public static PlayerControl greenplayer01currentTarget = null;
-        public static bool greenplayer01IsReviving = false;
         public static PlayerControl greenplayer02 = null;
-        public static PlayerControl greenplayer02currentTarget = null;
-        public static bool greenplayer02IsReviving = false;
         public static PlayerControl greenplayer03 = null;
-        public static PlayerControl greenplayer03currentTarget = null;
-        public static bool greenplayer03IsReviving = false;
         public static PlayerControl greenplayer04 = null;
-        public static PlayerControl greenplayer04currentTarget = null;
-        public static bool greenplayer04IsReviving = false;
         public static PlayerControl greenplayer05 = null;
-        public static PlayerControl greenplayer05currentTarget = null;
-        public static bool greenplayer05IsReviving = false;
         public static PlayerControl greenplayer06 = null;
-        public static PlayerControl greenplayer06currentTarget = null;
-        public static bool greenplayer06IsReviving = false;
+        public static List<PlayerControl> greenTeamCurrentargets = new List<PlayerControl>();
 
         public static List<PlayerControl> yellowTeam = new List<PlayerControl>();
         public static byte whichYellowKingplayerzone = 0;
@@ -4247,30 +4022,19 @@ namespace LasMonjas
         public static bool yellowKinghaszonetwo = false;
         public static bool yellowKinghaszonethree = false;
         public static PlayerControl yellowKingplayer = null;
-        public static PlayerControl yellowKingplayercurrentTarget = null;
-        public static bool yellowKingIsReviving = false;
         public static PlayerControl yellowplayer01 = null;
-        public static PlayerControl yellowplayer01currentTarget = null;
-        public static bool yellowplayer01IsReviving = false;
         public static PlayerControl yellowplayer02 = null;
-        public static PlayerControl yellowplayer02currentTarget = null;
-        public static bool yellowplayer02IsReviving = false;
         public static PlayerControl yellowplayer03 = null;
-        public static PlayerControl yellowplayer03currentTarget = null;
-        public static bool yellowplayer03IsReviving = false;
         public static PlayerControl yellowplayer04 = null;
-        public static PlayerControl yellowplayer04currentTarget = null;
-        public static bool yellowplayer04IsReviving = false;
         public static PlayerControl yellowplayer05 = null;
-        public static PlayerControl yellowplayer05currentTarget = null;
-        public static bool yellowplayer05IsReviving = false;
         public static PlayerControl yellowplayer06 = null;
-        public static PlayerControl yellowplayer06currentTarget = null;
-        public static bool yellowplayer06IsReviving = false;
+        public static List<PlayerControl> yellowTeamCurrentargets = new List<PlayerControl>();
+
         public static PlayerControl usurperPlayer = null;
         public static PlayerControl usurperPlayercurrentTarget = null;
-        public static bool usurperPlayerIsReviving = false;
         public static List<GameObject> usurperSpawns = new List<GameObject>();
+
+        public static HashSet<PlayerControl> revivingPlayers = new();
 
         public static float requiredPoints = 150;
         public static float captureCooldown = 10f;
@@ -4297,7 +4061,6 @@ namespace LasMonjas
 
         public static bool triggerGreenTeamWin = false;
         public static bool triggerYellowTeamWin = false;
-        public static bool triggerDrawWin = false;
 
         public static string kingpointCounter = Language.introTexts[2] + "<color=#00FF00FF>" + currentGreenTeamPoints.ToString("F0") + "</color> - " + "<color=#FFFF00FF>" + currentYellowTeamPoints.ToString("F0") + "</color>";
 
@@ -4325,26 +4088,14 @@ namespace LasMonjas
             greenKinghaszonetwo = false;
             greenKinghaszonethree = false;
             greenKingplayer = null;
-            greenKingplayercurrentTarget = null;
-            greenKingIsReviving = false;
             greenplayer01 = null;
-            greenplayer01currentTarget = null;
-            greenplayer01IsReviving = false;
             greenplayer02 = null;
-            greenplayer02currentTarget = null;
-            greenplayer02IsReviving = false;
             greenplayer03 = null;
-            greenplayer03currentTarget = null;
-            greenplayer03IsReviving = false;
             greenplayer04 = null;
-            greenplayer04currentTarget = null;
-            greenplayer04IsReviving = false;
             greenplayer05 = null;
-            greenplayer05currentTarget = null;
-            greenplayer05IsReviving = false;
             greenplayer06 = null;
-            greenplayer06currentTarget = null;
-            greenplayer06IsReviving = false;
+            greenTeamCurrentargets.Clear();
+            greenTeamCurrentargets = Enumerable.Repeat<PlayerControl>(null, 7).ToList();
 
             yellowTeam.Clear();
             whichYellowKingplayerzone = 0;
@@ -4353,29 +4104,17 @@ namespace LasMonjas
             yellowKinghaszonetwo = false;
             yellowKinghaszonethree = false;
             yellowKingplayer = null;
-            yellowKingplayercurrentTarget = null;
-            yellowKingIsReviving = false;
             yellowplayer01 = null;
-            yellowplayer01currentTarget = null;
-            yellowplayer01IsReviving = false;
             yellowplayer02 = null;
-            yellowplayer02currentTarget = null;
-            yellowplayer02IsReviving = false;
             yellowplayer03 = null;
-            yellowplayer03currentTarget = null;
-            yellowplayer03IsReviving = false;
             yellowplayer04 = null;
-            yellowplayer04currentTarget = null;
-            yellowplayer04IsReviving = false;
             yellowplayer05 = null;
-            yellowplayer05currentTarget = null;
-            yellowplayer05IsReviving = false;
             yellowplayer06 = null;
-            yellowplayer06currentTarget = null;
-            yellowplayer06IsReviving = false;
+            yellowTeamCurrentargets.Clear();
+            yellowTeamCurrentargets = Enumerable.Repeat<PlayerControl>(null, 7).ToList();
+
             usurperPlayer = null;
             usurperPlayercurrentTarget = null;
-            usurperPlayerIsReviving = false;
             usurperSpawns.Clear();
 
             requiredPoints = CustomOptionHolder.kingRequiredPoints.getFloat();
@@ -4401,10 +4140,20 @@ namespace LasMonjas
             yellowkingaura = null;
             triggerGreenTeamWin = false;
             triggerYellowTeamWin = false;
-            triggerDrawWin = false;
+
+            revivingPlayers.Clear();
 
             localArrows = new List<Arrow>();
             kingpointCounter = Language.introTexts[2] + "<color=#00FF00FF>" + currentGreenTeamPoints.ToString("F0") + "</color> - " + "<color=#FFFF00FF>" + currentYellowTeamPoints.ToString("F0") + "</color>";
+        }
+
+        public static void resetCapturedZones(ref bool capturedZone, GameObject zoneflag, GameObject zoneBase, ref Color zoneColor) {
+            if (!capturedZone) return;
+
+            capturedZone = false;
+            zoneflag.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.whiteflag.GetComponent<SpriteRenderer>().sprite;
+            zoneBase.GetComponent<SpriteRenderer>().sprite = CustomMain.customAssets.whitebase.GetComponent<SpriteRenderer>().sprite;
+            zoneColor = Color.white;
         }
     }
 
@@ -4472,6 +4221,7 @@ namespace LasMonjas
         public static void clearAndReload() {
             notPotatoTeam.Clear();
             notPotatoTeamAlive.Clear();
+            explodedPotatoTeam.Clear();
             hotPotatoPlayer = null;
             hotPotatoPlayerCurrentTarget = null;
             notPotato01 = null;
@@ -4524,7 +4274,6 @@ namespace LasMonjas
         public static List<PlayerControl> survivorTeam = new List<PlayerControl>();
         public static List<PlayerControl> zombieTeam = new List<PlayerControl>();
         public static List<GameObject> groundItems = new List<GameObject>();
-        public static List<PlayerControl> infectedTeam = new List<PlayerControl>();
         public static List<GameObject> nurseExits = new List<GameObject>();
         public static List<GameObject> nurseMedkits = new List<GameObject>();
         public static List<GameObject> laboratoryEntrances = new List<GameObject>();
@@ -4539,191 +4288,93 @@ namespace LasMonjas
         public static bool nursePlayerHasCureReady = false;
         public static byte nursePlayerCurrentExit = 0;
         public static PlayerControl survivorPlayer01 = null;
-        public static PlayerControl survivorPlayer01currentTarget = null;
-        public static bool survivorPlayer01IsReviving = false;
-        public static bool survivorPlayer01IsInfected = false;
-        public static bool survivorPlayer01CanKill = false;
-        public static bool survivorPlayer01HasKeyItem = false;
         public static byte survivorPlayer01FoundBox = 0;
         public static float survivorPlayer01Timer = 60;
         public static GameObject survivorPlayer01SelectedBox = null;
         public static GameObject survivorPlayer01CurrentBox = null;
         public static PlayerControl survivorPlayer02 = null;
-        public static PlayerControl survivorPlayer02currentTarget = null;
-        public static bool survivorPlayer02IsReviving = false;
-        public static bool survivorPlayer02IsInfected = false;
-        public static bool survivorPlayer02CanKill = false;
-        public static bool survivorPlayer02HasKeyItem = false;
         public static byte survivorPlayer02FoundBox = 0;
         public static float survivorPlayer02Timer = 60;
         public static GameObject survivorPlayer02SelectedBox = null;
         public static GameObject survivorPlayer02CurrentBox = null;
         public static PlayerControl survivorPlayer03 = null;
-        public static PlayerControl survivorPlayer03currentTarget = null;
-        public static bool survivorPlayer03IsReviving = false;
-        public static bool survivorPlayer03IsInfected = false;
-        public static bool survivorPlayer03CanKill = false;
-        public static bool survivorPlayer03HasKeyItem = false;
         public static byte survivorPlayer03FoundBox = 0;
         public static float survivorPlayer03Timer = 60;
         public static GameObject survivorPlayer03SelectedBox = null;
         public static GameObject survivorPlayer03CurrentBox = null;
         public static PlayerControl survivorPlayer04 = null;
-        public static PlayerControl survivorPlayer04currentTarget = null;
-        public static bool survivorPlayer04IsReviving = false;
-        public static bool survivorPlayer04IsInfected = false;
-        public static bool survivorPlayer04CanKill = false;
-        public static bool survivorPlayer04HasKeyItem = false;
         public static byte survivorPlayer04FoundBox = 0;
         public static float survivorPlayer04Timer = 60;
         public static GameObject survivorPlayer04SelectedBox = null;
         public static GameObject survivorPlayer04CurrentBox = null;
         public static PlayerControl survivorPlayer05 = null;
-        public static PlayerControl survivorPlayer05currentTarget = null;
-        public static bool survivorPlayer05IsReviving = false;
-        public static bool survivorPlayer05IsInfected = false;
-        public static bool survivorPlayer05CanKill = false;
-        public static bool survivorPlayer05HasKeyItem = false;
         public static byte survivorPlayer05FoundBox = 0;
         public static float survivorPlayer05Timer = 60;
         public static GameObject survivorPlayer05SelectedBox = null;
         public static GameObject survivorPlayer05CurrentBox = null;
         public static PlayerControl survivorPlayer06 = null;
-        public static PlayerControl survivorPlayer06currentTarget = null;
-        public static bool survivorPlayer06IsReviving = false;
-        public static bool survivorPlayer06IsInfected = false;
-        public static bool survivorPlayer06CanKill = false;
-        public static bool survivorPlayer06HasKeyItem = false;
         public static byte survivorPlayer06FoundBox = 0;
         public static float survivorPlayer06Timer = 60;
         public static GameObject survivorPlayer06SelectedBox = null;
         public static GameObject survivorPlayer06CurrentBox = null;
         public static PlayerControl survivorPlayer07 = null;
-        public static PlayerControl survivorPlayer07currentTarget = null;
-        public static bool survivorPlayer07IsReviving = false;
-        public static bool survivorPlayer07IsInfected = false;
-        public static bool survivorPlayer07CanKill = false;
-        public static bool survivorPlayer07HasKeyItem = false;
         public static byte survivorPlayer07FoundBox = 0;
         public static float survivorPlayer07Timer = 60;
         public static GameObject survivorPlayer07SelectedBox = null;
         public static GameObject survivorPlayer07CurrentBox = null;
         public static PlayerControl survivorPlayer08 = null;
-        public static PlayerControl survivorPlayer08currentTarget = null;
-        public static bool survivorPlayer08IsReviving = false;
-        public static bool survivorPlayer08IsInfected = false;
-        public static bool survivorPlayer08CanKill = false;
-        public static bool survivorPlayer08HasKeyItem = false;
         public static byte survivorPlayer08FoundBox = 0;
         public static float survivorPlayer08Timer = 60;
         public static GameObject survivorPlayer08SelectedBox = null;
         public static GameObject survivorPlayer08CurrentBox = null;
         public static PlayerControl survivorPlayer09 = null;
-        public static PlayerControl survivorPlayer09currentTarget = null;
-        public static bool survivorPlayer09IsReviving = false;
-        public static bool survivorPlayer09IsInfected = false;
-        public static bool survivorPlayer09CanKill = false;
-        public static bool survivorPlayer09HasKeyItem = false;
         public static byte survivorPlayer09FoundBox = 0;
         public static float survivorPlayer09Timer = 60;
         public static GameObject survivorPlayer09SelectedBox = null;
         public static GameObject survivorPlayer09CurrentBox = null;
         public static PlayerControl survivorPlayer10 = null;
-        public static PlayerControl survivorPlayer10currentTarget = null;
-        public static bool survivorPlayer10IsReviving = false;
-        public static bool survivorPlayer10IsInfected = false;
-        public static bool survivorPlayer10CanKill = false;
-        public static bool survivorPlayer10HasKeyItem = false;
         public static byte survivorPlayer10FoundBox = 0;
         public static float survivorPlayer10Timer = 60;
         public static GameObject survivorPlayer10SelectedBox = null;
         public static GameObject survivorPlayer10CurrentBox = null;
         public static PlayerControl survivorPlayer11 = null;
-        public static PlayerControl survivorPlayer11currentTarget = null;
-        public static bool survivorPlayer11IsReviving = false;
-        public static bool survivorPlayer11IsInfected = false;
-        public static bool survivorPlayer11CanKill = false;
-        public static bool survivorPlayer11HasKeyItem = false;
         public static byte survivorPlayer11FoundBox = 0;
         public static float survivorPlayer11Timer = 60;
         public static GameObject survivorPlayer11SelectedBox = null;
         public static GameObject survivorPlayer11CurrentBox = null;
         public static PlayerControl survivorPlayer12 = null;
-        public static PlayerControl survivorPlayer12currentTarget = null;
-        public static bool survivorPlayer12IsReviving = false;
-        public static bool survivorPlayer12IsInfected = false;
-        public static bool survivorPlayer12CanKill = false;
-        public static bool survivorPlayer12HasKeyItem = false;
         public static byte survivorPlayer12FoundBox = 0;
         public static float survivorPlayer12Timer = 60;
         public static GameObject survivorPlayer12SelectedBox = null;
         public static GameObject survivorPlayer12CurrentBox = null;
         public static PlayerControl survivorPlayer13 = null;
-        public static PlayerControl survivorPlayer13currentTarget = null;
-        public static bool survivorPlayer13IsReviving = false;
-        public static bool survivorPlayer13IsInfected = false;
-        public static bool survivorPlayer13CanKill = false;
-        public static bool survivorPlayer13HasKeyItem = false;
         public static byte survivorPlayer13FoundBox = 0;
         public static float survivorPlayer13Timer = 60;
         public static GameObject survivorPlayer13SelectedBox = null;
         public static GameObject survivorPlayer13CurrentBox = null;
+        public static List<PlayerControl> survivorTeamCurrentargets = new List<PlayerControl>();
+
         public static PlayerControl zombiePlayer01 = null;
-        public static PlayerControl zombiePlayer01currentTarget = null;
-        public static PlayerControl zombiePlayer01infectedTarget = null;
-        public static bool zombiePlayer01IsReviving = false;
         public static PlayerControl zombiePlayer02 = null;
-        public static PlayerControl zombiePlayer02currentTarget = null;
-        public static PlayerControl zombiePlayer02infectedTarget = null;
-        public static bool zombiePlayer02IsReviving = false;
         public static PlayerControl zombiePlayer03 = null;
-        public static PlayerControl zombiePlayer03currentTarget = null;
-        public static PlayerControl zombiePlayer03infectedTarget = null;
-        public static bool zombiePlayer03IsReviving = false;
         public static PlayerControl zombiePlayer04 = null;
-        public static PlayerControl zombiePlayer04currentTarget = null;
-        public static PlayerControl zombiePlayer04infectedTarget = null;
-        public static bool zombiePlayer04IsReviving = false;
         public static PlayerControl zombiePlayer05 = null;
-        public static PlayerControl zombiePlayer05currentTarget = null;
-        public static PlayerControl zombiePlayer05infectedTarget = null;
-        public static bool zombiePlayer05IsReviving = false;
         public static PlayerControl zombiePlayer06 = null;
-        public static PlayerControl zombiePlayer06currentTarget = null;
-        public static PlayerControl zombiePlayer06infectedTarget = null;
-        public static bool zombiePlayer06IsReviving = false;
         public static PlayerControl zombiePlayer07 = null;
-        public static PlayerControl zombiePlayer07currentTarget = null;
-        public static PlayerControl zombiePlayer07infectedTarget = null;
-        public static bool zombiePlayer07IsReviving = false;
         public static PlayerControl zombiePlayer08 = null;
-        public static PlayerControl zombiePlayer08currentTarget = null;
-        public static PlayerControl zombiePlayer08infectedTarget = null;
-        public static bool zombiePlayer08IsReviving = false;
         public static PlayerControl zombiePlayer09 = null;
-        public static PlayerControl zombiePlayer09currentTarget = null;
-        public static PlayerControl zombiePlayer09infectedTarget = null;
-        public static bool zombiePlayer09IsReviving = false;
         public static PlayerControl zombiePlayer10 = null;
-        public static PlayerControl zombiePlayer10currentTarget = null;
-        public static PlayerControl zombiePlayer10infectedTarget = null;
-        public static bool zombiePlayer10IsReviving = false;
         public static PlayerControl zombiePlayer11 = null;
-        public static PlayerControl zombiePlayer11currentTarget = null;
-        public static PlayerControl zombiePlayer11infectedTarget = null;
-        public static bool zombiePlayer11IsReviving = false;
         public static PlayerControl zombiePlayer12 = null;
-        public static PlayerControl zombiePlayer12currentTarget = null;
-        public static PlayerControl zombiePlayer12infectedTarget = null;
-        public static bool zombiePlayer12IsReviving = false;
         public static PlayerControl zombiePlayer13 = null;
-        public static PlayerControl zombiePlayer13currentTarget = null;
-        public static PlayerControl zombiePlayer13infectedTarget = null;
-        public static bool zombiePlayer13IsReviving = false;
         public static PlayerControl zombiePlayer14 = null;
-        public static PlayerControl zombiePlayer14currentTarget = null;
-        public static PlayerControl zombiePlayer14infectedTarget = null;
-        public static bool zombiePlayer14IsReviving = false;
+        public static List<PlayerControl> zombieTeamCurrentargets = new List<PlayerControl>();
+        public static List<PlayerControl> zombieTeamInfectedtargets = new List<PlayerControl>();
+
+        public static HashSet<PlayerControl> revivingPlayers = new();
+        public static HashSet<PlayerControl> infectedPlayers = new();
+        public static HashSet<PlayerControl> hasKeyItemPlayers = new();
+        public static HashSet<PlayerControl> hasAmmoPlayers = new();
 
         public static bool zombieSenseiMapLaboratoryMode = false;
         public static bool zombieDleksMapLaboratoryMode = false;
@@ -4768,7 +4419,7 @@ namespace LasMonjas
         public static bool triggerZombieWin = false;
         public static bool triggerSurvivorWin = false;
 
-        public static string zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedTeam.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + zombieTeam.Count + "</color>";
+        public static string zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + ZombieLaboratory.infectedPlayers.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + zombieTeam.Count + "</color>";
 
 
         public static List<Arrow> localSurvivorsDeliverArrow = new List<Arrow>();
@@ -4873,7 +4524,6 @@ namespace LasMonjas
             survivorTeam.Clear();
             zombieTeam.Clear();
             groundItems.Clear();
-            infectedTeam.Clear();
             susBoxPositions.Clear();
             nurseExits.Clear();
             nurseMedkits.Clear();
@@ -4890,191 +4540,96 @@ namespace LasMonjas
             nursePlayerCurrentExit = 0;
             laboratoryNurseMedKit = null;
             survivorPlayer01 = null;
-            survivorPlayer01currentTarget = null;
-            survivorPlayer01IsReviving = false;
-            survivorPlayer01IsInfected = false;
-            survivorPlayer01CanKill = false;
-            survivorPlayer01HasKeyItem = false;
             survivorPlayer01FoundBox = 0;
             survivorPlayer01SelectedBox = null;
             survivorPlayer01CurrentBox = null;
             survivorPlayer01Timer = timeForHeal;
             survivorPlayer02 = null;
-            survivorPlayer02currentTarget = null;
-            survivorPlayer02IsReviving = false;
-            survivorPlayer02IsInfected = false;
-            survivorPlayer02CanKill = false;
-            survivorPlayer02HasKeyItem = false;
             survivorPlayer02FoundBox = 0;
             survivorPlayer02SelectedBox = null;
             survivorPlayer02CurrentBox = null;
             survivorPlayer02Timer = timeForHeal;
             survivorPlayer03 = null;
-            survivorPlayer03currentTarget = null;
-            survivorPlayer03IsReviving = false;
-            survivorPlayer03IsInfected = false;
-            survivorPlayer03CanKill = false;
-            survivorPlayer03HasKeyItem = false;
             survivorPlayer03FoundBox = 0;
             survivorPlayer03SelectedBox = null;
             survivorPlayer03CurrentBox = null;
             survivorPlayer03Timer = timeForHeal;
             survivorPlayer04 = null;
-            survivorPlayer04currentTarget = null;
-            survivorPlayer04IsReviving = false;
-            survivorPlayer04IsInfected = false;
-            survivorPlayer04CanKill = false;
-            survivorPlayer04HasKeyItem = false;
             survivorPlayer04FoundBox = 0;
             survivorPlayer04SelectedBox = null;
             survivorPlayer04CurrentBox = null;
             survivorPlayer04Timer = timeForHeal;
             survivorPlayer05 = null;
-            survivorPlayer05currentTarget = null;
-            survivorPlayer05IsInfected = false;
-            survivorPlayer05IsReviving = false;
-            survivorPlayer05CanKill = false;
-            survivorPlayer05HasKeyItem = false;
             survivorPlayer05FoundBox = 0;
             survivorPlayer05SelectedBox = null;
             survivorPlayer05CurrentBox = null;
             survivorPlayer05Timer = timeForHeal;
             survivorPlayer06 = null;
-            survivorPlayer06currentTarget = null;
-            survivorPlayer06IsReviving = false;
-            survivorPlayer06IsInfected = false;
-            survivorPlayer06CanKill = false;
-            survivorPlayer06HasKeyItem = false;
             survivorPlayer06FoundBox = 0;
             survivorPlayer06SelectedBox = null;
             survivorPlayer06CurrentBox = null;
             survivorPlayer06Timer = timeForHeal;
             survivorPlayer07 = null;
-            survivorPlayer07currentTarget = null;
-            survivorPlayer07IsReviving = false;
-            survivorPlayer07IsInfected = false;
-            survivorPlayer07CanKill = false;
-            survivorPlayer07HasKeyItem = false;
             survivorPlayer07FoundBox = 0;
             survivorPlayer07SelectedBox = null;
             survivorPlayer07CurrentBox = null;
             survivorPlayer07Timer = timeForHeal;
             survivorPlayer08 = null;
-            survivorPlayer08currentTarget = null;
-            survivorPlayer08IsInfected = false;
-            survivorPlayer08IsReviving = false;
-            survivorPlayer08CanKill = false;
-            survivorPlayer08HasKeyItem = false;
             survivorPlayer08FoundBox = 0;
             survivorPlayer08SelectedBox = null;
             survivorPlayer08CurrentBox = null;
             survivorPlayer08Timer = timeForHeal;
             survivorPlayer09 = null;
-            survivorPlayer09currentTarget = null;
-            survivorPlayer09IsReviving = false;
-            survivorPlayer09IsInfected = false;
-            survivorPlayer09CanKill = false;
-            survivorPlayer09HasKeyItem = false;
             survivorPlayer09FoundBox = 0;
             survivorPlayer09SelectedBox = null;
             survivorPlayer09CurrentBox = null;
             survivorPlayer09Timer = timeForHeal;
             survivorPlayer10 = null;
-            survivorPlayer10currentTarget = null;
-            survivorPlayer10IsReviving = false;
-            survivorPlayer10IsInfected = false;
-            survivorPlayer10CanKill = false;
-            survivorPlayer10HasKeyItem = false;
             survivorPlayer10FoundBox = 0;
             survivorPlayer10SelectedBox = null;
             survivorPlayer10CurrentBox = null;
             survivorPlayer10Timer = timeForHeal;
             survivorPlayer11 = null;
-            survivorPlayer11currentTarget = null;
-            survivorPlayer11IsReviving = false;
-            survivorPlayer11IsInfected = false;
-            survivorPlayer11CanKill = false;
-            survivorPlayer11HasKeyItem = false;
             survivorPlayer11FoundBox = 0;
             survivorPlayer11SelectedBox = null;
             survivorPlayer11CurrentBox = null;
             survivorPlayer11Timer = timeForHeal;
             survivorPlayer12 = null;
-            survivorPlayer12currentTarget = null;
-            survivorPlayer12IsReviving = false;
-            survivorPlayer12IsInfected = false;
-            survivorPlayer12CanKill = false;
-            survivorPlayer12HasKeyItem = false;
             survivorPlayer12FoundBox = 0;
             survivorPlayer12SelectedBox = null;
             survivorPlayer12CurrentBox = null;
             survivorPlayer12Timer = timeForHeal;
             survivorPlayer13 = null;
-            survivorPlayer13currentTarget = null;
-            survivorPlayer13IsReviving = false;
-            survivorPlayer13IsInfected = false;
-            survivorPlayer13CanKill = false;
-            survivorPlayer13HasKeyItem = false;
             survivorPlayer13FoundBox = 0;
             survivorPlayer13SelectedBox = null;
             survivorPlayer13CurrentBox = null;
             survivorPlayer13Timer = timeForHeal;
+            survivorTeamCurrentargets.Clear();
+            survivorTeamCurrentargets = Enumerable.Repeat<PlayerControl>(null, 14).ToList();
+
             zombiePlayer01 = null;
-            zombiePlayer01currentTarget = null;
-            zombiePlayer01infectedTarget = null;
-            zombiePlayer01IsReviving = false;
             zombiePlayer02 = null;
-            zombiePlayer02currentTarget = null;
-            zombiePlayer02infectedTarget = null;
-            zombiePlayer02IsReviving = false;
             zombiePlayer03 = null;
-            zombiePlayer03currentTarget = null;
-            zombiePlayer03infectedTarget = null;
-            zombiePlayer03IsReviving = false;
             zombiePlayer04 = null;
-            zombiePlayer04currentTarget = null;
-            zombiePlayer04infectedTarget = null;
-            zombiePlayer04IsReviving = false;
             zombiePlayer05 = null;
-            zombiePlayer05currentTarget = null;
-            zombiePlayer06infectedTarget = null;
-            zombiePlayer05IsReviving = false;
             zombiePlayer06 = null;
-            zombiePlayer06currentTarget = null;
-            zombiePlayer06infectedTarget = null;
-            zombiePlayer06IsReviving = false;
             zombiePlayer07 = null;
-            zombiePlayer07currentTarget = null;
-            zombiePlayer07infectedTarget = null;
-            zombiePlayer07IsReviving = false;
             zombiePlayer08 = null;
-            zombiePlayer08currentTarget = null;
-            zombiePlayer08infectedTarget = null;
-            zombiePlayer08IsReviving = false;
             zombiePlayer09 = null;
-            zombiePlayer09currentTarget = null;
-            zombiePlayer09infectedTarget = null;
-            zombiePlayer09IsReviving = false;
             zombiePlayer10 = null;
-            zombiePlayer10currentTarget = null;
-            zombiePlayer10infectedTarget = null;
-            zombiePlayer10IsReviving = false;
             zombiePlayer11 = null;
-            zombiePlayer11currentTarget = null;
-            zombiePlayer11infectedTarget = null;
-            zombiePlayer11IsReviving = false;
             zombiePlayer12 = null;
-            zombiePlayer12currentTarget = null;
-            zombiePlayer12infectedTarget = null;
-            zombiePlayer12IsReviving = false;
             zombiePlayer13 = null;
-            zombiePlayer13currentTarget = null;
-            zombiePlayer13infectedTarget = null;
-            zombiePlayer13IsReviving = false;
             zombiePlayer14 = null;
-            zombiePlayer14currentTarget = null;
-            zombiePlayer14infectedTarget = null;
-            zombiePlayer14IsReviving = false;
+            zombieTeamCurrentargets.Clear();
+            zombieTeamInfectedtargets.Clear();
+            zombieTeamCurrentargets = Enumerable.Repeat<PlayerControl>(null, 14).ToList();
+            zombieTeamInfectedtargets = Enumerable.Repeat<PlayerControl>(null, 14).ToList();
+
+            revivingPlayers.Clear();
+            infectedPlayers.Clear();
+            hasKeyItemPlayers.Clear();
+            hasAmmoPlayers.Clear();
 
             laboratory = null;
             laboratoryEnterButton = null;
@@ -5114,7 +4669,7 @@ namespace LasMonjas
             laboratorytwoExitLeftButton = null;
             laboratorytwoExitRightButton = null;
 
-            zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + infectedTeam.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + zombieTeam.Count + "</color>";
+            zombieLaboratoryCounter = Language.introTexts[7] + "<color=#FF00FFFF>" + currentKeyItems + " / 6</color> | " + Language.introTexts[8] + "<color=#00CCFFFF>" + survivorTeam.Count + "</color> | " + Language.introTexts[9] + "<color=#FFFF00FF>" + infectedPlayers.Count + "</color> | " + Language.introTexts[10] + "<color=#996633FF>" + zombieTeam.Count + "</color>";
 
             switch (GameOptionsManager.Instance.currentGameOptions.MapId) {
                 case 0:
@@ -5779,74 +5334,60 @@ namespace LasMonjas
         public static float limePlayer01mouseAngle = 0f;
         public static GameObject limePlayer01Wep = null;
         public static float limePlayer01Lifes = 3;
-        public static bool limePlayer01IsReviving = false;
         public static PlayerControl limePlayer02 = null;
         public static float limePlayer02mouseAngle = 0f;
         public static GameObject limePlayer02Wep = null;
         public static float limePlayer02Lifes = 3;
-        public static bool limePlayer02IsReviving = false;
         public static PlayerControl limePlayer03 = null;
         public static float limePlayer03mouseAngle = 0f;
         public static GameObject limePlayer03Wep = null;
         public static float limePlayer03Lifes = 3;
-        public static bool limePlayer03IsReviving = false;
         public static PlayerControl limePlayer04 = null;
         public static float limePlayer04mouseAngle = 0f;
         public static GameObject limePlayer04Wep = null;
         public static float limePlayer04Lifes = 3;
-        public static bool limePlayer04IsReviving = false;
         public static PlayerControl limePlayer05 = null;
         public static float limePlayer05mouseAngle = 0f;
         public static GameObject limePlayer05Wep = null;
         public static float limePlayer05Lifes = 3;
-        public static bool limePlayer05IsReviving = false;
         public static PlayerControl limePlayer06 = null;
         public static float limePlayer06mouseAngle = 0f;
         public static GameObject limePlayer06Wep = null;
         public static float limePlayer06Lifes = 3;
-        public static bool limePlayer06IsReviving = false;
         public static PlayerControl limePlayer07 = null;
         public static float limePlayer07mouseAngle = 0f;
         public static GameObject limePlayer07Wep = null;
         public static float limePlayer07Lifes = 3;
-        public static bool limePlayer07IsReviving = false;
 
         public static List<PlayerControl> pinkTeam = new List<PlayerControl>();
         public static PlayerControl pinkPlayer01 = null;
         public static float pinkPlayer01mouseAngle = 0f;
         public static GameObject pinkPlayer01Wep = null;
         public static float pinkPlayer01Lifes = 3;
-        public static bool pinkPlayer01IsReviving = false;
         public static PlayerControl pinkPlayer02 = null;
         public static float pinkPlayer02mouseAngle = 0f;
         public static GameObject pinkPlayer02Wep = null;
         public static float pinkPlayer02Lifes = 3;
-        public static bool pinkPlayer02IsReviving = false;
         public static PlayerControl pinkPlayer03 = null;
         public static float pinkPlayer03mouseAngle = 0f;
         public static GameObject pinkPlayer03Wep = null;
         public static float pinkPlayer03Lifes = 3;
-        public static bool pinkPlayer03IsReviving = false;
         public static PlayerControl pinkPlayer04 = null;
         public static float pinkPlayer04mouseAngle = 0f;
         public static GameObject pinkPlayer04Wep = null;
         public static float pinkPlayer04Lifes = 3;
-        public static bool pinkPlayer04IsReviving = false;
         public static PlayerControl pinkPlayer05 = null;
         public static float pinkPlayer05mouseAngle = 0f;
         public static GameObject pinkPlayer05Wep = null;
         public static float pinkPlayer05Lifes = 3;
-        public static bool pinkPlayer05IsReviving = false;
         public static PlayerControl pinkPlayer06 = null;
         public static float pinkPlayer06mouseAngle = 0f;
         public static GameObject pinkPlayer06Wep = null;
         public static float pinkPlayer06Lifes = 3;
-        public static bool pinkPlayer06IsReviving = false;
         public static PlayerControl pinkPlayer07 = null;
         public static float pinkPlayer07mouseAngle = 0f;
         public static GameObject pinkPlayer07Wep = null;
         public static float pinkPlayer07Lifes = 3;
-        public static bool pinkPlayer07IsReviving = false;
 
         public static List<PlayerControl> serialKillerTeam = new List<PlayerControl>();
         public static PlayerControl serialKiller = null;
@@ -5854,8 +5395,9 @@ namespace LasMonjas
         public static GameObject serialKillerWep = null;
         public static float serialKillerLifes = 3;
         public static float serialKillerCooldown = 3;
-        public static bool serialKillerIsReviving = false;
         public static List<GameObject> serialKillerSpawns = new List<GameObject>();
+
+        public static HashSet<PlayerControl> revivingPlayers = new();
 
         public static List<Vector3> soloPlayersSpawnPositions = new List<Vector3>();
         public static bool battleRoyaleSenseiMapMode = false;
@@ -5875,7 +5417,6 @@ namespace LasMonjas
         public static bool triggerLimeTeamWin = false;
         public static bool triggerPinkTeamWin = false;
         public static bool triggerSerialKillerWin = false;
-        public static bool triggerDrawWin = false;
 
         public static string battleRoyalepointCounter = "";
 
@@ -5886,7 +5427,6 @@ namespace LasMonjas
             soloPlayerTeam.Clear();
             limeTeam.Clear();
             pinkTeam.Clear();
-            serialKillerTeam.Clear();
             soloPlayer01 = null;
             soloPlayer01mouseAngle = 0;
             soloPlayer01Wep = null;
@@ -5952,77 +5492,65 @@ namespace LasMonjas
             limePlayer01mouseAngle = 0;
             limePlayer01Wep = null;
             limePlayer01Lifes = fighterLifes;
-            limePlayer01IsReviving = false;
             limePlayer02 = null;
             limePlayer02mouseAngle = 0;
             limePlayer02Wep = null;
             limePlayer02Lifes = fighterLifes;
-            limePlayer02IsReviving = false;
             limePlayer03 = null;
             limePlayer03mouseAngle = 0;
             limePlayer03Wep = null;
             limePlayer03Lifes = fighterLifes;
-            limePlayer03IsReviving = false;
             limePlayer04 = null;
             limePlayer04mouseAngle = 0;
             limePlayer04Wep = null;
             limePlayer04Lifes = fighterLifes;
-            limePlayer04IsReviving = false;
             limePlayer05 = null;
             limePlayer05mouseAngle = 0;
             limePlayer05Wep = null;
             limePlayer05Lifes = fighterLifes;
-            limePlayer05IsReviving = false;
             limePlayer06 = null;
             limePlayer06mouseAngle = 0;
             limePlayer06Wep = null;
             limePlayer06Lifes = fighterLifes;
-            limePlayer06IsReviving = false;
             limePlayer07 = null;
             limePlayer07mouseAngle = 0;
             limePlayer07Wep = null;
             limePlayer07Lifes = fighterLifes;
-            limePlayer07IsReviving = false;
             pinkPlayer01 = null;
             pinkPlayer01mouseAngle = 0;
             pinkPlayer01Wep = null;
             pinkPlayer01Lifes = fighterLifes;
-            pinkPlayer01IsReviving = false;
             pinkPlayer02 = null;
             pinkPlayer02mouseAngle = 0;
             pinkPlayer02Wep = null;
             pinkPlayer02Lifes = fighterLifes;
-            pinkPlayer02IsReviving = false;
             pinkPlayer03 = null;
             pinkPlayer03mouseAngle = 0;
             pinkPlayer03Wep = null;
             pinkPlayer03Lifes = fighterLifes;
-            pinkPlayer03IsReviving = false;
             pinkPlayer04 = null;
             pinkPlayer04mouseAngle = 0;
             pinkPlayer04Wep = null;
             pinkPlayer04Lifes = fighterLifes;
-            pinkPlayer04IsReviving = false;
             pinkPlayer05 = null;
             pinkPlayer05mouseAngle = 0;
             pinkPlayer05Wep = null;
             pinkPlayer05Lifes = fighterLifes;
-            pinkPlayer05IsReviving = false;
             pinkPlayer06 = null;
             pinkPlayer06mouseAngle = 0;
             pinkPlayer06Wep = null;
             pinkPlayer06Lifes = fighterLifes;
-            pinkPlayer06IsReviving = false;
             pinkPlayer07 = null;
             pinkPlayer07mouseAngle = 0;
             pinkPlayer07Wep = null;
             pinkPlayer07Lifes = fighterLifes;
-            pinkPlayer07IsReviving = false;
             serialKiller = null;
             serialKillermouseAngle = 0;
             serialKillerWep = null;
-            serialKillerIsReviving = false;
             serialKillerSpawns.Clear();
+            serialKillerTeam.Clear();
+
+            revivingPlayers.Clear();
 
             killCooldown = CustomOptionHolder.battleRoyaleKillCooldown.getFloat();
             battleRoyaleSenseiMapMode = CustomOptionHolder.activateSenseiMap.getBool();
@@ -6047,7 +5575,6 @@ namespace LasMonjas
             triggerLimeTeamWin = false;
             triggerPinkTeamWin = false;
             triggerSerialKillerWin = false;
-            triggerDrawWin = false;
 
             switch (matchType) {
                 case 0:
@@ -6055,7 +5582,7 @@ namespace LasMonjas
                     break;
                 case 1:
                     if (serialKiller != null) {
-                        battleRoyalepointCounter = Language.introTexts[12] + "<color=#39FF14FF>" + limeTeam.Count + "</color> | " + Language.introTexts[13] + "<color=#F2BEFFFF>" + pinkTeam.Count + "</color> | " + Language.introTexts[14] + "<color=#808080FF>" + serialKillerTeam.Count + "</color>";
+                        battleRoyalepointCounter = Language.introTexts[12] + "<color=#39FF14FF>" + limeTeam.Count + "</color> | " + Language.introTexts[13] + "<color=#F2BEFFFF>" + pinkTeam.Count + "</color> | " + Language.introTexts[14] + "<color=#808080FF>1</color>";
                     }
                     else {
                         battleRoyalepointCounter = Language.introTexts[12] + "<color=#39FF14FF>" + limeTeam.Count + "</color> | " + Language.introTexts[13] + "<color=#F2BEFFFF>" + pinkTeam.Count + "</color>";
@@ -6201,289 +5728,6 @@ namespace LasMonjas
                     break;
             }
         }
-
-        public static PlayerControl GetShotPlayer(float shotSize, float effectiveRange, int whichPlayerShot) {
-            float playerMouse = 0;
-            Vector2 originPlayer = new Vector2(0, 0);
-            switch (whichPlayerShot) {
-                case 1:
-                    playerMouse = soloPlayer01mouseAngle;
-                    originPlayer = soloPlayer01.GetTruePosition();
-                    break;
-                case 2:
-                    playerMouse = soloPlayer02mouseAngle;
-                    originPlayer = soloPlayer02.GetTruePosition();
-                    break;
-                case 3:
-                    playerMouse = soloPlayer03mouseAngle;
-                    originPlayer = soloPlayer03.GetTruePosition();
-                    break;
-                case 4:
-                    playerMouse = soloPlayer04mouseAngle;
-                    originPlayer = soloPlayer04.GetTruePosition();
-                    break;
-                case 5:
-                    playerMouse = soloPlayer05mouseAngle;
-                    originPlayer = soloPlayer05.GetTruePosition();
-                    break;
-                case 6:
-                    playerMouse = soloPlayer06mouseAngle;
-                    originPlayer = soloPlayer06.GetTruePosition();
-                    break;
-                case 7:
-                    playerMouse = soloPlayer07mouseAngle;
-                    originPlayer = soloPlayer07.GetTruePosition();
-                    break;
-                case 8:
-                    playerMouse = soloPlayer08mouseAngle;
-                    originPlayer = soloPlayer08.GetTruePosition();
-                    break;
-                case 9:
-                    playerMouse = soloPlayer09mouseAngle;
-                    originPlayer = soloPlayer09.GetTruePosition();
-                    break;
-                case 10:
-                    playerMouse = soloPlayer10mouseAngle;
-                    originPlayer = soloPlayer10.GetTruePosition();
-                    break;
-                case 11:
-                    playerMouse = soloPlayer11mouseAngle;
-                    originPlayer = soloPlayer11.GetTruePosition();
-                    break;
-                case 12:
-                    playerMouse = soloPlayer12mouseAngle;
-                    originPlayer = soloPlayer12.GetTruePosition();
-                    break;
-                case 13:
-                    playerMouse = soloPlayer13mouseAngle;
-                    originPlayer = soloPlayer13.GetTruePosition();
-                    break;
-                case 14:
-                    playerMouse = soloPlayer14mouseAngle;
-                    originPlayer = soloPlayer14.GetTruePosition();
-                    break;
-                case 15:
-                    playerMouse = soloPlayer15mouseAngle;
-                    originPlayer = soloPlayer15.GetTruePosition();
-                    break;
-            }
-            PlayerControl result = null;
-            float num = effectiveRange;
-            Vector3 pos;
-            float mouseAngle = playerMouse;
-            foreach (PlayerControl player in soloPlayerTeam) {
-                if (player.PlayerId == PlayerInCache.LocalPlayer.PlayerControl.PlayerId) continue;
-
-                if (player.Data.IsDead || player.inVent) continue;
-
-                pos = player.transform.position - PlayerInCache.LocalPlayer.PlayerControl.transform.position;
-                pos = new Vector3(
-                    pos.x * MathF.Cos(mouseAngle) + pos.y * MathF.Sin(mouseAngle),
-                    pos.y * MathF.Cos(mouseAngle) - pos.x * MathF.Sin(mouseAngle));
-                if (Math.Abs(pos.y) < shotSize && (!(pos.x < 0)) && pos.x < num) {
-                    num = pos.x;
-                    if (!PhysicsHelpers.AnythingBetween(
-                            originPlayer,
-                            player.GetTruePosition(),
-                            Constants.ShipOnlyMask,
-                            false
-                        )) {
-                        result = player;
-                    }
-                }
-            }
-            return result;
-        }
-        public static PlayerControl GetLimeShotPlayer(float shotSize, float effectiveRange, int whichPlayerShot) {
-            float playerMouse = 0;
-            Vector2 originPlayer = new Vector2(0, 0);
-            switch (whichPlayerShot) {
-                case 1:
-                    playerMouse = limePlayer01mouseAngle;
-                    originPlayer = limePlayer01.GetTruePosition();
-                    break;
-                case 2:
-                    playerMouse = limePlayer02mouseAngle;
-                    originPlayer = limePlayer02.GetTruePosition();
-                    break;
-                case 3:
-                    playerMouse = limePlayer03mouseAngle;
-                    originPlayer = limePlayer03.GetTruePosition();
-                    break;
-                case 4:
-                    playerMouse = limePlayer04mouseAngle;
-                    originPlayer = limePlayer04.GetTruePosition();
-                    break;
-                case 5:
-                    playerMouse = limePlayer05mouseAngle;
-                    originPlayer = limePlayer05.GetTruePosition();
-                    break;
-                case 6:
-                    playerMouse = limePlayer06mouseAngle;
-                    originPlayer = limePlayer06.GetTruePosition();
-                    break;
-                case 7:
-                    playerMouse = limePlayer07mouseAngle;
-                    originPlayer = limePlayer07.GetTruePosition();
-                    break;
-            }
-            PlayerControl result = null;
-            float num = effectiveRange;
-            Vector3 pos;
-            float mouseAngle = playerMouse;
-            foreach (PlayerControl player in pinkTeam) {
-                if (player.PlayerId == PlayerInCache.LocalPlayer.PlayerControl.PlayerId) continue;
-
-                if (player.Data.IsDead || player.inVent) continue;
-
-                pos = player.transform.position - PlayerInCache.LocalPlayer.PlayerControl.transform.position;
-                pos = new Vector3(
-                    pos.x * MathF.Cos(mouseAngle) + pos.y * MathF.Sin(mouseAngle),
-                    pos.y * MathF.Cos(mouseAngle) - pos.x * MathF.Sin(mouseAngle));
-                if (Math.Abs(pos.y) < shotSize && (!(pos.x < 0)) && pos.x < num) {
-                    num = pos.x;
-                    if (!PhysicsHelpers.AnythingBetween(
-                            originPlayer,
-                            player.GetTruePosition(),
-                            Constants.ShipOnlyMask,
-                            false
-                        )) {
-                        result = player;
-                    }
-                }
-            }
-            foreach (PlayerControl player in serialKillerTeam) {
-                if (player.PlayerId == PlayerInCache.LocalPlayer.PlayerControl.PlayerId) continue;
-
-                if (player.Data.IsDead || player.inVent) continue;
-
-                pos = player.transform.position - PlayerInCache.LocalPlayer.PlayerControl.transform.position;
-                pos = new Vector3(
-                    pos.x * MathF.Cos(mouseAngle) + pos.y * MathF.Sin(mouseAngle),
-                    pos.y * MathF.Cos(mouseAngle) - pos.x * MathF.Sin(mouseAngle));
-                if (Math.Abs(pos.y) < shotSize && (!(pos.x < 0)) && pos.x < num) {
-                    num = pos.x;
-                    if (!PhysicsHelpers.AnythingBetween(
-                            originPlayer,
-                            player.GetTruePosition(),
-                            Constants.ShipOnlyMask,
-                            false
-                        )) {
-                        result = player;
-                    }
-                }
-            }
-            return result;
-        }
-        public static PlayerControl GetPinkShotPlayer(float shotSize, float effectiveRange, int whichPlayerShot) {
-            float playerMouse = 0;
-            Vector2 originPlayer = new Vector2(0, 0);
-            switch (whichPlayerShot) {
-                case 1:
-                    playerMouse = pinkPlayer01mouseAngle;
-                    originPlayer = pinkPlayer01.GetTruePosition();
-                    break;
-                case 2:
-                    playerMouse = pinkPlayer02mouseAngle;
-                    originPlayer = pinkPlayer02.GetTruePosition();
-                    break;
-                case 3:
-                    playerMouse = pinkPlayer03mouseAngle;
-                    originPlayer = pinkPlayer03.GetTruePosition();
-                    break;
-                case 4:
-                    playerMouse = pinkPlayer04mouseAngle;
-                    originPlayer = pinkPlayer04.GetTruePosition();
-                    break;
-                case 5:
-                    playerMouse = pinkPlayer05mouseAngle;
-                    originPlayer = pinkPlayer05.GetTruePosition();
-                    break;
-                case 6:
-                    playerMouse = pinkPlayer06mouseAngle;
-                    originPlayer = pinkPlayer06.GetTruePosition();
-                    break;
-                case 7:
-                    playerMouse = pinkPlayer07mouseAngle;
-                    originPlayer = pinkPlayer07.GetTruePosition();
-                    break;
-            }
-            PlayerControl result = null;
-            float num = effectiveRange;
-            Vector3 pos;
-            float mouseAngle = playerMouse;
-            foreach (PlayerControl player in limeTeam) {
-                if (player.PlayerId == PlayerInCache.LocalPlayer.PlayerControl.PlayerId) continue;
-
-                if (player.Data.IsDead || player.inVent) continue;
-
-                pos = player.transform.position - PlayerInCache.LocalPlayer.PlayerControl.transform.position;
-                pos = new Vector3(
-                    pos.x * MathF.Cos(mouseAngle) + pos.y * MathF.Sin(mouseAngle),
-                    pos.y * MathF.Cos(mouseAngle) - pos.x * MathF.Sin(mouseAngle));
-                if (Math.Abs(pos.y) < shotSize && (!(pos.x < 0)) && pos.x < num) {
-                    num = pos.x;
-                    if (!PhysicsHelpers.AnythingBetween(
-                            originPlayer,
-                            player.GetTruePosition(),
-                            Constants.ShipOnlyMask,
-                            false
-                        )) {
-                        result = player;
-                    }
-                }
-            }
-            foreach (PlayerControl player in serialKillerTeam) {
-                if (player.PlayerId == PlayerInCache.LocalPlayer.PlayerControl.PlayerId) continue;
-
-                if (player.Data.IsDead || player.inVent) continue;
-
-                pos = player.transform.position - PlayerInCache.LocalPlayer.PlayerControl.transform.position;
-                pos = new Vector3(
-                    pos.x * MathF.Cos(mouseAngle) + pos.y * MathF.Sin(mouseAngle),
-                    pos.y * MathF.Cos(mouseAngle) - pos.x * MathF.Sin(mouseAngle));
-                if (Math.Abs(pos.y) < shotSize && (!(pos.x < 0)) && pos.x < num) {
-                    num = pos.x;
-                    if (!PhysicsHelpers.AnythingBetween(
-                            originPlayer,
-                            player.GetTruePosition(),
-                            Constants.ShipOnlyMask,
-                            false
-                        )) {
-                        result = player;
-                    }
-                }
-            }
-            return result;
-        }
-        public static PlayerControl GetSerialShootPlayer(float shotSize, float effectiveRange) {
-            PlayerControl result = null;
-            float num = effectiveRange;
-            Vector3 pos;
-            float mouseAngle = serialKillermouseAngle;
-            foreach (PlayerControl player in PlayerInCache.AllPlayers) {
-                if (player.PlayerId == PlayerInCache.LocalPlayer.PlayerControl.PlayerId) continue;
-
-                if (player.Data.IsDead) continue;
-
-                pos = player.transform.position - PlayerInCache.LocalPlayer.PlayerControl.transform.position;
-                pos = new Vector3(
-                    pos.x * MathF.Cos(mouseAngle) + pos.y * MathF.Sin(mouseAngle),
-                    pos.y * MathF.Cos(mouseAngle) - pos.x * MathF.Sin(mouseAngle));
-                if (Math.Abs(pos.y) < shotSize && (!(pos.x < 0)) && pos.x < num) {
-                    num = pos.x;
-                    if (!PhysicsHelpers.AnythingBetween(
-                            serialKiller.GetTruePosition(),
-                            player.GetTruePosition(),
-                            Constants.ShipOnlyMask,
-                            false
-                        )) {
-                        result = player;
-                    }
-                }
-            }
-            return result;
-        }
     }
 
     public static class MonjaFestival
@@ -6491,126 +5735,98 @@ namespace LasMonjas
         public static List<PlayerControl> greenTeam = new List<PlayerControl>();
         public static GameObject greenTeamBase = null;
         public static PlayerControl greenPlayer01 = null;
-        public static bool greenPlayer01IsReviving = false;
         public static int greenPlayer01Items = 0;
-        public static PlayerControl greenPlayer01currentTarget = null;
         public static GameObject greenmonja01selectedSpawn = null;
         public static GameObject greenmonja01currentSpawn = null;
         public static byte greenmonja01foundspawn = 0;
         public static TMPro.TMP_Text greenmonja01DeliverCount;
         public static PlayerControl greenPlayer02 = null;
-        public static bool greenPlayer02IsReviving = false;
         public static int greenPlayer02Items = 0;
-        public static PlayerControl greenPlayer02currentTarget = null;
         public static GameObject greenmonja02selectedSpawn = null;
         public static GameObject greenmonja02currentSpawn = null;
         public static byte greenmonja02foundspawn = 0;
         public static TMPro.TMP_Text greenmonja02DeliverCount; 
         public static PlayerControl greenPlayer03 = null;
-        public static bool greenPlayer03IsReviving = false;
         public static int greenPlayer03Items = 0;
-        public static PlayerControl greenPlayer03currentTarget = null;
         public static GameObject greenmonja03selectedSpawn = null;
         public static GameObject greenmonja03currentSpawn = null;
         public static byte greenmonja03foundspawn = 0;
         public static TMPro.TMP_Text greenmonja03DeliverCount;
         public static PlayerControl greenPlayer04 = null;
-        public static bool greenPlayer04IsReviving = false;
         public static int greenPlayer04Items = 0;
-        public static PlayerControl greenPlayer04currentTarget = null;
         public static GameObject greenmonja04selectedSpawn = null;
         public static GameObject greenmonja04currentSpawn = null;
         public static byte greenmonja04foundspawn = 0;
         public static TMPro.TMP_Text greenmonja04DeliverCount;
         public static PlayerControl greenPlayer05 = null;
-        public static bool greenPlayer05IsReviving = false;
         public static int greenPlayer05Items = 0;
-        public static PlayerControl greenPlayer05currentTarget = null;
         public static GameObject greenmonja05selectedSpawn = null;
         public static GameObject greenmonja05currentSpawn = null;
         public static byte greenmonja05foundspawn = 0;
         public static TMPro.TMP_Text greenmonja05DeliverCount;
         public static PlayerControl greenPlayer06 = null;
-        public static bool greenPlayer06IsReviving = false;
         public static int greenPlayer06Items = 0;
-        public static PlayerControl greenPlayer06currentTarget = null;
         public static GameObject greenmonja06selectedSpawn = null;
         public static GameObject greenmonja06currentSpawn = null;
         public static byte greenmonja06foundspawn = 0;
         public static TMPro.TMP_Text greenmonja06DeliverCount;
         public static PlayerControl greenPlayer07 = null;
-        public static bool greenPlayer07IsReviving = false;
         public static int greenPlayer07Items = 0;
-        public static PlayerControl greenPlayer07currentTarget = null;
         public static GameObject greenmonja07selectedSpawn = null;
         public static GameObject greenmonja07currentSpawn = null;
         public static byte greenmonja07foundspawn = 0;
         public static TMPro.TMP_Text greenmonja07DeliverCount;
+        public static List<PlayerControl> greenTeamCurrentargets = new List<PlayerControl>();
 
         public static List<PlayerControl> cyanTeam = new List<PlayerControl>();
         public static GameObject cyanTeamBase = null;
         public static PlayerControl cyanPlayer01 = null;
-        public static bool cyanPlayer01IsReviving = false;
         public static int cyanPlayer01Items = 0;
-        public static PlayerControl cyanPlayer01currentTarget = null;
         public static GameObject cyanPlayer01selectedSpawn = null;
         public static GameObject cyanPlayer01currentSpawn = null;
         public static byte cyanPlayer01foundspawn = 0;
         public static TMPro.TMP_Text cyanPlayer01DeliverCount; 
         public static PlayerControl cyanPlayer02 = null;
-        public static bool cyanPlayer02IsReviving = false;
         public static int cyanPlayer02Items = 0;
-        public static PlayerControl cyanPlayer02currentTarget = null;
         public static GameObject cyanPlayer02selectedSpawn = null;
         public static GameObject cyanPlayer02currentSpawn = null;
         public static byte cyanPlayer02foundspawn = 0;
         public static TMPro.TMP_Text cyanPlayer02DeliverCount; 
         public static PlayerControl cyanPlayer03 = null;
-        public static bool cyanPlayer03IsReviving = false;
         public static int cyanPlayer03Items = 0;
-        public static PlayerControl cyanPlayer03currentTarget = null;
         public static GameObject cyanPlayer03selectedSpawn = null;
         public static GameObject cyanPlayer03currentSpawn = null;
         public static byte cyanPlayer03foundspawn = 0;
         public static TMPro.TMP_Text cyanPlayer03DeliverCount;
         public static PlayerControl cyanPlayer04 = null;
-        public static bool cyanPlayer04IsReviving = false;
         public static int cyanPlayer04Items = 0;
-        public static PlayerControl cyanPlayer04currentTarget = null;
         public static GameObject cyanPlayer04selectedSpawn = null;
         public static GameObject cyanPlayer04currentSpawn = null;
         public static byte cyanPlayer04foundspawn = 0;
         public static TMPro.TMP_Text cyanPlayer04DeliverCount;
         public static PlayerControl cyanPlayer05 = null;
-        public static bool cyanPlayer05IsReviving = false;
         public static int cyanPlayer05Items = 0;
-        public static PlayerControl cyanPlayer05currentTarget = null;
         public static GameObject cyanPlayer05selectedSpawn = null;
         public static GameObject cyanPlayer05currentSpawn = null;
         public static byte cyanPlayer05foundspawn = 0;
         public static TMPro.TMP_Text cyanPlayer05DeliverCount;
         public static PlayerControl cyanPlayer06 = null;
-        public static bool cyanPlayer06IsReviving = false;
         public static int cyanPlayer06Items = 0;
-        public static PlayerControl cyanPlayer06currentTarget = null;
         public static GameObject cyanPlayer06selectedSpawn = null;
         public static GameObject cyanPlayer06currentSpawn = null;
         public static byte cyanPlayer06foundspawn = 0;
         public static TMPro.TMP_Text cyanPlayer06DeliverCount;
         public static PlayerControl cyanPlayer07 = null;
-        public static bool cyanPlayer07IsReviving = false;
         public static int cyanPlayer07Items = 0;
-        public static PlayerControl cyanPlayer07currentTarget = null;
         public static GameObject cyanPlayer07selectedSpawn = null;
         public static GameObject cyanPlayer07currentSpawn = null;
         public static byte cyanPlayer07foundspawn = 0;
         public static TMPro.TMP_Text cyanPlayer07DeliverCount;
+        public static List<PlayerControl> cyanTeamCurrentargets = new List<PlayerControl>();
 
-        public static List<PlayerControl> bigMonjaTeam = new List<PlayerControl>();
         public static GameObject bigMonjaBase = null;
         public static GameObject bigMonjaBaseTwo = null;
         public static PlayerControl bigMonjaPlayer = null;
-        public static bool bigMonjaIsReviving = false;
         public static int bigMonjaPlayerItems = 0;
         public static GameObject bigMonjaPlayerselectedSpawn = null;
         public static GameObject bigMonjaPlayercurrentSpawn = null;
@@ -6621,6 +5837,8 @@ namespace LasMonjas
         public static float bigMonjaPlayerFindDeliverCooldown = 1;
         public static PlayerControl bigMonjaPlayercurrentTarget = null;
         public static List<GameObject> bigMonjaSpawns = new List<GameObject>();
+
+        public static HashSet<PlayerControl> revivingPlayers = new();
 
         public static bool monjaFestivalSenseiMapMode = false;
         public static bool monjaFestivalDleksMap = false;
@@ -6680,7 +5898,6 @@ namespace LasMonjas
         public static bool triggerGreenTeamWin = false;
         public static bool triggerCyanTeamWin = false;
         public static bool triggerBigMonjaWin = false;
-        public static bool triggerDrawWin = false;
 
         public static string monjaFestivalCounter = "";
 
@@ -6690,8 +5907,8 @@ namespace LasMonjas
             HudManagerStartPatch.bigmonjaInvisibleButton.isEffectActive = false;
             HudManagerStartPatch.bigmonjaInvisibleButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
             if (bigMonjaPlayer != null) {
-                Helpers.alphaPlayer(false, bigMonjaPlayer.PlayerId);
-                MonjaFestival.bigMonjaPlayer.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
+                Helpers.alphaPlayer(bigMonjaPlayer.PlayerId, 1f);
+                Helpers.RestoreBodyTypeWithDelay(bigMonjaPlayer);
             }
         }
 
@@ -6769,112 +5986,87 @@ namespace LasMonjas
 
             greenTeam.Clear();
             cyanTeam.Clear();
-            bigMonjaTeam.Clear();
             allulMonjaPositions.Clear();
 
             greenTeamBase = null;
             greenPlayer01 = null;
-            greenPlayer01IsReviving = false;
             greenPlayer01Items = 0;
-            greenPlayer01currentTarget = null;
             greenmonja01selectedSpawn = null;
             greenmonja01currentSpawn = null;
-            greenmonja01foundspawn = 0; 
-            greenPlayer02IsReviving = false;
+            greenmonja01foundspawn = 0;
+            greenPlayer02 = null;
             greenPlayer02Items = 0;
-            greenPlayer02currentTarget = null;
             greenmonja02selectedSpawn = null;
             greenmonja02currentSpawn = null;
             greenmonja02foundspawn = 0; 
             greenPlayer03 = null;
-            greenPlayer03IsReviving = false;
             greenPlayer03Items = 0;
-            greenPlayer03currentTarget = null;
             greenmonja03selectedSpawn = null;
             greenmonja03currentSpawn = null;
             greenmonja03foundspawn = 0;
             greenPlayer04 = null;
-            greenPlayer04IsReviving = false;
             greenPlayer04Items = 0;
-            greenPlayer04currentTarget = null;
             greenmonja04selectedSpawn = null;
             greenmonja04currentSpawn = null;
             greenmonja04foundspawn = 0;
             greenPlayer05 = null;
-            greenPlayer05IsReviving = false;
             greenPlayer05Items = 0;
-            greenPlayer05currentTarget = null;
             greenmonja05selectedSpawn = null;
             greenmonja05currentSpawn = null;
             greenmonja05foundspawn = 0;
             greenPlayer06 = null;
-            greenPlayer06IsReviving = false;
             greenPlayer06Items = 0;
-            greenPlayer06currentTarget = null;
             greenmonja06selectedSpawn = null;
             greenmonja06currentSpawn = null;
             greenmonja06foundspawn = 0;
             greenPlayer07 = null;
-            greenPlayer07IsReviving = false;
             greenPlayer07Items = 0;
-            greenPlayer07currentTarget = null;
             greenmonja07selectedSpawn = null;
             greenmonja07currentSpawn = null;
             greenmonja07foundspawn = 0;
+            greenTeamCurrentargets.Clear();
+            greenTeamCurrentargets = Enumerable.Repeat<PlayerControl>(null, 7).ToList();
             cyanTeamBase = null;
             cyanPlayer01 = null;
-            cyanPlayer01IsReviving = false;
             cyanPlayer01Items = 0;
-            cyanPlayer01currentTarget = null;
             cyanPlayer01selectedSpawn = null;
             cyanPlayer01currentSpawn = null;
             cyanPlayer01foundspawn = 0; 
             cyanPlayer02 = null;
-            cyanPlayer02IsReviving = false;
             cyanPlayer02Items = 0;
-            cyanPlayer02currentTarget = null;
             cyanPlayer02selectedSpawn = null;
             cyanPlayer02currentSpawn = null;
             cyanPlayer02foundspawn = 0; 
             cyanPlayer03 = null;
-            cyanPlayer03IsReviving = false;
             cyanPlayer03Items = 0;
-            cyanPlayer03currentTarget = null;
             cyanPlayer03selectedSpawn = null;
             cyanPlayer03currentSpawn = null;
             cyanPlayer03foundspawn = 0;
             cyanPlayer04 = null;
-            cyanPlayer04IsReviving = false;
             cyanPlayer04Items = 0;
-            cyanPlayer04currentTarget = null;
             cyanPlayer04selectedSpawn = null;
             cyanPlayer04currentSpawn = null;
             cyanPlayer04foundspawn = 0;
             cyanPlayer05 = null;
-            cyanPlayer05IsReviving = false;
             cyanPlayer05Items = 0;
-            cyanPlayer05currentTarget = null;
             cyanPlayer05selectedSpawn = null;
             cyanPlayer05currentSpawn = null;
             cyanPlayer05foundspawn = 0;
             cyanPlayer06 = null;
-            cyanPlayer06IsReviving = false;
             cyanPlayer06Items = 0;
-            cyanPlayer06currentTarget = null;
             cyanPlayer06selectedSpawn = null;
             cyanPlayer06currentSpawn = null;
             cyanPlayer06foundspawn = 0;
             cyanPlayer07 = null;
-            cyanPlayer07IsReviving = false;
             cyanPlayer07Items = 0;
-            cyanPlayer07currentTarget = null;
             cyanPlayer07selectedSpawn = null;
             cyanPlayer07currentSpawn = null;
             cyanPlayer07foundspawn = 0;
+            cyanTeamCurrentargets.Clear();
+            cyanTeamCurrentargets = Enumerable.Repeat<PlayerControl>(null, 7).ToList();
             bigMonjaBase = null;
             bigMonjaBaseTwo = null;
             bigMonjaPlayer = null;
-            bigMonjaIsReviving = false;
             bigMonjaPlayerItems = 0;
             bigMonjaPlayercurrentTarget = null;
             bigMonjaPlayerselectedSpawn = null;
@@ -6882,6 +6074,8 @@ namespace LasMonjas
             bigMonjaPlayerfoundspawn = 0;
             bigMonjaPlayerInvisibleTimer = 0f;
             bigMonjaSpawns.Clear();
+
+            revivingPlayers.Clear();
 
             grabDeliverTime = 1f;
             monjaFestivalSenseiMapMode = CustomOptionHolder.activateSenseiMap.getBool();
@@ -6919,7 +6113,6 @@ namespace LasMonjas
             triggerGreenTeamWin = false;
             triggerCyanTeamWin = false;
             triggerBigMonjaWin = false;
-            triggerDrawWin = false;
 
             localArrows = new List<Arrow>();
             allulMonja = null;
