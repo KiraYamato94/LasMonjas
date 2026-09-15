@@ -36,6 +36,21 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
 
+**Version 4.0.0 (15th September 2026)**
+- Code refactored for better performance, over 10,000 code lines removed
+- Role summary button is back and available all the time
+- Welcome message finally fixed, it only appears 1 time now
+- Mod options should sync now for players who join the lobby after changing any of them. If by chance it still fails for someone, use the change preset and change it back workaround before starting the game
+- Main menu credits button fixed
+- Added/changed some intro sounds for certains roles/gamemodes
+- Bounty Hunter no longer gets killed if its target disconnects, instead it can choose a new one
+- Fixed Trapper's traps, now they affect only the first player who steps on them and they become visible to everyone during that time
+- Seeker's current score is now displayed at the start of the minigame
+- Dead bodies are now shown on gamemodes while that player is reviving
+- Fixed an issue on gamemodes where the neutral player would become freezed randomly after killing or getting killed
+- Fixed an issue on Battle Royale, every player's shot now displays correctly on all clients
+- Fixed an issue with Zombie Laboratory's counter, now it updates correctly when someone turns into a zombie
+
 **Version 3.9.3 (18th August 2026)**
 - Compatibility patch for Among Us 2026.8.18 (v18)
 - Added vanilla Judge's animation to the Captain's force vote out ability
@@ -866,6 +881,7 @@ Roles can be activated by putting them at 100% spawn rate (there's only 0% and 1
 - His target is assigned randomly pressing the Find Target button and can't be the Kid, Big Chungus, Lovers or himself.
 - Find Target button can be use whenever he wants, but if it assigns a dead target the Bounty Hunter dies.
 - If his target is exiled or killed, Bounty Hunter also dies.
+- If his target disconnects, it can choose a new one.
 - If his target gets revived, Bounty Hunter also revives.
 - He can't be in the same game as Renegade, Trapper, Yinyanger, Challenger, Ninja, Berserker, Yandere, Stranded and Monja.
 
