@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace LasMonjas.Objects {
     public class Arrow {
-        public float perc = 0.925f;
         public SpriteRenderer image;
         public GameObject arrow;
         private Vector3 oldTarget;

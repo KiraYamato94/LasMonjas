@@ -14,8 +14,9 @@ namespace LasMonjas.Objects
         private Color color;
         public GameObject trap;
         private SpriteRenderer spriteRenderer;
-        private bool touched = false;
+        public bool touched = false;
         private Vector3 position;
+        public int trapId;
 
         public static Sprite getTrapSprite() {
             if (sprite) return sprite;
@@ -24,12 +25,13 @@ namespace LasMonjas.Objects
         }
 
         public Trap(float duration, Vector2 player) {
+            trapId = Trapper.trapCountId;
 
             this.color = new Color(1f, 1f, 1f, 1f);
 
             trap = new GameObject("Trap" + traps.Count.ToString());
             trap.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-            if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+            if (Helpers.isSubmergedMap()) {
                 position = new Vector3(player.x, player.y, -0.5f);
             }
             else {
@@ -51,6 +53,7 @@ namespace LasMonjas.Objects
             HudManager.Instance.StartCoroutine(Effects.Lerp(duration, new Action<float>((p) => {
 
                 var player = PlayerInCache.LocalPlayer.PlayerControl;
+
                 if (Vector2.Distance(player.transform.position, trap.transform.position) < 0.3f && !touched && player != Trapper.trapper && !player.Data.IsDead) {
                     touched = true;
                     trap.SetActive(true);
@@ -58,8 +61,9 @@ namespace LasMonjas.Objects
                         PlayerControl target = Helpers.playerById(player.PlayerId);
                         MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ActivateTrap, Hazel.SendOption.Reliable, -1);
                         killWriter.Write(player.PlayerId);
+                        killWriter.Write(trapId); 
                         AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                        RPCProcedure.activateTrap(target.PlayerId);
+                        RPCProcedure.activateTrap(target.PlayerId, trapId);
                     }
                 }
 

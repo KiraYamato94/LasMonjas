@@ -12,7 +12,6 @@ namespace LasMonjas.Objects
         private GameObject footprint;
         private SpriteRenderer spriteRenderer;
         private PlayerControl owner;
-        private bool anonymousFootprints;
         private Vector3 position;
 
         public static Sprite getFootprintSprite() {
@@ -23,7 +22,6 @@ namespace LasMonjas.Objects
 
         public Footprint(float footprintDuration, bool anonymousFootprints, PlayerControl player) {
             this.owner = player;
-            this.anonymousFootprints = anonymousFootprints;
             if (anonymousFootprints)
                 this.color = Palette.PlayerColors[6];
             else
@@ -31,7 +29,7 @@ namespace LasMonjas.Objects
 
             footprint = new GameObject("Footprint");
             footprint.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-            if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+            if (Helpers.isSubmergedMap()) {
                 position = new Vector3(player.transform.position.x, player.transform.position.y, -0.5f);
             }
             else {

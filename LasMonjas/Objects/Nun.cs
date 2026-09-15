@@ -29,7 +29,7 @@ namespace LasMonjas.Objects {
             nun.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
             background = new GameObject("Background");
             background.transform.SetParent(nun.transform);
-            if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+            if (Helpers.isSubmergedMap()) {
                 position = new Vector3(p.x, p.y, -0.5f);
             }
             else {

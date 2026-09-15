@@ -38,7 +38,7 @@ namespace LasMonjas.Objects
 
             footprint = new GameObject("BattleRoyaleFootprint");
             footprint.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-            if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+            if (Helpers.isSubmergedMap()) {
                 position = new Vector3(player.transform.position.x, player.transform.position.y, -0.5f);
             }
             else {

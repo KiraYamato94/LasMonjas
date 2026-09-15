@@ -4,7 +4,6 @@ using UnityEngine;
 using Hazel;
 using LasMonjas.Patches;
 using LasMonjas.Core;
-using Reactor.Utilities.Extensions;
 
 namespace LasMonjas.Objects
 {
@@ -32,7 +31,7 @@ namespace LasMonjas.Objects
 
             hypnotistSpiral = new GameObject("HypnotistSpiral" + hypnotistSpirals.Count.ToString());
             hypnotistSpiral.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-            if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+            if (Helpers.isSubmergedMap()) {
                 position = new Vector3(player.x, player.y, -0.5f);
             }
             else {

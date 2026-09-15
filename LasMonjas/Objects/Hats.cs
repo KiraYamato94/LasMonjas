@@ -41,7 +41,7 @@ namespace LasMonjas.Objects {
         public Hats(Vector2 p) {
             gameObject = new GameObject("Hat");
             gameObject.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover); 
-            if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+            if (Helpers.isSubmergedMap()) {
                 position = new Vector3(p.x, p.y, -0.5f);
             }
             else {

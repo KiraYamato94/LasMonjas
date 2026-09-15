@@ -14,8 +14,9 @@ namespace LasMonjas.Objects
         private Color color;
         public GameObject mine;
         private SpriteRenderer spriteRenderer;
-        private bool touched = false;
+        public bool touched = false;
         private Vector3 position;
+        public int mineId;
 
         public static Sprite getMineSprite() {
             if (sprite) return sprite;
@@ -24,12 +25,13 @@ namespace LasMonjas.Objects
         }
 
         public Mine(float duration, Vector2 player) {
+            mineId = Trapper.mineCountId;
 
             this.color = new Color(1f, 1f, 1f, 1f);
 
             mine = new GameObject("Mine" + mines.Count.ToString());
             mine.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-            if (GameOptionsManager.Instance.currentGameOptions.MapId == 6) {
+            if (Helpers.isSubmergedMap()) {
                 position = new Vector3(player.x, player.y, -0.5f);
             }
             else {
@@ -59,8 +61,9 @@ namespace LasMonjas.Objects
                         PlayerControl target = Helpers.playerById(player.PlayerId);
                         MessageWriter killWriter = AmongUsClient.Instance.StartRpcImmediately(PlayerInCache.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.MineKill, Hazel.SendOption.Reliable, -1);
                         killWriter.Write(target.PlayerId);
+                        killWriter.Write(mineId);
                         AmongUsClient.Instance.FinishRpcImmediately(killWriter);
-                        RPCProcedure.mineKill(target.PlayerId);
+                        RPCProcedure.mineKill(target.PlayerId, mineId);
                     }
                 }
 
