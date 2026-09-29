@@ -36,6 +36,9 @@ Don't forget to join the official [Las Monjas Discord](https://discord.gg/UPCSqn
 <details>
   <summary>Click to show</summary>
 
+**Version 4.0.1 (29th September 2026)**
+- Compatibility patch for Among Us 2026.9.29 (v19), starting with this patch, the mod works on both Epic and Steam using the same build.
+
 **Version 4.0.0 (15th September 2026)**
 - Code refactored for better performance, over 10,000 code lines removed
 - Role summary button is back and available all the time
